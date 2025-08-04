@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class DeviceInfoViewModelTests: XCTestCase {
     let mockDeviceActionsHandler = MockDeviceDetailsViewActions()
@@ -45,7 +45,8 @@ final class DeviceInfoViewModelTests: XCTestCase {
         )
     }
 
-    func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled() {
+    func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled(
+    ) {
         let expectation = expectation(description: "copy value should be called")
 
         mockConversationUserClientDetailsActions.showMyDevice_MockMethod = {
@@ -55,7 +56,8 @@ final class DeviceInfoViewModelTests: XCTestCase {
         wait(for: [expectation])
     }
 
-    func testThatItCallsHowToDoThatMethodInConversationUserClientDetailsActionsHandler_WhenOnHowToDoThatTappedIsCalled() {
+    func testThatItCallsHowToDoThatMethodInConversationUserClientDetailsActionsHandler_WhenOnHowToDoThatTappedIsCalled(
+    ) {
         let expectation = expectation(description: "copy value should be called")
 
         mockConversationUserClientDetailsActions.howToDoThat_MockMethod = {
@@ -68,7 +70,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
     func testThatItCallsDownloadCertificateMethodInDeviceActionsHandler_WhenDownloadCertificateIsCalled() {
         let expectation = expectation(description: "copy value should be called")
 
-        mockDeviceActionsHandler.downloadE2EIdentityCertificateCertificate_MockMethod = {[weak self] value in
+        mockDeviceActionsHandler.downloadE2EIdentityCertificateCertificate_MockMethod = { [weak self] value in
             XCTAssertEqual(self?.deviceInfoViewModel.e2eIdentityCertificate, value)
             expectation.fulfill()
         }

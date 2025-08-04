@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import XCTest
 
 import WireDataModelSupport
+import WireMockTransport
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
@@ -26,19 +27,21 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!
     var mockTransportSession: MockTransportSession!
-    var mockEventProcessor: MockConversationEventProcessorProtocol!
+    var mockEventProcessor: MockLegacyConversationEventProcessorProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        mockEventProcessor = MockConversationEventProcessorProtocol()
+        mockEventProcessor = MockLegacyConversationEventProcessorProtocol()
         mockEventProcessor.processConversationEvents_MockMethod = { _ in }
         presentationDelegate = MockPresentationDelegate()
 
-        sut = WireSyncEngine.DeepLinkURLActionProcessor(contextProvider: coreDataStack!,
-                                                        transportSession: mockTransportSession,
-                                                        eventProcessor: mockEventProcessor)
+        sut = WireSyncEngine.DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor
+        )
     }
 
     override func tearDown() {
@@ -79,13 +82,16 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? DeepLinkRequestError, .invalidConversationLink)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? DeepLinkRequestError,
+            .invalidConversationLink
+        )
     }
 
     func testThatItAsksToShowUserProfile_WhenUserIsKnown() {
         // GIVEN
         let userId = UUID()
-        let action: URLAction = .openUserProfile(id: userId)
+        let action: URLAction = .openUserProfile(id: userId, domain: nil)
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = userId
 
@@ -100,7 +106,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     func testThatItAsksToShowConnectionRequest_WhenUserIsUnknown() {
         // GIVEN
         let userId = UUID()
-        let action: URLAction = .openUserProfile(id: userId)
+        let action: URLAction = .openUserProfile(id: userId, domain: nil)
 
         // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
@@ -126,7 +132,10 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
         // THEN
         XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.count, 1)
-        XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.first?.first?.type, .conversationMemberJoin)
+        XCTAssertEqual(
+            mockEventProcessor.processConversationEvents_Invocations.first?.first?.type,
+            .conversationMemberJoin
+        )
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.first, action)
     }
@@ -142,7 +151,10 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError, ConversationFetchError.invalidCode)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError,
+            ConversationFetchError.invalidCode
+        )
     }
 
 }

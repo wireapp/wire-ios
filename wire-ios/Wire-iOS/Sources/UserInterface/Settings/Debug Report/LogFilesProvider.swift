@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,30 +18,10 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
+import WireSyncEngine
 import WireSystem
-import ZipArchive
-
-// sourcery: AutoMockable
-protocol LogFilesProviding {
-
-    /// Generates a zip file containing all log files and returns its data before removing the files
-    ///
-    /// - Returns: the log files archive data
-
-    func generateLogFilesData() throws -> Data
-
-    /// Generates a zip file containing all log files
-    /// 
-    /// - Returns: the log files archive URL
-
-    func generateLogFilesZip() throws -> URL
-
-    /// Clears the logs directory.
-    /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
-
-    func clearLogsDirectory() throws
-
-}
+import ZIPFoundation
 
 /// Generates log files archives.
 ///
@@ -66,86 +46,89 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Properties
 
-    private var logsDirectory: URL = {
-        let baseURL = URL(
-            fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true
-        )
-        return baseURL
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathComponent("logs")
-    }()
+    private let logsDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent("logs", isDirectory: true)
 
     private var logFilesURLs: [URL] {
-        var urls = WireLogger.logFiles
-        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
+        let fileManager = FileManager.default
+        var urls = ZMSLog.pathsForExistingLogs
+
+        // add the root directory of the app, NSE and SE logs
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+           let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+            let targetLogDirectories = try? fileManager.contentsOfDirectory(
+                at: sharedLogsDirectoryURL,
+                includingPropertiesForKeys: .none
+            )
+            urls.append(contentsOf: targetLogDirectories ?? [])
+        }
+
         return urls
     }
 
     // MARK: - Interface
 
     func generateLogFilesData() throws -> Data {
+        let fileManager = FileManager.default
         defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
-            }
-            try? clearLogsDirectory()
+            try? clearLogsDirectory(fileManager: fileManager)
         }
 
         let logFilesURL = try generateLogFilesZip()
-        let data = try Data(contentsOf: logFilesURL)
-
-        return data
+        return try Data(contentsOf: logFilesURL)
     }
 
     func generateLogFilesZip() throws -> URL {
-        try? clearLogsDirectory()
+        let fileManager = FileManager.default
+        try? clearLogsDirectory(fileManager: fileManager)
 
-        // Create a unique directory
-        var url = try createUniqueLogDirectory()
-
-        // Create the info file
-        let infoFileURL = try createInfoFile(at: url)
-
-        // Set the list of files to be zipped
-        let filesToZip = try filesToZipURLs(
-            logFilesURLs: logFilesURLs,
-            infoFileURL: infoFileURL
-        )
-
-        // Create the zip file
-        url.appendPathComponent("logs.zip")
-        SSZipArchive.createZipFile(
-            atPath: url.path,
-            withFilesAtPaths: filesToZip.map { $0.path }
-        )
-
-        return url
-    }
-
-    func clearLogsDirectory() throws {
-        try FileManager.default.removeItem(atPath: logsDirectory.path)
-    }
-
-    // MARK: - Helpers
-
-    private func filesToZipURLs(logFilesURLs: [URL], infoFileURL: URL) throws -> [URL] {
+        // Determine files to export
+        let logFilesURLs = logFilesURLs
         guard !logFilesURLs.isEmpty else {
             throw Error.noLogs(description: logFilesURLs.description)
         }
 
-        return logFilesURLs + [infoFileURL]
+        // Re-create the base directory
+        try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+
+        // Create a subfolder for the current session
+        let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try fileManager.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
+
+        // Create the info file
+        _ = try createInfoFile(at: archiveFolder)
+
+        // Copy files to be zipped
+        for logFilesURL in logFilesURLs {
+            let copy = archiveFolder.appending(path: logFilesURL.lastPathComponent, directoryHint: .notDirectory)
+            try fileManager.copyItem(at: logFilesURL, to: copy)
+        }
+
+        // Create the zip file
+        let zipURL = logsDirectory.appendingPathComponent("logs.zip")
+        try fileManager.zipItem(at: archiveFolder, to: zipURL, shouldKeepParent: false, compressionMethod: .deflate)
+
+        // Clean up
+        try fileManager.removeItem(at: archiveFolder)
+
+        return zipURL
     }
 
-    private func createUniqueLogDirectory() throws -> URL {
-        let url = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        return url
+    func clearLogsDirectory(fileManager: FileManager) throws {
+        if fileManager.fileExists(atPath: logsDirectory.path) {
+            try fileManager.removeItem(at: logsDirectory)
+        }
     }
 
-    private func createInfoFile(at url: URL) throws -> URL {
+    func removeLogFiles(fileManager: FileManager) throws {
+        for fileURL in logFilesURLs {
+            try fileManager.removeItem(at: fileURL)
+        }
+    }
+
+    // MARK: - Helpers
+
+    var info: String {
         let date = Date()
 
         var body = """
@@ -160,16 +143,39 @@ struct LogFilesProvider: LogFilesProviding {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
+        return body
+    }
 
+    private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
-        try body.write(
+        try info.write(
             to: infoFileURL,
             atomically: true,
             encoding: .utf8
         )
 
         return infoFileURL
+    }
+
+    /// Deletes all log-related archives and folders created in the temp directory.
+    /// This includes any leftover directories that match the pattern used in `logsDirectory`.
+    func removeLegacyLogArchives() throws {
+        let tempDir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let fileManager = FileManager.default
+
+        let contents = try fileManager.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)
+
+        for url in contents {
+            // The `logsDirectory` structure is /tmp/<UUID>/logs
+            let logsSubdir = url.appendingPathComponent("logs")
+            var isDirectory: ObjCBool = false
+
+            if fileManager.fileExists(atPath: logsSubdir.path, isDirectory: &isDirectory),
+               isDirectory.boolValue {
+                try fileManager.removeItem(at: url)
+            }
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMPersistentCookieStorage.h"
-#import "ZMPushChannelConnection.h"
 #import "ZMReachability.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
@@ -228,8 +227,10 @@ static FakePushChannel *currentFakePushChannel;
 
 @synthesize keepOpen;
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id<BackendEnvironmentProvider>)environment
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler
+                  userAgentString:(NSString *)userAgentString environment:(id<BackendEnvironmentProvider>)environment
                             queue:(NSOperationQueue * _Nonnull)queue
+                        isEnabled:(BOOL)isEnabled
 {
     self = [super init];
     if (self) {
@@ -248,8 +249,9 @@ static FakePushChannel *currentFakePushChannel;
                              proxyPassword:(NSString * _Nullable)proxyPassword
                              minTLSVersion:(NSString * _Nullable)minTLSVersion
                                      queue:(NSOperationQueue *_Nonnull)queue
+                                 isEnabled:(BOOL)isEnabled
 {
-    self = [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment queue:queue];
+    self = [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment queue:queue isEnabled:isEnabled];
     return self;
 }
 
@@ -426,7 +428,9 @@ static XCTestCase *currentTestCase;
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
+                minTLSVersion:nil
+                selfClientID:nil
+                isSyncV2Enabled:NO];
 
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -570,8 +574,10 @@ static XCTestCase *currentTestCase;
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
-    
+                minTLSVersion:nil
+                selfClientID: nil
+                isSyncV2Enabled:NO];
+
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     
@@ -795,8 +801,10 @@ static XCTestCase *currentTestCase;
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil
                                userAgent:self.userAgent
-                               minTLSVersion:nil];
-    
+                               minTLSVersion:nil
+                               selfClientID: nil
+                               isSyncV2Enabled:NO];
+
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
     

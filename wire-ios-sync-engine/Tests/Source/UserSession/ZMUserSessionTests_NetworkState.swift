@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,13 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireDomain
+import WireLoggingSupport
 import XCTest
+
+@testable import WireLogging
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
@@ -27,8 +32,19 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
-        cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: userId, useCache: true)
+        cookieStorage = ZMPersistentCookieStorage(
+            forServerName: "usersessiontest.example.com",
+            userIdentifier: userId,
+            useCache: true
+        )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
@@ -37,15 +53,26 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // when
         let mockContextStore = MockLAContextStorable()
-        mockContextStore.clear_MockMethod = { }
+        mockContextStore.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
+
+        let journal = Journal(
+            userID: coreDataStack.account.userIdentifier,
+            storage: UserDefaults.temporary()
+        )
+        let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            appVersion: "00000",
+            apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStore,
             earService: mockEARService,
@@ -56,7 +83,10 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: userId
+            userId: userId,
+            minTLSVersion: nil,
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
         let testSession = builder.build()
         testSession.setup(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,11 @@ extension ZClientViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction.link(title: upgradeActionTitle, url: URL.manageTeam(source: .settings), presenter: self))
+        alert.addAction(UIAlertAction.link(
+            title: upgradeActionTitle,
+            url: URL.manageTeam(source: .settings),
+            presenter: self
+        ))
 
         present(alert, animated: true)
     }

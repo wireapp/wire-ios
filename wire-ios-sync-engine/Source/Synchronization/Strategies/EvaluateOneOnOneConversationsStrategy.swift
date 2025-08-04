@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
@@ -63,7 +64,11 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             do {
                 let mlsService = await syncContext.perform { syncContext.mlsService }
                 let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
-                let resolver = OneOnOneResolver(migrator: migrator)
+                let mlsFeature = await FeatureRepository(context: syncContext).fetchMLS()
+                let resolver = LegacyOneOnOneResolver(
+                    migrator: migrator,
+                    isMLSEnabled: mlsFeature.isEnabled
+                )
                 try await resolver.resolveAllOneOnOneConversations(in: syncContext)
 
                 await syncContext.perform {
@@ -71,11 +76,14 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
                 }
             } catch {
                 await syncContext.perform {
-                    self.failCurrentSyncPhase(errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!")
+                    self
+                        .failCurrentSyncPhase(
+                            errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!"
+                        )
                 }
             }
 
-            self.task = nil
+            task = nil
         }
 
         return nil

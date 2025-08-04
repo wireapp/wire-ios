@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         newHandle: String?,
         availability: HandleChangeState.HandleAvailability,
         federationEnabled: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -101,10 +101,10 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     }
 }
 
-fileprivate extension UIViewController {
+private extension UIViewController {
 
     func prepareForSettingsSnapshots() -> UIView {
-        let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        let navigationController = wrapInNavigationController()
 
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()

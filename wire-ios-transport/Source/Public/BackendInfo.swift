@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ public enum BackendInfo {
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
+        case isMLSEnabled
 
     }
 
@@ -39,14 +40,14 @@ public enum BackendInfo {
     /// The currently selected API Version.
 
     public static var apiVersion: APIVersion? {
-        get { return apiVersion(for: Key.selectedAPIVersion) }
+        get { apiVersion(for: Key.selectedAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.selectedAPIVersion.rawValue) }
     }
 
     /// The preferred API Version.
 
     public static var preferredAPIVersion: APIVersion? {
-        get { return apiVersion(for: Key.preferredAPIVersion) }
+        get { apiVersion(for: Key.preferredAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.preferredAPIVersion.rawValue) }
     }
 
@@ -64,6 +65,11 @@ public enum BackendInfo {
     public static var isFederationEnabled: Bool {
         get { storage.bool(forKey: Key.isFederationEnabled.rawValue) }
         set { storage.set(newValue, forKey: Key.isFederationEnabled.rawValue) }
+    }
+
+    public static var isMLSEnabled: Bool {
+        get { storage.bool(forKey: Key.isMLSEnabled.rawValue) }
+        set { storage.set(newValue, forKey: Key.isMLSEnabled.rawValue) }
     }
 
     private static func apiVersion(for key: Key) -> APIVersion? {

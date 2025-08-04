@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMMessage {
 
     @objc(usersFromUpdateEvent:context:)
     static func users(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> [ZMUser] {
-        return updateEvent.users(in: context, createIfNeeded: true)
+        updateEvent.users(in: context, createIfNeeded: true)
     }
 }
 
 extension ZMMessage {
     var isSenderInConversation: Bool {
-        return conversation?.has(participantWithId: sender?.userId) ?? false
+        conversation?.has(participantWithId: sender?.userId) ?? false
     }
 }
 

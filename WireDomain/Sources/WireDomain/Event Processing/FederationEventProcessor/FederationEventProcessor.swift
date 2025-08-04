@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,35 +17,20 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// Process federation update events.
-
-protocol FederationEventProcessorProtocol {
-
-    /// Process a federation update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A federation update event.
-
-    func processEvent(_ event: FederationEvent) async throws
-
-}
-
-struct FederationEventProcessor {
+struct FederationEventProcessor: FederationEventProcessorProtocol {
 
     let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol
     let deleteEventProcessor: any FederationDeleteEventProcessorProtocol
 
     func processEvent(_ event: FederationEvent) async throws {
         switch event {
-        case .connectionRemoved(let event):
+        case let .connectionRemoved(event):
             try await connectionRemovedEventProcessor.processEvent(event)
 
-        case .delete(let event):
-            try await deleteEventProcessor.processEvent(event)
+        case let .delete(event):
+            await deleteEventProcessor.processEvent(event)
         }
     }
 

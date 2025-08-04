@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 class ExpiringActivityTests: XCTestCase {
 
@@ -48,7 +48,7 @@ class ExpiringActivityTests: XCTestCase {
                 }
             }
             XCTFail("Expected a cancellation error to be thrown")
-        } catch { }
+        } catch {}
     }
 
     func testThatTaskIsCancelled_WhenActivityIsNotAllowedToBegin() async throws {
@@ -72,7 +72,7 @@ class ExpiringActivityTests: XCTestCase {
                 }
             }
             XCTFail("Expected an expiring activity not allowed to run error to be thrown")
-        } catch { }
+        } catch {}
     }
 
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {

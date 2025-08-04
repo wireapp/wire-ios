@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ final class PasscodeSetupInteractor {
 }
 
 // MARK: - Interface
+
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
 
     func storePasscode(passcode: String) throws {
@@ -54,7 +55,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
         }
 
         switch error {
-        case .invalidPassword(let violations):
+        case let .invalidPassword(violations):
             interactorOutput?.passcodeValidated(result: .invalid(violations: violations))
         default:
             break

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
+NSString *const ZMConversationGroupTypeKey = @"groupType";
 NSString *const ZMConversationLastServerTimeStampKey = @"lastServerTimeStamp";
 NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeStamp";
 NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
@@ -72,6 +73,10 @@ NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataR
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
+NSString *const ZMConversationPrivateChannelPermission = @"privateChannelPermission";
+NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
+NSString *const ZMConversationCellNameKey = @"cellName";
+NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -356,7 +361,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
             PrimaryKey,
-            ZMConversationIsPendingInitialFetch
+            ZMConversationIsPendingInitialFetch,
+            ZMConversationGroupTypeKey,
+            ZMConversationPrivateChannelPermission,
+            ZMConversationMigratedToMLS,
+            ZMConversationCellNameKey,
+            ZMConversationWireCellsMessageAttachmentDraftsKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -372,7 +382,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     (self.conversationType == ZMConversationTypeInvalid) ||
     (self.conversationType == ZMConversationTypeSelf) ||
     (self.conversationType == ZMConversationTypeConnection) ||
-    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember);
+    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember) ||
+    (self.conversationType == ZMConversationTypeOneOnOne && self.connectedUser.isAccountDeleted == YES);
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;

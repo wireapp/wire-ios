@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 @import WireImages;
 @import WireUtilities;
 @import WireCryptobox;
-@import WireProtos;
 @import WireTransport;
 @import Foundation;
 
@@ -33,7 +32,6 @@
 #import <CommonCrypto/CommonKeyDerivation.h>
 #import <CommonCrypto/CommonCryptoError.h>
 #import "NSPredicate+ZMSearch.h"
-#import "ZMAddressBookContact.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
 
@@ -90,7 +88,7 @@ static NSString *const NeedsToAcknowledgeLegalHoldStatusKey = @"needsToAcknowled
 static NSString *const NeedsToRefetchLabelsKey = @"needsToRefetchLabels";
 static NSString *const ParticipantRolesKey = @"participantRoles";
 
-static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
+NS_SWIFT_NAME(TrackingIDKey) static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
 static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";

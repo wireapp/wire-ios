@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 
+@available(*, deprecated, message: "should use WireDesign's WireButtonStyle instead")
 struct ButtonStyle {
 
     typealias ButtonColors = SemanticColors.Button
@@ -109,11 +110,13 @@ struct ButtonStyle {
         normalStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil),
+            border: nil
+        ),
         highlightedStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil)
+            border: nil
+        )
     )
 
     static let iconButtonStyle = ButtonStyle(

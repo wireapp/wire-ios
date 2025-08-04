@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,10 @@
 import Foundation
 import WireDataModel
 
-@objc extension ZMOperationLoop {
+@objc
+public extension ZMOperationLoop {
 
-    public var currentAPIVersion: APIVersionWrapper? {
+    var currentAPIVersion: APIVersionWrapper? {
         guard let current = BackendInfo.apiVersion else { return nil }
         return .init(value: current)
     }
@@ -36,8 +37,7 @@ import WireDataModel
 @objc
 public class APIVersionWrapper: NSObject {
 
-    @objc
-    public var value: APIVersion
+    @objc public var value: APIVersion
 
     init(value: APIVersion) {
         self.value = value

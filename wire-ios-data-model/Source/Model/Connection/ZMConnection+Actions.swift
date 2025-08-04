@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,6 +63,11 @@ public struct UpdateConnectionAction: EntityAction {
 
     public init(connection: ZMConnection, newStatus: ZMConnectionStatus) {
         self.connectionID = connection.objectID
+        self.newStatus = newStatus
+    }
+
+    public init(connectionID: NSManagedObjectID, newStatus: ZMConnectionStatus) {
+        self.connectionID = connectionID
         self.newStatus = newStatus
     }
 }

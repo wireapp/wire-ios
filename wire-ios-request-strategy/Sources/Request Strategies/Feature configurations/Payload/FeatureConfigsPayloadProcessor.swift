@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
+import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
@@ -90,6 +91,15 @@ struct FeatureConfigsPayloadProcessor {
                 Feature.SelfDeletingMessages(
                     status: selfDeletingMessages.status,
                     config: selfDeletingMessages.config
+                )
+            )
+        }
+
+        if let allowedGlobalOperations = payload.allowedGlobalOperations {
+            repository.storeAllowedGlobalOperations(
+                Feature.AllowedGlobalOperations(
+                    status: allowedGlobalOperations.status,
+                    config: allowedGlobalOperations.config
                 )
             )
         }
@@ -202,18 +212,32 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+
+        if let channels = payload.channels {
+            repository.storeChannels(
+                Feature.Channels(
+                    status: channels.status,
+                    config: channels.config
+                )
+            )
+        }
     }
 
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface
+        repository: FeatureRepositoryInterface,
+        mlsClientManager: MLSClientManagerProtocol,
+        in context: NSManagedObjectContext
     ) throws {
         switch featureName {
         case .conferenceCalling:
             if let apiVersion = BackendInfo.apiVersion,
-                apiVersion >= .v6 {
-                let response = try decoder.decode(FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self, from: data)
+               apiVersion >= .v6 {
+                let response = try decoder.decode(
+                    FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self,
+                    from: data
+                )
                 repository.storeConferenceCalling(.init(status: response.status, config: response.config))
             } else {
                 let response = try decoder.decode(FeatureStatus.self, from: data)
@@ -229,15 +253,31 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeAppLock(.init(status: response.status, config: response.config))
 
         case .selfDeletingMessages:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self,
+                from: data
+            )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+
+        case .allowedGlobalOperations:
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
+                from: data
+            )
+            repository.storeAllowedGlobalOperations(.init(
+                status: response.status,
+                config: response.config
+            ))
 
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConversationGuestLinks(.init(status: response.status))
 
         case .classifiedDomains:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self,
+                from: data
+            )
             repository.storeClassifiedDomains(.init(status: response.status, config: response.config))
 
         case .digitalSignature:
@@ -247,6 +287,14 @@ struct FeatureConfigsPayloadProcessor {
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
             repository.storeMLS(.init(status: response.status, config: response.config))
+            Task {
+                let mlsFeature = await repository.fetchMLS()
+                await processMLSFeatureConfigChanges(
+                    mlsClientManager: mlsClientManager,
+                    context: context,
+                    mlsFeature: mlsFeature
+                )
+            }
 
         case .mlsMigration:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
@@ -255,6 +303,32 @@ struct FeatureConfigsPayloadProcessor {
         case .e2ei:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
+
+        case .channels:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
+            repository.storeChannels(.init(status: response.status, config: response.config))
         }
     }
+
+    private func processMLSFeatureConfigChanges(
+        mlsClientManager: MLSClientManagerProtocol,
+        context: NSManagedObjectContext,
+        mlsFeature: Feature.MLS
+    ) async {
+        let (qualifiedSelfClientID, hasRegisteredMLSClient) = await context.perform {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return (selfClient?.qualifiedClientID, selfClient?.hasRegisteredMLSClient ?? false)
+        }
+
+        guard let qualifiedSelfClientID else {
+            WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            return
+        }
+        await mlsClientManager.initializeMLSClientIfNeeded(
+            for: qualifiedSelfClientID,
+            hasRegisteredMLSClient: hasRegisteredMLSClient,
+            mlsFeature: mlsFeature
+        )
+    }
+
 }

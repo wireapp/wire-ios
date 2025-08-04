@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,20 +20,26 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationWarningSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
 
-    struct Configuration {
+    struct Configuration: Equatable {
         let topText: String
         let bottomText: String
     }
 
-    private let encryptionLabel = DynamicFontLabel(style: .subline1,
-                                                   color: LabelColors.textDefault)
-    private let sensitiveInfoLabel = DynamicFontLabel(style: .subline1,
-                                                      color: LabelColors.textDefault)
+    private let encryptionLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textDefault
+    )
+    private let sensitiveInfoLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textDefault
+    )
 
     func configure(with object: Configuration, animated: Bool) {
         encryptionLabel.text = object.topText
@@ -60,6 +66,7 @@ final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Con
         encryptionLabel.fitIn(view: topContentView)
         sensitiveInfoLabel.fitIn(view: bottomContentView)
         NSLayoutConstraint.activate([
-            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)])
+            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)
+        ])
     }
 }

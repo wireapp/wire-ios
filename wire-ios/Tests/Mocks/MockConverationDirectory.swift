@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +21,37 @@ import WireDataModel
 
 class MockConversationDirectory: ConversationDirectoryType {
 
-    var allFolders: [LabelType] = []
+    var nonDeletedFolders: [LabelType] = []
     var mockGroupConversations: [ZMConversation] = []
     var mockContactsConversations: [ZMConversation] = []
     var mockFavoritesConversations: [ZMConversation] = []
     var mockUnarchivedConversations: [ZMConversation] = []
 
     func createFolder(_ name: String) -> LabelType? {
-        return nil
+        nil
     }
 
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func conversations(by type: ConversationListType) -> [ZMConversation] {
         switch type {
         case .groups:
-            return mockGroupConversations
+            mockGroupConversations
         case .contacts:
-            return mockContactsConversations
+            mockContactsConversations
         case .favorites:
-            return mockFavoritesConversations
+            mockFavoritesConversations
         case .unarchived:
-            return mockUnarchivedConversations
+            mockUnarchivedConversations
         default:
-            return []
+            []
         }
+    }
+
+    func refetchAllLists(in managedObjectContext: NSManagedObjectContext) {
+        // No op
     }
 
 }

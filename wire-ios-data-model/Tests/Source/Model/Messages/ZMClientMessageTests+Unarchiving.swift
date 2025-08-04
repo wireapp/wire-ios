@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 
@@ -29,7 +30,11 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
         conversation.isArchived = true
 
         let genericMessage = GenericMessage(content: Text(content: "bar"))
-        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: genericMessage
+        )
 
         // when
         performPretendingUiMocIsSyncMoc {
@@ -49,7 +54,11 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
         conversation.mutedMessageTypes = .all
 
         let genericMessage = GenericMessage(content: Text(content: "bar"))
-        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: genericMessage
+        )
 
         // when
         performPretendingUiMocIsSyncMoc {
@@ -74,10 +83,17 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
         conversation.clearMessageHistory()
 
         let genericMessage = GenericMessage(content: Text(content: "bar"))
-        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: genericMessage
+        )
         XCTAssertNotNil(event)
 
-        XCTAssertGreaterThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timestamp!.timeIntervalSince1970)
+        XCTAssertGreaterThan(
+            conversation.clearedTimeStamp!.timeIntervalSince1970,
+            event.timestamp!.timeIntervalSince1970
+        )
 
         // when
         performPretendingUiMocIsSyncMoc {
@@ -102,7 +118,11 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
         conversation.clearMessageHistory()
 
         let genericMessage = GenericMessage(content: Text(content: "bar"))
-        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: genericMessage
+        )
 
         XCTAssertLessThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timestamp!.timeIntervalSince1970)
 

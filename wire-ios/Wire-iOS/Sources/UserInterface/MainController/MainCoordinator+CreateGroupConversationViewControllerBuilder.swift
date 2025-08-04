@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 import WireDataModel
 import WireMainNavigationUI
 
-extension MainCoordinator: ConversationCreationControllerDelegate where Dependencies.ConversationModel == ZMConversation {
+extension MainCoordinator: ConversationCreationControllerDelegate
+    where Dependencies.ConversationModel == ZMConversation {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
@@ -27,7 +28,17 @@ extension MainCoordinator: ConversationCreationControllerDelegate where Dependen
     ) {
         Task {
             await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
+            showConversation(conversation: conversation, message: nil)
+        }
+    }
+
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        Task {
+            await showConversationList(conversationFilter: .none)
+            showConversation(conversation: conversation, message: nil)
         }
     }
 }

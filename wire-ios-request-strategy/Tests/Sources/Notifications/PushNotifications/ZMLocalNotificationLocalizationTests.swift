@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ZMLocalNotificationLocalizationTests: ZMLocalNotificationTests {
 
@@ -29,9 +29,15 @@ class ZMLocalNotificationLocalizationTests: ZMLocalNotificationTests {
 
             // then
             XCTAssertEqual(result(self.sender, self.groupConversation), "Super User in Super Conversation")
-            XCTAssertEqual(result(self.userWithNoName, self.groupConversationWithoutName), "Someone calling in a conversation")
+            XCTAssertEqual(
+                result(self.userWithNoName, self.groupConversationWithoutName),
+                "Someone calling in a conversation"
+            )
             XCTAssertEqual(result(self.userWithNoName, self.groupConversation), "Someone calling in Super Conversation")
-            XCTAssertEqual(result(self.sender, self.groupConversationWithoutName), "Super User calling in a conversation")
+            XCTAssertEqual(
+                result(self.sender, self.groupConversationWithoutName),
+                "Super User calling in a conversation"
+            )
         }
     }
 }

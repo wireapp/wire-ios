@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,17 @@ import WireDesign
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let location: LocationMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            return message.isObfuscated
+    struct Configuration: Equatable {
+        var location: LocationMessageData
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var lastConfiguration: Configuration?
@@ -43,6 +48,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var labelFont: UIFont? = .normalFont
     var labelTextColor: UIColor? = SemanticColors.Label.textDefault
@@ -52,7 +58,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -103,7 +109,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
 
@@ -161,7 +169,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
             mapView.setCenterCoordinate(locationData.coordinate, zoomLevel: Int(locationData.zoomLevel))
         } else {
             // As the zoom level is optional we use a viewport of 250m x 250m if none is specified
-            let region = MKCoordinateRegion(center: locationData.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
+            let region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
             mapView.setRegion(region, animated: false)
         }
     }
@@ -181,26 +193,36 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
-    let configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var configuration: View.Configuration
+
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message, let locationMessageData = message.locationMessageData {
+                configuration.location = locationMessageData
+                configuration.isObfuscated = message.isObfuscated
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
+        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
     }
 
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage, location: LocationMessageData) {
-        configuration = View.Configuration(location: location, message: message)
+        self.configuration = View
+            .Configuration(
+                location: location,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 
 public final class WireAccentColorMapping: ObservableObject, Sendable {
 
@@ -50,7 +50,7 @@ public final class WireAccentColorMapping: ObservableObject, Sendable {
 }
 
 private struct WireAccentColorMappingKey: EnvironmentKey {
-    static let defaultValue: WireAccentColorMapping? = .none
+    static var defaultValue: WireAccentColorMapping? { .none }
 }
 
 public extension EnvironmentValues {

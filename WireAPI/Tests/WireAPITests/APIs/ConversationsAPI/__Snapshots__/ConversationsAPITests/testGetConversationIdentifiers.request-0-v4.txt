@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/v4/conversations/list-ids/"
-  - method: post
-  - body: {"size":500}

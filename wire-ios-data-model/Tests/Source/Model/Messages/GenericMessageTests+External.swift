@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 @testable import WireDataModel
 
@@ -60,7 +61,8 @@ class GenericMessageTests_External: XCTestCase {
         XCTAssertNotNil(firstDataWithKeys)
         XCTAssertNotNil(secondDataWithKeys)
         let firstEncrypted = firstDataWithKeys?.data.zmDecryptPrefixedPlainTextIV(key: firstDataWithKeys!.keys.aesKey)
-        let secondEncrypted = secondDataWithKeys?.data.zmDecryptPrefixedPlainTextIV(key: secondDataWithKeys!.keys.aesKey)
+        let secondEncrypted = secondDataWithKeys?.data
+            .zmDecryptPrefixedPlainTextIV(key: secondDataWithKeys!.keys.aesKey)
 
         // then
         XCTAssertNotEqual(firstDataWithKeys?.keys.aesKey, secondDataWithKeys?.keys.aesKey)

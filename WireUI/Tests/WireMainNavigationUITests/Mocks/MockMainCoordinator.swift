@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,11 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     var showConversationList_Invocations: [ConversationFilter?] = []
     func showConversationList(conversationFilter: ConversationFilter?) async {
         showConversationList_Invocations += [conversationFilter]
+    }
+
+    var applyConversationFilter_Invocations: [ConversationFilter?] = []
+    func applyConversationFilter(_ filter: ConversationFilter?) {
+        applyConversationFilter_Invocations += [filter]
     }
 
     var showArchive_Invocations: [Void] = []

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
@@ -23,9 +24,21 @@ import XCTest
 final class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
 
     func testQuoteRelationshipIsEstablishedWhenSendingMessage() {
-        let quotedMessage = try! conversation.appendText(content: "I have a proposal", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(
+            content: "I have a proposal",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
 
-        let message = try! conversation.appendText(content: "That's fine", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID()) as! TextMessageData
+        let message = try! conversation.appendText(
+            content: "That's fine",
+            mentions: [],
+            replyingTo: quotedMessage,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! TextMessageData
 
         XCTAssertEqual(message.quoteMessage as! ZMMessage, quotedMessage)
     }
@@ -35,7 +48,10 @@ final class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
         let replyMessage = GenericMessage(content: Text(content: "I agree", replyingTo: quotedMessage))
-        let data = ["sender": String.randomClientIdentifier(), "text": try? replyMessage.serializedData().base64EncodedString()]
+        let data = [
+            "sender": String.randomClientIdentifier(),
+            "text": try? replyMessage.serializedData().base64EncodedString()
+        ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
@@ -54,8 +70,14 @@ final class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
-        let replyMessage = GenericMessage(content: Ephemeral(content: Text(content: "I agree", replyingTo: quotedMessage), expiresAfter: 1000))
-        let data = ["sender": String.randomClientIdentifier(), "text": try? replyMessage.serializedData().base64EncodedString()]
+        let replyMessage = GenericMessage(content: Ephemeral(
+            content: Text(content: "I agree", replyingTo: quotedMessage),
+            expiresAfter: 1000
+        ))
+        let data = [
+            "sender": String.randomClientIdentifier(),
+            "text": try? replyMessage.serializedData().base64EncodedString()
+        ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 

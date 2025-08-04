@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.rawValue, 10)
         XCTAssertEqual(MessageDestructionTimeoutValue.fiveMinutes.rawValue, 300)
         XCTAssertEqual(MessageDestructionTimeoutValue.oneHour.rawValue, 3600)
-        XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.rawValue, 86400)
-        XCTAssertEqual(MessageDestructionTimeoutValue.oneWeek.rawValue, 604800)
-        XCTAssertEqual(MessageDestructionTimeoutValue.fourWeeks.rawValue, 2419200)
+        XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.rawValue, 86_400)
+        XCTAssertEqual(MessageDestructionTimeoutValue.oneWeek.rawValue, 604_800)
+        XCTAssertEqual(MessageDestructionTimeoutValue.fourWeeks.rawValue, 2_419_200)
     }
 
     func testThatItCreatesAValidTimeOut() {
@@ -37,11 +37,11 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
         XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 10), .tenSeconds)
         XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 300), .fiveMinutes)
         XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 3600), .oneHour)
-        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 86400), .oneDay)
-        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 604800), .oneWeek)
-        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 690000), .custom(690000))
-        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 2419200), .fourWeeks)
-        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 1234567890), .custom(1234567890))
+        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 86_400), .oneDay)
+        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 604_800), .oneWeek)
+        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 690_000), .custom(690_000))
+        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 2_419_200), .fourWeeks)
+        XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 1_234_567_890), .custom(1_234_567_890))
     }
 
 }
@@ -50,7 +50,10 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
 extension MessageDestructionTimeoutValueTests {
 
     func testThatItReturnsTheCorrectShortDisplayString() {
-        XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, NSLocalizedString("input.ephemeral.timeout.none", comment: ""))
+        XCTAssertEqual(
+            MessageDestructionTimeoutValue.none.displayString,
+            NSLocalizedString("input.ephemeral.timeout.none", comment: "")
+        )
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.shortDisplayString, "10")
         XCTAssertEqual(MessageDestructionTimeoutValue.fiveMinutes.shortDisplayString, "5")
         XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.shortDisplayString, "1")
@@ -59,7 +62,10 @@ extension MessageDestructionTimeoutValueTests {
     }
 
     func testThatItReturnsTheCorrectFormattedString() {
-        XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, NSLocalizedString("input.ephemeral.timeout.none", comment: ""))
+        XCTAssertEqual(
+            MessageDestructionTimeoutValue.none.displayString,
+            NSLocalizedString("input.ephemeral.timeout.none", comment: "")
+        )
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.displayString, "10 seconds")
         XCTAssertEqual(MessageDestructionTimeoutValue.fiveMinutes.displayString, "5 minutes")
         XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.displayString, "1 day")
@@ -143,14 +149,14 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOff() {
         // Given
-        let featureRepository = FeatureRepository(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: syncMOC)
 
         syncMOC.performGroupedAndWait {
             featureRepository.storeSelfDeletingMessages(.init(status: .disabled, config: .init()))
         }
 
         syncMOC.performGroupedAndWait {
-            XCTAssertEqual(featureRepository.fetchSelfDeletingMesssages().status, .disabled)
+            XCTAssertEqual(featureRepository.fetchSelfDeletingMessages().status, .disabled)
         }
 
         syncMOC.performGroupedAndWait {
@@ -166,14 +172,17 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOn() {
         // Given
-        let featureRepository = FeatureRepository(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: syncMOC)
 
         syncMOC.performGroupedAndWait {
-            featureRepository.storeSelfDeletingMessages(.init(status: .enabled, config: .init(enforcedTimeoutSeconds: 300)))
+            featureRepository.storeSelfDeletingMessages(.init(
+                status: .enabled,
+                config: .init(enforcedTimeoutSeconds: 300)
+            ))
         }
 
         syncMOC.performGroupedAndWait {
-            let feature = featureRepository.fetchSelfDeletingMesssages()
+            let feature = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(feature.status, .enabled)
             XCTAssertEqual(feature.config.enforcedTimeoutSeconds, 300)
 

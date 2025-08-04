@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ struct MessageReactionMetadata: Equatable {
     let isSelfUserReacting: Bool
 
     static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+        lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 
 }
@@ -43,11 +43,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     private let reactionsView = GridLayoutView()
 
     private lazy var insets = UIEdgeInsets(
-        top: 8,
+        top: 2,
         left: conversationHorizontalMargins.left,
         bottom: 0,
         right: conversationHorizontalMargins.right
@@ -86,12 +87,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
             ) { [weak self] in
                 guard
                     let self,
-                    let message = self.message
+                    let message
                 else {
                     return
                 }
 
-                self.delegate?.perform(
+                delegate?.perform(
                     action: .react(reaction.emoji),
                     for: message,
                     view: self

@@ -1,50 +1,56 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "WireDomainPackage",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    defaultLocalization: "en",
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
-        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
+        .library(name: "WireDomainPackage", targets: ["WireDomainPackage"]),
+        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"]),
+        .library(name: "WireUpdateEventCoding", targets: ["WireUpdateEventCoding"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
-        .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireNetwork"),
+        .package(path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
-            name: "WireDomainPkg",
-            dependencies: ["WireAPI"],
-            path: "./Sources/Package"
-        ),
-        .target(
-            name: "WireDomainPkgSupport",
-            dependencies: ["WireDomainPkg"],
-            path: "./Sources/PackageSupport",
-            plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+            name: "WireDomainPackage",
+            dependencies: [
+                "WireNetwork",
+                "WireLogging",
+                "WireFoundation"
             ]
         ),
+        .target(
+            name: "WireDomainPackageSupport",
+            dependencies: ["WireDomainPackage"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
         .testTarget(
-            name: "WireDomainPkgTests",
+            name: "WireDomainPackageTests",
             dependencies: [
-                "WireDomainPkg",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ],
-            path: "./Tests/PackageTests"
-        )
+                "WireDomainPackage",
+                "WireDomainPackageSupport",
+                .product(name: "WireFoundationSupport", package: "WireFoundation")
+            ]
+        ),
+        .target(
+            name: "WireUpdateEventCoding",
+            dependencies: ["WireNetwork"]
+        ),
     ]
 )
 
 for target in package.targets {
     target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("ExistentialAny")
     ]
 }

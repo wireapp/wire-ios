@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
+@testable import WireDataModelSupport
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
@@ -31,7 +32,7 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
     var coreCryptoKeyMock: CoreCryptoKeyMock?
 
-    override func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
+    override func coreCryptoKey(createIfNeeded: Bool, path: String) async throws -> Data {
         guard let mock = coreCryptoKeyMock else { throw MockError.unmockedMethodCalled }
         return try mock()
     }
@@ -41,10 +42,12 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
     private var sut: CoreCryptoConfigProvider!
+    private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
 
     override func setUp() {
         super.setUp()
-        mockCoreCryptoKeyProvider = MockCoreCryptoKeyProvider()
+        mockCoreCryptoKeyProvider =
+            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
         sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 
@@ -55,146 +58,61 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     // MARK: - Core crypto configuration
 
-    func test_itReturnsInitialCoreCryptoConfiguration() throws {
-        try syncMOC.performGroupedAndWait {
-            // GIVEN
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
+    func test_itReturnsInitialCoreCryptoConfiguration() async throws {
+        // GIVEN
+        let selfUserID: UUID = syncMOC.performAndWait {
+            let user = ZMUser.selfUser(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            return user.remoteIdentifier
+        }
 
-            // mock core crypto key
-            let key = Data([1, 2, 3])
-            self.mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
-                return key
-            }
+        // mock core crypto key
+        let key = Data([1, 2, 3])
+        mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
+            key
+        }
 
+        // WHEN
+        let configuration = try await sut.createInitialConfiguration(
+            sharedContainerURL: OtrBaseTest.sharedContainerURL,
+            userID: selfUserID,
+            createKeyIfNeeded: true
+        )
+
+        // THEN
+        XCTAssertEqual(configuration.key, key)
+        XCTAssertEqual(configuration.path, expectedPath(selfUserID))
+    }
+
+    func test_itThrows_FailedToGetCoreCryptoKey() async {
+        // GIVEN
+        let selfUserID: UUID = syncMOC.performAndWait {
+            let user = ZMUser.selfUser(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            return user.remoteIdentifier
+        }
+
+        // set the core crypto key provider mock
+        mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
+            throw MockCoreCryptoKeyProvider.MockError.coreCryptoKeyError
+        }
+
+        // THEN
+        await assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
             // WHEN
-            let configuration = try self.sut.createInitialConfiguration(
+            _ = try await sut.createInitialConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                userID: selfUser.remoteIdentifier,
+                userID: selfUserID,
                 createKeyIfNeeded: true
             )
-
-            // THEN
-            XCTAssertEqual(configuration.key, key.base64EncodedString())
-            XCTAssertEqual(configuration.path, self.expectedPath(selfUser))
-        }
-    }
-
-    func test_itReturnsFullCoreCryptoConfiguration() throws {
-        try syncMOC.performGroupedAndWait {
-            // GIVEN
-            // create self client and self user
-            self.createSelfClient()
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.domain = "example.domain.com"
-
-            // mock core crypto key
-            let key = Data([1, 2, 3])
-            self.mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
-                return key
-            }
-
-            // WHEN
-            let configuration = try self.sut.createFullConfiguration(
-                sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                selfUser: selfUser,
-                createKeyIfNeeded: true
-            )
-
-            // THEN
-            XCTAssertEqual(configuration.key, key.base64EncodedString())
-            XCTAssertEqual(configuration.path, self.expectedPath(selfUser))
-            XCTAssertEqual(configuration.clientID, try self.expectedClientID(selfUser))
-        }
-    }
-
-    func test_itThrows_FailedToGetQualifiedClientID() {
-        syncMOC.performAndWait {
-            // GIVEN
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.domain = "example.domain.com"
-
-            // we're not creating the self client
-
-            // THEN
-            assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetClientId) {
-                // WHEN
-                _ = try sut.createFullConfiguration(
-                    sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    selfUser: selfUser,
-                    createKeyIfNeeded: true
-                )
-            }
-        }
-    }
-
-    func test_itThrows_FailedToGetCoreCryptoKey() {
-        syncMOC.performAndWait {
-            // GIVEN
-            // create self client and set self user
-            createSelfClient()
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.domain = "example.domain.com"
-
-            // set the core crypto key provider mock
-            mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
-                throw MockCoreCryptoKeyProvider.MockError.coreCryptoKeyError
-            }
-
-            // THEN
-            assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
-                // WHEN
-                _ = try sut.createFullConfiguration(
-                    sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    selfUser: selfUser,
-                    createKeyIfNeeded: true
-                )
-            }
-        }
-    }
-
-    // MARK: - Client ID
-
-    func test_itReturnsClientIDForSelfUser() throws {
-        try syncMOC.performGroupedAndWait {
-            // GIVEN
-            self.createSelfClient()
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.domain = "example.domain.com"
-
-            // WHEN
-            let id = try self.sut.clientID(of: selfUser)
-
-            // THEN
-            XCTAssertEqual(id, try self.expectedClientID(selfUser))
-        }
-    }
-
-    func test_itThrows_WhenFailedToGetClientID() {
-        syncMOC.performAndWait {
-            // GIVEN
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.domain = "example.domain.com"
-
-            let expectedError = CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetClientId
-
-            // THEN
-            assertItThrows(error: expectedError) {
-                // WHEN
-                _ = try sut.clientID(of: selfUser)
-            }
         }
     }
 
     // MARK: - Helpers
 
-    private func expectedClientID(_ selfUser: ZMUser) throws -> String {
-        return try XCTUnwrap(MLSClientID(user: selfUser)).rawValue
-    }
-
-    private func expectedPath(_ selfUser: ZMUser) -> String {
+    private func expectedPath(_ selfUserId: UUID) -> String {
         let accountDirectory = CoreDataStack.accountDataFolder(
-            accountIdentifier: selfUser.remoteIdentifier,
+            accountIdentifier: selfUserId,
             applicationContainer: OtrBaseTest.sharedContainerURL
         )
         return accountDirectory.appendingPathComponent("corecrypto").path

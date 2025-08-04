@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@ extension RemoveClientsViewController {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
-            self.initalizeProperties(clientsList)
+            initalizeProperties(clientsList)
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList
+            clients = clientsList
                 .filter { !$0.isSelfClient() }
                 .sorted(by: {
                     guard
@@ -45,16 +45,18 @@ extension RemoveClientsViewController {
                 })
         }
 
-        func removeUserClient(_ userClient: UserClient, password: String) async throws {
+        func removeUserClient(_ userClient: UserClient, password: String?) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
-                return userClient.remoteIdentifier
+                userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
 
-            try await removeUserClientUseCase?.invoke(clientId: clientId,
-                                                      password: password)
+            try await removeUserClientUseCase?.invoke(
+                clientId: clientId,
+                password: password
+            )
         }
     }
 }

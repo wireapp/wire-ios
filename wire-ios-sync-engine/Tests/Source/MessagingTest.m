@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -353,16 +353,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     [moc saveOrRollback];
     
     return client;
-}
-
-- (UserClient *)createSelfClient
-{
-    UserClient *selfClient = [self setupSelfClientInMoc:self.syncMOC];
-    NSDictionary *payload = @{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]};
-    NOT_USED([UserClient createOrUpdateSelfUserClient:payload context:self.syncMOC]);
-    [self.syncMOC saveOrRollback];
-    
-    return selfClient;
 }
 
 @end

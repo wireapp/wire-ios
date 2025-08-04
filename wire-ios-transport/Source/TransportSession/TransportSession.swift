@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     var reachability: ReachabilityProvider & TearDownCapable { get }
 
     var pushChannel: ZMPushChannel { get }
+
+    var accessTokenHandler: ZMAccessTokenHandler { get }
 
     var cookieStorage: ZMPersistentCookieStorage { get }
 
@@ -67,7 +69,8 @@ public extension ZMTransportSession {
 
         // If not data is transmitted for this amount of time for a request, it will time out.
         // <https://wearezeta.atlassian.net/browse/MEC-622>.
-        // Note that it is ok for the request to take longer, we just require there to be _some_ data to be transmitted within this time window.
+        // Note that it is ok for the request to take longer, we just require there to be _some_ data to be transmitted
+        // within this time window.
         configuration.timeoutIntervalForRequest = 30
 
         // This is a conservative (!) upper bound for a requested resource:
@@ -118,7 +121,7 @@ public extension ZMTransportSession {
         prefix: String,
         userIdentifier: UUID
     ) -> String {
-        return "\(prefix)-\(userIdentifier.transportString())"
+        "\(prefix)-\(userIdentifier.transportString())"
     }
 
 }

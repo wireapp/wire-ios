@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,9 +64,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             useTypeIntrinsicSizeTableView: true,
             settingsCoordinator: settingsCoordinator
         )
-        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-        return viewController
+        return sut.wrapInNavigationController()
     }
 
     // MARK: Snapshot Tests
@@ -81,7 +79,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: viewController,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

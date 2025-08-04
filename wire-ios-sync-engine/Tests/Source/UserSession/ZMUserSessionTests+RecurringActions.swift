@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         // When
         XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -121,7 +121,10 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         return user
     }
 
-    private func createConversationIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
+    private func createConversationIsPendingMetadataRefresh(
+        moc: NSManagedObjectContext,
+        domain: String?
+    ) -> ZMConversation {
         let conversation = ZMConversation(context: moc)
         conversation.remoteIdentifier = UUID()
         conversation.domain = domain

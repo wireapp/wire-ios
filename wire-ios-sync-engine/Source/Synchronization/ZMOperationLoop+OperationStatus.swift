@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,13 @@ extension ZMOperationLoop: OperationStatusDelegate {
             transportSession.enterBackground()
         }
 
-        transportSession.pushChannel.keepOpen = state == .foreground || state == .backgroundCall
+        if isSyncV2Enabled {
+            // The new sync also includes a new push channel, so we don't
+            // what to open the legacy one.
+            transportSession.pushChannel.keepOpen = false
+        } else {
+            transportSession.pushChannel.keepOpen = state == .foreground || state == .backgroundCall
+        }
     }
 
 }

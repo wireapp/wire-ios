@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
     func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
         // With version 107 and later we can not insert duplicated keys anymore!
 
-        let versions = [(84...96), (98...106)].joined().map {
+        let versions = [84 ... 96, 98 ... 106].joined().map {
             "2.\($0).0"
         }
 

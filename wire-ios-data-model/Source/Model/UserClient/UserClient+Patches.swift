@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 extension UserClient {
@@ -95,7 +96,7 @@ extension UserClient {
             WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             return existingKeyStore
         } else if let accountDirectory = context.accountDirectoryURL,
-            let applicationContainer = context.applicationContainerURL {
+                  let applicationContainer = context.applicationContainerURL {
             WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
 
             return UserClientKeysStore(

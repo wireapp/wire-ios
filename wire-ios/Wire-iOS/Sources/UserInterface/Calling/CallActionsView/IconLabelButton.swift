@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
     }
 
     private func setupViews() {
-        iconButton.translatesAutoresizingMaskIntoConstraints = false
+        iconButton
+            .translatesAutoresizingMaskIntoConstraints = false
         iconButton.isUserInteractionEnabled = false
         iconButton.borderWidth = 0
         iconButton.circular = true
@@ -149,7 +150,10 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
 
-        iconButton.setBackgroundImageColor(configuration.backgroundColorSelectedAndHighlighted, for: .selectedAndHighlighted)
+        iconButton.setBackgroundImageColor(
+            configuration.backgroundColorSelectedAndHighlighted,
+            for: .selectedAndHighlighted
+        )
 
         blurView.isHidden = !configuration.showBlur
     }
@@ -157,7 +161,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
 }
 
 // MARK: - Helper
- extension UIControl.State {
+
+extension UIControl.State {
     static let disabledAndSelected: UIControl.State = [.disabled, .selected]
     static let selectedAndHighlighted: UIControl.State = [.highlighted, .selected]
 }

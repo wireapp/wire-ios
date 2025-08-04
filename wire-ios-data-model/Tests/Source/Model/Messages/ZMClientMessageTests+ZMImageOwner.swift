@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,14 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLinkPreview
 
 @testable import WireDataModel
 
 enum ContentType {
-    case textMessage, editMessage
+    case textMessage
+    case editMessage
 }
 
 class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
@@ -40,13 +42,17 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         article.summary = "tile"
         let mention = Mention(range: NSRange(location: 0, length: 4), user: user1)
 
-        let text = Text(content: "@joe example.com/article/original", mentions: [mention], linkPreviews: [article], replyingTo: nil)
-        var genericMessage: GenericMessage!
-        switch contentType {
+        let text = Text(
+            content: "@joe example.com/article/original",
+            mentions: [mention],
+            linkPreviews: [article],
+            replyingTo: nil
+        )
+        var genericMessage: GenericMessage! = switch contentType {
         case .textMessage:
-            genericMessage = GenericMessage(content: text, nonce: nonce)
+            GenericMessage(content: text, nonce: nonce)
         case .editMessage:
-            genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
+            GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
         }
         do {
             try clientMessage.setUnderlyingMessage(genericMessage)
@@ -64,7 +70,11 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let imageData = mediumJPEGData()
 
         // when
-        let properties = ZMIImageProperties(size: CGSize(width: 42, height: 12), length: UInt(imageData.count), mimeType: "image/jpeg")
+        let properties = ZMIImageProperties(
+            size: CGSize(width: 42, height: 12),
+            length: UInt(imageData.count),
+            mimeType: "image/jpeg"
+        )
         clientMessage.setImageData(imageData, for: .medium, properties: properties)
 
         // then
@@ -77,14 +87,19 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let imageData = mediumJPEGData()
 
         // when
-        let properties = ZMIImageProperties(size: CGSize(width: 42, height: 12), length: UInt(imageData.count), mimeType: "image/jpeg")
+        let properties = ZMIImageProperties(
+            size: CGSize(width: 42, height: 12),
+            length: UInt(imageData.count),
+            mimeType: "image/jpeg"
+        )
         clientMessage.setImageData(imageData, for: .medium, properties: properties)
 
         // then
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
-        XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
-        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
+        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
+        else { return XCTFail("did not contain linkpreview") }
         XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
         XCTAssertNotNil(linkPreview.image.uploaded.sha256)
 
@@ -102,14 +117,19 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let imageData = mediumJPEGData()
 
         // when
-        let properties = ZMIImageProperties(size: CGSize(width: 42, height: 12), length: UInt(imageData.count), mimeType: "image/jpeg")
+        let properties = ZMIImageProperties(
+            size: CGSize(width: 42, height: 12),
+            length: UInt(imageData.count),
+            mimeType: "image/jpeg"
+        )
         clientMessage.setImageData(imageData, for: .medium, properties: properties)
 
         // then
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
-        XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
-        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
+        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
+        else { return XCTFail("did not contain linkpreview") }
         XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
         XCTAssertNotNil(linkPreview.image.uploaded.sha256)
 
@@ -127,14 +147,14 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         clientMessage.processingDidFinish()
 
         // then
         XCTAssertEqual(clientMessage.linkPreviewState, ZMLinkPreviewState.processed)
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.originalImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.originalImageData(for: clientMessage))
     }
 
     func testThatItReturnsCorrectOriginalImageSize() {
@@ -143,7 +163,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         let imageSize = clientMessage.originalImageSize()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 import WireDataModel
 import WireSystem
 
-/**
- * Provides information to the event responder chain and executes actions.
- */
+/// Provides information to the event responder chain and executes actions.
 
 protocol AuthenticationEventResponderChainDelegate: AnyObject {
 
@@ -32,30 +31,26 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
     /// The object providing the current authentication state.
     var stateController: AuthenticationStateController { get }
 
-    /**
-     * Executes the specified actions.
-     * - parameter actions: The actions to execute.
-     */
+    /// Executes the specified actions.
+    /// - parameter actions: The actions to execute.
 
     func executeActions(_ actions: [AuthenticationCoordinatorAction])
 
 }
 
-/**
- * The authentication responder chain is responsible for dispatching events to supported
- * handlers, and determining what actions to execute in response.
- *
- * You configure the responder chain with a delegate, that will be responsible for providing
- * state and who will be responsible from
- */
+/// The authentication responder chain is responsible for dispatching events to supported
+/// handlers, and determining what actions to execute in response.
+///
+/// You configure the responder chain with a delegate, that will be responsible for providing
+/// state and who will be responsible from
 
 final class AuthenticationEventResponderChain {
 
-    /**
-     * The supported event types.
-     */
+    /// The supported event types.
 
-    enum EventType {
+    enum EventType: CustomStringConvertible {
+
+        case wireAuthenticationModuleComplete((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
         case flowStart(NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -67,6 +62,36 @@ final class AuthenticationEventResponderChain {
         case userProfileChange(UserChangeInfo)
         case userInput(Any)
         case deviceConfigurationComplete
+
+        var description: String {
+            switch self {
+            case .wireAuthenticationModuleComplete:
+                "wireAuthenticationModuleComplete"
+            case .flowStart:
+                "flowStart"
+            case .backupReady:
+                "backupReady"
+            case .clientRegistrationError:
+                "clientRegistrationError"
+            case .clientRegistrationSuccess:
+                "clientRegistrationSuccess"
+            case .authenticationFailure:
+                "authenticationFailure"
+            case .loginCodeAvailable:
+                "loginCodeAvailable"
+            case .registrationError:
+                "registrationError"
+            case .registrationStepSuccess:
+                "registrationStepSuccess"
+            case .userProfileChange:
+                "userProfileChange"
+            case .userInput:
+                "userInput"
+            case .deviceConfigurationComplete:
+                "deviceConfigurationComplete"
+            }
+        }
+
     }
 
     // MARK: - Properties
@@ -88,6 +113,10 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(
+        AuthenticationResult,
+        RegistrationAnalyticsTrackingConsent
+    )>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -99,18 +128,16 @@ final class AuthenticationEventResponderChain {
     var userInputObservers: [AnyAuthenticationEventHandler<Any>] = []
     var deviceConfigurationHandlers: [AnyAuthenticationEventHandler<Void>] = []
 
-    /**
-     * Configures the object with the given delegate and registers the default observers.
-     * - parameter delegate: The object assisting the responder chain.
-     */
+    /// Configures the object with the given delegate and registers the default observers.
+    /// - parameter delegate: The object assisting the responder chain.
 
     func configure(delegate: AuthenticationEventResponderChainDelegate) {
         self.delegate = delegate
-        self.registerDefaultEventHandlers()
+        registerDefaultEventHandlers()
     }
 
     /// Creates and registers the default error handlers.
-    fileprivate func registerDefaultEventHandlers() {
+    private func registerDefaultEventHandlers() {
         // flowStartHandlers
         registerHandler(AuthenticationStartClientLimitErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
@@ -118,7 +145,13 @@ final class AuthenticationEventResponderChain {
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartReauthenticateErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartCompanyLoginLinkEventHandler(), to: &flowStartHandlers)
-        registerHandler(AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider), to: &flowStartHandlers)
+        registerHandler(
+            AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider),
+            to: &flowStartHandlers
+        )
+
+        // wire authentication module handlers
+        registerHandler(WireAuthenticationModuleCompletionHandler(), to: &wireAuthenticationModuleHandlers)
 
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
@@ -173,41 +206,48 @@ final class AuthenticationEventResponderChain {
     }
 
     /// Registers a handler inside the specified type erased array.
-    fileprivate func registerHandler<Handler: AuthenticationEventHandler>(_ handler: Handler, to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]) {
+    private func registerHandler<Handler: AuthenticationEventHandler>(
+        _ handler: Handler,
+        to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]
+    ) {
         let box = AnyAuthenticationEventHandler(handler)
         handlerList.append(box)
     }
 
     // MARK: - Event Handling
 
-    /**
-     * Call this method to notify the responder chain that a supported event occured.
-     * - parameter eventType: The type of event that occured, and any required context.
-     */
+    /// Call this method to notify the responder chain that a supported event occurred.
+    /// - parameter eventType: The type of event that occurred, and any required context.
 
     func handleEvent(ofType eventType: EventType) {
-        log.info("Event handling manager received event: \(eventType)")
+        if case .userInput = eventType {
+            log.info("Event handling manager received event: userInput")
+        } else {
+            log.info("Event handling manager received event: \(eventType)")
+        }
 
         switch eventType {
-        case .flowStart(let error, let numberOfAccounts):
+        case let .wireAuthenticationModuleComplete(context):
+            handleEvent(with: wireAuthenticationModuleHandlers, context: context)
+        case let .flowStart(error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
-        case .backupReady(let existingAccount):
+        case let .backupReady(existingAccount):
             handleEvent(with: backupEventHandlers, context: existingAccount)
-        case .clientRegistrationError(let error, let accountID):
+        case let .clientRegistrationError(error, accountID):
             handleEvent(with: clientRegistrationErrorHandlers, context: (error, accountID))
         case .clientRegistrationSuccess:
             handleEvent(with: clientRegistrationSuccessHandlers, context: ())
-        case .authenticationFailure(let error):
+        case let .authenticationFailure(error):
             handleEvent(with: loginErrorHandlers, context: error)
         case .loginCodeAvailable:
             handleEvent(with: loginCodeHandlers, context: ())
-        case .registrationError(let error):
+        case let .registrationError(error):
             handleEvent(with: registrationErrorHandlers, context: error)
         case .registrationStepSuccess:
             handleEvent(with: registrationSuccessHandlers, context: ())
-        case .userProfileChange(let changeInfo):
+        case let .userProfileChange(changeInfo):
             handleEvent(with: userProfileChangeObservers, context: changeInfo)
-        case .userInput(let value):
+        case let .userInput(value):
             handleEvent(with: userInputObservers, context: value)
         case .deviceConfigurationComplete:
             handleEvent(with: deviceConfigurationHandlers, context: ())
@@ -216,7 +256,7 @@ final class AuthenticationEventResponderChain {
 
     /// Start handling the event with the specified context, using the given handlers and delegate.
     private func handleEvent<Context>(with handlers: [AnyAuthenticationEventHandler<Context>], context: Context) {
-        guard let delegate = self.delegate else {
+        guard let delegate else {
             log.error("The event will not be handled because the responder chain does not have a delegate.")
             return
         }
@@ -230,15 +270,19 @@ final class AuthenticationEventResponderChain {
                 handler.statusProvider = nil
             }
 
-            if let responseActions = handler.handleEvent(currentStep: delegate.stateController.currentStep,
-                                                         context: context) {
+            if let responseActions = handler.handleEvent(
+                currentStep: delegate.stateController.currentStep,
+                context: context
+            ) {
                 lookupResult = (handler.name, responseActions)
                 break
             }
         }
 
         guard let (name, actions) = lookupResult else {
-            log.error("No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)")
+            log.error(
+                "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
+            )
             return
         }
 

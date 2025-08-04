@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
+@testable import WireDataModel
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
@@ -51,7 +51,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
@@ -66,13 +66,13 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfASmallProfilePictureChangeIfTheInternalUserUpdates() {
 
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         let searchUser = makeSearchUser(name: "", remoteIdentifier: nil, user: user)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         user.previewProfileAssetIdentifier = UUID().transportString()
@@ -93,10 +93,10 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
-        self.token = nil
+        token = nil
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
 
         // then
@@ -108,21 +108,23 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
-        let actionHandler = MockActionHandler<ConnectToUserAction>(result: .success(()),
-                                                                   context: uiMOC.notificationContext)
+        let actionHandler = MockActionHandler<ConnectToUserAction>(
+            result: .success(()),
+            context: uiMOC.notificationContext
+        )
 
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+        token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: uiMOC)
 
         // when
         searchUser.connect(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(actionHandler.didPerformAction)
+        XCTAssertTrue(actionHandler.performedActions.count == 1)
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
-        guard let note = testObserver.receivedChangeInfo.first else { return XCTFail()}
+        guard let note = testObserver.receivedChangeInfo.first else { return XCTFail() }
         XCTAssertEqual(note.user as? ZMSearchUser, searchUser)
         XCTAssertTrue(note.connectionStateChanged)
     }

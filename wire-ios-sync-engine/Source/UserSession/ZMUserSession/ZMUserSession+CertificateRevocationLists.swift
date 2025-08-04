@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMUserSession {
 
@@ -35,7 +36,7 @@ extension ZMUserSession {
             fetchE2EIFeatureConfig: { [weak self] in
                 guard let self else { return nil }
 
-                let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
+                let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
                 return featureRepository.fetchE2EI().config
             },
             coreCryptoProvider: coreCryptoProvider,

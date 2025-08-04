@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,13 +34,11 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        entitySync = EntityActionSync(actionHandlers: [
-            SendMLSMessageActionHandler(context: managedObjectContext),
+        self.entitySync = EntityActionSync(actionHandlers: [
             SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
-            FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext),
             FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
@@ -67,7 +65,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
     // MARK: - Requests
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return entitySync.nextRequest(for: apiVersion)
+        entitySync.nextRequest(for: apiVersion)
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process conversation delete events.
-
-protocol ConversationDeleteEventProcessorProtocol {
-
-    /// Process a conversation delete event.
-    ///
-    /// - Parameter event: A conversation delete event.
-
-    func processEvent(_ event: ConversationDeleteEvent) async throws
-
-}
+import WireDataModel
+import WireNetwork
+import WireSystem
 
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
 
-    func processEvent(_: ConversationDeleteEvent) async throws {
-        // TODO: [WPB-10167]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case failedToDeleteConversation(Swift.Error)
+    }
+
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationDeleteEvent) async throws {
+        let id = event.conversationID.id
+        let domain = event.conversationID.domain
+
+        do {
+            try await repository.deleteConversation(
+                id: id,
+                domain: domain
+            )
+        } catch {
+            throw Error.failedToDeleteConversation(error)
+        }
     }
 
 }

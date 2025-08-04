@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,15 +35,24 @@ extension LegacyPersistedDataPatch {
         LegacyPersistedDataPatch(version: "103.0.2", block: InvalidGenericMessageDataRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "145.0.3", block: InvalidConversationRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "161.0.1", block: TransferStateMigration.migrateLegacyTransferState),
-        LegacyPersistedDataPatch(version: "167.3.0", block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange),
+        LegacyPersistedDataPatch(
+            version: "167.3.0",
+            block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange
+        ),
         LegacyPersistedDataPatch(version: "198.0.0", block: ZMConversation.introduceParticipantRoles),
         LegacyPersistedDataPatch(version: "220.0.4", block: InvalidConnectionRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "234.0.0", block: TransferApplockKeychain.migrateKeychainItems),
         LegacyPersistedDataPatch(version: "234.1.1", block: InvalidConnectionRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "236.0.0", block: MigrateSenderClient.migrateSenderClientID),
         LegacyPersistedDataPatch(version: "243.0.0", block: InvalidFeatureRemoval.removeInvalid),
-        LegacyPersistedDataPatch(version: "273.2.0", block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain),
-        LegacyPersistedDataPatch(version: "279.0.4", block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig),
+        LegacyPersistedDataPatch(
+            version: "273.2.0",
+            block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain
+        ),
+        LegacyPersistedDataPatch(
+            version: "279.0.4",
+            block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig
+        ),
         LegacyPersistedDataPatch(version: "285.0.0", block: ZMConversation.introduceAccessRoleV2),
         LegacyPersistedDataPatch(version: "290.0.1", block: ZMUser.refetchSelfUserDomain),
         LegacyPersistedDataPatch(version: "297.0.2", block: UserClient.migrateAllSessionsClientIdentifiersV3)

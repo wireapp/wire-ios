@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireCoreCrypto
+import WireLogging
 
 struct CreateMLSGroupUseCase {
 
@@ -60,12 +61,14 @@ struct CreateMLSGroupUseCase {
             return try await createGroup(
                 for: groupID,
                 parentGroupID: parentGroupID,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         } else {
             return try await createGroup(
                 for: groupID,
                 removalKeys: removalKeys,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         }
     }
 }
@@ -92,7 +95,8 @@ extension CreateMLSGroupUseCase {
         return try await createGroup(
             for: groupID,
             externalSenders: externalSenders,
-            ciphersuite: ciphersuite)
+            ciphersuite: ciphersuite
+        )
     }
 
     private func createGroup(
@@ -115,7 +119,8 @@ extension CreateMLSGroupUseCase {
             return try await createGroup(
                 for: groupID,
                 externalSenders: externalSenders,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         }
     }
 

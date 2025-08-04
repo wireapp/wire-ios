@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
-extension GenericMessage {
-    public init?(from updateEvent: ZMUpdateEvent) {
+public extension GenericMessage {
+    init?(from updateEvent: ZMUpdateEvent) {
         let base64Content: String?
 
         switch updateEvent.type {
@@ -35,7 +36,7 @@ extension GenericMessage {
 
         var message = GenericMessage(withBase64String: base64Content)
 
-        if case .some(.external(let external)) = message?.content {
+        if case let .some(.external(external)) = message?.content {
             message = GenericMessage(from: updateEvent, withExternal: external)
         }
 

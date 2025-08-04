@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process conversation message timer update events.
-
-protocol ConversationMessageTimerUpdateEventProcessorProtocol {
-
-    /// Process a conversation message timer update event.
-    ///
-    /// - Parameter event: A conversation message timer update event.
-
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
-
-}
+import WireDataModel
+import WireNetwork
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
-        // TODO: [WPB-10171]
-        assertionFailure("not implemented yet")
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
+        let userID = event.senderID
+        let conversationID = event.conversationID
+        let timerInMilliseconds = Double(event.newTimer ?? 0)
+        let timestamp = event.timestamp
+
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        )
+
+        let timeoutValue = timerInMilliseconds / 1000
+        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+        let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
+
+        if currentTimeout != timeout {
+
+            let messageType: SystemMessageType = .messageTimerUpdate(
+                sender: (userID.id, userID.domain),
+                date: timestamp,
+                timeoutValue: timeoutValue
+            )
+
+            await messageLocalStore.addSystemMessage(
+                messageType: messageType,
+                conversationID: conversationID.id,
+                conversationDomain: conversationID.domain
+            )
+        }
+
+        await conversationLocalStore.storeConversation(
+            timeoutValue: timeoutValue,
+            for: conversation
+        )
     }
 
 }

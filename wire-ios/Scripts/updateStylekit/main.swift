@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ import Foundation
 let template = """
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +96,10 @@ func success(_ message: String) -> Never {
 // MARK: - Parsing
 
 func getRenderingInfo(in str: String) -> [String: String] {
-    let regex = try! NSRegularExpression(pattern: "@objc public dynamic class func drawIcon_(\\w+)_(\\d+)pt", options: [])
+    let regex = try! NSRegularExpression(
+        pattern: "@objc public dynamic class func drawIcon_(\\w+)_(\\d+)pt",
+        options: []
+    )
     let stringRange = NSRange(str.startIndex ..< str.endIndex, in: str)
 
     var knownIcons: [String: String] = [:]

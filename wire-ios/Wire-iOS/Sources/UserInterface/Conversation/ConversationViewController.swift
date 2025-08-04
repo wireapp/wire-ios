@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,12 @@
 //
 
 import UIKit
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
+import WireMessagingUI
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
@@ -27,22 +30,31 @@ final class ConversationViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
+    private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
+    var actionControllerForSelectedEmoji: ConversationMessageActionController?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
-        return [
-            UIKeyCommand(action: #selector(gotoBottom(_:)),
-                         input: UIKeyCommand.inputDownArrow,
-                         modifierFlags: [.command, .alternate],
-                         discoverabilityTitle: keyboardShortcut.scrollToBottom),
-            UIKeyCommand(action: #selector(onCollectionButtonPressed(_:)),
-                         input: "f",
-                         modifierFlags: [.command],
-                         discoverabilityTitle: keyboardShortcut.searchInConversation),
-            UIKeyCommand(action: #selector(titleViewTapped),
-                         input: "i", modifierFlags: [.command],
-                         discoverabilityTitle: keyboardShortcut.conversationDetail)
+        [
+            UIKeyCommand(
+                action: #selector(gotoBottom(_:)),
+                input: UIKeyCommand.inputDownArrow,
+                modifierFlags: [.command, .alternate],
+                discoverabilityTitle: keyboardShortcut.scrollToBottom
+            ),
+            UIKeyCommand(
+                action: #selector(onSearchButtonPressed(_:)),
+                input: "f",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.searchInConversation
+            ),
+            UIKeyCommand(
+                action: #selector(onConversationDetailsPressed),
+                input: "i",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.conversationDetail
+            )
         ]
     }
 
@@ -70,11 +82,12 @@ final class ConversationViewController: UIViewController {
 
     var collectionController: CollectionsViewController?
     var outgoingConnectionViewController: OutgoingConnectionViewController!
-    let conversationBarController: BarController = BarController()
-    let guestsBarController: GuestsBarController = GuestsBarController()
-    let invisibleInputAccessoryView: InvisibleInputAccessoryView = InvisibleInputAccessoryView()
-    let mediaBarViewController: MediaBarViewController
-    private let titleView: ConversationTitleView
+    let conversationBarController: BarController = .init()
+    let guestsBarController: GuestsBarController = .init()
+    let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
+    private let mediaBarViewController: MediaBarViewController
+
+    private let titleView: WireMessagingUI.ConversationTitleView
 
     let userSession: UserSession
 
@@ -85,6 +98,8 @@ final class ConversationViewController: UIViewController {
     private var voiceChannelStateObserverToken: Any?
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
+    private var userObservationToken: NSObjectProtocol?
+    private var selfUserObservationToken: NSObjectProtocol?
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
@@ -107,8 +122,8 @@ final class ConversationViewController: UIViewController {
         default:
             break
         }
-
-        return viewController?.wrapInNavigationController()
+        guard let viewController else { return nil }
+        return UINavigationController(rootViewController: viewController)
     }
 
     required init(
@@ -119,14 +134,16 @@ final class ConversationViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
-        networkStatusObservable: any NetworkStatusObservable
+        networkStatusObservable: any NetworkStatusObservable,
+        getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
-        contentViewController = ConversationContentViewController(
+        self.contentViewController = ConversationContentViewController(
             conversation: conversation,
             message: visibleMessage,
             mediaPlaybackManager: mediaPlaybackManager,
@@ -135,22 +152,42 @@ final class ConversationViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
 
-        inputBarController = ConversationInputBarViewController(
+        self.getParticipantImageSourceUseCase = getParticipantImageSourceUseCase
+
+        DeveloperToolsViewModel.context.currentConversation = conversation
+
+        self.inputBarController = ConversationInputBarViewController(
             conversation: conversation,
             userSession: userSession,
             classificationProvider: classificationProvider,
-            networkStatusObservable: networkStatusObservable
+            networkStatusObservable: networkStatusObservable,
+            wireCellsFactory: wireCellsFactory
         )
 
-        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
+        self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
-        titleView = ConversationTitleView(conversation: conversation, interactive: true)
+        self.titleView = WireMessagingUI.ConversationTitleView(
+            source: ConversationTitleSource(
+                accountImageSource: nil,
+                title: conversation.displayNameWithFallback,
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
+            ),
+            canAnimate: !ProcessInfo.processInfo.isRunningTests
+        )
 
         super.init(nibName: nil, bundle: nil)
 
         definesPresentationContext = true
 
         update(conversation: conversation)
+
+        if let user = conversation.firstActiveParticipantOtherThanSelf {
+            titleView.updateOtherUserAccentColor(user.accentColor)
+        }
+        titleView.updateSelfUserAccentColor(userSession.selfUser.accentColor)
     }
 
     @available(*, unavailable)
@@ -164,15 +201,23 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+
     private var observationToken: SelfUnregisteringNotificationCenterToken?
 
     private func update(conversation: ZMConversation) {
-        setupNavigatiomItem()
+        setupNavigationItem()
         updateOutgoingConnectionVisibility()
 
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        if let participant = conversation.firstActiveParticipantOtherThanSelf {
+            userObservationToken = userSession.addUserObserver(self, for: participant)
+        }
+
+        selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
+
         startCallController = ConversationCallController(conversation: conversation, target: self)
+
     }
 
     override func viewDidLoad() {
@@ -185,11 +230,16 @@ final class ConversationViewController: UIViewController {
 
         observationToken = PrivacyWarningChecker.addPresenter(self)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
 
-        UIView.performWithoutAnimation({
+        UIView.performWithoutAnimation {
             self.view.backgroundColor = SemanticColors.View.backgroundConversationView
-        })
+        }
 
         setupInputBarController()
         setupContentViewController()
@@ -236,9 +286,9 @@ final class ConversationViewController: UIViewController {
                     }
                 })
             case .archive:
-                self?.userSession.enqueue({
+                self?.userSession.enqueue {
                     self?.conversation.isArchived = true
-                })
+                }
             }
             self?.mainCoordinator.hideConversation()
         }
@@ -271,15 +321,12 @@ final class ConversationViewController: UIViewController {
     }
 
     // MARK: - Device orientation
-    override var shouldAutorotate: Bool {
-        return true
-    }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .portrait
+            .portrait
         } else {
-            return .all
+            .all
         }
     }
 
@@ -293,10 +340,12 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
     }
 
-    override func willTransition(to newCollection: UITraitCollection,
-                                 with coordinator: UIViewControllerTransitionCoordinator) {
+    override func willTransition(
+        to newCollection: UITraitCollection,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
         super.willTransition(to: newCollection, with: coordinator)
-        self.updateLeftNavigationBarItems()
+        updateLeftNavigationBarItems()
     }
 
     override func didReceiveMemoryWarning() {
@@ -327,7 +376,10 @@ final class ConversationViewController: UIViewController {
     }
 
     private func setupMediaBarViewController() {
-        mediaBarViewController.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMediaBar(_:))))
+        mediaBarViewController.view.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(didTapMediaBar(_:))
+        ))
     }
 
     @objc
@@ -366,23 +418,95 @@ final class ConversationViewController: UIViewController {
     }
 
     @objc
-    private func titleViewTapped() {
-        if let superview = titleView.superview,
-           let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+    private func setupTitleViewTap() {
+        var actions = [UIAction]()
+        if shouldShowCollectionsButton {
+            actions.append(
+                UIAction(
+                    title: L10n.Localizable.Conversation.Action.search,
+                    image: UIImage(systemName: "magnifyingglass"),
+                    handler: { [weak self] _ in
+                        self?.onSearchButtonPressed(nil)
+                    }
+                )
+            )
         }
+        actions.append(UIAction(
+            title: L10n.Localizable.Conversation.Action.conversationDetails,
+            image: UIImage(systemName: "info.circle"),
+            handler: { [weak self] _ in
+                self?.onConversationDetailsPressed()
+            }
+        ))
+
+        let menu = UIMenu(title: "", children: actions)
+
+        titleView.menuProvider = { menu }
     }
 
-    private func setupNavigatiomItem() {
-        titleView.tapHandler = { [weak self] _ in
-            self?.titleViewTapped()
+    private func setupNavigationItem(isAfterTitleRelatedDataChanged: Bool = false) {
+        setupTitleViewTap()
+
+        if conversation.conversationType == .oneOnOne {
+            Task { [weak self] in
+                guard let self else { return }
+                guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+                    WireLogger.conversation
+                        .error("missing first active participant other then self for 1-1 conversation")
+                    return
+                }
+                let imageSource = await getParticipantImageSourceUseCase
+                    .invoke(user: user)
+                if isAfterTitleRelatedDataChanged,
+                   case .text = imageSource,
+                   case .image = titleView.source.accountImageSource {
+                    // no need to update because of the way updates come when avatar is changed (in several events)
+                    // if we get empty image after update but previously there was an image, we need to skip
+                    // so with next update event (which comes right after) we get updated image
+                    return
+                }
+                titleView
+                    .updateSource(ConversationTitleSource(
+                        accountImageSource: imageSource,
+                        title: conversation.displayNameWithFallback,
+                        subtitle: Self.getConversationSubtitle(conversation),
+                        isMLS: conversation.messageProtocol == .mls,
+                        isVerified: conversation.isVerified,
+                        isUnderLegalHold: conversation.isUnderLegalHold
+                    ))
+            }
+        } else {
+            // no need Image avatar for group chat
+            titleView.updateSource(ConversationTitleSource(
+                accountImageSource: nil,
+                title: conversation.displayNameWithFallback,
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
+            ))
         }
-        titleView.configure()
 
         navigationItem.titleView = titleView
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
+    }
+
+    static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
+        guard conversation.conversationType == .oneOnOne,
+              let user = conversation.firstActiveParticipantOtherThanSelf else {
+            return nil
+        }
+        if user.isExternalPartner {
+            return L10n.Localizable.Profile.Details.partner.uppercased()
+        } else if user.isFederated {
+            return L10n.Localizable.Profile.Details.federated.uppercased()
+        } else if !user.isTeamMember {
+            return L10n.Localizable.Profile.Details.guest.uppercased()
+        }
+        return nil
+
     }
 
     // MARK: Resolve 1-1 conversations
@@ -410,15 +534,21 @@ final class ConversationViewController: UIViewController {
                     assertionFailure("mlsService is missing")
                     return
                 }
-
-                let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
+                let resolver = LegacyOneOnOneResolver(
+                    migrator: OneOnOneMigrator(mlsService: mlsService),
+                    isMLSEnabled: mlsFeature.isEnabled
+                )
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
-                if case .migratedToMLSGroup(let identifier) = resolvedState {
+                if case let .migratedToMLSGroup(identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {
-                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+                WireLogger.conversation.warn(
+                    "resolution of proteus 1-1 conversation failed: \(error)",
+                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription]
+                )
             }
         }
     }
@@ -433,7 +563,9 @@ final class ConversationViewController: UIViewController {
         }
 
         guard let mlsConversation else {
-            assertionFailure("conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!")
+            assertionFailure(
+                "conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!"
+            )
             return
         }
 
@@ -443,7 +575,8 @@ final class ConversationViewController: UIViewController {
     // MARK: - ParticipantsPopover
 
     private func hideAndDestroyParticipantsPopover() {
-        if (presentedViewController is GroupDetailsViewController) || (presentedViewController is ProfileViewController) {
+        if (presentedViewController is GroupDetailsViewController) ||
+            (presentedViewController is ProfileViewController) {
             dismiss(animated: true)
         }
     }
@@ -467,7 +600,7 @@ final class ConversationViewController: UIViewController {
 
         Task {
             await userSession.mlsGroupVerification?.updateConversation(conversation, with: mlsGroupID)
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 }
@@ -477,14 +610,20 @@ final class ConversationViewController: UIViewController {
 extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
 
     // WARNING: DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
-    func invisibleInputAccessoryView(_ invisibleInputAccessoryView: InvisibleInputAccessoryView, superviewFrameChanged frame: CGRect?) {
+    func invisibleInputAccessoryView(
+        _ invisibleInputAccessoryView: InvisibleInputAccessoryView,
+        superviewFrameChanged frame: CGRect?
+    ) {
         // Adjust the input bar distance from bottom based on the invisibleAccessoryView
         var distanceFromBottom: CGFloat = 0
 
         // On iOS 8, the frame goes to zero when the accessory view is hidden
         if frame?.equalTo(.zero) == false {
 
-            let convertedFrame = view.convert(invisibleInputAccessoryView.superview?.frame ?? .zero, from: invisibleInputAccessoryView.superview?.superview)
+            let convertedFrame = view.convert(
+                invisibleInputAccessoryView.superview?.frame ?? .zero,
+                from: invisibleInputAccessoryView.superview?.superview
+            )
 
             // We have to use intrinsicContentSize here because the frame may not have actually been updated yet
             let newViewHeight = invisibleInputAccessoryView.intrinsicContentSize.height
@@ -533,11 +672,11 @@ extension ConversationViewController: ZMConversationObserver {
             note.securityLevelChanged ||
             note.connectionStateChanged ||
             note.legalHoldStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
 
         if note.mlsVerificationStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 }
@@ -557,38 +696,68 @@ extension ConversationViewController: ZMConversationListObserver {
     }
 }
 
+// MARK: - UserObserving
+
+extension ConversationViewController: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.accentColorValueChanged {
+            if changeInfo.user.isSelfUser {
+                titleView.updateSelfUserAccentColor(changeInfo.user.accentColor)
+            } else {
+                titleView.updateOtherUserAccentColor(changeInfo.user.accentColor)
+            }
+        }
+
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
+            changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+            setupNavigationItem(isAfterTitleRelatedDataChanged: true)
+        }
+    }
+}
+
 // MARK: - InputBar
 
 extension ConversationViewController: ConversationInputBarViewControllerDelegate {
-    func conversationInputBarViewControllerDidComposeText(text: String,
-                                                          mentions: [Mention],
-                                                          replyingTo message: ZMConversationMessage?) {
+    func conversationInputBarViewControllerDidComposeText(
+        text: String,
+        attachments: [MultipartAttachment],
+        mentions: [Mention],
+        replyingTo message: ZMConversationMessage?
+    ) {
         contentViewController.scrollToBottomIfNeeded()
-        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
+        inputBarController.sendController.sendTextMessage(
+            text,
+            attachments: attachments,
+            mentions: mentions,
+            userSession: userSession,
+            replyingTo: message,
+        )
     }
 
-    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        if !contentViewController.isScrolledToBottom && !controller.isEditingMessage &&
-            !controller.isReplyingToMessage {
+    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController)
+        -> Bool {
+        if !contentViewController.isScrolledToBottom, !controller.isEditingMessage,
+           !controller.isReplyingToMessage {
             collectionController = nil
             contentViewController.searchQueries = []
             contentViewController.scrollToBottomIfNeeded()
         }
 
-        setGuestBarForceHidden(true)
         return true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        setGuestBarForceHidden(false)
-        return true
+        true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,
-                                                            withText newText: String?,
-                                                            mentions: [Mention]) {
+    func conversationInputBarViewControllerDidFinishEditing(
+        _ message: ZMConversationMessage,
+        withText newText: String?,
+        mentions: [Mention]
+    ) {
         contentViewController.didFinishEditing(message)
-        userSession.enqueue({
+        userSession.enqueue {
             if let newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
@@ -596,7 +765,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             } else {
                 ZMMessage.deleteForEveryone(message)
             }
-        })
+        }
     }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {
@@ -619,30 +788,16 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
-    var searchBarButtonItem: UIBarButtonItem {
-        let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
-        let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
-
-        let button = IconButton()
-        button.setIcon(showingSearchResults ? .activeSearch : .search, size: .tiny, for: .normal)
-        button.accessibilityIdentifier = "collection"
-        button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
-
-        button.addTarget(self, action: action, for: .touchUpInside)
-
-        button.backgroundColor = SemanticColors.Button.backgroundBarItem
-        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-        button.layer.borderWidth = 1
-        button.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
-        button.layer.cornerRadius = 12
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-
-        return UIBarButtonItem(customView: button)
+    @objc
+    private func onConversationDetailsPressed() {
+        if let superview = titleView.superview, let participantsController {
+            presentParticipantsViewController(participantsController, from: superview)
+        }
     }
 
     @objc
-    private func onCollectionButtonPressed(_ sender: AnyObject?) {
+    private func onSearchButtonPressed(_ sender: AnyObject?) {
+        guard shouldShowCollectionsButton else { return }
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,
@@ -663,9 +818,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!)
+            .wrapInNavigationController()
 
-        ZClientViewController.shared?.present(navigationController, animated: true)
+        navigationController.presentOverAll(animated: true)
     }
 
 }

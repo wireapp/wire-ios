@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-@testable import WireDomain
 import WireDomainSupport
+import WireNetwork
 import XCTest
+@testable import WireDomain
 
 final class UserDeleteEventProcessorTests: XCTestCase {
 
@@ -43,7 +43,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_User_Account_Repo_Method() async throws {
         // Mock
 
-        userRepository.deleteUserAccountWithDomainAt_MockMethod = { _, _, _ in }
+        userRepository.deleteUserAccountIdDomainAt_MockMethod = { _, _, _ in }
 
         // When
 
@@ -51,13 +51,13 @@ final class UserDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.deleteUserAccountWithDomainAt_Invocations.count, 1)
+        XCTAssertEqual(userRepository.deleteUserAccountIdDomainAt_Invocations.count, 1)
     }
 
     private enum Scaffolding {
         static let event = UserDeleteEvent(
             qualifiedUserID: QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             time: .now

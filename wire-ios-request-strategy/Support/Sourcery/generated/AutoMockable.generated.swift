@@ -1,9 +1,8 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,17 +23,13 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
 import WireCoreCrypto
 import Combine
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
+
 
 
 
@@ -631,6 +626,54 @@ public class MockEventDecoderProtocol: EventDecoderProtocol {
         }
 
         await mock(privateKeys, callEventsOnly, block)
+    }
+
+}
+
+public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - waitUntilCanSendMessage
+
+    public var waitUntilCanSendMessage_Invocations: [Void] = []
+    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
+
+    public func waitUntilCanSendMessage() async {
+        waitUntilCanSendMessage_Invocations.append(())
+
+        guard let mock = waitUntilCanSendMessage_MockMethod else {
+            fatalError("no mock for `waitUntilCanSendMessage`")
+        }
+
+        await mock()
+    }
+
+}
+
+public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+
+    public func invoke(groupID: MLSGroupID, epoch: Int64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
     }
 
 }
@@ -1232,30 +1275,6 @@ public class MockProteusMessage: ProteusMessage {
 
 }
 
-public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - waitForQuickSyncToFinish
-
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
-
-    public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
-
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
-        }
-
-        await mock()
-    }
-
-}
-
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - Life cycle
@@ -1342,11 +1361,11 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, password: String) async throws {
+    public func deleteUserClient(clientId: String, password: String?) async throws {
         deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = deleteUserClientClientIdPassword_MockError {

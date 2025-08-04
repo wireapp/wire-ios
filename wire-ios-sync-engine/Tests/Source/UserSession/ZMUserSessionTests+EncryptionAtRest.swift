@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,41 +21,13 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
-final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
-
-    var prepareForMigration_Invocations = [Account]()
-    func prepareForMigration(
-        for account: WireDataModel.Account,
-        onReady: @escaping (NSManagedObjectContext) throws -> Void
-    ) {
-        prepareForMigration_Invocations.append(account)
-    }
-
-    func userSessionDidUnlock(_ session: ZMUserSession) {
-
-    }
-
-    func clientRegistrationDidSucceed(accountId: UUID) { }
-
-    func clientRegistrationDidFail(_ error: NSError, accountId: UUID) { }
-
-    func clientCompletedInitialSync(accountId: UUID) { }
-
-    var calleduserDidLogout: (Bool, UUID)?
-    func userDidLogout(accountId: UUID) {
-        calleduserDidLogout = (true, accountId)
-    }
-
-    func authenticationInvalidated(_ error: NSError, accountId: UUID) { }
-}
-
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     private var activityManager: MockBackgroundActivityManager!
     private var factory: BackgroundActivityFactory!
 
     private var account: Account {
-        return coreDataStack.account
+        coreDataStack.account
     }
 
     override func setUp() {
@@ -94,7 +66,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         super.tearDown()
     }
 
-    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #file, line: UInt = #line) {
+    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #filePath, line: UInt = #line) {
         try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 
 class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
@@ -23,9 +24,11 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
     func testThatMessageIsInserted_WhenNotIncludedInPrefetchResults() throws {
         // given
         let prefetchResults = ZMFetchRequestBatchResult()
-        let event = createUpdateEvent(UUID(),
-                                      conversationID: UUID(),
-                                      genericMessage: .init(content: Text(content: "Hello World")))
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: UUID(),
+            genericMessage: .init(content: Text(content: "Hello World"))
+        )
 
         // when
         var message: ZMOTRMessage?
@@ -44,10 +47,15 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
         existingMessage.senderClientID = senderClientID
         let prefetchResults = ZMFetchRequestBatchResult()
         prefetchResults.add([existingMessage])
-        let event = createUpdateEvent(UUID(),
-                                      conversationID: UUID(),
-                                      genericMessage: .init(content: Text(content: "Hello World"), nonce: existingMessage.nonce!),
-                                      senderClientID: senderClientID)
+        let event = createUpdateEvent(
+            UUID(),
+            conversationID: UUID(),
+            genericMessage: .init(
+                content: Text(content: "Hello World"),
+                nonce: existingMessage.nonce!
+            ),
+            senderClientID: senderClientID
+        )
 
         // when
         var message: ZMOTRMessage?
@@ -64,15 +72,19 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
         let prefetchResults = ZMFetchRequestBatchResult()
         let nonce = UUID()
         let senderClientID = "sender123"
-        let event1 = createUpdateEvent(UUID(),
-                                      conversationID: UUID(),
-                                      genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
-                                      senderClientID: senderClientID)
+        let event1 = createUpdateEvent(
+            UUID(),
+            conversationID: UUID(),
+            genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
+            senderClientID: senderClientID
+        )
 
-        let event2 = createUpdateEvent(UUID(),
-        conversationID: UUID(),
-        genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
-        senderClientID: senderClientID)
+        let event2 = createUpdateEvent(
+            UUID(),
+            conversationID: UUID(),
+            genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
+            senderClientID: senderClientID
+        )
 
         // when
         var message1: ZMOTRMessage?

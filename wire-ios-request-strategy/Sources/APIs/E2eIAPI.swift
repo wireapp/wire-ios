@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class E2eIAPIV5: E2eIAPI {
     let httpClient: HttpClient
 
     open var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 
     init(httpClient: HttpClient) {
@@ -40,10 +40,12 @@ class E2eIAPIV5: E2eIAPI {
     }
 
     func getWireNonce(clientId: String) async throws -> String {
-        let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathNonce)",
-                                         method: .head,
-                                         payload: nil,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathNonce)",
+            method: .head,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
         request.addValue(ContentType.joseAndJson, forAdditionalHeaderField: Constant.contentType)
 
         let response = await httpClient.send(request)
@@ -56,10 +58,12 @@ class E2eIAPIV5: E2eIAPI {
     }
 
     func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
-        let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
-                                         method: .post,
-                                         payload: nil,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
+            method: .post,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
         request.addValue(dpopToken, forAdditionalHeaderField: Constant.dpopHeaderKey)
         let response = await httpClient.send(request)
 
@@ -70,8 +74,24 @@ class E2eIAPIV5: E2eIAPI {
 
 class E2eIAPIV6: E2eIAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
+}
+
+class E2eIAPIV7: E2eIAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
+}
+
+class E2eIAPIV8: E2eIAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
+}
+
+class E2eIAPIV9: E2eIAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+final class E2eIAPIV10: E2eIAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
 }
 
 private enum Constant {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class MigrateSenderClient {
+enum MigrateSenderClient {
 
     /// Populate senderClientID for `.decryptionFailed` system messages.
     ///
@@ -27,7 +27,11 @@ final class MigrateSenderClient {
     /// which session we should reset when initiated directly from the decryption error.
     static func migrateSenderClientID(in moc: NSManagedObjectContext) {
         let request = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
-        request.predicate = NSPredicate(format: "%K = %d", ZMMessageSystemMessageTypeKey, ZMSystemMessageType.decryptionFailed.rawValue)
+        request.predicate = NSPredicate(
+            format: "%K = %d",
+            ZMMessageSystemMessageTypeKey,
+            ZMSystemMessageType.decryptionFailed.rawValue
+        )
 
         let systemMessages = moc.fetchOrAssert(request: request)
 

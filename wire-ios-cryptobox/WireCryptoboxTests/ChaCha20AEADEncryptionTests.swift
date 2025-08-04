@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
+import Clibsodium
+import WireCrypto
 import XCTest
+
+@testable import WireCryptobox
 
 class ChaCha20AEADEncryptionTests: XCTestCase {
 
@@ -29,7 +32,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     private func generateRandomCiphertext(length: UInt) -> Data {
         // Large enough to include authentication bytes in the ciphertext.
-        return Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
+        Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
     }
 
     // MARK: - Positive Tests

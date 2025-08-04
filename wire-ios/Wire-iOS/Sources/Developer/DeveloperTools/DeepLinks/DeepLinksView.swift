@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,29 +22,53 @@ struct DeepLinksView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeepLinksViewModel
+    @StateObject var viewModel: DeepLinksViewModel
 
-    @State
-    private var urlString = ""
+    @State private var urlString = ""
 
     // MARK: - Views
 
     var body: some View {
-        List {
-            Section("Open deeplink") {
-                TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
-                Button("Go") {
-                    viewModel.openLink(urlString: urlString)
+        VStack(spacing: 0) {
+            List {
+                Section("Open deeplink") {
+                    TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
+                    Button("Go") {
+                        viewModel.openLink(urlString: urlString)
+                    }
+                    .disabled(urlString.isEmpty)
                 }
-                .disabled(urlString.isEmpty)
             }
+            .listStyle(InsetGroupedListStyle())
+            .frame(height: 150)
+
+            QRCodeScannerView { scannedCode in
+                urlString = scannedCode
+                viewModel.openLink(urlString: scannedCode)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
         }
         .alert(
             isPresented: $viewModel.isShowingAlert,
             error: viewModel.error,
             actions: {}
         )
+    }
+}
+
+struct QRCodeScannerView: UIViewControllerRepresentable {
+
+    var onQRCodeScanned: (String) -> Void
+
+    func makeUIViewController(context: Context) -> QRCodeScannerViewController {
+        let viewController = QRCodeScannerViewController()
+        viewController.onQRCodeScanned = onQRCodeScanned
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: QRCodeScannerViewController, context: Context) {
+        // Nothing to update here.
     }
 }
 

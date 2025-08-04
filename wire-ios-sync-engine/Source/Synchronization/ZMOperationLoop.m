@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,10 +61,10 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
               operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
+                         isSyncV2Enabled:(BOOL)isSyncV2Enabled
 {
     Check(uiMOC != nil);
     Check(syncMOC != nil);
@@ -74,7 +74,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.operationStatus = operationStatus;
         self.syncStatus = syncStatus;
         self.pushNotificationStatus = pushNotificationStatus;
-        self.callEventStatus = callEventStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.updateEventProcessor = updateEventProcessor;
@@ -82,6 +81,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.shouldStopEnqueueing = NO;
         self.operationStatus.delegate = self;
         self.isDeveloperModeEnabled = isDeveloperModeEnabled;
+        self.isSyncV2Enabled = isSyncV2Enabled;
 
         [ZMRequestAvailableNotification addObserver:self];
         
@@ -89,7 +89,11 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         // this is needed to avoid loading from syncMOC on the main queue
         [moc performGroupedBlock:^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            if (isSyncV2Enabled) {
+                [self.transportSession.pushChannel setKeepOpen:false];
+            } else {
+                [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            }
         }];
     }
 
@@ -126,17 +130,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 }
 #endif
 
-
-- (APSSignalingKeysStore *)apsSignalKeyStore
-{
-    if (_apsSignalKeyStore == nil) {
-        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-        if (selfUser.selfClient != nil) {
-            _apsSignalKeyStore = [[APSSignalingKeysStore alloc] initWithUserClient:selfUser.selfClient];
-        }
-    }
-    return _apsSignalKeyStore;
-}
 
 - (ZMTransportRequestGenerator)requestGenerator {
     

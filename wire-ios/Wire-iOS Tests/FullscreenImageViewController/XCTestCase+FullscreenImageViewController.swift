@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,24 @@ import XCTest
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
-        let mockTapGestureRecognizer = MockTapGestureRecognizer(location: CGPoint(x: fullscreenImageViewController.view.bounds.size.width / 2, y: fullscreenImageViewController.view.bounds.size.height / 2), state: .ended)
+        let mockTapGestureRecognizer = MockTapGestureRecognizer(
+            location: CGPoint(
+                x: fullscreenImageViewController.view.bounds.size.width / 2,
+                y: fullscreenImageViewController.view.bounds.size.height / 2
+            ),
+            state: .ended
+        )
 
         fullscreenImageViewController.handleDoubleTap(mockTapGestureRecognizer)
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
     @MainActor
-    func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
-        let image = self.image(inTestBundleNamed: imageFileName)
+    func createFullscreenImageViewControllerForTest(
+        imageFileName: String,
+        userSession: UserSessionMock
+    ) -> FullscreenImageViewController {
+        let image = image(inTestBundleNamed: imageFileName)
 
         let message = MockMessageFactory.imageMessage(with: image)
 

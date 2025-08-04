@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
 //
 
 import UIKit
+import class WireCommonComponents.NetworkStatus
 import WireDataModel
 import WireSyncEngine
-import class WireCommonComponents.NetworkStatus
 
-// TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
+// TODO: [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
     var isCallingSupported: Bool {
-        return localParticipants.count > 1
+        localParticipants.count > 1
     }
 
     var firstCallingParticipantOtherThanSelf: UserType? {
@@ -39,17 +39,6 @@ extension ZMConversation {
         }
 
         joinVoiceChannel(video: false)
-    }
-
-    func startVideoCall() {
-        if warnAboutNoInternetConnection() {
-            return
-        }
-
-        warnAboutSlowConnection { abortCall in
-            guard !abortCall else { return }
-            self.joinVoiceChannel(video: true)
-        }
     }
 
     func joinCall() {
@@ -84,39 +73,6 @@ extension ZMConversation {
 
     }
 
-    func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
-
-        typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
-
-        guard let sessionManager = SessionManager.shared else {
-            assertionFailure("requires session manager to init NetworkConditionHelper!")
-            handler(false)
-            return
-        }
-
-        let reachability = sessionManager.environment.reachability
-        let networkInfo = NetworkInfo(serverConnection: reachability)
-        if networkInfo.qualityType() == .type2G {
-
-            let badConnectionController = UIAlertController(
-                title: ErrorCallSlowCallLocale.SlowConnection.title,
-                message: ErrorCallSlowCallLocale.slowConnection,
-                preferredStyle: .alert
-            )
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
-                handler(false)
-            })
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
-                handler(true)
-            })
-            ZClientViewController.shared?.present(badConnectionController, animated: true)
-        } else {
-            handler(false)
-        }
-
-        reachability.tearDown()
-    }
-
     func warnAboutNoInternetConnection() -> Bool {
         typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
         guard case .unreachable = NetworkStatus.shared.reachability else {
@@ -141,15 +97,20 @@ extension ZMConversation {
         return true
     }
 
-    func confirmJoiningCallIfNeeded(alertPresenter: UIViewController, forceAlertModal: Bool = false, completion: @escaping () -> Void) {
+    func confirmJoiningCallIfNeeded(
+        alertPresenter: UIViewController,
+        forceAlertModal: Bool = false,
+        completion: @escaping () -> Void
+    ) {
         guard ZMUserSession.shared()?.isCallOngoing == true else {
             return completion()
         }
 
-        let controller = UIAlertController.ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
-            guard confirmed else { return }
-            self.endAllCallsExceptIncoming(completion: completion)
-        }
+        let controller = UIAlertController
+            .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
+                guard confirmed else { return }
+                self.endAllCallsExceptIncoming(completion: completion)
+            }
 
         alertPresenter.present(controller, animated: true)
     }

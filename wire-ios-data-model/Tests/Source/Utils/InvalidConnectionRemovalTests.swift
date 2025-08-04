@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@ class InvalidConnectionRemovalTests: DiskDatabaseTest {
         // Given
         let selfUser = ZMUser.selfUser(in: moc)
         let otherUser = ZMUser.insertNewObject(in: moc)
-        let connectionToSelfUser = ZMConnection.insertNewObject(in: self.moc)
+        let connectionToSelfUser = ZMConnection.insertNewObject(in: moc)
         connectionToSelfUser.to = selfUser
-        let connectionToOtherUser = ZMConnection.insertNewObject(in: self.moc)
+        let connectionToOtherUser = ZMConnection.insertNewObject(in: moc)
         connectionToOtherUser.to = otherUser
 
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidConnectionRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidConnectionRemoval.removeInvalid(in: moc)
 
         // Then - invalid connection is deleted
         XCTAssertTrue(connectionToSelfUser.isDeleted)

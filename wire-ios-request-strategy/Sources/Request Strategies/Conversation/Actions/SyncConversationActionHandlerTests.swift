@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
 
@@ -148,7 +148,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didSucceed = self.customExpectation(description: "did succeed")
+        let didSucceed = customExpectation(description: "did succeed")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .success = result else {
@@ -181,7 +181,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // When
         sut.handleResponse(response, action: action)
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {

@@ -1,0 +1,5 @@
+{
+    "non_federating_backends": [
+        "string"
+    ]
+}

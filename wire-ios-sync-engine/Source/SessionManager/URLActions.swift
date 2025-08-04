@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum URLAction: Equatable {
 
@@ -38,8 +39,8 @@ public enum URLAction: Equatable {
     /// Navigate to a conversation
     case openConversation(id: UUID)
 
-    /// The UI search for the user ID and open the profile view for connection request if not connected
-    case openUserProfile(id: UUID)
+    /// The UI search for the user ID and domain, and open the profile view for connection request if not connected
+    case openUserProfile(id: UUID, domain: String?)
 
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
@@ -49,8 +50,8 @@ public enum URLAction: Equatable {
 
     public var causesLogout: Bool {
         switch self {
-        case .startCompanyLogin: return true
-        default: return false
+        case .startCompanyLogin: true
+        default: false
         }
     }
 
@@ -61,8 +62,8 @@ public enum URLAction: Equatable {
              .openUserProfile,
              .connectBot,
              .importEvents:
-             return true
-        default: return false
+            true
+        default: false
         }
     }
 
@@ -71,15 +72,15 @@ public enum URLAction: Equatable {
         case .joinConversation,
              .openConversation,
              .openUserProfile:
-            return true
-        default: return false
+            true
+        default: false
         }
     }
 }
 
 extension URLComponents {
     func query(for key: String) -> String? {
-        return self.queryItems?.first(where: { $0.name == key })?.value
+        queryItems?.first(where: { $0.name == key })?.value
     }
 }
 
@@ -87,18 +88,49 @@ extension URLAction {
 
     public init?(url: URL, validatingIn defaults: UserDefaults = .shared()) throws {
         guard let components = URLComponents(string: url.absoluteString),
-            let host = components.host,
-            let scheme = components.scheme,
+              let host = components.host,
+              let scheme = components.scheme,
               scheme.starts(with: "wire") == true || scheme == Bundle.main.bundleIdentifier else {
-                return nil
+            return nil
         }
 
         switch host {
         case URL.DeepLink.user:
-            if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
-                self = .openUserProfile(id: uuid)
-            } else {
+            /// The link is expected to be of the format  `wire://user/{domain}/{userID}`
+            /// and url.pathComponents are ["/", {domain}, {userID}]
+            ///
+            /// **Note:** to maintain backwards compatibility we should still support the legacy `wire://user/{userID}`
+            /// format and potentially `wire://user/{userID@domain}`
+
+            let components = url.pathComponents.dropFirst()
+
+            switch components.count {
+            // Legacy format wire://user/{userID}`
+            case 1:
+                let startComponent = components[components.startIndex]
+                if let qualifiedID = QualifiedID(rawValue: startComponent) {
+                    self = .openUserProfile(id: qualifiedID.uuid, domain: qualifiedID.domain)
+                } else if let uuid = UUID(uuidString: startComponent) {
+                    self = .openUserProfile(id: uuid, domain: nil)
+                } else {
+                    WireLogger.conversation.error("Invalid user profile deep link format")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+            // New format `wire://user/{domain}/{userID}`
+            case 2:
+                let userDomain = components[components.startIndex]
+                let userIDString = components[components.startIndex + 1]
+
+                guard let uuid = UUID(uuidString: userIDString) else {
+                    WireLogger.conversation.error("Invalid UUID in user profile deep link")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+                self = .openUserProfile(id: uuid, domain: userDomain)
+
+            default:
+                WireLogger.conversation.error("Invalid user profile deep link format")
                 throw DeepLinkRequestError.invalidUserLink
             }
 
@@ -114,7 +146,7 @@ extension URLAction {
 
         case URL.DeepLink.conversation:
             if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
+               let uuid = UUID(uuidString: lastComponent) {
                 self = .openConversation(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidConversationLink
@@ -132,15 +164,16 @@ extension URLAction {
 
         case URL.Host.connect:
             guard let service = components.query(for: URLQueryItem.Key.Connect.service),
-                let provider = components.query(for: URLQueryItem.Key.Connect.provider),
-                let serviceUUID = UUID(uuidString: service),
-                let providerUUID = UUID(uuidString: provider) else {
-                    throw DeepLinkRequestError.malformedLink
+                  let provider = components.query(for: URLQueryItem.Key.Connect.provider),
+                  let serviceUUID = UUID(uuidString: service),
+                  let providerUUID = UUID(uuidString: provider) else {
+                throw DeepLinkRequestError.malformedLink
             }
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 
         case URL.Host.accessBackend:
-            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config), let url = URL(string: config) else {
+            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
+                  let url = URL(string: config) else {
                 throw DeepLinkRequestError.malformedLink
             }
             self = .accessBackend(configurationURL: url)
@@ -164,7 +197,8 @@ extension URLAction {
                 guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
-                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier).flatMap(UUID.init(transportString:)) else {
+                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier)
+                    .flatMap(UUID.init(transportString:)) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
 
@@ -172,7 +206,9 @@ extension URLAction {
                     throw CompanyLoginError.invalidCookie
                 }
 
-                let userInfo = UserInfo(identifier: userID, cookieData: cookieData)
+                let cookies = HTTPCookie.cookies(from: cookieString, for: url)
+
+                let userInfo = UserInfo(identifier: userID, cookieData: cookieData, cookies: cookies)
                 self = .companyLoginSuccess(userInfo: userInfo)
 
             case URL.Path.failure:
@@ -185,6 +221,7 @@ extension URLAction {
                 }
 
                 throw CompanyLoginError(label: label)
+
             default:
                 throw ConmpanyLoginRequestError.invalidLink
             }
@@ -196,7 +233,8 @@ extension URLAction {
 
     private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {
         guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else { return false }
-        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:)) else { return false }
+        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:))
+        else { return false }
         return storedToken.matches(identifier: token)
     }
 

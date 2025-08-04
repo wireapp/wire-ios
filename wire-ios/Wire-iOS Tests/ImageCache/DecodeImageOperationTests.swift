@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         sut.image = image
@@ -89,7 +89,7 @@ final class DecodeImageOperationTests: XCTestCase {
         }
 
         operationQueue.addOperation(decodeOperation)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 5)
 
         // THEN
         XCTAssertNil(image)

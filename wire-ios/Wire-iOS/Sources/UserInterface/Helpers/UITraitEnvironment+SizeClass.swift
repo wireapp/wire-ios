@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@ import WireFoundation
 extension UITraitEnvironment {
 
     var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
+        traitCollection.horizontalSizeClass == .regular
     }
 
     func isIPadRegular(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
+        device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
     }
 
     func isIPadRegularPortrait(

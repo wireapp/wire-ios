@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireLogging
 import WireSystem
 import WireUtilities
 
@@ -25,14 +26,15 @@ enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
     case noDatabaseActivity
 }
+
 extension CoreDataStackError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
         case .simulateDatabaseLoadingFailure:
-            return "simulateDatabaseLoadingFailure"
+            "simulateDatabaseLoadingFailure"
         case .noDatabaseActivity:
-            return "Could not create a background activity for database setup"
+            "Could not create a background activity for database setup"
         }
     }
 }
@@ -43,6 +45,7 @@ public protocol ContextProvider {
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
+    func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
@@ -58,32 +61,31 @@ extension URL {
 
     /// Appends the name of the store to the path
     func appendingStoreFile() -> URL {
-        return self.appendingPathComponent("store.wiredatabase")
+        appendingPathComponent("store.wiredatabase")
     }
 
     func appendingEventStoreFile() -> URL {
-        return self.appendingPathComponent("ZMEventModel.sqlite")
-
+        appendingPathComponent("ZMEventModel.sqlite")
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingPersistentStoreLocation() -> URL {
-        return self.appendingPathComponent("store").appendingStoreFile()
+        appendingPathComponent("store").appendingStoreFile()
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingEventStoreLocation() -> URL {
-        return self.appendingPathComponent("events").appendingEventStoreFile()
+        appendingPathComponent("events").appendingEventStoreFile()
     }
 
     func appendingSessionStoreFolder() -> URL {
-        return self.appendingPathComponent("otr")
+        appendingPathComponent("otr")
     }
 
     func appendingStoreSupportFolder() -> URL {
-        let storeFile = self.appendingStoreFile()
+        let storeFile = appendingStoreFile()
         let storeName = storeFile.deletingPathExtension().lastPathComponent
-        let storeDirectory = self.deletingLastPathComponent()
+        let storeDirectory = deletingLastPathComponent()
         let supportFile = ".\(storeName)_SUPPORT"
         return storeDirectory.appendingPathComponent(supportFile)
     }
@@ -92,16 +94,25 @@ extension URL {
 public extension NSURL {
 
     /// Returns the location of the persistent store file in the given account folder
-    @objc func URLByAppendingPersistentStoreLocation() -> URL {
-        return (self as URL).appendingPersistentStoreLocation()
+    @objc
+    func URLByAppendingPersistentStoreLocation() -> URL {
+        (self as URL).appendingPersistentStoreLocation()
     }
 
 }
 
 // MARK: -
 
+// sourcery: AutoMockable
+public protocol CoreDataStackProtocol: ContextProvider {
+    var storesExists: Bool { get }
+    var needsMigration: Bool { get }
+
+    func loadStores(completionHandler: @escaping (Error?) -> Void)
+}
+
 @objcMembers
-public class CoreDataStack: NSObject, ContextProvider {
+public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
     public let account: Account
 
@@ -109,35 +120,42 @@ public class CoreDataStack: NSObject, ContextProvider {
         messagesContainer.viewContext
     }
 
-    public lazy var syncContext: NSManagedObjectContext = {
-        return messagesContainer.newBackgroundContext()
-    }()
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        #if DEBUG
+            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+        #else
+            return messagesContainer.newBackgroundContext()
+        #endif
+    }
 
-    public lazy var searchContext: NSManagedObjectContext = {
-        return messagesContainer.newBackgroundContext()
-    }()
+    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
-    public lazy var eventContext: NSManagedObjectContext = {
-        return eventsContainer.newBackgroundContext()
-    }()
+    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+
+    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
 
     public let accountContainer: URL
     public let applicationContainer: URL
 
-    let messagesContainer: PersistentContainer
+    public let messagesContainer: PersistentContainer
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    #if DEBUG
+        public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
+    #endif
     private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
     // MARK: - Initialization
 
-    public init(account: Account,
-                applicationContainer: URL,
-                inMemoryStore: Bool = false,
-                dispatchGroup: ZMSDispatchGroup? = nil) {
+    public init(
+        account: Account,
+        applicationContainer: URL,
+        inMemoryStore: Bool = false,
+        dispatchGroup: ZMSDispatchGroup? = nil
+    ) {
 
         ExtendedSecureUnarchiveFromData.register()
 
@@ -145,8 +163,10 @@ public class CoreDataStack: NSObject, ContextProvider {
         self.account = account
         self.dispatchGroup = dispatchGroup
 
-        let accountDirectory = Self.accountDataFolder(accountIdentifier: account.userIdentifier,
-                                                      applicationContainer: applicationContainer)
+        let accountDirectory = Self.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: applicationContainer
+        )
 
         self.accountContainer = accountDirectory
 
@@ -167,12 +187,18 @@ public class CoreDataStack: NSObject, ContextProvider {
             description = NSPersistentStoreDescription(url: storeURL)
 
             // https://www.sqlite.org/pragma.html
-            description.setValue("WAL" as NSObject,
-                                 forPragmaNamed: "journal_mode")
-            description.setValue("FULL" as NSObject,
-                                 forPragmaNamed: "synchronous")
-            description.setValue("TRUE" as NSObject,
-                                 forPragmaNamed: "secure_delete")
+            description.setValue(
+                "WAL" as NSObject,
+                forPragmaNamed: "journal_mode"
+            )
+            description.setValue(
+                "FULL" as NSObject,
+                forPragmaNamed: "synchronous"
+            )
+            description.setValue(
+                "TRUE" as NSObject,
+                forPragmaNamed: "secure_delete"
+            )
 
             let eventStoreURL = accountDirectory.appendingEventStoreLocation()
             eventStoreDescription = NSPersistentStoreDescription(url: eventStoreURL)
@@ -236,13 +262,20 @@ public class CoreDataStack: NSObject, ContextProvider {
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
+                WireLogger.localStorage.info(
+                    "[setup] start migration of core data messaging store!",
+                    attributes: .safePublic
+                )
 
                 do {
                     try self.migrateMessagingStore()
-                    WireLogger.localStorage.info("[setup] finished migration of core data messaging store!", attributes: .safePublic)
+                    WireLogger.localStorage.info(
+                        "[setup] finished migration of core data messaging store!",
+                        attributes: .safePublic
+                    )
                 } catch {
-                    let logMessage = "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
+                    let logMessage =
+                        "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
                     WireLogger.localStorage.error(logMessage, attributes: .safePublic)
 
                     DispatchQueue.main.async {
@@ -251,17 +284,26 @@ public class CoreDataStack: NSObject, ContextProvider {
                     return
                 }
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                    WireLogger.localStorage.info(
+                        "time spent in migration only: \(tp.elapsedTime)",
+                        attributes: .safePublic
+                    )
                 }
             }
 
             if self.needsEventStoreMigration() {
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info("[setup] start migration of core data event store!", attributes: .safePublic)
+                WireLogger.localStorage.info(
+                    "[setup] start migration of core data event store!",
+                    attributes: .safePublic
+                )
 
                 do {
                     try self.migrateEventStore()
-                    WireLogger.localStorage.info("[setup] finished migration of core data event store!", attributes: .safePublic)
+                    WireLogger.localStorage.info(
+                        "[setup] finished migration of core data event store!",
+                        attributes: .safePublic
+                    )
                 } catch {
                     let logMessage = "[setup] failed migration of core data event store: \(error.localizedDescription)."
                     WireLogger.localStorage.error(logMessage, attributes: .safePublic)
@@ -272,7 +314,10 @@ public class CoreDataStack: NSObject, ContextProvider {
                     return
                 }
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                    WireLogger.localStorage.info(
+                        "time spent in migration only: \(tp.elapsedTime)",
+                        attributes: .safePublic
+                    )
                 }
             }
 
@@ -373,9 +418,11 @@ public class CoreDataStack: NSObject, ContextProvider {
     func createStoreDirectory(for container: PersistentContainer) throws {
         let storeURL = container.persistentStoreDescriptions.first?.url
         if let url = storeURL?.deletingLastPathComponent() {
-            try FileManager.default.createDirectory(at: url,
-                                                    withIntermediateDirectories: true,
-                                                    attributes: nil)
+            try FileManager.default.createDirectory(
+                at: url,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
         }
     }
 
@@ -384,7 +431,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public var storesExists: Bool {
-        return messagesContainer.storeExists && eventsContainer.storeExists
+        messagesContainer.storeExists && eventsContainer.storeExists
     }
 
     // MARK: - Configure Contexts
@@ -418,10 +465,10 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.applicationContainerURL = applicationContainer
 
             if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-              context.setupUserKeyStore(
-                accountDirectory: accountContainer,
-                applicationContainer: applicationContainer
-              )
+                context.setupUserKeyStore(
+                    accountDirectory: accountContainer,
+                    applicationContainer: applicationContainer
+                )
             }
 
             context.undoManager = nil
@@ -467,7 +514,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     // MARK: - Static Helpers
 
     public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
-        return applicationContainer
+        applicationContainer
             .appendingPathComponent("AccountData")
             .appendingPathComponent(accountIdentifier.uuidString)
     }
@@ -475,7 +522,10 @@ public class CoreDataStack: NSObject, ContextProvider {
     public static func loadMessagingModel() -> NSManagedObjectModel {
         let modelBundle = Bundle(for: ZMManagedObject.self)
 
-        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("zmessaging.momd")) else {
+        guard let result = NSManagedObjectModel(
+            contentsOf: modelBundle.bundleURL
+                .appendingPathComponent("zmessaging.momd")
+        ) else {
             fatal("Can't load data model for messaging bundle")
         }
 
@@ -485,7 +535,10 @@ public class CoreDataStack: NSObject, ContextProvider {
     public static func loadEventsModel() -> NSManagedObjectModel {
         let modelBundle = WireDataModelBundle.bundle
 
-        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("ZMEventModel.momd")) else {
+        guard let result = NSManagedObjectModel(
+            contentsOf: modelBundle.bundleURL
+                .appendingPathComponent("ZMEventModel.momd")
+        ) else {
             fatal("Can't load data model for events bundle")
         }
 
@@ -528,10 +581,10 @@ public class CoreDataStack: NSObject, ContextProvider {
 
 // MARK: -
 
-class PersistentContainer: NSPersistentContainer {
+public class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
-        return persistentStoreDescriptions.first?.url
+        persistentStoreDescriptions.first?.url
     }
 
     var storeExists: Bool {
@@ -549,13 +602,17 @@ class PersistentContainer: NSPersistentContainer {
 
         return !managedObjectModel.isConfiguration(
             withName: nil,
-            compatibleWithStoreMetadata: metadataForStore(at: storeURL))
+            compatibleWithStoreMetadata: metadataForStore(at: storeURL)
+        )
     }
 
     /// Retrieves the metadata for the store
     func metadataForStore(at url: URL) -> [String: Any] {
         guard FileManager.default.fileExists(atPath: url.path),
-              let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url) else {
+              let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(
+                  ofType: NSSQLiteStoreType,
+                  at: url
+              ) else {
             return [:]
         }
 
@@ -569,7 +626,7 @@ extension NSPersistentStoreCoordinator {
 
     /// Returns the set of options that need to be passed to the persistent sotre
     static func persistentStoreOptions(supportsMigration: Bool) -> [String: Any] {
-        return [
+        [
             // https://www.sqlite.org/pragma.html
             NSSQLitePragmasOption: [
                 "journal_mode": "WAL",

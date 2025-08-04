@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v5, .v6:
+        case .v5, .v6, .v7, .v8, .v9, .v10:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
                 method: .get,
@@ -74,11 +74,13 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
                 .flatMap(\.base64DecodedBytes)
                 .map(\.data)
 
-            action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey,
-                                                              ed448: ed448RemovalKey,
-                                                              p256: p256RemovalKey,
-                                                              p384: p384RemovalKey,
-                                                              p521: p521RemovalKey)))
+            action.succeed(with: Action.Result(removal: .init(
+                ed25519: ed25519RemovalKey,
+                ed448: ed448RemovalKey,
+                p256: p256RemovalKey,
+                p384: p384RemovalKey,
+                p521: p521RemovalKey
+            )))
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)

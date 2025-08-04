@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
+import GenericMessageProtocol
 import XCTest
+
+@testable import WireDataModel
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
 
@@ -28,8 +30,18 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let clearedDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
-            let message = GenericMessage(content: Cleared(timestamp: clearedDate, conversationID: self.syncConversation.remoteIdentifier!), nonce: nonce)
-            let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
+            let message = GenericMessage(
+                content: Cleared(timestamp: clearedDate, conversationID: self.syncConversation.remoteIdentifier!),
+                nonce: nonce
+            )
+            let event = self.createUpdateEvent(
+                nonce,
+                conversationID: selfConversation.remoteIdentifier!,
+                timestamp: Date(),
+                genericMessage: message,
+                senderID: UUID(),
+                eventSource: ZMUpdateEventSource.download
+            )
 
             // when
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
@@ -52,8 +64,18 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let lastReadDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
             let conversationID = QualifiedID(uuid: remoteIdentifier, domain: "")
-            let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: lastReadDate), nonce: nonce)
-            let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
+            let message = GenericMessage(
+                content: LastRead(conversationID: conversationID, lastReadTimestamp: lastReadDate),
+                nonce: nonce
+            )
+            let event = self.createUpdateEvent(
+                nonce,
+                conversationID: selfConversation.remoteIdentifier!,
+                timestamp: Date(),
+                genericMessage: message,
+                senderID: UUID(),
+                eventSource: ZMUpdateEventSource.download
+            )
             self.syncConversation.lastReadServerTimeStamp = nil
 
             // when
@@ -72,9 +94,19 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
             let toBehiddenMessage = try! self.syncConversation.appendText(content: "hello") as! ZMClientMessage
-            let hideMessage = MessageHide(conversationId: self.syncConversation.remoteIdentifier!, messageId: toBehiddenMessage.nonce!)
+            let hideMessage = MessageHide(
+                conversationId: self.syncConversation.remoteIdentifier!,
+                messageId: toBehiddenMessage.nonce!
+            )
             let message = GenericMessage(content: hideMessage, nonce: nonce)
-            let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
+            let event = self.createUpdateEvent(
+                nonce,
+                conversationID: selfConversation.remoteIdentifier!,
+                timestamp: Date(),
+                genericMessage: message,
+                senderID: UUID(),
+                eventSource: ZMUpdateEventSource.download
+            )
 
             // when
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
@@ -93,12 +125,12 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            selfUser.trackingID = UUID()
 
-            let trackingIdentifier = UUID.create()
+            let trackingID = UUID.create()
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: trackingIdentifier,
+                trackingID: trackingID,
                 conversation: .selfConversation(in: self.syncMOC),
                 sender: selfUser
             )
@@ -107,7 +139,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, trackingIdentifier.transportString())
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
@@ -117,10 +149,11 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            let trackingID = UUID()
+            selfUser.trackingID = trackingID
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingID: UUID.create(),
                 conversation: .selfConversation(in: self.syncMOC),
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -129,7 +162,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
@@ -139,10 +172,11 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            let trackingID = UUID()
+            selfUser.trackingID = trackingID
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingID: UUID.create(),
                 conversation: self.conversation,
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -151,12 +185,16 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
-    private func createUpdateEvent(trackingIdentifier: UUID, conversation: ZMConversation, sender: ZMUser) -> ZMUpdateEvent {
-        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingIdentifier))
+    private func createUpdateEvent(
+        trackingID: UUID,
+        conversation: ZMConversation,
+        sender: ZMUser
+    ) -> ZMUpdateEvent {
+        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingID))
         let nonce = UUID.create()
 
         return createUpdateEvent(

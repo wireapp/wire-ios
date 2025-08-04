@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@ import WireSyncEngine
 
 extension Account {
     func userDefaultsKey() -> String {
-        return "account_\(self.userIdentifier.transportString())"
+        "account_\(userIdentifier.transportString())"
     }
 }
 
 extension Settings {
     private func payload(for account: Account) -> [String: Any] {
-        return defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
+        defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
     }
 
     /// Returns the value associated with the given account for the given key
@@ -55,15 +55,15 @@ extension Settings {
     ///   - value: value to set
     ///   - settingKey: the SettingKey enum
     ///   - account: account to set value
-    func setValue<T>(_ value: T?, settingKey: SettingKey, in account: Account) {
+    func setValue(_ value: (some Any)?, settingKey: SettingKey, in account: Account) {
         let key = settingKey.rawValue
-        var accountPayload = self.payload(for: account)
+        var accountPayload = payload(for: account)
         accountPayload[key] = value
         defaults.setValue(accountPayload, forKey: account.userDefaultsKey())
     }
 
     func lastViewedConversation(for account: Account) -> ZMConversation? {
-        guard let conversationID: String = self.value(for: .lastViewedConversation, in: account) else {
+        guard let conversationID: String = value(for: .lastViewedConversation, in: account) else {
             return nil
         }
 

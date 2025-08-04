@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,7 +87,10 @@ func WireTextStyleUIFontMappingPreview() -> UIViewController {
     viewController.view.addSubview(stackView)
     NSLayoutConstraint.activate([
         stackView.leadingAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.leadingAnchor),
-        stackView.topAnchor.constraint(equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor, multiplier: 2),
+        stackView.topAnchor.constraint(
+            equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor,
+            multiplier: 2
+        ),
         viewController.view.trailingAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.trailingAnchor)
     ])
 

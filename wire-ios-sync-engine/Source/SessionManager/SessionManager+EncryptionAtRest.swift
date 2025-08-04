@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension SessionManager: UserSessionEncryptionAtRestDelegate {
 
@@ -24,8 +25,8 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
-        let sharedContainerURL = self.sharedContainerURL
-        let dispatchGroup = self.dispatchGroup
+        let sharedContainerURL = sharedContainerURL
+        let dispatchGroup = dispatchGroup
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {
@@ -39,7 +40,7 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
                         switch result {
                         case .success:
                             self?.loadSession(for: account, completion: { _ in })
-                        case .failure(let error):
+                        case let .failure(error):
                             WireLogger.ear.error("failed to migrate account: \(error)")
                         }
                     }

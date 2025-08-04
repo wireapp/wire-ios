@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,13 @@
 
 /// A sub screen of the settings.
 public enum MainSettingsTopLevelMenuItem {
-    case account, devices, options, advanced, support, about, developerOptions
+    case account
+    case devices
+    case options
+    case advanced
+    case support
+    case about
+    case developerOptions
 }
 
 extension MainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {

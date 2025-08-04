@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             classificationProvider: mockClassificationProvider,
-            networkStatusObservable: MockNetworkStatusObservable()
+            networkStatusObservable: MockNetworkStatusObservable(),
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
 
         mockDelegate = MockDelegate()
@@ -80,21 +81,27 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
 
     var composedDrafts = [DraftMessage]()
 
-    func conversationInputBarViewControllerDidComposeText(text: String,
-                                                          mentions: [Mention],
-                                                          replyingTo message: ZMConversationMessage?) {}
+    func conversationInputBarViewControllerDidComposeText(
+        text: String,
+        attachments: [MultipartAttachment],
+        mentions: [Mention],
+        replyingTo message: ZMConversationMessage?
+    ) {}
 
-    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController)
+        -> Bool {
+        true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+        true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,
-                                                            withText newText: String?,
-                                                            mentions: [Mention]) {}
+    func conversationInputBarViewControllerDidFinishEditing(
+        _ message: ZMConversationMessage,
+        withText newText: String?,
+        mentions: [Mention]
+    ) {}
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {}
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireTransport
 import XCTest
 
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
-    var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
     var apiVersion: APIVersion! {
@@ -41,15 +41,10 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performAndWait { [self] in
             localNotificationDispatcher = MockPushMessageHandler()
-            mockApplicationStatus = MockApplicationStatus()
-            mockApplicationStatus.mockSynchronizationState = .online
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
-            sut = ClientMessageRequestStrategy(context: syncMOC,
-                                               localNotificationDispatcher: localNotificationDispatcher,
-                                               applicationStatus: mockApplicationStatus,
-                                               messageSender: mockMessageSender)
+            makeSut()
         }
 
         apiVersion = .v0
@@ -57,13 +52,25 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     override func tearDown() {
-        self.localNotificationDispatcher = nil
-        self.mockApplicationStatus = nil
-        self.mockAttachmentsDetector = nil
+        localNotificationDispatcher = nil
+        mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
-        self.sut = nil
+        sut = nil
 
         super.tearDown()
+    }
+
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
+
+        sut = ClientMessageRequestStrategy(
+            context: syncMOC,
+            localNotificationDispatcher: localNotificationDispatcher,
+            messageSender: mockMessageSender
+        )
     }
 
     /// Makes a conversation secure
@@ -80,9 +87,83 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testThatItDoesSendProteusMessageInVisibleConversation() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesSendProteusMessageInHiddenConversation() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesNotSendMLSMessageWhenMLSFeatureDisabled() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.conversation?.messageProtocol = .mls
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesSendMLSMessageWhenMLSFeatureEnabled() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.conversation?.messageProtocol = .mls
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -100,9 +181,9 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesAttachmentPrepocessorOfChanges() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
-            let text = String(repeating: "Hi", count: 100000)
+            let text = String(repeating: "Hi", count: 100_000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
 
             // WHEN
@@ -119,19 +200,23 @@ extension ClientMessageRequestStrategyTests {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
-            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            confirmationMessage = try! self.oneToOneConversation
+                .appendClientMessage(with: GenericMessage(content: Confirmation(
+                    messageId: UUID(),
+                    type: .delivered
+                )))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(confirmationMessage.isZombieObject)
         }
     }
@@ -141,16 +226,26 @@ extension ClientMessageRequestStrategyTests {
         // GIVEN
         var confirmationMessage: ZMMessage!
         var token: Any?
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
         let missingLegalholdConsentFailure = Payload.ResponseFailure(
             code: 403,
             label: .missingLegalholdConsent,
             message: "",
-            data: nil)
+            data: nil
+        )
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
-            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            confirmationMessage = try! self.oneToOneConversation
+                .appendClientMessage(with: GenericMessage(content: Confirmation(
+                    messageId: UUID(),
+                    type: .delivered
+                )))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockError = failure
 
@@ -158,13 +253,15 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
             let expectation = self.customExpectation(description: "Notification fired")
-            token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      object: nil) {_ in
+            token = NotificationInContext.addObserver(
+                name: ZMConversation.failedToSendMessageNotificationName,
+                context: self.uiMOC.notificationContext,
+                object: nil
+            ) { _ in
                 expectation.fulfill()
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         withExtendedLifetime(token) {
@@ -178,7 +275,7 @@ extension ClientMessageRequestStrategyTests {
 extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromAnEvent() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let text = "Everything"
@@ -195,7 +292,12 @@ extension ClientMessageRequestStrategyTests {
                 "time": Date().transportString(),
                 "from": self.otherUser.remoteIdentifier.transportString()
             ] as NSDictionary
-            guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
+            guard let event = ZMUpdateEvent.decryptedUpdateEvent(
+                fromEventStreamPayload: eventPayload,
+                uuid: nil,
+                transient: false,
+                source: .webSocket
+            ) else {
                 XCTFail("Failed to create event")
                 return
             }
@@ -211,9 +313,13 @@ extension ClientMessageRequestStrategyTests {
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
+        let eventDecoder = EventDecoder(
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
+            lastEventIDRepository: lastEventIDRepository
+        )
         let text = "Everything"
-        let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
+        let event = try await decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
         await syncMOC.perform {
             // WHEN

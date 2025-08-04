@@ -1,0 +1,5 @@
+{
+  "code": 503,
+  "label": "enterprise-service-not-enabled",
+  "message": "Enterprise service not enabled"
+}

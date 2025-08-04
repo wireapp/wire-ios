@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ final class ChangeEmailViewModel {
     // MARK: - Computed Properties
 
     var visibleEmail: String? {
-        return newEmail ?? currentEmail
+        newEmail ?? currentEmail
     }
 
     var validatedEmail: String? {
-        guard let newEmail = self.newEmail else { return nil }
+        guard let newEmail else { return nil }
         guard case .none = emailValidationError else {
             return nil
         }
@@ -43,7 +43,7 @@ final class ChangeEmailViewModel {
     }
 
     var isValid: Bool {
-        return validatedEmail != nil
+        validatedEmail != nil
     }
 
     // MARK: - Initialization

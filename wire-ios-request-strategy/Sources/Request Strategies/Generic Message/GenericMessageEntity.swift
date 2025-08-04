@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public enum Recipients {
     case conversationParticipants
@@ -24,7 +25,8 @@ public enum Recipients {
     case clients([ZMUser: Set<UserClient>])
 }
 
-@objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
+@objcMembers
+public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public var context: NSManagedObjectContext
     public var message: GenericMessage
@@ -36,11 +38,13 @@ public enum Recipients {
 
     public let targetRecipients: Recipients
 
-    public init(message: GenericMessage,
-                context: NSManagedObjectContext,
-                conversation: ZMConversation? = nil,
-                targetRecipients: Recipients = .conversationParticipants,
-                completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(
+        message: GenericMessage,
+        context: NSManagedObjectContext,
+        conversation: ZMConversation? = nil,
+        targetRecipients: Recipients = .conversationParticipants,
+        completionHandler: ((_ response: ZMTransportResponse) -> Void)?
+    ) {
         self.context = context
         self.conversation = conversation
         self.message = message
@@ -51,7 +55,7 @@ public enum Recipients {
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
 
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
     public var shouldIgnoreTheSecurityLevelCheck: Bool = false
@@ -76,11 +80,11 @@ public enum Recipients {
         // no-op
     }
 
-    public func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+    public func setUnderlyingMessage(_ message: GenericMessageProtocol.GenericMessage) throws {
         self.message = message
     }
 
-    public var underlyingMessage: WireProtos.GenericMessage? {
+    public var underlyingMessage: GenericMessageProtocol.GenericMessage? {
         message
     }
 
@@ -90,10 +94,10 @@ public enum Recipients {
     }
 
     public override var hash: Int {
-        return self.message.hashValue
+        message.hashValue
     }
 }
 
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
-    return lhs === rhs
+    lhs === rhs
 }

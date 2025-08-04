@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
 
 @testable import WireDomain
@@ -27,7 +27,7 @@ import XCTest
 final class UserClientAddEventProcessorTests: XCTestCase {
 
     private var sut: UserClientAddEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -41,9 +41,9 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
         sut = UserClientAddEventProcessor(
-            repository: userRepository
+            repository: userClientsRepository
         )
     }
 
@@ -54,7 +54,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         sut = nil
-        userRepository = nil
+        userClientsRepository = nil
     }
 
     // MARK: - Tests
@@ -66,25 +66,25 @@ final class UserClientAddEventProcessorTests: XCTestCase {
             modelHelper.createSelfClient(in: context)
         }
 
-        userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in
+        userClientsRepository.fetchOrCreateClientId_MockMethod = { _ in
             (userClient, true)
         }
 
-        userRepository.updateUserClientFromIsNewClient_MockMethod = { _, _, _ in }
+        userClientsRepository.updateClientIdFromIsNewClient_MockMethod = { _, _, _ in }
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchOrCreateUserClientWith_Invocations.count, 1)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.fetchOrCreateClientId_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.updateClientIdFromIsNewClient_Invocations.count, 1)
     }
 
     private enum Scaffolding {
         static let event = UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: "94766bd92f56923d",
                 type: .permanent,
                 activationDate: .now,

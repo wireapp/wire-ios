@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,27 +17,46 @@
 //
 
 import Foundation
+import WireLogging
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    public func application(_ application: ZMApplication, didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]) {
+    func application(
+        _ application: ZMApplication,
+        didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]
+    ) {
         startEphemeralTimers()
     }
 
-    public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void ) {
+    func application(
+        _ application: ZMApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        // TODO: [WPB-17583] re-enable background fetch for new sync.
+        guard !journal[.isSyncV2Enabled] else {
+            completionHandler(.noData)
+            return
+        }
+
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
+            self.applicationStatusDirectory.operationStatus
+                .startBackgroundFetch(withCompletionHandler: completionHandler)
         }
     }
 
-    public func application(_ application: ZMApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+    func application(
+        _ application: ZMApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
         completionHandler()
     }
 
     @objc
-    public func applicationDidEnterBackground(_ note: Notification?) {
+    func applicationDidEnterBackground(_ note: Notification?) {
+        syncAgent?.suspend()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -50,21 +69,22 @@ extension ZMUserSession {
     }
 
     @objc
-    public func applicationWillEnterForeground(_ note: Notification?) {
-
+    func applicationWillEnterForeground(_ note: Notification?) {
+        syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
         processPendingEvents()
     }
 
-    func processPendingEvents() {
+    internal func processPendingEvents() {
+        guard !journal[.isSyncV2Enabled] else { return }
         syncContext.performGroupedBlock {
-            self.processEvents()
+            self.processLegacyEvents()
         }
     }
 
-    func deleteOldEphemeralMessages() {
+    internal func deleteOldEphemeralMessages() {
         // In the case that an ephemeral was sent via the share extension, we need
         // to ensure that they have timers running or are deleted/obfuscated if
         // needed. Note: ZMMessageTimer will only create a new timer for a message
@@ -74,7 +94,7 @@ extension ZMUserSession {
         }
     }
 
-    func mergeChangesFromStoredSaveNotificationsIfNeeded() {
+    internal func mergeChangesFromStoredSaveNotificationsIfNeeded() {
         let storedNotifications = storedDidSaveNotifications.storedNotifications
         storedDidSaveNotifications.clear()
 
@@ -84,7 +104,10 @@ extension ZMUserSession {
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [managedObjectContext])
 
             syncManagedObjectContext.performGroupedBlock {
-                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.syncManagedObjectContext])
+                NSManagedObjectContext.mergeChanges(
+                    fromRemoteContextSave: changes,
+                    into: [self.syncManagedObjectContext]
+                )
             }
         }
 
@@ -94,10 +117,10 @@ extension ZMUserSession {
             self.syncManagedObjectContext.processPendingChanges()
         }
 
-        self.managedObjectContext.saveOrRollback()
+        managedObjectContext.saveOrRollback()
     }
 
-    func recalculateUnreadMessages() {
+    internal func recalculateUnreadMessages() {
         WireLogger.badgeCount.info("recalculate unread conversations")
         syncManagedObjectContext.performGroupedBlock {
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)

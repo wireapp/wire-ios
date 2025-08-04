@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,10 @@ enum InvalidClientsRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
         do {
-            try moc.batchDeleteEntities(named: UserClient.entityName(), matching: NSPredicate(format: "\(ZMUserClientUserKey) == nil"))
+            try moc.batchDeleteEntities(
+                named: UserClient.entityName(),
+                matching: NSPredicate(format: "\(ZMUserClientUserKey) == nil")
+            )
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }

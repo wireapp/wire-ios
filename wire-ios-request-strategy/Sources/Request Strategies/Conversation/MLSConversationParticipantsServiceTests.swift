@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -179,7 +179,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         let clientIDs = [MLSClientID.random()]
 
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return clientIDs
+            clientIDs
         }
 
         // WHEN
@@ -223,7 +223,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_RemoveParticipant_RethrowsErrors() async {
         // GIVEN
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return [MLSClientID.random()]
+            [MLSClientID.random()]
         }
 
         mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in

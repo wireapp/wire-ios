@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 
 @testable import WireDataModel
@@ -31,7 +30,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         migrator = MockCoreDataMessagingMigratorProtocol()
         migrator.requiresMigrationAtToVersion_MockMethod = { _, _ in
-            return false
+            false
         }
         migrator.migrateStoreAtToVersion_MockMethod = { _, _ in }
     }
@@ -50,7 +49,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     func createBackup(
         accountIdentifier: UUID,
         databaseKey: VolatileData? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Result<URL, Error> {
         var result: Result<URL, Error>?
@@ -59,10 +58,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: accountIdentifier,
             clientIdentifier: name,
             applicationContainer: DatabaseBaseTest.applicationContainer,
-            dispatchGroup: self.dispatchGroup,
+            dispatchGroup: dispatchGroup,
             databaseKey: databaseKey
         ) {
-            result = $0.map { $0.url }
+            result = $0.map(\.url)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1), file: file, line: line)
 
@@ -73,7 +72,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         accountIdentifier: UUID,
         backup: URL,
         migrator: CoreDataMessagingMigratorProtocol,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Result<URL, Error>? {
 
@@ -92,7 +91,11 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         return result
     }
 
-    func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func createBackupAndDeleteOriginalAccount(
+        accountIdentifier: UUID,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> URL {
 
         defer { clearStorageFolder() }
 
@@ -203,7 +206,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         XCTAssertThrowsError(try result.get()) { error in
 
             switch error as? CoreDataStack.BackupError {
-            case .failedToWrite(let failureError):
+            case let .failedToWrite(failureError):
 
                 switch failureError as? CoreDataStack.BackupError {
                 case .missingEAREncryptionKey:
@@ -280,9 +283,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // Set metadata on DB which we expect to be cleared when importing from a backup
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        directory.viewContext.setPersistentStoreMetadata(
+            "1234567890",
+            key: PersistentMetadataKey.lastUpdateEventID.rawValue
+        )
         directory.viewContext.forceSaveOrRollback()
 
         let backup = try createBackup(accountIdentifier: uuid).get()
@@ -301,9 +305,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // then
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
+        XCTAssertNil(
+            importedDirectory.viewContext
+                .persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        )
     }
 
     func testThatItFailsWhenImportingBackupIntoWrongAccount() throws {

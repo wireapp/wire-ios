@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,18 @@
 
 import Foundation
 
-/** 
- This class is used to add type safety to C opaque pointers.
- Just subclass this class and add the subclass to all signatures
-
- E.g.
- ```
- class CStruct : PointerWrapper {}
- 
- func foo(struct: CStruct) -> Int {
-    return some_c_function(struct.ptr)
- }
- 
- ```
- */
+/// This class is used to add type safety to C opaque pointers.
+/// Just subclass this class and add the subclass to all signatures
+///
+/// E.g.
+/// ```
+/// class CStruct : PointerWrapper {}
+///
+/// func foo(struct: CStruct) -> Int {
+///   return some_c_function(struct.ptr)
+/// }
+///
+/// ```
 class PointerWrapper {
     var ptr: OpaquePointer?
 }

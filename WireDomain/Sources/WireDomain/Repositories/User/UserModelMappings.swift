@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 extension Collection<WireDataModel.QualifiedID> {
 
-    func toAPIModel() -> [WireAPI.QualifiedID] {
+    func toAPIModel() -> [WireNetwork.QualifiedID] {
         map { $0.toAPIModel() }
     }
 
@@ -30,21 +30,21 @@ extension Collection<WireDataModel.QualifiedID> {
 
 extension WireDataModel.QualifiedID {
 
-    func toAPIModel() -> WireAPI.QualifiedID {
-        UserID(uuid: uuid, domain: domain)
+    func toAPIModel() -> WireNetwork.QualifiedID {
+        UserID(id: uuid, domain: domain)
     }
 
 }
 
-extension WireAPI.QualifiedID {
+extension WireNetwork.QualifiedID {
 
     func toDomainModel() -> WireDataModel.QualifiedID {
-        WireDataModel.QualifiedID(uuid: uuid, domain: domain)
+        WireDataModel.QualifiedID(uuid: id, domain: domain)
     }
 
 }
 
-extension Set<WireAPI.MessageProtocol> {
+extension Set<WireNetwork.MessageProtocol> {
 
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
         .init(map { $0.toDomainModel() })
@@ -52,7 +52,7 @@ extension Set<WireAPI.MessageProtocol> {
 
 }
 
-extension WireAPI.MessageProtocol {
+extension WireNetwork.MessageProtocol {
 
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
@@ -62,7 +62,7 @@ extension WireAPI.MessageProtocol {
     }
 }
 
-extension WireAPI.UserClientType {
+extension WireNetwork.UserClientType {
 
     func toDomainModel() -> WireDataModel.DeviceType {
         switch self {
@@ -77,7 +77,7 @@ extension WireAPI.UserClientType {
 
 }
 
-extension WireAPI.DeviceClass {
+extension WireNetwork.DeviceClass {
     func toDomainModel() -> WireDataModel.DeviceClass {
         switch self {
         case .phone:
@@ -92,7 +92,7 @@ extension WireAPI.DeviceClass {
     }
 }
 
-extension WireAPI.Prekey {
+extension WireNetwork.Prekey {
 
     func toDomainModel() -> WireDataModel.LegalHoldRequest.Prekey? {
         guard let data = Data(base64Encoded: base64EncodedKey) else {
@@ -100,6 +100,82 @@ extension WireAPI.Prekey {
         }
 
         return .init(id: id, key: data)
+    }
+
+}
+
+extension WireNetwork.UserUpdateEvent {
+
+    func toDomainModel() -> UserUpdateInfo {
+        .init(
+            userID: userID,
+            accentColorID: accentColorID,
+            name: name,
+            handle: handle,
+            email: email,
+            isSSOIDDeleted: isSSOIDDeleted,
+            previewAssetKey: assets?
+                .first(where: { $0.size == .preview })
+                .map(\.key),
+            completeAssetKey: assets?
+                .first(where: { $0.size == .complete })
+                .map(\.key),
+            supportedProtocols: supportedProtocols?.toDomainModel()
+        )
+    }
+
+}
+
+extension WireNetwork.User {
+
+    func toDomainModel() -> NewUserInfo {
+
+        .init(
+            userID: id.toDomainModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            accentID: accentID,
+            previewAssetKey: assets
+                .first(where: { $0.size == .preview })
+                .map(\.key),
+            completeAssetKey: assets
+                .first(where: { $0.size == .complete })
+                .map(\.key),
+            isDeleted: deleted ?? false,
+            email: email,
+            expiresAt: expiresAt,
+            serviceID: service?.id,
+            serviceProvider: service?.provider,
+            supportedProtocols: supportedProtocols?.toDomainModel()
+        )
+
+    }
+
+}
+
+extension WireNetwork.SelfUser {
+
+    func toDomainModel() -> NewUserInfo {
+        .init(
+            userID: qualifiedID.toDomainModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            accentID: accentID,
+            previewAssetKey: assets?
+                .first(where: { $0.size == .preview })
+                .map(\.key),
+            completeAssetKey: assets?
+                .first(where: { $0.size == .complete })
+                .map(\.key),
+            isDeleted: deleted ?? false,
+            email: email,
+            expiresAt: expiresAt,
+            serviceID: service?.id,
+            serviceProvider: service?.provider,
+            supportedProtocols: supportedProtocols?.toDomainModel()
+        )
     }
 
 }

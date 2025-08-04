@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
@@ -37,6 +40,11 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
         let mlsSelfConversation = createMLSSelfConversation()
+
+        // Self client is an mls client
+        let selfClient = ModelHelper().createSelfClient(in: uiMOC)
+        selfClient.mlsPublicKeys = .init(ed25519: "somekey")
+        selfClient.needsToUploadMLSPublicKeys = false
 
         // A conversation with a last read time stamp
         let conversationID = UUID.create()
@@ -84,6 +92,11 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
         let mlsSelfConversation = createMLSSelfConversation()
+
+        // Self client is an mls client
+        let selfClient = ModelHelper().createSelfClient(in: uiMOC)
+        selfClient.mlsPublicKeys = .init(ed25519: "somekey")
+        selfClient.needsToUploadMLSPublicKeys = false
 
         // A conversation with a cleared time stamp
         let conversationID = UUID.create()
@@ -134,7 +147,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         conversation.remoteIdentifier = nonce
         conversation.lastReadServerTimeStamp = Date(timeIntervalSince1970: 0)
 
-        let timeinterval: Int64 = 10000
+        let timeinterval: Int64 = 10_000
         let lastRead = LastRead.with {
             $0.conversationID = nonce.transportString()
             $0.lastReadTimestamp = timeinterval
@@ -162,7 +175,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         conversation.remoteIdentifier = nonce
         conversation.clearedTimeStamp = Date(timeIntervalSince1970: 0)
 
-        let timeinterval: Int64 = 10000
+        let timeinterval: Int64 = 10_000
         let cleared = Cleared.with {
             $0.conversationID = nonce.transportString()
             $0.clearedTimestamp = timeinterval

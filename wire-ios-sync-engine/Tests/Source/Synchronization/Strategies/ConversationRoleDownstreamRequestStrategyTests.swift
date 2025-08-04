@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,11 +27,15 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         super.setUp()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isSyncV2Enabled: false
         )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        sut = ConversationRoleDownstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = ConversationRoleDownstreamRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -42,11 +46,11 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     }
 
     private func createConversationToDownload() -> ZMConversation {
-        let convoToDownload: ZMConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        let convoToDownload = ZMConversation.insertNewObject(in: syncMOC)
         convoToDownload.conversationType = .group
         convoToDownload.remoteIdentifier = .create()
         convoToDownload.needsToDownloadRoles = true
-        convoToDownload.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: self.syncMOC), role: nil)
+        convoToDownload.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
         return convoToDownload
     }
 
@@ -91,9 +95,11 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
 
             // when
-            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({ $0.fetchRequestForTrackedObjects() }).flatMap({ try! self.syncMOC.fetch($0) as! [ZMConversation] })
+            let objs: [ZMConversation] = self.sut.contextChangeTrackers
+                .compactMap { $0.fetchRequestForTrackedObjects() }
+                .flatMap { try! self.syncMOC.fetch($0) as! [ZMConversation] }
 
-            // then            
+            // then
             XCTAssertEqual(objs, [convo1])
         }
     }
@@ -124,10 +130,12 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            request.complete(with: ZMTransportResponse(payload: self.sampleRolesPayload as ZMTransportData,
-                                                       httpStatus: 200,
-                                                       transportSessionError: nil,
-                                                       apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: self.sampleRolesPayload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -136,11 +144,11 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             // then
             XCTAssertEqual(convo1!.nonTeamRoles.count, 2)
             guard let admin = convo1!.nonTeamRoles.first(where: { $0.name == "wire_admin" }),
-                let member = convo1!.nonTeamRoles.first(where: { $0.name == "wire_member" }) else {
-                    return XCTFail()
+                  let member = convo1!.nonTeamRoles.first(where: { $0.name == "wire_member" }) else {
+                return XCTFail()
             }
-            XCTAssertEqual(Set(admin.actions.map { $0.name }), Set(["leave_conversation", "delete_conversation"]))
-            XCTAssertEqual(Set(member.actions.map { $0.name }), Set(["leave_conversation"]))
+            XCTAssertEqual(Set(admin.actions.map(\.name)), Set(["leave_conversation", "delete_conversation"]))
+            XCTAssertEqual(Set(member.actions.map(\.name)), Set(["leave_conversation"]))
 
         }
     }
@@ -155,10 +163,12 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            request.complete(with: ZMTransportResponse(payload: nil,
-                                                       httpStatus: 404,
-                                                       transportSessionError: nil,
-                                                       apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))

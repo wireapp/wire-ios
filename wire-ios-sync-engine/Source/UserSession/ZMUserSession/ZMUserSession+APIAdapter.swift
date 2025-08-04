@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireSystem
 
 // Note: this is just a tempory helper for debugging
@@ -68,15 +68,15 @@ private extension HTTPRequest.Method {
     func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
         switch self {
         case .delete:
-            return .delete
+            .delete
         case .get:
-            return .get
+            .get
         case .head:
-            return .head
+            .head
         case .post:
-            return .post
+            .post
         case .put:
-            return .put
+            .put
         }
     }
 
@@ -85,7 +85,7 @@ private extension HTTPRequest.Method {
 private extension ZMTransportResponse {
 
     func toHTTPResponse() -> HTTPResponse {
-        return HTTPResponse(
+        HTTPResponse(
             code: httpStatus,
             payload: rawData
         )

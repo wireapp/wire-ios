@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@ import UIKit
 import WireSettingsUI
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
+class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String
     private let presentationStyle: PresentationStyle
 
     weak var viewController: UIViewController?
-    let presentationAction: () -> (UIViewController?)
+    let presentationAction: (_ sender: UIView) -> UIViewController?
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
@@ -37,18 +37,18 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     let settingsCoordinator: AnySettingsCoordinator
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return text
+        text
     }
 
     init(
         text: String,
         previewGenerator: PreviewGeneratorType? = .none,
         presentationStyle: PresentationStyle,
-        presentationAction: @escaping () -> (UIViewController?),
+        presentationAction: @escaping (_ sender: UIView) -> UIViewController?,
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.text = text
@@ -64,16 +64,16 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         if let tableCell = cell as? SettingsAppearanceCell {
             tableCell.configure(with: .appearance(title: text))
 
-            if let previewGenerator = self.previewGenerator {
+            if let previewGenerator {
                 tableCell.type = previewGenerator(self)
             }
-            switch self.presentationStyle {
+            switch presentationStyle {
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
-                tableCell.hideDisclosureIndicator()
+                tableCell.hideAccessoryView()
             case .navigation:
                 tableCell.isAccessoryIconHidden = true
-                tableCell.showDisclosureIndicator()
+                tableCell.showDisclosureIndicatorAccessoryView()
             }
         }
     }
@@ -81,7 +81,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     // MARK: - SettingsCellDescriptorType
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = generateViewController() else { return }
+        guard let controllerToShow = generateViewController(sender: sender)  else { return }
 
         switch presentationStyle {
         case .alert:
@@ -97,7 +97,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         }
     }
 
-    func generateViewController() -> UIViewController? {
-        presentationAction()
+    private func generateViewController(sender: UIView) -> UIViewController? {
+        presentationAction(sender)
     }
 }

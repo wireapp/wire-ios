@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - CompositeMessageData protocol
 
@@ -28,7 +29,7 @@ public enum CompositeMessageItem {
     case text(TextMessageData)
     case button(ButtonMessageData)
 
-    internal init?(with protoItem: Composite.Item, message: ZMClientMessage) {
+    init?(with protoItem: Composite.Item, message: ZMClientMessage) {
         guard let content = protoItem.content else { return nil }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
         switch content {
@@ -40,9 +41,9 @@ public enum CompositeMessageItem {
     }
 }
 
-extension CompositeMessageItem {
-    public var textData: TextMessageData? {
-        guard case .text(let data) = self else { return nil }
+public extension CompositeMessageItem {
+    var textData: TextMessageData? {
+        guard case let .text(data) = self else { return nil }
         return data
     }
 }

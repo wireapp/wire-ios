@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class SyncStatusTests: MessagingTest {
 
@@ -39,7 +39,8 @@ final class SyncStatusTests: MessagingTest {
     private func createSut() -> SyncStatus {
         let sut = SyncStatus(
             managedObjectContext: uiMOC,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isSyncV2Enabled: false
         )
         sut.syncStateDelegate = mockSyncDelegate
         return sut
@@ -133,6 +134,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
         // when
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
@@ -228,6 +231,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
         // when
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
@@ -401,7 +406,7 @@ final class SyncStatusTests: MessagingTest {
         sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()
@@ -515,6 +520,9 @@ final class SyncStatusTests: MessagingTest {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingBackendMLSPublicKeys)
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
         // when
         XCTAssertEqual(sut.currentSyncPhase, .updateSelfSupportedProtocols)
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)

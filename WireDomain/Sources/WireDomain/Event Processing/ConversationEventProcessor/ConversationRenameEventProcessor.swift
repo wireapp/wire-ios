@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process conversation rename events.
-
-protocol ConversationRenameEventProcessorProtocol {
-
-    /// Process a conversation rename event.
-    ///
-    /// - Parameter event: A conversation rename event.
-
-    func processEvent(_ event: ConversationRenameEvent) async throws
-
-}
+import WireNetwork
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
-    func processEvent(_: ConversationRenameEvent) async throws {
-        // TODO: [WPB-10177]
-        assertionFailure("not implemented yet")
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationRenameEvent) async throws {
+        let newName = event.newName
+        let conversationID = event.conversationID
+        let senderID = event.senderID
+        let timestamp = event.timestamp
+
+        await repository.updateConversationName(
+            newName: newName,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain,
+            senderID: senderID.id,
+            senderDomain: senderID.domain,
+            date: timestamp
+        )
     }
 
 }

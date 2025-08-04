@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,13 +29,15 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC,
-                                                                  participants: [user1, user2, user3],
-                                                                  name: nil,
-                                                                  team: nil,
-                                                                  allowGuests: true,
-                                                                  readReceipts: false,
-                                                                  participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -58,7 +60,15 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [user1, user2, user3], name: nil, team: nil, allowGuests: true, readReceipts: false, participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         try! uiMOC.save()
 

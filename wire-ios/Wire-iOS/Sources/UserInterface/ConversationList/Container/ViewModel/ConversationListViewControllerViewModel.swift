@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ import UserNotifications
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -46,6 +48,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     @MainActor
     func showPermissionDeniedViewController()
 
+    @MainActor
+    func refreshAccountImageViewNotificationBadge()
+
     @discardableResult
     func selectOnListContentController(
         _ conversation: ZMConversation!,
@@ -54,7 +59,14 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         animated: Bool
     ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
+        _ viewModel: ConversationListViewController
+            .ViewModel
+    )
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    )
 }
 
 extension ConversationListViewController {
@@ -87,6 +99,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
+        private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var accountUpdatedNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
@@ -94,6 +108,8 @@ extension ConversationListViewController {
 
         private var userObservationToken: NSObjectProtocol?
         private var teamObservationToken: NSObjectProtocol?
+
+        private var userDidViewSelfProfileToken: NSObjectProtocol?
 
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -107,8 +123,21 @@ extension ConversationListViewController {
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
 
+        public var hideProfileNotificationsBadge: Bool {
+            if userSession.selfUser.isTeamMember {
+                return true
+            }
+            guard let apiVersion = BackendInfo.apiVersion,
+                  apiVersion >= .v7 else {
+                return true
+            }
+
+            return selfProfileViewsMonitor.didViewSelfProfile
+        }
+
         init(
             account: Account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitor,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
@@ -117,12 +146,13 @@ extension ConversationListViewController {
             getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
         ) {
             self.account = account
+            self.selfProfileViewsMonitor = selfProfileViewsMonitor
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-            selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
-            shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
-            didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
+            self.selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
+            self.shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
+            self.didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
@@ -143,6 +173,9 @@ extension ConversationListViewController {
 
             if let e2eiCertificateChangedToken {
                 notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
+            if let userDidViewSelfProfileToken {
+                notificationCenter.removeObserver(userDidViewSelfProfileToken)
             }
         }
     }
@@ -185,7 +218,7 @@ extension ConversationListViewController.ViewModel {
             // Therefore only update the account if the accountManager's accounts still contains the instance we have.
             if let self,
                let accountManager = notification.object as? AccountManager,
-               accountManager.accounts.contains(account),
+               accountManager.account(with: account.userIdentifier) != nil,
                accountManager.selectedAccount == account,
                !account.userName.isEmpty {
                 updateAccountImage()
@@ -202,13 +235,23 @@ extension ConversationListViewController.ViewModel {
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
+
+        userDidViewSelfProfileToken = notificationCenter.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { [weak self] in
+                await self?.viewController?.refreshAccountImageViewNotificationBadge()
+            }
+        }
     }
 
     private func updateAccountImage() {
         Task { @MainActor in
             do {
-                let useCase = GetUserAccountImageSourceUseCase()
-                accountImageSource = try await useCase.invoke(
+                accountImageSource = try await getUserAccountImageSourceUseCase.invoke(
                     user: userSession.selfUser,
                     userContext: userSession.contextProvider.viewContext,
                     account: account
@@ -287,7 +330,8 @@ extension ConversationListViewController.ViewModel: UserObserving {
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
-        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
+            .imageSmallProfileDataChanged || changeInfo.teamsChanged {
             updateAccountImage()
         }
 

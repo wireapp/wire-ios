@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+
 // sourcery: AutoMockable
 public protocol ProteusMessage: OTREntity {
 
@@ -35,9 +37,9 @@ public protocol ProteusMessage: OTREntity {
     func setUnderlyingMessage(_ message: GenericMessage) throws
 }
 
-extension ProteusMessage {
+public extension ProteusMessage {
 
-    public var debugInfo: String {
+    var debugInfo: String {
         guard let message = underlyingMessage else {
             return "\(self)"
         }
@@ -58,13 +60,13 @@ extension ProteusMessage {
 extension ZMClientMessage: ProteusMessage {}
 extension ZMAssetClientMessage: ProteusMessage {}
 
-extension ProteusMessage where Self: ZMOTRMessage {
+public extension ProteusMessage where Self: ZMOTRMessage {
 
-    public var targetRecipients: Recipients {
+    var targetRecipients: Recipients {
         .conversationParticipants
     }
 
-    public func prepareMessageForSending() async throws {
+    func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {
                 // Update expectsReadReceipt flag to reflect the current user setting
@@ -77,7 +79,8 @@ extension ProteusMessage where Self: ZMOTRMessage {
             if let legalHoldStatus = conversation?.legalHoldStatus {
                 // Update the legalHoldStatus flag to reflect the current known legal hold status
                 if var updatedGenericMessage = underlyingMessage {
-                    updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                    updatedGenericMessage
+                        .setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                     try setUnderlyingMessage(updatedGenericMessage)
                 }
             }

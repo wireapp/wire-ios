@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 
-/**
- * Handles the change of user data during registration.
- */
+/// Handles the change of user data during registration.
 
 final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
 
@@ -45,7 +43,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
                 )
             )
 
-        } else if unregisteredUser.password == nil && unregisteredUser.needsPassword {
+        } else if unregisteredUser.password == nil, unregisteredUser.needsPassword {
             return requestIntermediateStep(.setPassword, with: unregisteredUser, mode: .normal)
 
         } else {
@@ -58,13 +56,14 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
     private func requestIntermediateStep(
         _ step: IntermediateRegistrationStep,
         with user: UnregisteredUser,
-        mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
+        mode: AuthenticationStateController.StateChangeMode
+    ) -> [AuthenticationCoordinatorAction] {
         let flowStep = AuthenticationFlowStep.incrementalUserCreation(user, step)
         return [.hideLoadingView, .transition(flowStep, mode: mode)]
     }
 
     private func handleRegistrationCompletion(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
-        return [.showLoadingView, .completeUserRegistration]
+        [.showLoadingView, .completeUserRegistration]
     }
 
     private func makeNewUnregisteredUser(from oldUser: UnregisteredUser) -> UnregisteredUser {

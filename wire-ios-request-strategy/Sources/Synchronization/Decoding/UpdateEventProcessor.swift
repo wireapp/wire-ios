@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ public protocol UpdateEventProcessor: AnyObject {
     /// calling events will be processed. The function returns when all events have
     /// finished processing.
     func processEvents(_ events: [ZMUpdateEvent]) async throws
+
+    func processLiveEvents(_ events: [ZMUpdateEvent]) async throws
 
     /// Forward any buffered events to `processEvents`
     func processBufferedEvents() async throws

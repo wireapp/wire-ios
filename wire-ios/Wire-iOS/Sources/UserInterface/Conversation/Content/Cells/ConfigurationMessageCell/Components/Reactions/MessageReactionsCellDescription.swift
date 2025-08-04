@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,17 +46,11 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         self.configuration = reactions
     }
 
-    var topMargin: Float = 0
-
-    var isFullWidth: Bool = true
-
     var supportsActions: Bool = false
-
-    var showEphemeralTimer: Bool = false
 
     var containsHighlightableContent: Bool = false
 
-    var message: WireDataModel.ZMConversationMessage?
+    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 

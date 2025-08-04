@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 
 final class APIVersionResolver {
@@ -100,8 +101,8 @@ final class APIVersionResolver {
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
         } else if isDeveloperModeEnabled,
-            let preferredAPIVersion = BackendInfo.preferredAPIVersion,
-            allBackendVersions.contains(preferredAPIVersion) {
+                  let preferredAPIVersion = BackendInfo.preferredAPIVersion,
+                  allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {
@@ -118,7 +119,7 @@ final class APIVersionResolver {
         let wasFederationEnabled = BackendInfo.isFederationEnabled
         BackendInfo.isFederationEnabled = payload.federation
 
-        if previousBackendDomain == payload.domain && !wasFederationEnabled && BackendInfo.isFederationEnabled {
+        if previousBackendDomain == payload.domain, !wasFederationEnabled, BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
 
@@ -184,7 +185,7 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6]
+    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9]
 
     /// API versions currently under development and not suitable for production
     /// environments.

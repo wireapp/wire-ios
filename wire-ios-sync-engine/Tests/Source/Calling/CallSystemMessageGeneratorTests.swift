@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
             clientId: clientID,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
     }
 
@@ -71,9 +72,27 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
         let messageCount = conversation.allMessages.count
 
         // when
-        let msg1 = sut.appendSystemMessageIfNeeded(callState: .outgoing(degraded: false), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
-        let msg2 = sut.appendSystemMessageIfNeeded(callState: .established, conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
-        let msg3 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
+        let msg1 = sut.appendSystemMessageIfNeeded(
+            callState: .outgoing(isVideo: false, degraded: false),
+            conversation: conversation,
+            caller: selfUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
+        let msg2 = sut.appendSystemMessageIfNeeded(
+            callState: .established,
+            conversation: conversation,
+            caller: selfUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
+        let msg3 = sut.appendSystemMessageIfNeeded(
+            callState: .terminating(reason: .canceled),
+            conversation: conversation,
+            caller: selfUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         // then
         XCTAssertNil(msg1)
@@ -89,9 +108,27 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
         let messageCount = conversation.allMessages.count
 
         // when
-        let msg1 = sut.appendSystemMessageIfNeeded(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
-        let msg2 = sut.appendSystemMessageIfNeeded(callState: .established, conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
-        let msg3 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
+        let msg1 = sut.appendSystemMessageIfNeeded(
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            conversation: conversation,
+            caller: user,
+            timestamp: nil,
+            previousCallState: nil
+        )
+        let msg2 = sut.appendSystemMessageIfNeeded(
+            callState: .established,
+            conversation: conversation,
+            caller: user,
+            timestamp: nil,
+            previousCallState: nil
+        )
+        let msg3 = sut.appendSystemMessageIfNeeded(
+            callState: .terminating(reason: .canceled),
+            conversation: conversation,
+            caller: user,
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         // then
         XCTAssertNil(msg1)
@@ -106,8 +143,20 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
         let messageCount = conversation.allMessages.count
 
         // when
-        let msg1 = sut.appendSystemMessageIfNeeded(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
-        let msg2 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
+        let msg1 = sut.appendSystemMessageIfNeeded(
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            conversation: conversation,
+            caller: selfUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
+        let msg2 = sut.appendSystemMessageIfNeeded(
+            callState: .terminating(reason: .canceled),
+            conversation: conversation,
+            caller: selfUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         // then
         XCTAssertNil(msg1)
@@ -121,10 +170,22 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
         let messageCount = conversation.allMessages.count
 
         // when
-        let msg1 = sut.appendSystemMessageIfNeeded(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
+        let msg1 = sut.appendSystemMessageIfNeeded(
+            callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            conversation: conversation,
+            caller: user,
+            timestamp: nil,
+            previousCallState: nil
+        )
         var msg2: ZMSystemMessage?
-        self.performIgnoringZMLogError {
-            msg2 = self.sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: self.conversation, caller: self.user, timestamp: nil, previousCallState: nil)
+        performIgnoringZMLogError {
+            msg2 = self.sut.appendSystemMessageIfNeeded(
+                callState: .terminating(reason: .canceled),
+                conversation: self.conversation,
+                caller: self.user,
+                timestamp: nil,
+                previousCallState: nil
+            )
         }
 
         // then

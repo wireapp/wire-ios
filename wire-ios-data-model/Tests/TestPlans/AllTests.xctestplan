@@ -14,6 +14,17 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
     ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireDataModel.xcodeproj",
+      "identifier" : "F9C9A5051CAD5DF10039E10C",
+      "name" : "WireDataModelTests"
+    },
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [

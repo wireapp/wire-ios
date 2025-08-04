@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMClearedMessages() async {
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
@@ -46,7 +46,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatLastClearedUpdatesInSelfConversationDontExpire() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.remoteIdentifier = UUID()
             self.syncConversation.clearedTimeStamp = Date()
@@ -64,7 +64,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
     func testThatClearingMessageHistoryDeletesAllMessages() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             self.syncConversation.remoteIdentifier = UUID()
             let message1 = try! self.syncConversation.appendText(content: "B") as! ZMMessage

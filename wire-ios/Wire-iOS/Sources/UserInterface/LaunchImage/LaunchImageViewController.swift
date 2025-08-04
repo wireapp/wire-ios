@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@ class LaunchImageViewController: UIViewController {
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
-    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning animation
+    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
+    /// animation
     func showLoadingScreen() {
         shouldShowLoadingScreenOnViewDidLoad = true
         loadingScreenLabel.isHidden = false

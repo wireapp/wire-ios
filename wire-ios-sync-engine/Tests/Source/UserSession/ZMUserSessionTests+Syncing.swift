@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     override func setUp() {
         super.setUp()
 
-        mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+        mockMLSService.repairOutOfSyncConversations_MockMethod = {}
 
         mockPushSupportedProtocolsActionHandler = .init(
             result: .success(()),
@@ -51,26 +51,22 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     func startQuickSync() {
         sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
         sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
+        sut.didStartIncrementalSync()
     }
 
     func finishQuickSync() {
         syncMOC.performAndWait {
             sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         }
+        sut.didFinishIncrementalSync(isRecovering: false)
     }
 
     func startSlowSync() {
-        syncMOC.performAndWait {
-            sut.applicationStatusDirectory.syncStatus.forceSlowSync()
-        }
+        sut.didStartInitialSync()
     }
 
     func finishSlowSync() {
-        syncMOC.performAndWait {
-            sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .lastSlowSyncPhase
-            sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
-
-        }
+        sut.didFinishInitialSync()
     }
 
     // MARK: Slow Sync
@@ -124,13 +120,14 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
-        var didNotify: Bool = false
+        var didNotify = false
 
         let token = NotificationInContext.addObserver(
             name: .initialSync,
-            context: uiMOC.notificationContext) { _ in
-                didNotify = true
-            }
+            context: uiMOC.notificationContext
+        ) { _ in
+            didNotify = true
+        }
 
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -188,7 +185,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(sut.isPerformingSync)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -205,7 +202,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         networkStateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

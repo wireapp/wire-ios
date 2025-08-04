@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,17 @@ extension UIBarButtonItem {
 
     typealias IconColors = SemanticColors.Icon
 
-    convenience init(icon: StyleKitIcon,
-                     style: UIBarButtonItem.Style = .plain,
-                     target: Any?,
-                     action: Selector?) {
+    convenience init(
+        icon: StyleKitIcon,
+        style: UIBarButtonItem.Style = .plain,
+        target: Any?,
+        action: Selector?
+    ) {
         self.init(
-            image: icon.makeImage(size: .tiny,
-                                  color: IconColors.foregroundDefaultBlack),
+            image: icon.makeImage(
+                size: .tiny,
+                color: IconColors.foregroundDefaultBlack
+            ),
             style: style,
             target: target,
             action: action

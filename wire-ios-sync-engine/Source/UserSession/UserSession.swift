@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Foundation
 import LocalAuthentication
 import WireDataModel
+import WireDomain
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
 public protocol UserSession: AnyObject {
 
     // MARK: - Mixed properties and methods
+
+    var isTornDown: Bool { get }
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
@@ -79,6 +84,10 @@ public protocol UserSession: AnyObject {
     /// Whether the user needs to be informed about configuration changes.
 
     var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
+
+    /// This property will be set or cleared depending on the user giving or removing consent for analytics tracking.
+
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)? { get }
 
     /// Unlocks the database.
 
@@ -211,6 +220,8 @@ public protocol UserSession: AnyObject {
 
     var mlsFeature: Feature.MLS { get }
 
+    var channelsFeature: Feature.Channels { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(
@@ -257,6 +268,8 @@ public protocol UserSession: AnyObject {
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
+    func makeAppendMultipartMessageUseCase() -> AppendMultipartMessageUseCaseProtocol
+
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
@@ -269,6 +282,12 @@ public protocol UserSession: AnyObject {
 
     func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol
 
+    func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase
+
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
+
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
+
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
@@ -277,4 +296,7 @@ public protocol UserSession: AnyObject {
 
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
+
+    /// Dependencies owned by the user session that require a client
+    var clientSessionComponent: ClientSessionComponent? { get }
 }

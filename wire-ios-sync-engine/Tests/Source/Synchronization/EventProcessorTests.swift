@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,10 +24,11 @@ import XCTest
 
 final class EventProcessorTests: MessagingTest {
 
-    struct MockError: Error { }
+    struct MockError: Error {}
 
     var sut: EventProcessor!
     var eventProcessingTracker: EventProcessingTracker!
+    var mockStrategyDirectory: MockStrategyDirectory!
     var mockEventsConsumers: [MockEventConsumer]!
     var mockEventAsyncConsumers: [MockEventAsyncConsumer]!
     var earService: MockEARServiceInterface!
@@ -41,6 +42,9 @@ final class EventProcessorTests: MessagingTest {
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
+        mockStrategyDirectory = MockStrategyDirectory()
+        mockStrategyDirectory.eventConsumers = mockEventsConsumers
+        mockStrategyDirectory.eventAsyncConsumers = mockEventAsyncConsumers
 
         eventProcessingTracker = EventProcessingTracker()
 
@@ -52,13 +56,14 @@ final class EventProcessorTests: MessagingTest {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            strategyDirectory: mockStrategyDirectory,
+            additionalEventConsumers: []
         )
     }
 
     override func tearDown() {
+        mockStrategyDirectory = nil
         mockEventsConsumers = nil
         mockEventAsyncConsumers = nil
         eventProcessingTracker = nil
@@ -113,16 +118,16 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
     }
 
     func testThatEventsAreNotForwardedToAllEventConsumers_WhenBuffered() async {
@@ -134,14 +139,14 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
     }
 
     func testThatEventsAreNotForwardedToAllEventConsumers_WhenDatabaseIsLocked() async throws {
@@ -168,10 +173,10 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
-        })
+        }
     }
 
     func testThatEventsAreForwardedToAllEventConsumers_WhenBufferedEventsAreProcessed() async throws {
@@ -185,16 +190,16 @@ final class EventProcessorTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        mockEventsConsumers.forEach({ mockEventConsumer in
+        mockEventsConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
 
-        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+        mockEventAsyncConsumers.forEach { mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
-        })
+        }
     }
 
     func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() async {
@@ -231,8 +236,8 @@ final class EventProcessorTests: MessagingTest {
             eventDecoder: eventDecoder,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers
+            strategyDirectory: mockStrategyDirectory,
+            additionalEventConsumers: []
         )
 
         // When

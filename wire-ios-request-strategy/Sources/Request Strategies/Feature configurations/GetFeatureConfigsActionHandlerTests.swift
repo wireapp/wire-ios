@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     }
 
     func mockResponse(status: Int, payload: ZMTransportData? = nil) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,
@@ -78,7 +78,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.valuesHTTPStatus200
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -109,7 +112,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
@@ -159,7 +162,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.empty
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -189,7 +195,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .disabled)
             XCTAssertEqual(mls.config, .init())
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
 
@@ -200,6 +206,11 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .disabled)
             XCTAssertEqual(mlsMigration.config, .init())
+
+            let channels = featureRepository.fetchChannels()
+            XCTAssertEqual(channels.status, .disabled)
+            XCTAssertEqual(channels.config, .init())
+
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -357,7 +368,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.mlsConfigV3
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -382,84 +396,84 @@ private enum JSONPayload {
     static let empty = "{}"
 
     static let valuesHTTPStatus200 =
-"""
-{
-    "conversationGuestLinks": {
-        "status": "enabled"
-    },
-    "mls": {
-        "status": "enabled",
-        "config": {
-            "supportedProtocols": [],
-            "defaultCipherSuite": 1,
-            "protocolToggleUsers": [],
-            "allowedCipherSuites": [
-                1
-            ],
-            "defaultProtocol": "mls"
-        }
-    },
-    "appLock": {
-        "config": {
-            "enforceAppLock": true,
-            "inactivityTimeoutSecs": 11
-        },
-        "status": "enabled"
-    },
-    "mlsMigration": {
-        "status": "enabled",
-        "config": {
-            "startTime": "2024-02-19T11:59:27.542Z",
-            "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
-        }
-    },
-    "mlsE2EId": {
-        "status": "enabled",
-        "config": {
-            "acmeDiscoveryUrl": "https://example.com",
-            "verificationExpiration": 70,
-            "crlProxy": "https://example.com",
-            "useProxyOnMobile": true
-        }
-    },
-    "conferenceCalling": {
-        "status": "enabled"
-    },
-    "fileSharing": {
-        "status": "enabled"
-    },
-    "digitalSignatures": {
-        "status": "enabled"
-    },
-    "classifiedDomains": {
-        "config": {
-            "domains": [
-                "foo"
-            ]
-        },
-        "status": "enabled"
-    },
-    "selfDeletingMessages": {
-        "status": "enabled",
-        "config": {
-            "enforcedTimeoutSeconds": 22
-        }
-    }
-}
-"""
-
-    static let mlsConfigV3 =
-    """
-    {
-        "mls": {
-            "status": "enabled",
-            "config": {
-                "defaultCipherSuite": 1,
-                "protocolToggleUsers": ["881b1824-a6e1-4a60-8cc3-14feabf6dec0"],
-                "allowedCipherSuites": [1],
-                "defaultProtocol": "proteus"
+        """
+        {
+            "conversationGuestLinks": {
+                "status": "enabled"
+            },
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "supportedProtocols": [],
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": [],
+                    "allowedCipherSuites": [
+                        1
+                    ],
+                    "defaultProtocol": "mls"
+                }
+            },
+            "appLock": {
+                "config": {
+                    "enforceAppLock": true,
+                    "inactivityTimeoutSecs": 11
+                },
+                "status": "enabled"
+            },
+            "mlsMigration": {
+                "status": "enabled",
+                "config": {
+                    "startTime": "2024-02-19T11:59:27.542Z",
+                    "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+                }
+            },
+            "mlsE2EId": {
+                "status": "enabled",
+                "config": {
+                    "acmeDiscoveryUrl": "https://example.com",
+                    "verificationExpiration": 70,
+                    "crlProxy": "https://example.com",
+                    "useProxyOnMobile": true
+                }
+            },
+            "conferenceCalling": {
+                "status": "enabled"
+            },
+            "fileSharing": {
+                "status": "enabled"
+            },
+            "digitalSignatures": {
+                "status": "enabled"
+            },
+            "classifiedDomains": {
+                "config": {
+                    "domains": [
+                        "foo"
+                    ]
+                },
+                "status": "enabled"
+            },
+            "selfDeletingMessages": {
+                "status": "enabled",
+                "config": {
+                    "enforcedTimeoutSeconds": 22
+                }
             }
         }
-    }
-    """
+        """
+
+    static let mlsConfigV3 =
+        """
+        {
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": ["881b1824-a6e1-4a60-8cc3-14feabf6dec0"],
+                    "allowedCipherSuites": [1],
+                    "defaultProtocol": "proteus"
+                }
+            }
+        }
+        """
 }

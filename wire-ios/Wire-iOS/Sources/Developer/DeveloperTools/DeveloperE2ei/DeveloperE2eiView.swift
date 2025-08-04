@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@ import WireUtilities
 
 struct DeveloperE2eiView: View {
 
-    @StateObject
-    var viewModel: DeveloperE2eiViewModel
+    @StateObject var viewModel: DeveloperE2eiViewModel
 
     var body: some View {
 
@@ -62,7 +61,9 @@ struct DeveloperE2eiView: View {
                 )
                 VStack(alignment: .leading) {
                     Button("Clear CRL expiration dates", action: { viewModel.removeAllExpirationDates() })
-                    footNote("Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points")
+                    footNote(
+                        "Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points"
+                    )
                 }
             }
 

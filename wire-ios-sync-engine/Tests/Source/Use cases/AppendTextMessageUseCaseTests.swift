@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +30,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendTextMessageUseCase!
 
@@ -56,7 +57,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod = { _, _, _, _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         // WHEN
         try sut.invoke(
@@ -69,21 +70,24 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.count, 1)
-        let appendTextInvocation = try XCTUnwrap(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first)
+        let appendTextInvocation = try XCTUnwrap(
+            mockConversation
+                .appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first
+        )
         XCTAssertEqual(appendTextInvocation.content, "some message")
         XCTAssertEqual(appendTextInvocation.mentions, [])
         XCTAssertEqual(appendTextInvocation.fetchLinkPreview, false)
 
         XCTAssertNil(mockConversation.draftMessage)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .textMessage,
             conversationType: .group,
             conversationSize: 0
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

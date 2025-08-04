@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireCountly
+import WireDomain
+import WireLogging
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -41,13 +44,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
-    private lazy var voIPPushManager: VoIPPushManager = {
-        return VoIPPushManager(
-            application: UIApplication.shared,
-            requiredPushTokenType: requiredPushTokenType,
-            pushTokenService: pushTokenService
-        )
-    }()
+    private lazy var voIPPushManager: VoIPPushManager = .init(
+        application: UIApplication.shared,
+        pushTokenService: pushTokenService
+    )
 
     private let pushTokenService = PushTokenService()
     private var launchOperations: [LaunchSequenceOperation] = [
@@ -65,6 +65,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private var appStateCalculator = AppStateCalculator()
 
     // MARK: - Private Set Property
+
     private(set) var appRootRouter: AppRootRouter?
     private(set) var launchType: ApplicationLaunchType = .unknown
 
@@ -74,12 +75,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
-        return SessionManager.shared?.unauthenticatedSession
+        SessionManager.shared?.unauthenticatedSession
     }
 
     var launchOptions: LaunchOptions = [:]
 
-    // TODO [WPB-9867]: remove this property
+    // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
         appRootRouter?.zClientViewController?.mediaPlaybackManager
@@ -90,29 +91,37 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // to require explict configuration of the self user.
 
     var shouldConfigureSelfUserProvider: Bool {
-        return true
+        true
     }
 
     var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
 
-    func application(_ application: UIApplication,
-                     willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+
+        #if DEBUG
+            resetApp()
+        #endif
 
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
-        guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
+        guard application.connectedScenes.count == 1,
+              let windowScene = application.connectedScenes.first as? UIWindowScene else {
             fatalError("Expected a single scene of type `UIWindowScene`")
         }
         mainWindow = .init(windowScene: windowScene)
 
+        setNavigationAppearance()
         // enable logs
         _ = Settings.shared
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        // Set up Datadog as logger
-        WireAnalytics.Datadog.enable()
+        // Set up Datadog and other loggers
+        WireAnalytics.setup(for: .app)
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -127,6 +136,66 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    #if DEBUG
+        private func resetApp() {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-resetData") {
+                resetFileSystem()
+                resetUserDefaults()
+                resetKeychain()
+                print("app reset done")
+            }
+        }
+    #endif
+
+    // MARK: - Reset
+
+    private func resetUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    private func resetKeychain() {
+        let secItemClasses = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+        for itemClass in secItemClasses {
+            let query: [String: Any] = [kSecClass as String: itemClass]
+            SecItemDelete(query as CFDictionary)
+        }
+    }
+
+    private func resetFileSystem() {
+        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+        AccountManager.delete(at: rootURL)
+        let fileManager = FileManager.default
+        let directories: [FileManager.SearchPathDirectory] = [
+            .documentDirectory,
+            .cachesDirectory,
+            .applicationSupportDirectory
+        ]
+
+        for dir in directories {
+            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                try? fileManager.removeItem(at: url)
+            }
+        }
+    }
+
+    private func setNavigationAppearance() {
+        let backIndicator = UIImage(resource: mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
+        UINavigationBar.appearance().backIndicatorImage = backIndicator
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
+    }
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         WireLogger.push.info(
             "application did register for remote notifications, storing standard token",
@@ -135,28 +204,43 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
 
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
 
-        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))")
+        WireLogger.appDelegate
+            .info(
+                "application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
+            )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(userSessionDidBecomeAvailable(_:)),
-                                               name: Notification.Name.ZMUserSessionDidBecomeAvailable,
-                                               object: nil)
+        // set internal name to lower layers like SyncEngine
+        Bundle.mainAppInternalName = Bundle.main.appInternalName
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userSessionDidBecomeAvailable(_:)),
+            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
+            object: nil
+        )
 
         self.launchOptions = launchOptions ?? [:]
 
+        _ = NSAttributedString.paragraphStyle
+
         setupWindowAndRootViewController()
 
-        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
+        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
+            .hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
-        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
+        WireLogger.appDelegate
+            .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
         return true
     }
@@ -176,7 +260,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch launchType {
         case .url,
-                .push:
+             .push:
             break
         default:
             launchType = .direct
@@ -199,9 +283,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         launchType = .unknown
     }
 
-    func application(_ app: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         WireLogger.appDelegate.info(
             "application:openURL:options",
             attributes: .safePublic
@@ -216,11 +302,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func application(_ application: UIApplication,
-                     performActionFor shortcutItem: UIApplicationShortcutItem,
-                     completionHandler: @escaping (Bool) -> Void) {
-        appRootRouter?.performQuickAction(for: shortcutItem,
-                                          completionHandler: completionHandler)
+    func application(
+        _ application: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        appRootRouter?.performQuickAction(
+            for: shortcutItem,
+            completionHandler: completionHandler
+        )
     }
 
     @objc
@@ -237,9 +327,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - URL handling
 
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         WireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
 
         return SessionManager.shared?.continueUserActivity(userActivity) ?? false
@@ -247,13 +339,23 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - BackgroundUpdates
 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        WireLogger.appDelegate.info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        WireLogger.appDelegate
+            .info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
 
-        launchType = (application.applicationState == .inactive || application.applicationState == .background) ? .push : .direct
+        launchType = (application.applicationState == .inactive || application.applicationState == .background) ?
+            .push :
+            .direct
     }
 
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(
+        _ application: UIApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
         appRootRouter?.performWhenAuthenticated {
@@ -261,16 +363,31 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-        WireLogger.appDelegate.info("application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)")
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        WireLogger.appDelegate
+            .info(
+                "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
+            )
 
         appRootRouter?.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
+            ZMUserSession.shared()?.application(
+                application,
+                handleEventsForBackgroundURLSession: identifier,
+                completionHandler: completionHandler
+            )
         }
     }
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
-        guard appRootRouter == nil else { return }
+        WireLogger.appDelegate.info("applicationProtectedDataDidBecomeAvailable", attributes: .safePublic)
+        guard appRootRouter == nil else {
+            WireLogger.appDelegate.debug("applicationProtectedDataDidBecomeAvailable: appRootRouter nil")
+            return
+        }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 }
@@ -287,57 +404,91 @@ private extension AppDelegate {
     private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
-        createAppRootRouter(launchOptions)
+        createAppRootRouter()
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    private func createAppRootRouter(_ launchOptions: LaunchOptions) {
-
-        guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
+    private func createAppRootRouter() {
+        let sessionManager: SessionManager
+        do {
+            sessionManager = try createSessionManager()
+        } catch {
             fatalError("sessionManager is not created")
+        }
+
+        guard mainWindow != nil else {
+            WireLogger.appDelegate.critical("no mainWindow this should not be possible at this point")
+            assertionFailure("no mainWindow this should not be possible at this point")
+            return
         }
 
         appRootRouter = AppRootRouter(
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(sessionManager: sessionManager)
+            trackingManager: TrackingManager(
+                sessionManager: sessionManager,
+                availabilityChecker: .default
+            )
         )
     }
 
-    private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {
+    private func createSessionManager() throws -> SessionManager {
+        let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
+            throw SessionManagerSetupError.missingCurrentAppVersion
+        }
+
+        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingCurrentBuildVersion
+        }
+
         guard
-            let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
-            let configuration = SessionManagerConfiguration.load(from: url),
-            let mediaManager = AVSMediaManager.sharedInstance()
+            let configuration = SessionManagerConfiguration.load(from: url)
         else {
-            return nil
+            throw SessionManagerSetupError.missingConfiguration
+        }
+
+        guard let mediaManager = AVSMediaManager.sharedInstance() else {
+            throw SessionManagerSetupError.missingMediaManager
         }
 
         configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
         let jailbreakDetector = JailbreakDetector()
 
-        // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS flag defined
+        // Get maxNumberAccounts form SecurityFlags or SessionManager.defaultMaxNumberAccounts if no MAX_NUMBER_ACCOUNTS
+        // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let sessionManager = SessionManager(
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
+        let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build()
+            deleteUserLogs: deleteAllAccountsLogs,
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
         )
 
         voIPPushManager.delegate = sessionManager
@@ -360,9 +511,14 @@ private extension AppDelegate {
         appRootRouter?.start(launchOptions: launchOptions)
     }
 
-    private var requiredPushTokenType: PushToken.TokenType {
-        // Previously VoIP push were available for iOS <15
-        // this forces transition to standard ones.
-        return .standard
-    }
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingCurrentAppVersion
+    case missingCurrentBuildVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
+
 }

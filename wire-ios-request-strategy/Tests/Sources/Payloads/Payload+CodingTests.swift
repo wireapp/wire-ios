@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 import Foundation
 import XCTest
 
-@testable import WireRequestStrategy
 import WireTransport
+@testable import WireRequestStrategy
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
 
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     typealias InitCall = (Decoder, APIVersion)
 
@@ -42,11 +42,11 @@ private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
         mockEncode?(encoder, apiVersion)
     }
 
-    init() { }
+    init() {}
 }
 
 private struct CodableObject: Codable {
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     var initCalls = [Decoder]()
 
@@ -62,7 +62,7 @@ private struct CodableObject: Codable {
         mockEncode?(encoder)
     }
 
-    init() { }
+    init() {}
 }
 
 class Payload_CodingTests: XCTestCase {

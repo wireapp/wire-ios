@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 import XCTest
@@ -79,7 +80,11 @@ final class ZMHotFixTests_Integration: MessagingTest {
             let incomingMessage = try! oneOnOneConversation.appendText(content: "Test") as! ZMClientMessage
             let confirmation = Confirmation(messageId: incomingMessage.nonce!, type: .delivered)
 
-            confirmationMessage = try! oneOnOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
+            confirmationMessage = try! oneOnOneConversation.appendClientMessage(
+                with: GenericMessage(content: confirmation),
+                expires: false,
+                hidden: true
+            )
 
             self.syncMOC.saveOrRollback()
 
@@ -95,7 +100,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "54.0.1")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             self.syncMOC.saveOrRollback()
@@ -123,7 +128,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "235.0.1")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -151,12 +156,12 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "238.0.1")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
-            ZMUser.selfUser(in: self.syncMOC).team?.members.forEach({ member in
+            ZMUser.selfUser(in: self.syncMOC).team?.members.forEach { member in
                 XCTAssertTrue(member.needsToBeUpdatedFromBackend)
-            })
+            }
         }
     }
 
@@ -175,7 +180,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "280.0.1")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -201,7 +206,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "381.0.1")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             // THEN
@@ -238,7 +243,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
                 sut!.applyPatches(forCurrentVersion: "412.3.3")
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             // THEN
@@ -281,7 +286,7 @@ final class ZMHotFixTests_Integration: MessagingTest {
 
         // WHEN
         let sut = ZMHotFix(syncMOC: context)
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             context.performAndWait {
                 sut!.applyPatches(forCurrentVersion: "432.1.0")
             }

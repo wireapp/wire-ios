@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 @testable import WireDataModel
 
-fileprivate extension Notification {
+private extension Notification {
 
     init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
         self.init(name: .NSManagedObjectContextDidSave, userInfo: [
@@ -193,7 +193,10 @@ class ShareObjectStoreTests: ZMTBaseTest {
         // Given
 
         // Module prefix before project rename
-        NSKeyedArchiver.setClassName("ZMCDataModel.SharedObjectTestClass", for: WireDataModel.SharedObjectTestClass.self)
+        NSKeyedArchiver.setClassName(
+            "ZMCDataModel.SharedObjectTestClass",
+            for: WireDataModel.SharedObjectTestClass.self
+        )
         let item = WireDataModel.SharedObjectTestClass()
         item.flag = true
 

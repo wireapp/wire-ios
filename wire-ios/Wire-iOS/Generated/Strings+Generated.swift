@@ -277,8 +277,8 @@ internal enum L10n {
     }
     internal enum ContactsList {
       internal enum CancelButton {
-        /// Close contact list
-        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close contact list")
+        /// Close new conversation overview
+        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close new conversation overview")
       }
       internal enum ExternalIcon {
         /// External
@@ -329,6 +329,12 @@ internal enum L10n {
       internal enum CodeButton {
         /// Use code format
         internal static let description = L10n.tr("Accessibility", "conversation.codeButton.description", fallback: "Use code format")
+      }
+      internal enum Create {
+        internal enum Channel {
+          /// Go back to new conversation overview
+          internal static let back = L10n.tr("Accessibility", "conversation.create.channel.back", fallback: "Go back to new conversation overview")
+        }
       }
       internal enum EmphemeralButton {
         /// Set a timer for self-deleting messages
@@ -555,8 +561,8 @@ internal enum L10n {
     }
     internal enum ConversationList {
       internal enum StartConversationButton {
-        /// Create group or search for people
-        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create group or search for people")
+        /// Create a group or channel, or search for people
+        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create a group or channel, or search for people")
       }
     }
     internal enum ConversationSearch {
@@ -665,32 +671,48 @@ internal enum L10n {
           /// Show all conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.description", fallback: "Show all conversations")
           internal enum Selected {
-            /// Show all conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "Show all conversations")
+            /// All conversations, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "All conversations, selected")
+          }
+        }
+        internal enum Channels {
+          /// Show all channel conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.description", fallback: "Show all channel conversations")
+          internal enum Selected {
+            /// Channels, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.selected.description", fallback: "Channels, selected")
           }
         }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
           internal enum Selected {
-            /// Show all favorite conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Show all favorite conversations")
+            /// Favorites, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Favorites, selected")
+          }
+        }
+        internal enum Folders {
+          /// Folders
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.description", fallback: "Folders")
+          internal enum Selected {
+            /// Folder, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.selected.description", fallback: "Folder, selected")
           }
         }
         internal enum Groups {
           /// Show all group conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.description", fallback: "Show all group conversations")
           internal enum Selected {
-            /// Show all group conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Show all group conversations")
+            /// Groups, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Groups, selected")
           }
         }
         internal enum OneOnOne {
           /// Show all one on one conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
           internal enum Selected {
-            /// Show all one on one conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "Show all one on one conversations")
+            /// One-to-one conversations, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "One-to-one conversations, selected")
           }
         }
       }
@@ -703,6 +725,16 @@ internal enum L10n {
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
+        internal enum Avatar {
+          internal enum Channel {
+            /// Channel
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.channel.label", fallback: "Channel")
+          }
+          internal enum Group {
+            /// Group
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.group.label", fallback: "Group")
+          }
+        }
       }
       internal enum JoinButton {
         /// Join
@@ -737,18 +769,6 @@ internal enum L10n {
       internal enum BackButton {
         /// Go back to contact list
         internal static let description = L10n.tr("Accessibility", "createConversation.backButton.description", fallback: "Go back to contact list")
-      }
-      internal enum HideSettings {
-        /// Double tap to hide settings
-        internal static let hint = L10n.tr("Accessibility", "createConversation.hideSettings.hint", fallback: "Double tap to hide settings")
-      }
-      internal enum OpenSettings {
-        /// Double tap to open settings
-        internal static let hint = L10n.tr("Accessibility", "createConversation.openSettings.hint", fallback: "Double tap to open settings")
-      }
-      internal enum SearchView {
-        /// Type group name
-        internal static let description = L10n.tr("Accessibility", "createConversation.searchView.description", fallback: "Type group name")
       }
       internal enum SelectedUser {
         /// Double tap to deselect
@@ -844,6 +864,10 @@ internal enum L10n {
       }
     }
     internal enum MessageAction {
+      internal enum CollapseButton {
+        /// Collapse
+        internal static let description = L10n.tr("Accessibility", "messageAction.collapseButton.description", fallback: "Collapse")
+      }
       internal enum CopyButton {
         /// Copy picture
         internal static let description = L10n.tr("Accessibility", "messageAction.copyButton.description", fallback: "Copy picture")
@@ -895,6 +919,14 @@ internal enum L10n {
       internal enum BackButton {
         /// Go back to Options
         internal static let description = L10n.tr("Accessibility", "optionsSettings.backButton.description", fallback: "Go back to Options")
+      }
+    }
+    internal enum Peoplepicker {
+      internal enum UpgradeBanner {
+        internal enum CloseButton {
+          /// Close team creation option
+          internal static let label = L10n.tr("Accessibility", "peoplepicker.upgrade_banner.close_button.label", fallback: "Close team creation option")
+        }
       }
     }
     internal enum PictureView {
@@ -1069,12 +1101,20 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
       }
     }
+    internal enum WebAuth {
+      internal enum UrlLabel {
+        /// Identity Provider URL
+        internal static let description = L10n.tr("Accessibility", "webAuth.urlLabel.description", fallback: "Identity Provider URL")
+        /// Select to open the complete URL.
+        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Select to open the complete URL.")
+      }
+    }
   }
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
     /// *  Wire
-    ///  *  Copyright (C) 2024 Wire Swiss GmbH
+    ///  *  Copyright (C) 2025 Wire Swiss GmbH
     ///  *
     ///  *  This program is free software: you can redistribute it and/or modify
     ///  *  it under the terms of the GNU General Public License as published by
@@ -1145,16 +1185,16 @@ internal enum L10n {
     }
     internal enum AddParticipants {
       internal enum Alert {
-        /// The group is full
-        internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The group is full")
+        /// The conversation is full
+        internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The conversation is full")
         internal enum Message {
-          /// Up to %1$d people can join a conversation. Currently there is only room for %2$d more.
-          internal static func existingConversation(_ p1: Int, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", p1, p2, fallback: "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.")
+          /// Up to %@ people can join a conversation. Currently there is only room for %@ more.
+          internal static func existingConversation(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", String(describing: p1), String(describing: p2), fallback: "Up to %@ people can join a conversation. Currently there is only room for %@ more.")
           }
-          /// Up to %d people can join a conversation.
-          internal static func newConversation(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", p1, fallback: "Up to %d people can join a conversation.")
+          /// Up to %@ people can join a conversation.
+          internal static func newConversation(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", String(describing: p1), fallback: "Up to %@ people can join a conversation.")
           }
         }
       }
@@ -1523,6 +1563,12 @@ internal enum L10n {
       /// AE/AF Lock
       internal static let aeafLock = L10n.tr("Localizable", "camera_controls.aeaf_lock", fallback: "AE/AF Lock")
     }
+    internal enum ChannelAccessLevel {
+      /// Private
+      internal static let `private` = L10n.tr("Localizable", "channel_access_level.private", fallback: "Private")
+      /// Public
+      internal static let `public` = L10n.tr("Localizable", "channel_access_level.public", fallback: "Public")
+    }
     internal enum Collections {
       internal enum ImageViewer {
         internal enum Copied {
@@ -1660,6 +1706,32 @@ internal enum L10n {
       }
     }
     internal enum Content {
+      internal enum Collapsed {
+        internal enum Audio {
+          /// You sent an audio message
+          internal static let title = L10n.tr("Localizable", "content.collapsed.audio.title", fallback: "You sent an audio message")
+        }
+        internal enum File {
+          /// You sent a file
+          internal static let title = L10n.tr("Localizable", "content.collapsed.file.title", fallback: "You sent a file")
+        }
+        internal enum Image {
+          /// You sent a picture
+          internal static let title = L10n.tr("Localizable", "content.collapsed.image.title", fallback: "You sent a picture")
+        }
+        internal enum Link {
+          /// You sent a link
+          internal static let title = L10n.tr("Localizable", "content.collapsed.link.title", fallback: "You sent a link")
+        }
+        internal enum Location {
+          /// You sent your location
+          internal static let title = L10n.tr("Localizable", "content.collapsed.location.title", fallback: "You sent your location")
+        }
+        internal enum Video {
+          /// You sent a video
+          internal static let title = L10n.tr("Localizable", "content.collapsed.video.title", fallback: "You sent a video")
+        }
+      }
       internal enum File {
         /// Browse
         internal static let browse = L10n.tr("Localizable", "content.file.browse", fallback: "Browse")
@@ -1689,6 +1761,8 @@ internal enum L10n {
         internal static let saveImage = L10n.tr("Localizable", "content.image.save_image", fallback: "Save")
       }
       internal enum Message {
+        /// Collapse
+        internal static let collapse = L10n.tr("Localizable", "content.message.collapse", fallback: "Collapse")
         /// Copy
         internal static let copy = L10n.tr("Localizable", "content.message.copy", fallback: "Copy")
         /// Delete
@@ -1699,6 +1773,8 @@ internal enum L10n {
         internal static let details = L10n.tr("Localizable", "content.message.details", fallback: "Details")
         /// Download
         internal static let download = L10n.tr("Localizable", "content.message.download", fallback: "Download")
+        /// Edited
+        internal static let edited = L10n.tr("Localizable", "content.message.edited", fallback: "Edited")
         /// Reveal
         internal static let goToConversation = L10n.tr("Localizable", "content.message.go_to_conversation", fallback: "Reveal")
         /// Like
@@ -1826,8 +1902,14 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
-        /// Delivered
-        internal static let messageDeliveredTimestamp = L10n.tr("Localizable", "content.system.message_delivered_timestamp", fallback: "Delivered")
+        /// %@ set conversation history to %@
+        internal static func messageHistoryDepth(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@")
+        }
+        /// %@ disabled conversation history
+        internal static func messageHistoryDepthDisabled(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
+        }
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_read_receipt_off", String(describing: p1), fallback: "%@ turned read receipts off for everyone")
@@ -1846,10 +1928,6 @@ internal enum L10n {
         }
         /// Read receipts are on
         internal static let messageReadReceiptOnAddToGroup = L10n.tr("Localizable", "content.system.message_read_receipt_on_add_to_group", fallback: "Read receipts are on")
-        /// Seen
-        internal static let messageReadTimestamp = L10n.tr("Localizable", "content.system.message_read_timestamp", fallback: "Seen")
-        /// Sent
-        internal static let messageSentTimestamp = L10n.tr("Localizable", "content.system.message_sent_timestamp", fallback: "Sent")
         /// %@ set the message timer to %@
         internal static func messageTimerChanges(_ p1: Any, _ p2: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_changes", String(describing: p1), String(describing: p2), fallback: "%@ set the message timer to %@")
@@ -1916,8 +1994,6 @@ internal enum L10n {
         }
         /// You
         internal static let participantsYou = L10n.tr("Localizable", "content.system.participants_you", fallback: "You")
-        /// Sending…
-        internal static let pendingMessageTimestamp = L10n.tr("Localizable", "content.system.pending_message_timestamp", fallback: "Sending…")
         /// Plural format key: "%@%#@d_number_of_others@ started using %#@d_new_devices@"
         internal static func peopleStartedUsing(_ p1: Any, _ p2: Int, _ p3: Int) -> String {
           return L10n.tr("Localizable", "content.system.people_started_using", String(describing: p1), p2, p3, fallback: "Plural format key: \"%@%#@d_number_of_others@ started using %#@d_new_devices@\"")
@@ -1934,6 +2010,8 @@ internal enum L10n {
         internal static func unverifiedSelfDevices(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.unverified_self_devices", String(describing: p1), fallback: "You unverified one of [your devices](%@)")
         }
+        /// This user is no longer available
+        internal static let userRemovedFromTeam = L10n.tr("Localizable", "content.system.user_removed_from_team", fallback: "This user is no longer available")
         /// Verify devices
         internal static let verifyDevices = L10n.tr("Localizable", "content.system.verify_devices", fallback: "Verify devices")
         /// you
@@ -2013,6 +2091,32 @@ internal enum L10n {
           }
           /// You can now decrypt messages from yourself. To recover lost messages, you need to resend them.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
+        }
+        internal enum Channel {
+          internal enum Guest {
+            /// %@ joined the channel
+            internal static func joined(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.guest.joined", String(describing: p1), fallback: "%@ joined the channel")
+            }
+            /// You joined the channel
+            internal static let youJoined = L10n.tr("Localizable", "content.system.channel.guest.you_joined", fallback: "You joined the channel")
+          }
+          internal enum Invite {
+            /// Copy Channel link
+            internal static let button = L10n.tr("Localizable", "content.system.channel.invite.button", fallback: "Copy Channel link")
+            /// This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:
+            internal static let title = L10n.tr("Localizable", "content.system.channel.invite.title", fallback: "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:")
+          }
+          internal enum WithName {
+            /// %@ started the channel
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title", String(describing: p1), fallback: "%@ started the channel")
+            }
+            /// %@ started the channel
+            internal static func titleYou(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title-you", String(describing: p1), fallback: "%@ started the channel")
+            }
+          }
         }
         internal enum Conversation {
           internal enum Guest {
@@ -2326,6 +2430,8 @@ internal enum L10n {
     }
     internal enum Conversation {
       internal enum Action {
+        /// Conversation Details
+        internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }
@@ -2344,14 +2450,44 @@ internal enum L10n {
         }
         /// Externals
         internal static let externals = L10n.tr("Localizable", "conversation.banner.externals", fallback: "Externals")
+        /// Externals and guests are present
+        internal static let externalsGuestsPresent = L10n.tr("Localizable", "conversation.banner.externals_guests_present", fallback: "Externals and guests are present")
+        /// Externals, guests and services are present
+        internal static let externalsGuestsServicesPresent = L10n.tr("Localizable", "conversation.banner.externals_guests_services_present", fallback: "Externals, guests and services are present")
+        /// Externals are present
+        internal static let externalsPresent = L10n.tr("Localizable", "conversation.banner.externals_present", fallback: "Externals are present")
+        /// Externals and services are present
+        internal static let externalsServicesPresent = L10n.tr("Localizable", "conversation.banner.externals_services_present", fallback: "Externals and services are present")
         /// Guests
         internal static let guests = L10n.tr("Localizable", "conversation.banner.guests", fallback: "Guests")
+        /// Guests are present
+        internal static let guestsPresent = L10n.tr("Localizable", "conversation.banner.guests_present", fallback: "Guests are present")
+        /// Guests and services are present
+        internal static let guestsServicesPresent = L10n.tr("Localizable", "conversation.banner.guests_services_present", fallback: "Guests and services are present")
         /// Federated users
         internal static let remotes = L10n.tr("Localizable", "conversation.banner.remotes", fallback: "Federated users")
+        /// Federated users, externals and guests are present
+        internal static let remotesExternalsGuestsPresent = L10n.tr("Localizable", "conversation.banner.remotes_externals_guests_present", fallback: "Federated users, externals and guests are present")
+        /// Federated users, externals, guests and services are present
+        internal static let remotesExternalsGuestsServicesPresent = L10n.tr("Localizable", "conversation.banner.remotes_externals_guests_services_present", fallback: "Federated users, externals, guests and services are present")
+        /// Federated users and externals are present
+        internal static let remotesExternalsPresent = L10n.tr("Localizable", "conversation.banner.remotes_externals_present", fallback: "Federated users and externals are present")
+        /// Federated users, externals and services are present
+        internal static let remotesExternalsServicesPresent = L10n.tr("Localizable", "conversation.banner.remotes_externals_services_present", fallback: "Federated users, externals and services are present")
+        /// Federated users and guests are present
+        internal static let remotesGuestsPresent = L10n.tr("Localizable", "conversation.banner.remotes_guests_present", fallback: "Federated users and guests are present")
+        /// Federated users, guests and services are present
+        internal static let remotesGuestsServicesPresent = L10n.tr("Localizable", "conversation.banner.remotes_guests_services_present", fallback: "Federated users, guests and services are present")
+        /// Federated users are present
+        internal static let remotesPresent = L10n.tr("Localizable", "conversation.banner.remotes_present", fallback: "Federated users are present")
+        /// Federated users and services are present
+        internal static let remotesServicesPresent = L10n.tr("Localizable", "conversation.banner.remotes_services_present", fallback: "Federated users and services are present")
         ///  and 
         internal static let separator = L10n.tr("Localizable", "conversation.banner.separator", fallback: " and ")
         /// Services
         internal static let services = L10n.tr("Localizable", "conversation.banner.services", fallback: "Services")
+        /// Services are active
+        internal static let servicesActive = L10n.tr("Localizable", "conversation.banner.services_active", fallback: "Services are active")
       }
       internal enum Call {
         internal enum ManyParticipantsConfirmation {
@@ -2372,6 +2508,14 @@ internal enum L10n {
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
       }
       internal enum Create {
+        internal enum Channel {
+          /// Back
+          internal static let back = L10n.tr("Localizable", "conversation.create.channel.back", fallback: "Back")
+          /// Next
+          internal static let next = L10n.tr("Localizable", "conversation.create.channel.next", fallback: "Next")
+          /// New channel
+          internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
+        }
         internal enum GroupName {
           /// Group name
           internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")
@@ -2401,25 +2545,21 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
         internal enum NonFederatingDomainsError {
-          /// Discard Group Creation
-          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Group Creation")
+          /// Discard Conversation Creation
+          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Conversation Creation")
           /// Edit Participants List
           internal static let editParticipantList = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.edit_participant_list", fallback: "Edit Participants List")
           /// Learn More
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.learn_more", fallback: "Learn More")
-          /// People from backends %@ can't join the same group conversation.
-          /// To create the group, remove affected participants.
+          /// People from backends %@ can't join the same conversation.
+          /// To create the conversation, remove affected participants.
           internal static func message(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.")
+            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.")
           }
-          /// Group can't be created
-          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
+          /// Conversation can't be created
+          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Conversation can't be created")
         }
         internal enum Options {
-          /// Guests: %@, Services: %@, Read receipts: %@
-          internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
-            return L10n.tr("Localizable", "conversation.create.options.subtitle", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Guests: %@, Services: %@, Read receipts: %@")
-          }
           /// CONVERSATION OPTIONS
           internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "CONVERSATION OPTIONS")
         }
@@ -2459,10 +2599,6 @@ internal enum L10n {
         internal static func title(_ p1: Any) -> String {
           return L10n.tr("Localizable", "conversation.delete_request_error_dialog.title", String(describing: p1), fallback: "An error occurred while trying to delete the group %@. Please try again.")
         }
-      }
-      internal enum Displayname {
-        /// Empty group conversation
-        internal static let emptygroup = L10n.tr("Localizable", "conversation.displayname.emptygroup", fallback: "Empty group conversation")
       }
       internal enum InputBar {
         /// Cancel reply
@@ -2763,6 +2899,12 @@ internal enum L10n {
           /// Connect with others or create a new group to start collaborating!
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
         }
+        internal enum Channels {
+          /// Learn more about channels
+          internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.link", fallback: "Learn more about channels")
+          /// Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.subheadline", fallback: "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.")
+        }
         internal enum Favorite {
           /// How to label conversations as favorites
           internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")
@@ -2783,15 +2925,41 @@ internal enum L10n {
             return L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.subheadline", String(describing: p1), fallback: "You have no contacts yet.\nSearch for people on %@ and get connected.")
           }
         }
+        internal enum Search {
+          /// Connect with People
+          internal static let connectButton = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.connect_button", fallback: "Connect with People")
+          internal enum Button {
+            /// Start a new Conversation
+            internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.button.ipad", fallback: "Start a new Conversation")
+            /// New Conversation
+            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.button.phone", fallback: "New Conversation")
+          }
+          internal enum Subheadline {
+            /// No results found.
+            internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.ipad", fallback: "No results found.")
+            /// No conversations could be found.
+            /// 
+            /// Connect with people or start a new group conversation:
+            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.phone", fallback: "No conversations could be found.\n\nConnect with people or start a new group conversation:")
+          }
+        }
       }
       internal enum Filter {
         internal enum AllConversations {
           /// All Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
         }
+        internal enum Channels {
+          /// Channels
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.channels.title", fallback: "Channels")
+        }
         internal enum Favorites {
           /// Favorites
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
+        }
+        internal enum Folders {
+          /// Folders
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.folders.title", fallback: "Folders")
         }
         internal enum Groups {
           /// Groups
@@ -2835,8 +3003,14 @@ internal enum L10n {
         }
       }
       internal enum SearchBar {
+        /// Search channels
+        internal static let channelsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.channelsPlaceholder", fallback: "Search channels")
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
+        /// Search %@
+        internal static func foldersPlaceholder(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.search_bar.foldersPlaceholder", String(describing: p1), fallback: "Search %@")
+        }
         /// Search groups
         internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
         /// Search 1:1 conversations
@@ -3115,6 +3289,8 @@ internal enum L10n {
     internal enum EnrollE2eiCertificate {
       /// Certificate Details
       internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// Identity Provider URL
+      internal static let idpUrlTitle = L10n.tr("Localizable", "enroll_e2ei_certificate.idp_url_title", fallback: "Identity Provider URL")
       /// OK
       internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
       /// The certificate is active and your device is verified.
@@ -3129,30 +3305,6 @@ internal enum L10n {
       internal static let fullName = L10n.tr("Localizable", "error.full_name", fallback: "Please enter your full name")
       /// Please enter your full name and a valid email address
       internal static let nameAndEmail = L10n.tr("Localizable", "error.name_and_email", fallback: "Please enter your full name and a valid email address")
-      /// Couldn’t update your password.
-      internal static let updatingPassword = L10n.tr("Localizable", "error.updating_password", fallback: "Couldn’t update your password.")
-      internal enum Call {
-        /// Please try calling again in several minutes.
-        internal static let general = L10n.tr("Localizable", "error.call.general", fallback: "Please try calling again in several minutes.")
-        /// Please cancel the cellular call before calling on Wire.
-        internal static let gsmOngoing = L10n.tr("Localizable", "error.call.gsm_ongoing", fallback: "Please cancel the cellular call before calling on Wire.")
-        /// You might experience issues during the call
-        internal static let slowConnection = L10n.tr("Localizable", "error.call.slow_connection", fallback: "You might experience issues during the call")
-        internal enum General {
-          /// Call error
-          internal static let title = L10n.tr("Localizable", "error.call.general.title", fallback: "Call error")
-        }
-        internal enum GsmOngoing {
-          /// Cellular call
-          internal static let title = L10n.tr("Localizable", "error.call.gsm_ongoing.title", fallback: "Cellular call")
-        }
-        internal enum SlowConnection {
-          /// Call anyway
-          internal static let callAnyway = L10n.tr("Localizable", "error.call.slow_connection.call_anyway", fallback: "Call anyway")
-          /// Slow connection
-          internal static let title = L10n.tr("Localizable", "error.call.slow_connection.title", fallback: "Slow connection")
-        }
-      }
       internal enum Connection {
         /// Your backend does not federate with the backend of %@. You can not connect with them.
         internal static func federationDeniedMessage(_ p1: Any) -> String {
@@ -3251,6 +3403,8 @@ internal enum L10n {
         internal static let networkError = L10n.tr("Localizable", "error.user.network_error", fallback: "There seems to be a problem with your network. Please try again later.")
         /// Something went wrong. Please try again.
         internal static let registrationUnknownError = L10n.tr("Localizable", "error.user.registration_unknown_error", fallback: "Something went wrong. Please try again.")
+        /// Too many requests, please try again later.
+        internal static let tooManyRequests = L10n.tr("Localizable", "error.user.too_many_requests", fallback: "Too many requests, please try again later.")
         /// Something went wrong, please try again
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
         /// Please enter a valid verification code.
@@ -3289,10 +3443,10 @@ internal enum L10n {
         internal static let genericTitle = L10n.tr("Localizable", "feature_config.alert.generic_title", fallback: "Team settings changed")
         internal enum ConversationGuestLinks {
           internal enum Message {
-            /// Generating guest links is now disabled for all group admins.
-            internal static let disabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.disabled", fallback: "Generating guest links is now disabled for all group admins.")
-            /// Generating guest links is now enabled for all group admins.
-            internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all group admins.")
+            /// Generating guest links is now disabled for all conversation admins.
+            internal static let disabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.disabled", fallback: "Generating guest links is now disabled for all conversation admins.")
+            /// Generating guest links is now enabled for all conversation admins.
+            internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all conversation admins.")
           }
         }
         internal enum MlsE2ei {
@@ -3481,6 +3635,8 @@ internal enum L10n {
       internal static let on = L10n.tr("Localizable", "general.on", fallback: "On")
       /// Open Wire Settings
       internal static let openSettings = L10n.tr("Localizable", "general.open_settings", fallback: "Open Wire Settings")
+      /// or
+      internal static let or = L10n.tr("Localizable", "general.or", fallback: "or")
       /// Paste
       internal static let paste = L10n.tr("Localizable", "general.paste", fallback: "Paste")
       /// Service
@@ -3517,13 +3673,17 @@ internal enum L10n {
       }
     }
     internal enum GroupDetails {
+      internal enum AccessOptionsCell {
+        /// Channel access
+        internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
+      }
       internal enum ConversationAdminsHeader {
-        /// Group admins
-        internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Group admins")
+        /// Conversation admins
+        internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Conversation admins")
       }
       internal enum ConversationMembersHeader {
-        /// Group members
-        internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Group members")
+        /// Conversation members
+        internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Conversation members")
       }
       internal enum ConversationVerificationStatus {
         /// Verified (End-to-end Identity)
@@ -3969,16 +4129,6 @@ internal enum L10n {
           return L10n.tr("Localizable", "list.connect_request.people_waiting", p1, fallback: "Plural format key: \"%#@d_number_of_people@ waiting\"")
         }
       }
-      internal enum Section {
-        /// People
-        internal static let contacts = L10n.tr("Localizable", "list.section.contacts", fallback: "People")
-        /// Favorites
-        internal static let favorites = L10n.tr("Localizable", "list.section.favorites", fallback: "Favorites")
-        /// Groups
-        internal static let groups = L10n.tr("Localizable", "list.section.groups", fallback: "Groups")
-        /// Requests
-        internal static let requests = L10n.tr("Localizable", "list.section.requests", fallback: "Requests")
-      }
     }
     internal enum Location {
       internal enum Error {
@@ -4198,10 +4348,10 @@ internal enum L10n {
         internal static let clearContent = L10n.tr("Localizable", "meta.menu.clear_content", fallback: "Clear Content…")
         /// Notifications…
         internal static let configureNotifications = L10n.tr("Localizable", "meta.menu.configure_notifications", fallback: "Notifications…")
-        /// Delete Group…
-        internal static let delete = L10n.tr("Localizable", "meta.menu.delete", fallback: "Delete Group…")
-        /// Leave Group…
-        internal static let leave = L10n.tr("Localizable", "meta.menu.leave", fallback: "Leave Group…")
+        /// Delete Conversation…
+        internal static let delete = L10n.tr("Localizable", "meta.menu.delete", fallback: "Delete Conversation…")
+        /// Leave Conversation…
+        internal static let leave = L10n.tr("Localizable", "meta.menu.leave", fallback: "Leave Conversation…")
         /// Mark as Read
         internal static let markRead = L10n.tr("Localizable", "meta.menu.mark_read", fallback: "Mark as Read")
         /// Mark as Unread
@@ -4335,16 +4485,6 @@ internal enum L10n {
           internal static let google = L10n.tr("Localizable", "open_link.maps.option.google", fallback: "Google Maps")
         }
       }
-      internal enum Twitter {
-        internal enum Option {
-          /// Browser / Twitter
-          internal static let `default` = L10n.tr("Localizable", "open_link.twitter.option.default", fallback: "Browser / Twitter")
-          /// Tweetbot
-          internal static let tweetbot = L10n.tr("Localizable", "open_link.twitter.option.tweetbot", fallback: "Tweetbot")
-          /// Twitterrific
-          internal static let twitterrific = L10n.tr("Localizable", "open_link.twitter.option.twitterrific", fallback: "Twitterrific")
-        }
-      }
     }
     internal enum Participants {
       /// Add
@@ -4391,9 +4531,9 @@ internal enum L10n {
           internal static let footer = L10n.tr("Localizable", "participants.section.members.footer", fallback: "There are no members.")
         }
         internal enum Name {
-          /// Up to %1$d participants can join a group conversation.
-          internal static func footer(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "participants.section.name.footer", p1, fallback: "Up to %1$d participants can join a group conversation.")
+          /// Up to %@ participants can join a conversation.
+          internal static func footer(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "participants.section.name.footer", String(describing: p1), fallback: "Up to %@ participants can join a conversation.")
           }
         }
       }
@@ -4421,14 +4561,10 @@ internal enum L10n {
       internal static let hideSearchResult = L10n.tr("Localizable", "peoplepicker.hide_search_result", fallback: "Hide")
       /// Hiding…
       internal static let hideSearchResultProgress = L10n.tr("Localizable", "peoplepicker.hide_search_result_progress", fallback: "Hiding…")
-      /// Invite more people
-      internal static let inviteMorePeople = L10n.tr("Localizable", "peoplepicker.invite_more_people", fallback: "Invite more people")
       /// Invite people to join the team
       internal static let inviteTeamMembers = L10n.tr("Localizable", "peoplepicker.invite_team_members", fallback: "Invite people to join the team")
       /// No Contacts.
       internal static let noContactsTitle = L10n.tr("Localizable", "peoplepicker.no_contacts_title", fallback: "No Contacts.")
-      /// No results.
-      internal static let noMatchingResultsAfterAddressBookUploadTitle = L10n.tr("Localizable", "peoplepicker.no_matching_results_after_address_book_upload_title", fallback: "No results.")
       /// No matching results. Try entering a different name.
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
@@ -4484,6 +4620,10 @@ internal enum L10n {
         }
         /// Top people
         internal static let topPeople = L10n.tr("Localizable", "peoplepicker.header.top_people", fallback: "Top people")
+      }
+      internal enum NavigationHeader {
+        /// New conversation
+        internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
       }
       internal enum NoMatchingResults {
         internal enum Action {
@@ -4561,11 +4701,15 @@ internal enum L10n {
           return L10n.tr("Localizable", "peoplepicker.suggested.knows_two", String(describing: p1), String(describing: p2), fallback: "Knows %@ and %@")
         }
       }
-      internal enum Title {
-        /// Add participants
-        internal static let addToConversation = L10n.tr("Localizable", "peoplepicker.title.add_to_conversation", fallback: "Add participants")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.title.create_conversation", fallback: "Create group")
+      internal enum UpgradeBanner {
+        /// Channels are available for team members.
+        internal static let headline = L10n.tr("Localizable", "peoplepicker.upgrade_banner.headline", fallback: "Channels are available for team members.")
+        /// Create a team and start collaborating for free!
+        internal static let subheadline = L10n.tr("Localizable", "peoplepicker.upgrade_banner.subheadline", fallback: "Create a team and start collaborating for free!")
+        internal enum Button {
+          /// Create Wire Team
+          internal static let title = L10n.tr("Localizable", "peoplepicker.upgrade_banner.button.title", fallback: "Create Wire Team")
+        }
       }
     }
     internal enum Profile {
@@ -4583,10 +4727,10 @@ internal enum L10n {
       internal static let openConversationButtonTitle = L10n.tr("Localizable", "profile.open_conversation_button_title", fallback: "Open conversation")
       /// Cancel
       internal static let removeDialogButtonCancel = L10n.tr("Localizable", "profile.remove_dialog_button_cancel", fallback: "Cancel")
-      /// Remove From Group…
-      internal static let removeDialogButtonRemove = L10n.tr("Localizable", "profile.remove_dialog_button_remove", fallback: "Remove From Group…")
-      /// Remove From Group
-      internal static let removeDialogButtonRemoveConfirm = L10n.tr("Localizable", "profile.remove_dialog_button_remove_confirm", fallback: "Remove From Group")
+      /// Remove From Conversation…
+      internal static let removeDialogButtonRemove = L10n.tr("Localizable", "profile.remove_dialog_button_remove", fallback: "Remove From Conversation…")
+      /// Remove From Conversation
+      internal static let removeDialogButtonRemoveConfirm = L10n.tr("Localizable", "profile.remove_dialog_button_remove_confirm", fallback: "Remove From Conversation")
       /// %@ won’t be able to send or receive messages in this conversation.
       internal static func removeDialogMessage(_ p1: Any) -> String {
         return L10n.tr("Localizable", "profile.remove_dialog_message", String(describing: p1), fallback: "%@ won’t be able to send or receive messages in this conversation.")
@@ -4648,8 +4792,8 @@ internal enum L10n {
         }
         /// Federated
         internal static let federated = L10n.tr("Localizable", "profile.details.federated", fallback: "Federated")
-        /// Group admin
-        internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Group admin")
+        /// Conversation admin
+        internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Conversation admin")
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
         /// Get certainty about %@’s identity before connecting.
@@ -4713,8 +4857,8 @@ internal enum L10n {
       }
       internal enum Profile {
         internal enum GroupAdminOptions {
-          /// Group admin
-          internal static let title = L10n.tr("Localizable", "profile.profile.group_admin_options.title", fallback: "Group admin")
+          /// Conversation admin
+          internal static let title = L10n.tr("Localizable", "profile.profile.group_admin_options.title", fallback: "Conversation admin")
         }
       }
       internal enum ReadReceiptsDisabledMemo {
@@ -4793,24 +4937,6 @@ internal enum L10n {
           internal static let paragraph = L10n.tr("Localizable", "registration.add_email_password.hero.paragraph", fallback: "This lets you use Wire on multiple devices.")
           /// Add your email and password
           internal static let title = L10n.tr("Localizable", "registration.add_email_password.hero.title", fallback: "Add your email and password")
-        }
-      }
-      internal enum AddressBookAccessDenied {
-        internal enum Hero {
-          /// Wire helps find your friends if you share your contacts.
-          internal static let paragraph1 = L10n.tr("Localizable", "registration.address_book_access_denied.hero.paragraph1", fallback: "Wire helps find your friends if you share your contacts.")
-          /// To enable access tap Settings and turn on Contacts.
-          internal static let paragraph2 = L10n.tr("Localizable", "registration.address_book_access_denied.hero.paragraph2", fallback: "To enable access tap Settings and turn on Contacts.")
-          /// Wire does not have access to your contacts.
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.hero.title", fallback: "Wire does not have access to your contacts.")
-        }
-        internal enum MaybeLaterButton {
-          /// Maybe later
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.maybe_later_button.title", fallback: "Maybe later")
-        }
-        internal enum SettingsButton {
-          /// Settings
-          internal static let title = L10n.tr("Localizable", "registration.address_book_access_denied.settings_button.title", fallback: "Settings")
         }
       }
       internal enum Alert {
@@ -4892,8 +5018,6 @@ internal enum L10n {
         internal static let gotIt = L10n.tr("Localizable", "registration.no_history.got_it", fallback: "OK")
         /// It’s the first time you’re using Wire on this device.
         internal static let hero = L10n.tr("Localizable", "registration.no_history.hero", fallback: "It’s the first time you’re using Wire on this device.")
-        /// Restore from backup
-        internal static let restoreBackup = L10n.tr("Localizable", "registration.no_history.restore_backup", fallback: "Restore from backup")
         /// For privacy reasons, your conversation history will not appear here.
         internal static let subtitle = L10n.tr("Localizable", "registration.no_history.subtitle", fallback: "For privacy reasons, your conversation history will not appear here.")
         internal enum LoggedOut {
@@ -4903,53 +5027,6 @@ internal enum L10n {
           internal static let hero = L10n.tr("Localizable", "registration.no_history.logged_out.hero", fallback: "You’ve used Wire on this device before.")
           /// Messages sent in the meantime will not appear.
           internal static let subtitle = L10n.tr("Localizable", "registration.no_history.logged_out.subtitle", fallback: "Messages sent in the meantime will not appear.")
-        }
-        internal enum RestoreBackup {
-          /// Completed
-          internal static let completed = L10n.tr("Localizable", "registration.no_history.restore_backup.completed", fallback: "Completed")
-          /// Restoring…
-          internal static let restoring = L10n.tr("Localizable", "registration.no_history.restore_backup.restoring", fallback: "Restoring…")
-          internal enum Password {
-            /// The password is required to restore this backup.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup.password.message", fallback: "The password is required to restore this backup.")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "registration.no_history.restore_backup.password.placeholder", fallback: "Password")
-            /// This backup is password protected.
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup.password.title", fallback: "This backup is password protected.")
-          }
-          internal enum PasswordError {
-            /// Wrong Password
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup.password_error.title", fallback: "Wrong Password")
-          }
-        }
-        internal enum RestoreBackupFailed {
-          /// Your history could not be restored.
-          internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.message", fallback: "Your history could not be restored.")
-          /// Something went wrong
-          internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.title", fallback: "Something went wrong")
-          /// Try again
-          internal static let tryAgain = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.try_again", fallback: "Try again")
-          internal enum WrongAccount {
-            /// You cannot restore history from a different account.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_account.message", fallback: "You cannot restore history from a different account.")
-            /// Incompatible backup
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_account.title", fallback: "Incompatible backup")
-          }
-          internal enum WrongVersion {
-            /// This backup was created by a newer or outdated version of Wire and cannot be restored here.
-            internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_version.message", fallback: "This backup was created by a newer or outdated version of Wire and cannot be restored here.")
-            /// Incompatible backup
-            internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.wrong_version.title", fallback: "Incompatible backup")
-          }
-        }
-        internal enum RestoreBackupWarning {
-          /// The backup contents will replace the conversation history on this device.
-          /// You can only restore history from a backup of the same platform.
-          internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.message", fallback: "The backup contents will replace the conversation history on this device.\nYou can only restore history from a backup of the same platform.")
-          /// Choose Backup File
-          internal static let proceed = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.proceed", fallback: "Choose Backup File")
-          /// Restore history
-          internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_warning.title", fallback: "Restore history")
         }
       }
       internal enum Password {
@@ -5014,22 +5091,6 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "registration.select_handle.takeover.subtitle", fallback: "Claim your unique name on Wire.")
           /// Learn more
           internal static let subtitleLink = L10n.tr("Localizable", "registration.select_handle.takeover.subtitle_link", fallback: "Learn more")
-        }
-      }
-      internal enum ShareContacts {
-        internal enum FindFriendsButton {
-          /// Share contacts
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.find_friends_button.title", fallback: "Share contacts")
-        }
-        internal enum Hero {
-          /// Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.
-          internal static let paragraph = L10n.tr("Localizable", "registration.share_contacts.hero.paragraph", fallback: "Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.")
-          /// Find people on Wire
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.hero.title", fallback: "Find people on Wire")
-        }
-        internal enum SkipButton {
-          /// Not now
-          internal static let title = L10n.tr("Localizable", "registration.share_contacts.skip_button.title", fallback: "Not now")
         }
       }
       internal enum Signin {
@@ -5280,6 +5341,8 @@ internal enum L10n {
           }
         }
         internal enum AccountAppearanceGroup {
+          /// When this is on, your conversations show a background based on your profile color and light or dark theme.
+          internal static let footer = L10n.tr("Localizable", "self.settings.account_appearance_group.footer", fallback: "When this is on, your conversations show a background based on your profile color and light or dark theme.")
           /// Appearance
           internal static let title = L10n.tr("Localizable", "self.settings.account_appearance_group.title", fallback: "Appearance")
         }
@@ -5310,6 +5373,18 @@ internal enum L10n {
               internal static let password = L10n.tr("Localizable", "self.settings.account_details.log_out.alert.password", fallback: "Password")
               /// Log out
               internal static let title = L10n.tr("Localizable", "self.settings.account_details.log_out.alert.title", fallback: "Log out")
+            }
+            internal enum EraseData {
+              internal enum Alert {
+                /// Log out and clear data
+                internal static let logoutAndClear = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.logoutAndClear", fallback: "Log out and clear data")
+                /// Log out and keep data
+                internal static let logoutAndKeep = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.logoutAndKeep", fallback: "Log out and keep data")
+                /// Delete all your personal information and conversations on this device?
+                internal static let message = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.message", fallback: "Delete all your personal information and conversations on this device?")
+                /// Log out
+                internal static let title = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.title", fallback: "Log out")
+              }
             }
           }
           internal enum RemoveDevice {
@@ -5371,6 +5446,10 @@ internal enum L10n {
             internal static let takePicture = L10n.tr("Localizable", "self.settings.account_picture_group.alert.take_picture", fallback: "Take Photo")
             /// Change your profile picture
             internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.alert.title", fallback: "Change your profile picture")
+          }
+          internal enum Background {
+            /// Conversation background color
+            internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.background.title", fallback: "Conversation background color")
           }
         }
         internal enum AccountSection {
@@ -5461,9 +5540,9 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "self.settings.add_account.error.title", fallback: "Three accounts active")
           }
         }
-        internal enum AddTeamOrAccount {
-          /// Add Account
-          internal static let title = L10n.tr("Localizable", "self.settings.add_team_or_account.title", fallback: "Add Account")
+        internal enum AddAccountOrTeam {
+          /// Add Account or Team
+          internal static let title = L10n.tr("Localizable", "self.settings.add_account_or_team.title", fallback: "Add Account or Team")
         }
         internal enum Advanced {
           /// Advanced
@@ -5506,10 +5585,6 @@ internal enum L10n {
               internal static let title = L10n.tr("Localizable", "self.settings.advanced.troubleshooting.submit_debug.title", fallback: "Debug Report")
             }
           }
-        }
-        internal enum ApnsLogging {
-          /// APNS Logging
-          internal static let title = L10n.tr("Localizable", "self.settings.apns_logging.title", fallback: "APNS Logging")
         }
         internal enum Callkit {
           /// Share with iOS
@@ -5568,30 +5643,8 @@ internal enum L10n {
           internal static let header = L10n.tr("Localizable", "self.settings.external_apps.header", fallback: "Open With")
         }
         internal enum HistoryBackup {
-          /// Back Up Now
-          internal static let action = L10n.tr("Localizable", "self.settings.history_backup.action", fallback: "Back Up Now")
-          /// Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.
-          /// 
-          /// Choose a strong password to protect the backup file.
-          internal static let description = L10n.tr("Localizable", "self.settings.history_backup.description", fallback: "Create a backup to preserve your conversation history. You can use this to restore history if you lose your device or switch to a new one.\n\nChoose a strong password to protect the backup file.")
-          /// Back Up Conversations
-          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back Up Conversations")
-          internal enum Error {
-            /// Error
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
-          internal enum Password {
-            /// Cancel
-            internal static let cancel = L10n.tr("Localizable", "self.settings.history_backup.password.cancel", fallback: "Cancel")
-            /// The backup will be compressed and encrypted with the password you set here.
-            internal static let description = L10n.tr("Localizable", "self.settings.history_backup.password.description", fallback: "The backup will be compressed and encrypted with the password you set here.")
-            /// Next
-            internal static let next = L10n.tr("Localizable", "self.settings.history_backup.password.next", fallback: "Next")
-            /// Password
-            internal static let placeholder = L10n.tr("Localizable", "self.settings.history_backup.password.placeholder", fallback: "Password")
-            /// Set Password
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.password.title", fallback: "Set Password")
-          }
+          /// Back up or Restore
+          internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.
             internal static let message = L10n.tr("Localizable", "self.settings.history_backup.set_email.message", fallback: "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.")
@@ -5611,10 +5664,6 @@ internal enum L10n {
           internal enum Maps {
             /// Locations
             internal static let title = L10n.tr("Localizable", "self.settings.link_options.maps.title", fallback: "Locations")
-          }
-          internal enum Twitter {
-            /// Tweets
-            internal static let title = L10n.tr("Localizable", "self.settings.link_options.twitter.title", fallback: "Tweets")
           }
         }
         internal enum ManageTeam {
@@ -5730,6 +5779,12 @@ internal enum L10n {
         internal enum PrivacySecurity {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
+          internal enum CollapseOwnMessages {
+            /// When this is on, all your messages collapse after three lines.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse after three lines.")
+            /// Collapse my messages
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse my messages")
+          }
           internal enum DisableLinkPreviews {
             /// Previews may still be shown for links from other people.
             internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.disable_link_previews.footer", fallback: "Previews may still be shown for links from other people.")

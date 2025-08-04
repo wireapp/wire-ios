@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 import WireMainNavigationUI
 import WireSyncEngine
 
-final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate, PasscodeSetupViewControllerDelegate {
+final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate,
+    PasscodeSetupViewControllerDelegate {
 
     var userSession: any UserSession
     var settingsTableViewController: () -> SettingsTableViewController?
@@ -47,8 +48,10 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
         newValue: Bool,
         callback: @escaping ResultHandler
     ) {
-        // There is an additional check for the simulator because there's no way to disable the device passcode on the simulator. We need it for testing.
-        guard AuthenticationType.current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
+        // There is an additional check for the simulator because there's no way to disable the device passcode on the
+        // simulator. We need it for testing.
+        guard AuthenticationType
+            .current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
             callback(newValue)
             return
         }
@@ -64,7 +67,8 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
 
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: passcodeSetupViewController)
 
-        let wrappedViewController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+        let wrappedViewController = keyboardAvoidingViewController
+            .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
 
         let closeItem = passcodeSetupViewController.closeItem
 

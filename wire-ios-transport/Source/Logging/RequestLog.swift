@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 struct RequestLog: Codable {
     var method: String
@@ -46,34 +47,35 @@ struct RequestLog: Codable {
         "Set-cookie"
     ].map { $0.lowercased() })
 
-    static let authorizedHeaderFields = Set([
-        "Accept",
-        "Accept-Charset",
-        "Authorization",
-        "Set-cookie",
-        "Access-Control-Expose-Headers",
-        "Date",
-        "Location",
-        "Request id",
-        "Strict-Transport-Security",
-        "Vary",
-        "Accept-ranges",
-        "Age",
-        "Connection",
-        "Content-Length",
-        "Content-Type",
-        "Date",
-        "Etag",
-        "Last-Modified",
-        "Server",
-        "Via",
-        "X-Amz-Cf-Id",
-        "A-Amz-Cf-Pop",
-        "X-Amz-Meta-User",
-        "X-cache",
-        "Sec-WebSocket-key",
-        "sec-websocket-accept"
-    ].map { $0.lowercased() }
+    static let authorizedHeaderFields = Set(
+        [
+            "Accept",
+            "Accept-Charset",
+            "Authorization",
+            "Set-cookie",
+            "Access-Control-Expose-Headers",
+            "Date",
+            "Location",
+            "Request id",
+            "Strict-Transport-Security",
+            "Vary",
+            "Accept-ranges",
+            "Age",
+            "Connection",
+            "Content-Length",
+            "Content-Type",
+            "Date",
+            "Etag",
+            "Last-Modified",
+            "Server",
+            "Via",
+            "X-Amz-Cf-Id",
+            "A-Amz-Cf-Pop",
+            "X-Amz-Meta-User",
+            "X-cache",
+            "Sec-WebSocket-key",
+            "sec-websocket-accept"
+        ].map { $0.lowercased() }
     )
 }
 
@@ -81,7 +83,7 @@ extension URL {
     var endpointRemoteLogDescription: String {
         let visibleCharactersCount = 3
 
-        var components = URLComponents(string: self.absoluteString)
+        var components = URLComponents(string: absoluteString)
         let path = components?.path ?? ""
         let pathComponents = path.components(separatedBy: "/").map { $0.truncated(visibleCharactersCount) }
 
@@ -89,7 +91,10 @@ extension URL {
         queryComponents.enumerated().forEach { item in
             var redactedItem = item.element
             // truncates to 8 digits max for ids
-            let value = redactedItem.value?.redactedAndTruncated(maxVisibleCharacters: visibleCharactersCount, length: 8) ?? ""
+            let value = redactedItem.value?.redactedAndTruncated(
+                maxVisibleCharacters: visibleCharactersCount,
+                length: 8
+            ) ?? ""
             redactedItem.value = value
             queryComponents[item.offset] = redactedItem
         }
@@ -98,8 +103,8 @@ extension URL {
         components?.queryItems = queryComponents
 
         var endpoint = [components?.host, components?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))]
-            .compactMap { $0 }
-            .filter({ !$0.isEmpty })
+            .compactMap(\.self)
+            .filter { !$0.isEmpty }
             .joined(separator: "/")
         endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
         return endpoint
@@ -108,15 +113,15 @@ extension URL {
 
 public extension String {
     var redacted: String {
-        return "*".repeat(self.count)
+        "*".repeat(count)
     }
 
     func `repeat`(_ count: Int) -> String {
-        return String(repeating: self, count: count)
+        String(repeating: self, count: count)
     }
 
     func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
-        if self.count <= maxVisibleCharacters {
+        if count <= maxVisibleCharacters {
             return redacted
         }
         let newString = truncated(maxVisibleCharacters)
@@ -160,7 +165,7 @@ extension WireLogger {
     }
 }
 
-extension WireLoggerObjc {
+extension WireLoggerObjC {
     static func logRequest(_ request: NSURLRequest) {
         WireLogger.network.log(request: request)
     }
@@ -171,6 +176,10 @@ extension WireLoggerObjc {
 
     @objc(logRequestLoopAtPath:)
     static func logRequestLoop(at path: String) {
-        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
+        if let endpointDescription = URL(string: path)?.endpointRemoteLogDescription {
+            WireLogger.network.warn("Request loop detected for \(endpointDescription)", attributes: .safePublic)
+        } else {
+            WireLogger.network.warn("Request loop detected for \(path)")
+        }
     }
 }

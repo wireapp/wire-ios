@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,16 +25,22 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
 
     private let processor = ConnectionPayloadProcessor()
 
-    override func request(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func request(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
-            return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            return federatedRequest(for: action, apiVersion: apiVersion)
+            nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
+            federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
-    func nonFederatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func nonFederatedRequest(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         let payload = Payload.ConnectionRequest(userID: action.userID, name: "default")
 
         guard
@@ -46,14 +52,19 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             return nil
         }
 
-        return ZMTransportRequest(path: "/connections",
-                                  method: .post,
-                                  payload: payloadAsString as ZMTransportData,
-                                  apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/connections",
+            method: .post,
+            payload: payloadAsString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
 
     }
 
-    func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func federatedRequest(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
 
         let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         guard apiVersion > .v0, let domain else {
@@ -104,7 +115,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             context.saveOrRollback()
         }
 
-        action.notifyResult(.success(Void()))
+        action.notifyResult(.success(()))
     }
 
 }

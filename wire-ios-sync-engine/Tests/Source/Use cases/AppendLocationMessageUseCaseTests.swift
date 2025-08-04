@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +30,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendLocationMessageUseCase!
 
@@ -58,9 +59,14 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         mockConversation.appendLocation_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
-        let testLocationData = LocationData(latitude: 37.7749, longitude: -122.4194, name: "San Francisco", zoomLevel: 10)
+        let testLocationData = LocationData(
+            latitude: 37.7749,
+            longitude: -122.4194,
+            name: "San Francisco",
+            zoomLevel: 10
+        )
 
         // WHEN
         try sut.invoke(withLocationData: testLocationData, in: mockConversation)
@@ -74,14 +80,14 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         XCTAssertEqual(appendLocationInvocation.locationData.zoomLevel, testLocationData.zoomLevel)
         XCTAssertNotNil(appendLocationInvocation.nonce)
 
-        let expectedEvent = AnalyticsEvent.conversationContribution(
+        let expectedEvent = AnalyticsEvent.Contributed.conversationContribution(
             .locationMessage,
             conversationType: .group,
             conversationSize: 0
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

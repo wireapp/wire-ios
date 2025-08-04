@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ FOUNDATION_EXPORT const unsigned char WireTestingVersionString[];
 #import <WireTesting/XCTestCase+Helpers.h>
 #import <WireTesting/ZMTFailureRecorder.h>
 #import <WireTesting/ZMTAsserts.h>
-#import <WireTesting/NSData+WireTesting.h>
 #import <WireTesting/NSOperationQueue+WireTesting.h>
 #import <WireTesting/ZMTImageComparator.h>
 #import <WireTesting/NSUUID+WireTesting.h>

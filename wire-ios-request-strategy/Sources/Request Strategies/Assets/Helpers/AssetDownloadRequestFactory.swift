@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,12 @@ import WireTransport
 
 public final class AssetDownloadRequestFactory {
 
-    public func requestToGetAsset(withKey key: String, token: String?, domain: String?, apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func requestToGetAsset(
+        withKey key: String,
+        token: String?,
+        domain: String?,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
 
         let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         let path: String
@@ -31,7 +36,7 @@ public final class AssetDownloadRequestFactory {
         case .v1:
             guard let domain else { return nil }
             path = "/assets/v4/\(domain)/\(key)"
-        case .v2, .v3, .v4, .v5, .v6:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             guard let domain else { return nil }
             path = "/assets/\(domain)/\(key)"
         }

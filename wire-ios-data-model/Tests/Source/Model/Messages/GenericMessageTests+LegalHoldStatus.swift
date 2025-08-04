@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireTesting
 
 @testable import WireDataModel
@@ -38,7 +39,10 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
 
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🤠"], messageID: UUID.create()))
+        var genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
+            emojis: ["🤠"],
+            messageID: UUID.create()
+        ))
 
         // when
         XCTAssertEqual(genericMessage.reaction.legalHoldStatus, .unknown)
@@ -51,7 +55,10 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForKnock() {
 
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
+        var genericMessage = GenericMessage(
+            content: GenericMessageProtocol.Knock.with { $0.hotKnock = true },
+            nonce: UUID.create()
+        )
 
         // when
         XCTAssertEqual(genericMessage.knock.legalHoldStatus, .unknown)
@@ -64,7 +71,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForLocation() {
 
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 0.0
             $0.longitude = 0.0
         }
@@ -81,7 +88,14 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForAsset() {
 
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123), nonce: UUID.create())
+        var genericMessage = GenericMessage(
+            content: GenericMessageProtocol.Asset(
+                imageSize: CGSize(width: 42, height: 12),
+                mimeType: "image/jpeg",
+                size: 123
+            ),
+            nonce: UUID.create()
+        )
 
         // when
         XCTAssertEqual(genericMessage.asset.legalHoldStatus, .unknown)
@@ -94,7 +108,11 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForEphemeral() {
 
         // given
-        let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        let asset = GenericMessageProtocol.Asset(
+            imageSize: CGSize(width: 42, height: 12),
+            mimeType: "image/jpeg",
+            size: 123
+        )
         var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when

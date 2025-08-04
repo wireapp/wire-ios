@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,15 @@
 
 import Foundation
 
-final class InvalidGenericMessageDataRemoval {
+enum InvalidGenericMessageDataRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
         do {
-            try moc.batchDeleteEntities(named: ZMGenericMessageData.entityName(),
-                                        matching: NSPredicate(format: "\(ZMGenericMessageData.assetKey) == nil AND \(ZMGenericMessageData.messageKey) == nil"))
+            try moc.batchDeleteEntities(
+                named: ZMGenericMessageData.entityName(),
+                matching: NSPredicate(
+                    format: "\(ZMGenericMessageData.assetKey) == nil AND \(ZMGenericMessageData.messageKey) == nil"
+                )
+            )
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }

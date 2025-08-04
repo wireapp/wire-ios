@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 /// A service that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.
@@ -62,7 +63,7 @@ public final class ProteusService: ProteusServiceInterface {
             try await coreCrypto.perform { try await $0.proteusSessionFromPrekey(
                 sessionId: id.rawValue,
                 prekey: prekeyData
-            )}
+            ) }
         } catch {
             logger.error("failed to establish session from prekey: \(String(describing: error))")
             throw ProteusSessionError.failedToEstablishSession
@@ -126,22 +127,23 @@ public final class ProteusService: ProteusServiceInterface {
 
         static func == (lhs: ProteusService.EncryptionError, rhs: ProteusService.EncryptionError) -> Bool {
             switch (lhs, rhs) {
-            case (let failedToEncryptData(lhsError), let failedToEncryptData(rhsError)):
-                return lhsError as NSError == rhsError as NSError
-            case (let failedToEncryptDataBatch(lhsError), let failedToEncryptDataBatch(rhsError)):
-                return lhsError as NSError == rhsError as NSError
+            case let (failedToEncryptData(lhsError), failedToEncryptData(rhsError)):
+                lhsError as NSError == rhsError as NSError
+
+            case let (failedToEncryptDataBatch(lhsError), failedToEncryptDataBatch(rhsError)):
+                lhsError as NSError == rhsError as NSError
 
             default:
-                return false
+                false
             }
         }
 
         var errorDescription: String? {
             switch self {
-            case .failedToEncryptData(let error):
-                return "failedToEncryptData: underlying error : \(error.localizedDescription)"
-            case .failedToEncryptDataBatch(let error):
-                return "failedToEncryptDataBatch: underlying error : \(error.localizedDescription)"
+            case let .failedToEncryptData(error):
+                "failedToEncryptData: underlying error : \(error.localizedDescription)"
+            case let .failedToEncryptDataBatch(error):
+                "failedToEncryptDataBatch: underlying error : \(error.localizedDescription)"
             }
         }
     }
@@ -153,13 +155,12 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data")
 
         do {
-            let encryptedData = try await coreCrypto.perform {
+            return try await coreCrypto.perform {
                 try await $0.proteusEncrypt(
                     sessionId: id.rawValue,
                     plaintext: data
                 )
             }
-            return encryptedData
         } catch {
             throw EncryptionError.failedToEncryptData(error)
         }
@@ -174,13 +175,12 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data batch")
 
         do {
-            let encryptedBatch = try await coreCrypto.perform {
+            return try await coreCrypto.perform {
                 try await $0.proteusEncryptBatched(
                     sessions: sessions.map(\.rawValue),
                     plaintext: data
                 )
             }
-            return encryptedBatch
         } catch {
             throw EncryptionError.failedToEncryptDataBatch(error)
         }
@@ -188,58 +188,82 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    public enum DecryptionError: Error, Equatable {
+    public enum DecryptionError: Error, LocalizedError {
 
         case failedToDecryptData(ProteusError)
         case failedToEstablishSessionFromMessage(ProteusError)
 
         public var proteusError: ProteusError {
             switch self {
-            case .failedToDecryptData(let proteusError):
-                return proteusError
+            case let .failedToDecryptData(proteusError):
+                proteusError
 
-            case .failedToEstablishSessionFromMessage(let proteusError):
-                return proteusError
+            case let .failedToEstablishSessionFromMessage(proteusError):
+                proteusError
             }
         }
 
+        public var errorDescription: String? {
+            switch self {
+            case let .failedToDecryptData(proteusError):
+                "failedToDecryptData: \(String(describing: proteusError))"
+
+            case let .failedToEstablishSessionFromMessage(proteusError):
+                "failedToEstablishSessionFromMessage: \(String(describing: proteusError))"
+            }
+        }
     }
 
     public func decrypt(
         data: Data,
-        forSession id: ProteusSessionID
+        forSession id: ProteusSessionID,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+        if let context {
+            try await decryptInternal(data: data, forSession: id, context: context)
+        } else {
+            try await coreCrypto.perform { context in
+                try await self.decryptInternal(data: data, forSession: id, context: context)
+            }
+        }
+    }
+
+    private func decryptInternal(
+        data: Data,
+        forSession id: ProteusSessionID,
+        context: CoreCryptoContextProtocol
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
-        if await sessionExists(id: id) {
+        if try await context.proteusSessionExists(sessionId: id.rawValue) {
             logger.info("session exists, decrypting...")
 
-            let decryptedData: Data = try await coreCrypto.perform {
+            let decryptedData: Data = try await {
                 do {
-                    return try await $0.proteusDecrypt(
+                    return try await context.proteusDecrypt(
                         sessionId: id.rawValue,
                         ciphertext: data
                     )
-                } catch {
-                    throw DecryptionError.failedToDecryptData($0.lastProteusError)
+                } catch let CoreCryptoError.Proteus(error) {
+                    throw DecryptionError.failedToDecryptData(error)
                 }
-            }
+            }()
 
             return (didCreateNewSession: false, decryptedData: decryptedData)
 
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
 
-            let decryptedData: Data = try await coreCrypto.perform {
+            let decryptedData: Data = try await {
                 do {
-                    return try await $0.proteusSessionFromMessage(
+                    return try await context.proteusSessionFromMessage(
                         sessionId: id.rawValue,
                         envelope: data
                     )
-                } catch {
-                    throw DecryptionError.failedToEstablishSessionFromMessage($0.lastProteusError)
+                } catch let CoreCryptoError.Proteus(error) {
+                    throw DecryptionError.failedToEstablishSessionFromMessage(error)
                 }
-            }
+            }()
 
             return (didCreateNewSession: true, decryptedData: decryptedData)
         }
@@ -287,7 +311,7 @@ public final class ProteusService: ProteusServiceInterface {
         let range = await prekeysRange(count, start: start)
         let prekeys = try await generatePrekeys(range)
 
-        guard prekeys.count > 0 else {
+        guard !prekeys.isEmpty else {
             throw PrekeyError.failedToGeneratePrekey
         }
 
@@ -356,12 +380,4 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
-}
-
-private extension CoreCryptoProtocol {
-
-    var lastProteusError: ProteusError {
-        return ProteusError(proteusCode: proteusLastErrorCode())
-    }
-
 }

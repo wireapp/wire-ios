@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -765,36 +765,6 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
         return YES;
     }
     return [super validateValue:ioValue forKey:key error:outError];
-}
-
-@end
-
-
-
-
-@implementation ZMManagedObject (NonpersistedObjectIdentifer)
-
-- (NSString *)nonpersistedObjectIdentifer;
-{
-    return [NSString stringWithFormat:@"Z%tx", (unsigned long) self];
-}
-
-+ (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ContextProvider>)userSession;
-{
-    VerifyReturnNil(identifier != nil);
-    intptr_t value = 0;
-    if (sscanf([identifier UTF8String], "Z%tx", &value) != 1) {
-        return nil;
-    }
-    
-    NSManagedObjectContext *moc = userSession.viewContext;
-    for (ZMManagedObject *mo in moc.registeredObjects) {
-        intptr_t otherValue = (intptr_t) ((__bridge void *) mo);
-        if (otherValue == value) {
-            return mo;
-        }
-    }
-    return nil;
 }
 
 @end

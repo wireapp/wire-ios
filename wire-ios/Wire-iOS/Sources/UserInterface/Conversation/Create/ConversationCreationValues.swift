@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,11 +32,21 @@ final class ConversationCreationValues {
     private var unfilteredParticipants: UserSet
     private let selfUser: UserType
 
+    let isChannel: Bool
+    var channelHistoryDepth: Int?
     var name: String
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
-    var encryptionProtocol: Feature.MLS.Config.MessageProtocol
+    var encryptionProtocol: MessageProtocol {
+        didSet {
+            allowServices = shouldIncludeServices
+        }
+    }
+
+    var shouldIncludeServices: Bool {
+        encryptionProtocol.supportsBots
+    }
 
     var participants: UserSet {
         get {
@@ -62,14 +72,16 @@ final class ConversationCreationValues {
     // MARK: - Life cycle
 
     init(
+        isChannel: Bool,
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
         allowServices: Bool = true,
         enableReceipts: Bool = true,
-        encryptionProtocol: Feature.MLS.Config.MessageProtocol,
+        encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
+        self.isChannel = isChannel
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 struct E2EIdentityCertificateDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
     var certificateDetails: String
     var isDownloadAndCopyEnabled: Bool
 
@@ -45,18 +45,12 @@ struct E2EIdentityCertificateDetailsView: View {
         .overlay {
             HStack {
                 Spacer()
-                Button(
-                    action: {
-                        dismiss()
-                        didDismiss?()
-                    },
-                    label: {
-                        Image(.close)
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
-                )
-                .accessibilityIdentifier("CloseButton")
-                .padding(.all, ViewConstants.Padding.standard)
+                CloseButton(action: {
+                    dismiss()
+                    didDismiss?()
+                }, accessibilityLabel: L10n.Localizable.General.close)
+                    .accessibilityIdentifier("CloseButton")
+                    .padding(.all, ViewConstants.Padding.standard)
             }
         }
     }
@@ -133,10 +127,10 @@ struct E2EIdentityCertificateDetailsView: View {
                     Spacer()
                     moreButton
                         .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    .confirmationDialog("...", isPresented: $isMenuPresented) {
-                        copyToClipboardButton
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
+                        .confirmationDialog("...", isPresented: $isMenuPresented) {
+                            copyToClipboardButton
+                                .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
+                        }
                 }
             }
         }
@@ -159,13 +153,14 @@ struct E2EIdentityCertificateDetailsView: View {
 
         certificateView
             .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
-
-        .safeAreaInset(edge: .bottom,
-                       spacing: .zero) {
-            bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
-        }
-        .ignoresSafeArea()
-        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
+            .safeAreaInset(
+                edge: .bottom,
+                spacing: .zero
+            ) {
+                bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
+            }
+            .ignoresSafeArea()
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 }
 

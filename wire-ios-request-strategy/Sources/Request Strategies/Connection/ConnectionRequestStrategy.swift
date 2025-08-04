@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireLogging
 
-public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
+public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
+    ZMContextChangeTrackerSource {
 
     let eventsToProcess: [ZMUpdateEventType] = [
         .userConnection
@@ -49,21 +51,30 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.syncProgress = syncProgress
         self.localConnectionListSync =
-        PaginatedSync<Payload.PaginatedLocalConnectionList>(basePath: "/connections",
-                                                            pageSize: 200,
-                                                            context: managedObjectContext)
+            PaginatedSync<Payload.PaginatedLocalConnectionList>(
+                basePath: "/connections",
+                pageSize: 200,
+                context: managedObjectContext
+            )
 
         self.connectionListSync =
-        PaginatedSync<Payload.PaginatedConnectionList>(basePath: "/list-connections",
-                                                       pageSize: 200,
-                                                       method: .post,
-                                                       context: managedObjectContext)
+            PaginatedSync<Payload.PaginatedConnectionList>(
+                basePath: "/list-connections",
+                pageSize: 200,
+                method: .post,
+                context: managedObjectContext
+            )
 
-        connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
-        connectionByIDSync = IdentifierObjectSync(managedObjectContext: managedObjectContext,
-                                                  transcoder: connectionByIDTranscoder)
-        connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
-        connectionByQualifiedIDSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: connectionByQualifiedIDTranscoder)
+        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
+        self.connectionByIDSync = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: connectionByIDTranscoder
+        )
+        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
+        self.connectionByQualifiedIDSync = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: connectionByQualifiedIDTranscoder
+        )
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConnection.entityName(), \.needsToBeUpdatedFromBackend)
 
@@ -78,8 +89,10 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync]
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringSlowSync
+        ]
 
         updateSync.transcoder = self
     }
@@ -101,20 +114,24 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         case .v0:
             localConnectionListSync.fetch { [weak self] result in
                 switch result {
-                case .success(let connectionList):
-                    self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
-                                                              hasMore: connectionList.hasMore)
+                case let .success(connectionList):
+                    self?.createConnectionsAndFinishSyncPhase(
+                        connectionList.connections,
+                        hasMore: connectionList.hasMore
+                    )
                 case .failure:
                     self?.failSyncPhase()
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             connectionListSync.fetch { [weak self] result in
                 switch result {
-                case .success(let connectionList):
-                    self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
-                                                              hasMore: connectionList.hasMore)
+                case let .success(connectionList):
+                    self?.createConnectionsAndFinishSyncPhase(
+                        connectionList.connections,
+                        hasMore: connectionList.hasMore
+                    )
                 case .failure:
                     self?.failSyncPhase()
                 }
@@ -144,12 +161,12 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     public var requestGenerators: [ZMRequestGenerator] {
         if syncProgress.currentSyncPhase == .fetchingConnections {
-            return [
+            [
                 connectionListSync,
                 localConnectionListSync
             ]
         } else {
-            return [
+            [
                 connectionByIDSync,
                 connectionByQualifiedIDSync,
                 actionSync
@@ -158,7 +175,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [updateSync]
+        [updateSync]
     }
 
 }
@@ -178,7 +195,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
@@ -226,28 +243,50 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
             in: context
         )
 
-        guard payload.connection.status == .accepted, let userID = payload.connection.qualifiedTo else {
-            return
-        }
+        guard let userID = payload.connection.qualifiedTo else { return }
 
-        WaitingGroupTask(context: context) { [self] in
-            do {
-                // The client who accepts the connection resolves the conversation immediately.
-                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
-                // but also to re-attempt resolution in case of failure.
-                try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
+        if payload.connection.status == .accepted {
+            WaitingGroupTask(context: context) { [self] in
+                do {
+                    // The client who accepts the connection resolves the conversation immediately.
+                    // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                    // but also to re-attempt resolution in case of failure.
+                    try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
 
-                let resolver = self.oneOnOneResolver
-                try await resolver.resolveOneOnOneConversation(with: userID, in: context)
+                    let resolver = oneOnOneResolver
+                    try await resolver.resolveOneOnOneConversation(with: userID, in: context)
 
-                await context.perform {
-                    _ = context.saveOrRollback()
+                    await context.perform {
+                        _ = context.saveOrRollback()
+                    }
+                } catch {
+                    WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                    assertionFailure("Error resolving one-on-one conversation: \(error)")
                 }
-            } catch {
-                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
-                assertionFailure("Error resolving one-on-one conversation: \(error)")
+            }
+        } else {
+            Task {
+                let userObjectID = await managedObjectContext.perform { [context] in
+                    ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)?.objectID
+                }
+
+                guard let userObjectID else {
+                    WireLogger.individualToTeamMigration.error("User not found for connection event")
+                    return
+                }
+
+                do {
+                    let connectionValidator = ConnectionValidator(context: context)
+                    try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                    try await oneOnOneResolver.resolveOneOnOneConversation(with: userID, in: context)
+                } catch {
+                    WireLogger.individualToTeamMigration.error(
+                        "failed to clean up invalid connection: \(String(describing: error))"
+                    )
+                }
             }
         }
+
     }
 }
 
@@ -273,7 +312,11 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/connections/\(userID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         guard
@@ -329,10 +372,17 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         // GET /connections/domain/<UUID>
-        return ZMTransportRequest(getFromPath: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            getFromPath: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         guard

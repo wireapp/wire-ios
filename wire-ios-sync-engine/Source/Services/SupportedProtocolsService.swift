@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
 
 import Foundation
 import WireDomain
+import WireLogging
 import WireRequestStrategy
 
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {
 
-    func calculateSupportedProtocols() -> Set<MessageProtocol>
+    func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol>
 
 }
 
@@ -60,8 +61,12 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()
         let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
+        let currentSelfUserSupportedProtocols = selfUserSupportedProtocols()
 
-        logger.debug("remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)")
+        logger
+            .debug(
+                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
+            )
 
         var result = Set<MessageProtocol>()
 
@@ -70,28 +75,33 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
             result.insert(.proteus)
         }
 
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
+        }
+
         // All clients are mls ready so we support it if the backend does.
-        if remoteProtocols.contains(.mls) && allClientsMLSReady {
+        if remoteProtocols.contains(.mls), allClientsMLSReady {
             result.insert(.mls)
         }
 
         // Proteus is still supported if migration is pending or still ongoing.
-        if migrationState.isOne(of: .notStarted, .ongoing) && allClientsMLSReady {
+        if migrationState.isOne(of: .notStarted, .ongoing), allClientsMLSReady {
             result.insert(.proteus)
         }
 
         // MLS migration is complete.
-        if remoteProtocols.contains(.mls) && migrationState == .finalised {
+        if remoteProtocols.contains(.mls), migrationState == .finalised {
             result.insert(.mls)
         }
 
         // MLS is forced.
-        if remoteProtocols == [.mls] && migrationState.isOne(of: .disabled, .finalised) {
+        if remoteProtocols == [.mls], migrationState.isOne(of: .disabled, .finalised) {
             result = [.mls]
         }
 
         // Even if proteus isn't supported, migration is pending or still ongoing.
-        if remoteProtocols == [.mls] && !allClientsMLSReady && migrationState.isOne(of: .notStarted, .ongoing) {
+        if remoteProtocols == [.mls], !allClientsMLSReady, migrationState.isOne(of: .notStarted, .ongoing) {
             result = [.proteus]
         }
 
@@ -150,9 +160,12 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     }
 
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        return selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
+        selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
+    private func selfUserSupportedProtocols() -> Set<MessageProtocol> {
+        selfUserProvider.fetchSelfUser().supportedProtocols
+    }
 }
 
 // MARK: -
@@ -160,11 +173,11 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 private extension UserClient {
 
     var isActiveMLSClient: Bool {
-        return hasMLSIdentity && isRecentlyActive
+        hasMLSIdentity && isRecentlyActive
     }
 
     var hasMLSIdentity: Bool {
-        return !mlsPublicKeys.isEmpty
+        !mlsPublicKeys.isEmpty
     }
 
     var isRecentlyActive: Bool {

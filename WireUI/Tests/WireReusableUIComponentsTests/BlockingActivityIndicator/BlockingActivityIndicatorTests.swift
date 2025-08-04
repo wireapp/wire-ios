@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,10 @@ final class BlockingActivityIndicatorTests: XCTestCase {
         XCTAssertEqual(targetView.subviews.count, 1, "too many views added")
         XCTAssertEqual(blockingView.frame, targetView.bounds, "blocking view frame does not match target view bounds")
 
-        let activityIndicatorView = try XCTUnwrap(blockingView.subviews.first as? ProgressSpinner, "activity indicator view not found")
+        let activityIndicatorView = try XCTUnwrap(
+            blockingView.subviews.first as? ProgressSpinner,
+            "activity indicator view not found"
+        )
         XCTAssertTrue(activityIndicatorView.isAnimating)
     }
 

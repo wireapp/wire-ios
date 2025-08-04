@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 @class ZMConversation;
 @class UserClient;
-@class ZMAddressBookContact;
 @class AddressBookEntry;
 @class Member;
 @class Team;
@@ -94,6 +93,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 + (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ContextProvider> _Nonnull)session;
 
 @end
+
 
 
 

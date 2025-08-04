@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,13 +22,15 @@ import XCTest
 
 @testable import Wire
 
-final class CallParticipantsListHelper {
+enum CallParticipantsListHelper {
 
-    static func participants(count participantCount: Int,
-                             videoState: VideoState? = nil,
-                             microphoneState: MicrophoneState? = nil,
-                             mockUsers: [UserType]) -> CallParticipantsList {
-        let sortedParticipants = (0..<participantCount)
+    static func participants(
+        count participantCount: Int,
+        videoState: VideoState? = nil,
+        microphoneState: MicrophoneState? = nil,
+        mockUsers: [UserType]
+    ) -> CallParticipantsList {
+        let sortedParticipants = (0 ..< participantCount)
             .lazy
             .map { mockUsers[$0] }
             .sortedAscendingPrependingNil(by: \.name)
@@ -37,9 +39,11 @@ final class CallParticipantsListHelper {
             callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
         }
 
-        return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: $0),
-                                                                                              callParticipantState: callParticipantState,
-                                                                                              activeSpeakerState: .inactive)
+        return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: $0),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         }
     }
 
@@ -59,7 +63,12 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = .init()
-        mockParticipants = CallParticipantsListHelper.participants(count: 10, videoState: .stopped, microphoneState: .muted, mockUsers: SwiftMockLoader.mockUsers())
+        mockParticipants = CallParticipantsListHelper.participants(
+            count: 10,
+            videoState: .stopped,
+            microphoneState: .muted,
+            mockUsers: SwiftMockLoader.mockUsers()
+        )
         selfUser = ZMUser.selfUser()
         guard selfUser != nil else {
             XCTFail("ZMUser.selfUser() is nil")

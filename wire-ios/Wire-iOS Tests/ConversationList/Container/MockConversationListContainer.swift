@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     var hasUsernameTakeoverViewController: Bool {
         // no-op
-        return false
+        false
     }
 
     @discardableResult
@@ -52,8 +52,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     func updateBottomBarSeparatorVisibility(
         with controller: ConversationListContentController
-    ) {
-    }
+    ) {}
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
         // no-op
@@ -108,7 +107,19 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
-        _ viewModel: Wire.ConversationListViewController.ViewModel) {
+        _ viewModel: Wire.ConversationListViewController.ViewModel
+    ) {
         // no-op
     }
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    ) {
+        // no - op
+    }
+
+    func refreshAccountImageViewNotificationBadge() {
+        // no - op
+    }
+
 }

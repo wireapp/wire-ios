@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,8 @@ struct WireURLs: Codable {
     /// Link to an article explaining how to create, share, and revoke a group conversation link.
     let guestLinksInfo: URL
 
-    /// Shown when a user tries to send a message or create a group with users from different backends when one of the backends is not reachable.
+    /// Shown when a user tries to send a message or create a group with users from different backends when one of the
+    /// backends is not reachable.
     /// Links to a support page that explains the issue when one of the backend is offline.
     let unreachableBackendInfo: URL
 
@@ -89,6 +90,18 @@ struct WireURLs: Codable {
 
     /// Link to an article explaining how to add a conversation to your favourites folder.
     let howToAddConversationToYourFavourites: URL
+
+    /// Link to an article explaining how to add a conversation to a custom folder.
+    let howToAddConversationToCustomFolder: URL
+
+    /// Link to an article explaining how to change email address.
+    let howToChangeEmail: URL
+
+    /// Link to an article explaining how to delete a private account.
+    let howToDeleteAccount: URL
+
+    /// Link to an article about channels.
+    let learnMoreAboutChannels: URL
 
     static var shared: WireURLs = {
         do {
@@ -127,6 +140,10 @@ struct WireURLs: Codable {
         case mlsInfo
         case endToEndIdentityInfo
         case howToAddConversationToYourFavourites
+        case howToAddConversationToCustomFolder
+        case howToChangeEmail
+        case howToDeleteAccount
+        case learnMoreAboutChannels
     }
 
     enum WireURLsError: Error {

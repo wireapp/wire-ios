@@ -1,0 +1,152 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireLogging
+import WireSystem
+
+public class CoreCryptoKeyProvider {
+
+    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
+
+    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?) {
+        self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
+    }
+
+    public func coreCryptoKey(
+        createIfNeeded: Bool,
+        path: String
+    ) async throws -> Data {
+        removeLegacyKeyIfNeeded()
+        try await migrateKeyIfNeeded(path: path)
+
+        do {
+            return try fetchCoreCryptoKey()
+        } catch {
+            if createIfNeeded {
+                return try createCoreCryptoKey()
+            } else {
+                throw error
+            }
+        }
+    }
+
+    private func migrateKeyIfNeeded(path: String) async throws {
+        WireLogger.coreCrypto.info("Migrating core crypto key...")
+
+        if let oldKey = try? fetchCoreCryptoKey() {
+            // Since version 6.x, CC has changed the key format and clients need to migrate the key.
+            // We can reuse the same key, but the "new key" must be 'Data'.
+            try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
+                path: path,
+                oldKey: oldKey.base64EncodedString(),
+                newKey: oldKey
+            )
+        } else {
+            // If there is no key,
+            // then this is a fresh install and we do not need to perform migration.
+            coreCryptoKeyMigrationManager?.markMigrationAsSkipped()
+        }
+    }
+
+    private func fetchCoreCryptoKey() throws -> Data {
+        let item = CoreCryptoKeychainItem()
+        return try KeychainManager.fetchItem(item)
+    }
+
+    private func createCoreCryptoKey() throws -> Data {
+        let item = CoreCryptoKeychainItem()
+        let key = try KeychainManager.generateKey(numberOfBytes: 32)
+        try KeychainManager.storeItem(item, value: key)
+        return key
+    }
+
+    private func removeLegacyKeyIfNeeded() {
+        let legacyItem = LegacyCoreCryptoKeychainItem()
+
+        do {
+            _ = try KeychainManager.fetchItem(legacyItem) as Data
+            WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
+            try KeychainManager.deleteItem(legacyItem)
+            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
+        } catch let KeychainManager.Error.failedToDeleteItemFromKeychain(error) {
+            WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
+        } catch {
+            // key was not found. no action needed
+        }
+    }
+}
+
+struct CoreCryptoKeychainItem: KeychainItemProtocol {
+
+    var id: String {
+        "com.wire.mls.key"
+    }
+
+    var tag: Data {
+        id.data(using: .utf8)!
+    }
+
+    var getQuery: [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+}
+
+struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
+
+    var id: String {
+        "com.wire.mls.key"
+    }
+
+    var tag: Data {
+        id.data(using: .utf8)!
+    }
+
+    var getQuery: [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+        ]
+    }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+        ]
+    }
+}

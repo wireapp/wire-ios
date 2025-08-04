@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ public final class AccountImageView: UIView {
     // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
-    private let initialsLabelSizeMultiplier: CGFloat = 7 / 10
+    private let initialsLabelSizeMultiplier: CGFloat = 3 / 5
 
     enum Defaults {
         static let imageViewBorderWidth: CGFloat = 1
@@ -93,13 +93,17 @@ public final class AccountImageView: UIView {
         set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
+    public var hideProfileNotificationsBadge: Bool = false {
+        didSet { updateNotificationBadge() }
+    }
+
     // MARK: - Private Properties
 
     private let accountImageView = UIImageView()
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
-
-    override public var intrinsicContentSize: CGSize {
+    let notificationBadgeView = createNotificationBadgeView()
+    public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
             height: imageBorderWidth * 2 + accountImageHeight
@@ -118,13 +122,13 @@ public final class AccountImageView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
-    override public func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         updateAccountImageBorder()
         updateShape()
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
@@ -177,40 +181,82 @@ public final class AccountImageView: UIView {
             return constraint
         })
 
-        initialsLabel.font = .systemFont(ofSize: 100, weight: .light)
+        initialsLabel.font = .systemFont(ofSize: 100, weight: .regular)
         initialsLabel.textAlignment = .center
         initialsLabel.adjustsFontSizeToFitWidth = true
-        initialsLabel.minimumScaleFactor = 0.1
+        initialsLabel.minimumScaleFactor = 0.01
+        initialsLabel.lineBreakMode = .byClipping
         initialsLabel.translatesAutoresizingMaskIntoConstraints = false
         accountImageViewWrapper.addSubview(initialsLabel)
         accountImageViewWrapper.backgroundColor = .systemBackground
 
         NSLayoutConstraint.activate([
             // image mode
-            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: imageBorderWidth),
-            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: imageBorderWidth),
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: imageBorderWidth),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: imageBorderWidth),
+            accountImageView.leadingAnchor.constraint(
+                equalTo: accountImageViewWrapper.leadingAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageView.topAnchor.constraint(
+                equalTo: accountImageViewWrapper.topAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageViewWrapper.trailingAnchor.constraint(
+                equalTo: accountImageView.trailingAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageViewWrapper.bottomAnchor.constraint(
+                equalTo: accountImageView.bottomAnchor,
+                constant: imageBorderWidth
+            ),
             // text mode
             initialsLabel.centerXAnchor.constraint(equalTo: accountImageViewWrapper.centerXAnchor),
             initialsLabel.centerYAnchor.constraint(equalTo: accountImageViewWrapper.centerYAnchor),
-            initialsLabel.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: initialsLabelSizeMultiplier),
-            initialsLabel.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: initialsLabelSizeMultiplier)
+            initialsLabel.widthAnchor.constraint(
+                equalTo: accountImageViewWrapper.widthAnchor,
+                multiplier: initialsLabelSizeMultiplier
+            ),
+            initialsLabel.heightAnchor.constraint(
+                equalTo: accountImageViewWrapper.heightAnchor,
+                multiplier: initialsLabelSizeMultiplier
+            )
         ])
 
         // view which renders the availability status
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityIndicatorView)
         NSLayoutConstraint.activate([
-            availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
-            availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
+            availabilityIndicatorView.widthAnchor.constraint(
+                equalTo: accountImageViewWrapper.widthAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
+            availabilityIndicatorView.heightAnchor.constraint(
+                equalTo: accountImageViewWrapper.heightAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
+        ])
+
+        // view which renders the notification badge
+        notificationBadgeView.isHidden = true
+        notificationBadgeView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(notificationBadgeView)
+        NSLayoutConstraint.activate([
+            notificationBadgeView.widthAnchor.constraint(
+                equalToConstant: 14
+            ),
+            notificationBadgeView.heightAnchor.constraint(equalToConstant: 14),
+            notificationBadgeView.centerYAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: 3.5),
+            notificationBadgeView.centerXAnchor.constraint(
+                equalTo: accountImageViewWrapper.trailingAnchor,
+                constant: -3.5
+            )
         ])
 
         updateAccountImage()
         updateShape()
         updateAvailabilityIndicator()
+        updateNotificationBadge()
 
         if #available(iOS 17.0, *) {
             registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
@@ -228,11 +274,11 @@ public final class AccountImageView: UIView {
 
     private func updateAccountImage() {
         switch source {
-        case .image(let image):
+        case let .image(image):
             initialsLabel.text = nil
             accountImageView.image = image
 
-        case .text(let initials):
+        case let .text(initials):
             initialsLabel.text = initials
             accountImageView.image = nil
         }
@@ -257,6 +303,12 @@ public final class AccountImageView: UIView {
             // remove clipping
             accountImageView.superview?.layer.mask = .none
             return
+        }
+    }
+
+    private func updateNotificationBadge() {
+        if notificationBadgeView.isHidden != hideProfileNotificationsBadge {
+            notificationBadgeView.isHidden = hideProfileNotificationsBadge
         }
     }
 }
@@ -287,37 +339,46 @@ struct AccountImageView_Previews: PreviewProvider {
     @ViewBuilder
     static func previewWithNavigationBar(
         _ source: AccountImageSource,
-        _ availability: Availability?
+        _ availability: Availability?,
+        _ showNotificationsBadge: Bool = false
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(source, availability)
-                // slightly differnet colors so that we can verify that the view modifiers work
-                .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
-                .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
-                .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
-                .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
-                .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
-                // set a frame in order check that it scales,
-                // ensure it scales with "aspectFit" content mode
-                .frame(width: 32, height: 50)
-                // make the frame visible in order to be able
-                // to check the alignment and size
-                .background(Color(UIColor.systemGray2))
-                .center()
-                // scale in order to better see it, keeping the
-                // ratio between the border width and total size
-                .scaleEffect(6)
-                .navigationTitle(Text(verbatim: "Conversations"))
-                .navigationBarTitleDisplayMode(.inline)
-                .background(Color(UIColor.systemGray3))
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {} label: {
-                            AccountImageViewRepresentable(source, availability)
-                                .padding(.horizontal)
-                        }
+            AccountImageViewRepresentable(
+                source: source,
+                availability: availability,
+                showNotificationsBadge: showNotificationsBadge
+            )
+            // slightly differnet colors so that we can verify that the view modifiers work
+            .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
+            .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
+            .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
+            .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
+            .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
+            // set a frame in order check that it scales,
+            // ensure it scales with "aspectFit" content mode
+            .frame(width: 32, height: 50)
+            // make the frame visible in order to be able
+            // to check the alignment and size
+            .background(Color(UIColor.systemGray2))
+            .center()
+            // scale in order to better see it, keeping the
+            // ratio between the border width and total size
+            .scaleEffect(6)
+            .navigationTitle(Text(verbatim: "Conversations"))
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(UIColor.systemGray3))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {} label: {
+                        AccountImageViewRepresentable(
+                            source: source,
+                            availability: availability,
+                            showNotificationsBadge: showNotificationsBadge
+                        )
+                        .padding(.horizontal)
                     }
                 }
+            }
         }
     }
 }

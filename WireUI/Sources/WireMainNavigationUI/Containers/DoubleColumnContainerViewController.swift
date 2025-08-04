@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,8 @@ final class DoubleColumnContainerViewController: UIViewController {
         borderView.backgroundColor = borderColor
 
         borderWidthConstraint = borderView.widthAnchor.constraint(equalToConstant: borderWidth)
-        primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor.constraint(equalToConstant: primaryColumnWidth)
+        primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor
+            .constraint(equalToConstant: primaryColumnWidth)
         NSLayoutConstraint.activate([
             borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
             borderView.topAnchor.constraint(equalTo: view.topAnchor),

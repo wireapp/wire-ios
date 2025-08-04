@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,10 +29,14 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
     public var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
     public var lastGeneratedLastPrekey: String?
 
-    override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
+    public override func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
 
-        if self.failToGeneratePreKeys {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
+        if failToGeneratePreKeys {
+            let error = NSError(
+                domain: "cryptobox.error",
+                code: 0,
+                userInfo: ["reason": "using fake store with simulated fail"]
+            )
             throw error
         } else {
             let keys = try! super.generateMoreKeys(count, start: start)
@@ -41,9 +45,13 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
         }
     }
 
-    override public func lastPreKey() throws -> String {
-        if self.failToGenerateLastPreKey {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
+    public override func lastPreKey() throws -> String {
+        if failToGenerateLastPreKey {
+            let error = NSError(
+                domain: "cryptobox.error",
+                code: 0,
+                userInfo: ["reason": "using fake store with simulated fail"]
+            )
             throw error
         } else {
             lastGeneratedLastPrekey = try! super.lastPreKey()
@@ -53,7 +61,7 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
 
     public var accessEncryptionContextCount = 0
 
-    override public var encryptionContext: EncryptionContext {
+    public override var encryptionContext: EncryptionContext {
         get {
             accessEncryptionContextCount += 1
             return super.encryptionContext

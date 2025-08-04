@@ -1,0 +1,88 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"general.loading" = "Wird geladen…";
+
+// Channel Access level
+"channel_access_level.public" = "Öffentlich";
+"channel_access_level.private" = "Privat";
+"channel_access_level.admins" = "Admins";
+"channel_access_level.everyone" = "Admins und Mitglieder";
+"channel_access_level.navigation_title" = "Zugang";
+
+"channel_access_level.participants_header" = "Teilnehmer hinzufügen";
+"channel_access_level.participants_header" = "Teilnehmer hinzufügen";
+
+"channel_access_level.access_footer" = "Alle Team-Mitglieder können öffentlichen Channels beitreten. Aber nur Channel-Admins oder -Mitglieder können Personen zu einem privaten Channel hinzufügen. Ein privater Channel kann nicht in einen öffentlichen umgewandelt werden.";
+"channel_access_level.participants_footer" = "Wählen Sie, wer Teilnehmer zu einem privaten Channel hinzufügen kann";
+
+
+"channel_access_level.change_level_alert.title" = "Zugang von öffentlich auf privat ändern?";
+"channel_access_level.change_level_alert.message" = "Das bedeutet: Team-Mitglieder können diesem Channel nicht selbst beitreten.\nAbhängig von Ihrer Wahl können nur Channel-Admins oder sowohl Admins als auch Mitglieder neue Teilnehmer hinzufügen.\nSie können diesen Schritt nicht rückgängig machen. Der Channel bleibt privat.";
+"channel_access_level.change_level_alert.button.change" = "Auf privat ändern";
+"channel_access_level.change_level_alert.button.cancel" = "Abbrechen";
+
+
+"conversation.create.channel.title" = "Neuer Channel";
+"conversation.create.channel.subtitle" = "Gesprächsverlauf und mehr";
+"conversation.create.group.title" = "Neue Gruppe";
+
+// MARK: Navigation
+"conversation.create.channel.back" = "Zurück";
+"conversation.create.channel.next" = "Weiter";
+
+// MARK: - Channel name
+"conversation.creationForm.channelName.sectionTitle" = "Channel-Name";
+"conversation.creationForm.channelName.placeholder" = "Channel-Name eingeben";
+"conversation.creationForm.channelName.label" = "Channel-Name";
+
+// MARK: - Options
+"conversation.creationForm.options.sectionTitle" = "Optionen";
+"conversation.creationForm.options.channelAccess" = "Channel-Zugang";
+"conversation.creationForm.options.channelAccess.public" = "Öffentlich";
+"conversation.creationForm.options.channelAccess.private" = "Privat";
+
+"conversation.creationForm.options.channelAccess.invitePolicy" = "Teilnehmer hinzufügen";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsOnly" = "Admins";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsAndMembers" = "Admins und Mitglieder";
+
+"conversation.creationForm.options.footer" = "Alle Team-Mitglieder können öffentlichen Channels beitreten. Aber nur Channel-Admins oder -Mitglieder können Personen zu einem privaten Channel hinzufügen. Ein privater Channel kann nicht in einen öffentlichen umgewandelt werden.";
+
+"conversation.creationForm.services.toggle" = "Dienste zulassen";
+"conversation.creationForm.guests.toggle" = "Gäste zulassen";
+"conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
+
+"conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
+"conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgraden Sie auf eine kostenpflichtige Version, um Channel-Mitgliedern den gesamten Gesprächsverlauf zu bieten.";
+"conversation.channelHistory.upgradeBanner.button" = "Jetzt upgraden";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Gesprächsverlauf";
+"conversation.channelHistory.picker.off" = "Aus";
+"conversation.channelHistory.picker.oneDay" = "1 Tag";
+"conversation.channelHistory.picker.oneWeek" = "1 Woche";
+"conversation.channelHistory.picker.fourWeeks" = "4 Wochen";
+"conversation.channelHistory.picker.unlimited" = "Unbegrenzt";
+"conversation.channelHistory.picker.custom" = "Benutzerdefiniert";
+"conversation.channelHistory.customPicker.days" = "Tage";
+"conversation.channelHistory.customPicker.weeks" = "Wochen";
+"conversation.channelHistory.navigationTitle" = "Gesprächsverlauf";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Wählen Sie einen Zeitraum. Wenn Teilnehmer diesem Channel beitreten, können sie den Verlauf für diese Zeitspanne verfolgen.";

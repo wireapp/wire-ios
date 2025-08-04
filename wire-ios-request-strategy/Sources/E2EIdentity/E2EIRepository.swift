@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 public protocol E2EIRepositoryInterface {
 
@@ -86,7 +87,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             do {
                 try await e2eiSetupService.registerFederationCertificate(certificate)
             } catch {
-                logger.warn("failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))")
+                logger
+                    .warn(
+                        "failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))"
+                    )
             }
         }
     }

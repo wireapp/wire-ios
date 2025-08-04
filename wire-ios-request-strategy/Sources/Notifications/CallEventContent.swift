@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public struct CallEventContent: Codable {
 
@@ -86,54 +87,54 @@ public struct CallEventContent: Codable {
 
     // MARK: - Methods
 
-    public var callerID: UUID? {
-        callerUserID.flatMap(UUID.init(transportString:))
+    public var callerID: AVSIdentifier? {
+        callerUserID.flatMap(AVSIdentifier.init(string:))
     }
 
     public var callState: LocalNotificationType.CallState? {
         if isIncomingCall {
-            return .incomingCall(video: properties?.isVideo ?? false)
+            .incomingCall(video: properties?.isVideo ?? false)
         } else if isEndCall {
-            return .missedCall(cancelled: true)
+            .missedCall(cancelled: true)
         } else {
-            return nil
+            nil
         }
     }
 
     public var initiatesRinging: Bool {
-        return isIncomingCall
+        isIncomingCall
     }
 
     public var terminatesRinging: Bool {
-        return isEndCall || isAnsweredElsewhere || isRejected
+        isEndCall || isAnsweredElsewhere || isRejected
     }
 
     public var isIncomingCall: Bool {
-        return isStartCall && !resp
+        isStartCall && !resp
     }
 
     public var isAnsweredElsewhere: Bool {
-        return isStartCall && resp
+        isStartCall && resp
     }
 
     public var isStartCall: Bool {
-        return type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
+        type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
     }
 
     public var isEndCall: Bool {
-        return type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
+        type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
     }
 
     public var isRejected: Bool {
-        return type == "REJECT"
+        type == "REJECT"
     }
 
     public var isRemoteMute: Bool {
-        return type == "REMOTEMUTE"
+        type == "REMOTEMUTE"
     }
 
     public var isConferenceKey: Bool {
-        return type == "CONFKEY"
+        type == "CONFKEY"
     }
 
     public var isVideo: Bool {
@@ -153,7 +154,7 @@ extension CallEventContent {
         private let videosend: String
 
         var isVideo: Bool {
-            return videosend == "true"
+            videosend == "true"
         }
     }
 
@@ -162,7 +163,7 @@ extension CallEventContent {
 extension ZMUpdateEvent {
 
     var isCallEvent: Bool {
-        return CallEventContent(from: self) != nil
+        CallEventContent(from: self) != nil
     }
 
 }

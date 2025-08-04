@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
+import WireNetwork
 import XCTest
+@testable import WireDomain
 
 final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
@@ -50,7 +50,8 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Removes_Participants_From_A_Group_Conversation_That_Is_Not_Hosted_On_Specified_Domains() async throws {
+    func testProcessEvent_It_Removes_Participants_From_A_Group_Conversation_That_Is_Not_Hosted_On_Specified_Domains(
+    ) async throws {
         // Given
 
         await context.perform { [self] in
@@ -95,12 +96,19 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
             let lastMessages = conversation.lastMessages(limit: 2)
 
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 
-    func testProcessEvent_It_Removes_Participant_On_A_Domain_From_A_Group_Conversation_That_Is_Hosted_On_Another_Domain() async throws {
+    func testProcessEvent_It_Removes_Participant_On_A_Domain_From_A_Group_Conversation_That_Is_Hosted_On_Another_Domain(
+    ) async throws {
         // Given
 
         await context.perform { [self] in
@@ -145,8 +153,14 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
             let lastMessages = conversation.lastMessages(limit: 2)
 
-            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
-            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
+            XCTAssertEqual(
+                lastMessages.first?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.participantsRemoved
+            )
+            XCTAssertEqual(
+                lastMessages.last?.systemMessageData?.systemMessageType,
+                ZMSystemMessageType.domainsStoppedFederating
+            )
         }
     }
 

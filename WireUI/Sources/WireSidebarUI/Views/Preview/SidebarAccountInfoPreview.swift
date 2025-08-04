@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,27 @@ import SwiftUI
 
 @ViewBuilder @MainActor
 func SidebarAccountInfoPreview() -> some View {
-    SidebarAccountInfoView(displayName: "Firstname Lastname", username: "@username") {
-        MockAccountView()
-    }
+    SidebarAccountInfoView(
+        displayName: "Firstname Lastname",
+        username: "@username",
+        isE2EICertified: true,
+        isVerified: true,
+        isLegalHoldIndicatorVisible: true,
+        accountImageView: { MockAccountView() },
+        legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
+    )
 }
 
 private struct MockAccountView: View {
     var body: some View {
         Circle()
             .foregroundStyle(Color.primary)
+    }
+}
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
     }
 }

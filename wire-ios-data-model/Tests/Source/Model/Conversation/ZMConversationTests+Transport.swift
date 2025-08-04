@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,10 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let accessMode = ConversationAccessMode.allowGuests
 
             // when
-            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map({ $0.rawValue }))
+            conversation.updateAccessStatus(
+                accessModes: accessMode.stringValue,
+                accessRoles: accessRoles.map(\.rawValue)
+            )
 
             // then
             XCTAssertEqual(conversation.accessMode, accessMode)
@@ -166,7 +169,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             XCTAssertEqual(participant2.role?.team, team)
             XCTAssertEqual(participant1.role?.name, "test_role1")
             XCTAssertEqual(participant2.role?.name, "test_role2")
-            XCTAssertEqual(team.roles, Set([participant1.role, participant2.role].compactMap { $0 }))
+            XCTAssertEqual(team.roles, Set([participant1.role, participant2.role].compactMap(\.self)))
         }
     }
 
@@ -226,7 +229,11 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            let selfRole = Role.create(managedObjectContext: self.syncMOC, name: "test_role", conversation: conversation)
+            let selfRole = Role.create(
+                managedObjectContext: self.syncMOC,
+                name: "test_role",
+                conversation: conversation
+            )
 
             // when
             conversation.updateMembers([], selfUserRole: selfRole)
@@ -246,7 +253,11 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            let selfRole = Role.create(managedObjectContext: self.syncMOC, name: "test_role", conversation: conversation)
+            let selfRole = Role.create(
+                managedObjectContext: self.syncMOC,
+                name: "test_role",
+                conversation: conversation
+            )
 
             // when
             conversation.updateMembers([], selfUserRole: selfRole)
@@ -258,13 +269,13 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
 }
 
-extension ZMConversation {
+private extension ZMConversation {
 
-    fileprivate func participantForUser(_ user: ZMUser) -> ParticipantRole? {
-        return self.participantForUser(id: user.remoteIdentifier!)
+    func participantForUser(_ user: ZMUser) -> ParticipantRole? {
+        participantForUser(id: user.remoteIdentifier!)
     }
 
-    fileprivate func participantForUser(id: UUID) -> ParticipantRole? {
-        return self.participantRoles.first(where: { $0.user?.remoteIdentifier == id })
+    func participantForUser(id: UUID) -> ParticipantRole? {
+        participantRoles.first(where: { $0.user?.remoteIdentifier == id })
     }
 }

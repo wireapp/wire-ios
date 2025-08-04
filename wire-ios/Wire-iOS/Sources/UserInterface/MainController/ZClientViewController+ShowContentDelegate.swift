@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ extension ZClientViewController {
         await mainCoordinator.presentViewController(navigationController)
     }
 
-    func showConnectionRequest(userId: UUID) {
+    func showConnectionRequest(qualifiedID: QualifiedID) {
         let searchUserViewConroller = SearchUserViewController(
-            userId: userId,
+            qualifiedID: qualifiedID,
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
@@ -67,10 +67,12 @@ extension ZClientViewController {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
         case .group, .oneOnOne:
-            select(conversation: conversation,
-                   scrollTo: message,
-                   focusOnView: true,
-                   animated: true)
+            select(
+                conversation: conversation,
+                scrollTo: message,
+                focusOnView: true,
+                animated: true
+            )
         default:
             break
         }

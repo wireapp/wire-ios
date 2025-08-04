@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
@@ -27,30 +27,38 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         // GIVEN
         let tempURL = createTempFolder()
         let mockCoreCrypto = MockCoreCryptoProtocol()
-        mockCoreCrypto.restoreFromDisk_MockMethod = {}
+        let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+
+        mockCoreCrypto.transaction_MockMethod = { block in
+            _ = try await block(mockCoreCryptoContext)
+        }
+
+        mockCoreCryptoContext.proteusReloadSessions_MockMethod = {}
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN / THEN
-        await sut.perform { _ in }
+        try await sut.perform { _ in }
 
     }
 
     func test_performDoesCallRestoreFromDisk() async throws {
         let tempURL = createTempFolder()
         let mockCoreCrypto = MockCoreCryptoProtocol()
-        var called = false
-        mockCoreCrypto.setCallbacksCallbacks_MockMethod = { _ in }
-        mockCoreCrypto.restoreFromDisk_MockMethod = {
-            called = true
+        let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+
+        mockCoreCrypto.transaction_MockMethod = { block in
+            _ = try await block(mockCoreCryptoContext)
         }
+
+        mockCoreCryptoContext.proteusReloadSessions_MockMethod = {}
 
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN
-        await sut.perform { _ in }
+        try await sut.perform { _ in }
 
         // THEN
-        XCTAssertTrue(called)
+        XCTAssertEqual(mockCoreCryptoContext.proteusReloadSessions_Invocations.count, 1)
     }
 
 }

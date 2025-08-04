@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,15 @@
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
-
-/// Data Structure containing contextual information currently displayed view
-struct DeveloperToolsContext {
-    var currentUserClient: UserClient?
-}
+import WireViewsDebugUI
 
 final class DeveloperToolsViewModel: ObservableObject {
 
-    static var context: DeveloperToolsContext = DeveloperToolsContext()
+    static var context: DeveloperToolsContext = .init()
 
     // MARK: - Models
 
@@ -50,14 +47,14 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         var id: UUID {
             switch self {
-            case .button(let item):
-                return item.id
+            case let .button(item):
+                item.id
 
-            case .text(let item):
-                return item.id
+            case let .text(item):
+                item.id
 
-            case .destination(let item):
-                return item.id
+            case let .destination(item):
+                item.id
             }
         }
 
@@ -104,8 +101,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     var sections: [Section]
 
-    @Published
-    var isPresentingAlert = false
+    @Published var isPresentingAlert = false
 
     var alertTitle: String?
     var alertBody: String?
@@ -124,7 +120,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     ) {
         self.router = router
         self.onDismiss = onDismiss
-        sections = []
+        self.sections = []
 
         setupSections()
     }
@@ -144,6 +140,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupPushToken()
 
         setupDatadog()
+
+        sections.append(debugViewSection)
     }
 
     // MARK: - Section Builders
@@ -154,29 +152,72 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
+                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
             ]
         ))
     }
 
     private func setupSelfUser() {
         if let selfUser {
-            sections.append(Section(
-                header: "Self user",
-                items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
-                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
-                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(
-                        title: "Supported protocols",
-                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
-                    ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
-                ]
-            ))
+            sections.append(
+                Section(
+                    header: "Self user",
+                    items: [
+                        .text(TextItem(
+                            title: "Handle",
+                            value: selfUser.handleDisplayString(withDomain: true) ?? "None"
+                        )),
+                        .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
+                        .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
+                        .text(
+                            TextItem(
+                                title: "Analytics ID",
+                                value: selfUser.trackingID?.transportString().uppercased() ?? "None"
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "Client ID",
+                            value: selfClient?.remoteIdentifier?.uppercased() ?? "None"
+                        )),
+                        .text(
+                            TextItem(
+                                title: "Supported protocols",
+                                value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "MLS public key",
+                            value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
+                        )),
+                        .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
+                        .text(TextItem(
+                            title: "Consumable Notifications Capability",
+                            value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
+                        ))
+                    ]
+                )
+            )
         }
+    }
+
+    private func oneOnOneMLSConversationsCount() -> String {
+        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+            return "-"
+        }
+        let allOneOnOneRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        allOneOnOneRequest.predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+        let allOneOnOneCount = context.countOrAssert(request: allOneOnOneRequest)
+
+        let mlsOneOnOneRequest = ZMConversation.fetchRequest()
+        mlsOneOnOneRequest.predicate = NSPredicate(
+            format: "%K = YES && %K != nil",
+            #keyPath(ZMConversation.migratedToMLS),
+            #keyPath(ZMConversation.oneOnOneUser)
+        )
+        let mlsOneOnOneCount = context.countOrAssert(request: mlsOneOnOneRequest)
+
+        return "\(mlsOneOnOneCount)/\(allOneOnOneCount)"
     }
 
     private func setupPushToken() {
@@ -184,7 +225,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Push token",
                 items: [
-                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
                     .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
                     .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
                         self?.checkRegisteredTokens()
@@ -207,12 +247,14 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupContextualItems() {
+        let context = Self.context
         let actionsProviders: [DeveloperToolsContextItemsProvider?] = [
-            UserClientDeveloperItemsProvider(context: Self.context)
+            UserClientDeveloperItemsProvider(context: context),
+            ConversationDeveloperActionsProvider(context: context)
             // add new builder here
         ]
 
-        let actions = actionsProviders.reduce(into: [], { $0 += ($1?.getActionItems() ?? []) })
+        let actions = actionsProviders.reduce(into: []) { $0 += ($1?.getActionItems() ?? []) }
         guard !actions.isEmpty else { return }
 
         sections.append(
@@ -231,7 +273,11 @@ final class DeveloperToolsViewModel: ObservableObject {
                     AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
                 })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
+                        selfClient: self?
+                            .selfClient,
+                        onDismiss: { self?.onDismiss {} }
+                    )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
@@ -285,6 +331,22 @@ final class DeveloperToolsViewModel: ObservableObject {
         return sessionManager.canSwitchBackend() == nil
     }
 
+    private lazy var debugViewSection: Section = {
+        let header = "Views"
+
+        let items: [Item] = [
+            .destination(DestinationItem(
+                title: "Authentication",
+                makeView: { AnyView(WireAuthenticationUIDebugView()) }
+            ))
+        ]
+
+        return Section(
+            header: header,
+            items: items
+        )
+    }()
+
     // MARK: - Events
 
     func handleEvent(_ event: Event) {
@@ -337,23 +399,31 @@ final class DeveloperToolsViewModel: ObservableObject {
     // MARK: - Helpers
 
     private var appVersion: String {
-        return Bundle.main.shortVersionString ?? "Unknown"
+        Bundle.main.shortVersionString ?? "Unknown"
     }
 
     private var bundleIdentifier: String {
-        return Bundle.main.bundleIdentifier ?? "Unknown"
+        Bundle.main.bundleIdentifier ?? "Unknown"
     }
 
     private var buildNumber: String {
-        return Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+        Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+    }
+
+    private var lastCompletedAppMigration: String? {
+        guard let selfUser else { return nil }
+        return Journal(
+            userID: selfUser.remoteIdentifier,
+            storage: UserDefaults.shared()
+        ).lastCompletedAppVersionMigration?.string
     }
 
     private var backendName: String {
-        return BackendEnvironment.shared.title
+        BackendEnvironment.shared.title
     }
 
     private var backendDomain: String {
-        return BackendInfo.domain ?? "None"
+        BackendInfo.domain ?? "None"
     }
 
     private var apiVersion: String {
@@ -362,7 +432,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var isFederationEnabled: String {
-        return String(describing: BackendInfo.isFederationEnabled)
+        String(describing: BackendInfo.isFederationEnabled)
     }
 
     private var selfUser: ZMUser? {
@@ -409,27 +479,12 @@ final class DeveloperToolsViewModel: ObservableObject {
 
 }
 
-extension PushToken.TokenType: CustomStringConvertible {
-
-    public var description: String {
-        switch self {
-        case .standard:
-            return "Standard"
-
-        case .voip:
-            return "VoIP"
-
-        }
-    }
-
-}
-
 extension PushToken: CustomDebugStringConvertible {
 
     public var debugDescription: String {
-        return """
+        """
         token: \(deviceTokenString),
-        type: \(tokenType),
+        type: standard,
         transport: \(transportType)
         app: \(appIdentifier)
         """

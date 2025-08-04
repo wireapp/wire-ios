@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,50 @@
 
 import Foundation
 
-public struct AVSVideoStreams: Codable, Equatable {
+public struct AVSVideoStreams: Encodable, Equatable {
     let conversationId: String
-    let clients: [AVSClient]
+    let clients: [AVSClientVideoStream]
 
     enum CodingKeys: String, CodingKey {
         case conversationId = "convid"
         case clients
+    }
+}
+
+public enum AVSStreamQuality: Int, Codable {
+    case any = 0 // any resolution (avs decides)
+    case low = 1 // low quality resolution
+    case high = 2 // high quality resolution
+
+    var debugDescription: String {
+        String(describing: self)
+    }
+}
+
+public struct AVSClientVideoStream: Encodable, Equatable, Hashable {
+    public let userId: String
+    public let clientId: String
+    public let quality: AVSStreamQuality
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "userid"
+        case clientId = "clientid"
+        case streamQuality = "quality"
+    }
+
+    public init(
+        client: AVSClient,
+        quality: AVSStreamQuality = .any
+    ) {
+        self.userId = client.userId
+        self.clientId = client.clientId
+        self.quality = quality
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(userId, forKey: .userId)
+        try container.encode(clientId, forKey: .clientId)
+        try container.encode(quality.rawValue, forKey: .streamQuality)
     }
 }

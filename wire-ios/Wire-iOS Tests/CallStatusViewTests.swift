@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,13 +43,13 @@ final class CallStatusViewTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
-            state: .connecting,
-            isVideoCall: false,
-            isConstantBitRate: false,
-            title: "Italy Trip",
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
+                state: .connecting,
+                isVideoCall: false,
+                isConstantBitRate: false,
+                title: "Italy Trip",
+                userEnabledCBR: false,
+                isForcedCBR: false,
+                classification: .none
             )
         )
         sut.backgroundColor = .white

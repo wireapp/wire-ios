@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,5 +19,7 @@
 /// The type of tabs of the main tab bar controller shows.
 /// Since UIKit has a type `UITab` this type has been suffixed with "Content".
 public enum MainTabBarControllerContent: Int, CaseIterable {
-    case conversations, archive, settings
+    case conversations
+    case archive
+    case settings
 }

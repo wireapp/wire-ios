@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -136,9 +136,9 @@ final class URLActionRouterTests: XCTestCase {
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
-    func updateActiveCallPresentationState() { }
+    func updateActiveCallPresentationState() {}
 
-    func minimizeCallOverlay(animated: Bool, completion: Completion?) { }
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) {}
 
     var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {
@@ -155,7 +155,7 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
     var canDisplayAlerts: Bool = true
     func urlActionRouterCanDisplayAlerts() -> Bool {
-        return canDisplayAlerts
+        canDisplayAlerts
     }
 
 }

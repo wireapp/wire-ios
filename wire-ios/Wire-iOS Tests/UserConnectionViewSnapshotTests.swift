@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import WireTestingPackage
 import XCTest
 
@@ -26,8 +27,8 @@ import XCTest
 extension UIView {
 
     func layoutForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
-        let fittingSize = self.systemLayoutSizeFitting(size)
-        self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
+        let fittingSize = systemLayoutSizeFitting(size)
+        frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: size.width),
             heightAnchor.constraint(equalToConstant: size.height)
@@ -74,7 +75,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
         let connectionView = UserConnectionView(user: mockUser)
         connectionView.layoutForTest()
-
+        connectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         return connectionView
     }
 

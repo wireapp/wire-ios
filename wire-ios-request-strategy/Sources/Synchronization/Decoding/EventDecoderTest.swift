@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireTesting
+import WireTestingPackage
 
 @testable import WireRequestStrategy
 
@@ -28,6 +30,8 @@ public enum EventConversation {
     static let addAsset = "conversation.asset-add"
     static let addOTRAsset = "conversation.otr-asset-add"
 }
+
+struct DummyError: Error {}
 
 class EventDecoderTest: MessagingTestBase {
 
@@ -50,9 +54,13 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.remoteIdentifier = self.accountIdentifier
             selfConversation.conversationType = .self
         }
+        disableZMLogError(true)
+
     }
 
     override func tearDown() {
+        // log ZMUpdateEvents will produce errors (SafeTypes)
+        disableZMLogError(false)
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
@@ -60,6 +68,7 @@ class EventDecoderTest: MessagingTestBase {
 }
 
 // MARK: - Processing events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEvents() async throws {
@@ -87,8 +96,10 @@ extension EventDecoderTest {
         var didCallBlock = false
         let accountID = UUID.create()
         let keyGenerator = EARKeyGenerator()
-        let primaryKeys = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
-        let secondaryKeys = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
+        let primaryKeys = try keyGenerator
+            .generatePrimaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
+        let secondaryKeys = try keyGenerator
+            .generateSecondaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
 
         let publicKeys = EARPublicKeys(
             primary: primaryKeys.publicKey,
@@ -134,11 +145,11 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await self.sut.decryptAndStoreEvents([event1])
+        _ = try await sut.decryptAndStoreEvents([event1])
 
         // when
-        _ = try await self.sut.decryptAndStoreEvents([event2])
-        await self.sut.processStoredEvents { events in
+        _ = try await sut.decryptAndStoreEvents([event2])
+        await sut.processStoredEvents { events in
             if callCount == 0 {
                 XCTAssertTrue(events.contains(event1))
             } else if callCount == 1 {
@@ -213,7 +224,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await self.sut.decryptAndStoreEvents([event1, event2])
+        _ = try await sut.decryptAndStoreEvents([event1, event2])
 
         await sut.processStoredEvents(with: nil) { events in
             XCTAssert(events.contains(event1))
@@ -238,14 +249,17 @@ extension EventDecoderTest {
 
         // given
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: Calling(content: "123", conversationId: .random())))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: Calling(content: "123", conversationId: .random()))
+            )
         }
 
         let event2 = await syncMOC.perform {
             self.eventStreamEvent()
         }
 
-        self.insert([event1, event2])
+        insert([event1, event2])
 
         // when
         await sut.processStoredEvents(with: nil) { events in
@@ -266,12 +280,16 @@ extension EventDecoderTest {
         let callingBessage = GenericMessage(content: Calling(content: "123", conversationId: .random()))
 
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: callingBessage, from: ZMUser.selfUser(in: self.syncMOC))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: callingBessage,
+                from: ZMUser.selfUser(in: self.syncMOC)
+            )
         }
         let event2 = await syncMOC.perform {
             self.eventStreamEvent()
         }
-        self.insert([event1, event2])
+        insert([event1, event2])
 
         // when
         await sut.processStoredEvents(with: nil) { events in
@@ -290,13 +308,16 @@ extension EventDecoderTest {
 
         // given
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: WireProtos.Availability(.away)))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Availability(.away))
+            )
         }
         let event2 = await syncMOC.perform {
             self.eventStreamEvent()
         }
 
-        self.insert([event1, event2])
+        insert([event1, event2])
 
         // when
         await sut.processStoredEvents(with: nil) { events in
@@ -313,12 +334,13 @@ extension EventDecoderTest {
 }
 
 // MARK: - Already seen events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() async throws {
 
         // given
-        let pushProcessed = self.customExpectation(description: "Push event processed")
+        let pushProcessed = customExpectation(description: "Push event processed")
 
         let pushEvent = await syncMOC.perform {
             self.pushNotificationEvent()
@@ -335,10 +357,10 @@ extension EventDecoderTest {
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.customExpectation(description: "Stream event processed")
+        let streamProcessed = customExpectation(description: "Stream event processed")
         _ = try await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
@@ -346,13 +368,13 @@ extension EventDecoderTest {
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItDoesProcessEventsWithSameUUIDWhenThroughPushEventsFirst() async throws {
 
         // given
-        let pushProcessed = self.customExpectation(description: "Push event processed")
+        let pushProcessed = customExpectation(description: "Push event processed")
         let uuid = UUID.create()
 
         let pushEvent = await syncMOC.perform {
@@ -370,10 +392,10 @@ extension EventDecoderTest {
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.customExpectation(description: "Stream event not processed")
+        let streamProcessed = customExpectation(description: "Stream event not processed")
 
         _ = try await sut.decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
@@ -383,13 +405,13 @@ extension EventDecoderTest {
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItProcessesEventsWithSameUUIDWhenThroughPushEventsFirstAndDiscarding() async throws {
 
         // given
-        let pushProcessed = self.customExpectation(description: "Push event processed")
+        let pushProcessed = customExpectation(description: "Push event processed")
         let uuid = UUID.create()
 
         let pushEvent = await syncMOC.perform {
@@ -400,26 +422,26 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = try await self.sut.decryptAndStoreEvents([pushEvent])
-        await self.sut.processStoredEvents { events in
+        _ = try await sut.decryptAndStoreEvents([pushEvent])
+        await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // and when
-        let streamProcessed = self.customExpectation(description: "Stream event processed")
+        let streamProcessed = customExpectation(description: "Stream event processed")
 
-        _ = try await self.sut.decryptAndStoreEvents([streamEvent])
-        await self.sut.processStoredEvents { events in
+        _ = try await sut.decryptAndStoreEvents([streamEvent])
+        await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
             streamProcessed.fulfill()
         }
 
         // then
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
 }
@@ -433,8 +455,8 @@ extension EventDecoderTest {
         let mockProteusService = MockProteusServiceInterface()
 
         // Given
-        mockProteusService.decryptDataForSession_MockMethod = { data, _ in
-            return (didCreateNewSession: false, decryptedData: data)
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
+            (didCreateNewSession: false, decryptedData: data)
         }
 
         let event = await syncMOC.perform {
@@ -449,18 +471,18 @@ extension EventDecoderTest {
         }
 
         // When
-        _ = try await self.sut.decryptAndStoreEvents([event])
+        _ = try await sut.decryptAndStoreEvents([event])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
+        XCTAssertEqual(mockProteusService.decryptDataForSessionContext_Invocations.count, 1)
 
         // Cleanup
         proteusViaCoreCrypto.isOn = false
     }
 
-    func test_ProteusEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+    func test_ProteusEventDecryptionDoesStoreLastEventIdIfFails() async throws {
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         defer {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
@@ -471,7 +493,7 @@ extension EventDecoderTest {
             case decryptionError
         }
         // Given
-        mockProteusService.decryptDataForSession_MockMethod = { _, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { _, _, _ in
             throw FakeError.decryptionError
         }
 
@@ -485,13 +507,150 @@ extension EventDecoderTest {
         }
 
         // When
-        _ = try await self.sut.decryptAndStoreEvents([event])
+        _ = try await sut.decryptAndStoreEvents([event])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+        XCTAssertEqual(mockProteusService.decryptDataForSessionContext_Invocations.count, 1)
+        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1)
+    }
+
+    func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+
+        // Given
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
+        let mockProteusService = MockProteusServiceInterface()
+        let decryptionErrorReason = DummyError()
+
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
+            (didCreateNewSession: false, decryptedData: data)
+        }
+
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
+        }
+
+        let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
+            mlsMessageAddEvent(
+                data: Data.random().base64EncodedString(),
+                groupID: .random()
+            )
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.proteusService = mockProteusService
+        }
+
+        do {
+            // When
+            _ = try await sut.decryptAndStoreEvents([mlsEvent])
+        } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
+            // Then
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
+            XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+        }
+
+    }
+
+    func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithEmptyResults() async throws {
+
+        // Given
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
+        let mockProteusService = MockProteusServiceInterface()
+
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
+            (didCreateNewSession: false, decryptedData: data)
+        }
+
+        let eventID = UUID.create()
+
+        let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
+            mlsMessageAddEvent(
+                data: Data.random().base64EncodedString(),
+                groupID: .random(),
+                eventID: eventID
+            )
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.proteusService = mockProteusService
+        }
+
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [] // decryption success with empty results
+        }
+
+        // When
+        let decryptedEvents = try await sut.decryptAndStoreEvents([mlsEvent])
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(decryptedEvents.isEmpty, true) // no decrypted events
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.count,
+            1
+        ) // last event ID updated locally because MLS decryption was successful
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.first,
+            eventID
+        )
+
+    }
+
+    func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithProposalResult() async throws {
+
+        // Given
+        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
+        }
+        let mockProteusService = MockProteusServiceInterface()
+
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
+            (didCreateNewSession: false, decryptedData: data)
+        }
+
+        let eventID = UUID.create()
+
+        let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
+            mlsMessageAddEvent(
+                data: Data.random().base64EncodedString(),
+                groupID: .random(),
+                eventID: eventID
+            )
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.proteusService = mockProteusService
+        }
+
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [.proposal(10)] // decryption success with result of type `proposal`
+        }
+
+        // When
+        let decryptedEvents = try await sut.decryptAndStoreEvents([mlsEvent])
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(decryptedEvents.isEmpty, true) // no decrypted events because decryption result is `proposal`
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.count,
+            1
+        ) // last event ID updated locally because MLS decryption was successful
+        XCTAssertEqual(
+            lastEventIDRepository.storeLastEventID_Invocations.first,
+            eventID
+        )
     }
 
     func test_ProteusEventDecryption_Legacy() async throws {
@@ -506,12 +665,12 @@ extension EventDecoderTest {
         proteusViaCoreCrypto.isOn = false
 
         // When
-        let decryptedEvents = try await self.sut.decryptAndStoreEvents([event])
+        let decryptedEvents = try await sut.decryptAndStoreEvents([event])
         XCTAssertEqual(decryptedEvents.count, 1)
 
         // Then
         // We could decrypt, and the proteus service doesn't exist, so it used the keystore.
-        let proteusService = await self.syncMOC.perform { self.syncMOC.proteusService }
+        let proteusService = await syncMOC.perform { self.syncMOC.proteusService }
         XCTAssertNil(proteusService)
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -522,21 +681,21 @@ extension EventDecoderTest {
 // MARK: - MLS Event Decryption
 
 extension EventDecoderTest {
-    func test_DecryptMLSMessage_ReturnsDecryptedEvent() async {
+    func test_DecryptMLSMessage_ReturnsDecryptedEvent() async throws {
         // Given
         let messageData = Data.random()
         let senderClientID = "clientID"
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.message(messageData, senderClientID)]
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [.message(messageData, senderClientID)]
         }
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
-            self.mlsMessageAddEvent(
+            mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
                 groupID: .random()
             )
         }
         // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
+        let decryptedEvents = try await sut.decryptMlsMessage(from: event, context: syncMOC)
 
         // Then
         let decryptedEvent = decryptedEvents.first
@@ -555,19 +714,19 @@ extension EventDecoderTest {
         let mlsGroupID = MLSGroupID.random()
 
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
-            self.mlsMessageAddEvent(
+            mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
                 groupID: mlsGroupID
             )
         }
         var expectedCommitDate = try XCTUnwrap(event.timestamp)
         expectedCommitDate += TimeInterval(commitDelay)
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [.proposal(commitDelay)]
         }
 
         // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
+        let decryptedEvents = try await sut.decryptMlsMessage(from: event, context: syncMOC)
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
@@ -582,22 +741,22 @@ extension EventDecoderTest {
         }
     }
 
-    func test_DecryptMLSMessage_CommitsPendingsProposals_WhenReceivingProposalOnWebsocket() async {
+    func test_DecryptMLSMessage_CommitsPendingsProposals_WhenReceivingProposalOnWebsocket() async throws {
         // Given
         let commitDelay: UInt64 = 5
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
-            self.mlsMessageAddEvent(
+            mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
                 groupID: .random()
             )
         }
         event.source = .webSocket
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [.proposal(commitDelay)]
         }
 
         // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
+        let decryptedEvents = try await sut.decryptMlsMessage(from: event, context: syncMOC)
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
@@ -605,7 +764,7 @@ extension EventDecoderTest {
         XCTAssertEqual(1, mockMLSService.commitPendingProposalsIfNeeded_Invocations.count)
     }
 
-    func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async {
+    func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async throws {
         // Given
         let commitDelay: UInt64 = 5
         let mlsGroupID = MLSGroupID.random()
@@ -616,12 +775,12 @@ extension EventDecoderTest {
             )
         }
         event.source = .download
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            [.proposal(commitDelay)]
         }
 
         // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
+        let decryptedEvents = try await sut.decryptMlsMessage(from: event, context: syncMOC)
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
@@ -629,37 +788,42 @@ extension EventDecoderTest {
         XCTAssertTrue(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 
-    func test_DecryptMLSMessage_ReturnsNoEvent_WhenPayloadIsInvalid() async {
+    func test_DecryptMLSMessage_ReturnsNoEvent_WhenPayloadIsInvalid() async throws {
         // Given
         let invalidDataPayload = ["invalidKey": ""]
         let event = await syncMOC.perform { self.mlsMessageAddEvent(data: invalidDataPayload) }
 
-        // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
-
-        // Then
-        XCTAssertTrue(decryptedEvents.isEmpty)
+        do {
+            // When
+            _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
+        } catch {
+            // Then
+            XCTAssert(error is DecodingError)
+        }
 
     }
 
-    func test_DecryptMLSMessage_ReturnsNoEvent_WhenGroupIDIsMissing() async {
+    func test_DecryptMLSMessage_ReturnsNoEvent_WhenGroupIDIsMissing() async throws {
         // Given
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-            data: Data.random().base64EncodedString(),
-            groupID: nil)
+                data: Data.random().base64EncodedString(),
+                groupID: nil
+            )
         }
 
-        // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
-
-        // Then
-        XCTAssertTrue(decryptedEvents.isEmpty)
+        do {
+            // When
+            _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
+        } catch let error as EventDecoder.Failure {
+            // Then
+            XCTAssert(error == .missingMLSGroupID)
+        }
     }
 
-    func test_DecryptMLSMessage_ReturnsNoEvent_WhenDecryptedDataIsNil() async {
+    func test_DecryptMLSMessage_ReturnsNoEvent_WhenDecryptedDataIsNil() async throws {
         // Given
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             []
         }
 
@@ -671,16 +835,17 @@ extension EventDecoderTest {
         }
 
         // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
+        let decryptedEvents = try await sut.decryptMlsMessage(from: event, context: syncMOC)
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
     }
 
-    func test_DecryptMLSMessage_ReturnsNoEvent_WhenmlsServiceThrows() async {
+    func test_DecryptMLSMessage_ReturnsNoEvent_WhenmlsServiceThrows() async throws {
         // Given
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+        let decryptionErrorReason = DummyError()
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let event = await syncMOC.perform { [self] in
@@ -690,11 +855,13 @@ extension EventDecoderTest {
             )
         }
 
-        // When
-        let decryptedEvents = await sut.decryptMlsMessage(from: event, context: syncMOC)
-
-        // Then
-        XCTAssertTrue(decryptedEvents.isEmpty)
+        do {
+            // When
+            _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
+        } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
+            // Then
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
+        }
     }
 
     func test_DecryptWelcomeMessage_ReturnsEvent() async throws {
@@ -703,7 +870,7 @@ extension EventDecoderTest {
         let groupID = MLSGroupID.random()
         let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
 
-        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+        mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
         let result = try await sut.decryptAndStoreEvents([event])
@@ -718,13 +885,13 @@ extension EventDecoderTest {
         let groupID = MLSGroupID.random()
         let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
 
-        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+        mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
         _ = try await sut.decryptAndStoreEvents([event])
 
         // Then
-        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
     }
 }
 
@@ -739,37 +906,51 @@ extension EventDecoderTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
     }
 
-    func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
-        var payload: ZMTransportData
-        if let user {
-            payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
+    func eventStreamEvent(
+        conversation: ZMConversation,
+        genericMessage: GenericMessage,
+        from user: ZMUser? = nil,
+        uuid: UUID? = nil
+    ) -> ZMUpdateEvent {
+        var payload: ZMTransportData = if let user {
+            payloadForMessage(
+                in: conversation,
+                type: EventConversation.addOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()],
+                time: nil,
+                from: user
+            )!
         } else {
-            payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
+            payloadForMessage(
+                in: conversation,
+                type: EventConversation.addOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()]
+            )!
         }
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
     }
 
     /// Returns a `conversation.mls-message-add` event
-    func mlsMessageAddEvent(data: Any, groupID: MLSGroupID? = nil) -> ZMUpdateEvent {
+    func mlsMessageAddEvent(data: Any, groupID: MLSGroupID? = nil, eventID: UUID = .create()) -> ZMUpdateEvent {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.mlsGroupID = groupID
         conversation.mlsStatus = .ready
 
-        let payload = self.payloadForMessage(
+        let payload = payloadForMessage(
             in: conversation,
             type: "conversation.mls-message-add",
             data: data,
             time: Date()
         )
 
-        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!
+        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: eventID)!
     }
 
-    /// Returns a `conversation.mls-message-add` event
+    /// Returns a `conversation.mls-welcome` event
     func mlsWelcomeMessageEvent(data: Data, conversationID: QualifiedID) -> ZMUpdateEvent {
-        let payload = self.payloadForMessage(
+        let payload = payloadForMessage(
             conversationID: conversationID.uuid,
             domain: conversationID.domain,
             type: "conversation.mls-welcome",
@@ -797,7 +978,12 @@ extension EventDecoderTest {
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
         eventMOC.performGroupedAndWait {
             events.enumerated().forEach { index, event  in
-                _ = StoredUpdateEvent.encryptAndCreate(event, context: self.eventMOC, index: Int64(startIndex) + Int64(index))
+                _ = StoredUpdateEvent.encryptAndCreate(
+                    event,
+                    context: self.eventMOC,
+                    index: Int64(startIndex) + Int64(index),
+                    isCallEvent: event.isCallEvent
+                )
             }
 
             XCTAssert(self.eventMOC.saveOrRollback())

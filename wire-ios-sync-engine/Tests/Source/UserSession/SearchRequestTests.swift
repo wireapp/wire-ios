@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Foundation
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class SearchRequestTests: MessagingTest {
 
@@ -66,13 +66,26 @@ class SearchRequestTests: MessagingTest {
         try assertHandleAndDomain(from: "@john", handle: "john", domain: nil)
     }
 
+    func testThatItConfiguresRequestIfFederationSearchIsAllowed() throws {
+        // given
+        let query = "john@example.com"
+        let domain = "wire.com"
+
+        // when
+        let request = SearchRequest(query: query, searchDomain: domain, searchOptions: [])
+
+        // then
+        XCTAssertEqual(request.query.string, query)
+        XCTAssertEqual(request.searchDomain, domain)
+    }
+
     // MARK: - Helpers
 
     func assertHandleAndDomain(
         from query: String,
         handle expectedHandle: String,
         domain expectedDomain: String?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         // when

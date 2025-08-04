@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import CallKit
 import Foundation
+import WireLogging
 import WireSystem
 
 enum ConversationLookupError: Error {
@@ -38,7 +39,10 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         withSession(for: account) { userSession in
-            guard let conversation = ZMConversation.fetch(with: handle.conversationID, in: userSession.managedObjectContext) else {
+            guard let conversation = ZMConversation.fetch(
+                with: handle.conversationID,
+                in: userSession.managedObjectContext
+            ) else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
@@ -64,9 +68,12 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            userSession.processPendingCallEvents {
+            Task {
+                await userSession.processPendingCallEvents()
                 WireLogger.calling.info("did process call events, returning conversation...")
-                completionHandler(.success(conversation))
+                await MainActor.run {
+                    completionHandler(.success(conversation))
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import avs
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AVURLAsset_conversionTests: XCTestCase {
 
@@ -37,10 +37,10 @@ final class AVURLAsset_conversionTests: XCTestCase {
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN
         let videoURL = urlForResource(inTestBundleNamed: "video.mp4")
-        let originalAsset: AVURLAsset = AVURLAsset(url: videoURL, options: nil)
+        let originalAsset = AVURLAsset(url: videoURL, options: nil)
 
         // WHEN
-        let expectation = self.expectation(description: "Video converted")
+        let expectation = expectation(description: "Video converted")
 
         AVURLAsset.convertVideoToUploadFormat(
             at: videoURL,

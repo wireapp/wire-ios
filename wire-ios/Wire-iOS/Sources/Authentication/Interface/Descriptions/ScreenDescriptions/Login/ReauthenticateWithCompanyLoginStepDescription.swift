@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,13 +28,16 @@ final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDes
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        headline = L10n.Localizable.Registration.Signin.title
-        subtext = .markdown(from: L10n.Localizable.SigninLogout.Sso.subheadline, style: .login)
+        self.backButton = BackButtonDescription()
+        self.headline = L10n.Localizable.Registration.Signin.title
+        self.subtext = .markdown(from: L10n.Localizable.SigninLogout.Sso.subheadline, style: .login)
 
-        mainView = SolidButtonDescription(title: L10n.Localizable.SigninLogout.Sso.buton, accessibilityIdentifier: "company_login")
-        secondaryView = nil
-        footerView = nil
+        self.mainView = SolidButtonDescription(
+            title: L10n.Localizable.SigninLogout.Sso.buton,
+            accessibilityIdentifier: "company_login"
+        )
+        self.secondaryView = nil
+        self.footerView = nil
     }
 
 }

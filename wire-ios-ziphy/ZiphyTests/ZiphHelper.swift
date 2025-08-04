@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 import Foundation
 @testable import Ziphy
 
-final class ZiphHelper {
+enum ZiphHelper {
     static func createZiph(id: String, url: URL) -> Ziph {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),
-            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
-            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
+            .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51_200),
+            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204_800),
+            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2_048_000),
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
         ]
 
         return createZiph(id: id, url: url, imagesList: imagesList)
@@ -33,8 +33,6 @@ final class ZiphHelper {
 
     static func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
 
-        let ziph = Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
-
-        return ziph
+        Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SidebarMenuItemView: View {
+struct SidebarMenuItemView<TitleView: View>: View {
 
     // MARK: - Constants
 
@@ -39,6 +39,8 @@ struct SidebarMenuItemView: View {
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
+    /// The `systemName` of the highlighted icon if set, otherwise `icon` will be appended with ".fill".
+    private(set) var iconHighlighted: String?
     private(set) var iconSize: CGSize?
 
     /// If `true` an icon will be shown at the trailing side of the title.
@@ -48,7 +50,8 @@ struct SidebarMenuItemView: View {
     /// If `true`, ".fill" will be appended to the value of the `icon` property.
     private(set) var isHighlighted = false
 
-    private(set) var title: () -> Text
+    private(set) var title: () -> TitleView
+    private(set) var accessibilityLabel: () -> Text
     private(set) var action: () -> Void
 
     // MARK: -
@@ -60,8 +63,7 @@ struct SidebarMenuItemView: View {
                     title()
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
-                    let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
-                    let icon = Image(systemName: icon + iconSystemNameSuffix)
+                    let icon = Image(systemName: iconSystemName())
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
@@ -85,8 +87,19 @@ struct SidebarMenuItemView: View {
             .padding(.vertical, 12)
             .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
+            .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+    }
+
+    private func iconSystemName() -> String {
+        if !isHighlighted {
+            icon
+        } else if let iconHighlighted {
+            iconHighlighted
+        } else {
+            icon + ".fill"
+        }
     }
 }
 
@@ -112,7 +125,11 @@ extension View {
     }
 
     func sidebarMenuItemIsSelectedTitleForegroundColor(_ isSelectedTitleForegroundColor: Color) -> some View {
-        modifier(SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(isSelectedTitleForegroundColor: isSelectedTitleForegroundColor))
+        modifier(
+            SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(
+                isSelectedTitleForegroundColor: isSelectedTitleForegroundColor
+            )
+        )
     }
 }
 

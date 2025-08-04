@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,11 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser, trackingManager: nil)
+        settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: nil
+        )
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
@@ -86,41 +90,52 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testForSettingGroup() throws {
         let group = settingsCellDescriptorFactory.settingsGroup(
-            isPublicDomain: true,
+            isAnalyticsTrackingAvailable: true,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            mainCoordinator: MockMainCoordinator()
         )
         try verify(group: group)
     }
 
+    @MainActor
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isPublicDomain: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
+        let group = settingsCellDescriptorFactory.accountGroup(
+            isAnalyticsTrackingAvailable: true,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true
+        )
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
+    @MainActor
     func testForAccountGroup_Federated() throws {
         try testForAccountGroup(federated: true)
     }
 
+    @MainActor
     func testForAccountGroup_NotFederated() throws {
         try testForAccountGroup(federated: false)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_Federated() throws {
         try testForAccountGroup(federated: true, disabledEditing: true)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_NotFederated() throws {
         try testForAccountGroup(federated: false, disabledEditing: true)
     }
@@ -150,7 +165,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
         sut.view.layoutIfNeeded()
 
-        snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
+        snapshotHelper.verify(
+            matching: sut,
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: 1400)
+        )
     }
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
@@ -197,7 +215,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     private func verify(
         group: Any,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
@@ -216,14 +234,17 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - advanced
 
     func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        let group = settingsCellDescriptorFactory.advancedGroup(
+            userSession: userSession,
+            mainCoordinator: MockMainCoordinator()
+        )
         try verify(group: group)
     }
 
     // MARK: - data usage permissions
 
     func testForDataUsagePermissionsForPublicDomain() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isPublicDomain: true)
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: true)
         try verify(group: group)
     }
 }

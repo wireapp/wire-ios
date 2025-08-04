@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@
 @property (nonatomic, readwrite) BOOL canModifyEphemeralSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canModifyReadReceiptSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canModifyNotificationSettingsInConversation;
-@property (nonatomic, readwrite) BOOL canModifyAccessControlSettingsInConversation;
+@property (nonatomic, readwrite) BOOL canModifyGuestsAccessControlSettingsInConversation;
+@property (nonatomic, readwrite) BOOL canModifyChannelAccessLevelSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canAddUserToConversation;
 @property (nonatomic, readwrite) BOOL canRemoveUserFromConversation;
 @property (nonatomic, readwrite) BOOL canAddServiceToConversation;
@@ -88,7 +89,6 @@
 
 @property (nonatomic) NSSet <id<UserClientType>> * clients;
 @property (nonatomic) ZMConnection *connection;
-@property (nonatomic) ZMAddressBookContact *contact;
 @property (nonatomic) AddressBookEntry *addressBookEntry;
 @property (nonatomic, copy) NSUUID *remoteIdentifier;
 @property (nonatomic, readwrite) ZMAvailability availability;

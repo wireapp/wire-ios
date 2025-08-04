@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,13 +32,5 @@ extern NSString * _Nonnull const ZMDataPropertySuffix;
 + (nullable instancetype)existingObjectWithObjectIdentifier:(nullable NSString *)identifier inManagedObjectContext:(nullable NSManagedObjectContext *)context;
 
 - (nullable NSString *)objectIDURLString;
-
-@end
-
-@interface ZMManagedObject (NonpersistedObjectIdentifer)
-
-@property (nonatomic, readonly, nonnull) NSString *nonpersistedObjectIdentifer;
-
-+ (nullable instancetype)existingObjectWithNonpersistedObjectIdentifer:(nullable NSString *)identifier inUserSession:(nonnull id<ContextProvider>)userSession;
 
 @end

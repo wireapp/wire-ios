@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,19 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
 
 class MentionTests: ZMBaseManagedObjectTest {
 
-    func createMention(start: Int = 0, length: Int = 1, userId: String = UUID().transportString(), domain: String? = nil) -> WireProtos.Mention {
+    func createMention(
+        start: Int = 0,
+        length: Int = 1,
+        userId: String = UUID().transportString(),
+        domain: String? = nil
+    ) -> GenericMessageProtocol.Mention {
         // Make user mentioned user exists
         if let remoteIdentifier = UUID(uuidString: userId) {
             let user = ZMUser.insertNewObject(in: uiMOC)
@@ -31,13 +37,13 @@ class MentionTests: ZMBaseManagedObjectTest {
             user.domain = domain
         }
 
-        return WireProtos.Mention.with {
+        return GenericMessageProtocol.Mention.with {
             $0.start = Int32(start)
             $0.length = Int32(length)
             $0.userID = userId
 
             if let domain {
-                $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
+                $0.qualifiedUserID = GenericMessageProtocol.QualifiedUserId.with {
                     $0.id = userId
                     $0.domain = domain
                 }

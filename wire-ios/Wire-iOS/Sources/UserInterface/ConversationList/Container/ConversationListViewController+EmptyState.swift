@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     var isEmptyPlaceholderVisible: Bool {
-        let totalItems = listContentController.listViewModel.sections.map { $0.items.count }.reduce(0, +)
-        return totalItems == 0
+        listContentController.listViewModel.isEmptyList
     }
 
     var emptyPlaceholderForSelectedFilter: EmptyPlaceholder {
@@ -32,7 +31,8 @@ extension ConversationListViewController {
         guard let selectedFilter = listContentController.listViewModel.selectedFilter else {
             return EmptyPlaceholder(
                 headline: Strings.All.headline + " 👋",
-                subheadline: Strings.All.subheadline.attributedString)
+                subheadline: Strings.All.subheadline.attributedString
+            )
         }
         switch selectedFilter {
         case .favorites:
@@ -46,15 +46,33 @@ extension ConversationListViewController {
 
             return EmptyPlaceholder(
                 subheadline: subheadline + "\n\n" + link,
-                showArrow: false)
+                showArrow: false
+            )
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
+        case .channels:
+            let subheadline = Strings.Channels.subheadline.attributedString
+            let link = NSAttributedString(
+                string: Strings.Channels.link,
+                attributes: [
+                    .link: WireURLs.shared.learnMoreAboutChannels
+                ]
+            )
+
+            return EmptyPlaceholder(
+                subheadline: subheadline + "\n\n" + link,
+                showArrow: false
+            )
         case .oneOnOne:
             let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
             return EmptyPlaceholder(
                 subheadline: Strings.Oneonone.subheadline(domain).attributedString,
                 showArrow: !isIPadRegular(),
-                showButton: isIPadRegular())
+                showButton: isIPadRegular()
+            )
+        case .folder:
+            // FIXME: [WPB-13905] Disallow this state
+            return EmptyPlaceholder(subheadline: "".attributedString)
         }
     }
 

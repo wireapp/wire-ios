@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ extension Member {
         context.fetchOrAssert(request: request).forEach(migrateUserRemoteIdentifer)
     }
 
-    static private func migrateUserRemoteIdentifer(for member: Member) {
+    private static func migrateUserRemoteIdentifer(for member: Member) {
         member.remoteIdentifier = member.user?.remoteIdentifier
     }
 

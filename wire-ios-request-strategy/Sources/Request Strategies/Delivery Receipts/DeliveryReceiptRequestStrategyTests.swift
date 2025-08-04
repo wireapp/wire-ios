@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireRequestStrategy
@@ -37,8 +38,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         mockClientRegistrationStatus = MockClientRegistrationStatus()
         mockMessageSender = MockMessageSenderInterface()
 
-        sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
-                                             messageSender: mockMessageSender)
+        sut = DeliveryReceiptRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender
+        )
 
         syncMOC.performGroupedAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -68,10 +71,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             // when
             self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
 
     }
 
@@ -96,7 +99,11 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // given
             let confirmation = GenericMessage(content: Confirmation(messageId: .create()))
-            let event = self.createUpdateEvent(message: confirmation, from: self.otherUser, in: self.oneToOneConversation)
+            let event = self.createUpdateEvent(
+                message: confirmation,
+                from: self.otherUser,
+                in: self.oneToOneConversation
+            )
 
             // when
             let deliveryReceipts = self.sut.deliveryReceipts(for: [event])
@@ -138,7 +145,11 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             // given
             let eightDaysAgo = Date(timeIntervalSinceNow: -(60 * 60 * 24 * 8))
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let event = self.createTextUpdateEvent(from: selfUser, in: self.oneToOneConversation, timestamp: eightDaysAgo)
+            let event = self.createTextUpdateEvent(
+                from: selfUser,
+                in: self.oneToOneConversation,
+                timestamp: eightDaysAgo
+            )
 
             // when
             let deliveryReceipts = self.sut.deliveryReceipts(for: [event])
@@ -151,8 +162,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func testMessagesAreCombined_WhenSameSenderMultipleMessageInAConversation() {
         syncMOC.performGroupedAndWait {
             // given
-            let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
-                          self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)]
+            let events = [
+                self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
+                self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
+            ]
 
             // when
             let deliveryReceipts = self.sut.deliveryReceipts(for: events)
@@ -167,8 +180,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func testMessagesAreNotCombined_WhenSameSenderMultipleMessageInDifferentConversations() {
         syncMOC.performGroupedAndWait {
             // given
-            let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
-                          self.createTextUpdateEvent(from: self.otherUser, in: self.secondOneToOneConveration)]
+            let events = [
+                self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
+                self.createTextUpdateEvent(from: self.otherUser, in: self.secondOneToOneConveration)
+            ]
 
             // when
             let deliveryReceipts = self.sut.deliveryReceipts(for: events)
@@ -182,8 +197,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func testMessagesAreNotCombined_WhenDifferentSendersSendMultipleMessageInAConversations() {
         syncMOC.performGroupedAndWait {
             // given
-            let events = [self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
-                          self.createTextUpdateEvent(from: self.secondUser, in: self.oneToOneConversation)]
+            let events = [
+                self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation),
+                self.createTextUpdateEvent(from: self.secondUser, in: self.oneToOneConversation)
+            ]
 
             // when
             let deliveryReceipts = self.sut.deliveryReceipts(for: events)
@@ -197,22 +214,26 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
     // MARK: Helpers
 
-    func createTextUpdateEvent(from sender: ZMUser,
-                               in conversation: ZMConversation,
-                               timestamp: Date = Date()) -> ZMUpdateEvent {
+    func createTextUpdateEvent(
+        from sender: ZMUser,
+        in conversation: ZMConversation,
+        timestamp: Date = Date()
+    ) -> ZMUpdateEvent {
 
-        let message = GenericMessage(content: WireProtos.Text(content: "Hello World"))
+        let message = GenericMessage(content: GenericMessageProtocol.Text(content: "Hello World"))
         return createUpdateEvent(message: message, from: sender, in: conversation, timestamp: timestamp)
     }
 
-    func createUpdateEvent(message: GenericMessage,
-                           from sender: ZMUser,
-                           in conversation: ZMConversation,
-                           timestamp: Date = Date() ) -> ZMUpdateEvent {
+    func createUpdateEvent(
+        message: GenericMessage,
+        from sender: ZMUser,
+        in conversation: ZMConversation,
+        timestamp: Date = Date()
+    ) -> ZMUpdateEvent {
 
         let dict: NSDictionary = [
-            "recipient": self.selfClient.remoteIdentifier!,
-            "sender": self.selfClient.remoteIdentifier!,
+            "recipient": selfClient.remoteIdentifier!,
+            "sender": selfClient.remoteIdentifier!,
             "text": try! message.serializedData().base64String()
         ]
 

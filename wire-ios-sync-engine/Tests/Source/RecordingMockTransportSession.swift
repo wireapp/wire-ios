@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
 
     let mockReachability = MockReachability()
     var reachability: ReachabilityProvider & TearDownCapable {
-        return mockReachability
+        mockReachability
     }
 
     init(cookieStorage: ZMPersistentCookieStorage, pushChannel: ZMPushChannel) {
@@ -38,7 +38,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         super.init()
     }
 
-    func tearDown() { }
+    func tearDown() {}
 
     var didCallEnterBackground = false
     func enterBackground() {
@@ -50,9 +50,9 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         didCallEnterForeground = true
     }
 
-    func prepareForSuspendedState() { }
+    func prepareForSuspendedState() {}
 
-    func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
+    func cancelTask(with taskIdentifier: ZMTaskIdentifier) {}
 
     func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
         lastEnqueuedRequest = request
@@ -74,18 +74,18 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         return ZMTransportEnqueueResult(didHaveLessRequestsThanMax: true, didGenerateNonNullRequest: true)
     }
 
-    func setAccessTokenRenewalFailureHandler(_ handler: @escaping ZMCompletionHandlerBlock) { }
+    func setAccessTokenRenewalFailureHandler(_ handler: @escaping ZMCompletionHandlerBlock) {}
 
-    func setAccessTokenRenewalSuccessHandler(_ handler: @escaping ZMAccessTokenHandlerBlock) { }
+    func setAccessTokenRenewalSuccessHandler(_ handler: @escaping ZMAccessTokenHandlerBlock) {}
 
-    func setAccessTokenRenewalSuccessHandler(handler: @escaping ZMAccessTokenHandlerBlock) { }
+    func setAccessTokenRenewalSuccessHandler(handler: @escaping ZMAccessTokenHandlerBlock) {}
 
     var didCallSetNetworkStateDelegate: Bool = false
     func setNetworkStateDelegate(_ delegate: ZMNetworkStateDelegate?) {
         didCallSetNetworkStateDelegate = true
     }
 
-    func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) { }
+    func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
 
     var didCallConfigurePushChannel = false
     func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue) {
@@ -95,5 +95,9 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     var renewAccessTokenCalls = [String]()
     func renewAccessToken(with clientID: String) {
         renewAccessTokenCalls.append(clientID)
+    }
+
+    var accessTokenHandler: ZMAccessTokenHandler {
+        ZMAccessTokenHandler()
     }
 }

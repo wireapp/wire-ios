@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,12 +26,13 @@ private enum WebsitePages {
 }
 
 enum TeamSource: Int {
-    case onboarding, settings
+    case onboarding
+    case settings
 
     var parameterValue: String {
         switch self {
-        case .onboarding: return "client_landing"
-        case .settings: return "client_settings"
+        case .onboarding: "client_landing"
+        case .settings: "client_settings"
         }
     }
 }
@@ -55,8 +56,10 @@ extension URL {
     static func manageTeam(source: TeamSource) -> URL {
         let baseURL = BackendEnvironment.shared.teamsURL
 
-        let queryItems = [URLQueryItem(name: "utm_source", value: source.parameterValue),
-                          URLQueryItem(name: "utm_term", value: "ios")]
+        let queryItems = [
+            URLQueryItem(name: "utm_source", value: source.parameterValue),
+            URLQueryItem(name: "utm_term", value: "ios")
+        ]
 
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
 
@@ -92,10 +95,13 @@ private extension BackendEnvironment {
     }
 
     static var selfUserProfileLink: URL? {
-        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
+        guard let selfUser = SelfUser.provider?.providedSelfUser,
+              let userID = selfUser.remoteIdentifier?.uuidString,
+              let domain = selfUser.domain
+        else {
             return nil
         }
-        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
+        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID.lowercased())@\(domain)")
     }
 
 }

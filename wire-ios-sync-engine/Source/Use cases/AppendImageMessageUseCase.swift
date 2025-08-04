@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import WireAnalytics
 import WireDataModel
 
@@ -29,22 +31,22 @@ public protocol AppendImageMessageUseCaseProtocol {
 
 public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         withImageData imageData: Data,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
         analyticsEventTracker?.trackEvent(
-            .conversationContribution(
+            .Contributed.conversationContribution(
                 .imageMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

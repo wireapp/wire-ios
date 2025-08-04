@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
+public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
 
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
     case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
@@ -33,34 +33,34 @@ public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
         switch self {
 
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
-            return "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519"
+            "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519"
         case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
-            return "MLS_128_DHKEMP256_AES128GCM_SHA256_P256"
+            "MLS_128_DHKEMP256_AES128GCM_SHA256_P256"
         case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
-            return "MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519"
+            "MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519"
         case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
-            return "MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448"
+            "MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448"
         case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
-            return "MLS_256_DHKEMP521_AES256GCM_SHA512_P521"
+            "MLS_256_DHKEMP521_AES256GCM_SHA512_P521"
         case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
-            return "MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448"
+            "MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448"
         case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
-            return "MLS_256_DHKEMP384_AES256GCM_SHA384_P384"
+            "MLS_256_DHKEMP384_AES256GCM_SHA384_P384"
         }
     }
 
     public var signature: MLSSignatureAlgorithm {
-        return switch self {
+        switch self {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519, .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
-                .ed25519
+            .ed25519
         case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448, .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
-                .ed448
+            .ed448
         case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
-                .p256
+            .p256
         case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
-                .p384
+            .p384
         case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
-                .p521
+            .p521
         }
     }
 }

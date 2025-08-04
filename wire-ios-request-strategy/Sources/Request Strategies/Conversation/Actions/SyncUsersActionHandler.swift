@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v4, .v5, .v6:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             guard
                 let payloadData = RequestPayload(qualified_ids: action.qualifiedIDs).payloadString()
             else {
@@ -95,7 +95,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return
 
-        case .v4, .v5, .v6:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData,
@@ -118,9 +118,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
             default:
                 let errorInfo = response.errorInfo
-                action.fail(with: .unknownError(code: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+                action.fail(with: .unknownError(
+                    code: errorInfo.status,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
             }
-
         }
     }
 

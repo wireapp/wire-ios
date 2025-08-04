@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process user legalhold enable events.
-
-protocol UserLegalholdEnableEventProcessorProtocol {
-
-    /// Process a user legalhold enable event.
-    ///
-    /// - Parameter event: A user legalhold enable event.
-
-    func processEvent(_ event: UserLegalholdEnableEvent) async throws
-
-}
+import CoreData
+import WireNetwork
 
 struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProtocol {
 
-    func processEvent(_: UserLegalholdEnableEvent) async throws {
-        // TODO: [WPB-10195]
-        assertionFailure("not implemented yet")
+    let context: NSManagedObjectContext
+    let userRepository: any UserRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
+
+    func processEvent(_ event: UserLegalholdEnableEvent) async throws {
+        let userID = event.userID
+
+        let selfUser = await userRepository.fetchSelfUser()
+
+        let selfUserID = await context.perform {
+            selfUser.remoteIdentifier
+        }
+
+        guard userID == selfUserID else {
+            return
+        }
+
+        try await userClientsRepository.pullSelfClients()
     }
 
 }

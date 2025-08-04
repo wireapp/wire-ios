@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -70,8 +72,10 @@ final class ConversationContentViewController: UIViewController {
         return button
     }()
 
-    let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
-    let bottomContainer: UIView = UIView(frame: .zero)
+    private let userDefaults: PrivateUserDefaults<ConversationBackgroundKey>
+
+    let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
+    let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -81,17 +85,20 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
+    let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
-    lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(
-            conversation: conversation,
-            tableView: tableView,
-            actionResponder: self,
-            cellDelegate: self,
-            userSession: userSession
-        )
-    }()
+    lazy var dataSource = ConversationTableViewDataSource(
+        conversation: conversation,
+        tableView: tableView,
+        actionResponder: self,
+        cellDelegate: self,
+        userSession: userSession,
+        getUserByIDUseCase: GetUserByIdUseCase()
+    )
+
+    /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
+    /// left).
+    private var refreshTimer: Timer?
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
@@ -111,6 +118,10 @@ final class ConversationContentViewController: UIViewController {
     private var token: NSObjectProtocol?
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    let linkDetector = NSDataDetector.linkDetector
+
+    private let logger: WireLogger
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     init(
         conversation: ZMConversation,
@@ -118,14 +129,20 @@ final class ConversationContentViewController: UIViewController {
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
-        messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
-        messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.logger = .conversation
+        self.userDefaults = PrivateUserDefaults<ConversationBackgroundKey>(
+            userID: userSession.selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -134,13 +151,19 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.targetViewController = self
         messagePresenter.modalTargetController = parent
 
-        token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
+        self.token = NotificationCenter.default.addObserver(
+            forName: .activeMediaPlayerChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateMediaBar()
         }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -151,19 +174,22 @@ final class ConversationContentViewController: UIViewController {
                 break
             }
         }
+
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: ZMConversation.failedToSendMessageNotificationName, object: nil)
+        DeveloperToolsViewModel.context.currentConversation = nil
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func loadView() {
-        super.loadView()
+        view = .init()
 
         view.addSubview(tableView)
 
@@ -209,10 +235,8 @@ final class ConversationContentViewController: UIViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.delaysContentTouches = false
-        tableView.keyboardDismissMode = AutomationHelper.sharedHelper.disableInteractiveKeyboardDismissal ? .none : .interactive
-
-        tableView.backgroundColor = SemanticColors.View.backgroundConversationView
-        view.backgroundColor = SemanticColors.View.backgroundConversationView
+        tableView.keyboardDismissMode = AutomationHelper.sharedHelper
+            .disableInteractiveKeyboardDismissal ? .none : .interactive
 
         setupMentionsResultsView()
 
@@ -229,12 +253,30 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
+
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
+
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [unowned self] color in
+                updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        func set(color: UIColor) {
+            tableView.backgroundColor = color
+            view.backgroundColor = color
+        }
+        guard let color, userDefaults.bool(forKey: .conversationBackground) else {
+            set(color: SemanticColors.View.backgroundConversationView)
+            return
+        }
+        set(color: color.accentColor.conversationBackgroundColor)
     }
 
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
-        tableView.reloadData()
     }
 
     private func handleScrollToBottomTapped() {
@@ -244,8 +286,10 @@ final class ConversationContentViewController: UIViewController {
     @objc
     private func showErrorAlertToSendMessage(_ notification: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
-        UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
-                                                 message: MessageSendError.missingLegalholdConsent)
+        UIAlertController.showErrorAlertWithLink(
+            title: MessageSendError.title,
+            message: MessageSendError.missingLegalholdConsent
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -262,6 +306,8 @@ final class ConversationContentViewController: UIViewController {
 
         UIAccessibility.post(notification: .screenChanged, argument: nil)
         setNeedsStatusBarAppearanceUpdate()
+
+        startRefreshTimerIfNeeded()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -275,7 +321,7 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.modalTargetController = parent
 
         updateHeaderHeight()
-
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
         setNeedsStatusBarAppearanceUpdate()
     }
 
@@ -285,14 +331,20 @@ final class ConversationContentViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        stopRefreshTimer()
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        let margins = HorizontalMargins.conversationHorizontalMargins()
+        dataSource.contentWidth = tableView.bounds.width - margins.right - margins.left
         scrollToFirstUnreadMessageIfNeeded()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     func setupMentionsResultsView() {
@@ -311,10 +363,6 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    override var shouldAutorotate: Bool {
-        return true
-    }
-
     override func didReceiveMemoryWarning() {
         zmLog.warn("Received system memory warning.")
         super.didReceiveMemoryWarning()
@@ -327,7 +375,8 @@ final class ConversationContentViewController: UIViewController {
 
     @discardableResult
     func willSelectRow(at indexPath: IndexPath, tableView: UITableView) -> IndexPath? {
-        guard dataSource.messages.indices.contains(indexPath.section) == true else { return nil }
+        let messages = dataSource.allMessages
+        guard messages.indices.contains(indexPath.section) == true else { return nil }
 
         // If the menu is visible, hide it and do nothing
         if UIMenuController.shared.isMenuVisible {
@@ -335,7 +384,7 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section] as? ZMMessage
+        let message = messages[indexPath.section]
 
         if message == dataSource.selectedMessage {
 
@@ -366,11 +415,12 @@ final class ConversationContentViewController: UIViewController {
     }
 
     var isScrolledToBottom: Bool {
-        return !dataSource.hasNewerMessagesToLoad &&
-        tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
+        !dataSource.hasNewerMessagesToLoad &&
+            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     // MARK: - Actions
+
     func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
     }
@@ -397,12 +447,12 @@ final class ConversationContentViewController: UIViewController {
 
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows
 
-        if let firstIndexPath = indexPathsForVisibleRows?.first {
-            let lastVisibleMessage = dataSource.messages[firstIndexPath.section]
+        if let firstIndexPath = indexPathsForVisibleRows?.first,
+           let lastVisibleMessage = dataSource.allMessages[ifExists: firstIndexPath.section] {
             conversation.markMessagesAsRead(until: lastVisibleMessage)
         }
 
-        // Update media bar visiblity
+        // Update media bar visibility
         updateMediaBar()
     }
 
@@ -417,6 +467,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     // MARK: - MediaPlayer
+
     /// Update media bar visiblity
     private func updateMediaBar() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
@@ -428,11 +479,17 @@ final class ConversationContentViewController: UIViewController {
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         } else {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    willDisplayActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         }
     }
@@ -451,6 +508,58 @@ final class ConversationContentViewController: UIViewController {
         tableView.reloadRows(at: visibleRows, with: .none)
         tableView.endUpdates()
     }
+
+    // MARK: - Update Timer
+
+    @objc
+    private func startRefreshTimerIfNeeded() {
+        stopRefreshTimer()
+
+        var timeInterval = TimeInterval()
+        for indexPath in tableView.indexPathsForVisibleRows ?? [] {
+            let section = dataSource.currentSections[indexPath.section]
+            for cellDescription in section.elements {
+                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                    timeInterval = timeInterval == .zero
+                        ? refreshInterval
+                        : min(timeInterval, refreshInterval)
+                }
+            }
+        }
+
+        guard timeInterval > 0 else { return }
+        logger.info("starting refresh timer with interval: \(timeInterval)")
+        refreshTimer = .scheduledTimer(
+            timeInterval: timeInterval,
+            target: self,
+            selector: #selector(refreshTimerFire(_:)),
+            userInfo: .none,
+            repeats: true
+        )
+    }
+
+    private func stopRefreshTimer() {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+        logger.info("stopped refresh timer")
+    }
+
+    @objc
+    private func refreshTimerFire(_ timer: Timer) {
+        logger.info("refresh timer fire")
+
+        var indexPathsToReload = [IndexPath]()
+        for indexPath in tableView.indexPathsForVisibleRows ?? [] {
+            let section = dataSource.currentSections[indexPath.section]
+            let cellDescription = section.elements[indexPath.row]
+            if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                indexPathsToReload += [indexPath]
+                continue
+            }
+        }
+        tableView.reloadRows(at: indexPathsToReload, with: .fade)
+    }
+
 }
 
 // MARK: - TableView
@@ -464,9 +573,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // using dispatch_async because when this method gets run, the cell is not yet in visible cells,
         // so the update will fail
         // dispatch_async runs it with next runloop, when the cell has been added to visible cells
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.updateVisibleMessagesWindow()
-        })
+        }
 
         cachedRowHeights[indexPath] = cell.frame.size.height
     }
@@ -478,11 +587,113 @@ extension ConversationContentViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cachedRowHeights[indexPath] ?? UITableView.automaticDimension
+        cachedRowHeights[indexPath] ?? UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return willSelectRow(at: indexPath, tableView: tableView)
+        willSelectRow(at: indexPath, tableView: tableView)
+    }
+
+    private func actionControllerToSwipe(
+        indexPath: IndexPath,
+        isLeading: Bool
+    ) -> ConversationMessageActionController? {
+
+        let section = dataSource.currentSections[ifExists: indexPath.section]?.elements[ifExists: indexPath.row]
+        let actionController = section?.actionController
+        let cellDescription = section?.instance
+        // There were a bug with no able to swipe https://wearezeta.atlassian.net/browse/WPB-17839
+        // Happened because action controller of a section controller was nil and
+        // different to actionControllers[<message.nonce>], so it was out of sync
+        // it was fixed but for extra safety backup action controller if not found
+        var backupActionController: ConversationMessageActionController?
+        if let nonce = cellDescription?.message?.nonce {
+            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+        }
+
+        if cellDescription?.supportsActions ?? false,
+           let actionController = actionController ?? backupActionController,
+           isLeading ? actionController.message.canAddReaction : actionController
+           .canPerformAction(action: .react("❤️")) {
+            return actionController
+        }
+
+        return nil
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
+
+        // setting an empty title string since it would be displayed upside down
+        // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
+        let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
+            actionController.perform(action: .reply)
+            completionHandler(true)
+        }
+
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the arrowImage, remove the upsideDownImage
+        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
+
+        replyAction.image = arrowImage
+        replyAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [replyAction])
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
+
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the real image, remove the upsideDownImage
+        let reactImage = UIImage(resource: .addEmojis)
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
+
+        let reactAction = UIContextualAction(style: .normal, title: "") { [weak self] _, _, completionHandler in
+            guard let delegate = self?.delegate else {
+                completionHandler(false)
+                return
+            }
+            completionHandler(true)
+            // Since view is swipable, we need to wait for it to go back
+            // so we can show popover from cell's original place and not from swiped position
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                let popoverInfo = tableView.cellForRow(at: indexPath).map {
+                    (sourceView: tableView, frame: $0.frame)
+                }
+                delegate.didSwipeToReact(actionController: actionController, popoverPresentationInfo: popoverInfo)
+            }
+        }
+        reactAction.image = reactImage
+        reactAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [reactAction])
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        startRefreshTimerIfNeeded()
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        // use for example when tapping the arrow to scroll to the bottom
+        startRefreshTimerIfNeeded()
+    }
+
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        startRefreshTimerIfNeeded()
     }
 }
 
@@ -494,28 +705,52 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 
 private extension UIAlertController {
 
-    static func showErrorAlertWithLink(title: String,
-                                       message: String) {
+    static func showErrorAlertWithLink(
+        title: String,
+        message: String
+    ) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
-            topmostViewController?.present(browserViewController, animated: true)
+            WireURLs.shared.legalHoldInfo.open(from: topmostViewController)
         }
 
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
 
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
-                                                style: .default,
-                                                handler: legalHoldLearnMoreHandler))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.LegalholdActive.Alert.learnMore,
+            style: .default,
+            handler: legalHoldLearnMoreHandler
+        ))
 
         topmostViewController?.present(alertController, animated: true)
     }
 
+}
+
+extension AccentColor {
+    var conversationBackgroundColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.View.conversationBackgroundBlue
+        case .purple:
+            SemanticColors.View.conversationBackgroundPurple
+        case .green:
+            SemanticColors.View.conversationBackgroundGreen
+        case .amber:
+            SemanticColors.View.conversationBackgroundAmber
+        case .red:
+            SemanticColors.View.conversationBackgroundRed
+        case .turquoise:
+            SemanticColors.View.conversationBackgroundTurquoise
+        }
+    }
 }

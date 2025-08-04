@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,9 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
-/// Process user update events.
-
-protocol UserEventProcessorProtocol {
-
-    /// Process a user update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A user update event.
-
-    func processEvent(_ event: UserEvent) async throws
-
-}
-
-struct UserEventProcessor {
+struct UserEventProcessor: UserEventProcessorProtocol {
 
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
     let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol
@@ -50,42 +35,42 @@ struct UserEventProcessor {
 
     func processEvent(_ event: UserEvent) async throws {
         switch event {
-        case .clientAdd(let event):
-            try await clientAddEventProcessor.processEvent(event)
+        case let .clientAdd(event):
+            await clientAddEventProcessor.processEvent(event)
 
-        case .clientRemove(let event):
+        case let .clientRemove(event):
             try await clientRemoveEventProcessor.processEvent(event)
 
-        case .connection(let event):
+        case let .connection(event):
             try await connectionEventProcessor.processEvent(event)
 
-        case .contactJoin(let event):
+        case .contactJoin:
             /// This event is not processed, we only show a notification to the user.
             break
 
-        case .delete(let event):
+        case let .delete(event):
             try await deleteEventProcessor.processEvent(event)
 
-        case .legalholdDisable(let event):
+        case let .legalholdDisable(event):
             try await legalholdDisableEventProcessor.processEvent(event)
 
-        case .legalholdEnable(let event):
+        case let .legalholdEnable(event):
             try await legalholdEnableEventProcessor.processEvent(event)
 
-        case .legalholdRequest(let event):
-            try await legalholdRequestEventProcessor.processEvent(event)
+        case let .legalholdRequest(event):
+            await legalholdRequestEventProcessor.processEvent(event)
 
-        case .propertiesSet(let event):
+        case let .propertiesSet(event):
             try await propertiesSetEventProcessor.processEvent(event)
 
-        case .propertiesDelete(let event):
-            try await propertiesDeleteEventProcessor.processEvent(event)
+        case let .propertiesDelete(event):
+            await propertiesDeleteEventProcessor.processEvent(event)
 
         case .pushRemove:
             pushRemoveEventProcessor.processEvent()
 
-        case .update(let event):
-            try await updateEventProcessor.processEvent(event)
+        case let .update(event):
+            await updateEventProcessor.processEvent(event)
         }
     }
 

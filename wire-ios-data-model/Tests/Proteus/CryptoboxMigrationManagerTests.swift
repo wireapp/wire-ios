@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,9 +47,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager = nil
         mockSafeCoreCrypto = nil
 
-        syncMOC.performAndWait({
+        syncMOC.performAndWait {
             syncMOC.proteusService = nil
-        })
+        }
 
         proteusViaCoreCryptoFlag.isOn = false
         DeveloperFlag.storage = UserDefaults.standard
@@ -58,7 +58,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     }
 
     var accountDirectory: URL {
-        return FileManager.default
+        FileManager.default
             .temporaryDirectory
             .appendingPathComponent("CryptoBoxMigrationManagerTests")
     }
@@ -110,7 +110,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         let migrated = customExpectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
-        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+        mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             migrated.fulfill()
         }
 
@@ -127,13 +127,16 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+        mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             throw CryptoboxMigrationManager.Failure.failedToMigrateData
         }
 
         // When
         await assertItThrows(error: CryptoboxMigrationManager.Failure.failedToMigrateData) {
-            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
+            try await self.sut.performMigration(
+                accountDirectory: self.accountDirectory,
+                coreCrypto: self.mockSafeCoreCrypto
+            )
         }
 
         // Then

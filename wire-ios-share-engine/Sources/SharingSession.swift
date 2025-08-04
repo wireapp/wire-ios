@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 import Foundation
 import WireDataModel
+import WireDomain
 import WireLinkPreview
+import WireNetwork
 import WireRequestStrategy
 import WireTransport
 
@@ -38,7 +40,9 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String { // TODO move constant into shared framework
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
             return !clientId.isEmpty
         }
 
@@ -59,23 +63,27 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     }
 
     var state: AuthenticationState {
-        return isLoggedIn ? .authenticated : .unauthenticated
+        isLoggedIn ? .authenticated : .unauthenticated
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.hasAuthenticationCookie
+        transportSession.cookieStorage.hasAuthenticationCookie
     }
 
 }
 
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: false)
+        let backendURL = backendURL.host!
+        return ZMPersistentCookieStorage(
+            forServerName: backendURL,
+            userIdentifier: account.userIdentifier,
+            useCache: false
+        )
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        return cookieStorage(for: account).hasAuthenticationCookie
+        cookieStorage(for: account).hasAuthenticationCookie
     }
 }
 
@@ -91,44 +99,68 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public let linkPreviewDetector: LinkPreviewDetectorType
 
-    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
+    public let syncStatus: SyncStatusProtocol
+
+    public init(
+        transportSession: ZMTransportSession,
+        authenticationStatus: AuthenticationStatusProvider,
+        clientRegistrationStatus: ClientRegistrationStatus,
+        linkPreviewDetector: LinkPreviewDetectorType,
+        syncStatus: SyncStatusProtocol = SyncStatus()
+    ) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.linkPreviewDetector = linkPreviewDetector
+        self.syncStatus = syncStatus
     }
 
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
-        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
+        self.init(
+            transportSession: transportSession,
+            authenticationStatus: authenticationStatus,
+            clientRegistrationStatus: clientRegistrationStatus,
+            linkPreviewDetector: linkPreviewDetector
+        )
     }
 
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .online
+            .online
         } else {
-            return .unauthenticated
+            .unauthenticated
         }
     }
 
     public var operationState: OperationState {
-        return .foreground
+        .foreground
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return transportSession
+        transportSession
     }
 
     func requestResyncResources() {
         // we don't resync Resources in the share engine
     }
 
+}
+
+/// Required by `MLSService` initializer.
+/// No need to fill in the methods as we don't sync resources in the share engine.
+struct SyncStatus: SyncStatusProtocol {
+    func performQuickSync() async {}
+    func resyncResources() {}
+    func forceSlowSync() {}
+    func recoverWithQuickSync() async {}
+    var isLive: Bool = false
 }
 
 /// A Wire session to share content from a share extension
@@ -145,16 +177,19 @@ public final class SharingSession {
     /// - LoggedOut: No user is logged in
     /// - missingSharedContainer: The shared container is missing
     public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
+        case needsMigration
+        case loggedOut
+        case missingSharedContainer
+        case pendingCryptoboxMigration
     }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     private var syncContext: NSManagedObjectContext {
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     /// Directory of all application statuses
@@ -173,23 +208,24 @@ public final class SharingSession {
 
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
-        return userInterfaceContext.conversationListDirectory()
+        userInterfaceContext.conversationListDirectory()
     }
 
     /// Whether all prerequsisties for sharing are met
     public var canShare: Bool {
-        return applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
+        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory
+            .clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations: [Conversation] {
-        return directory.unarchivedConversations.writeableConversations
+        directory.unarchivedConversations.writeableConversations
     }
 
     /// List of archived conversations in which the user can write
     public var writebleArchivedConversations: [Conversation] {
-        return directory.archivedConversations.writeableConversations
+        directory.archivedConversations.writeableConversations
     }
 
     private let operationLoop: RequestGeneratingOperationLoop
@@ -218,7 +254,7 @@ public final class SharingSession {
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         hostBundleIdentifier: String,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
@@ -226,8 +262,10 @@ public final class SharingSession {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
-        let coreDataStack = CoreDataStack(account: Account(userName: "", userIdentifier: accountIdentifier),
-                                          applicationContainer: sharedContainerURL)
+        let coreDataStack = CoreDataStack(
+            account: Account(userName: "", userIdentifier: accountIdentifier),
+            applicationContainer: sharedContainerURL
+        )
 
         guard coreDataStack.storesExists else {
             throw InitializationError.missingSharedContainer
@@ -246,12 +284,20 @@ public final class SharingSession {
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: accountIdentifier,
+            useCache: false
+        )
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
+        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
+
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
 
         let transportSession = ZMTransportSession(
             environment: environment,
@@ -262,16 +308,75 @@ public final class SharingSession {
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID,
+            // This flag only concerns the push channel which isn't relevant
+            // in the sharing session.
+            isSyncV2Enabled: false
         )
+
+        let proxySettings: WireNetwork.ProxySettings? = {
+            guard let proxy = environment.proxy else { return nil }
+
+            if proxy.needsAuthentication {
+                guard
+                    let proxyUsername = credentials?.username,
+                    let proxyPassword = credentials?.password else {
+                    fatalInternal("Proxy needs authentication but credentials are missing")
+                    return nil
+                }
+
+                return .authenticated(
+                    host: proxy.host,
+                    port: proxy.port,
+                    username: proxyUsername,
+                    password: proxyPassword
+                )
+            } else {
+                return .unauthenticated(host: proxy.host, port: proxy.port)
+            }
+        }()
+
+        let wireAPIBackendEnvironment = BackendEnvironment(
+            url: environment.backendURL,
+            webSocketURL: environment.backendWSURL,
+            pinnedKeys: environment.trustData.map { trustData in
+                PinnedKey(
+                    key: trustData.certificateKey,
+                    rawKey: trustData.rawCertificateKey,
+                    hosts: trustData.hosts.map { host in
+                        switch host.rule {
+                        case .equals:
+                            .equals(host.value)
+                        case .endsWith:
+                            .endsWith(host.value)
+                        }
+                    }
+                )
+            },
+            proxySettings: proxySettings
+        )
+
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            fatal("cannot resolve api version")
+
+        }
 
         try self.init(
             accountIdentifier: accountIdentifier,
+            selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            accountContainer: CoreDataStack.accountDataFolder(
+                accountIdentifier: accountIdentifier,
+                applicationContainer: sharedContainerURL
+            ),
             appLockConfig: appLockConfig,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            apiVersion: wireAPIVersion,
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -291,6 +396,7 @@ public final class SharingSession {
         earService: EARServiceInterface,
         contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
+        mlsService: MLSServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
     ) throws {
@@ -314,7 +420,8 @@ public final class SharingSession {
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
-        guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        guard applicationStatusDirectory.authenticationStatus.state == .authenticated
+        else { throw InitializationError.loggedOut }
 
         let accountDirectory = coreDataStack.accountContainer
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
@@ -326,8 +433,15 @@ public final class SharingSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
-                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
+            if mlsFeature.isEnabled {
+                if coreDataStack.syncContext.mlsDecryptionService == nil {
+                    coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+                }
+
+                if coreDataStack.syncContext.mlsService == nil {
+                    coreDataStack.syncContext.mlsService = mlsService
+                }
             }
         }
 
@@ -337,22 +451,33 @@ public final class SharingSession {
 
     public convenience init(
         accountIdentifier: UUID,
+        selfClientID: String,
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
         cachesDirectory: URL,
         accountContainer: URL,
         appLockConfig: AppLockController.LegacyConfig?,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         sharedUserDefaults: UserDefaults
     ) throws {
 
-        let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
-        let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            syncContext: coreDataStack.syncContext,
+            transportSession: transportSession
+        )
+        let linkPreviewPreprocessor = LinkPreviewPreprocessor(
+            linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
+            managedObjectContext: coreDataStack.syncContext
+        )
 
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
-            transportSession: transportSession
+            transportSession: transportSession,
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -369,22 +494,22 @@ public final class SharingSession {
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let journal = Journal(
+            userID: accountIdentifier,
+            storage: sharedUserDefaults
+        )
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
-        )
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: coreDataStack.syncContext.notificationContext
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
@@ -398,7 +523,51 @@ public final class SharingSession {
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+        let mlsDecryptionService = MLSDecryptionService(
+            context: coreDataStack.syncContext,
+            mlsActionExecutor: mlsActionExecutor
+        )
+
+        let mlsService = MLSService(
+            context: coreDataStack.syncContext,
+            notificationContext: coreDataStack.syncContext.notificationContext,
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            userDefaults: .standard,
+            userID: coreDataStack.account.userIdentifier
+        )
+
+        let userSessionComponent = UserSessionComponent(
+            selfUserID: accountIdentifier,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion,
+            localDomain: WireTransport.BackendInfo.domain!,
+            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            sharedUserDefaults: sharedUserDefaults,
+            syncContext: coreDataStack.syncContext,
+            eventContext: coreDataStack.eventContext,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsService,
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
+        )
+
+        let completionHandlers = ClientSessionComponent.CompletionHandlers(
+            onProcessedCallEvent: { _ in },
+            onSelfClientInvalidated: {},
+            onAuthenticationFailure: {},
+            onProcessedTypingUsers: { _ in }
+        )
+
+        let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
+        let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
+            clientID: selfClientID,
+            completionHandlers: completionHandlers
+        )
+
+        coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
         try self.init(
             accountIdentifier: accountIdentifier,
@@ -415,6 +584,7 @@ public final class SharingSession {
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,
+            mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             sharedUserDefaults: sharedUserDefaults
         )
@@ -468,17 +638,34 @@ public final class SharingSession {
 }
 
 extension SharingSession: LinkPreviewDetectorType {
-    public func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
-        applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excluding, completion: completion)
+    public func downloadLinkPreviews(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkMetadata]) -> Void
+    ) {
+        applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(
+            inText: text,
+            excluding: excluding,
+            completion: completion
+        )
     }
 
 }
 
 // MARK: - Helper
 
-fileprivate extension ConversationList {
+private extension WireDataModel.ConversationList {
 
     var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }
+    }
+}
+
+extension InitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {}
+
+// No need to handle it in share extension for now
+struct NullInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+        // do nothing
     }
 }

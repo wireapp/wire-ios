@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import GenericMessageProtocol
 import XCTest
+
+@testable import WireRequestStrategy
 
 class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
@@ -26,7 +28,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheLocationMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let location = WireProtos.Location.with {
+            let location = GenericMessageProtocol.Location.with {
                 $0.latitude = 0.0
                 $0.longitude = 0.0
             }
@@ -44,7 +46,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheKnockMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true })
+            let message = GenericMessage(content: GenericMessageProtocol.Knock.with { $0.hotKnock = true })
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -58,7 +60,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheEphemeralMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let message = GenericMessage(content: Text(content: "Ephemeral Message"), nonce: UUID(), expiresAfterTimeInterval: 100)
+            let message = GenericMessage(
+                content: Text(content: "Ephemeral Message"),
+                nonce: UUID(),
+                expiresAfterTimeInterval: 100
+            )
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -86,8 +92,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheAudioMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let audioMetadata = ZMAudioMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), duration: 100)
-            let message = GenericMessage(content: WireProtos.Asset(audioMetadata))
+            let audioMetadata = ZMAudioMetadata(
+                fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+                duration: 100
+            )
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(audioMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -101,8 +110,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheVideoMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let videoMetadata = ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())
-            let message = GenericMessage(content: WireProtos.Asset(videoMetadata))
+            let videoMetadata = ZMVideoMetadata(
+                fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+                thumbnail: self.verySmallJPEGData()
+            )
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(videoMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -117,7 +129,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             let fileMetaData = self.createFileMetadata()
-            let message = GenericMessage(content: WireProtos.Asset(fileMetaData))
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(fileMetaData))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -131,7 +143,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberJoinEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberJoinUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
+            let event = self.createMemberJoinUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                users: [self.selfUser]
+            )
 
             // when
             let contentType = Sut(event: event, conversation: self.groupConversation, in: self.syncMOC)
@@ -144,7 +160,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberLeaveEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
+            let event = self.createMemberLeaveUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                users: [self.selfUser]
+            )
 
             // when
             let contentType = Sut(event: event, conversation: self.groupConversation, in: self.syncMOC)
@@ -168,12 +188,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     }
 
     private func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
-        let fileURL: URL
-
-        if let fileName = filename {
-            fileURL = testURLWithFilename(fileName)
+        let fileURL: URL = if let fileName = filename {
+            testURLWithFilename(fileName)
         } else {
-            fileURL = testURLWithFilename("file.dat")
+            testURLWithFilename("file.dat")
         }
 
         _ = createTestFile(at: fileURL)

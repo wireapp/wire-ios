@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     weak var delegate: GroupDetailsFooterViewDelegate?
 
     enum Action {
-        case more, invite
+        case more
+        case invite
     }
 
-    func update(for conversation: GroupDetailsConversationType) {
-        guard let user = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
-            return
-        }
-
-        leftButton.isHidden = !user.canAddUser(to: conversation)
+    func update(
+        for conversation: GroupDetailsConversationType,
+        user: any UserType
+    ) {
+        let shouldShow = user.canAddUser(to: conversation)
+        leftButton.isHidden = !shouldShow
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }
 

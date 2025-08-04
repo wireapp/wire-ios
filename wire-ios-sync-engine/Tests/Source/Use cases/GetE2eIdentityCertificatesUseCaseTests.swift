@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import WireCoreCrypto
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
 
@@ -30,13 +30,13 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     private var sut: GetE2eIdentityCertificatesUseCase!
     private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var safeCoreCrypto: MockSafeCoreCrypto!
-    private var coreCrypto: MockCoreCryptoProtocol!
+    private var coreCryptoContext: MockCoreCryptoContextProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        coreCrypto = MockCoreCryptoProtocol()
-        safeCoreCrypto = MockSafeCoreCrypto(coreCrypto: coreCrypto)
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        safeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = safeCoreCrypto
         sut = GetE2eIdentityCertificatesUseCase(
@@ -48,7 +48,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         sut = nil
-        coreCrypto = nil
+        coreCryptoContext = nil
         safeCoreCrypto = nil
         coreCryptoProvider = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -61,7 +61,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         name: String,
         status: DeviceStatus
     ) -> WireCoreCrypto.WireIdentity {
-        return .init(
+        .init(
             clientId: clientID,
             status: status,
             thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
@@ -72,8 +72,8 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
                 domain: "local.com",
                 certificate: mockCertificate,
                 serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
-                notBefore: 1709112038,
-                notAfter: 1716888038
+                notBefore: 1_709_112_038,
+                notAfter: 1_716_888_038
             )
         )
     }
@@ -135,8 +135,8 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
             status: .revoked
         )
 
-        coreCrypto.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
-            return [
+        coreCryptoContext.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
+            [
                 validIdentity,
                 identityWithInvalidHandle,
                 identityWithInvalidName,

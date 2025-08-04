@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Appends a "message invalid" system message
     @objc @discardableResult
-    public func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        return appendSystemMessage(type: .invalid,
-                                 sender: sender,
-                                 users: nil,
-                                 clients: nil,
-                                 timestamp: date)
+    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
+        appendSystemMessage(
+            type: .invalid,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: date
+        )
     }
 }

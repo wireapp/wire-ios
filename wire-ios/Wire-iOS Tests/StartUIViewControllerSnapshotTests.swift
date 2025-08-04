@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,33 +20,8 @@ import WireDesign
 import WireTestingPackage
 import XCTest
 
+import WireMessagingAssembly
 @testable import Wire
-
-final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
-
-    var isAddressBookAccessDisabled: Bool = false
-
-    var accessStatusDidChangeToGranted: Bool = true
-
-    static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
-
-    func persistCurrentAccessStatus() {
-
-    }
-
-    var isAddressBookAccessGranted: Bool {
-        return false
-    }
-
-    var isAddressBookAccessUnknown: Bool {
-        return true
-    }
-
-    func requestPermissions(_ callback: ((Bool) -> Void)?) {
-        // no-op
-        callback?(false)
-    }
-}
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
@@ -55,7 +30,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: StartUIViewController!
-    private var mockAddressBookHelper: MockAddressBookHelper!
     private var userSession: UserSessionMock!
 
     // MARK: - setUp
@@ -69,9 +43,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
     // MARK: - tearDown
@@ -79,7 +53,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        mockAddressBookHelper = nil
         SelfUser.provider = nil
         userSession = nil
         mockMainCoordinator = nil
@@ -91,10 +64,10 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
-            addressBookHelperType: MockAddressBookHelper.self,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(),
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -149,5 +122,67 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
                 .withUserInterfaceStyle(.dark)
                 .verify(matching: navigationController.view)
         }
+    }
+
+    func testStartUIViewControllerShowNewChannelOptionForPersonalUser() {
+        // Given, channels are supported and user is a personal user
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+
+        nonTeamTest {
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
+    func testStartUIViewControllerShowNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+        // channels are enabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .enabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+        // user is in a team and is allowed to create a channel
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        mockUserType.teamRole = .member
+        userSession.selfUser = mockUserType
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
+    }
+
+    func testStartUIViewControllerHideNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+
+        // user is in a team
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        userSession.selfUser = mockUserType
+
+        // but channels are disabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .disabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
     }
 }

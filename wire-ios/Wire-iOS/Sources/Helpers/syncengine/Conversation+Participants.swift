@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireSyncEngine
 
 extension GroupDetailsConversation where Self: ZMConversation {
     var freeParticipantSlots: Int {
-        return ZMConversation.maxParticipants - localParticipants.count
+        Self.getMaxParticipants(isChannel: isChannel) - localParticipants.count
     }
 }
 
@@ -32,10 +33,19 @@ extension ZMConversation {
 
     static let legacyGroupVideoParticipantLimit: Int = 4
 
-    static let maxParticipants: Int = 500
+    static let maxParticipantsForChannels: Int = 2000
+    static let maxParticipantsForGroups: Int = 500
 
-    static var maxParticipantsExcludingSelf: Int {
-        return maxParticipants - 1
+    static func maxParticipantsExcludingSelf(isChannel: Bool) -> Int {
+        getMaxParticipants(isChannel: isChannel) - 1
+    }
+
+    static func getMaxParticipants(isChannel: Bool) -> Int {
+        if isChannel {
+            ZMConversation.maxParticipantsForChannels
+        } else {
+            ZMConversation.maxParticipantsForGroups
+        }
     }
 
     func addOrShowError(participants: [UserType]) {
@@ -61,7 +71,7 @@ extension ZMConversation {
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    return try ZMConversation.existingObject(for: objectID, in: syncContext)
                 }
 
                 try await service.addParticipants(users, to: conversation)
@@ -77,7 +87,8 @@ extension ZMConversation {
 
     func removeOrShowError(participant user: UserType, completion: ((Result<Void, Error>) -> Void)? = nil) {
 
-        @Sendable func fail(with error: Error) {
+        @Sendable
+        func fail(with error: Error) {
             showAlertForRemoval(for: error)
             completion?(.failure(error))
         }
@@ -99,11 +110,11 @@ extension ZMConversation {
         Task {
             do {
                 let user = try await syncContext.perform {
-                    return try ZMUser.existingObject(for: user.objectID, in: syncContext)
+                    try ZMUser.existingObject(for: user.objectID, in: syncContext)
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    return try ZMConversation.existingObject(for: objectID, in: syncContext)
                 }
 
                 try await service.removeParticipant(user, from: conversation)

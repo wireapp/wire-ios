@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol UserSessionLogoutDelegate: AnyObject {
 
@@ -45,7 +46,8 @@ extension SessionManager: UserSessionLogoutDelegate {
             return
         }
 
-        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
+        WireLogger.authentication
+            .warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {
         case .clientDeletedRemotely:

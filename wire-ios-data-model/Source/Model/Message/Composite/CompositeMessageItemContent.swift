@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage
@@ -43,39 +44,39 @@ class CompositeMessageItemContent: NSObject {
 extension CompositeMessageItemContent: TextMessageData {
 
     var messageText: String? {
-        return text?.content.removingExtremeCombiningCharacters
+        text?.content.removingExtremeCombiningCharacters
     }
 
     var linkPreview: LinkMetadata? {
-        return nil
+        nil
     }
 
     var mentions: [Mention] {
-        return Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
+        Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
     }
 
     var quote: ZMMessage? {
-        return nil
+        nil
     }
 
     var quoteMessage: ZMConversationMessage? {
-        return quote
+        quote
     }
 
     var linkPreviewHasImage: Bool {
-        return false
+        false
     }
 
     var linkPreviewImageCacheKey: String? {
-        return nil
+        nil
     }
 
     var isQuotingSelf: Bool {
-        return false
+        false
     }
 
     var hasQuote: Bool {
-        return false
+        false
     }
 
     func fetchLinkPreviewImageData(
@@ -99,36 +100,36 @@ extension CompositeMessageItemContent: TextMessageData {
 extension CompositeMessageItemContent: ButtonMessageData {
 
     var title: String? {
-        return button?.text
+        button?.text
     }
 
     var state: ButtonMessageState {
-        return ButtonMessageState(from: buttonState?.state)
+        ButtonMessageState(from: buttonState?.state)
     }
 
     var isExpired: Bool {
-        return buttonState?.isExpired ?? false
+        buttonState?.isExpired ?? false
     }
 
     func touchAction() {
         guard let moc = parentMessage.managedObjectContext,
-            let buttonId = button?.id,
-            let messageId = parentMessage.nonce,
-            !hasSelectedButton else { return }
+              let buttonId = button?.id,
+              let messageId = parentMessage.nonce,
+              !hasSelectedButton else { return }
 
         moc.performGroupedBlock { [weak self] in
             guard let self else { return }
-            let buttonState = self.buttonState ??
-                ButtonState.insert(with: buttonId, message: self.parentMessage, inContext: moc)
-            self.parentMessage.buttonStates?.resetExpired()
-            guard self.parentMessage.isSenderInConversation else {
+            let buttonState = buttonState ??
+                ButtonState.insert(with: buttonId, message: parentMessage, inContext: moc)
+            parentMessage.buttonStates?.resetExpired()
+            guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
                 moc.saveOrRollback()
                 return
             }
 
             do {
-                try self.parentMessage.conversation?.appendButtonAction(havingId: buttonId, referenceMessageId: messageId)
+                try parentMessage.conversation?.appendButtonAction(havingId: buttonId, referenceMessageId: messageId)
                 buttonState.state = .selected
             } catch {
                 Logging.messageProcessing.warn("Failed to append button action. Reason: \(error.localizedDescription)")
@@ -140,9 +141,10 @@ extension CompositeMessageItemContent: ButtonMessageData {
 }
 
 // MARK: - Helpers
+
 extension CompositeMessageItemContent {
     private var hasSelectedButton: Bool {
-        return parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
+        parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
     }
 
     private var buttonState: ButtonState? {

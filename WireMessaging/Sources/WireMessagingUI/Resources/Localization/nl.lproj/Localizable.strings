@@ -1,0 +1,88 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"general.loading" = "Laden…";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
+"channel_access_level.admins" = "Admins";
+"channel_access_level.everyone" = "Admins and members";
+"channel_access_level.navigation_title" = "Access";
+
+"channel_access_level.participants_header" = "Personen toevoegen";
+"channel_access_level.participants_header" = "Personen toevoegen";
+
+"channel_access_level.access_footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public.";
+"channel_access_level.participants_footer" = "Select who can add participants to a private channel";
+
+
+"channel_access_level.change_level_alert.title" = "Change access from public to private?";
+"channel_access_level.change_level_alert.message" = "It means: Team members can't join this channel themselves.\nDepending on your choice, only channel admins or both admins and members can add new participants.\nYou can't undo this step. The channel will stay private.";
+"channel_access_level.change_level_alert.button.change" = "Change to Private";
+"channel_access_level.change_level_alert.button.cancel" = "Annuleer";
+
+
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.subtitle" = "Conversation history and more";
+"conversation.create.group.title" = "New group";
+
+// MARK: Navigation
+"conversation.create.channel.back" = "Vorige";
+"conversation.create.channel.next" = "Volgende";
+
+// MARK: - Channel name
+"conversation.creationForm.channelName.sectionTitle" = "Channel name";
+"conversation.creationForm.channelName.placeholder" = "Enter channel name";
+"conversation.creationForm.channelName.label" = "Channel name";
+
+// MARK: - Options
+"conversation.creationForm.options.sectionTitle" = "Opties";
+"conversation.creationForm.options.channelAccess" = "Channel access";
+"conversation.creationForm.options.channelAccess.public" = "Public";
+"conversation.creationForm.options.channelAccess.private" = "Private";
+
+"conversation.creationForm.options.channelAccess.invitePolicy" = "Personen toevoegen";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsOnly" = "Admins";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsAndMembers" = "Admins and members";
+
+"conversation.creationForm.options.footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public later.";
+
+"conversation.creationForm.services.toggle" = "Allow services";
+"conversation.creationForm.guests.toggle" = "Sta gasten toe";
+"conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
+
+"conversation.creationForm.readReceipts.toggle" = "Leesbevestigingen";
+"conversation.creationForm.readReceipts.description" = "Wanneer dit aanstaat, kunnen mensen zien wanneer je hun berichten gelezen hebt.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.channelHistory.upgradeBanner.button" = "Upgrade now";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Conversation history";
+"conversation.channelHistory.picker.off" = "Uit";
+"conversation.channelHistory.picker.oneDay" = "1 day";
+"conversation.channelHistory.picker.oneWeek" = "1 week";
+"conversation.channelHistory.picker.fourWeeks" = "4 weeks";
+"conversation.channelHistory.picker.unlimited" = "Unlimited";
+"conversation.channelHistory.picker.custom" = "Custom";
+"conversation.channelHistory.customPicker.days" = "Days";
+"conversation.channelHistory.customPicker.weeks" = "Weeks";
+"conversation.channelHistory.navigationTitle" = "Conversation history";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";

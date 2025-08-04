@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,8 @@
 
 public protocol MainSidebarSelectableMenuItemRepresentable: Sendable {
     init(_ mainSidebarMenuItem: MainSidebarMenuItem)
-    init?<SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable>(mappingFrom selectableMenuItem: SidebarSelectableMenuItem?)
-    func mapToMainSidebarMenuItem() -> MainSidebarMenuItem
 }
 
 extension MainSidebarMenuItem: MainSidebarSelectableMenuItemRepresentable {
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
-    public func mapToMainSidebarMenuItem() -> MainSidebarMenuItem { self }
-}
-
-public extension MainSidebarSelectableMenuItemRepresentable {
-
-    init?(mappingFrom selectableMenuItem: (some MainSidebarSelectableMenuItemRepresentable)?) {
-        guard let selectableMenuItem else { return nil }
-        self.init(selectableMenuItem.mapToMainSidebarMenuItem())
-    }
 }

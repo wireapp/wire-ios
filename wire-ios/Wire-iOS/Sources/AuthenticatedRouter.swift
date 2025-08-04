@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,15 @@
 //
 
 import UIKit
+import WireDataModel
+import WireFoundation
+import WireLogging
 import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
-    case connectionRequest(UUID)
+    case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
 }
 
@@ -36,8 +39,10 @@ final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
+    private let notificationCenter: NotificationCenter
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
+    private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -60,27 +65,39 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        environment: BackendEnvironment,
+        notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
-        activeCallRouter = ActiveCallRouter(
+        self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
             userSession: userSession,
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
-        zClientControllerBuilder = .init(
+        self.zClientControllerBuilder = .init(
             account: account,
             userSession: userSession,
-            trackingManager: trackingManager
+            trackingManager: trackingManager,
+            environment: environment
         )
 
+        self.notificationCenter = notificationCenter
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
-        featureChangeObserverToken = NotificationCenter.default.addObserver(
+        self.callEndedAnalyticsController = .init(
+            contextProvider: userSession.contextProvider,
+            notificationCenter: notificationCenter,
+            analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
+            logger: WireLogger.analytics,
+            currentDateProvider: .system
+        )
+
+        self.featureChangeObserverToken = notificationCenter.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
@@ -88,7 +105,7 @@ final class AuthenticatedRouter {
             self?.notifyFeatureChange(notification)
         }
 
-        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+        self.revokedCertificateObserverToken = notificationCenter.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
             object: nil,
             queue: .main
@@ -99,11 +116,11 @@ final class AuthenticatedRouter {
 
     deinit {
         if let featureChangeObserverToken {
-            NotificationCenter.default.removeObserver(featureChangeObserverToken)
+            notificationCenter.removeObserver(featureChangeObserverToken)
         }
 
         if let revokedCertificateObserverToken {
-            NotificationCenter.default.removeObserver(revokedCertificateObserverToken)
+            notificationCenter.removeObserver(revokedCertificateObserverToken)
         }
     }
 
@@ -111,14 +128,19 @@ final class AuthenticatedRouter {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                                 acknowledger: featureRepositoryProvider.featureRepository,
-                                                                 actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change,
-                                                      acknowledger: featureRepositoryProvider.featureRepository)
+            ? UIAlertController.fromFeatureChangeWithActions(
+                change,
+                acknowledger: featureRepositoryProvider
+                    .featureRepository,
+                actionsHandler: featureChangeActionsHandler
+            )
+            : UIAlertController.fromFeatureChange(
+                change,
+                acknowledger: featureRepositoryProvider.featureRepository
+            )
         else { return }
 
-        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
@@ -150,13 +172,13 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case .conversation(let converation, let message):
+        case let .conversation(converation, message):
             _zClientViewController?.showConversation(converation, at: message)
-        case .connectionRequest(let userId):
-            _zClientViewController?.showConnectionRequest(userId: userId)
+        case let .connectionRequest(qualifiedID):
+            _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
-        case .userProfile(let user):
+        case let .userProfile(user):
             Task { @MainActor in
                 await _zClientViewController?.showUserProfile(user: user)
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,6 +43,15 @@ final class AnyMainCoordinatorTests: XCTestCase {
         // Then
         XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.count, 1)
         XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.first, .groups)
+    }
+
+    func testApplyFilterIsInvoked() {
+        // When
+        sut.applyConversationFilter(.groups)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.applyConversationFilter_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.applyConversationFilter_Invocations.first, .groups)
     }
 
     func testShowArchiveIsInvoked() async {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import struct WireSystem.WireLogger
+import WireLogging
 
 protocol AccessTokenRenewalObserver {
     func accessTokenRenewalDidSucceed()
@@ -48,7 +48,10 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
 
         tokenRenewer.setAccessTokenRenewalObserver(self)
 
-        try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Swift.Error>) in
+        try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<
+            Void,
+            Swift.Error
+        >) in
             self?.continuation = continuation
             tokenRenewer.renewAccessToken(with: clientID)
         }

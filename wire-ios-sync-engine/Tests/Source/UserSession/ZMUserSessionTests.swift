@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
 
 import Foundation
 import WireDataModelSupport
-import WireSyncEngine
 import WireTesting
+import WireTestingPackage
 
+@testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext, self.sut.syncManagedObjectContext.zm_sync)
@@ -36,14 +37,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsSelfForLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext, self.sut.managedObjectContext.zm_userInterface)
+        XCTAssertEqual(sut.managedObjectContext, sut.managedObjectContext.zm_userInterface)
     }
 
     func testThatSyncContextReturnsLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext.zm_userInterface, self.sut.managedObjectContext)
@@ -52,9 +53,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext.zm_sync, self.sut.syncManagedObjectContext)
+        XCTAssertEqual(sut.managedObjectContext.zm_sync, sut.syncManagedObjectContext)
     }
 
     func testThatLinkedUIContextIsNotStrongReferenced() {
@@ -108,6 +109,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.createSelfClient()
         }
 
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         // WHEN
         syncMOC.performGroupedBlock { [self] in
             sut.didRegisterSelfUserClient(userClient)
@@ -121,13 +125,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
-    func testItSlowSyncsAfterRegisteringMLSClient() async throws {
+    // TODO: [WPB-16224] Re-enable
+    func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         let userClient = await syncMOC.perform {
-            let userClient = self.createSelfClient()
-            userClient.mlsPublicKeys = .init(ed25519: "ed25519")
-            userClient.needsToUploadMLSPublicKeys = false
-            return userClient
+            self.createSelfClient()
         }
 
         // WHEN
@@ -143,15 +145,36 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(syncStatus.isSlowSyncing)
     }
 
+    func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {
+        // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
+        let userClient = await syncMOC.perform {
+            self.createSelfClient(capabilities: [.consumableNotifications, .legalholdConsent])
+        }
+
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didRegisterSelfUserClient(userClient)
+        }
+
+        // THEN
+        XCTAssertTrue(sut.journal[.isConsumableNotificationsEnabled])
+    }
+
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
-        var executed: Bool = false
-        var contextSaved: Bool = false
+        var executed = false
+        var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.perform {
@@ -173,9 +196,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -205,9 +229,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -245,9 +270,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueueDelayed {
@@ -306,7 +332,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
@@ -318,7 +344,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
         // WHEN
         syncMOC.performAndWait {
-            sut.didStartQuickSync()
+            sut.didStartIncrementalSync()
         }
 
         // THEN
@@ -378,8 +404,13 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
         // GIVEN
+        // Update the network state to online
+        sut.isPerformingSync = false
+        sut.updateNetworkState()
+
         let stateRecorder = NetworkStateRecorder()
         stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
+        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
 
         // WHEN
         sut.didReceiveData()
@@ -421,33 +452,39 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
-        XCTAssertGreaterThanOrEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalMinimum)
-        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, (TimeInterval) (20 * 60))
+        XCTAssertGreaterThanOrEqual(
+            application.minimumBackgroundFetchInverval,
+            UIApplication.backgroundFetchIntervalMinimum
+        )
+        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, TimeInterval(20 * 60))
     }
 
     func testThatItMarksTheConversationsAsRead() throws {
         // GIVEN
-        let conversationsRange: CountableClosedRange = 1...10
+        let conversationsRange: CountableClosedRange = 1 ... 10
 
         let conversations: [ZMConversation] = conversationsRange.map { _ in
-            return self.sut.insertConversationWithUnreadMessage()
+            self.sut.insertConversationWithUnreadMessage()
         }
 
-        try self.uiMOC.save()
+        try uiMOC.save()
 
         // WHEN
-        self.sut.markAllConversationsAsRead()
+        sut.markAllConversationsAsRead()
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.uiMOC.refreshAllObjects()
+        uiMOC.refreshAllObjects()
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // GIVEN
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        syncMOC.performAndWait {
+            let mls = Feature.MLS(status: .enabled, config: .init())
+            self.sut.featureRepository.storeMLS(mls)
+        }
         mockMLSService.performPendingJoins_MockMethod = {}
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
@@ -461,16 +498,22 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             result: .success(()),
             context: syncMOC.notificationContext
         )
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
+            result: .success(backendPublicKeys),
+            context: syncMOC.notificationContext
+        )
 
         // MLS client has been registered
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let selfUserClient = createSelfClient()
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
             syncMOC.saveOrRollback()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -484,15 +527,61 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
         XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
+    }
+
+    func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
+        // GIVEN
+        syncMOC.performAndWait {
+            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
+        }
+        let selfUserClient = syncMOC.performAndWait {
+            self.createSelfClient()
+        }
+
+        mockMLSService.performPendingJoins_MockMethod = {}
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
+        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
+
+        syncMOC.performAndWait {
+            XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
+
+            XCTAssertFalse(BackendInfo.isMLSEnabled)
+            XCTAssertFalse(sut.featureRepository.fetchMLS().isEnabled)
+        }
+
+        // WHEN
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
+            result: .success(backendPublicKeys),
+            context: syncMOC.notificationContext
+        )
+        syncMOC.performAndWait {
+            let mls = Feature.MLS(status: .enabled, config: .init())
+            self.sut.featureRepository.storeMLS(mls)
+
+            sut.didFinishIncrementalSync(isRecovering: false)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
+            XCTAssertTrue(BackendInfo.isMLSEnabled)
+            XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
+        }
     }
 
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -501,5 +590,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
 
         XCTAssertTrue(supportedProtocols.contains(.proteus))
+    }
+
+    func test_OnSelfClientInvalidated() async throws {
+        // GIVEN
+        let applicationStatusDirectory = sut.applicationStatusDirectory
+        let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+        let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+        clientRegistrationStatus.emailCredentials = .credentials(
+            email: "test@wire.com",
+            password: "7@9xIZ"
+        )
+
+        clientUpdateStatus.needsToVerifySelfClient = true
+
+        // WHEN
+        await sut.onSelfClientInvalidated()
+
+        // THEN
+        XCTAssertEqual(clientRegistrationStatus.emailCredentials, nil)
+        XCTAssertEqual(clientRegistrationStatus.cookieProvider.isAuthenticated, false)
+        XCTAssertEqual(clientUpdateStatus.needsToVerifySelfClient, false)
     }
 }

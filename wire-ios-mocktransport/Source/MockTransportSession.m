@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -469,7 +469,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/register", @"processRegistrationRequest:"],
              @[@"/activate/send", @"processVerificationCodeRequest:"],
              @[@"/activate", @"processPhoneActivationRequest:"],
-             @[@"/onboarding/v3", @"processOnboardingRequest:"],
              @[@"/invitations", @"processInvitationsRequest:"],
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],

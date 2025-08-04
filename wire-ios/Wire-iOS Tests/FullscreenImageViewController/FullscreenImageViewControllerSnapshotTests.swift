@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatSmallImageIsCenteredInTheScreen() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         snapshotHelper.verify(matching: sut.view)
     }
@@ -63,7 +66,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
     @MainActor
     func testThatSmallImageIsScaledToFitTheScreenAfterDoubleTapped() {
         // GIVEN
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         // WHEN
         doubleTap(fullscreenImageViewController: sut)
@@ -74,7 +80,10 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     @MainActor
     func testThatImageIsDarkenWhenSelectedByMenu() {
-        sut = createFullscreenImageViewControllerForTest(imageFileName: "unsplash_matterhorn_small_size.jpg", userSession: userSession)
+        sut = createFullscreenImageViewControllerForTest(
+            imageFileName: "unsplash_matterhorn_small_size.jpg",
+            userSession: userSession
+        )
 
         sut.setSelectedByMenu(true, animated: false)
         // test for tap again does not add one more layer

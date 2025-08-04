@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                         lastEventIDRepository:self.lastEventIDRepository];
+                                                         lastEventIDRepository:self.lastEventIDRepository
+                                                               isSyncV2Enabled:NO];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockOperationStatus = [[OperationStatus alloc] init];
     self.mockOperationStatus.isInBackground = NO;
@@ -75,7 +76,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
                                                                  operationStatus:self.mockOperationStatus
-                                                      useLegacyPushNotifications:NO
                                                            lastEventIDRepository:self.lastEventIDRepository];
 }
 
@@ -396,7 +396,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
                                                                                                  operationStatus:self.mockOperationStatus
-                                                                                      useLegacyPushNotifications:NO
                                                                                            lastEventIDRepository:self.lastEventIDRepository];
 
     WaitForAllGroupsToBeEmpty(0.5);

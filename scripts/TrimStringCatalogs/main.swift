@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,20 +57,18 @@ func TrimStringCatalogs(paths: some Collection<String>) throws {
         var data = try Data(contentsOf: url)
         print("Trimming \(path) ...")
 
-        /*
-         {
-           "version" : "1.0",
-           "sourceLanguage" : "en",
-           "strings" : {
-             "tabBar.archived.description" : {
-               "localizations" : {
-                 "ar" : {
-                   "stringUnit" : {
-                     "state" : "translated",
-                     "value" : "حفظ في الأرشيف"
-                   },
-                   ...
-         */
+        // {
+        //  "version" : "1.0",
+        //  "sourceLanguage" : "en",
+        //  "strings" : {
+        //    "tabBar.archived.description" : {
+        //      "localizations" : {
+        //        "ar" : {
+        //          "stringUnit" : {
+        //            "state" : "translated",
+        //            "value" : "حفظ في الأرشيف"
+        //          },
+        //          ...
 
         var json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
         var strings = json["strings"] as! [String: Any]

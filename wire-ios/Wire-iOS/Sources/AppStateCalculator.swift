@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 
 enum AppState: Equatable {
@@ -31,33 +32,34 @@ enum AppState: Equatable {
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
+    case syncFailure(error: any Error, onRetry: () -> Void)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
         case (.headless, .headless):
-            return true
+            true
         case (.locked, .locked):
-            return true
+            true
         case (.authenticated, .authenticated):
-            return true
+            true
         case let (.unauthenticated(error1), .unauthenticated(error2)):
-            return error1 === error2
+            error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
-            return reason1 == reason2
+            reason1 == reason2
         case (jailbroken, jailbroken):
-            return true
+            true
         case (certificateEnrollmentRequired, certificateEnrollmentRequired):
-            return true
+            true
         case (databaseFailure, databaseFailure):
-            return true
+            true
         case (migrating, migrating):
-            return true
+            true
         case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            return accountTo1 == accountTo2 && accountFrom1 == accountFrom2
+            accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -74,20 +76,22 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             "unauthenticated: \(error.debugDescription)"
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
         case .jailbroken:
             "jailbroken"
         case .certificateEnrollmentRequired:
             "certificateEnrollmentRequired"
-        case .databaseFailure(reason: let reason):
+        case let .databaseFailure(reason: reason):
             "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
         case .loading:
             "loading"
+        case let .syncFailure(error, _):
+            "syncFailure: \(error.localizedDescription)"
         }
     }
 }
@@ -96,27 +100,29 @@ extension AppState: SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String {
         switch self {
         case .retryStart:
-            return "retryStart"
+            "retryStart"
         case .headless:
-            return "headless"
+            "headless"
         case .locked:
-            return "locked"
+            "locked"
         case .authenticated:
-            return "authenticated"
-        case .unauthenticated(let error):
-            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
-        case .blacklisted(let reason):
-            return "blacklisted \(reason)"
+            "authenticated"
+        case let .unauthenticated(error):
+            "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+        case let .blacklisted(reason):
+            "blacklisted \(reason)"
         case .jailbroken:
-            return "jailbroken"
+            "jailbroken"
         case .certificateEnrollmentRequired:
-            return "certificateEnrollmentRequired"
-        case .databaseFailure(let reason):
-            return "databaseFailure \(reason)"
+            "certificateEnrollmentRequired"
+        case let .databaseFailure(reason):
+            "databaseFailure \(reason)"
         case .migrating:
-            return "migrating"
-        case .loading(let account, let from):
-            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+            "migrating"
+        case let .loading(account, from):
+            "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        case let .syncFailure(error, _):
+            "syncFailure \(error.localizedDescription)"
         }
     }
 
@@ -142,10 +148,12 @@ final class AppStateCalculator {
     }
 
     // MARK: - Public Property
+
     weak var delegate: AppStateCalculatorDelegate?
     var wasUnauthenticated: Bool = false
 
     // MARK: - Private Set Property
+
     private(set) var pendingAppState: AppState?
     private(set) var appState: AppState = .headless {
         willSet {
@@ -158,10 +166,12 @@ final class AppStateCalculator {
     }
 
     // MARK: - Private Property
+
     private var observerTokens: [NSObjectProtocol] = []
     private var hasEnteredForeground: Bool = false
 
     // MARK: - Private Implementation
+
     private func transition(
         to appState: AppState,
         completion: (() -> Void)? = nil
@@ -183,9 +193,12 @@ final class AppStateCalculator {
         }
 
         self.appState = appState
-        self.pendingAppState = nil
+        pendingAppState = nil
 
-        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
+        WireLogger.appState.debug(
+            "transitioning to app state \(appState.safeForLoggingDescription)",
+            attributes: .safePublic
+        )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
@@ -193,6 +206,7 @@ final class AppStateCalculator {
 }
 
 // MARK: - ApplicationStateObserving
+
 extension AppStateCalculator: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
@@ -209,21 +223,23 @@ extension AppStateCalculator: ApplicationStateObserving {
 }
 
 // MARK: - SessionManagerDelegate
+
 extension AppStateCalculator: SessionManagerDelegate {
     var isInAuthenticatedAppState: Bool {
         switch appState {
         case .authenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
+
     var isInUnathenticatedAppState: Bool {
         switch appState {
         case .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -267,13 +283,19 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
     }
 
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void) {
-        let appState: AppState = .loading(account: account,
-                                          from: selectedAccount)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    ) {
+        let appState: AppState = .loading(
+            account: account,
+            from: selectedAccount
+        )
+        transition(
+            to: appState,
+            completion: userSessionCanBeTornDown
+        )
     }
 
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
@@ -315,9 +337,18 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         }
     }
+
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        transition(to: .syncFailure(error: error, onRetry: retryHandler))
+    }
+
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
+
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(userSession: UserSession) {
         if userSession.isLocked {

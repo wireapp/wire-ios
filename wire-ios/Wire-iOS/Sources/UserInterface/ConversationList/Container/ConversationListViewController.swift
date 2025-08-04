@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ final class ConversationListViewController: UIViewController {
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
+    let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -63,6 +64,7 @@ final class ConversationListViewController: UIViewController {
             }
         }
         button.addAction(action, for: .touchUpInside)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
 
@@ -73,8 +75,12 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
+        case .channels:
+            return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case let .folder(_, name):
+            return name
         case .none:
             return ""
         }
@@ -102,14 +108,14 @@ final class ConversationListViewController: UIViewController {
     weak var accountImageView: AccountImageView?
 
     let networkStatusViewController = NetworkStatusViewController()
-    private var emptyPlaceholderView: EmptyPlaceholderView!
+    private var emptyPlaceholderView: EmptyPlaceholderContainerView!
+
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
             updateNavigationItem()
             applyColorTheme()
             updateFilterContainerView()
-            navigationItem.searchController?.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
         }
     }
 
@@ -124,15 +130,18 @@ final class ConversationListViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
-        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
+            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             mainCoordinator: mainCoordinator,
-            getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
+            getUserAccountImageSourceUseCase: getUserAccountImageSourceUseCase
         )
         self.init(
             viewModel: viewModel,
@@ -140,7 +149,8 @@ final class ConversationListViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder
+            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
+            folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
         )
     }
 
@@ -150,7 +160,8 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
-        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -158,11 +169,12 @@ final class ConversationListViewController: UIViewController {
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
         self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
+        self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
         self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(
+        self.listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
@@ -177,6 +189,8 @@ final class ConversationListViewController: UIViewController {
 
         hideNoContactLabel(animated: false)
         viewModel.viewController = self
+
+        setupSearchController()
     }
 
     @available(*, unavailable)
@@ -205,11 +219,12 @@ final class ConversationListViewController: UIViewController {
 
         setupObservers()
 
-        listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+        listContentController.collectionView.scrollRectToVisible(
+            CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1),
+            animated: false
+        )
 
         applyColorTheme()
-
-        setupSearchController()
 
         setContentScrollView(listContentController.collectionView)
     }
@@ -239,6 +254,8 @@ final class ConversationListViewController: UIViewController {
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
+
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
 
     override func viewDidLayoutSubviews() {
@@ -305,19 +322,31 @@ final class ConversationListViewController: UIViewController {
         NSLayoutConstraint.activate([
             filterContainerStackView.topAnchor.constraint(equalTo: filterContainerView.topAnchor),
             filterContainerView.bottomAnchor.constraint(equalTo: filterContainerStackView.bottomAnchor),
-            filterContainerStackView.leadingAnchor.constraint(equalToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 2),
-            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 2)
+            filterContainerStackView.leadingAnchor.constraint(
+                equalToSystemSpacingAfter: filterContainerView.leadingAnchor,
+                multiplier: 2
+            ),
+            filterContainerView.trailingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor,
+                multiplier: 2
+            )
         ])
 
         filterContainerStackView.addArrangedSubview(filterLabel)
         filterContainerStackView.addArrangedSubview(removeButton)
+
+        NSLayoutConstraint.activate([
+            filterContainerView.heightAnchor.constraint(equalTo: filterLabel.heightAnchor, constant: 16)
+        ])
 
         // Initially hide the filter container view
         filterContainerView.isHidden = true
     }
 
     func updateFilterContainerView() {
-        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        filterContainerView
+            .isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController
+            .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
 
@@ -333,18 +362,26 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        let connectWithPeopleAction = UIAction { [weak self] _ in
+        let connectWithPeopleAction: () -> Void = { [weak self] in
             self?.presentConnectUI()
         }
-        emptyPlaceholderView = EmptyPlaceholderView(
+        let createConversation: () -> Void = { [weak self] in
+            self?.presentCreateConversationUI()
+        }
+        emptyPlaceholderView = EmptyPlaceholderContainerView(
             content: emptyPlaceholderForSelectedFilter,
-            connectWithPeopleAction: connectWithPeopleAction)
+            connectWithPeopleAction: connectWithPeopleAction,
+            newConversationAction: createConversation
+
+        )
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
     func configureEmptyPlaceholder() {
-        emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.placeholderView.configure(with: emptyPlaceholderForSelectedFilter)
+
         emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
+        emptyPlaceholderView.hideSearchResult(listContentController.listViewModel.appliedSearchText.isEmpty)
     }
 
     private func setupNetworkStatusBar() {
@@ -373,7 +410,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.topAnchor),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
@@ -386,51 +423,44 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-        ? ColorTheme.Backgrounds.backgroundVariant
-        : ColorTheme.Backgrounds.surface
+            ? ColorTheme.Backgrounds.backgroundVariant
+            : ColorTheme.Backgrounds.surface
     }
 
-    static func makeSearchController(
-            filter: ConversationFilter?,
-            mainSplitViewState: MainSplitViewState,
-            isEmptyPlaceholderVisible: Bool
-    ) -> UISearchController {
+    static func makeSearchController() -> UISearchController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
-        searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
+        searchController.hidesNavigationBarDuringPresentation = true
         return searchController
     }
 
     private static func searchPlaceholderText(for filter: ConversationFilter?) -> String {
         switch filter {
         case .none:
-            return L10n.Localizable.ConversationList.SearchBar.placeholder
+            L10n.Localizable.ConversationList.SearchBar.placeholder
         case .favorites:
-            return L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+            L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
         case .groups:
-            return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .channels:
+            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
-            return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+            L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case let .folder(_, name):
+            L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
     }
 
     private func setupSearchController() {
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: listContentController.listViewModel.selectedFilter,
-            mainSplitViewState: mainSplitViewState,
-            isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
-        )
-
+        let filter = listContentController.listViewModel.selectedFilter
+        let searchController = Self.makeSearchController()
+        searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
-
-        if !isEmptyPlaceholderVisible {
-            navigationItem.searchController = searchController
-        } else {
-            navigationItem.searchController = nil
-        }
+        searchController.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
@@ -485,9 +515,16 @@ final class ConversationListViewController: UIViewController {
         } else {
             setupRightNavigationBarButtonItems_SplitView()
         }
-        setupSearchController()
         updateFilterContainerView()
         configureEmptyPlaceholder()
+
+        let filter = listContentController.listViewModel.selectedFilter
+        navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+
+        // This should actually be done as a result of an empty list of conversations, not directly when selecting a
+        // filter.
+        navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
+
     }
 
     @objc
@@ -499,6 +536,7 @@ final class ConversationListViewController: UIViewController {
             .trimmingCharacters(in: .whitespaces)
             .lowercased() ?? ""
         listContentController.listViewModel.appliedSearchText = searchText
+        configureEmptyPlaceholder()
     }
 
     // MARK: - Selection Management

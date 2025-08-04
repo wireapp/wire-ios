@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ final class ClientTableViewCell: UITableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
+
     let nameLabel = DynamicFontLabel(
         style: .h3,
         color: LabelColors.textDefault
@@ -65,8 +66,9 @@ final class ClientTableViewCell: UITableViewCell {
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
 
     // MARK: - Initialization
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        wr_editable = true
+        self.wr_editable = true
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         createConstraints()
@@ -79,6 +81,7 @@ final class ClientTableViewCell: UITableViewCell {
     }
 
     // MARK: - Override method
+
     override func setEditing(_ editing: Bool, animated: Bool) {
         if wr_editable {
             super.setEditing(editing, animated: animated)
@@ -86,6 +89,7 @@ final class ClientTableViewCell: UITableViewCell {
     }
 
     // MARK: - Methods
+
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"

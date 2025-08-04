@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,32 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public extension SessionManager {
 
-extension SessionManager {
-
-    enum AnalyticsError: Error {
+    internal enum AnalyticsError: Error {
 
         case noActiveSession
 
     }
 
-    public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-        DisableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+    func makeDisableAnalyticsUseCase() -> (any DisableAnalyticsUseCaseProtocol)? {
+        analyticsService.map { analyticsService in
+            DisableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
     }
 
-    public func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+    func makeEnableAnalyticsUseCase() throws -> (any EnableAnalyticsUseCaseProtocol)? {
         guard let activeUserSession else {
             throw AnalyticsError.noActiveSession
         }
 
-        return EnableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+        return analyticsService.map { analyticsService in
+            EnableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
+    }
+
+    var canEnableTracking: Bool {
+        analyticsService != nil
     }
 
 }

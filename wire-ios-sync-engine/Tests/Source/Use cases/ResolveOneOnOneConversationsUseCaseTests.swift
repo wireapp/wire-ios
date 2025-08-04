@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireDomainSupport
 import WireSyncEngineSupport
 import XCTest
+
+@testable import WireSyncEngine
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
@@ -28,11 +30,12 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private var sut: ResolveOneOnOneConversationsUseCase!
     private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
+    private var mockPullSelfUserClients: MockPullSelfUserClientsSyncProtocol!
     private var stack: CoreDataStack!
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp
@@ -42,11 +45,16 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         mockSupportedProtocolService = MockSupportedProtocolsServiceInterface()
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
+        mockPullSelfUserClients = MockPullSelfUserClientsSyncProtocol()
+        mockPullSelfUserClients.pull_MockMethod = {}
 
         sut = ResolveOneOnOneConversationsUseCase(
             context: syncContext,
             supportedProtocolService: mockSupportedProtocolService,
-            resolver: mockOneOnOneResolver
+            resolver: mockOneOnOneResolver,
+            pullSelfUserClientsFactory: { _ in
+                self.mockPullSelfUserClients
+            }
         )
     }
 
@@ -56,12 +64,30 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = nil
         mockSupportedProtocolService = nil
         mockOneOnOneResolver = nil
+        mockPullSelfUserClients = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
 
     // MARK: - Unit Tests
+
+    func test_invoke_Calls_PullSelfClients() async throws {
+        // GIVEN
+        await syncContext.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            selfUser.supportedProtocols = [.mls]
+            mockSupportedProtocolService.calculateSupportedProtocols_MockValue = [.mls]
+        }
+        mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_MockMethod = { _ in }
+
+        // WHEN
+        try await sut.invoke()
+
+        // THEN
+        XCTAssertEqual(mockPullSelfUserClients.pull_Invocations.count, 1)
+        XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
+    }
 
     func test_SupportedProtocolsRemainProteusOnly() async throws {
         // GIVEN

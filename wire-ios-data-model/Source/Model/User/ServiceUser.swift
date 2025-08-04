@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
 
 import Foundation
 
-@objc public protocol ServiceUser: AnyObject, UserType {
+@objc
+public protocol ServiceUser: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
 
-@objc public protocol SearchServiceUser: ServiceUser {
+@objc
+public protocol SearchServiceUser: ServiceUser {
     var summary: String? { get }
 }
 

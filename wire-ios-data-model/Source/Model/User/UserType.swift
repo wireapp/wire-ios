@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The identifier which uniquely idenitifies the user in its domain
     var remoteIdentifier: UUID! { get }
+
+    /// Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
 
     /// The domain which the user originates from
     var domain: String? { get }
@@ -167,7 +170,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user can create services
     var canCreateService: Bool { get }
 
-    /// Whether the user can administate the team
+    /// Whether the user can administrate the team
     var canManageTeam: Bool { get }
 
     /// Whether the user can access the private company information of the other given user.
@@ -210,8 +213,12 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can toggle the access level setting in the conversation.
-    @objc(canModifyAccessControlSettingsInConversation:)
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool
+    @objc(canModifyGuestsAccessControlSettingsInConversation:)
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool
+
+    /// Whether the user can toggle the channel's access level setting in the conversation.
+    @objc(canModifyChannelAccessLevelSettingsInConversation:)
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)
@@ -259,7 +266,8 @@ public protocol UserConnections {
     var canBeConnected: Bool { get }
 
     /// Sends a connection request to the given user. May be a no-op, eg. if we're already connected.
-    /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
+    /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status
+    /// change
     /// You should stop from observing the searchUser and start observing the user from there on
     func connect(completion: @escaping (Error?) -> Void)
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 
 @testable import WireTransport
 
-extension HTTPCookie {
+public extension HTTPCookie {
 
-    @objc public class func validCookieData() -> Data {
+    @objc
+    class func validCookieData() -> Data {
         validCookieData(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
     }
 
-    @objc public class func validCookieData(string: String) -> Data {
+    @objc
+    class func validCookieData(string: String) -> Data {
         HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
     }
 

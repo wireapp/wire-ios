@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle canNotRegisterMoreClients errors
@@ -31,7 +34,8 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
             error.userSessionErrorCode == .canNotRegisterMoreClients,
             let nextStep = AuthenticationFlowStep.makeClientManagementStep(
                 from: error,
-                statusProvider: self.statusProvider)
+                statusProvider: statusProvider
+            )
         else {
             return nil
         }

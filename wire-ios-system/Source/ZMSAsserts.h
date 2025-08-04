@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ do { \
                         ""]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjc assertionDumpLog:output]; \
+    [WireLoggerObjC assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \
@@ -149,7 +149,7 @@ do { \
                         message]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjc assertionDumpLog:output]; \
+    [WireLoggerObjC assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \

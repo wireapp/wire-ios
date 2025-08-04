@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
@@ -59,6 +60,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
             try await coreCryptoProvider.coreCrypto()
         }
     }
+
     // MARK: - Message encryption
 
     public enum MLSMessageEncryptionError: Error {
@@ -73,7 +75,10 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ) async throws -> Data {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try await coreCrypto.perform { try await $0.encryptMessage(conversationId: groupID.data, message: message) }
+            return try await coreCrypto.perform { try await $0.encryptMessage(
+                conversationId: groupID.data,
+                message: message
+            ) }
         } catch {
             WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage

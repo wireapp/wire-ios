@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@ import UIKit
 
 /// Implements the delegate method `navigationControllerSupportedInterfaceOrientations(_: UINavigationController)`
 /// and returns the value of the top view controller's supported interface orientations.
-public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
+public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject,
+    UINavigationControllerDelegate {
 
-    public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController) -> UIInterfaceOrientationMask {
+    public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController)
+        -> UIInterfaceOrientationMask {
         navigationController.topViewController?.supportedInterfaceOrientations ?? .all
     }
 }
@@ -31,7 +33,8 @@ public final class SupportedOrientationsDelegatingNavigationControllerDelegate: 
 
 public extension SupportedOrientationsDelegatingNavigationControllerDelegate {
 
-    /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation controller in order to achieve the desired behavior.
+    /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation
+    /// controller in order to achieve the desired behavior.
     func setAsDelegateAndNontomicRetainedAssociatedObject(_ navigationController: UINavigationController) {
         navigationController.delegate = self
         objc_setAssociatedObject(navigationController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

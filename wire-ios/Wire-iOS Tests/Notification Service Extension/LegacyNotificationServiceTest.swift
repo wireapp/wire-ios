@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import Wire_Notification_Service_Extension
+import WireDomain
 import WireNotificationEngine
 import XCTest
 
@@ -35,11 +37,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
     private var callEventHandlerMock: CallEventHandlerMock!
 
     private var otherUser: ZMUser {
-        return coreDataFixture.otherUser
+        coreDataFixture.otherUser
     }
 
     private var selfUser: ZMUser {
-        return coreDataFixture.selfUser
+        coreDataFixture.selfUser
     }
 
     private var client: UserClient {
@@ -53,9 +55,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
         callEventHandlerMock = CallEventHandlerMock()
         currentUserIdentifier = UUID.create()
         notificationContent = createNotificationContent()
-        request = UNNotificationRequest(identifier: currentUserIdentifier.uuidString,
-                                        content: notificationContent,
-                                        trigger: nil)
+        request = UNNotificationRequest(
+            identifier: currentUserIdentifier.uuidString,
+            content: notificationContent,
+            trigger: nil
+        )
 
         coreDataFixture = CoreDataFixture()
         mockConversation = createTeamGroupConversation()
@@ -123,9 +127,13 @@ final class LegacyNotificationServiceTests: XCTestCase {
             fatalError()
         }
 
-        let manager = AccountManager(sharedDirectory: sharedContainer)
+        let manager = try? AccountManager(
+            currentAppVersion: "1.0.0",
+            sharedDirectory: sharedContainer,
+            defaults: .temporary()
+        )
         let account = Account(userName: "Test Account", userIdentifier: id)
-        manager.addOrUpdate(account)
+        manager?.addOrUpdate(account)
     }
 
     private func createNotificationContent() -> UNMutableNotificationContent {
@@ -145,7 +153,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
         guard let event = createEvent() else {
             return nil
         }
-        return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: coreDataFixture.uiMOC)
+        return ZMLocalNotification(
+            event: event,
+            conversation: conversation,
+            managedObjectContext: coreDataFixture.uiMOC
+        )
     }
 
     private func createEvent() -> ZMUpdateEvent? {

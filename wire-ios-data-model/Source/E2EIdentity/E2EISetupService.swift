@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,12 +28,13 @@ public protocol E2EISetupServiceInterface {
     func registerFederationCertificate(_ certificate: String) async throws
 
     /// Setup enrollment for a client
-    /// 
+    ///
     /// - parameter clientID: qualifed client ID.
     /// - parameter userName: fullname of the user owning the client.
     /// - parameter handle: handle of the user owning the client.
     /// - parameter teamId: team ID of the team the user belongs to.
-    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are registering a new MLS client.
+    /// - parameter isUpgradingClient: `true` if we are upgrading an already existing MLS client, `false` is we are
+    /// registering a new MLS client.
     /// - parameter expirySec: optional custom expiration time for the enrollment certificate
 
     func setupEnrollment(
@@ -71,7 +72,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     public func isTrustAnchorRegistered() async throws -> Bool {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
-            await coreCrypto.e2eiIsPkiEnvSetup()
+            try await coreCrypto.e2eiIsPkiEnvSetup()
         }
     }
 

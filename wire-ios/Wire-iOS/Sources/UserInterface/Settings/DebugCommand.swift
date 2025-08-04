@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,15 @@ import Foundation
 
 enum DebugCommand {
 
-    /// Update accessRoles for existing conversations where the team is nil and accessRoles == [.teamMember]
+    /// Update accessRoles for existing conversations where the
+    /// team is nil and accessRoles == [.teamMember]
+
     case repairInvalidAccessRoles
+
+    /// Fetch team, users, connections, conversations, etc, from
+    /// the backend to update local database.
+
+    case resyncResources
 
     init?(string: String) {
         // We may want to have commands that accept arguments, which means
@@ -29,6 +36,10 @@ enum DebugCommand {
         switch string {
         case "repairInvalidAccessRoles":
             self = .repairInvalidAccessRoles
+
+        case "resync resources":
+            self = .resyncResources
+
         default:
             return nil
         }

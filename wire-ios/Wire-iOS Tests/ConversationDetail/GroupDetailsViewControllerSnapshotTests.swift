@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,6 +80,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
     }
 
+    private func createChannelConversation() {
+        mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
+        mockConversation.isChannel = true
+        mockConversation.groupType = .channel
+    }
+
     func testForOptionsForTeamUserInNonTeamConversation() {
         // GIVEN & WHEN
 
@@ -137,9 +143,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyEphemeralSettingsInConversation = true
         mockSelfUser.canModifyNotificationSettingsInConversation = true
         mockSelfUser.canModifyReadReceiptSettingsInConversation = true
-        mockSelfUser.canModifyAccessControlSettings = true
+        mockSelfUser.canModifyGuestsAccessControlSettings = true
+        mockSelfUser.canModifyChannelAccessLevelSettings = true
 
         createGroupConversation()
+        mockConversation.teamType = MockTeam()
         mockConversation.teamRemoteIdentifier = mockSelfUser.teamIdentifier
         mockConversation.allowGuests = true
         mockConversation.allowServices = true
@@ -280,4 +288,26 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
+
+    func testChannel() {
+        // GIVEN & WHEN
+        setSelfUserInTeam()
+        mockSelfUser.canAddUserToConversation = false
+
+        mockSelfUser.teamRole = .partner
+
+        createChannelConversation()
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
 }

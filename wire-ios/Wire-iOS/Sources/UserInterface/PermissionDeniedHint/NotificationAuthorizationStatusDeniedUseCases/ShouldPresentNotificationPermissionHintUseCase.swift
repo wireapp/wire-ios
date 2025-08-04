@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 //
 
 import UserNotifications
-import WireSystem
+import WireFoundation
 import WireUtilities
 
-struct ShouldPresentNotificationPermissionHintUseCase<DateProvider>: ShouldPresentNotificationPermissionHintUseCaseProtocol
-where DateProvider: CurrentDateProviding {
+struct ShouldPresentNotificationPermissionHintUseCase<
+    DateProvider
+>: ShouldPresentNotificationPermissionHintUseCaseProtocol
+    where DateProvider: CurrentDateProviding {
 
     var currentDateProvider: DateProvider
     var userDefaults: UserDefaults

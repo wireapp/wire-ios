@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCryptobox
+import WireLogging
 
 private var zmLog = ZMSLog(tag: "message encryption")
 
@@ -57,7 +59,8 @@ extension ZMClientMessage {
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -65,11 +68,13 @@ extension ZMClientMessage {
         if let legalHoldStatus = conversation?.legalHoldStatus {
             // Update the legalHoldStatus flag to reflect the current known legal hold status
             if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                updatedGenericMessage
+                    .setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -87,7 +92,8 @@ extension ZMAssetClientMessage {
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -95,11 +101,13 @@ extension ZMAssetClientMessage {
         if let legalHoldStatus = conversation?.legalHoldStatus {
             // Update the legalHoldStatus flag to reflect the current known legal hold status
             if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                updatedGenericMessage
+                    .setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -107,16 +115,23 @@ extension ZMAssetClientMessage {
 
 }
 
-extension GenericMessage {
+public extension GenericMessage {
 
-    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: [ZMUser: Set<UserClient>], strategy: MissingClientsStrategy) {
+    func recipientUsersForMessage(
+        in conversation: ZMConversation,
+        selfUser: ZMUser
+    ) -> (users: [ZMUser: Set<UserClient>], strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForButtonActionMessage() -> Set<ZMUser> {
             guard
                 case .buttonAction? = content,
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce: UUID(uuidString: buttonAction.referenceMessageID), for: conversation, in: managedObjectContext),
+                let message = ZMMessage.fetch(
+                    withNonce: UUID(uuidString: buttonAction.referenceMessageID),
+                    for: conversation,
+                    in: managedObjectContext
+                ),
                 let sender = message.sender
             else {
                 fatal("buttonAction needs a recipient")
@@ -129,10 +144,14 @@ extension GenericMessage {
             guard
                 hasConfirmation,
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce: UUID(uuidString: confirmation.firstMessageID), for: conversation, in: managedObjectContext),
+                let message = ZMMessage.fetch(
+                    withNonce: UUID(uuidString: confirmation.firstMessageID),
+                    for: conversation,
+                    in: managedObjectContext
+                ),
                 let sender = message.sender
-                else {
-                    return nil
+            else {
+                return nil
             }
 
             return [sender]
@@ -152,7 +171,7 @@ extension GenericMessage {
                 return nil
             }
 
-            let nonce = UUID(uuidString: self.deleted.messageID)
+            let nonce = UUID(uuidString: deleted.messageID)
 
             guard
                 let managedObjectContext = conversation.managedObjectContext,
@@ -163,8 +182,14 @@ extension GenericMessage {
             }
 
             guard let sender = message.sender else {
-                zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
-                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
+                zmLog
+                    .error(
+                        "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                    )
+                WireLogger.proteus
+                    .error(
+                        "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                    )
                 return [selfUser]
             }
 
@@ -179,8 +204,9 @@ extension GenericMessage {
             if let connectedUser = conversation.connectedUser { return [connectedUser, selfUser] }
 
             func mentionedServices() -> Set<ZMUser> {
-                return services.filter { service in
-                    self.textData?.mentions.contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
+                services.filter { service in
+                    self.textData?.mentions
+                        .contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
                 }
             }
 
@@ -194,8 +220,10 @@ extension GenericMessage {
         switch content {
         case .confirmation?:
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
-                let confirmationInfo = ", original message: \(String(describing: self.confirmation.firstMessageID))"
-                fatal("confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)")
+                let confirmationInfo = ", original message: \(String(describing: confirmation.firstMessageID))"
+                fatal(
+                    "confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)"
+                )
             }
             recipientUsers = recipients
         case .buttonAction?:
@@ -215,9 +243,9 @@ extension GenericMessage {
 
         let strategy: MissingClientsStrategy
         if hasRestrictions {
-            let qualifiedIds = recipientUsers.compactMap({ user in
+            let qualifiedIds = recipientUsers.compactMap { user in
                 user.qualifiedID
-            })
+            }
             strategy = .ignoreAllMissingClientsNotFromUsers(userIds: Set(qualifiedIds))
         } else {
             strategy = .doNotIgnoreAnyMissingClient
@@ -301,7 +329,10 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
 
-    public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) async throws -> Data {
+    public func encryptForTransport(
+        using encrypt: MLSEncryptedPayloadGenerator
+            .EncryptionFunction
+    ) async throws -> Data {
         let unencryptedData = try unencryptedData()
         return try await encrypt(unencryptedData)
     }

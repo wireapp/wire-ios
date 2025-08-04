@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ extension UIApplication {
 
     /// Check whether that app is in left to right layout.
     static var isLeftToRightLayout: Bool {
-        return UIApplication.shared.userInterfaceLayoutDirection == .leftToRight
+        UIApplication.shared.userInterfaceLayoutDirection == .leftToRight
     }
 
 }
@@ -34,18 +34,18 @@ extension UIEdgeInsets {
     /// The leading insets, that respect the layout direction.
     var leading: CGFloat {
         if UIApplication.isLeftToRightLayout {
-            return left
+            left
         } else {
-            return right
+            right
         }
     }
 
     /// The trailing insets, that respect the layout direction.
     var trailing: CGFloat {
         if UIApplication.isLeftToRightLayout {
-            return right
+            right
         } else {
-            return left
+            left
         }
     }
 }

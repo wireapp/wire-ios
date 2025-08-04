@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,9 +42,9 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
         contextRef.setAllowsAntialiasing(true)
         let cropBox = pageRef.getBoxRect(CGPDFBox.cropBox)
         guard cropBox.size.width != 0,
-              cropBox.size.width < 16384,
+              cropBox.size.width < 16_384,
               cropBox.size.height != 0,
-              cropBox.size.height < 16384
+              cropBox.size.height < 16_384
         else { throw Error.failedToCreatePreview }
 
         let xScale = thumbnailSize.width / cropBox.size.width

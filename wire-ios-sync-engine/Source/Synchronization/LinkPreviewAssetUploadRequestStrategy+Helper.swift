@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,18 @@
 
 import Foundation
 
-extension LinkPreviewAssetUploadRequestStrategy {
+public extension LinkPreviewAssetUploadRequestStrategy {
 
-    public static func create(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) -> LinkPreviewAssetUploadRequestStrategy {
-        return LinkPreviewAssetUploadRequestStrategy(managedObjectContext: managedObjectContext, applicationStatus: applicationStatus, linkPreviewPreprocessor: nil, previewImagePreprocessor: nil)
+    static func create(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) -> LinkPreviewAssetUploadRequestStrategy {
+        LinkPreviewAssetUploadRequestStrategy(
+            managedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus,
+            linkPreviewPreprocessor: nil,
+            previewImagePreprocessor: nil
+        )
     }
 
 }

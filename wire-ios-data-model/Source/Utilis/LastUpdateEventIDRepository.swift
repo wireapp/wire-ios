@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 @objc
@@ -47,7 +48,7 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )
@@ -62,7 +63,10 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     }
 
     public func storeLastEventID(_ id: UUID?) {
-        WireLogger.sync.info("store last event id", attributes: [.lastEventID: String(describing: id?.safeForLoggingDescription ?? "<nil>")])
+        WireLogger.sync.info(
+            "store last event id",
+            attributes: [.lastEventID: String(describing: id?.safeForLoggingDescription ?? "<nil>")]
+        )
         storage.setUUID(id, forKey: .lastEventID)
     }
 

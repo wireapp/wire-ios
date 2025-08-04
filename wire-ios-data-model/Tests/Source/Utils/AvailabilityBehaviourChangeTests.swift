@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class AvailabilityBehaviourChangeTests: ModelObjectsTests {
 
     func selfUserWithTeam() -> ZMUser {
-        let team = self.createTeam(in: uiMOC)
+        let team = createTeam(in: uiMOC)
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        _ = self.createMembership(in: uiMOC, user: selfUser, team: team)
+        _ = createMembership(in: uiMOC, user: selfUser, team: team)
         return selfUser
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 /// Container of information needed to encrypt a message
 struct MessageInfo {
@@ -39,7 +40,7 @@ struct MessageInfo {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
             for (_, userClientDatas) in userClientIdAndSessionIds {
-                let sessionIds = userClientDatas.compactMap( { $0.sessionID })
+                let sessionIds = userClientDatas.compactMap(\.sessionID)
                 result.append(contentsOf: sessionIds)
             }
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import Foundation
 public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
     public var processedEvents: [ZMUpdateEvent] = []
+    public var processedLivedEvents: [ZMUpdateEvent] = []
     public var bufferedEvents: [ZMUpdateEvent] = []
 
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -32,6 +33,10 @@ public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processedEvents.append(contentsOf: events)
+    }
+
+    public func processLiveEvents(_ events: [ZMUpdateEvent]) async throws {
+        processedLivedEvents.append(contentsOf: events)
     }
 
     public func processBufferedEvents() async {

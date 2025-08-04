@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 class MemberTests: ZMConversationTestsBase {
 
@@ -111,7 +111,7 @@ class MemberTests: ZMConversationTestsBase {
         let (team, existingMember) = createTeamAndMember(for: user)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
@@ -126,7 +126,7 @@ class MemberTests: ZMConversationTestsBase {
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
@@ -144,7 +144,7 @@ class MemberTests: ZMConversationTestsBase {
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
@@ -204,7 +204,8 @@ extension MemberTests {
             ]
 
             // when
-            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC) else { return XCTFail("No member created") }
+            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC)
+            else { return XCTFail("No member created") }
 
             // then
             XCTAssertEqual(member.user?.remoteIdentifier, userId)

@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/v1/feature-configs"
-  - method: get
-  - body: none

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -25,9 +26,13 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    func advancedGroup(userSession: UserSession) -> any SettingsCellDescriptorType {
+
+    func advancedGroup(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> any SettingsCellDescriptorType {
         let items = [
-            troubleshootingSection(userSession: userSession),
+            troubleshootingSection(userSession: userSession, mainCoordinator: mainCoordinator),
             debuggingToolsSection,
             pushSection
         ]
@@ -43,13 +48,20 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-    private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
+
+    private func troubleshootingSection(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                let router = SettingsDebugReportRouter()
+                let router = SettingsDebugReportRouter(mainCoordinator: mainCoordinator)
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-                let fetchShareableConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(
+                    contextProvider: userSession
+                        .contextProvider
+                )
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
@@ -59,7 +71,8 @@ extension SettingsCellDescriptorFactory {
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
                 return viewController
-        })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [submitDebugButton],
@@ -72,19 +85,21 @@ extension SettingsCellDescriptorFactory {
         let pushButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             presentationAction: { () -> (UIViewController?) in
                 ZMUserSession.shared()?.validatePushToken()
                 return self.pushButtonAlertController
-        })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [pushButton],
             header: .none,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                return true
-        })
+                true
+            }
+        )
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {
@@ -116,6 +131,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Helpers
+
     private var pushButtonAlertController: UIAlertController {
         let alert = UIAlertController(
             title: SelfSettingsAdvancedLocale.ResetPushTokenAlert.title,

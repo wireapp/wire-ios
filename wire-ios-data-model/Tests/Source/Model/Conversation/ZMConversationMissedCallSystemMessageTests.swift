@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase 
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
 
             // when
-            let messages = (0..<3).map {
+            let messages = (0 ..< 3).map {
                 conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(TimeInterval($0)))
             }
 
@@ -144,7 +144,10 @@ final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase 
             let first = conversation.appendMissedCallMessage(fromUser: firstUser, at: timestamp)
 
             // when
-            let second = conversation.appendMissedCallMessage(fromUser: secondUser, at: timestamp.addingTimeInterval(100))
+            let second = conversation.appendMissedCallMessage(
+                fromUser: secondUser,
+                at: timestamp.addingTimeInterval(100)
+            )
 
             // then
             let lastMessages = conversation.lastMessages()

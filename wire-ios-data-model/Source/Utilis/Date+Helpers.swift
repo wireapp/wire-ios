@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,13 +38,13 @@ public extension Date {
     /// Whether the date is after the current instant.
 
     var isInTheFuture: Bool {
-        return !isInThePast
+        !isInThePast
     }
 
     /// Whether the date is before the current instant.
 
     var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
+        compare(Date()) != .orderedDescending
     }
 
 }

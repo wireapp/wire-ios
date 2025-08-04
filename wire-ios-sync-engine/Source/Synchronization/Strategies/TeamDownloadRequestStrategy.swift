@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import WireLogging
 
 struct TeamListPayload: Decodable {
     let hasMore: Bool
@@ -31,17 +33,17 @@ struct TeamPayload: Decodable {
     let identifier: UUID
     let name: String
     let creator: UUID
-    let binding: Bool
     let icon: String
     let iconKey: String?
+    let splashScreen: String?
 
     private enum CodingKeys: String, CodingKey {
         case identifier = "id"
         case name
         case creator
-        case binding
         case icon
         case iconKey = "icon_key"
+        case splashScreen = "splash_screen"
     }
 
 }
@@ -67,45 +69,50 @@ extension TeamPayload {
         team.creator = ZMUser.fetchOrCreate(with: creator, domain: nil, in: managedObjectContext)
         team.pictureAssetId = icon
         team.pictureAssetKey = iconKey
-
-        if !binding {
-            managedObjectContext.delete(team)
-        }
     }
 
 }
 
-fileprivate extension Team {
+private extension Team {
 
-    static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
-    }()
+    static var predicateForObjectsNeedingToBeUpdated: NSPredicate = .init(
+        format: "%K == YES AND %K != NULL",
+        #keyPath(Team.needsToBeUpdatedFromBackend),
+        Team.remoteIdentifierDataKey()
+    )
 
 }
 
 /// Responsible for downloading the team which the self user belongs to during the slow sync
 /// and for updating it when processing events or when manually requested.
 
-public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer, ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
+public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer,
+    ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
 
     private(set) var downstreamSync: ZMDownstreamObjectSync!
     private(set) var slowSync: ZMSingleRequestSync!
 
     fileprivate unowned var syncStatus: SyncStatus
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
         self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = [.allowsRequestsWhileOnline, .allowsRequestsDuringSlowSync]
-        downstreamSync = ZMDownstreamObjectSync(
+        self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
             predicateForObjectsToDownload: Team.predicateForObjectsNeedingToBeUpdated,
             filter: nil,
             managedObjectContext: managedObjectContext
         )
-        slowSync = ZMSingleRequestSync(singleRequestTranscoder: self,
-                                       groupQueue: managedObjectContext)
+        self.slowSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: managedObjectContext
+        )
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -118,18 +125,19 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     fileprivate var expectedSyncPhase: SyncPhase {
-        return .fetchingTeams
+        .fetchingTeams
     }
 
     fileprivate var isSyncing: Bool {
-        return syncStatus.currentSyncPhase == expectedSyncPhase
+        syncStatus.currentSyncPhase == expectedSyncPhase
     }
 
     // MARK: - ZMEventConsumer
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         events.forEach(process)
     }
@@ -145,10 +153,15 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     private func createTeam(with event: ZMUpdateEvent) {
-        // With the new multi-account model this event should not be sent anymore,
-        // and if it is we should not act on it.
-        // An account will either have a team since registration or not,
-        // currently there is no way to get added to a team after registering.
+        guard
+            let data = event.dataPayload,
+            let team = TeamPayload(data)
+        else {
+            WireLogger.updateEvent.error("failed to process team.create event")
+            return
+        }
+
+        _ = team.createOrUpdateTeam(in: managedObjectContext)
     }
 
     private func deleteTeam(with event: ZMUpdateEvent) {
@@ -158,7 +171,8 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
+        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String)
+            .flatMap(UUID.init(transportString:)) else { return }
         guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
         if let member = user.membership {
             if user.isSelfUser {
@@ -174,7 +188,8 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     private func processUpdatedMember(with event: ZMUpdateEvent) {
         guard event.teamId != nil, let data = event.dataPayload else { return }
-        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
+        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
+        else { return }
         guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
         member.needsToBeUpdatedFromBackend = true
     }
@@ -195,7 +210,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
-        case .v4, .v5, .v6:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
                 syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
                 return nil
@@ -221,7 +236,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
             syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
 
-        case .v4, .v5, .v6:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             guard
                 let rawData = response.rawData,
                 let teamPayload = TeamPayload(rawData)
@@ -238,8 +253,13 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
+              let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
         return team.remoteIdentifier.map { TeamDownloadRequestFactory.getRequest(for: [$0], apiVersion: apiVersion) }
     }
 
@@ -257,7 +277,8 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { return }
+        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
+              let team = object as? Team else { return }
 
         managedObjectContext.delete(team)
     }
@@ -265,14 +286,14 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
 // MARK: - Event
 
-fileprivate extension ZMUpdateEvent {
+private extension ZMUpdateEvent {
 
     var teamId: UUID? {
         (payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
     var dataPayload: [String: Any]? {
-        return payload[TeamEventPayloadKey.data.rawValue] as? [String: Any]
+        payload[TeamEventPayloadKey.data.rawValue] as? [String: Any]
     }
 }
 

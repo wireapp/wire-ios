@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import WireDataModelSupport
 import WireDomainSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+
+@testable import WireSyncEngine
 
 final class SupportedProtocolsServiceTests: XCTestCase {
 
@@ -88,14 +89,14 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
 
             // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate == validLastActiveDate && otherClient.mlsPublicKeys == validMLSPublicKeys {
+            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
                 otherClient.lastActiveDate = invalidLastActiveDate
             }
         }
     }
 
     private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
-        return UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
+        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {
@@ -167,6 +168,19 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     }
 
     // MARK: - Tests
+
+    func test_CalculateSupportedProtocols_PreviousSupportedProtocolMLS_DoesNotRemoveMLS() async throws {
+        try syncContext.performAndWait {
+            // Given
+            try mock(allActiveMLSClients: false)
+            mock(remoteSupportedProtocols: [.proteus, .mls])
+            mock(migrationState: .disabled)
+            ZMUser.selfUser(in: syncContext).supportedProtocols = [.proteus, .mls]
+
+            // When / then
+            XCTAssertEqual(sut.calculateSupportedProtocols(), [.proteus, .mls])
+        }
+    }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() throws {
         try syncContext.performAndWait {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireDataModel
 extension CustomMessageView: ConversationMessageCell {
 
     var selectionView: UIView? {
-        return messageLabel
+        messageLabel
     }
 
     func configure(with object: String, animated: Bool) {
@@ -40,19 +40,14 @@ final class UnknownStoredMessageCellDescription: ConversationMessageCellDescript
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    let isFullWidth: Bool = false
-    let supportsActions: Bool = false
     let containsHighlightableContent = false
 
     init() {
-        configuration = L10n.Localizable.Content.System.UnknownMessage.body
-        accessibilityLabel = configuration
+        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
+        self.accessibilityLabel = configuration
     }
 
 }

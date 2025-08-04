@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/properties/WIRE_RECEIPT_MODE"
-  - method: get
-  - body: none

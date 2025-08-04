@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
-import WireProtos
-@testable import WireRequestStrategy
 import WireTransport
 import WireUtilities
 import XCTest
+@testable import WireRequestStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
 
@@ -38,6 +38,7 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 }
 
 // MARK: - Client discovery
+
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
@@ -103,7 +104,10 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages"
+            )
             XCTAssertEqual(message, expectedMessage)
         }
     }

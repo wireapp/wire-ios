@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 @import WireSystem;
 
 #import <WireTransport/ZMTransportSession.h>
-#import "ZMPushChannelConnection.h"
 #import "ZMTransportRequestScheduler.h"
 #import "ZMAccessTokenHandler.h"
 #import "ZMURLSession.h"
@@ -43,7 +42,9 @@
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
-                               minTLSVersion:(NSString *)minTLSVersion;
+                               minTLSVersion:(NSString *)minTLSVersion
+                                selfClientID: (NSString *)selfClientID
+                             isSyncV2Enabled:(bool)isSyncV2Enabled;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

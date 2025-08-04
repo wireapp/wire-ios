@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ protocol CallPermissionsConfiguration {
 extension CallPermissionsConfiguration {
 
     var isAudioDisabledForever: Bool {
-        return canAcceptAudioCalls == false && isPendingAudioPermissionRequest == false
+        canAcceptAudioCalls == false && isPendingAudioPermissionRequest == false
     }
 
     var isVideoDisabledForever: Bool {
-        return canAcceptVideoCalls == false && isPendingVideoPermissionRequest == false
+        canAcceptVideoCalls == false && isPendingVideoPermissionRequest == false
     }
 
     var preferredVideoPlaceholderState: CallVideoPlaceholderState {
@@ -48,8 +48,8 @@ extension CallPermissionsConfiguration {
 }
 
 func == (lhs: CallPermissionsConfiguration, rhs: CallPermissionsConfiguration) -> Bool {
-    return lhs.canAcceptAudioCalls == rhs.canAcceptAudioCalls &&
-           lhs.isPendingAudioPermissionRequest == rhs.isPendingAudioPermissionRequest &&
-           lhs.canAcceptVideoCalls == rhs.canAcceptVideoCalls &&
-           lhs.isPendingVideoPermissionRequest == rhs.isPendingVideoPermissionRequest
+    lhs.canAcceptAudioCalls == rhs.canAcceptAudioCalls &&
+        lhs.isPendingAudioPermissionRequest == rhs.isPendingAudioPermissionRequest &&
+        lhs.canAcceptVideoCalls == rhs.canAcceptVideoCalls &&
+        lhs.isPendingVideoPermissionRequest == rhs.isPendingVideoPermissionRequest
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,30 +24,40 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentGuestOptions(animated: Bool)
     func presentServicesOptions(animated: Bool)
     func presentNotificationsOptions(animated: Bool)
+    func presentAccessOptions(animated: Bool)
 }
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
 
-    private enum Option: Int, CaseIterable {
+    enum Option: Int, CaseIterable {
 
-        case notifications = 0, guests, services, timeout
+        case channelAccess = 0
+        case notifications
+        case guests
+        case services
+        case timeout
 
-        func accessible(in conversation: GroupDetailsConversationType,
-                        by user: UserType) -> Bool {
+        func accessible(
+            in conversation: GroupDetailsConversationType,
+            by user: UserType
+        ) -> Bool {
             switch self {
-            case .notifications: return user.canModifyNotificationSettings(in: conversation)
-            case .guests:        return user.canModifyAccessControlSettings(in: conversation)
-            case .services:      return user.canModifyAccessControlSettings(in: conversation)
-            case .timeout:       return user.canModifyEphemeralSettings(in: conversation)
+            case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
+            case .notifications: user.canModifyNotificationSettings(in: conversation)
+            case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
+            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
+                .botCanBeAdded
+            case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }
 
         var cellReuseIdentifier: String {
             switch self {
-            case .guests: return GroupDetailsGuestOptionsCell.zm_reuseIdentifier
-            case .services: return GroupDetailsServicesCell.zm_reuseIdentifier
-            case .timeout: return GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
-            case .notifications: return GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
+            case .guests: GroupDetailsGuestOptionsCell.zm_reuseIdentifier
+            case .services: GroupDetailsServicesCell.zm_reuseIdentifier
+            case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
+            case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
+            case .channelAccess: GroupDetailsAccessOptionsCell.zm_reuseIdentifier
             }
         }
 
@@ -61,7 +71,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     private let options: [Option]
 
     var hasOptions: Bool {
-        return !options.isEmpty
+        !options.isEmpty
     }
 
     init(
@@ -79,7 +89,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     // MARK: - Collection View
 
     override var sectionTitle: String {
-        return L10n.Localizable.Participants.Section.settings.localizedUppercase
+        L10n.Localizable.Participants.Section.settings.localizedUppercase
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -88,19 +98,30 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsServicesCell.register)
         collectionView.flatMap(GroupDetailsTimeoutOptionsCell.register)
         collectionView.flatMap(GroupDetailsNotificationOptionsCell.register)
+        collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return options.count
+        options.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let option = options[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: option.cellReuseIdentifier, for: indexPath) as! GroupDetailsDisclosureOptionsCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: option.cellReuseIdentifier,
+            for: indexPath
+        ) as! GroupDetailsDisclosureOptionsCell
 
         cell.configure(with: conversation)
         cell.showSeparator = indexPath.row < options.count - 1
@@ -121,6 +142,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             delegate?.presentTimeoutOptions(animated: true)
         case .notifications:
             delegate?.presentNotificationsOptions(animated: true)
+        case .channelAccess:
+            delegate?.presentAccessOptions(animated: true)
         }
 
     }

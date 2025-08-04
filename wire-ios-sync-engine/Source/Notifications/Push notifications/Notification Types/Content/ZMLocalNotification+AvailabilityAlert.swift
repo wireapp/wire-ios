@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,22 +38,22 @@ private class AvailabilityNotificationBuilder: NotificationBuilder {
     }
 
     var notificationType: LocalNotificationType {
-        return .availabilityBehaviourChangeAlert(availability)
+        .availabilityBehaviourChangeAlert(availability)
     }
 
     func shouldCreateNotification() -> Bool {
-        return availability.isOne(of: .away, .busy)
+        availability.isOne(of: .away, .busy)
     }
 
     func titleText() -> String? {
-        return notificationType.alertTitleText(team: ZMUser.selfUser(in: managedObjectContext).team)
+        notificationType.alertTitleText(team: ZMUser.selfUser(in: managedObjectContext).team)
     }
 
     func bodyText() -> String {
-        return notificationType.alertMessageBodyText()
+        notificationType.alertMessageBodyText()
     }
 
     func userInfo() -> NotificationUserInfo? {
-        return nil
+        nil
     }
 }

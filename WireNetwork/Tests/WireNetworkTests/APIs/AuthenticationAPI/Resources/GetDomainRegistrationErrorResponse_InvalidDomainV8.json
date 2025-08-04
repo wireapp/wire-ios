@@ -1,0 +1,6 @@
+{
+  "code": 400,
+  "label": "invalid-domain",
+  "message": "Invalid domain"
+}
+

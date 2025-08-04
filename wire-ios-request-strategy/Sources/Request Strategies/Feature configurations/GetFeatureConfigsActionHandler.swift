@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,11 +64,14 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 case .v0, .v1, .v2, .v3, .v4, .v5:
                     try processor.processActionPayload(
                         data: data,
-                        repository: repository)
-                case .v6:
+                        repository: repository
+                    )
+
+                case .v6, .v7, .v8, .v9, .v10:
                     try processor.processActionPayloadAPIV6(
                         data: data,
-                        repository: repository)
+                        repository: repository
+                    )
                 }
 
                 action.succeed()

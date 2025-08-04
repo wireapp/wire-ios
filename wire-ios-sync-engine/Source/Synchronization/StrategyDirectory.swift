@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 import WireDomain
+import WireNetwork
 import WireRequestStrategy
 
 @objc
@@ -26,19 +28,20 @@ public protocol StrategyDirectoryProtocol {
     var eventConsumers: [ZMEventConsumer] { get }
     var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
-    var contextChangeTrackers: [ZMContextChangeTracker] {get }
+    var contextChangeTrackers: [ZMContextChangeTracker] { get }
 
 }
 
 @objcMembers
 public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
-    let strategies: [Any]
-
-    public let requestStrategies: [RequestStrategy]
-    public let eventConsumers: [ZMEventConsumer]
-    public let eventAsyncConsumers: [ZMEventAsyncConsumer]
-    public let contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var strategies: [Any]
+    public private(set) var requestStrategies: [RequestStrategy]
+    public private(set) var eventConsumers: [ZMEventConsumer]
+    public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
+    public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
+        .InitiateResetMLSConversationUseCaseProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -48,15 +51,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        searchUsersCache: SearchUsersCache?
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
+        searchUsersCache: SearchUsersCache?,
+        initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
+            .InitiateResetMLSConversationUseCaseProtocol
     ) {
-
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -65,19 +69,20 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             flowManager: flowManager,
             updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
-            useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
+        self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
-        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
-        self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
-        self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
-        self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in
+        self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
+        self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
+        self.eventAsyncConsumers = strategies.compactMap { $0 as? ZMEventAsyncConsumer }
+        self.contextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
             if let source = object as? ZMContextChangeTrackerSource {
                 return source.contextChangeTrackers
             } else if let tracker = object as? ZMContextChangeTracker {
@@ -85,7 +90,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             } else {
                 return []
             }
-        })
+        }
     }
 
     deinit {
@@ -104,41 +109,27 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
-        let httpClient = HttpClientImpl(
-            transportSession: transportSession,
-            queue: syncMOC)
-        let apiProvider = APIProvider(httpClient: httpClient)
-        let sessionEstablisher = SessionEstablisher(
-            context: syncMOC,
-            apiProvider: apiProvider)
-        let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
-        let quickSyncObserver = QuickSyncObserver(
-            context: syncMOC,
-            applicationStatus: applicationStatusDirectory,
-            notificationContext: syncMOC.notificationContext
+        let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
+        let oneOnOneResolver = LegacyOneOnOneResolver(
+            migrator: OneOnOneMigrator(mlsService: mlsService),
+            isMLSEnabled: mlsFeature.isEnabled
         )
-        let messageSender = MessageSender(
-            apiProvider: apiProvider,
-            clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
-            sessionEstablisher: sessionEstablisher,
-            messageDependencyResolver: messageDependencyResolver,
-            quickSyncObserver: quickSyncObserver,
-            context: syncMOC
+        let mlsClientManager = MLSClientManager(
+            coreCryptoProvider: coreCryptoProvider,
+            mlsService: mlsService
         )
-        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
 
-        let strategies: [Any] = [
-
+        return [
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
@@ -152,75 +143,73 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
                 operationStatus: applicationStatusDirectory.operationStatus,
-                useLegacyPushNotifications: useLegacyPushNotifications,
-                lastEventIDRepository: lastEventIDRepository),
+                lastEventIDRepository: lastEventIDRepository
+            ),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             VerifyLegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ProxiedRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                requestsStatus: applicationStatusDirectory.proxiedRequestStatus),
+                requestsStatus: applicationStatusDirectory.proxiedRequestStatus
+            ),
             DeleteAccountRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                cookieStorage: cookieStorage),
+                cookieStorage: cookieStorage
+            ),
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetV3DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
-            AssetClientMessageRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
-            ClientMessageRequestStrategy(
-                context: syncMOC,
-                localNotificationDispatcher: pushMessageHandler,
-                applicationStatus: applicationStatusDirectory,
-                messageSender: messageSender),
-            DeliveryReceiptRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender),
-            AvailabilityRequestStrategy(
-                context: syncMOC,
-                messageSender: messageSender),
+                applicationStatus: applicationStatusDirectory
+            ),
             UserPropertyRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             UserProfileUpdateRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                userProfileUpdateStatus: applicationStatusDirectory.userProfileUpdateStatus),
+                userProfileUpdateStatus: applicationStatusDirectory.userProfileUpdateStatus
+            ),
             LinkPreviewAssetUploadRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 linkPreviewPreprocessor: nil,
-                previewImagePreprocessor: nil),
+                previewImagePreprocessor: nil
+            ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
-            LinkPreviewUpdateRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                applicationStatus: applicationStatusDirectory
+            ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             PushTokenStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC
+            ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
                 managedObjectContext: syncMOC,
@@ -237,79 +226,96 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
-                removeLocalConversation: RemoveLocalConversationUseCase()),
+                removeLocalConversation: RemoveLocalConversationUseCase()
+            ),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOnOneResolver: oneOnOneResolver
+            ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus,
-                lastEventIDRepository: lastEventIDRepository),
+                lastEventIDRepository: lastEventIDRepository
+            ),
             ZMSelfStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                syncStatus: applicationStatusDirectory.syncStatus) as Any,
+                syncStatus: applicationStatusDirectory.syncStatus
+            ) as Any,
             SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
-            CallingRequestStrategy(
-                managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
-                flowManager: flowManager,
-                callEventStatus: applicationStatusDirectory.callEventStatus,
-                messageSender: messageSender),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamRolesDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamMembersDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             PermissionsDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TeamInvitationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                teamInvitationStatus: applicationStatusDirectory.teamInvitationStatus),
+                teamInvitationStatus: applicationStatusDirectory.teamInvitationStatus
+            ),
             AssetDeletionRequestStrategy(
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                identifierProvider: applicationStatusDirectory.assetDeletionStatus),
+                identifierProvider: applicationStatusDirectory.assetDeletionStatus
+            ),
             UserRichProfileRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TeamImageAssetUpdateStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             LabelDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             LabelUpstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ConversationRoleDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             SignatureRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             FeatureConfigRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus,
+                mlsClientManager: mlsClientManager
+            ),
+            FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus
@@ -319,19 +325,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory
             ),
             ConversationStatusStrategy(
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC
+            ),
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
                     context: syncMOC,
-                    resolver: oneOnOneResolver
+                    resolver: oneOnOneResolver,
+                    pullSelfUserClientsFactory: pullSelfUserClientsFactory
                 )
             ),
-            ResetSessionRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
@@ -354,20 +359,102 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
+    }
 
-        return strategies
+    func makeClientRelatedStategies(
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        syncContext: NSManagedObjectContext,
+        transportSession: TransportSessionType,
+        pushMessageHandler: PushMessageHandler,
+        flowManager: FlowManagerType,
+        incrementalSyncObserver: IncrementalSyncObserverProtocol
+    ) {
+        syncContext.performAndWait {
+            let httpClient = HttpClientImpl(
+                transportSession: transportSession,
+                queue: syncContext
+            )
+            let apiProvider = APIProvider(httpClient: httpClient)
+            let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
+            let sessionEstablisher = SessionEstablisher(
+                context: syncContext,
+                apiProvider: apiProvider
+            )
+
+            let messageSender = MessageSender(
+                apiProvider: apiProvider,
+                sessionEstablisher: sessionEstablisher,
+                messageDependencyResolver: messageDependencyResolver,
+                context: syncContext,
+                incrementalSyncObserver: incrementalSyncObserver,
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
+                featureRepository: FeatureRepository(context: syncContext)
+            )
+
+            let strategies: [Any] = [
+                AssetClientMessageRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                ClientMessageRequestStrategy(
+                    context: syncContext,
+                    localNotificationDispatcher: pushMessageHandler,
+                    messageSender: messageSender
+                ),
+                DeliveryReceiptRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                AvailabilityRequestStrategy(
+                    context: syncContext,
+                    messageSender: messageSender
+                ),
+                LinkPreviewUpdateRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                CallingRequestStrategy(
+                    managedObjectContext: syncContext,
+                    applicationStatus: applicationStatusDirectory,
+                    flowManager: flowManager,
+                    messageSender: messageSender
+                ),
+                ResetSessionRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                )
+            ]
+
+            self.strategies.append(contentsOf: strategies)
+            self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
+            self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
+            self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
+            self.contextChangeTrackers
+                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                    if let source = object as? ZMContextChangeTrackerSource {
+                        return source.contextChangeTrackers
+                    } else if let tracker = object as? ZMContextChangeTracker {
+                        return [tracker]
+                    } else {
+                        return []
+                    }
+                })
+        }
     }
 
     // MARK: Use Cases
 
     private static func makeResolveOneOnOneConversationsUseCase(
         context: NSManagedObjectContext,
-        resolver: any OneOnOneResolverInterface
+        resolver: any OneOnOneResolverInterface,
+        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
     ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: SupportedProtocolsService(context: context),
-            resolver: resolver
+            resolver: resolver,
+            pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )
     }
 }

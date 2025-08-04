@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
 
@@ -105,7 +105,10 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
 
                     // Connected conversation was migrated.
                     let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
-                    let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
+                    let connectedConversation = try XCTUnwrap(ZMConversation.fetch(
+                        with: connectedConversationID,
+                        in: context
+                    ))
                     XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
                     XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
 
@@ -122,7 +125,8 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                     XCTAssertNil(teamConversation2.oneOnOneUser)
                 }
             },
-            for: self)
+            for: self
+        )
     }
 
     private func addUser(

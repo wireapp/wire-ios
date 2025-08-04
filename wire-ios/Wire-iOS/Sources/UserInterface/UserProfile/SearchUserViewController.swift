@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ final class SearchUserViewController: UIViewController {
 
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
-    private let userId: UUID
+    private let qualifiedID: QualifiedID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
     private let mainCoordinator: AnyMainCoordinator
@@ -43,13 +43,13 @@ final class SearchUserViewController: UIViewController {
     // MARK: - Init
 
     init(
-        userId: UUID,
+        qualifiedID: QualifiedID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
-        self.userId = userId
+        self.qualifiedID = qualifiedID
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
@@ -58,7 +58,7 @@ final class SearchUserViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         if let session = ZMUserSession.shared() {
-            searchDirectory = SearchDirectory(userSession: session)
+            self.searchDirectory = SearchDirectory(userSession: session)
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -80,7 +80,7 @@ final class SearchUserViewController: UIViewController {
 
         activityIndicator.start()
 
-        if let task = searchDirectory?.lookup(userId: userId) {
+        if let task = searchDirectory?.lookup(qualifiedID: qualifiedID) {
             task.addResultHandler { [weak self] in
                 self?.activityIndicator.stop()
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
@@ -111,13 +111,12 @@ final class SearchUserViewController: UIViewController {
             return
         }
 
-        let profileUser: UserType?
-        if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            profileUser = searchUser
+        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
+            searchUser
         } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            profileUser = memberUser
+            memberUser
         } else {
-            profileUser = nil
+            nil
         }
 
         if let profileUser {

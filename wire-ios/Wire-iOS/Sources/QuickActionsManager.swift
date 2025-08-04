@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,21 +18,26 @@
 
 import UIKit
 import WireSyncEngine
+
 extension UIApplicationShortcutItem {
     static let markAllAsReadType = "com.wire.shortcut.markAllAsRead"
-    static let markAllAsRead = UIApplicationShortcutItem(type: markAllAsReadType,
-                                                         localizedTitle: L10n.Localizable.Shortcut.MarkAllAsRead.title,
-                                                         localizedSubtitle: nil,
-                                                         icon: UIApplicationShortcutIcon(type: .taskCompleted),
-                                                         userInfo: nil)
+    static let markAllAsRead = UIApplicationShortcutItem(
+        type: markAllAsReadType,
+        localizedTitle: L10n.Localizable.Shortcut.MarkAllAsRead.title,
+        localizedSubtitle: nil,
+        icon: UIApplicationShortcutIcon(type: .taskCompleted),
+        userInfo: nil
+    )
 }
 
 final class QuickActionsManager: NSObject {
 
     // MARK: - Public Property
+
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
+
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
         super.init()
@@ -48,7 +53,8 @@ final class QuickActionsManager: NSObject {
         UIApplication.shared.shortcutItems = [.markAllAsRead]
     }
 
-    @objc func performAction(for shortcutItem: UIApplicationShortcutItem, completionHandler: ((Bool) -> Void)?) {
+    @objc
+    func performAction(for shortcutItem: UIApplicationShortcutItem, completionHandler: ((Bool) -> Void)?) {
         switch shortcutItem.type {
         case UIApplicationShortcutItem.markAllAsReadType:
             sessionManager?.markAllConversationsAsRead {

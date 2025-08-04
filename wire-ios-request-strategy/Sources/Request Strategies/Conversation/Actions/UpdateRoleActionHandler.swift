@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             let role = Role.existingObject(for: action.roleID, in: context),
             let participant = ZMUser.existingObject(for: action.userID, in: context),
             let roleName = role.name,
-            let userId = participant.remoteIdentifier,
-            let conversationId = conversation.remoteIdentifier,
+            let userID = participant.remoteIdentifier?.transportString(),
+            let convID = conversation.remoteIdentifier?.transportString(),
             let payload = Payload.ConversationUpdateRole(role: roleName),
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
             let payloadString = String(bytes: payloadData, encoding: .utf8)
@@ -36,17 +36,37 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             return nil
         }
 
-        let path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
+        let path: String
 
-        let request = ZMTransportRequest(path: path, method: .put, payload: payloadString as ZMTransportData, apiVersion: apiVersion.rawValue)
-        return request
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3, .v4, .v5, .v6:
+            path = "/conversations/\(convID)/members/\(userID)"
+        case .v7, .v8, .v9, .v10:
+            guard
+                let convDomain = conversation.domain ?? BackendInfo.domain,
+                let userDomain = participant.domain ?? BackendInfo.domain
+            else {
+                var action = action
+                action.notifyResult(.failure(UpdateRoleError.missingDomains))
+                return nil
+            }
+
+            path = "/conversations/\(convDomain)/\(convID)/members/\(userDomain)/\(userID)"
+        }
+
+        return ZMTransportRequest(
+            path: path,
+            method: .put,
+            payload: payloadString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: UpdateRoleAction) {
         var action = action
 
         switch response.httpStatus {
-        case 200..<300:
+        case 200 ..< 300:
             guard
                 let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
                 let role = Role.existingObject(for: action.roleID, in: context),

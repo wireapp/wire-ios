@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,8 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
-
-/// Process federation connection removed events.
-
-protocol FederationConnectionRemovedEventProcessorProtocol {
-
-    /// Process a federation connection removed event.
-    ///
-    /// - Parameter event: A federation connection removed event.
-
-    func processEvent(_ event: FederationConnectionRemovedEvent) async throws
-
-}
+import WireNetwork
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
 
@@ -66,21 +54,24 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
     ) async {
         await context.perform { [self] in
 
-            /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain` and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
+            /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain`
+            /// and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
 
             removeFederationConnection(
                 with: [domain, otherDomain],
                 forConversationsNotOwnedBy: [domain, otherDomain]
             )
 
-            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
+            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from
+            /// `domain` from those conversations.
 
             removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: otherDomain
             )
 
-            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations.
+            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from
+            /// `otherDomain` from those conversations.
 
             removeFederationConnection(
                 with: otherDomain,
@@ -194,15 +185,13 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
     ) -> Set<ZMUser> {
         let localParticipants = Set(conversation.participantRoles.compactMap(\.user))
 
-        let participants = localParticipants.filter { user in
+        return localParticipants.filter { user in
             if let domain = user.domain {
                 domain.isOne(of: domains)
             } else {
                 false
             }
         }
-
-        return participants
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public import WireFoundation
+
 import WireDataModel
 
 public protocol AppendTextMessageUseCaseProtocol {
@@ -32,17 +33,17 @@ public protocol AppendTextMessageUseCaseProtocol {
 
 public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
-        in conversation: Conversation,
+        in conversation: some MessageAppendableConversation,
         fetchLinkPreview: Bool
     ) throws {
         try conversation.appendText(
@@ -54,10 +55,10 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         )
         conversation.draftMessage = nil
         analyticsEventTracker?.trackEvent(
-            .conversationContribution(
+            .Contributed.conversationContribution(
                 .textMessage,
                 conversationType: .init(conversation.conversationType),
-                conversationSize: UInt(conversation.localParticipants.count)
+                conversationSize: conversation.localParticipants.count
             )
         )
     }

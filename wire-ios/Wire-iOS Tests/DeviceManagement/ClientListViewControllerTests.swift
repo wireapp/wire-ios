@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,8 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
     /// Prepare SUT for snapshot tests
     ///
     /// - Parameters:
-    /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
+    /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same
+    /// screen
     @MainActor
     func prepareSut(numberOfClients: Int = 3) {
         sut = ClientListViewController(

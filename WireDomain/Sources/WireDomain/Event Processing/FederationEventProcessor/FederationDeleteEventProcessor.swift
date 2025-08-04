@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,27 +17,15 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
-
-/// Process federation delete events.
-
-protocol FederationDeleteEventProcessorProtocol {
-
-    /// Process a federation delete event.
-    ///
-    /// - Parameter event: A federation delete event.
-
-    func processEvent(_ event: FederationDeleteEvent) async throws
-
-}
+import WireNetwork
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext
 
-    func processEvent(_ event: FederationDeleteEvent) async throws {
-        try await deleteFederationConnection(with: event.domain)
+    func processEvent(_ event: FederationDeleteEvent) async {
+        await deleteFederationConnection(with: event.domain)
     }
 
     // MARK: - Private
@@ -45,11 +33,12 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     /// Deletes a federation connection on a specific domain locally.
     /// - Parameter domain: The domain to delete the connection for.
 
-    private func deleteFederationConnection(with domain: String) async throws {
+    private func deleteFederationConnection(with domain: String) async {
         await context.perform { [self] in
             let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
 
-            /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
+            /// For all conversations owned by self domain, remove all users that belong to `domain` from those
+            /// conversations.
             removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: selfUserDomain
@@ -61,7 +50,8 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
                 forConversationsOwnedBy: domain
             )
 
-            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
+            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain
+            /// and `domain`, remove users from `domain` and `otherDomain` from those conversations.
             removeFederationConnection(
                 with: [selfUserDomain, domain],
                 forConversationsNotOwnedBy: [selfUserDomain, domain]
@@ -70,7 +60,8 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
             /// For any connection from a user on self domain to a user on `domain`, delete the connection.
             removeConnectionRequests(with: domain)
 
-            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
+            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those
+            /// conversations.
             markOneToOneConversationsAsReadOnly(with: domain)
 
             /// Remove connection for all connected users owned by `domain`.
@@ -183,15 +174,13 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
     ) -> Set<ZMUser> {
         let localParticipants = Set(conversation.participantRoles.compactMap(\.user))
 
-        let participants = localParticipants.filter { user in
+        return localParticipants.filter { user in
             if let domain = user.domain {
                 domain.isOne(of: domains)
             } else {
                 false
             }
         }
-
-        return participants
     }
 
     private func removeConnectionRequests(with domain: String) {

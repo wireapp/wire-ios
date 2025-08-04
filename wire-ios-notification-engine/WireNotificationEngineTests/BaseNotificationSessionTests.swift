@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,9 +55,9 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(

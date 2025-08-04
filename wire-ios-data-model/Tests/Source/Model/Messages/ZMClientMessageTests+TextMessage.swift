@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireLinkPreview
 import XCTest
 
@@ -173,7 +174,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
     }
 
-    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkMetadata, line: UInt = #line) {
+    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(
+        _ preview: LinkMetadata,
+        line: UInt = #line
+    ) {
 
         // given
         let nonce = UUID.create()
@@ -194,10 +198,12 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 
         // when
-        let expectation = self.customExpectation(description: "Notified")
-        let token: Any? = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
-                                          context: self.uiMOC.notificationContext,
-                                          object: clientMessage.objectID) { _ in
+        let expectation = customExpectation(description: "Notified")
+        let token: Any? = NotificationInContext.addObserver(
+            name: ZMClientMessage.linkPreviewImageDownloadNotification,
+            context: uiMOC.notificationContext,
+            object: clientMessage.objectID
+        ) { _ in
             expectation.fulfill()
         }
 

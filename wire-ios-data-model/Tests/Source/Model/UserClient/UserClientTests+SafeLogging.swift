@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
     func testThatSafeRemoteIdentifierReturnsReadableHashOfRemoteIdentifier() {
         let uuid = UUID.create().transportString()
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = uuid
             XCTAssertEqual(uuid.redactedAndTruncated(), client.safeRemoteIdentifier.safeForLoggingDescription)
 
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatSafeRemoteIdentifierReturnsNilStringIfRemoteIdentifierIsNil() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             XCTAssertEqual("nil", client.safeRemoteIdentifier.safeForLoggingDescription)
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }

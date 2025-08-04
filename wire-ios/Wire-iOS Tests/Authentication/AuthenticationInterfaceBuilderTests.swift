@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,13 +34,17 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         accentColor = .blue
 
         featureProvider = MockAuthenticationFeatureProvider()
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: {
-            let backendEnvironmentProvider = MockEnvironment()
-            let proxy: FakeProxySettings? = nil
-            backendEnvironmentProvider.proxy = proxy
-            backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
-            return backendEnvironmentProvider
-        })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
+            backendEnvironmentProvider: {
+                let backendEnvironmentProvider = MockEnvironment()
+                let proxy: FakeProxySettings? = nil
+                backendEnvironmentProvider.proxy = proxy
+                backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
+                return backendEnvironmentProvider
+            }
+        )
     }
 
     override func tearDown() {
@@ -55,138 +59,194 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     // MARK: - General
 
+    @MainActor
     func testLandingScreen() {
         runSnapshotTest(for: .landingScreen)
     }
 
+    @MainActor
     func testThatItDoesNotGenerateInterfaceForCompanyLoginFlow() {
         runSnapshotTest(for: .companyLogin)
     }
 
     // MARK: - User Registration
 
+    @MainActor
     func testRegistrationScreen() {
         runSnapshotTest(for: .createCredentials(UnregisteredUser()))
     }
 
+    @MainActor
     func testActivationScreen_Email() {
         let unverifiedEmail = "test@example.com"
         runSnapshotTest(for: .enterActivationCode(unverifiedEmail: unverifiedEmail, user: UnregisteredUser()))
     }
 
+    @MainActor
     func testSetNameScreen() {
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setName))
     }
 
+    @MainActor
     func testSetPasswordScreen() {
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setPassword))
     }
 
     // MARK: - Login
 
+    @MainActor
     func testLoginScreen_Email() {
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
+    @MainActor
     func testLoginScreen_Email_WithProxyAuthenticated() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
-        backendEnvironmentProvider.proxy = FakeProxySettings(host: "api.example.org", port: 1345, needsAuthentication: true)
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider.proxy = FakeProxySettings(
+            host: "api.example.org",
+            port: 1345,
+            needsAuthentication: true
+        )
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
-        runSnapshotTest(for: .provideCredentials(nil), customSize: .init(width: CGSize.iPhoneSize.iPhone4_7Inch.width, height: 1000)) // setting higher value for scrollview content
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
+        runSnapshotTest(
+            for: .provideCredentials(nil),
+            customSize: .init(width: CGSize.iPhoneSize.iPhone4_7Inch.width, height: 1000)
+        ) // setting higher value for scrollview content
     }
 
+    @MainActor
     func testLoginScreen_Email_WithConfig() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         backendEnvironmentProvider.proxy = nil
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
+    @MainActor
     func testLoginScreen_Email_WithProxyNoAuthentication() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
-        backendEnvironmentProvider.proxy = FakeProxySettings(host: "api.example.org", port: 1345, needsAuthentication: false)
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider.proxy = FakeProxySettings(
+            host: "api.example.org",
+            port: 1345,
+            needsAuthentication: false
+        )
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
 
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
+    @MainActor
     func testLoginScreen_Email_PhoneDisabled() {
         featureProvider.allowOnlyEmailLogin = true
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
+    @MainActor
     func testBackupScreen_NewDevice() {
         runSnapshotTest(for: .noHistory(credentials: nil, context: .newDevice))
     }
 
+    @MainActor
     func testBackupScreen_LoggedOut() {
         runSnapshotTest(for: .noHistory(credentials: nil, context: .loggedOut))
     }
 
+    @MainActor
     func testTooManyDevicesScreen() {
         runSnapshotTest(for: .clientManagement(clients: []))
     }
 
+    @MainActor
     func testClientRemovalScreen() {
         runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
+    @MainActor
     func testAddEmailPasswordScreen() {
         runSnapshotTest(for: .addEmailAndPassword)
     }
 
+    @MainActor
     func testVerifyEmailLinkTests() {
         let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
+    @MainActor
     func testReauthenticate_Email_TokenExpired() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
+    @MainActor
     func testReauthenticate_Email_DuringLogin() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
+    @MainActor
     func testReauthenticate_CompanyLogin() {
         let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
+    @MainActor
     func testReauthenticate_NoCredentials() {
         runSnapshotTest(for: .reauthenticate(credentials: nil, numberOfAccounts: 1, isSignedOut: true))
     }
 
     // MARK: - Helpers
 
+    @MainActor
     private func runSnapshotTest(
         for step: AuthenticationFlowStep,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line,
         customSize: CGSize? = nil
     ) {
-        if let viewController = builder.makeViewController(for: step) {
+        if let viewController = builder.makeViewController(for: step, authenticationCoordinator: nil) {
             if !step.needsInterface {
                 return XCTFail("An interface was generated but we didn't expect one.", file: file, line: line)
             }
 
-            let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+            let navigationController = UINavigationController(
+                navigationBarClass: AuthenticationNavigationBar.self,
+                toolbarClass: nil
+            )
             navigationController.viewControllers = [viewController]
 
-            snapshotHelper.verify(matching: navigationController,
-                   size: customSize,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            snapshotHelper.verify(
+                matching: navigationController,
+                size: customSize,
+                file: file,
+                testName: testName,
+                line: line
+            )
         } else {
             XCTAssertFalse(step.needsInterface, "Missing interface.", file: file, line: line)
         }

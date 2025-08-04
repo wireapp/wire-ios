@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ final class RoundedBlurViewTests: XCTestCase {
         // put the blur view in front of an image
         let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
         let container = UIView(frame: frame)
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let imageView = UIImageView(image: image)
         imageView.frame = frame
         imageView.contentMode = .scaleAspectFill

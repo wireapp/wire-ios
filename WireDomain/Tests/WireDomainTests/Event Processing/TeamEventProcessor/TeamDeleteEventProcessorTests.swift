@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
+import WireNetwork
 import XCTest
+@testable import WireDomain
 
 final class TeamDeleteEventProcessorTests: XCTestCase {
 
@@ -70,7 +70,7 @@ final class TeamDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent()
+        await sut.processEvent()
 
         await fulfillment(of: [expectation], timeout: 5.0)
     }

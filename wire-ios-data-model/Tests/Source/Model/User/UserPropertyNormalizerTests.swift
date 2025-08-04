@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,12 +131,18 @@ final class UserPropertyNormalizerTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func assertNormalizationValue<T>(_ normalizationResult: UserPropertyNormalizationResult<T>, _ expectedValue: T) where T: Equatable {
+    private func assertNormalizationValue<T>(
+        _ normalizationResult: UserPropertyNormalizationResult<T>,
+        _ expectedValue: T
+    ) where T: Equatable {
         XCTAssertTrue(normalizationResult.isValid)
         XCTAssertEqual(normalizationResult.normalizedValue, expectedValue)
     }
 
-    private func assertNormalizationErrorCode<T>(_ normalizationResult: UserPropertyNormalizationResult<T>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
+    private func assertNormalizationErrorCode(
+        _ normalizationResult: UserPropertyNormalizationResult<some Any>,
+        _ expectedCode: ZMManagedObjectValidationErrorCode
+    ) {
         guard normalizationResult.validationError != nil else {
             return XCTFail("unexpected success")
         }

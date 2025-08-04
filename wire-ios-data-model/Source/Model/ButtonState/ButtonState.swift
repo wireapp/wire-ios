@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,11 +34,11 @@ class ButtonState: ZMManagedObject {
     }
 
     override static func entityName() -> String {
-        return String(describing: ButtonState.self)
+        String(describing: ButtonState.self)
     }
 
     override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     enum State: Int16 {
@@ -49,7 +49,7 @@ class ButtonState: ZMManagedObject {
 
     var state: State {
         get {
-            return State(rawValue: stateValue) ?? .unselected
+            State(rawValue: stateValue) ?? .unselected
         }
         set {
             stateValue = newValue.rawValue

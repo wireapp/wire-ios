@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 /// Objects conforming to this protocol opt in to react to changes of the preferred content size category
 public protocol DynamicTypeCapable {
     /// This method is called when the preferred content size category changes.
-    /// Your implementation should update all of its fonts that are appropriately sized for the current content size category.
+    /// Your implementation should update all of its fonts that are appropriately sized for the current content size
+    /// category.
     func redrawFont()
 }

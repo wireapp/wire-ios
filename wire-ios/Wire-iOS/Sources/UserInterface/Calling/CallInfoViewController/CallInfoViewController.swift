@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ protocol CallInfoViewControllerInput: CallActionsViewInputType, CallStatusViewIn
 // `Equatable` which we want to avoid.
 extension CallInfoViewControllerInput {
     func isEqual(toConfiguration other: CallInfoViewControllerInput) -> Bool {
-        return accessoryType == other.accessoryType &&
+        accessoryType == other.accessoryType &&
             degradationState == other.degradationState &&
             videoPlaceholderState == other.videoPlaceholderState &&
             permissions == other.permissions &&
@@ -83,9 +83,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     ) {
         self.configuration = configuration
 
-        statusViewController = CallStatusViewController(configuration: configuration)
+        self.statusViewController = CallStatusViewController(configuration: configuration)
 
-        accessoryViewController = CallAccessoryViewController(
+        self.accessoryViewController = CallAccessoryViewController(
             configuration: configuration,
             selfUser: selfUser,
             userSession: userSession

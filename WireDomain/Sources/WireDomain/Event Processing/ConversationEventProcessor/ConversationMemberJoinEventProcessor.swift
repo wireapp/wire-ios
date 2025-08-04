@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process conversation member join events.
-
-protocol ConversationMemberJoinEventProcessorProtocol {
-
-    /// Process a conversation member join event.
-    ///
-    /// - Parameter event: A conversation member join event.
-
-    func processEvent(_ event: ConversationMemberJoinEvent) async throws
-
-}
+import WireDataModel
+import WireNetwork
+import WireSystem
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
 
-    func processEvent(_: ConversationMemberJoinEvent) async throws {
-        // TODO: [WPB-10168]
-        assertionFailure("not implemented yet")
+    let conversationRepository: any ConversationRepositoryProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let userRepository: any UserRepositoryProtocol
+
+    func processEvent(_ event: ConversationMemberJoinEvent) async throws {
+        let conversationID = event.conversationID
+        let senderID = event.senderID
+
+        let newParticipants = event.members.compactMap {
+            getParticipantInfo(from: $0)
+        }
+
+        try await conversationRepository.addParticipants(
+            newParticipants,
+            sender: (senderID.id, senderID.domain),
+            date: event.timestamp,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain
+        )
+    }
+
+    private func getParticipantInfo(
+        from member: WireNetwork.Conversation.Member
+    ) -> (id: UUID, domain: String?, role: String?)? {
+        guard let userID = member.id ?? member.qualifiedID?.id else {
+            return nil
+        }
+
+        return (userID, member.qualifiedID?.domain, member.conversationRole)
     }
 
 }

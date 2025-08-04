@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,20 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
 
         var items: [SettingsSectionDescriptor] = []
 
         // show analytics toggle for public domain
-        if isPublicDomain {
-            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing), inverse: true)
-            let sendAnalyticsDataSection = SettingsSectionDescriptor(cellDescriptors: [sendAnalyticsData], footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title)
+        if isAnalyticsTrackingAvailable {
+            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
+                settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
+                inverse: true
+            )
+            let sendAnalyticsDataSection = SettingsSectionDescriptor(
+                cellDescriptors: [sendAnalyticsData],
+                footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title
+            )
 
             items.append(sendAnalyticsDataSection)
         }

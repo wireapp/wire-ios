@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ enum MessageAction: CaseIterable, Equatable {
         .visitLink,
         .digitallySign,
         .copy,
+        .collapse,
         .reply,
         .openDetails,
         .edit,
@@ -45,25 +46,26 @@ enum MessageAction: CaseIterable, Equatable {
     ]
 
     case
-    digitallySign,
-    copy,
-    reply,
-    openDetails,
-    edit,
-    delete,
-    save,
-    cancel,
-    download,
-    resend,
-    showInConversation,
-    sketchDraw,
-    sketchEmoji,
-    // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
-    present,
-    openQuote,
-    resetSession,
-    react(Emoji.ID),
-    visitLink
+        digitallySign,
+        copy,
+        reply,
+        openDetails,
+        edit,
+        delete,
+        save,
+        cancel,
+        download,
+        resend,
+        showInConversation,
+        sketchDraw,
+        sketchEmoji,
+        // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
+        present,
+        openQuote,
+        resetSession,
+        react(Emoji.ID),
+        visitLink,
+        collapse
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -96,10 +98,12 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.Image.addEmoji
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
+        case .collapse:
+            return MessageActionLocale.collapse
         case .present,
-                .openQuote,
-                .resetSession,
-                .react:
+             .openQuote,
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -107,118 +111,129 @@ enum MessageAction: CaseIterable, Equatable {
     var icon: StyleKitIcon? {
         switch self {
         case .copy:
-            return .copy
+            .copy
         case .reply:
-            return .reply
+            .reply
         case .openDetails:
-            return .about
+            .about
         case .edit:
-            return .pencil
+            .pencil
         case .delete:
-            return .trash
+            .trash
         case .save:
-            return .save
+            .save
         case .cancel:
-            return .cross
+            .cross
         case .download:
-            return .downArrow
+            .downArrow
         case .resend:
-            return .redo
+            .redo
         case .showInConversation:
-            return .eye
+            .eye
         case .sketchDraw:
-            return .brush
+            .brush
         case .sketchEmoji:
-            return .emoji
+            .emoji
         case .visitLink:
-            return .externalLink
+            .externalLink
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react:
-            return nil
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react,
+             .collapse:
+            nil
+        }
+    }
+
+    var image: UIImage? {
+        switch self {
+        case .collapse:
+            UIImage(resource: .collapse)
+                .resizeMaintainingAspectRatio(targetSize: StyleKitIcon.Size.small.cgSize)
+        default:
+            nil
         }
     }
 
     func systemIcon() -> UIImage? {
-        return imageSystemName().flatMap(UIImage.init(systemName:))
+        imageSystemName().flatMap(UIImage.init(systemName:))
     }
 
     private func imageSystemName() -> String? {
-        let imageName: String?
         switch self {
         case .copy:
-            imageName = "doc.on.doc"
+            "doc.on.doc"
         case .reply:
-            imageName = "arrow.uturn.left"
+            "arrow.uturn.left"
         case .openDetails:
-            imageName = "info.circle"
+            "info.circle"
         case .edit:
-            imageName = "pencil"
+            "pencil"
         case .delete:
-            imageName = "trash"
+            "trash"
         case .save:
-            imageName = "arrow.down.to.line"
+            "arrow.down.to.line"
         case .cancel:
-            imageName = "xmark"
+            "xmark"
         case .download:
-            imageName = "chevron.down"
+            "chevron.down"
         case .resend:
-            imageName = "arrow.clockwise"
+            "arrow.clockwise"
         case .showInConversation:
-            imageName = "eye.fill"
+            "eye.fill"
         case .sketchDraw:
-            imageName = "scribble"
+            "scribble"
         case .sketchEmoji:
-            imageName = "smiley.fill"
+            "smiley.fill"
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react,
-                .visitLink:
-            imageName = nil
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react,
+             .visitLink,
+             .collapse:
+            nil
         }
-
-        return imageName
     }
 
     var selector: Selector? {
         switch self {
         case .copy:
-            return #selector(ConversationMessageActionController.copyMessage)
+            #selector(ConversationMessageActionController.copyMessage)
         case .digitallySign:
-            return #selector(ConversationMessageActionController.digitallySignMessage)
+            #selector(ConversationMessageActionController.digitallySignMessage)
         case .reply:
-            return #selector(ConversationMessageActionController.quoteMessage)
+            #selector(ConversationMessageActionController.quoteMessage)
         case .openDetails:
-            return #selector(ConversationMessageActionController.openMessageDetails)
+            #selector(ConversationMessageActionController.openMessageDetails)
         case .edit:
-            return #selector(ConversationMessageActionController.editMessage)
+            #selector(ConversationMessageActionController.editMessage)
         case .delete:
-            return #selector(ConversationMessageActionController.deleteMessage)
+            #selector(ConversationMessageActionController.deleteMessage)
         case .save:
-            return #selector(ConversationMessageActionController.saveMessage)
+            #selector(ConversationMessageActionController.saveMessage)
         case .cancel:
-            return #selector(ConversationMessageActionController.cancelDownloadingMessage)
+            #selector(ConversationMessageActionController.cancelDownloadingMessage)
         case .download:
-            return #selector(ConversationMessageActionController.downloadMessage)
+            #selector(ConversationMessageActionController.downloadMessage)
         case .resend:
-            return #selector(ConversationMessageActionController.resendMessage)
+            #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
-            return #selector(ConversationMessageActionController.revealMessage)
+            #selector(ConversationMessageActionController.revealMessage)
         case .react:
-            return #selector(ConversationMessageActionController.addReaction(reaction:) )
+            #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
-            return #selector(ConversationMessageActionController.visitLink)
+            #selector(ConversationMessageActionController.visitLink)
+        case .collapse:
+            #selector(ConversationMessageActionController.collapse)
         case .present,
-                .sketchDraw,
-                .sketchEmoji,
-                .openQuote,
-                .resetSession:
+             .sketchDraw,
+             .sketchEmoji,
+             .openQuote,
+             .resetSession:
             // no message related actions are not handled in ConversationMessageActionController
-            return nil
+            nil
         }
     }
 
@@ -238,6 +253,8 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageAction.RevealButton.description
         case .delete:
             return MessageAction.DeleteButton.description
+        case .collapse:
+            return MessageAction.CollapseButton.description
         default:
             return nil
         }

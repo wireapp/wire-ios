@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ import WireDataModel
 import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import XCTest
+@testable import WireShareEngine
 
 @testable import WireDataModelSupport
 
@@ -63,6 +63,7 @@ class BaseTest: ZMTBaseTest {
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
+    var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
@@ -72,9 +73,9 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(
@@ -121,8 +122,12 @@ class BaseTest: ZMTBaseTest {
         strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext),
-            transportSession: transportSession
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(
+                linkPreviewDetector: linkPreviewDetector,
+                managedObjectContext: coreDataStack.syncContext
+            ),
+            transportSession: transportSession,
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
         )
 
         let context = coreDataStack.syncContext
@@ -141,10 +146,11 @@ class BaseTest: ZMTBaseTest {
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabase_MockMethod = { }
-        mockEARService.lockDatabase_MockMethod = { }
+        mockEARService.unlockDatabase_MockMethod = {}
+        mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
+        mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
@@ -192,6 +198,7 @@ class BaseTest: ZMTBaseTest {
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
+            mlsService: mockMLSService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()
         )

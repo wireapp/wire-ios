@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ extension EncryptionSessionsDirectory {
         _ encryptedData: Data,
         for sessionID: EncryptionSessionIdentifier
     ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
-        if self.hasSession(for: sessionID) {
+        if hasSession(for: sessionID) {
             let decryptedData = try decrypt(encryptedData, from: sessionID)
             return (didCreateNewSession: false, decryptedData: decryptedData)
         } else {

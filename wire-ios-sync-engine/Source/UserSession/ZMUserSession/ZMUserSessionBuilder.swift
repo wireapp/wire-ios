@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@
 
 import Foundation
 import WireDataModel
+import WireDomain
+import WireFoundation
+import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
@@ -25,7 +29,11 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var appVersion: String?
+    private var apiServiceFactory: APIServiceFactory?
+    private var backendEnvironment: WireTransport.BackendEnvironment?
+    private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
+    private var currentAppVersion: String?
+    private var currentBuildNumber: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
@@ -46,16 +54,22 @@ struct ZMUserSessionBuilder {
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
+    private var minTLSVersion: String?
+    private var apiVersion: WireNetwork.APIVersion?
+    private var journal: Journal?
+    private var logFilesProvider: LogFilesProviding?
 
     // MARK: - Initialize
 
-    init() { }
+    init() {}
 
     // MARK: - Build
 
     func build() -> ZMUserSession {
         guard
-            let appVersion,
+            let apiServiceFactory,
+            let currentAppVersion,
+            let currentBuildNumber,
             let appLock,
             let application,
             let applicationStatusDirectory,
@@ -75,7 +89,11 @@ struct ZMUserSessionBuilder {
             let recurringActionService,
             let sharedUserDefaults,
             let transportSession,
-            let userId
+            let userId,
+            let wireAPIBackendEnvironment,
+            let apiVersion,
+            let journal,
+            let logFilesProvider
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -85,8 +103,10 @@ struct ZMUserSessionBuilder {
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
+            apiServiceFactory: apiServiceFactory,
             application: application,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
@@ -101,17 +121,27 @@ struct ZMUserSessionBuilder {
             applicationStatusDirectory: applicationStatusDirectory,
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
-            dependencies: dependencies
+            dependencies: dependencies,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            apiVersion: apiVersion,
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
     }
 
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        appVersion: String,
+        apiServiceFactory: @escaping APIServiceFactory,
+        backendEnvironment: WireTransport.BackendEnvironment,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,
@@ -122,17 +152,13 @@ struct ZMUserSessionBuilder {
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
-        userId: UUID
+        userId: UUID,
+        minTLSVersion: String?,
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) {
         // reused dependencies
 
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: userId,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
-        )
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -140,9 +166,11 @@ struct ZMUserSessionBuilder {
 
         // other dependencies
 
+        let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
+
         let appLock = AppLockController(
             userId: userId,
-            selfUser: .selfUser(in: coreDataStack.viewContext),
+            selfUser: selfUser,
             legacyConfig: configuration.appLockConfig,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
@@ -152,7 +180,8 @@ struct ZMUserSessionBuilder {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -177,22 +206,30 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
-
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
         )
-        let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
+        let recurringActionService = recurringActionService ?? RecurringActionService(
+            storage: sharedUserDefaults,
+            dateProvider: .system
+        )
+
+        if
+            let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
+            self.apiVersion = apiVersion
+        }
 
         // setup builder
 
-        self.appVersion = appVersion
+        self.apiServiceFactory = apiServiceFactory
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
         self.application = application
         self.applicationStatusDirectory = applicationStatusDirectory
@@ -200,11 +237,11 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
+        dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
-        self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
+        lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
         self.mediaManager = mediaManager
         self.mlsService = mlsService
@@ -213,6 +250,10 @@ struct ZMUserSessionBuilder {
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
         self.userId = userId
+        self.minTLSVersion = minTLSVersion
+        self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
+        self.journal = journal
+        self.logFilesProvider = logFilesProvider
     }
 
     // MARK: UserSesssionDependencies

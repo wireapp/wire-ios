@@ -52,6 +52,7 @@
         "EncryptionKeysTests\/testThatAsymmetricKeysWorksWithExpectedAlgorithm()",
         "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyCreated()",
         "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyDeleted()",
+        "FileAssetCacheTests\/testThatItDoesDecryptAFileWithTheRightSHA256()",
         "FileAssetCacheTests\/testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256()",
         "FileAssetCacheTests\/testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256()",
         "NSManagedObjectContextTests_EncryptionAtRest\/testItThrowsAnError_WhenDatabaseKeyIsMissing_WhenEarIsEnabled()",

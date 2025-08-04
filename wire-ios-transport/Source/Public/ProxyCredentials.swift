@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,9 +57,11 @@ public final class ProxyCredentials: NSObject {
 
             let username = String(decoding: usernameData, as: UTF8.self)
             let password = String(decoding: passwordData, as: UTF8.self)
-            return ProxyCredentials(username: username,
-                                    password: password,
-                                    proxy: proxy)
+            return ProxyCredentials(
+                username: username,
+                password: password,
+                proxy: proxy
+            )
         } catch {
             return nil
         }
@@ -100,7 +102,7 @@ struct GenericPasswordKeychainItem: KeychainItem {
     }
 
     func queryForSetting(value: Data) -> [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: itemIdentifier,
             kSecValueData: value

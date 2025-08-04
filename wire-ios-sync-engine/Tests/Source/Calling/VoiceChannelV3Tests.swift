@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,14 @@ class VoiceChannelV3Tests: MessagingTest {
         conversation?.remoteIdentifier = UUID.create()
         conversation?.conversationType = .group
 
-        wireCallCenterMock = WireCallCenterV3Mock(userId: selfUser.avsIdentifier, clientId: selfClientId, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
+        wireCallCenterMock = WireCallCenterV3Mock(
+            userId: selfUser.avsIdentifier,
+            clientId: selfClientId,
+            uiMOC: uiMOC,
+            flowManager: FlowManagerMock(),
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
+        )
 
         uiMOC.zm_callCenter = wireCallCenterMock
 
@@ -65,7 +72,12 @@ class VoiceChannelV3Tests: MessagingTest {
 
     func testThatItAnswers_whenTheresAnIncomingCall() {
         // given
-        wireCallCenterMock?.setMockCallState(.incoming(video: false, shouldRing: false, degraded: false), conversationId: conversation!.avsIdentifier!, callerId: AVSIdentifier.stub, isVideo: false)
+        wireCallCenterMock?.setMockCallState(
+            .incoming(isVideo: false, shouldRing: false, degraded: false),
+            conversationId: conversation!.avsIdentifier!,
+            callerId: AVSIdentifier.stub,
+            isVideo: false
+        )
 
         // when
         _ = sut.join(video: false)
@@ -77,13 +89,23 @@ class VoiceChannelV3Tests: MessagingTest {
     func testThatItForwardsNetworkQualityFromCallCenter() {
         // given
         let caller = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
-        wireCallCenterMock?.setMockCallState(.established, conversationId: conversation!.avsIdentifier!, callerId: caller.avsIdentifier, isVideo: false)
+        wireCallCenterMock?.setMockCallState(
+            .established,
+            conversationId: conversation!.avsIdentifier!,
+            callerId: caller.avsIdentifier,
+            isVideo: false
+        )
         let quality = NetworkQuality.poor
         XCTAssertEqual(sut.networkQuality, .normal)
 
         // when
 
-        wireCallCenterMock?.handleNetworkQualityChange(conversationId: conversation!.avsIdentifier!, userId: caller.userId, clientId: caller.clientId, quality: quality)
+        wireCallCenterMock?.handleNetworkQualityChange(
+            conversationId: conversation!.avsIdentifier!,
+            userId: caller.userId,
+            clientId: caller.clientId,
+            quality: quality
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -118,7 +140,8 @@ class VoiceChannelV3Tests: MessagingTest {
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
                 callCenter: wireCallCenterMock!,
-                clients: [])
+                clients: []
+            )
         ]
 
         // When

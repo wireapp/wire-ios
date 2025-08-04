@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             ],
             "found": [
                 [
-                    "accent_id": 2147483647,
+                    "accent_id": 2_147_483_647,
                     "assets": [
                         [
                             "key": "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",

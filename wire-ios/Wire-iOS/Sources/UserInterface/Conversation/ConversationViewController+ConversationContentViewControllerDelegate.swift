@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,33 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
+
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    ) {
+        actionControllerForSelectedEmoji = actionController
+        let pickerController = CompleteReactionPickerViewController(
+            selectedReactions: actionController.message
+                .selfUserReactions()
+        )
+        pickerController.delegate = self
+
+        // Embed the pickerController in a UINavigationController
+        let navigationController = UINavigationController(rootViewController: pickerController)
+        navigationController.modalPresentationStyle = .popover
+        navigationController.preferredContentSize = CGSize(width: 580, height: 640)
+
+        if let popoverPresentationController = navigationController.popoverPresentationController,
+           let info = popoverPresentationInfo {
+            popoverPresentationController.sourceView = info.sourceView
+            popoverPresentationController.sourceRect = info.frame
+            popoverPresentationController.permittedArrowDirections = .any
+            popoverPresentationController.delegate = self
+        }
+        present(navigationController, animated: true)
+    }
+
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
@@ -34,7 +61,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             user: user,
             viewer: selfUser,
             conversation: conversation,
-            viewControllerDismisser: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -45,21 +71,27 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         self.view.window?.endEditing(true)
 
-        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController())
+        createAndPresentParticipantsPopoverController(
+            with: frame,
+            from: view,
+            contentViewController: profileViewController.wrapInNavigationController()
+        )
     }
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
         willDisplayActiveMediaPlayerFor message: ZMConversationMessage?
     ) {
-        conversationBarController.dismiss(bar: mediaBarViewController)
+        /// Do not handle intentionally due to the issue described in the
+        /// https://wearezeta.atlassian.net/browse/WPB-18452
     }
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
         didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage
     ) {
-        conversationBarController.present(bar: mediaBarViewController)
+        /// Do not handle intentionally due to the issue described in the
+        /// https://wearezeta.atlassian.net/browse/WPB-18452
     }
 
     func conversationContentViewController(
@@ -118,7 +150,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             selfProfileUIBuilder: selfProfileUIBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
+        let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
@@ -128,12 +160,13 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
-                groupDetailsViewController.presentParticipantsDetails(
-                    with: conversation.sortedOtherParticipants,
-                    selectedUsers: selectedUsers,
-                    animated: false
-                )
+        if let groupDetailsViewController = (participantsController as? UINavigationController)?
+            .topViewController as? GroupDetailsViewController {
+            groupDetailsViewController.presentParticipantsDetails(
+                with: conversation.sortedOtherParticipants,
+                selectedUsers: selectedUsers,
+                animated: false
+            )
         }
 
         if let participantsController {
@@ -151,8 +184,23 @@ extension ConversationViewController {
         ConversationInputBarViewController.endEditingMessage()
         inputBarController.inputBar.textView.resignFirstResponder()
 
-        createAndPresentParticipantsPopoverController(with: sourceView.bounds,
-                                                      from: sourceView,
-                                                      contentViewController: viewController)
+        createAndPresentParticipantsPopoverController(
+            with: sourceView.bounds,
+            from: sourceView,
+            contentViewController: viewController
+        )
+    }
+}
+
+extension ConversationViewController: EmojiPickerViewControllerDelegate {
+
+    func emojiPickerDeleteTapped() {
+        actionControllerForSelectedEmoji = nil
+    }
+
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        actionControllerForSelectedEmoji?.perform(action: .react(emoji.value))
+        dismiss(animated: true)
+        actionControllerForSelectedEmoji = nil
     }
 }

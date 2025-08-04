@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ final class ConversationCallController: NSObject {
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
             guard let self else { return }
-            self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
+            conversation.confirmJoiningCallIfNeeded(alertPresenter: target) {
                 started?()
                 self.conversation.startAudioCall()
             }
@@ -44,7 +44,7 @@ final class ConversationCallController: NSObject {
         if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
             startCall()
         } else {
-            confirmGroupCall {[weak self] accepted in
+            confirmGroupCall { [weak self] accepted in
                 self?.target.setNeedsStatusBarAppearanceUpdate()
 
                 guard accepted else { return }
@@ -53,42 +53,27 @@ final class ConversationCallController: NSObject {
         }
     }
 
-    func startVideoCall(started: Completion?) {
-        let startVideoCall = { [weak self] in
-            guard let self else { return }
-            self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
-                started?()
-                self.conversation.startVideoCall()
-            }
-        }
-
-        if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
-            startVideoCall()
-        } else {
-            confirmGroupCall {[weak self] accepted in
-                self?.target.setNeedsStatusBarAppearanceUpdate()
-
-                guard accepted else { return }
-                startVideoCall()
-            }
-        }
-    }
-
     func joinCall() {
         guard conversation.canJoinCall else { return }
 
-        let checker = PrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
-            conversation.acknowledgePrivacyChanges()
-            conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
-                conversation.joinCall() // This will result in joining an ongoing call.
-            }
-        }, cancelAction: { [weak self] in
-            guard let userSession = ZMUserSession.shared() else { return }
-            self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+        let checker = PrivacyWarningChecker(
+            conversation: conversation,
+            alertType: .incomingCall,
+            continueAction: { [conversation] in
+                conversation.acknowledgePrivacyChanges()
+                conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
+                    conversation.joinCall() // This will result in joining an ongoing call.
+                }
+            },
+            cancelAction: { [weak self] in
+                guard let userSession = ZMUserSession.shared() else { return }
+                self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
 
-        }, showAlert: { [weak self] in
-            self?.presentIncomingCallDegradedAlert()
-        })
+            },
+            showAlert: { [weak self] in
+                self?.presentIncomingCallDegradedAlert()
+            }
+        )
         checker.performAction()
     }
 

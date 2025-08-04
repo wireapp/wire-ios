@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ protocol SectionListCellType: AnyObject {
 extension SectionListCellType {
 
     var identifier: String {
-        return [obfuscatedSectionName ?? sectionName, cellIdentifier]
-            .compactMap { $0 }
+        [obfuscatedSectionName ?? sectionName, cellIdentifier]
+            .compactMap(\.self)
             .joined(separator: " - ")
     }
 }
@@ -60,7 +60,11 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
 
         setNeedsUpdateConstraints()
@@ -68,7 +72,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     override var accessibilityIdentifier: String? {
         get {
-            return identifier
+            identifier
         }
         set {
             // no op

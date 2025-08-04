@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,31 +30,34 @@ struct HorizontalMargins {
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            left = 96
-            right = 96
+            self.left = 96
+            self.right = 96
         default:
-            left = 56
-            right = 16
+            self.left = 56
+            self.right = 16
         }
     }
+
+    static func conversationHorizontalMargins(
+        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width
+    ) -> HorizontalMargins {
+        let userInterfaceSizeClass: UIUserInterfaceSizeClass
+
+            // On iPad 9.7 inch 2/3 mode, right view's width is 396pt, use the compact mode's narrower margin
+            = if let windowWidth, windowWidth <= CGFloat.SplitView.IPadMarginLimit {
+            .compact
+        } else {
+            .regular
+        }
+
+        return HorizontalMargins(userInterfaceSizeClass: userInterfaceSizeClass)
+    }
+
 }
 
 extension UITraitEnvironment {
     var conversationHorizontalMargins: HorizontalMargins {
-        return conversationHorizontalMargins()
-    }
-
-    func conversationHorizontalMargins(windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width) -> HorizontalMargins {
-        let userInterfaceSizeClass: UIUserInterfaceSizeClass
-
-        // On iPad 9.7 inch 2/3 mode, right view's width is 396pt, use the compact mode's narrower margin
-        if let windowWidth, windowWidth <= CGFloat.SplitView.IPadMarginLimit {
-            userInterfaceSizeClass = .compact
-        } else {
-            userInterfaceSizeClass = .regular
-        }
-
-        return HorizontalMargins(userInterfaceSizeClass: userInterfaceSizeClass)
+        HorizontalMargins.conversationHorizontalMargins()
     }
 
     var directionAwareConversationLayoutMargins: HorizontalMargins {

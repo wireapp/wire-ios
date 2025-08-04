@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
+@testable import WireRequestStrategy
 
 class AssetRequestFactoryTests: MessagingTestBase {
 
@@ -76,7 +76,8 @@ class AssetRequestFactoryTests: MessagingTestBase {
         user.teamIdentifier = .init()
 
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(session: self.coreDataStack, participants: [user]) else { return XCTFail("no conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(session: coreDataStack, participants: [user])
+        else { return XCTFail("no conversation") }
 
         // then
         XCTAssert(conversation.containsTeamUser)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when a client is successfully registered
@@ -27,13 +28,18 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 }
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
         WireLogger.sessionManager.debug("Client registration was successful")
 
-        if self.configuration.encryptionAtRestEnabledByDefault {
+        if configuration.encryptionAtRestEnabledByDefault {
             do {
                 try activeUserSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
             } catch {
@@ -73,5 +79,15 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
                 delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
             }
         }
+    }
+
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        delegate?.sessionManagerDidFailSyncing(
+            error: error,
+            retryHandler: retryHandler
+        )
     }
 }

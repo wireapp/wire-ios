@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,17 +30,19 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
     func showMyDevice() {
         guard let selfUserClient = userSession.selfUserClient else { return }
 
-        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
-                                                                userSession: userSession,
-                                                                fromConversation: true)
+        let selfClientController = SettingsClientViewController(
+            userClient: selfUserClient,
+            userSession: userSession,
+            fromConversation: true
+        )
         let navigationControllerWrapper = selfClientController.wrapInNavigationController()
-        navigationControllerWrapper.presentTopmost()
+        navigationControllerWrapper.presentOverAll()
     }
 
     func howToDoThat() {
         guard let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        WireURLs.shared.howToVerifyFingerprintArticle.openInApp(above: topMostViewController)
+        WireURLs.shared.howToVerifyFingerprintArticle.open(from: topMostViewController)
     }
 }

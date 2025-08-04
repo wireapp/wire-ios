@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
+        self.federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -51,7 +51,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return nil
+        nil
     }
 
 }
@@ -82,33 +82,34 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
                payload.domains.count == 2,
                let firstDomain = payload.domains.first,
                let secondDomain = payload.domains.last {
-                federationTerminationManager.handleFederationTerminationBetween(firstDomain,
-                                                                                otherDomain: secondDomain)
+                federationTerminationManager.handleFederationTerminationBetween(
+                    firstDomain,
+                    otherDomain: secondDomain
+                )
             }
 
         default:
             break
-
         }
     }
 
 }
 
-extension Payload {
+public extension Payload {
 
     /// The domain that the self domain has stopped federate with.
     struct FederationDelete: Codable {
 
-        let domain: String
-        let type: String
+        public let domain: String
+        public let type: String
 
     }
 
     /// The list of domains that have terminated federation with each other.
     struct ConnectionRemoved: Codable {
 
-        let domains: [String]
-        let type: String
+        public let domains: [String]
+        public let type: String
 
     }
 

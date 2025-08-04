@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,11 +41,9 @@ final class SwitchBackendViewModel: ObservableObject {
 
     let items: [Item]
 
-    @Published
-    var selectedItemID: Item.ID
+    @Published var selectedItemID: Item.ID
 
-    @Published
-    var alertItem: AlertItem?
+    @Published var alertItem: AlertItem?
 
     struct AlertItem: Identifiable {
 
@@ -59,7 +57,7 @@ final class SwitchBackendViewModel: ObservableObject {
 
     init() {
         var items = [
-            Item(title: "Production", value: .production),
+            Item(title: "Default", value: .default),
             Item(title: "Staging", value: .staging),
             Item(title: "Anta", value: .anta),
             Item(title: "Bella", value: .bella),
@@ -81,7 +79,7 @@ final class SwitchBackendViewModel: ObservableObject {
             items.append(selectedItem!)
         }
         self.items = items
-        selectedItemID = selectedItem!.id
+        self.selectedItemID = selectedItem!.id
     }
 
     // MARK: - Events

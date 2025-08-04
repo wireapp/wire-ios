@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,53 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-
-/// Process conversation member update events.
-
-protocol ConversationMemberUpdateEventProcessorProtocol {
-
-    /// Process a conversation member update event.
-    ///
-    /// - Parameter event: A conversation member update event.
-
-    func processEvent(_ event: ConversationMemberUpdateEvent) async throws
-
-}
+import WireNetwork
+import WireSystem
 
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationMemberUpdateEvent) async throws {
-        // TODO: [WPB-10170]
-        assertionFailure("not implemented yet")
+    let conversationRepository: any ConversationRepositoryProtocol
+    let userRepository: any UserRepositoryProtocol
+    let localStore: any ConversationLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMemberUpdateEvent) async throws {
+        let conversationID = event.conversationID
+        let memberChange = event.memberChange
+        let memberChangeID = memberChange.id
+        let muteStatus = memberChange.newMuteStatus
+        let muteStatusDate = memberChange.muteStatusReferenceDate
+        let archivedStatus = memberChange.newArchivedStatus
+        let archivedStatusDate = memberChange.archivedStatusReferenceDate
+
+        let conversation = await conversationRepository.fetchOrCreateConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        )
+
+        let isSelfUser = try await userRepository.isSelfUser(
+            id: memberChangeID.id,
+            domain: memberChangeID.domain
+        )
+
+        if isSelfUser {
+            await localStore.updateMemberStatus(
+                mutedStatusInfo: (muteStatus, muteStatusDate),
+                archivedStatusInfo: (archivedStatus, archivedStatusDate),
+                for: conversation
+            )
+        }
+
+        guard let role = event.memberChange.newRoleName else {
+            return
+        }
+
+        await conversationRepository.addOrUpdateParticipant(
+            participantID: memberChangeID.id,
+            participantDomain: memberChangeID.domain,
+            participantRole: role,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain
+        )
     }
 
 }

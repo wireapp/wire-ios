@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,10 +40,12 @@ extension Payload {
             case mlsGroupID = "group_id"
             case epoch
             case epochTimestamp = "epoch_timestamp"
+            case groupType = "group_conv_type"
+            case addPermission = "add_permission"
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationCreate
+            .conversationCreate
         }
 
         var qualifiedID: QualifiedID?
@@ -65,26 +67,31 @@ extension Payload {
         var mlsGroupID: String?
         var epoch: UInt?
         var epochTimestamp: Date?
+        var groupType: ConversationGroupType?
+        var addPermission: ChannelPermission?
 
-        init(qualifiedID: QualifiedID? = nil,
-             id: UUID?  = nil,
-             type: Int? = nil,
-             creator: UUID? = nil,
-             cipherSuite: UInt16? = nil,
-             access: [String]? = nil,
-             legacyAccessRole: String? = nil,
-             accessRoles: [String]? = nil,
-             name: String? = nil,
-             members: ConversationMembers? = nil,
-             lastEvent: String? = nil,
-             lastEventTime: String? = nil,
-             teamID: UUID? = nil,
-             messageTimer: TimeInterval? = nil,
-             readReceiptMode: Int? = nil,
-             messageProtocol: String? = nil,
-             mlsGroupID: String? = nil,
-             epoch: UInt? = nil,
-             epochTimestamp: Date? = nil
+        init(
+            qualifiedID: QualifiedID? = nil,
+            id: UUID?  = nil,
+            type: Int? = nil,
+            creator: UUID? = nil,
+            cipherSuite: UInt16? = nil,
+            access: [String]? = nil,
+            legacyAccessRole: String? = nil,
+            accessRoles: [String]? = nil,
+            name: String? = nil,
+            members: ConversationMembers? = nil,
+            lastEvent: String? = nil,
+            lastEventTime: String? = nil,
+            teamID: UUID? = nil,
+            messageTimer: TimeInterval? = nil,
+            readReceiptMode: Int? = nil,
+            messageProtocol: String? = nil,
+            mlsGroupID: String? = nil,
+            epoch: UInt? = nil,
+            epochTimestamp: Date? = nil,
+            groupType: ConversationGroupType? = nil,
+            addPermission: ChannelPermission? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -105,32 +112,34 @@ extension Payload {
             self.mlsGroupID = mlsGroupID
             self.epoch = epoch
             self.epochTimestamp = epochTimestamp
+            self.groupType = groupType
+            self.addPermission = addPermission
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
-            id = try container.decodeIfPresent(UUID.self, forKey: .id)
-            type = try container.decodeIfPresent(Int.self, forKey: .type)
-            creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
-            access = try container.decodeIfPresent([String].self, forKey: .access)
-            name = try container.decodeIfPresent(String.self, forKey: .name)
-            members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
-            lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
-            lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
-            teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
-            messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-            readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
-            mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
-            epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+            self.qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+            self.id = try container.decodeIfPresent(UUID.self, forKey: .id)
+            self.type = try container.decodeIfPresent(Int.self, forKey: .type)
+            self.creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
+            self.access = try container.decodeIfPresent([String].self, forKey: .access)
+            self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            self.members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
+            self.lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
+            self.lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
+            self.teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
+            self.messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+            self.readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            self.messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+            self.mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
+            self.epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
 
             switch apiVersion {
             case .v0, .v1, .v2:
-                legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6:
+                self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -138,21 +147,29 @@ extension Payload {
                 // which still have both "access_role_v2" and "access_role" fields
 
                 if !container.contains(CodingKeys.accessRoleV2) {
-                    legacyAccessRole = nil
-                    accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+                    self.legacyAccessRole = nil
+                    self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 } else {
-                    legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                    accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+                    self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                    self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
                 }
             }
 
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4:
-                cipherSuite = nil
-                epochTimestamp = nil
-            case .v5, .v6:
-                cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
-                epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+                self.cipherSuite = nil
+                self.epochTimestamp = nil
+            case .v5, .v6, .v7, .v8, .v9, .v10:
+                self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
+                self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+            }
+
+            switch apiVersion {
+            case .v8, .v9, .v10:
+                self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
+                self.addPermission = try container.decodeIfPresent(ChannelPermission.self, forKey: .addPermission)
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+                break
             }
         }
 
@@ -179,13 +196,21 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {
                     try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                     try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
                 }
+            }
+
+            switch apiVersion {
+            case .v8, .v9, .v10:
+                try container.encodeIfPresent(groupType, forKey: .groupType)
+                try container.encodeIfPresent(addPermission, forKey: .addPermission)
+            case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+                break
             }
         }
     }

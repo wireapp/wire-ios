@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ struct CoreImageBasedImageTransformer: ImageTransformer {
     func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage? {
 
         let filter = CIFilter(name: "CIColorControls")
-        let inputImage = image.ciImage ?? image.cgImage.map({ .init(cgImage: $0) })
+        let inputImage = image.ciImage ?? image.cgImage.map { .init(cgImage: $0) }
         guard let filter, let inputImage else { return nil }
 
         filter.setValue(inputImage, forKey: kCIInputImageKey)

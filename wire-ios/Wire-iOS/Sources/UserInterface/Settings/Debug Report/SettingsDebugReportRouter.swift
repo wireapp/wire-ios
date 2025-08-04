@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import MessageUI
 import WireDataModel
+import WireMainNavigationUI
 import WireReusableUIComponents
 
 // sourcery: AutoMockable
@@ -25,14 +26,15 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the mail composer with the debug report
 
-    @MainActor func presentMailComposer()
+    @MainActor
+    func presentMailComposer()
 
     /// Presents the fallback alert
 
     func presentFallbackAlert(sender: UIView)
 
     /// Presents the share view controller
-    /// 
+    ///
     /// - Parameters:
     ///   - destinations: list of conversations to choose from to send the report
     ///   - debugReport: the debug report to share
@@ -50,6 +52,11 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
     weak var viewController: UIViewController?
 
     private let mailRecipient = WireEmail.shared.callingSupportEmail
+    private let mainCoordinator: any MainCoordinatorProtocol
+
+    init(mainCoordinator: any MainCoordinatorProtocol) {
+        self.mainCoordinator = mainCoordinator
+    }
 
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
@@ -66,7 +73,8 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let shareViewController = ShareViewController<ZMConversation, ShareableDebugReport>(
             shareable: debugReport,
             destinations: destinations,
-            showPreview: true
+            showPreview: true,
+            mainCoordinator: mainCoordinator
         )
 
         shareViewController.onDismiss = { shareController, _ in
@@ -85,8 +93,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        activityIndicator.stop()
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        activityIndicator.start()
         Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 

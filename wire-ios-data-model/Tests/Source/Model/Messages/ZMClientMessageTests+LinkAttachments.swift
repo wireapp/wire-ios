@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,12 +50,18 @@ class ZMClientMessageTests_LinkAttachments: BaseZMClientMessageTests {
 
         let thumbnail = URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
 
-        var attachment: LinkAttachment! = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                                         permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                                         thumbnails: [thumbnail],
-                                                         originalRange: NSRange(location: 20, length: 43))
+        var attachment: LinkAttachment! = LinkAttachment(
+            type: .youTubeVideo,
+            title: "Pingu Season 1 Episode 1",
+            permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+            thumbnails: [thumbnail],
+            originalRange: NSRange(location: 20, length: 43)
+        )
 
-        var message: ZMClientMessage? = try? conversation.appendText(content: "Hello world", nonce: nonce) as? ZMClientMessage
+        var message: ZMClientMessage? = try? conversation.appendText(
+            content: "Hello world",
+            nonce: nonce
+        ) as? ZMClientMessage
         message?.sender = sender
         message?.linkAttachments = [attachment]
         uiMOC.saveOrRollback()

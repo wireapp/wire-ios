@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-@testable import WireDataModel
-@testable import WireDataModelSupport
 import WireFoundation
 import XCTest
+@testable import WireDataModel
+@testable import WireDataModelSupport
 
 class CRLExpirationDatesRepositoryTests: XCTestCase {
 
@@ -36,7 +36,7 @@ class CRLExpirationDatesRepositoryTests: XCTestCase {
 
         storage = PrivateUserDefaults<CRLExpirationDatesRepository.Key>(
             userID: .create(),
-            storage: .temporary()
+            storage: UserDefaults.temporary()
         )
 
         sut = CRLExpirationDatesRepository(storage: storage)

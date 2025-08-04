@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # Wire
-# Copyright (C) 2024 Wire Swiss GmbH
+# Copyright (C) 2025 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,9 +41,15 @@ TMP_DIR="$REPO_ROOT/DerivedData/Generate-Licenses"
 rm -rf "$TMP_DIR"
 
 # Resolve Dependencies
-echo ""
-echo "ℹ️  Resolve Dependencies"
-( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+if [[ -n "${CI-}" ]]; then
+    # CI
+    echo "Skipping install since CI is defined"
+else
+	# Local machine
+    echo ""
+    echo "ℹ️  Resolve Dependencies"
+    ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+fi
 
 
 # Copy Dependencies

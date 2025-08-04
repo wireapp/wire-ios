@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ extension MessagePresenter {
     ///   - message: a message with image data
     ///   - actionResponder: a action responder
     ///   - isPreviewing: is peeking with 3D touch?
-    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
+    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in
+    /// navigation controller
     func imagesViewController(
         for message: ZMConversationMessage,
         actionResponder: MessageActionResponder,
@@ -49,8 +50,10 @@ extension MessagePresenter {
 
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
 
-        let collection = AssetCollectionWrapper(conversation: conversation,
-                                                matchingCategories: [imagesCategoryMatch])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [imagesCategoryMatch]
+        )
 
         let imagesController = ConversationImagesViewController(
             collection: collection,
@@ -78,9 +81,12 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.modalTargetController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.modalTargetController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
 
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
@@ -88,7 +94,8 @@ extension MessagePresenter {
             self?.modalTargetController?.dismiss(animated: true, completion: completion)
         }
 
-        return isPreviewing ? imagesController : imagesController.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+        return isPreviewing ? imagesController : imagesController
+            .wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
 
     @objc

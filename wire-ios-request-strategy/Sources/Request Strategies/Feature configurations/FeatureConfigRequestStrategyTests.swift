@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+@testable import WireDataModelSupport
+@testable import WireRequestStrategy
 
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
@@ -26,6 +27,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     var sut: FeatureConfigRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
+    var mockMLSClientManager: MockMLSClientManagerProtocol!
     var featureRepository: FeatureRepository!
 
     // MARK: - Life cycle
@@ -33,12 +35,14 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
+        mockMLSClientManager = MockMLSClientManagerProtocol()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
 
         sut = FeatureConfigRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: MockSyncProgress()
+            syncProgress: MockSyncProgress(),
+            mlsClientManager: mockMLSClientManager
         )
 
         featureRepository = .init(context: syncMOC)
@@ -54,6 +58,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     // MARK: - Processing events
 
     func test_ItProcessesEvent_AppLock() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let appLock = Feature.AppLock(
@@ -96,6 +103,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_FileSharing() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeFileSharing(.init(status: .disabled))
@@ -127,6 +137,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_SelfDeletingMessages() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let selfDeletingMessages = Feature.SelfDeletingMessages(
@@ -159,7 +172,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         // Then
         syncMOC.performGroupedAndWait {
-            let existingfeature = self.featureRepository.fetchSelfDeletingMesssages()
+            let existingfeature = self.featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(existingfeature.status, .enabled)
             XCTAssertEqual(existingfeature.config.enforcedTimeoutSeconds, 60)
         }
@@ -168,6 +181,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConferenceCalling() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConferenceCalling(.init(status: .disabled))
@@ -188,7 +204,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -199,6 +215,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ConversationGuestLinks() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeConversationGuestLinks(.init(status: .disabled))
@@ -219,7 +238,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -230,6 +249,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_DigitalSignature() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             self.featureRepository.storeDigitalSignature(.init(status: .disabled))
@@ -250,7 +272,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -261,6 +283,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_ClassifiedDomains() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         syncMOC.performGroupedAndWait {
             // Given
             let classifiedDomains = Feature.ClassifiedDomains(status: .disabled, config: .init())
@@ -298,12 +323,18 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLS() throws {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         try syncMOC.performAndWait {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -323,7 +354,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .proteus)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 
@@ -331,12 +365,18 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLS_defaultProtocolIsMLS() throws {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         try syncMOC.performAndWait {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -356,7 +396,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .mls)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 
@@ -364,6 +407,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     }
 
     func test_ItProcessesEvent_MLSMigration() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
         // Given
         let startTime = "2023-10-27T12:43:48.000Z"
         let finaliseTime = "2023-11-02T12:43:48.000Z"
@@ -406,58 +452,103 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+
+    func test_ItProcessesEvent_Channels() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
+        // Given
+        syncMOC.performAndWait {
+            let channels = Feature.Channels(status: .disabled, config: .init())
+            self.featureRepository.storeChannels(channels)
+
+            let config: NSDictionary = [
+                "allowed_to_create_channels": "team-members",
+                "allowed_to_open_channels": "admins"
+            ]
+
+            let data: NSDictionary = [
+                "status": "enabled",
+                "config": config
+            ]
+
+            let payload: NSDictionary = [
+                "type": "feature-config.update",
+                "data": data,
+                "name": "channels"
+            ]
+
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+
+            // When
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        syncMOC.performGroupedAndWait {
+            let channels = self.featureRepository.fetchChannels()
+            XCTAssertEqual(channels.status, .enabled)
+            XCTAssertEqual(channels.config.allowedToCreateChannels, .teamMembers)
+            XCTAssertEqual(channels.config.allowedToOpenChannels, .admins)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
 }
 
 // MARK: JSON
 
 private enum MockJSON {
     static let mlsWithDefaultProtocolProteus = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "proteus",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "proteus",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 
     static let mlsWithDefaultProtocolMLS = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "mls",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "mls",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 }

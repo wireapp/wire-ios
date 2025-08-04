@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+import WireLogging
 
 extension ZMOTRMessage {
 
@@ -26,49 +28,44 @@ extension ZMOTRMessage {
         inManagedObjectContext moc: NSManagedObjectContext,
         prefetchResult: ZMFetchRequestBatchResult
     ) -> ZMOTRMessage? {
+
         let selfUser = ZMUser.selfUser(in: moc)
 
         guard
             let senderID = updateEvent.senderUUID,
-            let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
-            !isSelf(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier)
+            let conversation = conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
+            !isSelf(
+                conversation: conversation,
+                andIsSenderID: senderID,
+                differentFromSelfUserID: selfUser.remoteIdentifier
+            )
         else {
-            WireLogger.eventProcessing.debug("Illegal sender or conversation, abort processing.", attributes: updateEvent.logAttributes)
+            WireLogger.eventProcessing.debug(
+                "Illegal sender or conversation, abort processing.",
+                attributes: updateEvent.logAttributes
+            )
             return nil
         }
 
         guard !conversation.isForcedReadOnly else {
-            WireLogger.eventProcessing.warn("Ignoring incoming message in readonly conversation.", attributes: updateEvent.logAttributes)
+            WireLogger.eventProcessing.warn(
+                "Ignoring incoming message in readonly conversation.",
+                attributes: updateEvent.logAttributes
+            )
             return nil
         }
 
-        guard let message = GenericMessage(from: updateEvent) else {
-            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing:\n\(updateEvent.payload)", attributes: updateEvent.logAttributes)
+        guard
+            let message = GenericMessage(from: updateEvent),
+            let content = message.content
+        else {
+            WireLogger.eventProcessing.warn(
+                "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
+                attributes: updateEvent.logAttributes
+            )
+            appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
             return nil
         }
-
-        if message.isContentUnknown {
-            switch message.unknownStrategy {
-            case .ignore:
-                // Throw the message away without informing the user.
-                return nil
-
-            case .discardAndWarn:
-                appendUnknownMessageReceivedSystemMessage(
-                    fromSender: senderID,
-                    atTime: updateEvent.timestamp ?? .now,
-                    to: conversation,
-                    in: moc
-                )
-                return nil
-
-            case .warnUserAllowRetry:
-                // Continue to insert anyway, it'll be shown as an
-                // unknown message in the conversation.
-                break
-            }
-        }
-
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
         let logAttributes: LogAttributes = [
             .eventId: updateEvent.safeUUID,
@@ -77,7 +74,6 @@ extension ZMOTRMessage {
             .messageType: updateEvent.safeType
         ]
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
-
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(
             message: message,
@@ -85,13 +81,10 @@ extension ZMOTRMessage {
         )
 
         // Verify sender is part of conversation
-        conversation.verifySender(
-            of: updateEvent,
-            moc: moc
-        )
+        conversation.verifySender(of: updateEvent, moc: moc)
 
         // Insert the message
-        switch message.content {
+        switch content {
         case .lastRead where conversation.isSelfConversation:
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: message.lastRead,
@@ -105,17 +98,12 @@ extension ZMOTRMessage {
             )
 
         case .hidden where conversation.isSelfConversation:
-            ZMMessage.remove(
-                remotelyHiddenMessage: message.hidden,
-                inContext: moc
-            )
+            ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
 
         case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
-                break
-            }
-
-            ZMUser.selfUser(in: moc).analyticsIdentifier = trackingIdentifier
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:))
+            else { break }
+            ZMUser.selfUser(in: moc).trackingID = trackingID
 
         case .deleted:
             ZMMessage.remove(
@@ -124,7 +112,7 @@ extension ZMOTRMessage {
                 senderID: senderID,
                 inContext: moc
             )
-            
+
         case .reaction:
             ZMMessage.add(
                 reaction: message.reaction,
@@ -133,21 +121,21 @@ extension ZMOTRMessage {
                 creationDate: updateEvent.timestamp,
                 inContext: moc
             )
-            
+
         case .confirmation:
             ZMMessageConfirmation.createMessageConfirmations(
                 message.confirmation,
                 conversation: conversation,
                 updateEvent: updateEvent
             )
-            
+
         case .buttonActionConfirmation:
             ZMClientMessage.updateButtonStates(
                 withConfirmation: message.buttonActionConfirmation,
                 forConversation: conversation,
                 inContext: moc
             )
-            
+
         case .edited:
             return ZMClientMessage.editMessage(
                 withEdit: message.edited,
@@ -158,32 +146,33 @@ extension ZMOTRMessage {
             )
 
         case .clientAction(.resetSession):
-            let sender = ZMUser.fetchOrCreate(
-                with: senderID,
-                domain: nil,
-                in: moc
-            )
-
+            let sender = ZMUser.fetchOrCreate(with: senderID, domain: nil, in: moc)
             guard
                 let senderClientID = updateEvent.senderClientID,
-                let senderClient = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: sender, createIfNeeded: true),
+                let senderClient = UserClient.fetchUserClient(
+                    withRemoteId: senderClientID,
+                    forUser: sender,
+                    createIfNeeded: true
+                ),
                 let timestamp = updateEvent.timestamp
             else {
-                WireLogger.eventProcessing.warn("clientAction resetSession did not create any message", attributes: logAttributes)
+                WireLogger.eventProcessing.warn(
+                    "clientAction resetSession did not create any message",
+                    attributes: logAttributes
+                )
                 return nil
             }
-
-            conversation.appendSessionResetSystemMessage(
-                user: sender,
-                client: senderClient,
-                at: timestamp
-            )
+            conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
 
         case .calling, .availability:
             return nil
 
         case .inCallEmoji:
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
+            return nil
+
+        case .inCallHandRaise:
+            // Not supported yet, just discard. TODO: [WPB-11769] implement here
             return nil
 
         default:
@@ -191,7 +180,10 @@ extension ZMOTRMessage {
                 conversation.shouldAdd(event: updateEvent),
                 let nonce = UUID(uuidString: message.messageID)
             else {
-                WireLogger.eventProcessing.warn("Dropping message because no nonce or for self conv", attributes: logAttributes)
+                WireLogger.eventProcessing.warn(
+                    "Dropping message because no nonce or for self conv",
+                    attributes: logAttributes
+                )
                 return nil
             }
 
@@ -237,23 +229,24 @@ extension ZMOTRMessage {
                 if let message = clientMessage {
                     prefetchResult.add([message])
                 }
-
-            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
-                WireLogger.eventProcessing.warn("senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))", attributes: logAttributes)
+            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent
+                .senderClientID {
+                WireLogger.eventProcessing.warn(
+                    "senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))",
+                    attributes: logAttributes
+                )
                 return nil
             }
 
-            // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
-            clientMessage?.update(
-                with: updateEvent,
-                initialUpdate: isNewMessage
-            )
+            // In case of AssetMessages: If the payload does not match the sha265 digest, calling
+            // `updateWithGenericMessage:updateEvent` will delete the object.
+            clientMessage?.update(with: updateEvent, initialUpdate: isNewMessage)
 
             // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.
             // In addition the object will still have a managedObjectContext until the context is finally saved. In this
             // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
             // relationship between the deleted object and the conversation and / or sender
-            guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
+            guard !isZombieObject(clientMessage), clientMessage?.nonce != nil else {
                 WireLogger.eventProcessing.warn("Dropping potential zombie message", attributes: logAttributes)
                 return nil
             }
@@ -269,10 +262,7 @@ extension ZMOTRMessage {
     }
 
     private static func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
-        guard let message else {
-            return false
-        }
-
+        guard let message else { return false }
         return message.isZombieObject
     }
 
@@ -281,7 +271,7 @@ extension ZMOTRMessage {
         andIsSenderID senderID: UUID,
         differentFromSelfUserID selfUserID: UUID
     ) -> Bool {
-        return conversation.isSelfConversation && senderID != selfUserID
+        conversation.isSelfConversation && senderID != selfUserID
     }
 
     private static func isGroup(
@@ -289,28 +279,18 @@ extension ZMOTRMessage {
         andIsSenderID senderID: UUID,
         differentFromSelfUserID selfUserID: UUID
     ) -> Bool {
-        return conversation.conversationType == .group && senderID != selfUserID
+        conversation.conversationType == .group && senderID != selfUserID
     }
 
-    private static func appendUnknownMessageReceivedSystemMessage(
-        fromSender senderID: UUID,
-        atTime time: Date,
-        to conversation: ZMConversation,
-        in context: NSManagedObjectContext
+    private static func appendInvalidSystemMessage(
+        forUpdateEvent event: ZMUpdateEvent,
+        toConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
     ) {
-        let sender = ZMUser.fetchOrCreate(
-            with: senderID,
-            domain: nil,
-            in: context
-        )
-
-        conversation.appendSystemMessage(
-            type: .unknownMessageReceived,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: time
-        )
+        guard let remoteId = event.senderUUID,
+              let sender = ZMUser.fetch(with: remoteId, domain: nil, in: moc) else {
+            return
+        }
+        conversation.appendInvalidSystemMessage(at: event.timestamp ?? Date(), sender: sender)
     }
-
 }

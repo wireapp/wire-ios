@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,29 +47,34 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
     }
 
     var userInfoKeys: Set<String> {
-        return [
+        [
             #keyPath(LabelChangeInfo.nameChanged)
         ]
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ team: Label, modifier: (Label) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ team: Label,
+        modifier: (Label) -> Void,
+        expectedChangedFields: Set<String>,
+        customAffectedKeys: AffectedKeys? = nil
+    ) {
 
         // given
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
-        self.token = LabelChangeInfo.add(observer: labelObserver, for: team, managedObjectContext: self.uiMOC)
+        token = LabelChangeInfo.add(observer: labelObserver, for: team, managedObjectContext: uiMOC)
 
         // when
         modifier(team)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = labelObserver.notifications.count
         XCTAssertEqual(changeCount, 1)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(labelObserver.notifications.count, changeCount, "Should not have changed further once")
@@ -80,14 +85,15 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedName() {
         // given
-        let label = Label.insertNewObject(in: self.uiMOC)
+        let label = Label.insertNewObject(in: uiMOC)
         label.name = "bar"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(label,
-                                                     modifier: { $0.name = "foo" },
-                                                     expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
+        checkThatItNotifiesTheObserverOfAChange(
+            label,
+            modifier: { $0.name = "foo" },
+            expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
         )
 
     }

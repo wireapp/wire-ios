@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
     private let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
             style: .body2,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
 
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)

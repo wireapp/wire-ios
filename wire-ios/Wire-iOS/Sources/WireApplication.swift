@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,10 @@ final class WireApplication: UIApplication {
         guard motion == .motionShake else { return }
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            presenter.presentIfNotDisplayed(with: appDelegate.appRootRouter, from: self.topmostViewController(onlyFullScreen: false))
+            presenter.presentIfNotDisplayed(
+                with: appDelegate.appRootRouter,
+                from: self.topmostViewController(onlyFullScreen: false)
+            )
         }
     }
 }
@@ -39,6 +42,9 @@ final class WireApplication: UIApplication {
 extension WireApplication: NotificationSettingsRegistrable {
 
     var shouldRegisterUserNotificationSettings: Bool {
-        return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
+        !(
+            AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper
+                .disablePushNotificationAlert
+        )
     }
 }

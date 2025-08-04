@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,31 +19,19 @@
 #include "warnings.xcconfig"
 #include "project-common.xcconfig"
 
-
-
-// Architectures
-//
-ONLY_ACTIVE_ARCH = YES
-
-
-
 // Deployment
 //
 COPY_PHASE_STRIP = NO
 
-
 // LLVM - Code Generation
 //
 GCC_OPTIMIZATION_LEVEL = 0
-
 
 // Swift Compiler - Code Generation
 //
 SWIFT_OPTIMIZATION_LEVEL = -Onone
 OTHER_SWIFT_FLAGS = -D DEBUG
 ENABLE_TESTABILITY = YES
-
-
 
 // LLVM - Preprocessing
 //

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,49 +29,45 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
 
     let configuration: View.Configuration
 
-    static private let resetSessionURL: URL = URL(string: "action://reset-session")!
+    private static let resetSessionURL: URL = .init(string: "action://reset-session")!
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
-        let icon: UIImage
-        if data.systemMessageType == .decryptionFailedResolved {
-            icon = StyleKitIcon.checkmark.makeImage(
+    init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType, accentColor: UIColor) {
+        let icon: UIImage = if data.systemMessageType == .decryptionFailedResolved {
+            StyleKitIcon.checkmark.makeImage(
                 size: 16,
                 color: IconColors.foregroundCheckMarkInSystemMessage
             )
         } else {
-            icon = StyleKitIcon.exclamationMark.makeImage(
+            StyleKitIcon.exclamationMark.makeImage(
                 size: 16,
                 color: IconColors.foregroundExclamationMarkInSystemMessage
             )
         }
 
         let title = ConversationCannotDecryptSystemMessageCellDescription.makeAttributedString(
-                systemMessage: data,
-                sender: sender
-            )
-
-        configuration = View.Configuration(
-            icon: icon,
-            attributedText: title,
-            showLine: false
+            systemMessage: data,
+            sender: sender,
+            accentColor: accentColor
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: title,
+            showLine: false,
+            accentColor: accentColor
+        )
+
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 
     func isConfigurationEqual(with other: Any) -> Bool {
@@ -86,13 +82,17 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
 
     private static let BaseLocalizationString = "content.system.cannot_decrypt"
 
-    private static func makeAttributedString(systemMessage: ZMSystemMessageData, sender: UserType) -> NSAttributedString {
+    private static func makeAttributedString(
+        systemMessage: ZMSystemMessageData,
+        sender: UserType,
+        accentColor: UIColor
+    ) -> NSAttributedString {
 
-        let messageString = self.messageString(systemMessage.systemMessageType, sender: sender)
-        let resetSessionString = self.resetSessionString()
-        let errorDetailsString = self.errorDetailsString(
+        let messageString = messageString(systemMessage.systemMessageType, sender: sender)
+        let resetSessionString = resetSessionString(accentColor: accentColor)
+        let errorDetailsString = errorDetailsString(
             errorCode: systemMessage.decryptionErrorCode?.intValue ?? 0,
-            clientIdentifier: (systemMessage.senderClientID ?? "N/A")
+            clientIdentifier: systemMessage.senderClientID ?? "N/A"
         )
 
         var components: [NSAttributedString]
@@ -104,7 +104,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
             if systemMessage.isDecryptionErrorRecoverable {
                 components.append(resetSessionString)
             }
-
         case .decryptionFailedResolved:
             components = [
                 messageString,
@@ -137,10 +136,13 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         return localizationKey
     }
 
-    private static func messageString(_ systemMessageType: ZMSystemMessageType, sender: UserType) -> NSAttributedString {
+    private static func messageString(
+        _ systemMessageType: ZMSystemMessageType,
+        sender: UserType
+    ) -> NSAttributedString {
 
         let name = sender.name ?? ""
-        var localizationKey = self.localizationKey(systemMessageType)
+        var localizationKey = localizationKey(systemMessageType)
 
         if sender.isSelfUser {
             localizationKey += ".self"
@@ -151,21 +153,29 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         return NSMutableAttributedString.markdown(from: localizationKey.localized(args: name), style: .systemMessage)
     }
 
-    private static func resetSessionString() -> NSAttributedString {
+    private static func resetSessionString(accentColor: UIColor) -> NSAttributedString {
         let string = L10n.Localizable.Content.System.CannotDecrypt.resetSession
 
-        return NSAttributedString(string: string.localizedUppercase,
-                                  attributes: [.link: resetSessionURL,
-                                               .foregroundColor: UIColor.accent(),
-                                               .font: UIFont.mediumSemiboldFont])
+        return NSAttributedString(
+            string: string.localizedUppercase,
+            attributes: [
+                .link: resetSessionURL,
+                .foregroundColor: accentColor,
+                .font: UIFont.mediumSemiboldFont
+            ]
+        )
     }
 
     private static func errorDetailsString(errorCode: Int, clientIdentifier: String) -> NSAttributedString {
         let string = L10n.Localizable.Content.System.CannotDecrypt.errorDetails(errorCode, clientIdentifier)
 
-        return NSAttributedString(string: string.localizedUppercase,
-                                  attributes: [.foregroundColor: LabelColors.textDefault,
-                                               .font: UIFont.mediumFont])
+        return NSAttributedString(
+            string: string.localizedUppercase,
+            attributes: [
+                .foregroundColor: LabelColors.textDefault,
+                .font: UIFont.mediumFont
+            ]
+        )
     }
 
 }

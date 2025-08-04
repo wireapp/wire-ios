@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import Foundation
 
-struct TransferStateMigration {
+enum TransferStateMigration {
 
-    internal enum LegacyTransferState: Int, CaseIterable {
+    enum LegacyTransferState: Int, CaseIterable {
         case uploading = 0
         case uploaded
         case downloading
@@ -57,7 +57,10 @@ struct TransferStateMigration {
 
         for (legacyValues, newValue) in LegacyTransferState.migrationMappings {
             let batchUpdateRequest = NSBatchUpdateRequest(entityName: ZMAssetClientMessage.entityName())
-            batchUpdateRequest.predicate = NSPredicate(format: "\(transferStateKey) IN %@", legacyValues.map(\.rawValue))
+            batchUpdateRequest.predicate = NSPredicate(
+                format: "\(transferStateKey) IN %@",
+                legacyValues.map(\.rawValue)
+            )
             batchUpdateRequest.propertiesToUpdate = [transferStateKey: newValue.rawValue]
             batchUpdateRequest.resultType = .updatedObjectsCountResultType
 

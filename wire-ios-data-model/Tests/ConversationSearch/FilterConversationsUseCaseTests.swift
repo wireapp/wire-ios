@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,11 +89,15 @@ final class FilterConversationsUseCaseTests: XCTestCase {
         let filtered = sut.invoke(query: "ö")
 
         // Then matches
+        // - the "Announcements" conversation, because the conversation name contains "o". This is prioritized over
+        //   "Wire Team" because conversation names have a higher weight than participant names.
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
-        // - the "Announcements" conversation, because the conversation name contains "o"
         // - the "Pipaluk Bróðir" conversation, because the conversation name contains "o"
         // - the "Guests" conversation, because at least one participant's name contains "o"
-        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]])
+        XCTAssertEqual(
+            filtered,
+            [[groupConversations[1], groupConversations[0]], [oneOnOneConversations[0]], [otherGroupConversations[0]]]
+        )
     }
 
     func testSpecialCharacter_ß_MatchesConversationNameWith_ss() {
@@ -126,6 +130,36 @@ final class FilterConversationsUseCaseTests: XCTestCase {
         XCTAssertEqual(filtered, [[], [], [otherGroupConversations[1], otherGroupConversations[2]]])
     }
 
+    func testInvoke_sortsMatches() {
+
+        // Given
+        let container = MockContainer([
+            MockConversation(name: "Tomorrow", otherParticipants: ["Grusha"], isOneOnOne: false),
+            MockConversation(name: "Today", otherParticipants: ["Kike"], isOneOnOne: false),
+            MockConversation(name: "Guests", otherParticipants: ["Maria"], isOneOnOne: true),
+            MockConversation(name: "UI", otherParticipants: ["Peter"], isOneOnOne: true),
+            MockConversation(name: "Freedom", otherParticipants: ["Sonny"], isOneOnOne: false),
+            MockConversation(name: "Tasks", otherParticipants: ["Yukari"], isOneOnOne: false)
+
+        ])
+        sut = .init(conversationContainers: [container])
+
+        // When
+        let filtered = sut.invoke(query: "e")
+
+        // Then
+        // - the "Guests" conversation matches by name and is moved to the front because it is a one on one.
+        // - the "UI" conversation matched by participants and is moved to the front because it is a one on one.
+        // - the "Freedom" conversation matches my name. Name matches appear after one on one conversations.
+        // - the "Today" conversation matches by participants. Participant matches appear last.
+        XCTAssertEqual(filtered, [[
+            MockConversation(name: "Guests", otherParticipants: ["Maria"], isOneOnOne: true),
+            MockConversation(name: "UI", otherParticipants: ["Peter"], isOneOnOne: true),
+            MockConversation(name: "Freedom", otherParticipants: ["Sonny"], isOneOnOne: false),
+            MockConversation(name: "Today", otherParticipants: ["Kike"], isOneOnOne: false)
+        ]])
+    }
+
     // MARK: - Content
 
     private var conversationContainers: [MockContainer] {
@@ -139,31 +173,50 @@ final class FilterConversationsUseCaseTests: XCTestCase {
     private let groupConversations = [
         MockConversation(
             name: "Wire Team",
-            participants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+            otherParticipants: [
+                "Petrŭ",
+                "Mariele",
+                "Mneme Tiedemann",
+                "Sasho Gréta",
+                "Pipaluk Bróðir",
+                "Liselot Þórgrímr",
+                "Völund Gustavo"
+            ],
+            isOneOnOne: false
         ),
         MockConversation(
             name: "Announcements",
-            participants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
+            otherParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"],
+            isOneOnOne: false
         )
     ]
 
     private let oneOnOneConversations = [
-        MockConversation(name: "Pipaluk Bróðir", participants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
-        MockConversation(name: "Mariele", participants: ["Mariele", "Mneme Tiedemann"])
+        MockConversation(
+            name: "Pipaluk Bróðir",
+            otherParticipants: ["Pipaluk Bróðir", "Mneme Tiedemann"],
+            isOneOnOne: true
+        ),
+        MockConversation(name: "Mariele", otherParticipants: ["Mariele", "Mneme Tiedemann"], isOneOnOne: true)
     ]
 
     private let otherGroupConversations = [
-        MockConversation(name: "Guests", participants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
-        MockConversation(name: "Spaß", participants: ["Mneme Tiedemann"]),
-        MockConversation(name: "Essen", participants: ["Mneme Tiedemann"])
+        MockConversation(
+            name: "Guests",
+            otherParticipants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"],
+            isOneOnOne: false
+        ),
+        MockConversation(name: "Spaß", otherParticipants: ["Mneme Tiedemann"], isOneOnOne: false),
+        MockConversation(name: "Essen", otherParticipants: ["Mneme Tiedemann"], isOneOnOne: false)
     ]
 }
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable,
+    ExpressibleByArrayLiteral {
 
-    private(set) var conversations: [MockConversation]
+    var conversations: [MockConversation]
 
     var debugDescription: String { "\(conversations)" }
 
@@ -174,32 +227,30 @@ private struct MockContainer: MutableConversationContainer, CustomDebugStringCon
     init(arrayLiteral elements: MockConversation...) {
         self.init(elements)
     }
-
-    mutating func removeConversation(at index: Int) {
-        conversations.remove(at: index)
-    }
 }
 
 private struct MockConversation: FilterableConversation, CustomDebugStringConvertible, Equatable {
 
     private(set) var name: String
-    private(set) var participants: [MockParticipant]
+    private(set) var otherParticipants: [MockParticipant]
+    private(set) var isOneOnOne: Bool
 
     var debugDescription: String {
-        let participants = participants
+        let otherParticipants = otherParticipants
             .map(String.init(reflecting:))
             .joined(separator: ", ")
-        return "\(name)(\(participants))"
+        return "\(name)(\(otherParticipants) + self-user)"
     }
 }
 
-private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
+private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable,
+    ExpressibleByStringLiteral {
 
     private(set) var name: String
 
     var debugDescription: String { name }
 
     init(stringLiteral value: String) {
-        name = value
+        self.name = value
     }
 }

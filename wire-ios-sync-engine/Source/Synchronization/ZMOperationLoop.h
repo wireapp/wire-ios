@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 @import Foundation;
 
-@protocol ZMSyncStateDelegate;
 @protocol ZMApplication;
 @protocol FlowManagerType;
 @protocol TransportSessionType;
@@ -29,7 +28,6 @@
 @class OperationStatus;
 @class SyncStatus;
 @class PushNotificationStatus;
-@class CallEventStatus;
 @class ZMSyncStrategy;
 
 extern NSString * const ZMPushChannelIsOpenKey;
@@ -39,6 +37,7 @@ extern NSString * const ZMPushChannelIsOpenKey;
 @property (nonatomic, readonly) id<ZMApplication> application;
 @property (nonatomic, readonly) id<TransportSessionType> transportSession;
 @property (nonatomic) BOOL isDeveloperModeEnabled;
+@property (nonatomic) BOOL isSyncV2Enabled;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
@@ -47,10 +46,10 @@ extern NSString * const ZMPushChannelIsOpenKey;
                          operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
-                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled;
+                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
+                         isSyncV2Enabled:(BOOL)isSyncV2Enabled;
 
 - (void)tearDown;
 

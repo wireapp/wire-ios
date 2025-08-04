@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,11 @@ import MessageUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireLogging
 import WireSystem
 
 /// Presents debug alerts
-final class DebugAlert {
+enum DebugAlert {
 
     private struct Action {
         let text: String
@@ -57,7 +58,7 @@ final class DebugAlert {
             )
         }
 
-        self.show(
+        show(
             message: message,
             actions: [action1, action2],
             title: "Send debug logs"
@@ -74,7 +75,8 @@ final class DebugAlert {
     ) {
 
         guard Bundle.developerModeEnabled else { return }
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false), !isShown else { return }
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
+              !isShown else { return }
         isShown = true
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -109,7 +111,10 @@ final class DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentationConfiguration: popoverPresentationConfiguration))
+        alert.addAction(makeFallbackAlertAction(
+            from: controller,
+            popoverPresentationConfiguration: popoverPresentationConfiguration
+        ))
         controller.present(alert, animated: true, completion: nil)
     }
 
@@ -127,11 +132,14 @@ final class DebugAlert {
                 return
             }
 
-            let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
+            let activityViewController = UIActivityViewController(
+                activityItems: [logsFileURL],
+                applicationActivities: nil
+            )
             activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
-                    try logFilesProvider.clearLogsDirectory()
+                    try logFilesProvider.clearLogsDirectory(fileManager: .default)
                 } catch {
                     WireLogger.system.warn("Unable to clear temporary directory: \(error)")
                 }
@@ -146,7 +154,7 @@ final class DebugAlert {
 final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
     private var mailViewController: MFMailComposeViewController?
-    static private var senderInstance: DebugLogSender?
+    private static var senderInstance: DebugLogSender?
 
     /// Sends recorded logs by email
     static func sendLogsByEmail(
@@ -155,7 +163,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
-        guard self.senderInstance == nil else { return }
+        guard senderInstance == nil else { return }
 
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser
@@ -184,7 +192,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
-        self.senderInstance = alert
+        senderInstance = alert
 
         Task {
             await mailVC.attachLogs()
@@ -198,7 +206,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         didFinishWith result: MFMailComposeResult,
         error: Error?
     ) {
-        self.mailViewController = nil
+        mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil
     }

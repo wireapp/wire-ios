@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireMainNavigationUI
+import WireMessagingAssembly
+import WireMessagingDomain
+import WireMessagingUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
@@ -37,18 +43,58 @@ final class StartUIViewController: UIViewController {
 
     let groupSelector = SearchGroupSelector()
 
-    let searchResultsViewController: SearchResultsViewController
+    lazy var conversationTypePicker: UIViewController = {
+        let canCreateChannels = userSession.channelsFeature.canCreateChannels(
+            role: userSession.selfUser.teamRole
+        )
 
-    var addressBookHelperType: AddressBookHelperProtocol.Type
+        let isTeamUser = userSession.selfUser.hasTeam
+
+        let availableConversationTypes: Set<MultiParticipantConversationType> = if areChannelsSupported,
+                                                                                   canCreateChannels ||
+                                                                                   !isTeamUser {
+            [.channel, .group]
+        } else {
+            [.group]
+        }
+
+        let view = ConversationTypePickerFactory().create(
+            availableConversationTypes: availableConversationTypes,
+            onConversationTypeSelected: { [weak self] selectedConversationType in
+                guard let self else { return }
+                switch selectedConversationType {
+                case .group:
+                    Task { @MainActor [weak self] in
+                        self?.navigateToConversationCreation()
+                    }
+                case .channel:
+                    Task { @MainActor [weak self] in
+                        guard let self else { return }
+                        if canCreateChannels {
+                            navigateToChannelCreation()
+                        } else {
+                            presentCreateTeamBanner()
+                        }
+                    }
+                }
+            }
+        )
+        let vc = UIHostingController(rootView: view)
+        vc.sizingOptions = .intrinsicContentSize
+        vc.view.backgroundColor = .clear
+        return vc
+    }()
+
+    let searchResultsViewController: SearchResultsViewController
 
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
-
-    let quickActionsBar = StartUIInviteActionBar()
 
     let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
@@ -58,38 +104,30 @@ final class StartUIViewController: UIViewController {
     let backgroundColor = SemanticColors.View.backgroundDefault
 
     var searchResults: SearchResultsViewController {
-        return self.searchResultsViewController
+        searchResultsViewController
     }
 
     var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        SearchGroup.all.count > 1 &&
+            userSession.selfUser.canSeeServices &&
+            userSession.defaultProtocol != .mls
     }
 
     // MARK: - Init
 
     private var navigationBarTitle: String? {
-        if let title = userSession.selfUser.membership?.team?.name {
-            return title
-        } else if let title = userSession.selfUser.name {
-            return title
-        }
-
-        return nil
+        L10n.Localizable.Peoplepicker.NavigationHeader.title
     }
 
-    /// init method for injecting mock addressBookHelper
-    ///
-    /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
     init(
-        addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
-        self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
@@ -100,7 +138,9 @@ final class StartUIViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
-        profilePresenter = .init(
+        self.channelConversationFormFactory = channelConversationFormFactory
+        self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
@@ -135,8 +175,8 @@ final class StartUIViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        _ = self.searchController.searchBar.resignFirstResponder()
-        self.navigationController?.dismiss(animated: true)
+        _ = searchController.searchBar.resignFirstResponder()
+        navigationController?.dismiss(animated: true)
         return true
     }
 
@@ -144,6 +184,7 @@ final class StartUIViewController: UIViewController {
 
     func setupViews() {
         configGroupSelector()
+        configConversationTypePicker()
         emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
@@ -160,16 +201,14 @@ final class StartUIViewController: UIViewController {
         if showsGroupSelector {
             view.addSubview(groupSelector)
         }
+        view.addSubview(conversationTypePicker.view)
 
         searchResults.delegate = self
         addToSelf(searchResults)
         searchResults.searchResultsView.emptyResultView = emptyResultView
         searchResults.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
-        quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
-
         createConstraints()
-        updateActionBar()
         searchResults.searchContactList()
 
         view.accessibilityViewIsModal = true
@@ -188,7 +227,7 @@ final class StartUIViewController: UIViewController {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if .services == group {
+            if group == .services {
                 self?.searchController.searchBar.text = ""
             }
             self?.searchResults.searchGroup = group
@@ -196,10 +235,18 @@ final class StartUIViewController: UIViewController {
         }
     }
 
+    private func configConversationTypePicker() {
+        conversationTypePicker.view.translatesAutoresizingMaskIntoConstraints = false
+        conversationTypePicker.view.backgroundColor = backgroundColor
+        addChild(conversationTypePicker)
+        conversationTypePicker.didMove(toParent: self)
+    }
+
     // MARK: - Setup constraints
 
     private func createConstraints() {
-        [groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+        [groupSelector, searchResultsViewController.view]
+            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         if showsGroupSelector {
             NSLayoutConstraint.activate([
@@ -207,15 +254,25 @@ final class StartUIViewController: UIViewController {
                 groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
+                conversationTypePicker.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor, constant: 24)
             ])
         } else {
             NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+                conversationTypePicker.view.topAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
+                    constant: 24
+                )
             ])
         }
 
         NSLayoutConstraint.activate([
+            conversationTypePicker.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            conversationTypePicker.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            searchResultsViewController.view.topAnchor.constraint(
+                equalTo: conversationTypePicker.view.bottomAnchor,
+                constant: 16
+            ),
             searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -247,29 +304,90 @@ final class StartUIViewController: UIViewController {
         } else {
             searchResults.searchForServices(withQuery: searchString)
         }
-        emptyResultView.updateStatus(searchingForServices: groupSelector.group == .services,
-                                     hasFilter: !searchString.isEmpty)
+        emptyResultView.updateStatus(
+            searchingForServices: groupSelector.group == .services,
+            hasFilter: !searchString.isEmpty
+        )
     }
 
-    // MARK: - Action bar
+    // MARK: - Navigation methods
 
-    @objc
-    func inviteMoreButtonTapped(_ sender: UIButton?) {
-        if needsAddressBookPermission {
-            presentShareContactsViewController()
-        } else {
-            navigationController?.pushViewController(ContactsViewController(), animated: true)
-        }
+    private func navigateToConversationCreation() {
+        let conversationCreationController = createGroupConversationUIBuilder.build()
+        navigationController?.pushViewController(conversationCreationController, animated: true)
     }
 
-    func updateActionBar() {
-        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
-            searchResults.searchResultsView.accessoryView = nil
-        } else {
-            searchResults.searchResultsView.accessoryView = quickActionsBar
+    private func navigateToChannelCreation() {
+        let vc = channelConversationFormFactory.create(userSession: userSession)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    /// Checks whether a channel can be created, conditions are:
+    /// - conversation message protocol is MLS
+    /// - conversation belongs to a team
+    /// - MLS is enabled
+    /// - API >= v8
+    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
+
+    private var areChannelsSupported: Bool {
+        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
+            return false
+        }
+        guard BackendInfo.isMLSEnabled else {
+            return false
+        }
+        guard backendInfoApiVersion >= .v8 else {
+            return false
         }
 
-        view.setNeedsLayout()
+        return true
+    }
+
+    private func presentCreateTeamBanner() {
+
+        typealias Localizable = L10n.Localizable.Peoplepicker
+        typealias Accessibility = L10n.Accessibility.Peoplepicker
+
+        let configuration = ChannelBannerView.Configuration(
+            title: Localizable.UpgradeBanner.headline,
+            message: Localizable.UpgradeBanner.subheadline,
+            mainButtonTitle: Localizable.UpgradeBanner.Button.title,
+            mainButtonAction: { [weak self] in
+                self?.dismiss(animated: true) { [weak self] in self?.presentPersonalToTeamMigration() }
+            },
+            closeButton: .init(
+                accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
+                action: { [weak self] in self?.dismiss(animated: true) }
+            )
+        )
+        let banner = ChannelBannerView(configuration: configuration)
+        // Dimmer that covers entire screen and intercepts taps
+        let rootView = ZStack {
+            Color.black.opacity(0.5)
+                .edgesIgnoringSafeArea(.all)
+            banner
+        }
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .overFullScreen
+        hostingController.modalTransitionStyle   = .crossDissolve
+        hostingController.overrideUserInterfaceStyle = .dark
+        present(hostingController, animated: true)
+    }
+
+    private func presentPersonalToTeamMigration() {
+        Task {
+            let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.presentationController?.delegate = rootViewController
+            await mainCoordinator.presentViewController(navigationController)
+            if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                selfProfileViewController.triggerCreateTeamFlow()
+            }
+        }
     }
 
 }
@@ -293,4 +411,5 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
         searchBar.text = ""
         performSearch()
     }
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public extension Font {
         case .subline1:
             .caption
         case .buttonSmall:
-            fatalError("not implemented")
+            .system(size: 14, weight: .semibold)
         case .buttonBig:
             .title3.weight(.semibold)
         }

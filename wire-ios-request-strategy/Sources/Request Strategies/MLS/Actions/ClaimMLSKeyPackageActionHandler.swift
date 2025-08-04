@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        let path = "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
+        let path =
+            "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
 
         var payload: ZMTransportData?
         if let skipOwn = action.excludedSelfClientId, !skipOwn.isEmpty {

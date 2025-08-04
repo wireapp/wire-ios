@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,5 +18,9 @@
 
 @frozen @objc(ZMLogLevel)
 public enum ZMLogLevel: Int8 {
-    case `public`, error, warn, info, debug
+    case `public`
+    case error
+    case warn
+    case info
+    case debug
 }

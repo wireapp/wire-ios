@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@ import Foundation
 final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
     var transportSession: TransportSessionType
-    var eventProcessor: ConversationEventProcessorProtocol
+    var eventProcessor: LegacyConversationEventProcessorProtocol
     var contextProvider: ContextProvider
     var searchUsersCache: SearchUsersCache?
 
     init(
         contextprovider: ContextProvider,
         transportSession: TransportSessionType,
-        eventProcessor: ConversationEventProcessorProtocol,
+        eventProcessor: LegacyConversationEventProcessorProtocol,
         searchUsersCache: SearchUsersCache?
     ) {
         self.contextProvider = contextprovider
@@ -37,7 +37,7 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case .connectBot(let serviceUserData) = urlAction else { return }
+        guard case let .connectBot(serviceUserData) = urlAction else { return }
 
         let serviceUser = ZMSearchUser(
             contextProvider: contextProvider,
@@ -47,7 +47,6 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             remoteIdentifier: serviceUserData.service,
             teamIdentifier: nil,
             user: nil,
-            contact: nil,
             searchUsersCache: searchUsersCache
         )
         serviceUser.providerIdentifier = serviceUserData.provider.transportString()
@@ -59,7 +58,7 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             switch result {
             case .success:
                 delegate?.completedURLAction(urlAction)
-            case .failure(let error):
+            case let .failure(error):
                 delegate?.failedToPerformAction(urlAction, error: error)
             }
         }

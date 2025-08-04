@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount: Int = 0
@@ -34,8 +34,8 @@ private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelega
 final class ReplyComposingViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        self.verifyDeallocation {
-            return ReplyComposingView(message: message)
+        verifyDeallocation {
+            ReplyComposingView(message: message)
         }
     }
 

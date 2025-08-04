@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 import Foundation
 import ZipArchive
 
-extension Array where Element == URL {
+extension [URL] {
     func zipFiles(filename: String = "archive.zip") -> URL? {
         let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
 
-        let paths = map { $0.path }
+        let paths = map(\.path)
 
         let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
 

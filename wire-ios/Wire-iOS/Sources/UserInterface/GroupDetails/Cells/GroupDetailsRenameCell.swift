@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
         accessoryIconView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
 
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
-        titleTextField.font = FontSpec.init(.normal, .light).font!
+        titleTextField.font = FontSpec(.normal, .light).font!
         titleTextField.returnKeyType = .done
         titleTextField.backgroundColor = .clear
         titleTextField.textInsets = UIEdgeInsets.zero

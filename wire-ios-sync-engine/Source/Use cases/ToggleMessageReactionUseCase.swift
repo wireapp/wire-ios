@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public import WireFoundation
+
 import WireDataModel
 
 public protocol ToggleMessageReactionUseCaseProtocol {
@@ -30,16 +31,16 @@ public protocol ToggleMessageReactionUseCaseProtocol {
 
 public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         _ reaction: String,
         for message: ZMConversationMessage,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) {
         let currentReactions = message.selfUserReactions()
         if currentReactions.contains(reaction) {
@@ -48,10 +49,10 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
             ZMMessage.addReaction(reaction, to: message)
             if reaction == "❤️" {
                 analyticsEventTracker?.trackEvent(
-                    .conversationContribution(
+                    .Contributed.conversationContribution(
                         .likeMessage,
                         conversationType: .init(conversation.conversationType),
-                        conversationSize: UInt(conversation.localParticipants.count)
+                        conversationSize: conversation.localParticipants.count
                     )
                 )
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,9 +44,7 @@ public class UnregisteredUser {
         }
     }
 
-    /**
-     * Creates an empty unregistered user.
-     */
+    /// Creates an empty unregistered user.
 
     public init() {}
 
@@ -74,7 +72,7 @@ public class UnregisteredUser {
 extension UnregisteredUser: Equatable {
 
     public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
-        return lhs.unverifiedEmail == rhs.unverifiedEmail
+        lhs.unverifiedEmail == rhs.unverifiedEmail
             && lhs.verificationCode == rhs.verificationCode
             && lhs.name == rhs.name
             && lhs.accentColor == rhs.accentColor

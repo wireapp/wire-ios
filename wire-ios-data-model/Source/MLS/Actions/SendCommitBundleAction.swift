@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 public final class SendCommitBundleAction: EntityAction {
     public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageAction.Failure
+    public typealias Failure = SendMLSMessageFailure
 
     public var resultHandler: ResultHandler?
     public var commitBundle: Data

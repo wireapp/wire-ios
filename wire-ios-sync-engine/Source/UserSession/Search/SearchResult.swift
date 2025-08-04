@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ public struct SearchResult {
     public var contacts: [ZMSearchUser]
     /// Users from the team.
     public var teamMembers: [ZMSearchUser]
-    /// Legacy, not used anymore.
-    public var addressBook: [ZMSearchUser]
     /// Non-connected users.
     public var directory: [ZMSearchUser]
     /// Group conversations.
@@ -51,7 +49,8 @@ extension SearchResult {
         let filteredDocuments = documents.filter { document -> Bool in
             let name = document["name"] as? String
             let handle = document["handle"] as? String
-            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?.contains(query.string.lowercased()) ?? false
+            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?
+                .contains(query.string.lowercased()) ?? false
         }
 
         let searchUsers = ZMSearchUser.searchUsers(
@@ -60,18 +59,17 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
-        contacts = []
-        addressBook = []
-        directory = searchUsers.filter({ !$0.isConnected && !$0.isTeamMember })
-        conversations = []
-        services = []
+        self.contacts = []
+        self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
+        self.conversations = []
+        self.services = []
         self.searchUsersCache = searchUsersCache
 
-        if searchOptions.contains(.teamMembers) &&
+        if searchOptions.contains(.teamMembers),
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
-            teamMembers = searchUsers.filter({ $0.isTeamMember })
+            self.teamMembers = searchUsers.filter(\.isTeamMember)
         } else {
-            teamMembers = []
+            self.teamMembers = []
         }
     }
 
@@ -91,12 +89,11 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = []
-        conversations = []
-        services = searchUsersServices
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.services = searchUsersServices
         self.searchUsersCache = searchUsersCache
     }
 
@@ -118,37 +115,39 @@ extension SearchResult {
             return nil
         }
 
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = [searchUser]
-        conversations = []
-        services = []
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = [searchUser]
+        self.conversations = []
+        self.services = []
         self.searchUsersCache = searchUsersCache
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
         payload.members.forEach { membershipPayload in
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
-            let permissions = membershipPayload.permissions.flatMap({ Permissions(rawValue: $0.selfPermissions) })
+            let permissions = membershipPayload.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
             searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: membershipPayload.createdBy)
         }
     }
 
-    mutating func filterBy(searchOptions: SearchOptions,
-                           query: String,
-                           contextProvider: ContextProvider) {
+    mutating func filterBy(
+        searchOptions: SearchOptions,
+        query: String,
+        contextProvider: ContextProvider
+    ) {
         guard searchOptions.contains(.excludeNonActivePartners) else { return }
 
         let selfUser = ZMUser.selfUser(in: contextProvider.viewContext)
         let isHandleQuery = query.hasPrefix("@")
-        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query).lowercased()
+        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query)
+            .lowercased()
 
-        teamMembers = teamMembers.filter({
+        teamMembers = teamMembers.filter {
             $0.teamRole != .partner ||
-            $0.teamCreatedBy == selfUser.remoteIdentifier ||
-            isHandleQuery && $0.handle == queryWithoutAtSymbol
-        })
+                $0.teamCreatedBy == selfUser.remoteIdentifier ||
+                isHandleQuery && $0.handle == queryWithoutAtSymbol
+        }
     }
 
     func copy(on context: NSManagedObjectContext) -> SearchResult {
@@ -160,7 +159,6 @@ extension SearchResult {
         return SearchResult(
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: copiedConversations,
             services: services,
@@ -169,13 +167,13 @@ extension SearchResult {
     }
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
-        SearchResult(contacts: result.contacts,
-                     teamMembers: result.teamMembers,
-                     addressBook: result.addressBook,
-                     directory: directory,
-                     conversations: result.conversations,
-                     services: services,
-                     searchUsersCache: searchUsersCache
+        SearchResult(
+            contacts: result.contacts,
+            teamMembers: result.teamMembers,
+            directory: directory,
+            conversations: result.conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
         )
     }
 
@@ -183,7 +181,6 @@ extension SearchResult {
         SearchResult(
             contacts: contacts,
             teamMembers: teamMembers,
-            addressBook: addressBook,
             directory: directory,
             conversations: conversations,
             services: result.services,
@@ -195,7 +192,6 @@ extension SearchResult {
         SearchResult(
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
-            addressBook: addressBook,
             directory: result.directory,
             conversations: conversations,
             services: services,

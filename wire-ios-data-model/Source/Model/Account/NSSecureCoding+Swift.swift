@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ import Foundation
 extension NSCoder {
 
     func decodeString(forKey key: String) -> String? {
-        return decodeObject(of: NSString.self, forKey: key) as String?
+        decodeObject(of: NSString.self, forKey: key) as String?
     }
 
     func decodeData(forKey key: String) -> Data? {
-        return decodeObject(of: NSData.self, forKey: key) as Data?
+        decodeObject(of: NSData.self, forKey: key) as Data?
     }
 
 }

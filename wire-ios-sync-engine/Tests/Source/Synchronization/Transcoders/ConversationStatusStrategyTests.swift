@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class ConversationStatusStrategyTests: MessagingTest {
 
     func testThatItProcessesConversationsWithLocalModifications_LastRead() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let lastReadServerTimeStamp: Set<AnyHashable> = ["lastReadServerTimeStamp"]
@@ -66,7 +66,7 @@ class ConversationStatusStrategyTests: MessagingTest {
 
     func testThatItProcessesConversationsWithLocalModifications_Cleared() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let clearedTimeStamp: Set<AnyHashable> = ["clearedTimeStamp"]
@@ -92,7 +92,7 @@ class ConversationStatusStrategyTests: MessagingTest {
 
     func testThatItDeletesOlderMessages_Cleared() {
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let clearedTimeStamp: Set<AnyHashable> = ["clearedTimeStamp"]
@@ -116,7 +116,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItAddsUnsyncedConversationsToTrackedObjects() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let lastReadServerTimeStamp: Set<AnyHashable> = ["lastReadServerTimeStamp"]
@@ -129,7 +129,7 @@ class ConversationStatusStrategyTests: MessagingTest {
             // when
             let request = self.sut.fetchRequestForTrackedObjects()
             let result = try! self.syncMOC.fetch(request!) as! [NSManagedObject]
-            if result.count > 0 {
+            if !result.isEmpty {
                 self.sut.addTrackedObjects(Set<NSManagedObject>(result))
             } else {
                 XCTFail("should fetch insertedConversation")

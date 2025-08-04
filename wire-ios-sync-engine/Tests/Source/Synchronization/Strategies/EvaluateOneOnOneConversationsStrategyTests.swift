@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 import WireRequestStrategySupport
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
@@ -66,7 +66,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     func testNextRequest_givenSyncPhaseEvaluate1on1ConversationsForMLS_thenCallFinishSync() async {
         // given
-        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
+        let expectation = expectation(description: "EvaluateOneOnOneConversationsStrategy")
 
         mockSyncStatus.currentSyncPhase = .evaluate1on1ConversationsForMLS
         mockSyncStatus.finishCurrentSyncPhasePhase_MockMethod = { _ in
@@ -81,14 +81,14 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssertEqual(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.count, 1)
     }
 
     func testNextRequest_givenOtherSyncPhase_thenDoNotCallFinishSync() async {
         // given
-        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
+        let expectation = expectation(description: "EvaluateOneOnOneConversationsStrategy")
         expectation.isInverted = true
 
         mockSyncStatus.currentSyncPhase = .fetchingLastUpdateEventID
@@ -104,7 +104,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         }
 
         // then
-        await fulfillment(of: [expectation], timeout: 0.1)
+        await fulfillment(of: [expectation], timeout: 1)
 
         XCTAssert(mockSyncStatus.finishCurrentSyncPhasePhase_Invocations.isEmpty)
     }

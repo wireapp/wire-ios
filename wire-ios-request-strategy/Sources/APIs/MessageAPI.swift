@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,21 +17,31 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol MessageAPI {
 
-    func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendProteusMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func sendProteusMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
 
 }
 
 extension Payload.ClientListByUserID {
     func toClientListByQualifiedUserID(domain: String) -> Payload.ClientListByQualifiedUserID {
-        return [domain: self]
+        [domain: self]
     }
 }
 
@@ -43,7 +53,8 @@ extension Payload.MessageSendingStatusV0 {
             redundant: redundant.toClientListByQualifiedUserID(domain: domain),
             deleted: deleted.toClientListByQualifiedUserID(domain: domain),
             failedToSend: [:],
-            failedToConfirm: [:])
+            failedToConfirm: [:]
+        )
     }
 }
 
@@ -53,14 +64,15 @@ class MessageAPIV0: MessageAPI {
         .v0
     }
 
-    internal let httpClient: HttpClient
+    let httpClient: HttpClient
     private let protobufContentType = "application/x-protobuf"
 
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
 
-    func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/otr/messages"
 
         let request = ZMTransportRequest(
@@ -92,7 +104,8 @@ class MessageAPIV0: MessageAPI {
         conversationID: QualifiedID,
         expirationDate: Date?
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
+        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"]
+            .joined(separator: "/")
 
         let request = ZMTransportRequest(
             path: path,
@@ -122,7 +135,11 @@ class MessageAPIV0: MessageAPI {
         }
     }
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
         throw NetworkError.endpointNotAvailable
     }
 }
@@ -135,7 +152,7 @@ func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     }
 }
 
-func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
+private func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     guard
         let value = T(response, decoder: .defaultDecoder)
     else {
@@ -161,7 +178,8 @@ class MessageAPIV1: MessageAPIV0 {
         .v1
     }
 
-    override func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         let request = ZMTransportRequest(
@@ -196,7 +214,9 @@ class MessageAPIV1: MessageAPIV0 {
         conversationID: QualifiedID,
         expirationDate: Date?
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
 
         let request = ZMTransportRequest(
             path: path,
@@ -249,7 +269,8 @@ class MessageAPIV4: MessageAPIV3 {
 
     private let protobufContentType = "application/x-protobuf"
 
-    override func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         let request = ZMTransportRequest(
@@ -285,7 +306,9 @@ class MessageAPIV4: MessageAPIV3 {
         conversationID: QualifiedID,
         expirationDate: Date?
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
 
         let request = ZMTransportRequest(
             path: path,
@@ -325,7 +348,11 @@ class MessageAPIV5: MessageAPIV4 {
         .v5
     }
 
-    override func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    override func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
 
         let request = ZMTransportRequest(
             path: "/mls/messages",
@@ -341,9 +368,25 @@ class MessageAPIV5: MessageAPIV4 {
         }
 
         let response = await httpClient.send(request)
-        let payload: Payload.MLSMessageSendingStatus = try mapResponse(response)
+
+        let payload: Payload.MLSMessageSendingStatus
+        if response.result == .success {
+            payload = try mapSuccessResponse(response)
+        } else {
+            throw customMapFailureResponse(response)
+        }
 
         return (payload, response)
+    }
+
+    private func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
+        if let error = SendMLSMessageFailure(from: response) {
+            error
+        } else {
+            // This will return a NetworkError
+            // (i.e. federation error will be caughted on MessageSender)
+            mapFailureResponse(response)
+        }
     }
 }
 
@@ -351,4 +394,20 @@ class MessageAPIV6: MessageAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
+}
+
+class MessageAPIV7: MessageAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
+}
+
+class MessageAPIV8: MessageAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
+}
+
+class MessageAPIV9: MessageAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
+}
+
+final class MessageAPIV10: MessageAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
 }

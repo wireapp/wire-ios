@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Handles the notification informing the user that backups are ready to be imported.
- */
+/// Handles the notification informing the user that backups are ready to be imported.
 
 final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
 
@@ -43,7 +41,7 @@ final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
         let authenticationCredentials: UserCredentials?
 
         switch currentStep {
-        case .authenticateEmailCredentials(let credentials):
+        case let .authenticateEmailCredentials(credentials):
             authenticationCredentials = credentials
         case .companyLogin:
             authenticationCredentials = nil

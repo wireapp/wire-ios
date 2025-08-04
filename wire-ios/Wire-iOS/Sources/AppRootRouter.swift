@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,11 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 // MARK: - AppRootRouter
+
 final class AppRootRouter {
 
     // MARK: - Private Properties
@@ -102,13 +104,13 @@ final class AppRootRouter {
     // MARK: - Public implementation
 
     func start(launchOptions: LaunchOptions) {
-        self.lastLaunchOptions = launchOptions
+        lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
-        return urlActionRouter.open(url: deepLinkURL)
+        urlActionRouter.open(url: deepLinkURL)
     }
 
     func performQuickAction(
@@ -125,7 +127,13 @@ final class AppRootRouter {
         completion: @escaping () -> Void
     ) {
         mainWindow.rootViewController = viewController
-        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}, completion: { _ in completion() })
+        UIView.transition(
+            with: mainWindow,
+            duration: 0.2,
+            options: .transitionCrossDissolve,
+            animations: {},
+            completion: { _ in completion() }
+        )
     }
 
     private func setupAppStateCalculator() {
@@ -150,7 +158,8 @@ final class AppRootRouter {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
         sessionManager.usePackagingFeatureConfig = true
-        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings.shared[.callingConstantBitRate] ?? false
+        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings
+            .shared[.callingConstantBitRate] ?? false
         sessionManager.useConstantBitRateAudio = useCBR
     }
 
@@ -178,7 +187,7 @@ final class AppRootRouter {
         appStateTransitionQueue.async { [weak self] in
             guard let self else { return }
 
-            self.appStateTransitionGroup.wait()
+            appStateTransitionGroup.wait()
 
             DispatchQueue.main.async {
                 self.transition(to: appState, completion: completion)
@@ -189,10 +198,13 @@ final class AppRootRouter {
 }
 
 // MARK: - AppStateCalculatorDelegate
+
 extension AppRootRouter: AppStateCalculatorDelegate {
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void) {
+    func appStateCalculator(
+        _: AppStateCalculator,
+        didCalculate appState: AppState,
+        completion: @escaping () -> Void
+    ) {
         enqueueTransition(to: appState, completion: completion)
     }
 
@@ -210,17 +222,17 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         switch appState {
         case .retryStart:
             retryStart(completion: completion)
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
             showJailbroken(completion: completion)
         case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completion)
-        case .databaseFailure(let error):
+        case let .databaseFailure(error):
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completion)
@@ -232,7 +244,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
-
         case .headless:
             showLaunchScreen(completion: completion)
         case .loading:
@@ -240,7 +251,41 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case let .locked(userSession):
             screenCurtainWindow.userSession = userSession
             showAppLock(userSession: userSession, completion: completion)
+        case let .syncFailure(error, onRetry):
+            presentSyncErrorAlert(error: error, onRetry: onRetry)
         }
+    }
+
+    private func presentSyncErrorAlert(
+        error: any Error,
+        onRetry: @escaping () -> Void
+    ) {
+        let alert = UIAlertController(
+            title: L10n.Localizable.General.failure,
+            message: (error as NSError).description,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Content.System.FailedtosendMessage.retry, // reusing retry string
+                style: .default
+            ) { [weak self] _ in
+                onRetry()
+                self?.appStateTransitionGroup.leave()
+            }
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.General.cancel,
+                style: .destructive
+            ) { [weak self] _ in
+                self?.appStateTransitionGroup.leave()
+            }
+        )
+
+        rootViewController.present(alert, animated: true)
     }
 
     private func resetAuthenticationCoordinatorIfNeeded(for state: AppState) {
@@ -320,10 +365,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         // Only execute handle events if there is no current flow
         guard
             self.authenticationCoordinator == nil ||
-                error?.userSessionErrorCode == .addAccountRequested ||
-                error?.userSessionErrorCode == .accountDeleted ||
-                error?.userSessionErrorCode == .canNotRegisterMoreClients ||
-                error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
+            error?.userSessionErrorCode == .addAccountRequested ||
+            error?.userSessionErrorCode == .accountDeleted ||
+            error?.userSessionErrorCode == .canNotRegisterMoreClients ||
+            error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
             let sessionManager = SessionManager.shared
         else {
             completion()
@@ -396,7 +441,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func configureUnauthenticatedAppearance() {
         mainWindow.tintColor = UIColor.Wire.primaryLabel
-        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
+        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self])
+            .tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
@@ -410,12 +456,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
-        guard let userSession = ZMUserSession.shared() else { return nil }
+        guard let userSession = userSession as? ZMUserSession else { return nil }
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
             account: account,
             userSession: userSession,
+            environment: sessionManager.environment,
             trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
@@ -443,7 +490,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
@@ -557,9 +604,9 @@ extension AppRootRouter: URLActionRouterDelegate {
     func urlActionRouterCanDisplayAlerts() -> Bool {
         switch appStateCalculator.appState {
         case .authenticated, .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -612,8 +659,12 @@ extension AppRootRouter: ContentSizeCategoryObserving {
     static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]
-        let barButtonItemAppearance = UIBarButtonItem.appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
+            .baselineOffset: navigationBarTitleBaselineOffset
+        ]
+        let barButtonItemAppearance = UIBarButtonItem
+            .appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .normal)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .highlighted)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .disabled)

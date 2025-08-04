@@ -1,9 +1,8 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,16 +23,13 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
-import WireAnalytics
+import WireDataModel
+import WireDomain
+import Combine
 
 @testable import WireSyncEngine
+
 
 
 
@@ -103,12 +99,12 @@ public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneC
 
     // MARK: - invoke
 
-    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_Invocations: [WireDataModel.QualifiedID] = []
     public var invokeUserID_MockError: Error?
-    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> Bool)?
+    public var invokeUserID_MockMethod: ((WireDataModel.QualifiedID) async throws -> Bool)?
     public var invokeUserID_MockValue: Bool?
 
-    public func invoke(userID: QualifiedID) async throws -> Bool {
+    public func invoke(userID: WireDataModel.QualifiedID) async throws -> Bool {
         invokeUserID_Invocations.append(userID)
 
         if let error = invokeUserID_MockError {
@@ -224,6 +220,7 @@ public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol 
     public var invoke_MockError: Error?
     public var invoke_MockMethod: (() async throws -> Void)?
 
+    @MainActor
     public func invoke() async throws {
         invoke_Invocations.append(())
 
@@ -385,6 +382,139 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
 
 }
 
+public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdaterProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - reportMigrationNeeded
+
+    public var reportMigrationNeeded_Invocations: [Void] = []
+    public var reportMigrationNeeded_MockMethod: (() async -> Void)?
+
+    public func reportMigrationNeeded() async {
+        reportMigrationNeeded_Invocations.append(())
+
+        guard let mock = reportMigrationNeeded_MockMethod else {
+            fatalError("no mock for `reportMigrationNeeded`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - selectAccountAndTriggerSlowSync
+
+    public var selectAccountAndTriggerSlowSync_Invocations: [Account] = []
+    public var selectAccountAndTriggerSlowSync_MockMethod: ((Account) async -> Void)?
+
+    public func selectAccountAndTriggerSlowSync(_ account: Account) async {
+        selectAccountAndTriggerSlowSync_Invocations.append(account)
+
+        guard let mock = selectAccountAndTriggerSlowSync_MockMethod else {
+            fatalError("no mock for `selectAccountAndTriggerSlowSync`")
+        }
+
+        await mock(account)
+    }
+
+}
+
+public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStorageProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - importsDirectory
+
+    public var importsDirectory: URL {
+        get { return underlyingImportsDirectory }
+        set(value) { underlyingImportsDirectory = value }
+    }
+
+    public var underlyingImportsDirectory: URL!
+
+
+    // MARK: - replacePersistentStore
+
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup)] = []
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError: Error?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
+
+    @discardableResult
+    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
+        replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+
+        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError {
+            throw error
+        }
+
+        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod {
+            return try await mock(accountIdentifier, backupDirectory, applicationContainer, dispatchGroup)
+        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup`")
+        }
+    }
+
+    // MARK: - createContextProvider
+
+    public var createContextProviderAccountApplicationContainerDispatchGroup_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?)] = []
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockError: Error?
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockMethod: ((Account, URL, ZMSDispatchGroup?) async throws -> ContextProvider)?
+    public var createContextProviderAccountApplicationContainerDispatchGroup_MockValue: ContextProvider?
+
+    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?) async throws -> ContextProvider {
+        createContextProviderAccountApplicationContainerDispatchGroup_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+
+        if let error = createContextProviderAccountApplicationContainerDispatchGroup_MockError {
+            throw error
+        }
+
+        if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockMethod {
+            return try await mock(account, applicationContainer, dispatchGroup)
+        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroup`")
+        }
+    }
+
+}
+
+public class MockImportLegacyBackupStreamDecryptorProtocol: ImportLegacyBackupStreamDecryptorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decrypt
+
+    public var decryptInputOutputAccountIDPassword_Invocations: [(input: InputStream, output: OutputStream, accountID: UUID, password: String)] = []
+    public var decryptInputOutputAccountIDPassword_MockError: Error?
+    public var decryptInputOutputAccountIDPassword_MockMethod: ((InputStream, OutputStream, UUID, String) throws -> Void)?
+
+    public func decrypt(input: InputStream, output: OutputStream, accountID: UUID, password: String) throws {
+        decryptInputOutputAccountIDPassword_Invocations.append((input: input, output: output, accountID: accountID, password: password))
+
+        if let error = decryptInputOutputAccountIDPassword_MockError {
+            throw error
+        }
+
+        guard let mock = decryptInputOutputAccountIDPassword_MockMethod else {
+            fatalError("no mock for `decryptInputOutputAccountIDPassword`")
+        }
+
+        try mock(input, output, accountID, password)
+    }
+
+}
+
 public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateEnrollmentRequiredProtocol {
 
     // MARK: - Life cycle
@@ -507,11 +637,11 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
     // MARK: - invoke
 
-    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var invokeClientIdPassword_MockError: Error?
-    public var invokeClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var invokeClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func invoke(clientId: String, password: String) async throws {
+    public func invoke(clientId: String, password: String?) async throws {
         invokeClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = invokeClientIdPassword_MockError {
@@ -552,6 +682,38 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
         }
 
         try await mock()
+    }
+
+}
+
+public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?)] = []
+    public var invokeQueryOptionsMessageProtocol_MockError: Error?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, WireDataModel.MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
+
+    public func invoke(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?) async throws -> SearchResult {
+        invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
+
+        if let error = invokeQueryOptionsMessageProtocol_MockError {
+            throw error
+        }
+
+        if let mock = invokeQueryOptionsMessageProtocol_MockMethod {
+            return try await mock(query, options, messageProtocol)
+        } else if let mock = invokeQueryOptionsMessageProtocol_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeQueryOptionsMessageProtocol`")
+        }
     }
 
 }
@@ -632,33 +794,6 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
             fatalError("no mock for `getCertificate`")
         }
     }
-
-}
-
-public class MockServerConnection: ServerConnection {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - isMobileConnection
-
-    public var isMobileConnection: Bool {
-        get { return underlyingIsMobileConnection }
-        set(value) { underlyingIsMobileConnection = value }
-    }
-
-    public var underlyingIsMobileConnection: Bool!
-
-    // MARK: - isOffline
-
-    public var isOffline: Bool {
-        get { return underlyingIsOffline }
-        set(value) { underlyingIsOffline = value }
-    }
-
-    public var underlyingIsOffline: Bool!
-
 
 }
 
@@ -882,6 +1017,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(activeSession)
     }
 
+    // MARK: - sessionManagerDidFailSyncing
+
+    public var sessionManagerDidFailSyncingErrorRetryHandler_Invocations: [(error: any Error, retryHandler: () -> Void)] = []
+    public var sessionManagerDidFailSyncingErrorRetryHandler_MockMethod: ((any Error, @escaping () -> Void) -> Void)?
+
+    public func sessionManagerDidFailSyncing(error: any Error, retryHandler: @escaping () -> Void) {
+        sessionManagerDidFailSyncingErrorRetryHandler_Invocations.append((error: error, retryHandler: retryHandler))
+
+        guard let mock = sessionManagerDidFailSyncingErrorRetryHandler_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailSyncingErrorRetryHandler`")
+        }
+
+        mock(error, retryHandler)
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
@@ -1020,10 +1170,10 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
     // MARK: - calculateSupportedProtocols
 
     public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<WireDataModel.MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
 
-    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+    public func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol> {
         calculateSupportedProtocols_Invocations.append(())
 
         if let mock = calculateSupportedProtocols_MockMethod {
@@ -1037,27 +1187,38 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
 
 }
 
-public class MockToFolderMovableConversation: ToFolderMovableConversation {
+class MockSyncAgentProtocol: SyncAgentProtocol {
 
     // MARK: - Life cycle
 
-    public init() {}
 
+    // MARK: - isSyncV2Enabled
 
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        guard let mock = moveToFolder_MockMethod else {
-            fatalError("no mock for `moveToFolder`")
-        }
-
-        mock(folder)
+    var isSyncV2Enabled: Bool {
+        get { return underlyingIsSyncV2Enabled }
+        set(value) { underlyingIsSyncV2Enabled = value }
     }
+
+    var underlyingIsSyncV2Enabled: Bool!
+
+    // MARK: - isLive
+
+    var isLive: Bool {
+        get { return underlyingIsLive }
+        set(value) { underlyingIsLive = value }
+    }
+
+    var underlyingIsLive: Bool!
+
+    // MARK: - syncStatePublisher
+
+    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+        get { return underlyingSyncStatePublisher }
+        set(value) { underlyingSyncStatePublisher = value }
+    }
+
+    var underlyingSyncStatePublisher: AnyPublisher<SyncState, Never>!
+
 
 }
 

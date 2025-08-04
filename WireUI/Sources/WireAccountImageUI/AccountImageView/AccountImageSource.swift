@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import UIKit
 
-public enum AccountImageSource: Equatable, Sendable {
-    case image(UIImage), text(_ initials: String)
+public enum AccountImageSource: Hashable, Sendable {
+    case image(UIImage)
+    case text(_ initials: String)
     public init() { self = .text("") }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ struct ConversationMissedCallSystemMessageViewModel {
     let message: ZMConversationMessage
 
     func image() -> UIImage? {
-        return iconColor.map { icon.makeImage(size: .tiny, color: $0) }
+        iconColor.map { icon.makeImage(size: .tiny, color: $0) }
     }
 
     func attributedTitle() -> NSAttributedString? {

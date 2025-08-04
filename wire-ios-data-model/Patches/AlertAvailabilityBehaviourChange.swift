@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
 import Foundation
 
 extension Notification.Name {
-    static let applicationUpdateDidChangeAvailabilityBehaviour = Notification.Name("applicationUpdateDidChangeAvailabilityBehaviour")
+    static let applicationUpdateDidChangeAvailabilityBehaviour = Notification
+        .Name("applicationUpdateDidChangeAvailabilityBehaviour")
 }
 
-struct AvailabilityBehaviourChange {
+enum AvailabilityBehaviourChange {
 
     static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 

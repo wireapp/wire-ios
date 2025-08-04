@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 final class SwiftMockLoader {
 
     static func mockUsers() -> [MockUserType] {
-        return mockUsers(fromResource: "people-01.json")
+        mockUsers(fromResource: "people-01.json")
     }
 
     static func mockUsers(fromResource resource: String) -> [MockUserType] {

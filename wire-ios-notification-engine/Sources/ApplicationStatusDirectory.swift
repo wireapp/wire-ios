@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,22 +80,22 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .online
+            .online
         } else {
-            return .unauthenticated
+            .unauthenticated
         }
     }
 
     public var operationState: OperationState {
-        return .background
+        .background
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return transportSession
+        transportSession
     }
 
     func requestResyncResources() {

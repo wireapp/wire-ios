@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -191,15 +191,16 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 }
 
 // MARK: - Helpers
+
 extension FeatureTests {
 
     func configData(enforced: Bool) -> Data {
         let json = """
-          {
-            "enforceAppLock": \(enforced),
-            "inactivityTimeoutSecs": 30
-          }
-          """
+        {
+          "enforceAppLock": \(enforced),
+          "inactivityTimeoutSecs": 30
+        }
+        """
 
         return json.data(using: .utf8)!
     }
@@ -208,10 +209,12 @@ extension FeatureTests {
 extension Feature {
 
     @discardableResult
-    static func insert(name: Name,
-                       status: Status,
-                       config: Data?,
-                       context: NSManagedObjectContext) -> Feature {
+    static func insert(
+        name: Name,
+        status: Status,
+        config: Data?,
+        context: NSManagedObjectContext
+    ) -> Feature {
 
         let feature = Feature.insertNewObject(in: context)
         feature.name = name

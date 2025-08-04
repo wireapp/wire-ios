@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,26 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
-            guard DeveloperFlag.enableMLSSupport.isOn else { return }
+            guard
+                let self,
+                mlsFeature.isEnabled else {
+                return
+            }
 
             Task { [weak self] in
                 do {
                     try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
                 } catch {
-                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
+                    WireLogger.mls
+                        .error(
+                            "proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))"
+                        )
                 }
             }
         }
@@ -41,7 +49,8 @@ extension ZMUserSession {
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait {
 
-                let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+                let fetchRequest = ZMUser
+                    .sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import GenericMessageProtocol
 import WireTesting
+
+@testable import WireDataModel
+@testable import WireRequestStrategy
 
 final class StoreUpdateEventTests: MessagingTestBase {
 
@@ -117,7 +120,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
     }
 
     private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
-        return try createStoredEvents(indices: [index])[0]
+        try createStoredEvents(indices: [index])[0]
     }
 
     private func createStoredEvents(indices: [UInt]) throws -> [StoredUpdateEvent] {
@@ -133,15 +136,16 @@ final class StoreUpdateEventTests: MessagingTestBase {
         from event: ZMUpdateEvent,
         index: UInt
     ) throws -> StoredUpdateEvent {
-        return try createStoredEvents(eventsAndIndices: [(event, index)])[0]
+        try createStoredEvents(eventsAndIndices: [(event, index)])[0]
     }
 
     private func createStoredEvents(eventsAndIndices: [(ZMUpdateEvent, UInt)]) throws -> [StoredUpdateEvent] {
-        return try eventsAndIndices.map { event, index in
+        try eventsAndIndices.map { event, index in
             guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
-                index: Int64(index)
+                index: Int64(index),
+                isCallEvent: event.isCallEvent
             ) else {
                 throw Failure("Could not create storedEvents")
             }
@@ -151,24 +155,26 @@ final class StoreUpdateEventTests: MessagingTestBase {
     }
 
     private func createStoredEvents(encrypt: Bool) throws -> ([ZMUpdateEvent], [StoredUpdateEvent]) {
-        let conversation = self.createConversation(in: self.uiMOC)
-        let event1 = self.createNewConversationEvent(for: conversation)
-        let event2 = try self.createNewCallEvent(for: conversation)
+        let conversation = createConversation(in: uiMOC)
+        let event1 = createNewConversationEvent(for: conversation)
+        let event2 = try createNewCallEvent(for: conversation)
 
         guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
             event1,
-            context: self.eventMOC,
+            context: eventMOC,
             index: 2,
-            publicKeys: encrypt ? self.publicKeys : nil
+            isCallEvent: event1.isCallEvent,
+            publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
         }
 
         guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
             event2,
-            context: self.eventMOC,
+            context: eventMOC,
             index: 3,
-            publicKeys: encrypt ? self.publicKeys : nil
+            isCallEvent: event2.isCallEvent,
+            publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
         }
@@ -239,6 +245,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -248,6 +255,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
 
@@ -268,16 +276,23 @@ final class StoreUpdateEventTests: MessagingTestBase {
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
 
-            _ = StoredUpdateEvent.create(from: event1,
-                                                                  eventId: try XCTUnwrap(event1.uuid?.uuidString.lowercased()),
-                                                                  eventHash: 0,
-                                                                  index: 1,
-                                                                  context: eventMOC)
+            _ = StoredUpdateEvent.create(
+                from: event1,
+                eventId: try XCTUnwrap(
+                    event1.uuid?.uuidString
+                        .lowercased()
+                ),
+                eventHash: 0,
+                index: 1,
+                isCallEvent: event1.isCallEvent,
+                context: eventMOC
+            )
             // WHEN
             let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
 
@@ -296,6 +311,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -305,6 +321,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             ))
 
@@ -335,6 +352,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -344,6 +362,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 3,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -375,6 +394,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -384,6 +404,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             )
 
@@ -409,6 +430,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
             XCTAssertNotNil(storedEvent1)
@@ -418,6 +440,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             )
             XCTAssertNotNil(storedEvent2)
@@ -437,6 +460,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -446,6 +470,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 3,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")

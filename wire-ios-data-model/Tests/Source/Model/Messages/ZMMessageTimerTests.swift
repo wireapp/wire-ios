@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTransport
 import XCTest
+@testable import WireDataModel
 
 class ZMMessageTimerTests: BaseZMMessageTests {
 
@@ -53,7 +53,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
     func testThatItRemovesTheInternalTimerAfterTimerFired() throws {
         // given
         let message = try XCTUnwrap(createClientTextMessage(withText: "hello"))
-        let expectation = self.customExpectation(description: "timer fired")
+        let expectation = customExpectation(description: "timer fired")
         sut.timerCompletionBlock = { _, _ in expectation.fulfill() }
 
         // when

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,11 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
+import WireDomain
+import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
 import WireSyncEngineSupport
@@ -28,12 +31,14 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var isTornDown = false
+
     var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
-        return MLSGroupID(Data())
+        MLSGroupID(Data())
     }
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
@@ -48,7 +53,7 @@ final class UserSessionMock: UserSession {
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
-            return Data("102030405060708090102030405060708090102030405060708090".utf8)
+            Data("102030405060708090102030405060708090102030405060708090".utf8)
         }
         return mock
     }()
@@ -115,8 +120,8 @@ final class UserSessionMock: UserSession {
         self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
         self.editableSelfUser = editableSelfUser
 
-        searchUsersCache = .init()
-        userProfile = MockUserProfile()
+        self.searchUsersCache = .init()
+        self.userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen
@@ -130,6 +135,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     func openAppLock() throws {
         openApp.append(())
@@ -154,7 +160,7 @@ final class UserSessionMock: UserSession {
     }
 
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
-    var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
+    var maxUploadFileSize: UInt64 = 26_214_400 // 25 megabytes (25 * 1024 * 1024)
     var maxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
 
     var shouldNotifyUserOfDisabledAppLock = false
@@ -168,7 +174,7 @@ final class UserSessionMock: UserSession {
     }
 
     var conversationDirectory: ConversationDirectoryType {
-        return mockConversationDirectory
+        mockConversationDirectory
     }
 
     func perform(_ changes: @escaping () -> Void) {
@@ -184,18 +190,18 @@ final class UserSessionMock: UserSession {
     }
 
     func addUserObserver(_ observer: UserObserving, for user: UserType) -> NSObjectProtocol? {
-        return nil
+        nil
     }
 
     func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
         for list: ConversationList
     ) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func conversationList() -> ConversationList {
@@ -224,36 +230,34 @@ final class UserSessionMock: UserSession {
         _ observer: ZMMessageObserver,
         for message: ZMConversationMessage
     ) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallingUnavailableObserver(
         _ observer: ConferenceCallingUnavailableObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallStateObserver(
         _ observer: WireCallCenterCallStateObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallErrorObserver(
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
-    func acknowledgeFeatureChange(for feature: Feature.Name) {
-
-    }
+    func acknowledgeFeatureChange(for feature: Feature.Name) {}
 
     func classification(
         users: [UserType],
         conversationDomain: String?
     ) -> SecurityClassification? {
-        return .none
+        .none
     }
 
     func proxiedRequest(
@@ -262,12 +266,10 @@ final class UserSessionMock: UserSession {
         type: WireSyncEngine.ProxiedRequestType,
         callback: WireSyncEngine.ProxyRequestCallback?
     ) -> WireSyncEngine.ProxyRequest {
-        return ProxyRequest(type: type, path: path, method: method, callback: callback)
+        ProxyRequest(type: type, path: path, method: method, callback: callback)
     }
 
-    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {
-
-    }
+    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {}
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol
@@ -286,7 +288,7 @@ final class UserSessionMock: UserSession {
     }()
 
     var selfUserClient: UserClient? {
-        return nil
+        nil
     }
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
@@ -313,6 +315,10 @@ final class UserSessionMock: UserSession {
         AppendTextMessageUseCase(analyticsEventTracker: nil)
     }
 
+    func makeAppendMultipartMessageUseCase() -> any AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: nil)
+    }
+
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
         AppendImageMessageUseCase(analyticsEventTracker: nil)
     }
@@ -337,17 +343,55 @@ final class UserSessionMock: UserSession {
         SubmitCallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 
-    var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
+    func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
+        UpdateConversationFolderUseCase(context: syncContext)
+    }
 
-    var mlsFeature: Feature.MLS = Feature.MLS(
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase {
+        CreateConversationFolderUseCase(context: syncContext)
+    }
+
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+        let mock = MockSearchUsersUseCaseProtocol()
+        mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
+            let payload = ["documents": [
+                [
+                    "id": self.selfUser.remoteIdentifier ?? UUID(),
+                    "name": self.selfUser.name ?? "",
+                    "accent_id": 1,
+                    "handle": self.selfUser.handle ?? ""
+                ]
+            ]]
+            return SearchResult(
+                payload: payload,
+                query: .fullTextSearch(""),
+                searchOptions: [.directory],
+                contextProvider: MockContextProvider(),
+                searchUsersCache: nil
+            )!
+        }
+        return mock
+    }
+
+    var e2eiFeature: Feature.E2EI = .init(status: .enabled)
+
+    var channelsFeature: Feature.Channels = .init(status: .disabled)
+
+    var mlsFeature: Feature.MLS = .init(
         status: .enabled,
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
 
     func fetchAllClients() {}
 
-    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
-    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+    var createTeamOneOnOneWithCompletion_Invocations: [(
+        user: UserType,
+        completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    )] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((
+        UserType,
+        @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) -> Void)?
 
     func createTeamOneOnOne(
         with user: UserType,
@@ -381,6 +425,9 @@ final class UserSessionMock: UserSession {
         coreDataStack ?? MockContextProvider()
     }
 
+    // MARK: - ClientSessionComponent?
+
+    var clientSessionComponent: WireDomain.ClientSessionComponent?
 }
 
 // MARK: - UserSessionMock + ContextProvider
@@ -389,6 +436,10 @@ extension UserSessionMock: ContextProvider {
 
     var account: Account { contextProvider.account }
     var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
+
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }

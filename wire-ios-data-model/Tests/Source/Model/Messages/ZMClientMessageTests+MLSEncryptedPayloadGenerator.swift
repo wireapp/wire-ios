@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessageTests {
@@ -62,7 +64,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         }
 
         // When
-        guard let encryptedMessage = try? await message.encryptForTransport(using: self.encryptionFunction) else {
+        guard let encryptedMessage = try? await message.encryptForTransport(using: encryptionFunction) else {
             return XCTFail("failed to encrypt message")
         }
 
@@ -96,7 +98,7 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
         }
 
         // When
-        let encryptedMessage = try await message.encryptForTransport(using: self.encryptionFunction)
+        let encryptedMessage = try await message.encryptForTransport(using: encryptionFunction)
 
         await syncMOC.perform {
             // Then

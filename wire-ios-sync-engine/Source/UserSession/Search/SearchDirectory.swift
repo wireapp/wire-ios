@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class SearchDirectory: NSObject {
+@objcMembers
+public class SearchDirectory: NSObject {
 
     let searchContext: NSManagedObjectContext
     let contextProvider: ContextProvider
@@ -82,13 +83,14 @@ import Foundation
         return task
     }
 
-    /// Lookup a user by user Id and returns a search user in the directory results. If the user doesn't exists
+    /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user
+    /// doesn't exists
     /// an empty directory result is returned.
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
-    public func lookup(userId: UUID) -> SearchTask {
+    public func lookup(qualifiedID: QualifiedID) -> SearchTask {
         let task = SearchTask(
-            task: .lookup(userId: userId),
+            task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,

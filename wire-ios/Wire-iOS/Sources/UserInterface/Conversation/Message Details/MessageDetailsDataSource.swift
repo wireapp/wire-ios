@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ import WireSyncEngine
 
 /// The way the details are displayed.
 enum MessageDetailsDisplayMode: Int {
-    case reactions, receipts, combined
+    case reactions
+    case receipts
+    case combined
 }
 
-/**
- * An object that observes changes in the message data source.
- */
+/// An object that observes changes in the message data source.
 
 protocol MessageDetailsDataSourceObserver: AnyObject {
     /// Called when the message details change.
@@ -37,9 +37,7 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource)
 }
 
-/**
- * The data source to present message details.
- */
+/// The data source to present message details.
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving {
 
@@ -92,7 +90,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
-        supportsReadReceipts = message.needsReadConfirmation
+        self.supportsReadReceipts = message.needsReadConfirmation
 
         switch (showLikesTab, showReceiptsTab) {
         case (true, true):
@@ -121,7 +119,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     // MARK: - Interface Properties
 
     private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDate() else {
+        guard let sentDate = message.formattedReceivedDateTime() else {
             return
         }
 
@@ -135,8 +133,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         }
 
         self.subtitle = subtitle
-        self.accessibilitySubtitle = message.formattedAccessibleMessageDetails()
-        self.observer?.detailsFooterDidChange(self)
+        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
+        observer?.detailsFooterDidChange(self)
     }
 
     // MARK: - Changes
@@ -185,7 +183,10 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
 
     func setupReadReceipts() {
         readReceipts = [
-            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+            MessageDetailsSectionDescription(
+                items: MessageDetailsCellDescription
+                    .makeReceiptCell(message.sortedReadReceipts)
+            )
         ].filter {
             !$0.items.isEmpty
         }

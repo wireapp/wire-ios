@@ -1,4 +1,0 @@
-framework=WireMockTransport
-organization=wireapp
-repository=wire-ios-mocktransport
-release-name-format={ADJECTIVE} {ANIMAL} is {ADJECTIVE}

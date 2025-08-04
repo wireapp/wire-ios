@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 
 public extension ZMLocalNotification {
 
     static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
-    convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
+    convenience init?(
+        event: ZMUpdateEvent,
+        conversation: ZMConversation?,
+        managedObjectContext moc: NSManagedObjectContext
+    ) {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             guard conversation?.isForcedReadOnly != true else { break }
             guard let message = GenericMessage(from: event) else { break }
-            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder.self
+            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
+                .self
 
         case .conversationCreate:
             builderType = ConversationCreateEventNotificationBuilder.self
@@ -92,7 +100,7 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
-        if let sender = self.sender, sender.isSelfUser { return false }
+        if let sender, sender.isSelfUser { return false }
 
         if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
@@ -100,7 +108,7 @@ private class EventNotificationBuilder: NotificationBuilder {
             }
 
             if let timeStamp = event.timestamp,
-                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
+               let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
                 // don't show notifications that have already been read
                 return false
             }
@@ -110,11 +118,11 @@ private class EventNotificationBuilder: NotificationBuilder {
     }
 
     func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
     }
 
     func userInfo() -> NotificationUserInfo? {
@@ -144,10 +152,10 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     private let message: GenericMessage
 
     override var notificationType: LocalNotificationType {
-        if ZMLocalNotification.shouldHideNotificationContent(moc: self.moc) {
-            return LocalNotificationType.message(.hidden)
+        if ZMLocalNotification.shouldHideNotificationContent(moc: moc) {
+            LocalNotificationType.message(.hidden)
         } else {
-            return LocalNotificationType.message(.reaction(emoji: emoji))
+            LocalNotificationType.message(.reaction(emoji: emoji))
         }
     }
 
@@ -167,7 +175,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        return false
+        false
     }
 
     override func userInfo() -> NotificationUserInfo? {
@@ -183,7 +191,21 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 private class ConversationCreateEventNotificationBuilder: EventNotificationBuilder {
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.conversationCreated)
+        LocalNotificationType.event(.conversationCreated)
+    }
+
+    override func shouldCreateNotification() -> Bool {
+        // if there is a sender, make sure it's not the selfUser (no notification for self)
+        if let sender, sender.isSelfUser { return false }
+
+        if conversation == nil {
+            // WPB-8946: fixes bug: notifications shown even though availability is busy or away
+            let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
+            return [.none, .available].contains(availability)
+        }
+
+        // default behavior
+        return super.shouldCreateNotification()
     }
 
 }
@@ -193,11 +215,11 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
 private class ConversationDeleteEventNotificationBuilder: EventNotificationBuilder {
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.conversationDeleted)
+        LocalNotificationType.event(.conversationDeleted)
     }
 
     override func shouldCreateNotification() -> Bool {
-        return super.shouldCreateNotification() && conversation?.conversationType == .group
+        super.shouldCreateNotification() && conversation?.conversationType == .group
     }
 
 }
@@ -210,12 +232,12 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     var senderName: String?
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(eventType)
+        LocalNotificationType.event(eventType)
     }
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
 
-        if let status = (event.payload["connection"] as? [String: AnyObject] )?["status"] as? String {
+        if let status = (event.payload["connection"] as? [String: AnyObject])?["status"] as? String {
             if status == "accepted" {
                 self.eventType = .connectionRequestAccepted
             } else if status == "pending" {
@@ -229,15 +251,15 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
 
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
 
-        senderName = sender?.name ?? (event.payload["user"] as? [String: Any])?["name"] as? String
+        self.senderName = sender?.name ?? (event.payload["user"] as? [String: Any])?["name"] as? String
     }
 
     override func titleText() -> String? {
-        return nil
+        nil
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(senderName: senderName)
+        notificationType.messageBodyText(senderName: senderName)
     }
 
 }
@@ -247,11 +269,11 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
 private class NewUserEventNotificationBuilder: EventNotificationBuilder {
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.newConnection)
+        LocalNotificationType.event(.newConnection)
     }
 
     override func titleText() -> String? {
-        return nil
+        nil
     }
 
     override func bodyText() -> String {
@@ -270,7 +292,11 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
             let message = GenericMessage(from: event),
-            let contentType = LocalNotificationContentType(message: message, conversation: conversation, in: managedObjectContext)
+            let contentType = LocalNotificationContentType(
+                message: message,
+                conversation: conversation,
+                in: managedObjectContext
+            )
         else {
             return nil
         }
@@ -281,15 +307,16 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
-        return shouldHideNotificationContent
+        shouldHideNotificationContent
             ? .message(.hidden)
             : .message(contentType)
     }
@@ -297,26 +324,36 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     private var shouldHideNotificationContent: Bool {
         switch contentType {
         case .ephemeral:
-            return false
+            false
         default:
-            return ZMLocalNotification.shouldHideNotificationContent(moc: moc)
+            ZMLocalNotification.shouldHideNotificationContent(moc: moc)
         }
     }
 
     override func shouldCreateNotification() -> Bool {
-        if let conversation,
-            let senderUUID = event.senderUUID,
-            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
-            return false
-        }
-        if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
+        let selfUser = ZMUser.selfUser(in: moc)
+        guard selfUser.remoteIdentifier != event.senderUUID else {
+            // message comes from selfUser, discard
             return false
         }
 
+        if let conversation,
+           let senderUUID = event.senderUUID,
+           conversation.isMessageSilenced(message, senderID: senderUUID) {
+            WireLogger.push
+                .info(
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
+                )
+            return false
+        } else if conversation == nil {
+            // WPB-8946: fixes bug: notifications shown even though availability is busy or away
+            let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
+            return [.none, .available].contains(availability)
+        }
+
         if let timeStamp = event.timestamp,
-            let lastRead = conversation?.lastReadServerTimeStamp,
-            lastRead.compare(timeStamp) != .orderedAscending {
+           let lastRead = conversation?.lastReadServerTimeStamp,
+           lastRead.compare(timeStamp) != .orderedAscending {
             return false
         }
         return true
@@ -329,7 +366,11 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     let contentType: LocalNotificationContentType
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
-        guard let contentType = LocalNotificationContentType(event: event, conversation: conversation, in: managedObjectContext) else {
+        guard let contentType = LocalNotificationContentType(
+            event: event,
+            conversation: conversation,
+            in: managedObjectContext
+        ) else {
             return nil
         }
 
@@ -338,15 +379,16 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.message(contentType)
+        LocalNotificationType.message(contentType)
     }
 
     override func shouldCreateNotification() -> Bool {
@@ -359,6 +401,6 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
         default:
             break
         }
-         return super.shouldCreateNotification()
+        return super.shouldCreateNotification()
     }
 }

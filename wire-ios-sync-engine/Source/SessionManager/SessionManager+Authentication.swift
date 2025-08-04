@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@ public extension SessionManager {
 
     static var previousSystemBootTime: Date? {
         get {
-            guard let string = ZMKeychain.data(forAccount: previousSystemBootTimeContainer).map({ String(decoding: $0, as: UTF8.self) }),
+            guard let string = ZMKeychain.data(forAccount: previousSystemBootTimeContainer).map({ String(
+                decoding: $0,
+                as: UTF8.self
+            ) }),
                 let timeInterval = TimeInterval(string) else {
-                    return nil
+                return nil
             }
             return Date(timeIntervalSince1970: timeInterval)
         }

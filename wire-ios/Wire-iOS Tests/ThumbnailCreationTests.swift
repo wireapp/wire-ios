@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ final class ThumbnailCreationTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        squareImage = self.image(inTestBundleNamed: "unsplash_square.jpg")
-        verticalPanoramaImage = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
-        horizontalPanoramaImage = self.image(inTestBundleNamed: "unsplash_pano.jpg")
+        squareImage = image(inTestBundleNamed: "unsplash_square.jpg")
+        verticalPanoramaImage = image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
+        horizontalPanoramaImage = image(inTestBundleNamed: "unsplash_pano.jpg")
 
         guard let squareData = squareImage?.imageData,
               let verticalData = verticalPanoramaImage?.imageData,
@@ -132,7 +132,7 @@ final class ThumbnailCreationTests: XCTestCase {
 
 // MARK: - Helper
 
-fileprivate extension UIImage {
+private extension UIImage {
 
     func wrappedInImageView() -> UIImageView {
         let view = UIImageView()

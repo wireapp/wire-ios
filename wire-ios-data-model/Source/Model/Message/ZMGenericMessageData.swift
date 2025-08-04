@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,18 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCryptobox
+import WireLogging
 
 @objc(ZMGenericMessageData)
-@objcMembers public class ZMGenericMessageData: ZMManagedObject {
+@objcMembers
+public class ZMGenericMessageData: ZMManagedObject {
 
     // MARK: - Static
 
-    override open class func entityName() -> String {
-        return "GenericMessageData"
+    open override class func entityName() -> String {
+        "GenericMessageData"
     }
 
     public static let dataKey = "data"
@@ -67,11 +70,11 @@ import WireCryptobox
     /// Whether the Protobuf data is encrypted in the database.
 
     public var isEncrypted: Bool {
-        return nonce != nil
+        nonce != nil
     }
 
     public override var modifiedKeys: Set<AnyHashable>? {
-        get { return Set() }
+        get { Set() }
         set { /* do nothing */ }
     }
 
@@ -145,13 +148,13 @@ extension ZMGenericMessageData {
         var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:
-                return "A managed object context is required to process the message data."
+                "A managed object context is required to process the message data."
             case .failedToSerializeMessage:
-                return "The message data couldn't not be serialized."
-            case .failedToEncrypt(reason: let encryptionError):
-                return "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
-            case .failedToDecrypt(reason: let encryptionError):
-                return "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
+                "The message data couldn't not be serialized."
+            case let .failedToEncrypt(reason: encryptionError):
+                "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
+            case let .failedToDecrypt(reason: encryptionError):
+                "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
             }
         }
     }
@@ -171,7 +174,7 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
             key: key
         )
 
-        self.data = ciphertext
+        data = ciphertext
         self.nonce = nonce
     }
 
@@ -189,7 +192,7 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
             key: key
         )
 
-        self.data = plaintext
+        data = plaintext
         self.nonce = nil
     }
 

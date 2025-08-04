@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -199,13 +199,14 @@
     
     // expect
     XCTestExpectation *expectation = [self customExpectationWithDescription:@"Notified"];
-    id token = [NotificationInContext addObserverWithName:ZMConnection.invalidateTopConversationCacheNotificationName
-                                       context:self.uiMOC.notificationContext
-                                        object:nil
-                                         queue:nil using:^(NotificationInContext * note __unused) {
-                                             [expectation fulfill];
-                                         }];
-    
+    id token = [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
+                                                                   name:ZMConnection.invalidateTopConversationCacheNotificationName
+                                                                context:self.uiMOC.notificationContext
+                                                                 object:nil
+                                                                  queue:nil using:^(NotificationInContext * note __unused) {
+        [expectation fulfill];
+    }];
+
     // when
     ZMConnection *connection = (id) [self.uiMOC objectWithID:moid];
     connection.status = ZMConnectionStatusAccepted;

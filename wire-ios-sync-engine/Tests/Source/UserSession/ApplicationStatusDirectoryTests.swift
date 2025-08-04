@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 requestCancellation: self,
                 application: mockApplication,
                 lastEventIDRepository: lastEventIDRepository,
-                coreCryptoProvider: MockCoreCryptoProviderProtocol()
+                coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                isSyncV2Enabled: false
             )
         }
     }
@@ -51,7 +52,11 @@ class ApplicationStatusDirectoryTests: MessagingTest {
 
     func testThatOperationStatusIsUpdatedWhenCallStarts() {
         // given
-        let note = NotificationInContext(name: CallStateObserver.CallInProgressNotification, context: uiMOC.notificationContext, userInfo: [CallStateObserver.CallInProgressKey: true ])
+        let note = NotificationInContext(
+            name: CallStateObserver.CallInProgressNotification,
+            context: uiMOC.notificationContext,
+            userInfo: [CallStateObserver.CallInProgressKey: true]
+        )
 
         // when
         note.post()
@@ -64,7 +69,11 @@ class ApplicationStatusDirectoryTests: MessagingTest {
     func testThatOperationStatusIsUpdatedWhenCallEnds() {
         // given
         sut.operationStatus.hasOngoingCall = true
-        let note = NotificationInContext(name: CallStateObserver.CallInProgressNotification, context: uiMOC.notificationContext, userInfo: [CallStateObserver.CallInProgressKey: false ])
+        let note = NotificationInContext(
+            name: CallStateObserver.CallInProgressNotification,
+            context: uiMOC.notificationContext,
+            userInfo: [CallStateObserver.CallInProgressKey: false]
+        )
 
         // when
         note.post()

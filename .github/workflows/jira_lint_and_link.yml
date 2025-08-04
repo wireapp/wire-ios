@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   add-jira-description:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.event.action == 'opened' || github.event.changes.title != null
     steps:
       - uses: cakeinpanic/jira-description-action@v0.8.0
@@ -20,4 +20,4 @@ jobs:
           jira-token: ${{ secrets.JIRA_TOKEN }}
           jira-base-url: https://wearezeta.atlassian.net
           skip-branches: '^(production-release|main|master|release\/v\d+)$' #optional
-          fail-when-jira-issue-not-found: false
+          fail-when-jira-issue-not-found: true

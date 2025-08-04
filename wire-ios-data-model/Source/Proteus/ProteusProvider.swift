@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
-public typealias KeyStorePerformBlock<T> = ((UserClientKeysStore) throws -> T)
-public typealias ProteusServicePerformBlock<T> = ((ProteusServiceInterface) throws -> T)
+public typealias KeyStorePerformBlock<T> = (UserClientKeysStore) throws -> T
+public typealias ProteusServicePerformBlock<T> = (ProteusServiceInterface) throws -> T
 
-public typealias KeyStorePerformAsyncBlock<T> = ((UserClientKeysStore) async throws -> T)
-public typealias ProteusServicePerformAsyncBlock<T> = ((ProteusServiceInterface) async throws -> T)
+public typealias KeyStorePerformAsyncBlock<T> = (UserClientKeysStore) async throws -> T
+public typealias ProteusServicePerformAsyncBlock<T> = (ProteusServiceInterface) async throws -> T
 
 public protocol ProteusProviding {
 
@@ -50,9 +51,11 @@ public class ProteusProvider: ProteusProviding {
         context: NSManagedObjectContext,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
-        self.init(proteusService: context.proteusService,
-                  keyStore: context.zm_cryptKeyStore,
-                  proteusViaCoreCrypto: proteusViaCoreCrypto)
+        self.init(
+            proteusService: context.proteusService,
+            keyStore: context.zm_cryptKeyStore,
+            proteusViaCoreCrypto: proteusViaCoreCrypto
+        )
     }
 
     public init(
@@ -72,7 +75,7 @@ public class ProteusProvider: ProteusProviding {
 
         if let proteusService, proteusViaCoreCrypto {
 
-          return try proteusServiceBlock(proteusService)
+            return try proteusServiceBlock(proteusService)
 
         } else if let keyStore, !proteusViaCoreCrypto {
 

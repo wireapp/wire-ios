@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,12 +45,18 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(
+        accountDirectory: URL,
+        coreCrypto: SafeCoreCryptoProtocol
+    )] = []
     public var performMigrationAccountDirectorySyncContext_MockError: Error?
     public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
     public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
-        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
+        performMigrationAccountDirectorySyncContext_Invocations.append((
+            accountDirectory: accountDirectory,
+            coreCrypto: coreCrypto
+        ))
 
         if let error = performMigrationAccountDirectorySyncContext_MockError {
             throw error

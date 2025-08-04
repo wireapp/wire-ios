@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,21 +28,18 @@ extension UIViewController {
     /// - Parameters:
     ///   - participant: user to remove
     ///   - conversation: the current converation contains that user
-    ///   - viewControllerDismiser: a ViewControllerDismisser to call when this UIViewController is dismissed
     func presentRemoveDialogue(
         for participant: UserType,
         from conversation: ZMConversation,
-        sender: UIView,
-        dismisser: ViewControllerDismisser? = nil
+        sender: UIView
     ) {
-
         let alertController = UIAlertController.remove(participant) { [weak self] remove in
             guard let self, remove else { return }
 
             conversation.removeOrShowError(participant: participant) { result in
                 switch result {
                 case .success:
-                    dismisser?.dismiss(viewController: self, completion: nil)
+                    self.navigationController?.popViewController(animated: true)
                 case .failure:
                     break
                 }

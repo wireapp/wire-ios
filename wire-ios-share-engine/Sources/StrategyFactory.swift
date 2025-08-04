@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,26 +31,29 @@ final class StrategyFactory {
 
     private var tornDown = false
 
-    init(syncContext: NSManagedObjectContext,
-         applicationStatus: ApplicationStatus,
-         linkPreviewPreprocessor: LinkPreviewPreprocessor,
-         transportSession: TransportSessionType
+    init(
+        syncContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        linkPreviewPreprocessor: LinkPreviewPreprocessor,
+        transportSession: TransportSessionType,
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
-        let quickSyncObserver = QuickSyncObserver(context: syncContext, applicationStatus: applicationStatus, notificationContext: syncContext.notificationContext)
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
         self.messageSender = MessageSender(
             apiProvider: apiProvider,
-            clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate,
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
-            quickSyncObserver: quickSyncObserver,
-            context: syncContext)
+            context: syncContext,
+            incrementalSyncObserver: NoOpIncrementalSyncObserver(),
+            initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
+            featureRepository: FeatureRepository(context: syncContext)
+        )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -68,7 +71,7 @@ final class StrategyFactory {
     }
 
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
-        return [
+        [
             // Clients
             createFetchingClientsStrategy(),
             createVerifyLegalHoldStrategy(),
@@ -87,27 +90,27 @@ final class StrategyFactory {
     }
 
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
-        return VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
-        return ClientMessageRequestStrategy(
+        ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            applicationStatus: applicationStatus,
             messageSender: messageSender
         )
     }
 
     // MARK: – Link Previews
 
-    private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
+    private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor)
+        -> LinkPreviewAssetUploadRequestStrategy {
 
-        return LinkPreviewAssetUploadRequestStrategy(
+        LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
@@ -116,13 +119,19 @@ final class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        return LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        LinkPreviewUpdateRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender
+        )
     }
 
     // MARK: - Asset V3
 
     private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
-        let strategy = AssetV3UploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        let strategy = AssetV3UploadRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus
+        )
 
         // WORKAROUND:
         // There are some issues with uploading file using a background session from the share extension.
@@ -142,6 +151,17 @@ final class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        return AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        AssetClientMessageRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender
+        )
     }
+}
+
+private struct NoOpIncrementalSyncObserver: IncrementalSyncObserverProtocol {
+
+    func waitUntilCanSendMessage() async {
+        // There is no quick sync in the share extension, so no op
+    }
+
 }

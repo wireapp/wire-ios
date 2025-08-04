@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,19 @@
 
 import Foundation
 import WireDataModelSupport
-@testable import WireSyncEngine
-@testable import WireSyncEngineSupport
-import WireTransport
+import WireDomain
+import WireLoggingSupport
+import WireNetwork
 import XCTest
 
-class APIMigrationMock: APIMigration {
+@testable import WireLogging
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+@testable import WireTransport
+
+private typealias APIVersion = WireTransport.APIVersion
+
+private class APIMigrationMock: APIMigration {
     var version: APIVersion
 
     init(version: APIVersion) {
@@ -236,6 +243,14 @@ final class APIMigrationManagerTests: MessagingTest {
     @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
@@ -244,24 +259,62 @@ final class APIMigrationManagerTests: MessagingTest {
             useCache: true
         )
 
+        let baseURL = URL(string: "http://bar.example.com")!
+
+        let backendEnvironment = WireTransport.BackendEnvironment(
+            title: "Mock backend environment",
+            trustData: [],
+            environmentType: .default,
+            endpoints: BackendEndpoints(
+                backendURL: baseURL,
+                backendWSURL: baseURL,
+                blackListURL: baseURL,
+                teamsURL: baseURL,
+                accountsURL: baseURL,
+                websiteURL: baseURL,
+                countlyURL: nil
+            ),
+            proxySettings: nil,
+            certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
+        )
+
+        let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
+            url: backendEnvironment.backendURL,
+            webSocketURL: backendEnvironment.backendWSURL,
+            pinnedKeys: [],
+            proxySettings: nil
+        )
+
         let mockTransportSession = RecordingMockTransportSession(
             cookieStorage: cookieStorage,
             pushChannel: MockPushChannel()
         )
 
         let mockContextStorable = MockLAContextStorable()
-        mockContextStorable.clear_MockMethod = { }
+        mockContextStorable.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
         let mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
 
+        let userID = UUID()
+        let journal = Journal(
+            userID: userID,
+            storage: UserDefaults.temporary()
+        )
+        let logFilesProvider = LogFilesProvidingMock()
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            appVersion: "999",
+            apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: createCoreDataStack(),
+            coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStorable,
             earService: nil,
@@ -272,7 +325,10 @@ final class APIMigrationManagerTests: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
-            userId: .create()
+            userId: userID,
+            minTLSVersion: nil,
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = builder.build()

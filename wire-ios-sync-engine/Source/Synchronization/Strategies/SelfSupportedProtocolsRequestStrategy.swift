@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomain
+import WireLogging
 import WireRequestStrategy
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
@@ -40,7 +41,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // MARK: - Initializers
 
-    required public init(
+    public required init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
@@ -60,8 +61,6 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         guard isSlowSyncing else {
             return nil
         }
-
-        WireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
 
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)

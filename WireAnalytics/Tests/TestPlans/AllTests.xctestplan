@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "BE2F1BC8-EAC1-496B-9F9E-FD0251975803",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "${CI}"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireAnalytics",
+      "identifier" : "WireAnalyticsTests",
+      "name" : "WireAnalyticsTests"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireAnalytics",
+        "identifier" : "WireAnalyticsTests",
+        "name" : "WireAnalyticsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

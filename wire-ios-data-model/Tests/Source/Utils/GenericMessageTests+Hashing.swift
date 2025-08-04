@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
@@ -27,7 +28,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText1() {
         // given
         let textMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -39,7 +40,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText2() {
         // given
         let textMessage = GenericMessage(content: Text(content: "https://www.youtube.com/watch?v=DLzxrzFCyOs"))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -51,7 +52,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText3() {
         // given
         let textMessage = GenericMessage(content: Text(content: "بغداد"))
-        let timestamp = Date(timeIntervalSince1970: 1540213965)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_965)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -64,12 +65,12 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForLocation1() {
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 52.5166667
             $0.longitude = 13.4
         }
         let locationMessage = GenericMessage(content: location)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = locationMessage.hashOfContent(with: timestamp)
@@ -80,12 +81,12 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForLocation2() {
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 51.509143
             $0.longitude = -0.117277
         }
         let locationMessage = GenericMessage(content: location)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = locationMessage.hashOfContent(with: timestamp)
@@ -98,13 +99,13 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForAsset1() {
         // given
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             $0.uploaded.otrKey = Data()
             $0.uploaded.sha256 = Data()
         }
         var assetMessage = GenericMessage(content: asset)
         assetMessage.updateUploaded(assetId: "3-2-1-38d4f5b9", token: nil, domain: nil)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = assetMessage.hashOfContent(with: timestamp)
@@ -115,13 +116,13 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForAsset2() {
         // given
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             $0.uploaded.otrKey = Data()
             $0.uploaded.sha256 = Data()
         }
         var assetMessage = GenericMessage(content: asset)
         assetMessage.updateUploaded(assetId: "3-3-3-82a62735", token: nil, domain: nil)
-        let timestamp = Date(timeIntervalSince1970: 1540213965)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_965)
 
         // when
         let hash = assetMessage.hashOfContent(with: timestamp)
@@ -135,7 +136,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForEphemeral() {
         // given
         let ephemeralTextMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: .tenSeconds)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = ephemeralTextMessage.hashOfContent(with: timestamp)
@@ -149,8 +150,11 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForEdited() {
         // given
 
-        let editedTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID(), text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let editedTextMessage = GenericMessage(content: MessageEdit(
+            replacingMessageID: UUID(),
+            text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")
+        ))
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = editedTextMessage.hashOfContent(with: timestamp)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ final class IncomingConnectionView: UIView {
         warningView.translatesAutoresizingMaskIntoConstraints = false
         verticalStackView.spacing = 30.0
         verticalStackView.alignment = .center
-        [usernameLabel, userDetailView, securityLevelView, verticalStackView, incomingConnectionFooter].forEach(addSubview)
+        [usernameLabel, userDetailView, securityLevelView, verticalStackView, incomingConnectionFooter]
+            .forEach(addSubview)
         [userImageView, federatedIndicator, warningView].forEach { verticalStackView.addArrangedSubview($0) }
         setupLabelText()
     }
@@ -119,9 +120,11 @@ final class IncomingConnectionView: UIView {
         usernameLabel.attributedText = viewModel.title
         usernameLabel.accessibilityIdentifier = "name"
         userDetailView.configure(with: viewModel)
-        securityLevelView.configure(with: [user],
-                                    conversationDomain: nil,
-                                    provider: classificationProvider)
+        securityLevelView.configure(
+            with: [user],
+            conversationDomain: nil,
+            provider: classificationProvider
+        )
     }
 
     private func createConstraints() {

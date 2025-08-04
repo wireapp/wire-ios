@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ extension SessionManager: APIVersionResolverDelegate {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
-            applicationVersion: appVersion,
-            readyForRequests: self.isUnauthenticatedTransportSessionReady
+            applicationVersion: currentBuildNumber,
+            readyForRequests: isUnauthenticatedTransportSessionReady
         )
 
         let apiVersionResolver = APIVersionResolver(
@@ -90,8 +90,8 @@ extension SessionManager: APIVersionResolverDelegate {
         dispatchQueue.async { [weak self] in
             guard let self else { return }
 
-            self.activeUserSession = nil
-            self.accountManager.accounts.forEach { account in
+            activeUserSession = nil
+            accountManager.accounts.forEach { account in
 
                 // 1. Tear down the user sessions
                 DispatchQueue.main.async {
@@ -120,7 +120,7 @@ extension SessionManager: APIVersionResolverDelegate {
             dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
-            self.accountManager.accounts.forEach { account in
+            accountManager.accounts.forEach { account in
                 dispatchGroup.enter()
 
                 if account == self.accountManager.selectedAccount {
@@ -136,7 +136,7 @@ extension SessionManager: APIVersionResolverDelegate {
             }
 
             dispatchGroup.wait(forInterval: 1)
-            self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
+            delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
 

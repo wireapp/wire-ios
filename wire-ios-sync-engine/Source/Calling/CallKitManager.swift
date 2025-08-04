@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import avs
 import CallKit
 import Foundation
 import Intents
+import WireLogging
 import WireRequestStrategy
 
 protocol CallKitManagerDelegate: AnyObject {
@@ -68,8 +69,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 
     private let application: ZMApplication
-    private let requirePushTokenType: PushToken.TokenType
-
+    private let delegateQueue = DispatchQueue(label: "CallkitProviderDelegateQueue")
     private let provider: CXProvider
     private let callController: CXCallController
     private weak var mediaManager: MediaManagerType?
@@ -88,12 +88,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     public convenience init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         mediaManager: MediaManagerType
     ) {
         self.init(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             mediaManager: mediaManager,
             delegate: nil
         )
@@ -101,13 +99,11 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     convenience init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         mediaManager: MediaManagerType,
         delegate: CallKitManagerDelegate?
     ) {
         self.init(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             provider: CXProvider(configuration: CallKitManager.providerConfiguration),
             callController: CXCallController(queue: DispatchQueue.main),
             mediaManager: mediaManager,
@@ -118,7 +114,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     init(
         isEnabled: Bool = false,
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         provider: CXProvider,
         callController: CXCallController,
         mediaManager: MediaManagerType?,
@@ -126,7 +121,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     ) {
         self.isEnabled = isEnabled
         self.application = application
-        self.requirePushTokenType = requiredPushTokenType
         self.provider = provider
         self.callController = callController
         self.mediaManager = mediaManager
@@ -134,10 +128,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         super.init()
 
-        provider.setDelegate(self, queue: nil)
+        provider.setDelegate(self, queue: delegateQueue)
 
-        callStateObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
-        missedCallObserverToken = WireCallCenterV3.addGlobalMissedCallObserver(observer: self)
+        self.callStateObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
+        self.missedCallObserverToken = WireCallCenterV3.addGlobalMissedCallObserver(observer: self)
     }
 
     deinit {
@@ -180,7 +174,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     private func log(
         _ message: String,
-        file: String = #file,
+        file: String = #fileID,
         line: Int = #line
     ) {
         let messageWithLineNumber = String(
@@ -196,7 +190,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     // MARK: - Actions
 
     private func actionsToEndAllOngoingCalls(excepting handle: CallHandle) -> [CXAction] {
-        return callRegister.allCalls
+        callRegister.allCalls
             .lazy
             .filter { $0.handle != handle }
             .map { CXEndCallAction(call: $0.id) }
@@ -206,7 +200,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     func findConversationAssociated(
         with contacts: [INPerson],
-        completion: @escaping (ZMConversation) -> Void) {
+        completion: @escaping (ZMConversation) -> Void
+    ) {
         guard
             contacts.count == 1,
             let contact = contacts.first,
@@ -217,7 +212,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         delegate?.lookupConversation(by: callHandle) { result in
-            guard case .success(let conversation) = result else { return }
+            guard case let .success(conversation) = result else { return }
             completion(conversation)
         }
     }
@@ -233,8 +228,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
         if let startCallIntent = intent as? INStartCallIntent {
-          contacts = startCallIntent.contacts
-          video = startCallIntent.callCapability == .videoCall
+            contacts = startCallIntent.contacts
+            video = startCallIntent.callCapability == .videoCall
         }
 
         if let contacts {
@@ -279,7 +274,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         in conversation: ZMConversation,
         video: Bool
     ) {
-        self.logger.info("request join call")
+        logger.info("request join call")
 
         if existsIncomingCall(in: conversation) {
             requestAnswerCall(in: conversation, video: video)
@@ -303,14 +298,14 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         in conversation: ZMConversation,
         video: Bool
     ) {
-        self.logger.info("request start call")
+        logger.info("request start call")
 
         guard
             let context = conversation.managedObjectContext,
             let handle = conversation.callHandle
         else {
-            self.logger.warn("fail: request start call: context or handle missing")
-            self.log("Ignore request to start call since remoteIdentifier or handle is nil")
+            logger.warn("fail: request start call: context or handle missing")
+            log("Ignore request to start call since remoteIdentifier or handle is nil")
             return
         }
 
@@ -339,10 +334,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 
     func requestAnswerCall(in conversation: ZMConversation, video: Bool) {
-        self.logger.info("request answer call")
+        logger.info("request answer call")
 
         guard let call = callRegister.lookupCall(by: conversation) else {
-            self.logger.warn("fail: request answer call: call doesn't exist")
+            logger.warn("fail: request answer call: call doesn't exist")
             return
         }
 
@@ -364,10 +359,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         in conversation: ZMConversation,
         completion: (() -> Void)? = nil
     ) {
-        self.logger.info("request end call")
+        logger.info("request end call")
 
         guard let call = callRegister.lookupCall(by: conversation) else {
-            self.logger.warn("fail: request end call: call doesn't exist")
+            logger.warn("fail: request end call: call doesn't exist")
             return
         }
 
@@ -394,10 +389,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         callerName: String,
         hasVideo: Bool
     ) {
-        self.logger.info("report incoming call preemptively")
+        logger.info("report incoming call preemptively")
 
         guard !callRegister.callExists(for: handle) else {
-            self.logger.critical("fail: report incoming call preemptively: call doesn't exist")
+            logger.critical("fail: report incoming call preemptively: call doesn't exist")
             return
         }
 
@@ -412,6 +407,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         update.supportsGrouping = false
         update.supportsUngrouping = false
 
+        // Don't use the async version, it's broken
+        // It doesn't get executed when waking up the app from the background and ends up crashing
+        // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
         provider.reportNewIncomingCall(
             with: call.id,
             update: update
@@ -428,7 +426,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         handle: CallHandle,
         reason: CXCallEndedReason
     ) {
-        self.logger.info("report call ended preemptively")
+        logger.info("report call ended preemptively")
 
         guard let call = callRegister.lookupCall(by: handle) else {
             logger.critical("fail: report call ended preemptively: call doesn't exist")
@@ -456,22 +454,24 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         in conversation: ZMConversation,
         hasVideo: Bool
     ) {
-        self.logger.info("report incoming call")
+        logger.info("report incoming call")
 
         guard isEnabled else {
-            self.logger.warn("fail: report incoming call: CallKit not enabled")
+            logger.warn("fail: report incoming call: CallKit not enabled")
             return
         }
 
         guard let handle = conversation.callHandle else {
-            self.logger.warn("fail: report incoming call: handle doesn't exist")
+            logger.warn("fail: report incoming call: handle doesn't exist")
             log("Cannot report incoming call: conversation is missing handle")
             return
         }
 
         guard !callRegister.callExists(for: handle)  else {
-            self.logger.warn("fail: report incoming call: call already exists")
-            log("Cannot report incoming call: call already exists, probably b/c it was reported earlier for a push notification")
+            logger.warn("fail: report incoming call: call already exists")
+            log(
+                "Cannot report incoming call: call already exists, probably b/c it was reported earlier for a push notification"
+            )
             return
         }
 
@@ -579,7 +579,7 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 call.observer.startObservingChanges(in: conversation)
 
                 call.observer.onAnswered = {
@@ -590,13 +590,13 @@ extension CallKitManager: CXProviderDelegate {
                     provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
                 }
 
-                self.mediaManager?.setupAudioDevice()
+                mediaManager?.setupAudioDevice()
 
                 if conversation.voiceChannel?.join(video: action.isVideo) == true {
-                    self.logger.info("success: perform start call action")
+                    logger.info("success: perform start call action")
                     action.fulfill()
                 } else {
-                    self.logger.error("fail: perform start call action: couldn't join call")
+                    logger.error("fail: perform start call action: couldn't join call")
                     action.fail()
                 }
 
@@ -605,9 +605,9 @@ extension CallKitManager: CXProviderDelegate {
                 update.localizedCallerName = conversation.localizedCallerNameForOutgoingCall()
                 provider.reportCall(with: action.callUUID, updated: update)
 
-            case .failure(let error):
-                self.logger.error("fail: perform start call action: can't fetch conversation: \(error)")
-                self.log("fail CXStartCallAction because can't fetch conversation: \(error)")
+            case let .failure(error):
+                logger.error("fail: perform start call action: can't fetch conversation: \(error)")
+                log("fail CXStartCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
         }
@@ -638,7 +638,7 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 call.observer.startObservingChanges(in: conversation)
 
                 call.observer.onEstablished = { [weak self] in
@@ -666,17 +666,17 @@ extension CallKitManager: CXProviderDelegate {
                     )
                 }
 
-                self.logger.info("joining the call...")
-                self.mediaManager?.setupAudioDevice()
+                logger.info("joining the call...")
+                mediaManager?.setupAudioDevice()
 
                 if conversation.voiceChannel?.join(video: false) != true {
-                    self.logger.error("fail: perform answer call action: couldn't join call")
+                    logger.error("fail: perform answer call action: couldn't join call")
                     action.fail()
                 }
 
-            case .failure(let error):
-                self.logger.error("fail: perform answer call action: couldn't fetch conversation: \(error)")
-                self.log("fail CXAnswerCallAction because can't fetch conversation: \(error)")
+            case let .failure(error):
+                logger.error("fail: perform answer call action: couldn't fetch conversation: \(error)")
+                log("fail CXAnswerCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
         }
@@ -708,17 +708,17 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.leave()
                 action.fulfill()
-                self.callRegister.unregisterCall(call)
-                self.logger.info("success: perform end call action")
+                callRegister.unregisterCall(call)
+                logger.info("success: perform end call action")
 
-            case .failure(let error):
-                self.logger.error("fail: perform end call action: couldn't fetch conversation: \(error)")
-                self.log("fail CXEndCallAction because can't fetch conversation: \(error)")
+            case let .failure(error):
+                logger.error("fail: perform end call action: couldn't fetch conversation: \(error)")
+                log("fail CXEndCallAction because can't fetch conversation: \(error)")
                 action.fail()
-                self.callRegister.unregisterCall(call)
+                callRegister.unregisterCall(call)
             }
         }
     }
@@ -745,12 +745,12 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.muted = action.isOnHold
                 action.fulfill()
 
-            case .failure(let error):
-                self.log("fail CXSetHeldCallAction because can't fetch conversation: \(error)")
+            case let .failure(error):
+                log("fail CXSetHeldCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
         }
@@ -778,12 +778,12 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.muted = action.isMuted
                 action.fulfill()
 
-            case .failure(let error):
-                self.log("fail CXSetMutedCallAction because can't fetch conversation: \(error)")
+            case let .failure(error):
+                log("fail CXSetMutedCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
         }
@@ -846,7 +846,7 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
                 )
             }
 
-        case .terminating(let reason):
+        case let .terminating(reason):
             logger.info("will report call ended, reason: \(reason)")
             reportCallEnded(
                 in: conversation,
@@ -888,11 +888,11 @@ private extension Date {
 
     func clamp(between fromDate: Date, and toDate: Date) -> Date {
         if timeIntervalSinceReferenceDate < fromDate.timeIntervalSinceReferenceDate {
-            return fromDate
+            fromDate
         } else if timeIntervalSinceReferenceDate > toDate.timeIntervalSinceReferenceDate {
-            return toDate
+            toDate
         } else {
-            return self
+            self
         }
     }
 }
@@ -915,7 +915,7 @@ extension ZMConversation {
     }
 
     func localizedCallerNameForOutgoingCall() -> String? {
-        guard let managedObjectContext = self.managedObjectContext  else { return nil }
+        guard let managedObjectContext  else { return nil }
 
         return localizedCallerName(with: ZMUser.selfUser(in: managedObjectContext))
     }
@@ -925,7 +925,7 @@ extension ZMConversation {
 extension CXCallAction {
 
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
-        return ZMConversation.fetch(with: callUUID, in: context)
+        ZMConversation.fetch(with: callUUID, in: context)
     }
 
 }
@@ -935,15 +935,15 @@ extension CallClosedReason {
     var CXCallEndedReason: CXCallEndedReason {
         switch self {
         case .timeout, .timeoutECONN:
-            return .unanswered
+            .unanswered
         case .normal, .canceled:
-            return .remoteEnded
+            .remoteEnded
         case .answeredElsewhere:
-            return .answeredElsewhere
+            .answeredElsewhere
         case .rejectedElsewhere:
-            return .declinedElsewhere
+            .declinedElsewhere
         default:
-            return .failed
+            .failed
         }
     }
 
@@ -961,7 +961,7 @@ extension CallKitCallRegister {
 private extension CXCallController {
 
     func existingCall(for callKitCall: CallKitCall) -> CXCall? {
-        return callObserver.calls.first { $0.uuid == callKitCall.id }
+        callObserver.calls.first { $0.uuid == callKitCall.id }
     }
 
 }

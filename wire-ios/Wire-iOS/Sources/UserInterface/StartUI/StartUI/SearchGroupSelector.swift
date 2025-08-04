@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@ final class SearchGroupSelector: UIView {
     // MARK: - Init
 
     init() {
-        groups = SearchGroup.all
+        self.groups = SearchGroup.all
 
-        let groupItems: [String] = groups.map { $0.name }
+        let groupItems: [String] = groups.map(\.name)
 
-        segmentedControl = UISegmentedControl(items: groupItems)
+        self.segmentedControl = UISegmentedControl(items: groupItems)
         super.init(frame: .zero)
 
         configureViews()

@@ -1,0 +1,44 @@
+[
+  {
+    "capabilities": {
+      "capabilities": [
+        "legalhold-implicit-consent"
+      ]
+    },
+    "class": "phone",
+    "cookie": "string",
+    "id": "string",
+    "label": "string",
+    "location": {
+      "lat": 0,
+      "lon": 0
+    },
+    "mls_public_keys": {
+      "ed25519": "ZXhhbXBsZQo="
+    },
+    "model": "string",
+    "time": "2021-05-12T10:52:02.671Z",
+    "type": "temporary"
+  },
+  {
+    "capabilities": {
+      "capabilities": [
+        "legalhold-implicit-consent"
+      ]
+    },
+    "class": "phone",
+    "cookie": "string",
+    "id": "string",
+    "label": "string",
+    "location": {
+      "lat": 0,
+      "lon": 0
+    },
+    "mls_public_keys": {
+      "ed25519": "ZXhhbXBsZQo="
+    },
+    "model": "string",
+    "time": "2021-05-12T10:52:02.671Z",
+    "type": "temporary"
+  }
+]

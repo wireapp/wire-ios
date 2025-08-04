@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
                 allowServices: conversation.allowServices
             ) { result in
                 switch result {
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(.failedToEnableGuestAccess(error)))
                 case .success:
                     createGuestLink(conversation: conversation, password: password, completion)
@@ -71,7 +71,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         _ completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
-        guard conversation.canManageAccess else {
+        guard conversation.canManageGuestsAccess else {
             completion(.failure(CreateConversationGuestLinkUseCaseError.invalidOperation))
             return
         }
@@ -88,9 +88,9 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
 
         action.perform(in: context.notificationContext) { result in
             switch result {
-            case .success(let link):
+            case let .success(link):
                 completion(.success(link))
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(.networkError(error)))
             }
         }

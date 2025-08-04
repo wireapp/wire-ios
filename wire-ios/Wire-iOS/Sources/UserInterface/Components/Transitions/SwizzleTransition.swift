@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.5
+        0.5
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -71,7 +71,8 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
         let originalFromViewAlpha = fromView?.alpha
         UIView.animate(easing: .easeInQuad, duration: durationPhase1, animations: {
             fromView?.alpha = 0
-            fromView?.transform = self.direction == .horizontal ? CGAffineTransform(translationX: 48, y: 0) : verticalTransform
+            fromView?.transform = self
+                .direction == .horizontal ? CGAffineTransform(translationX: 48, y: 0) : verticalTransform
         }, completion: { _ in
             UIView.animate(easing: .easeOutQuad, duration: durationPhase2, animations: {
                 toView?.transform = .identity

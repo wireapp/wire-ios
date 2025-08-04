@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-ruby File.read('.ruby-version').strip
+ruby file: ".ruby-version"
 
+gem 'abbrev'
 gem 'fastlane'
 gem 'git'
 gem 'httparty'

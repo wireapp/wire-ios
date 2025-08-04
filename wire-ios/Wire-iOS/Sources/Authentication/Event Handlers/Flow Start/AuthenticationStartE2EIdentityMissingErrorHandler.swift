@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,16 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to the lack of a e2e identity enrollment on launch
- */
+/// Handles client registration errors related to the lack of a e2e identity enrollment on launch
 
 final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle errors on start
@@ -40,7 +41,7 @@ final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEve
         }
 
         // Verify the state
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

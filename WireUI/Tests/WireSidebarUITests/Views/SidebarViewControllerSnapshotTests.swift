@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ final class SidebarViewControllerSnapshotTests: XCTestCase {
     @available(iOS 17, *) @MainActor
     func testUIFontDarkUserInterfaceStyle() {
         let sut = SidebarViewControllerPreview()
-        sut.view.frame.size = .init(width: 1_024, height: 768)
+        sut.view.frame.size = .init(width: 1024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -48,7 +48,7 @@ final class SidebarViewControllerSnapshotTests: XCTestCase {
     @available(iOS 17, *) @MainActor
     func testUIFontContentSizeCategories() {
         let sut = SidebarViewControllerPreview()
-        sut.view.frame.size = .init(width: 1_024, height: 768)
+        sut.view.frame.size = .init(width: 1024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         for contentSizeCategory in UIContentSizeCategory.allCases {
             sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory

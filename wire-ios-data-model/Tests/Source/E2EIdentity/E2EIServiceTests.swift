@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ final class E2EIServiceTests: ZMConversationTestsBase {
 
     var sut: E2EIService!
     var mockE2eIdentity: MockE2EIEnrollment!
-    var mockCoreCrypto: MockCoreCryptoProtocol!
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -33,8 +33,8 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         super.setUp()
 
         mockE2eIdentity = MockE2EIEnrollment()
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = E2EIService(
@@ -45,7 +45,7 @@ final class E2EIServiceTests: ZMConversationTestsBase {
     }
 
     override func tearDown() {
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockSafeCoreCrypto = nil
         mockCoreCryptoProvider = nil
         mockE2eIdentity = nil
@@ -56,10 +56,12 @@ final class E2EIServiceTests: ZMConversationTestsBase {
 
     func testThatItContainsCorrectAcmeDirectoryInTheResponse() async throws {
         // Expectation
-        let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                                  newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                                  revokeCert: "")
+        let expectedacmeDirectory = AcmeDirectory(
+            newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            revokeCert: ""
+        )
 
         // Given
         var mockDirectoryResponseCount = 0
@@ -193,9 +195,11 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         // Expectation
         let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
         let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
-        let expectedAcmeOrder = NewAcmeAuthz(identifier: "",
-                                             keyauth: "",
-                                             challenge: wireDpopChallenge)
+        let expectedAcmeOrder = NewAcmeAuthz(
+            identifier: "",
+            keyauth: "",
+            challenge: wireDpopChallenge
+        )
 
         // Given
         var mockSetAuthzResponse = 0
@@ -270,9 +274,11 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        let oidcChallenge = try await sut.getNewOidcChallengeRequest(idToken: "idToken",
-                                                                     refreshToken: "refreshToken",
-                                                                     nonce: "nonce")
+        let oidcChallenge = try await sut.getNewOidcChallengeRequest(
+            idToken: "idToken",
+            refreshToken: "refreshToken",
+            nonce: "nonce"
+        )
 
         // Then
         XCTAssertEqual(mockGetsNewOidcChallengeRequest, 1)

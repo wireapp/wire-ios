@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension GenericMessage {
 
@@ -26,11 +27,13 @@ extension GenericMessage {
 
 }
 
-extension ImageAsset {
-    public init(mediumProperties: ZMIImageProperties?,
-                processedProperties: ZMIImageProperties?,
-                encryptionKeys: ZMImageAssetEncryptionKeys?,
-                format: ZMImageFormat) {
+public extension ImageAsset {
+    init(
+        mediumProperties: ZMIImageProperties?,
+        processedProperties: ZMIImageProperties?,
+        encryptionKeys: ZMImageAssetEncryptionKeys?,
+        format: ZMImageFormat
+    ) {
         self = ImageAsset.with {
             $0.width = Int32(processedProperties?.size.width ?? 0)
             $0.height = Int32(processedProperties?.size.height ?? 0)

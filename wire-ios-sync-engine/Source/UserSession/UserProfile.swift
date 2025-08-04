@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 import Foundation
 
 // sourcery: AutoMockable
-@objc public protocol UserProfile {
+@objc
+public protocol UserProfile {
 
     /// Requests email change
     /// The email will need to be verified externally
@@ -49,7 +50,8 @@ import Foundation
 
     /// Add an observer for callbacks about the user profile.
     /// Returns a token which should retained as long as the observer should be active.
-    @objc(addObserver:) func add(observer: UserProfileUpdateObserver) -> Any
+    @objc(addObserver:)
+    func add(observer: UserProfileUpdateObserver) -> Any
 
     /// Last handle to have been suggested
     @objc var lastSuggestedHandle: String? { get }

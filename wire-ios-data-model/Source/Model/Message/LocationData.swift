@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,13 @@ public final class LocationData: NSObject {
     public let name: String?
     public let zoomLevel: Int32
 
-    public static func locationData(withLatitude latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) -> LocationData {
-        return LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
+    public static func locationData(
+        withLatitude latitude: Float,
+        longitude: Float,
+        name: String?,
+        zoomLevel: Int32
+    ) -> LocationData {
+        LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
     }
 
     init(latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) {

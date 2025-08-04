@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,41 +26,37 @@ public struct SearchOptions: OptionSet {
 
     public static let contacts = SearchOptions(rawValue: 1 << 0)
 
-    /// Users found in your address book.
-
-    public static let addressBook = SearchOptions(rawValue: 1 << 1)
-
     /// Users which are a member of the same team as you.
 
-    public static let teamMembers = SearchOptions(rawValue: 1 << 2)
+    public static let teamMembers = SearchOptions(rawValue: 1 << 1)
 
     /// Exclude team members which aren't in an active conversation with you.
 
-    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 3)
+    public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 2)
 
     /// Exclude team members with the role .partner which aren't in an active conversation with you.
 
-    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 4)
+    public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 3)
 
     /// Users from the public directory.
 
-    public static let directory = SearchOptions(rawValue: 1 << 5)
+    public static let directory = SearchOptions(rawValue: 1 << 4)
 
     /// Group conversations you are or were a participant of.
 
-    public static let conversations = SearchOptions(rawValue: 1 << 6)
+    public static let conversations = SearchOptions(rawValue: 1 << 5)
 
     /// Services which are enabled in your team.
 
-    public static let services = SearchOptions(rawValue: 1 << 7)
+    public static let services = SearchOptions(rawValue: 1 << 6)
 
     /// Users from federated servers.
 
-    public static let federated = SearchOptions(rawValue: 1 << 8)
+    public static let federated = SearchOptions(rawValue: 1 << 7)
 
     /// Only search the local database.
 
-    public static let localResultsOnly = SearchOptions(rawValue: 1 << 9)
+    public static let localResultsOnly = SearchOptions(rawValue: 1 << 8)
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
@@ -68,8 +64,8 @@ public struct SearchOptions: OptionSet {
 
 }
 
-extension SearchOptions {
-    public mutating func updateForSelfUserTeamRole(selfUser: UserType) {
+public extension SearchOptions {
+    mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
             remove(.directory)
@@ -88,18 +84,18 @@ public struct SearchRequest {
         var isHandleQuery: Bool {
             switch self {
             case .exactHandle:
-                return true
+                true
             case .fullTextSearch:
-                return false
+                false
             }
         }
 
         var string: String {
             switch self {
-            case .exactHandle(let handle):
-                return handle
-            case .fullTextSearch(let text):
-                return text
+            case let .exactHandle(handle):
+                handle
+            case let .fullTextSearch(text):
+                text
             }
         }
 
@@ -110,10 +106,20 @@ public struct SearchRequest {
     let searchDomain: String?
     let searchOptions: SearchOptions
 
-    public init(query: String, searchOptions: SearchOptions, team: Team? = nil) {
-        let (query, searchDomain) = Self.parseQuery(query)
-        self.query = query
-        self.searchDomain = searchDomain
+    public init(
+        query: String,
+        searchDomain: String? = nil,
+        searchOptions: SearchOptions,
+        team: Team? = nil
+    ) {
+        if let searchDomain {
+            self.query = .fullTextSearch(query)
+            self.searchDomain = searchDomain
+        } else {
+            let (query, parsedDomain) = Self.parseQuery(query)
+            self.query = query
+            self.searchDomain = parsedDomain
+        }
         self.searchOptions = searchOptions
         self.team = team
     }
@@ -155,9 +161,10 @@ private extension SearchRequest {
 
 }
 
-fileprivate extension String {
+private extension String {
 
     func normalizedAndTrimmed() -> String {
+        // swiftformat:disable:next redundantSelf
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }

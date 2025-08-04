@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,18 +65,17 @@ final class PreferredAPIVersionViewModel: ObservableObject {
 
     let sections: [Section]
 
-    @Published
-    var selectedItemID: Item.ID
+    @Published var selectedItemID: Item.ID
 
     // MARK: - Life cycle
 
     init() {
-        sections = [
+        self.sections = [
             Section(header: "", items: [Item(title: "No preference", value: .noPreference)]),
-            Section(header: "Production versions", items: APIVersion.productionVersions.map {
+            Section(header: "Production versions", items: APIVersion.productionVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             }),
-            Section(header: "Development versions", items: APIVersion.developmentVersions.map {
+            Section(header: "Development versions", items: APIVersion.developmentVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             })
         ]
@@ -86,7 +85,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             item.value == Value(apiVersion: BackendInfo.preferredAPIVersion)
         }!
 
-        selectedItemID = selectedItem.id
+        self.selectedItemID = selectedItem.id
     }
 
     // MARK: - Events
@@ -99,7 +98,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             switch item.value {
             case .noPreference:
                 BackendInfo.preferredAPIVersion = nil
-            case .apiVersion(let version):
+            case let .apiVersion(version):
                 BackendInfo.preferredAPIVersion = version
             }
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     func testWipeDatabaseViewController() {
         let createSut: () -> UIViewController = {
-            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            let navigationController = UIViewController()
+                .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
             navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
             return navigationController
         }
@@ -61,7 +62,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,10 @@
 
 import SwiftUI
 
-// swiftlint:disable opening_brace
-
-public final class MainSplitViewController<Sidebar, TabController>: UISplitViewController, MainSplitViewControllerProtocol where
+public final class MainSplitViewController<Sidebar, TabController>: UISplitViewController,
+    MainSplitViewControllerProtocol where
     Sidebar: MainSidebarProtocol,
-    TabController: MainTabBarControllerProtocol
-{
-    // swiftlint:enable opening_brace
+    TabController: MainTabBarControllerProtocol {
 
     private let secondaryColumnMinWidth: CGFloat = 360
 
@@ -124,12 +121,15 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         fatalError("init(coder:) is not supported")
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setPreferredSplitBehaviorAndDisplayMode(basedOn: view.frame.size.width)
     }
 
-    override public func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+    public override func viewWillTransition(
+        to size: CGSize,
+        with coordinator: any UIViewControllerTransitionCoordinator
+    ) {
         super.viewWillTransition(to: size, with: coordinator)
         setPreferredSplitBehaviorAndDisplayMode(basedOn: size.width)
     }
@@ -157,7 +157,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
         _conversationListUI = conversationListUI
 
-        let viewControllers = [conversationListUI].compactMap { $0 }
+        let viewControllers = [conversationListUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -165,7 +165,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
         _archiveUI = archiveUI
 
-        let viewControllers = [archiveUI].compactMap { $0 }
+        let viewControllers = [archiveUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -173,7 +173,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         _settingsUI = settingsUI
 
-        let viewControllers = [settingsUI].compactMap { $0 }
+        let viewControllers = [settingsUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
@@ -181,7 +181,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
         _conversationUI = conversationUI
 
-        let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap { $0 }
+        let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap(\.self)
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }
@@ -189,7 +189,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) {
         _settingsContentUI = settingsContentUI
 
-        let viewControllers = [settingsContentUI].compactMap { $0 }
+        let viewControllers = [settingsContentUI].compactMap(\.self)
         splitLayoutContainer.secondaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.secondaryNavigationController.view.layoutIfNeeded()
     }

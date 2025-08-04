@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-class ConversationIconBasedCell: UIView {
+class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
 
     let imageContainer = UIView()
     let imageView = UIImageView()
@@ -38,15 +38,16 @@ class ConversationIconBasedCell: UIView {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return textLabel
+        textLabel
     }
 
     var selectionRect: CGRect {
-        return textLabel.bounds
+        textLabel.bounds
     }
 
     var attributedText: NSAttributedString? {
@@ -63,7 +64,7 @@ class ConversationIconBasedCell: UIView {
     }
 
     private var trailingTextMargin: CGFloat {
-        return -conversationHorizontalMargins.right * 2
+        -conversationHorizontalMargins.right * 2
     }
 
     override init(frame: CGRect) {
@@ -72,6 +73,7 @@ class ConversationIconBasedCell: UIView {
         configureConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
@@ -108,9 +110,18 @@ class ConversationIconBasedCell: UIView {
         bottomContentView.translatesAutoresizingMaskIntoConstraints = false
         lineView.translatesAutoresizingMaskIntoConstraints = false
 
-        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: trailingTextMargin)
-        containerWidthConstraint = imageContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
-        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: trailingTextMargin)
+        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: trailingTextMargin
+        )
+        let topContentViewWidthConstraint = topContentView.widthAnchor.constraint(equalToConstant: 0)
+        topContentViewWidthConstraint.priority = .defaultLow
+        containerWidthConstraint = imageContainer.widthAnchor
+            .constraint(equalToConstant: conversationHorizontalMargins.left)
+        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: trailingTextMargin
+        )
         textLabelTopConstraint = textLabel.topAnchor.constraint(equalTo: topContentView.bottomAnchor)
 
         // We want the content view to at least be below the image container
@@ -127,7 +138,7 @@ class ConversationIconBasedCell: UIView {
 
             // imageView
             imageView.widthAnchor.constraint(equalToConstant: 32),
-            imageView.heightAnchor.constraint(equalToConstant: 32),
+            imageView.heightAnchor.constraint(equalToConstant: 34),
             imageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor),
 
@@ -135,6 +146,7 @@ class ConversationIconBasedCell: UIView {
             topContentView.topAnchor.constraint(equalTo: topAnchor),
             topContentView.leadingAnchor.constraint(equalTo: textLabel.leadingAnchor),
             topContentViewTrailingConstraint,
+            topContentViewWidthConstraint,
 
             // textLabel
             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
@@ -163,12 +175,15 @@ class ConversationIconBasedCell: UIView {
         topContentViewTrailingConstraint.constant = trailingTextMargin
     }
 
-}
+    // MARK: - UITextViewDelegate
 
-extension ConversationIconBasedCell: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith url: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

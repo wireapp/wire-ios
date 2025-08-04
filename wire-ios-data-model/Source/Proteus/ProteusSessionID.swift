@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ public struct ProteusSessionID: Hashable, Equatable {
     }
 
     public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {
-        return lhs.rawValue == rhs.rawValue
+        lhs.rawValue == rhs.rawValue
     }
 
 }
@@ -69,7 +69,7 @@ public struct ProteusSessionID: Hashable, Equatable {
 extension ProteusSessionID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        return "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
+        "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
     }
 
 }

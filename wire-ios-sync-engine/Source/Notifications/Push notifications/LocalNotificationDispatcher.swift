@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,13 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import UserNotifications
+import WireLogging
 
 /// Creates and cancels local notifications
-@objcMembers public class LocalNotificationDispatcher: NSObject {
+@objcMembers
+public class LocalNotificationDispatcher: NSObject {
 
     public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
@@ -38,26 +41,38 @@ import UserNotifications
     @objc(initWithManagedObjectContext:)
     public init(in managedObjectContext: NSManagedObjectContext) {
         self.syncMOC = managedObjectContext
-        self.eventNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherEventNotificationsKey", keyValueStore: managedObjectContext)
-        self.failedMessageNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherFailedNotificationsKey", keyValueStore: managedObjectContext)
-        self.callingNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherCallingNotificationsKey", keyValueStore: managedObjectContext)
+        self.eventNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherEventNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
+        self.failedMessageNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherFailedNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
+        self.callingNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherCallingNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
         super.init()
         observers.append(
-            NotificationInContext.addObserver(name: ZMConversation.lastReadDidChangeNotificationName,
-                                              context: managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.cancelNotificationForLastReadChanged(notification: $0) })
+            NotificationInContext.addObserver(
+                name: ZMConversation.lastReadDidChangeNotificationName,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in
+                    self?.cancelNotificationForLastReadChanged(notification: $0)
+                }
+            )
         )
     }
 
     func scheduleLocalNotification(_ note: ZMLocalNotification) {
-        Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
+        WireLogger.notifications.debug("Scheduling local notification with id=\(note.id)")
 
         notificationCenter.add(note.request) { error in
             if let error {
-                Logging.push.safePublic("Error scheduling local notification")
-                Logging.push.error("Scheduling Error: \(error)")
+                WireLogger.notifications.error("Scheduling local notification error: \(error)")
             } else {
-                Logging.push.safePublic("Successfully scheduled local notification")
+                WireLogger.notifications.debug("Successfully scheduled local notification")
             }
         }
     }
@@ -79,7 +94,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
 
     public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         let eventsToForward = events.filter { $0.source.isOne(of: .pushNotification, .webSocket) }
-        self.didReceive(events: eventsToForward, conversationMap: [:])
+        didReceive(events: eventsToForward, conversationMap: [:])
     }
 
     func didReceive(events: [ZMUpdateEvent], conversationMap: [UUID: ZMConversation]) {
@@ -88,7 +103,11 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
                 // Fetch the conversation here to avoid refetching every time we try to create a notification
-                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(with: conversationID, domain: event.conversationDomain, in: self.syncMOC)
+                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(
+                    with: conversationID,
+                    domain: event.conversationDomain,
+                    in: self.syncMOC
+                )
             }
 
             if let messageNonce = event.messageNonce {
@@ -124,9 +143,9 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
 
 // MARK: - Availability behaviour change
 
-extension LocalNotificationDispatcher {
+public extension LocalNotificationDispatcher {
 
-    public func notifyAvailabilityBehaviourChangedIfNeeded() {
+    func notifyAvailabilityBehaviourChangedIfNeeded() {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
 
@@ -168,21 +187,24 @@ extension LocalNotificationDispatcher: PushMessageHandler {
 extension LocalNotificationDispatcher {
 
     private var allNotificationSets: [ZMLocalNotificationSet] {
-        return [self.eventNotifications,
-                self.failedMessageNotifications,
-                self.callingNotifications]
+        [
+            eventNotifications,
+            failedMessageNotifications,
+            callingNotifications
+        ]
     }
 
     /// Can be used for cancelling all conversations if need
     public func cancelAllNotifications() {
-        self.allNotificationSets.forEach { $0.cancelAllNotifications() }
+        allNotificationSets.forEach { $0.cancelAllNotifications() }
     }
 
     /// Cancels all notifications for a specific conversation
-    /// - note: Notifications for a specific conversation are otherwise deleted automatically when the message window changes and
+    /// - note: Notifications for a specific conversation are otherwise deleted automatically when the message window
+    /// changes and
     /// ZMConversationDidChangeVisibleWindowNotification is called
     public func cancelNotification(for conversation: ZMConversation) {
-        self.allNotificationSets.forEach { $0.cancelNotifications(conversation) }
+        allNotificationSets.forEach { $0.cancelNotifications(conversation) }
     }
 
     func cancelMessageForDeletedMessage(_ genericMessage: GenericMessage) {
@@ -206,10 +228,13 @@ extension LocalNotificationDispatcher {
         guard let conversation = notification.object as? ZMConversation else { return }
         let isUIObject = conversation.managedObjectContext?.zm_isUserInterfaceContext ?? false
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             if isUIObject {
                 // clear all notifications for this conversation
-                if let syncConversation = (try? self.syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation {
+                if let syncConversation = (
+                    try? self.syncMOC
+                        .existingObject(with: conversation.objectID)
+                ) as? ZMConversation {
                     self.cancelNotification(for: syncConversation)
                 }
             } else {

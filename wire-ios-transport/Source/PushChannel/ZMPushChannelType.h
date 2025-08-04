@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ NS_SWIFT_NAME(PushChannelType)
                               proxyUsername:(NSString * _Nullable)proxyUsername
                               proxyPassword:(NSString * _Nullable)proxyPassword
                                  minTLSVersion:(NSString * _Nullable)minTLSVersion
-                                      queue:(NSOperationQueue * _Nonnull)queue;
+                                      queue:(NSOperationQueue * _Nonnull)queue
+                                  isEnabled:(bool)isEnabled;
 
 /// Set the consumer of push channel messsages.
 ///

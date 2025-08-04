@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ protocol ConnectedUserProvider {
 }
 
 // MARK: - ZMConversation extension from sync engine
+
 protocol TypingStatusProvider {
     var typingUsers: [UserType] { get }
     func setIsTyping(_ isTyping: Bool)
@@ -42,8 +43,8 @@ protocol VoiceChannelProvider {
     var voiceChannel: VoiceChannel? { get }
 }
 
-protocol CanManageAccessProvider {
-    var canManageAccess: Bool { get }
+protocol CanManageGuestsAccessProvider {
+    var canManageGuestsAccess: Bool { get }
 }
 
 // MARK: - Input Bar View controller
@@ -61,22 +62,22 @@ protocol InputBarConversation {
     var isReadOnly: Bool { get }
 
     var participants: [UserType] { get }
-    var domain: String? {get}
+    var domain: String? { get }
 }
 
-typealias InputBarConversationType = InputBarConversation & TypingStatusProvider & ConversationLike
+typealias InputBarConversationType = ConversationLike & InputBarConversation & TypingStatusProvider
 
 extension ZMConversation: InputBarConversation {
 
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.status == .disabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.config.enforcedTimeoutSeconds > 0
     }
 
@@ -113,18 +114,18 @@ protocol GroupDetailsConversation {
 
 }
 
-typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
+typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
 
 extension ZMConversation: ConversationStatusProvider {}
 
 extension ZMConversation: TypingStatusProvider {}
 extension ZMConversation: VoiceChannelProvider {}
-extension ZMConversation: CanManageAccessProvider {}
+extension ZMConversation: CanManageGuestsAccessProvider {}
 
 extension ZMConversation: GroupDetailsConversation {
 
     var syncedMessageDestructionTimeout: TimeInterval {
-        return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+        messageDestructionTimeoutValue(for: .groupConversation).rawValue
     }
 
     var isE2EIEnabled: Bool {
@@ -140,9 +141,9 @@ extension GroupDetailsConversation {
     var isVerified: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
-            return securityLevel == .secure
+            securityLevel == .secure
         case .mls:
-            return isE2EIEnabled && mlsVerificationStatus == .verified
+            isE2EIEnabled && mlsVerificationStatus == .verified
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ class StartUIIconCell: UICollectionViewCell {
 
     var icon: StyleKitIcon? {
         didSet {
-            iconView.image = icon?.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).withRenderingMode(.alwaysTemplate)
+            iconView.image = icon?.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault)
+                .withRenderingMode(.alwaysTemplate)
             iconView.tintColor = SemanticColors.Icon.foregroundDefault
         }
     }
