@@ -41,7 +41,7 @@ extension EmptySearchResultsViewAction {
     var title: String {
         switch self {
         case .openManageServices:
-            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageServices
+            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageApps
         case .openSearchSupportPage:
             L10n.Localizable.Peoplepicker.NoMatchingResults.Action.learnMore
         }
@@ -81,12 +81,12 @@ final class EmptySearchResultsView: UIView {
                 return Message.users
             }
         case .noServices:
-            return Message.services
+            return Message.apps
         case .noServicesEnabled:
             if isSelfUserAdmin {
-                return Message.servicesNotEnabledAdmin
+                return Message.appsNotEnabledAdmin
             } else {
-                return Message.servicesNotEnabled
+                return Message.appsNotEnabled
             }
         case .initialSearch:
             return ""

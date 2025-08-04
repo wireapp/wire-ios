@@ -56,7 +56,7 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override var sectionTitle: String {
-        L10n.Localizable.Peoplepicker.Header.services
+        L10n.Localizable.Peoplepicker.Header.apps
     }
 
     func service(for indexPath: IndexPath) -> ServiceUser {
