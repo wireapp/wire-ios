@@ -34,6 +34,7 @@ public final class UserSessionComponent {
     private let isMLSEnabled: Bool
 
     private let sharedUserDefaults: UserDefaults
+    private let sharedContainerURL: URL?
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
@@ -51,6 +52,7 @@ public final class UserSessionComponent {
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL?,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
@@ -72,6 +74,7 @@ public final class UserSessionComponent {
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
         self.coreCryptoProvider = coreCryptoProvider
+        self.sharedContainerURL = sharedContainerURL
     }
 
     private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
@@ -138,6 +141,7 @@ public final class UserSessionComponent {
             isFederationEnabled: isFederationEnabled,
             isMLSEnabled: isMLSEnabled,
             cookieStorage: cookieStorage,
+            sharedContainerURL: sharedContainerURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: syncContext,
             eventContext: eventContext,

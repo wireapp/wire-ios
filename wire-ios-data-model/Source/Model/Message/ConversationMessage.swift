@@ -302,7 +302,7 @@ extension ZMMessage: ZMConversationMessage {
             let managedObjectContext
         else { return false }
 
-        let featureRepository = FeatureRepository(context: managedObjectContext)
+        let featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         let fileSharingFeature = featureRepository.fetchFileSharing()
 
         return fileSharingFeature.status == .disabled

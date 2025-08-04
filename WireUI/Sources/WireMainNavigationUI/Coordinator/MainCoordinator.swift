@@ -462,6 +462,14 @@ private extension MainSidebarMenuItem {
             self = .channels
         case .oneOnOne:
             self = .oneOnOne
+        case .unread:
+            self = .unread
+        case .mentions:
+            self = .mentions
+        case .replies:
+            self = .replies
+        case .drafts:
+            self = .drafts
         case .folder:
             self = .folders
         }

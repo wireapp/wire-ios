@@ -19,5 +19,9 @@
 "sidebar.settings.description" = "Abra suas configurações";
 "sidebar.support.description" = "Abrir suporte";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "Conversas uma a uma";
+"sidebar.conversation_filter.unread.description" = "Show unread conversations";
+"sidebar.conversation_filter.mentions.description" = "Show conversations with mentions";
+"sidebar.conversation_filter.replies.description" = "Show conversations with replies";
+"sidebar.conversation_filter.drafts.description" = "Show conversations with drafts";
 "sidebar.name.description" = "Nome do perfil";
 "sidebar.handle.description" = "Nome de usuário";

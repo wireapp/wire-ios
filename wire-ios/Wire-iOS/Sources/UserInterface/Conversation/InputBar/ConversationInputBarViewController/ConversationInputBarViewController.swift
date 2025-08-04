@@ -462,7 +462,7 @@ final class ConversationInputBarViewController: UIViewController,
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:

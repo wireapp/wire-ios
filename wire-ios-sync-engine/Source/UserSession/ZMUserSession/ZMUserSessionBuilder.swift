@@ -52,6 +52,7 @@ struct ZMUserSessionBuilder {
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
+    private var sharedContainerURL: URL?
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
     private var minTLSVersion: String?
@@ -88,6 +89,7 @@ struct ZMUserSessionBuilder {
             let proteusToMLSMigrationCoordinator,
             let recurringActionService,
             let sharedUserDefaults,
+            let sharedContainerURL,
             let transportSession,
             let userId,
             let wireAPIBackendEnvironment,
@@ -113,6 +115,7 @@ struct ZMUserSessionBuilder {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: sharedContainerURL,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
             lastEventIDRepository: lastEventIDRepository,
@@ -151,6 +154,7 @@ struct ZMUserSessionBuilder {
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL,
         transportSession: any TransportSessionType,
         userId: UUID,
         minTLSVersion: String?,
@@ -206,7 +210,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier
         )
@@ -248,6 +252,7 @@ struct ZMUserSessionBuilder {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
+        self.sharedContainerURL = sharedContainerURL
         self.transportSession = transportSession
         self.userId = userId
         self.minTLSVersion = minTLSVersion

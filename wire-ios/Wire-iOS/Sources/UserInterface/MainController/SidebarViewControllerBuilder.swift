@@ -22,6 +22,7 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 import WireSidebarUI
+import WireUtilities
 
 struct SidebarViewControllerBuilder {
 
@@ -63,6 +64,9 @@ struct SidebarViewControllerBuilder {
         sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
         sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign
             .menuItemIsSelectedTitleForegroundColor
+
+        // Configure unread filters visibility based on feature flag
+        sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
 
         return sidebarViewController
     }

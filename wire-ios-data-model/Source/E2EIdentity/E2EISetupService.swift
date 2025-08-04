@@ -53,7 +53,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -63,7 +63,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: FeatureRepositoryInterface) {
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: LegacyFeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
     }

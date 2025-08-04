@@ -40,6 +40,10 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* channelConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* unreadConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* mentionedConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* repliedConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* draftConversations;
 
 @property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;
