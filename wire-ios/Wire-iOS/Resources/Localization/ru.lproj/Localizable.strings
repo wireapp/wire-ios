@@ -182,13 +182,10 @@
 "conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
 "conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
 "conversation_list.empty_state.unread.title" = "Нет непрочитанных бесед";
-"conversation_list.empty_state.unread.subtitle" = "Все ваши беседы актуальны";
 "conversation_list.empty_state.mentions.title" = "Нет упоминаний";
-"conversation_list.empty_state.mentions.subtitle" = "Все ваши беседы актуальны";
 "conversation_list.empty_state.replies.title" = "Нет ответов";
-"conversation_list.empty_state.replies.subtitle" = "Все ваши беседы актуальны";
 "conversation_list.empty_state.drafts.title" = "Нет черновиков";
-"conversation_list.empty_state.drafts.subtitle" = "Все ваши беседы актуальны";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
