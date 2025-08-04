@@ -61,7 +61,9 @@ public struct AttachmentsCarousel: View {
 private struct AttachmentsCarouselItemView: View {
 
     enum Constants {
-        static let cornerButtonRadius: CGFloat = 24
+        static let topPadding: CGFloat = 8
+        static let trailingPadding: CGFloat = 6
+        static let buttonCornerRadius: CGFloat = 24
     }
 
     let item: AttachmentsCarouselItem
@@ -73,27 +75,41 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
-
-                if let progress = item.state.progress {
-                    VStack(alignment: .leading) {
-                        Spacer()
-                        ProgressView(value: progress, total: 1)
-                            .tint(Color.blue)
-                    }
-                }
+                    .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
-            .padding([.top, .trailing], Constants.cornerButtonRadius / 2)
+            .padding(.top, Constants.topPadding)
+            .padding(.trailing, Constants.trailingPadding)
 
             cornerButton
         }
     }
 
+    @ViewBuilder
     var content: some View {
-        Text(contentLabel)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.gray)
-            .onTapGesture(perform: onTap)
+        switch item.kind {
+        case let .image(thumbnail):
+            WireCellsImageAttachmentPreview(
+                thumbnail: thumbnail.map { Image(uiImage: $0) },
+                progress: item.state.progress,
+                isError: item.state.isFailed
+            )
+        case let .video(thumbnail):
+            WireCellsVideoAttachmentPreview(
+                thumbnail: thumbnail.map { Image(uiImage: $0) },
+                progress: item.state.progress,
+                isError: item.state.isFailed,
+                canPlay: false
+            )
+        case .audio, .document:
+            WireCellsDocumentAttachmentPreview(
+                headerIcon: Image(systemName: "text.document"),
+                headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
+                labelText: item.name,
+                progress: item.state.progress,
+                isError: item.state.isFailed
+            )
+        }
     }
 
     // TODO: [WPB-17604] Add missing accessibility labels
@@ -110,7 +126,7 @@ private struct AttachmentsCarouselItemView: View {
                         Image(systemName: "ellipsis.circle.fill")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: Constants.cornerButtonRadius, height: Constants.cornerButtonRadius)
+                            .frame(width: Constants.buttonCornerRadius, height: Constants.buttonCornerRadius)
                     }
                 } else {
                     Button(
@@ -119,7 +135,7 @@ private struct AttachmentsCarouselItemView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: Constants.cornerButtonRadius, height: Constants.cornerButtonRadius)
+                                .frame(width: Constants.buttonCornerRadius, height: Constants.buttonCornerRadius)
                         }
                     )
 
@@ -129,19 +145,6 @@ private struct AttachmentsCarouselItemView: View {
 
             Spacer()
         }
-    }	
-
-    var contentLabel: String {
-        switch item.kind {
-        case .image:
-            "Image"
-        case .video:
-            "Video"
-        case .audio:
-            "Audio"
-        case .document:
-            "Document"
-        }
     }
 
 }
@@ -149,7 +152,7 @@ private struct AttachmentsCarouselItemView: View {
 private extension AttachmentsCarouselItem {
 
     var aspectRatio: CGFloat {
-        switch kind {
+        switch kind {	
         case .image, .video:
             1
         case .audio, .document:
@@ -174,42 +177,57 @@ private extension AttachmentsCarouselItem.State {
         switch self {
         case let .uploading(progress):
             progress
-        case .uploaded, .failed:
+        case .uploaded:
             nil
+        case .failed:
+            1 // When failed we show a full red progress bar
         }
     }
 }
 
 #Preview {
-    ZStack {
-        Color(.green).ignoresSafeArea()
+    VStack {
+        ZStack {
+            Color(.green).ignoresSafeArea()
 
-        AttachmentsCarousel(
-            viewModel: AttachmentsCarouselViewModel(
-                items: [
-                    AttachmentsCarouselItem(
-                        id: UUID(),
-                        state: .failed,
-                        kind: .image(thumbnail: UIImage()),
-                        name: "Image",
-                        size: "1.2 MB"
-                    ),
-                    AttachmentsCarouselItem(
-                        id: UUID(),
-                        state: .uploading(progress: 0.5),
-                        kind: .video(thumbnail: UIImage()),
-                        name: "Video",
-                        size: "1.2 MB"
-                    )
-                ]
-            ),
-            onTap: { _ in },
-            onRemove: { _ in },
-            onRetry: { _ in }
-        )
-        .frame(height: 74)
-        .background(Color.white)
+            AttachmentsCarousel(
+                viewModel: AttachmentsCarouselViewModel(
+                    items: [
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .failed,
+                            kind: .image(
+                                thumbnail: UIImage(named: "rectangular-placeholder", in: Bundle.module, with: nil)
+                            ),
+                            name: "Image",
+                            fileExtension: "jpg",
+                            size: "1.2 MB"
+                        ),
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .uploading(progress: 1),
+                            kind: .video(thumbnail: nil),
+                            name: "Video",
+                            fileExtension: "mp4",
+                            size: "1.2 MB"
+                        ),
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .uploading(progress: 0.5),
+                            kind: .document,
+                            name: "Doc",
+                            fileExtension: "pdf",
+                            size: "1.2 MB"
+                        )
+                    ]
+                ),
+                onTap: { _ in },
+                onRemove: { _ in },
+                onRetry: { _ in }
+            )
+            .frame(height: 82)
+            .background(Color.white)
+        }
+        Spacer(minLength: 500)
     }
-
-
 }
