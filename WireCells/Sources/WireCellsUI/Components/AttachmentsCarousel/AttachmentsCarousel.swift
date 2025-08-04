@@ -51,7 +51,7 @@ public struct AttachmentsCarousel: View {
                     )
                 }
             }
-            .padding(.horizontal, 12) // TODO: [WPB-17604] Don't hardcode but rely on system spacing
+            .padding(.horizontal, 12)
         }
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .bottom)
@@ -59,7 +59,6 @@ public struct AttachmentsCarousel: View {
 
 }
 
-// TODO: [WPB-17604] This implementation is a functional placeholder. It needs to be updated to match designs.
 private struct AttachmentsCarouselItemView: View {
 
     enum Constants {
@@ -143,7 +142,7 @@ private struct AttachmentsCarouselItemView: View {
 
                 }
             }
-            .buttonStyle(CircularIconButtonStyle(padding: 0))
+            .buttonStyle(CornerButtonStyle())
 
             Spacer()
         }
@@ -185,6 +184,21 @@ private extension AttachmentsCarouselItem.State {
             1 // When failed we show a full red progress bar
         }
     }
+}
+
+private struct CornerButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        return configuration
+            .label
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color, ColorTheme.Buttons.Secondary.enabled.color)
+            .overlay(
+                Circle().strokeBorder(ColorTheme.Buttons.Secondary.enabledOutline.color, lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
+    }
+
 }
 
 #Preview {
