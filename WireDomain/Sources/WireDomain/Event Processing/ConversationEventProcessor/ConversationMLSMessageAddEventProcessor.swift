@@ -105,6 +105,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
+        // TODO: store
+
         // Handle calling if there's one.
 
         if let callEventInfo = getCallEventInfo(
@@ -143,6 +145,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
     }
 
+    // TODO: try to share code with the proteus counterpart
     private func getProtobufMessage(
         from base64Message: String
     ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
@@ -151,6 +154,32 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         guard let genericMessage, let content = genericMessage.content else {
             return nil
         }
+
+//        if let content = genericMessage.content {
+//            return (genericMessage, content)
+//        }
+
+//        if genericMessage.isContentUnknown {
+//            switch message.unknownStrategy {
+//            case .ignore:
+//                // Throw the message away without informing the user.
+//                return nil
+//
+//            case .discardAndWarn:
+//                appendUnknownMessageReceivedSystemMessage(
+//                    fromSender: senderID,
+//                    atTime: updateEvent.timestamp ?? .now,
+//                    to: conversation,
+//                    in: moc
+//                )
+//                return nil
+//
+//            case .warnUserAllowRetry:
+//                // Continue to insert anyway, it'll be shown as an
+//                // unknown message in the conversation.
+//                break
+//            }
+//        }
 
         return (genericMessage, content)
     }
