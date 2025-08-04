@@ -48,8 +48,6 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var isChannel: Bool = false
 
-    var channelHistoryDepth: Int = 10_000
-
     var teamRemoteIdentifier: UUID?
 
     var mockLocalParticipantsContain: Bool = false
@@ -91,7 +89,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
 
-    var channelHistoryDepth: String?
+    var channelHistoryDepth: String? = ""
 
     var wireCellName: String = ""
 }
