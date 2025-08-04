@@ -169,13 +169,18 @@ class UserHelper {
         return accessToken.token
     }
 
-    func registerUsersAsTeamMember(accessToken: String, teamID: UUID, member: UserInfo) async throws -> String {
+    func registerUsersAsTeamMember(
+        ownerAccessToken: String,
+        teamID: UUID
+    ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
+        
+        let teamMember = UserGenerator.generateUniqueUserInfo()
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
-            access_token: accessToken,
+            access_token: ownerAccessToken,
             teamID: teamID,
-            memberName: member.name,
-            memberEmail: member.email
+            memberName: teamMember.name,
+            memberEmail: teamMember.email
         )
 
         let invitationCode = try await authenticationAPI.getInvitationCode(
@@ -183,21 +188,28 @@ class UserHelper {
             invitationID: invitationID
         )
 
-        return try await authenticationAPI.registerTeamMember(
-            email: member.email,
-            password: member.password,
-            name: member.name,
+        let qualifiedID = try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
             invitationCode: invitationCode
         )
+
+        return (qualifiedID, teamMember)
     }
 
-    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (convoId: UUID?, domain: String?) {
+    func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
         for try await ids in try await conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
+        return conversationIDs
+    }
+
+    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
+        -> (convoId: UUID?, domain: String?) {
+        let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
 
@@ -214,6 +226,28 @@ class UserHelper {
             return (match.qualifiedID?.id, match.qualifiedID?.domain)
         }
         return (nil, nil)
+    }
+
+    func createGroupConversations(memberUser: UserInfo, groupName: String) async throws {
+        // NEED FIXING
+//        _ = try await BackendClient.loginViaAPI(email: memberUser.email, password: memberUser.password)
+//        let selfUser = try await selfUserAPI.getSelfUser()
+
+//        let params = CreateGroupConversationParameters(
+//            groupType: .group,
+//            messageProtocol: .proteus,
+//            creatorClientID: "deprecated",
+//            qualifiedUserIDs: [selfUser.qualifiedID],
+//            unqualifiedUserIDs: [],
+//            name: groupName,
+//            accessMode: [.invite, .code],
+//            accessRoles: [.teamMember, .guest],
+//            legacyAccessRole: nil,
+//            teamID: selfUser.teamID,
+//            isReadReceiptsEnabled: true
+//        )
+
+//        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 }
 

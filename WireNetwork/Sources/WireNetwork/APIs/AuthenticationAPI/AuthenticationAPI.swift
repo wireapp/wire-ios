@@ -150,6 +150,6 @@ public protocol AuthenticationAPI: Sendable {
             password: String,
             name: String,
             invitationCode: String
-        ) async throws -> String
+        ) async throws -> QualifiedID
     #endif
 }

@@ -78,7 +78,7 @@ class TestServiceClient {
     }
 
     func createConversation(
-        owner: UserInfo, member1_id: String, member2_id: String,
+        owner: UserInfo, member1Id: String, member2Id: String,
     ) async throws -> String {
 
         let instanceId = try await getInstanceId(
@@ -95,7 +95,7 @@ class TestServiceClient {
         let body: [String: Any] = [
             "name": "demo chat",
             "userIds": [
-                member1_id, member2_id
+                member1Id, member2Id
             ]
         ]
 

@@ -295,7 +295,6 @@ struct CreateGroupConversationParametersV8: Encodable {
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
         self.conversationGroupType = parameters.groupType.toNetworkModel()
     }
-
 }
 
 // MARK: - Decodables
