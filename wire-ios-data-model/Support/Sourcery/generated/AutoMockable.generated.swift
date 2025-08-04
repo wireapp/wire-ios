@@ -51,6 +51,8 @@ import WireCoreCrypto
 
 
 
+
+
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle
@@ -407,7 +409,7 @@ public class MockConversationLike: ConversationLike {
 
 }
 
-public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
+public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 

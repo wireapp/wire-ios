@@ -17,7 +17,7 @@
 //
 
 import Foundation
-public import WireCellsAPI
+import WireMessagingDomain
 
 @objc
 public enum WireCellsMessageAttachmentDraftUploadStatus: Int16 {

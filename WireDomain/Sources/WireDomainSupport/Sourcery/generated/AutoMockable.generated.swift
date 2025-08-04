@@ -53,6 +53,8 @@ import WireCoreCrypto
 
 
 
+
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -5278,17 +5280,3 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
     }
 
 }
-
-public class MockWireCellsMessageAttachmentsDraftsLocalStoreProtocol: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-}
-
-// swiftlint:enable variable_name
-// swiftlint:enable line_length
-// swiftlint:enable vertical_whitespace
-// swiftlint:enable superfluous_disable_command
