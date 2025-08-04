@@ -85,9 +85,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
-        NoHistoryView(factory: { [unowned self] in
-            noHistoryFactory(authenticationResult: result)
-        })
+        NoHistoryView(factory: self.noHistoryFactory(authenticationResult: result))
     }
 
     @MainActor var viewModel: DetermineAuthMethodViewModel {

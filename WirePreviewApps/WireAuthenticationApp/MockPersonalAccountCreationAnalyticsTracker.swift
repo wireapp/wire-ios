@@ -19,6 +19,13 @@
 import WireAuthenticationAPI
 
 struct MockPersonalAccountCreationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+    var trackingID: String?
+
+    func deleteTemporaryTrackingID() { }
+
+    func isAnalyticsTrackingAvailable(for backendConfig: WireAuthenticationAPI.BackendConfig) -> Bool {
+        false
+    }
 
     func setUp() {}
 

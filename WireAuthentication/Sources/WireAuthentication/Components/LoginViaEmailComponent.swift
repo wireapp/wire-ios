@@ -86,17 +86,17 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         return VerificationCodeView(factory: factory)
     }
 
+    fileprivate func noHistoryComponent(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+    
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
-        NoHistoryView(
-            factory: { [unowned self] in
-                NoHistoryComponent(
-                    parent: self,
-                    authenticationResult: result,
-                    didDetectDomainConflict: didDetectDomainConflict
-                )
-            }
-        )
+        NoHistoryView(factory: self.noHistoryComponent(result: result))
     }
 
     @MainActor
