@@ -18,16 +18,16 @@
 
 import Foundation
 
-public extension ZMConversation {
+public struct FetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCaseProtocol {
+    public let repository: any ChannelRepositoryProtocol
 
-    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
-
-    var channelHistoryDepth: String? {
-        get {
-            nil
-        }
-
-        set {}
+    public init(
+        repository: any ChannelRepositoryProtocol
+    ) {
+        self.repository = repository
     }
 
+    public func invoke() async throws -> Bool {
+        try await repository.isConferenceCallingFeatureEnabled()
+    }
 }

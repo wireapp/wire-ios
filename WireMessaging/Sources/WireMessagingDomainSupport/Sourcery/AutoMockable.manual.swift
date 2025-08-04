@@ -20,6 +20,57 @@ public import WireMessagingDomain
 
 import UIKit
 
+public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: updateHistoryDepth
+
+    public var updateHistoryDepth_Invocations: [(WireMessagingDomain.ChannelHistoryOption, WireMessagingDomain.ChannelHistoryOption.Custom)] = []
+    public var updateHistoryDepth_MockMethod: (((WireMessagingDomain.ChannelHistoryOption, WireMessagingDomain.ChannelHistoryOption.Custom)) async throws -> Void)?
+    public var updateHistoryDepth_MockError: (any Error)?
+
+    public func updateHistoryDepth(
+        channelHistoryOption: WireMessagingDomain.ChannelHistoryOption,
+        channelHistoryOptionCustom: WireMessagingDomain.ChannelHistoryOption.Custom
+    ) async throws {
+        updateHistoryDepth_Invocations.append((channelHistoryOption, channelHistoryOptionCustom))
+
+        if let error = updateHistoryDepth_MockError {
+            throw error
+        }
+
+        if let mock = updateHistoryDepth_MockMethod {
+            try await mock((channelHistoryOption, channelHistoryOptionCustom))
+        } else {
+            fatalError("no mock for `updateHistoryDepth`")
+        }
+    }
+
+    // MARK: - isEnterpriseUser
+
+    public var isEnterpriseUser_Invocations: [Void] = []
+    public var isEnterpriseUser_MockValue: Bool?
+    public var isEnterpriseUser_MockError: (any Error)?
+
+    public func isEnterpriseUser() async throws -> Bool {
+        isEnterpriseUser_Invocations.append(())
+
+        if let error = isEnterpriseUser_MockError {
+            throw error
+        }
+
+        if let mock = isEnterpriseUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isEnterpriseUser`")
+        }
+    }
+
+}
+
 public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -68,7 +119,7 @@ public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
 
 }
 
-public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtocol {
+public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
 
     // MARK: - Life cycle
 
@@ -91,6 +142,41 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
             return mock
         } else {
             fatalError("no mock for `updateParticipantPermissionTo`")
+        }
+    }
+
+    // MARK: - updateHistoryDepth
+
+    public var updateHistoryDepth_Invocations: [Void] = []
+    public var updateHistoryDepth_MockMethod: ((String?) async throws -> Void)?
+    public var updateHistoryDepth_MockError: (any Error)?
+
+    public func updateHistoryDepth(_ historyDepth: String?) async throws {
+        updateHistoryDepth_Invocations.append(())
+
+        if let error = updateParticipantPermissionTo_MockError {
+            throw error
+        }
+
+        if let mock = updateHistoryDepth_MockMethod {
+            try await mock(historyDepth)
+        } else {
+            fatalError("no mock for `updateHistoryDepth`")
+        }
+    }
+
+    // MARK: - isConferenceCallingFeatureEnabled
+
+    public var isConferenceCallingFeatureEnabled_Invocations: [Void] = []
+    public var isConferenceCallingFeatureEnabled_MockValue: Bool?
+
+    public func isConferenceCallingFeatureEnabled() async throws -> Bool {
+        isConferenceCallingFeatureEnabled_Invocations.append(())
+
+        if let mock = isConferenceCallingFeatureEnabled_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isConferenceCallingFeatureEnabled`")
         }
     }
 

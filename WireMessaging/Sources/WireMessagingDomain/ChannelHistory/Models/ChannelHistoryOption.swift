@@ -18,16 +18,33 @@
 
 import Foundation
 
-public extension ZMConversation {
+public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable, Identifiable {
+    case off
+    case oneDay
+    case oneWeek
+    case fourWeeks
+    case unlimited
+    case custom
 
-    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
+    public var id: Self { self }
 
-    var channelHistoryDepth: String? {
-        get {
-            nil
+    public struct Custom: Equatable, Hashable, Sendable {
+        public enum Unit: Equatable, Hashable, CaseIterable, Sendable, Identifiable {
+            case days
+            case weeks
+
+            public var id: Self { self }
         }
 
-        set {}
-    }
+        public init(
+            unit: Unit = .days,
+            value: Int = 10
+        ) {
+            self.unit = unit
+            self.value = value
+        }
 
+        public var unit: Unit
+        public var value: Int
+    }
 }

@@ -18,16 +18,10 @@
 
 import Foundation
 
-public extension ZMConversation {
-
-    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
-
-    var channelHistoryDepth: String? {
-        get {
-            nil
-        }
-
-        set {}
-    }
-
+@MainActor
+public protocol UpdateChannelHistoryDepthUseCaseProtocol {
+    func invoke(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) async throws
 }

@@ -24,17 +24,15 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 import WireReusableUIComponents
 
-package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
+package final class ChannelHistoryHostingController: UIHostingController<ChannelHistoryView> {
 
-    private let viewModel: ChannelAccessViewModel
-
+    private let viewModel: ChannelHistoryViewModel
     private var activityIndicator: BlockingActivityIndicator!
-
     private var cancellables = Set<AnyCancellable>()
 
-    package init(viewModel: ChannelAccessViewModel) {
+    package init(viewModel: ChannelHistoryViewModel) {
         self.viewModel = viewModel
-        super.init(rootView: ChannelAccessView(viewModel: viewModel))
+        super.init(rootView: ChannelHistoryView(viewModel: viewModel))
     }
 
     @available(*, unavailable)
@@ -46,7 +44,7 @@ package  final class ChannelAccessHostingController: UIHostingController<Channel
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Localizable.ChannelAccessLevel.navigationTitle
+        title = L10n.Localizable.Conversation.ChannelHistory.navigationTitle
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -75,24 +73,33 @@ package  final class ChannelAccessHostingController: UIHostingController<Channel
     }
 }
 
-struct ChannelAccessHostingController_Previews: PreviewProvider {
+struct ChannelHistoryHostingController_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelAccessHostingControllerPreview()
+        ChannelHistoryHostingControllerPreview()
             .edgesIgnoringSafeArea(.all)
             .previewDisplayName("UIKit NavController Preview")
     }
 }
 
-struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
+struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
+        let repository = MockChannelRepositoryProtocol()
+        repository.updateHistoryDepth_MockMethod = { _ in }
+        repository.isConferenceCallingFeatureEnabled_MockValue = true
 
-        let useCase = ChannelAccessUseCase(
-            permission: .everyone,
-            repository: MockChannelRepositoryProtocol()
+        let useCase = ChannelHistoryUseCase(
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repository),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repository)
         )
-        let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 
-        let channelAccessVC = ChannelAccessHostingController(viewModel: viewModel)
+        let viewModel = ChannelHistoryViewModel(
+            historyDepth: "",
+            teamsURL: URL(string: "https://google.com")!,
+            accentColor: .red,
+            useCase: useCase
+        )
+
+        let channelAccessVC = ChannelHistoryHostingController(viewModel: viewModel)
         return UINavigationController(rootViewController: channelAccessVC)
     }
 

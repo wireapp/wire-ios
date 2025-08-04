@@ -19,7 +19,7 @@
 import WireDataModel
 import WireLogging
 
-final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
+public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Error
 
@@ -33,7 +33,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext
     ) {
         self.context = context
@@ -53,6 +53,14 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
             }
 
             return feature
+        }
+    }
+
+    public func isFeatureEnabled(
+        feature: Feature
+    ) async -> Bool {
+        await context.perform {
+            feature.status == .enabled
         }
     }
 
