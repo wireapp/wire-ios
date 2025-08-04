@@ -32,7 +32,7 @@ public struct UpdateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase
         channelHistoryOption: ChannelHistoryOption,
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
     ) async throws {
-        let historyDepth = computeHistoryDepth(
+        let historyDepth = getHistoryDepth(
             channelHistoryOption: channelHistoryOption,
             channelHistoryOptionCustom: channelHistoryOptionCustom
         )
@@ -42,39 +42,23 @@ public struct UpdateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase
         )
     }
 
-    private func computeHistoryDepth(
+    private func getHistoryDepth(
         channelHistoryOption: ChannelHistoryOption,
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) -> Int? {
-        let historyDepth: TimeInterval? = switch channelHistoryOption {
+    ) -> String? {
+        switch channelHistoryOption {
         case .off:
-            nil
+            .none
         case .oneDay:
-            TimeInterval.oneDay
+            "One day"
         case .oneWeek:
-            TimeInterval.oneWeek
+            "One week"
         case .fourWeeks:
-            TimeInterval.fourWeeks
+            "Four weeks"
         case .unlimited:
-            TimeInterval.oneYearFromNow
+            "Unlimited"
         case .custom:
-            computeHistoryCustomDepth(channelHistoryOptionCustom: channelHistoryOptionCustom)
-        }
-
-        return historyDepth != nil ? Int(historyDepth!) : nil
-    }
-
-    private func computeHistoryCustomDepth(
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) -> TimeInterval {
-        let value = TimeInterval(channelHistoryOptionCustom.value)
-        let oneDay = TimeInterval.oneDay
-
-        switch channelHistoryOptionCustom.unit {
-        case .days:
-            return value * oneDay
-        case .weeks:
-            return value * 7 * oneDay
+            "\(channelHistoryOptionCustom.value) \(channelHistoryOptionCustom.unit == .days ? "days" : "weeks")"
         }
     }
 }

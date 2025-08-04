@@ -148,10 +148,10 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
     // MARK: - updateHistoryDepth
 
     public var updateHistoryDepth_Invocations: [Void] = []
-    public var updateHistoryDepth_MockMethod: ((Int?) async throws -> Void)?
+    public var updateHistoryDepth_MockMethod: ((String?) async throws -> Void)?
     public var updateHistoryDepth_MockError: (any Error)?
 
-    public func updateHistoryDepth(_ historyDepth: Int?) async throws {
+    public func updateHistoryDepth(_ historyDepth: String?) async throws {
         updateHistoryDepth_Invocations.append(())
 
         if let error = updateParticipantPermissionTo_MockError {

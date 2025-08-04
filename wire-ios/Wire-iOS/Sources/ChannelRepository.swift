@@ -57,7 +57,7 @@ class ChannelRepository: ChannelRepositoryProtocol {
     }
 
     // TODO: [WPB-18347] - call endpoint when backend ready - PUT /conversations/{cnv_domain}/{cnv_id}/history and store history depth to local store
-    func updateHistoryDepth(_ historyDepth: Int?) async throws {
+    func updateHistoryDepth(_ historyDepth: String?) async throws {
         // let historyDepth = api.updateChannelHistoryDepth(
         // conversationID: conversationID,
         // conversationDomain: conversationDomain,
