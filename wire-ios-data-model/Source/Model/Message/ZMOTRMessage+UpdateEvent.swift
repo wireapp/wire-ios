@@ -55,17 +55,36 @@ extension ZMOTRMessage {
             return nil
         }
 
-        guard
-            let message = GenericMessage(from: updateEvent),
-            let content = message.content
-        else {
+        guard let message = GenericMessage(from: updateEvent) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
                 attributes: updateEvent.logAttributes
             )
-            appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
             return nil
         }
+
+        if message.isContentUnknown {
+            switch message.unknownStrategy {
+            case .ignore:
+                // Throw the message away without informing the user.
+                return nil
+
+            case .discardAndWarn:
+                appendUnknownMessageReceivedSystemMessage(
+                    fromSender: senderID,
+                    atTime: updateEvent.timestamp ?? .now,
+                    to: conversation,
+                    in: moc
+                )
+                return nil
+
+            case .warnUserAllowRetry:
+                // Continue to insert anyway, it'll be shown as an
+                // unknown message in the conversation.
+                break
+            }
+        }
+
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
         let logAttributes: LogAttributes = [
             .eventId: updateEvent.safeUUID,
@@ -74,6 +93,7 @@ extension ZMOTRMessage {
             .messageType: updateEvent.safeType
         ]
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
+
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(
             message: message,
@@ -84,7 +104,7 @@ extension ZMOTRMessage {
         conversation.verifySender(of: updateEvent, moc: moc)
 
         // Insert the message
-        switch content {
+        switch message.content {
         case .lastRead where conversation.isSelfConversation:
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: message.lastRead,
@@ -229,6 +249,7 @@ extension ZMOTRMessage {
                 if let message = clientMessage {
                     prefetchResult.add([message])
                 }
+
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent
                 .senderClientID {
                 WireLogger.eventProcessing.warn(
@@ -282,15 +303,25 @@ extension ZMOTRMessage {
         conversation.conversationType == .group && senderID != selfUserID
     }
 
-    private static func appendInvalidSystemMessage(
-        forUpdateEvent event: ZMUpdateEvent,
-        toConversation conversation: ZMConversation,
-        inContext moc: NSManagedObjectContext
+    private static func appendUnknownMessageReceivedSystemMessage(
+        fromSender senderID: UUID,
+        atTime time: Date,
+        to conversation: ZMConversation,
+        in context: NSManagedObjectContext
     ) {
-        guard let remoteId = event.senderUUID,
-              let sender = ZMUser.fetch(with: remoteId, domain: nil, in: moc) else {
-            return
-        }
-        conversation.appendInvalidSystemMessage(at: event.timestamp ?? Date(), sender: sender)
+        let sender = ZMUser.fetchOrCreate(
+            with: senderID,
+            domain: nil,
+            in: context
+        )
+
+        conversation.appendSystemMessage(
+            type: .unknownMessageReceived,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: time
+        )
     }
+
 }
