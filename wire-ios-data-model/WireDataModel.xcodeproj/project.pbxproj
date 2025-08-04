@@ -412,7 +412,6 @@
 		63FCE54828C78D1F00126D9D /* ZMConversationTests+Predicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FCE54728C78D1F00126D9D /* ZMConversationTests+Predicates.swift */; };
 		70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B7C273188150021EE70 /* ZMConversation+Role.swift */; };
 		76E000BA2DAFED1B00853C45 /* WireCellsMessageAttachmentDraftEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E000B92DAFED1B00853C45 /* WireCellsMessageAttachmentDraftEntity.swift */; };
-		76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 76E000BB2DAFED3A00853C45 /* WireCellsAPI */; };
 		7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2778C5285223D90044A73F /* KeychainManager.swift */; };
 		7A2778C8285329210044A73F /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2778C7285329210044A73F /* KeychainManagerTests.swift */; };
 		7C88C5352182FBD90037DD03 /* ZMClientMessageTests+Replies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C88C5312182F6150037DD03 /* ZMClientMessageTests+Replies.swift */; };
@@ -493,6 +492,7 @@
 		BFF8AE8520E4E12A00988700 /* ZMMessage+ShouldDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF8AE8420E4E12A00988700 /* ZMMessage+ShouldDisplay.swift */; };
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
+		C9954F8A2E38CA8600A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F892E38CA8600A5EB01 /* WireMessagingDomain */; };
 		C912D5742E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = C912D5732E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift */; };
 		C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D22CEF630500012A0E /* TypingUsers.swift */; };
 		C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */; };
@@ -1852,12 +1852,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9954F8A2E38CA8600A5EB01 /* WireMessagingDomain in Frameworks */,
 				34DC44B52E01C210004D5DD5 /* WireNetwork in Frameworks */,
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */,
 				1657FA9A2D9C2EB800A7B337 /* WireCoreCryptoUniffi in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
-				76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */,
 				59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */,
@@ -2815,6 +2815,7 @@
 				CB5212112D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift */,
 				C912D5732E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift */,
 				CBED6B432D91B2F500328BED /* ZMConversation+ConversationGroupType.swift */,
+				C9A65E6B2E0AD4F4004D7FD5 /* ZMConversation+ChannelHistoryDepth.swift */,
 				63D41E4E2452EA080076826F /* ZMConversation+SelfConversation.swift */,
 				A95E7BF4239134E600935B88 /* ZMConversation+Participants.swift */,
 				A90B3E2C23A255D5003EFED4 /* ZMConversation+Creation.swift */,
@@ -3781,11 +3782,11 @@
 				CBD35F2B2D09EBB20080DA37 /* WireCrypto */,
 				01D2B7A22D64A8F50030D28D /* WireCoreCrypto */,
 				1657FA992D9C2EB800A7B337 /* WireCoreCryptoUniffi */,
-				76E000BB2DAFED3A00853C45 /* WireCellsAPI */,
 				34DC44B42E01C210004D5DD5 /* WireNetwork */,
 				59506A872E2E61BD0051B07A /* SwiftProtobuf */,
 				5950B0342E2EA1070051B07A /* GenericMessageProtocol */,
 				CBB648A42E33D18900FA52AA /* WireData */,
+				C9954F892E38CA8600A5EB01 /* WireMessagingDomain */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -4171,6 +4172,7 @@
 				F9331C781CB4165100139ECC /* NSString+ZMPersonName.m in Sources */,
 				63B1335529A503D100009D84 /* ProteusService.swift in Sources */,
 				BF6EA4D21E2512E800B7BD4B /* ZMConversation+DisplayName.swift in Sources */,
+				C9A65E6C2E0AD4F4004D7FD5 /* ZMConversation+ChannelHistoryDepth.swift in Sources */,
 				F1C867851FAA0D48001505E8 /* ZMUser+Create.swift in Sources */,
 				EEDA9C152513A1DA003A5B27 /* ZMClientMessage+EncryptionAtRest.swift in Sources */,
 				A95E7BF5239134E600935B88 /* ZMConversation+Participants.swift in Sources */,
@@ -5188,9 +5190,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
 		};
-		76E000BB2DAFED3A00853C45 /* WireCellsAPI */ = {
+		C9954F892E38CA8600A5EB01 /* WireMessagingDomain */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireCellsAPI;
+			productName = WireMessagingDomain;
 		};
 		CBB648A42E33D18900FA52AA /* WireData */ = {
 			isa = XCSwiftPackageProductDependency;

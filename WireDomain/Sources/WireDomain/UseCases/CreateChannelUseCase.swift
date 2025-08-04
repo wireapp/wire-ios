@@ -27,7 +27,7 @@ public protocol CreateChannelUseCaseProtocol {
     func invoke(
         teamID: UUID,
         name: String?,
-        historyDepth: Int?,
+        historyDepth: String?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -77,7 +77,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     public func invoke(
         teamID: UUID,
         name: String?,
-        historyDepth: Int?,
+        historyDepth: String?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -132,7 +132,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private func createChannel(
         teamID: UUID,
         name: String?,
-        historyDepth: Int?,
+        historyDepth: String?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -207,7 +207,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         name: String?,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
-        historyDepth: Int?,
+        historyDepth: String?,
         enableReceipts: Bool,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {

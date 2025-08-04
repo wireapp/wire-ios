@@ -204,9 +204,6 @@
       location = "group:WireBackup">
    </FileRef>
    <FileRef
-      location = "group:WireCells">
-   </FileRef>
-   <FileRef
       location = "group:WireData">
    </FileRef>
    <FileRef
