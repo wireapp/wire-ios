@@ -178,7 +178,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
         Group {
             NavigationStack {
                 ChannelHistoryView(viewModel: ChannelHistoryViewModel(
-                    historyDepth: 10_000,
+                    historyDepth: "",
                     teamsURL: URL(string: "https://google.com")!,
                     accentColor: .blue,
                     useCase: channelHistoryUseCase()

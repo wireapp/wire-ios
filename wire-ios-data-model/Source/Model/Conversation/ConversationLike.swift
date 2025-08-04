@@ -56,7 +56,6 @@ public protocol ConversationLike: AnyObject {
     var areServicesPresent: Bool { get }
     var domain: String? { get }
     var isChannel: Bool { get }
-    var channelHistoryDepth: Int { get }
     var privateChannelPermission: PrivateChannelPermission { get }
     var channelHistoryDepth: String? { get }
 

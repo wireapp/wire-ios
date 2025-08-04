@@ -36,7 +36,7 @@ final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptions
         status = historyDepthValue
     }
 
-    private func mapHistoryDepth(_ historyDepth: Int) -> String {
+    private func mapHistoryDepth(_ historyDepth: String?) -> String {
         // TODO: [WPB-18396] - return correct `historyDepth` value from db
         "Off"
     }

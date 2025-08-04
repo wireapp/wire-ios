@@ -34,7 +34,7 @@ package class ChannelHistoryViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
     package init(
-        historyDepth: Int,
+        historyDepth: String?,
         teamsURL: URL,
         accentColor: Color,
         useCase: any ChannelHistoryUseCaseProtocol

@@ -38,7 +38,7 @@ public class ChannelViewFactory {
 
     @MainActor
     public static func makeChannelHistoryView(
-        historyDepth: Int,
+        historyDepth: String?,
         accentColor: Color,
         teamsURL: URL,
         repository: any ChannelRepositoryProtocol

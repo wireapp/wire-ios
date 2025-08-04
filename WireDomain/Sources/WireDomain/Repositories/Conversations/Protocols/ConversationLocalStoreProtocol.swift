@@ -465,7 +465,7 @@ public protocol ConversationLocalStoreProtocol {
     ///     - historyDepth: The history depth (one day, one week, four weeks..)
 
     func storeConversation(
-        historyDepth: Int,
+        historyDepth: String,
         conversationID: UUID,
         conversationDomain: String?
     ) async throws

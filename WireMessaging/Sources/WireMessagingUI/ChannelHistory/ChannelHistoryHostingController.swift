@@ -93,7 +93,7 @@ struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
         )
 
         let viewModel = ChannelHistoryViewModel(
-            historyDepth: 10_000,
+            historyDepth: "",
             teamsURL: URL(string: "https://google.com")!,
             accentColor: .red,
             useCase: useCase

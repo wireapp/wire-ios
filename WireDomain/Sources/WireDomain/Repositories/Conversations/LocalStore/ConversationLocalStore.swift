@@ -286,7 +286,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func storeConversation(
-        historyDepth: Int,
+        historyDepth: String,
         conversationID: UUID,
         conversationDomain: String?
     ) async throws {
