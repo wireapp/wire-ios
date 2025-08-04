@@ -124,7 +124,7 @@ public final class E2EIService: E2EIServiceInterface {
     }
 
     public func setOIDCChallengeResponse(challenge: Data) async throws {
-        try await self.e2eIdentity.newOidcChallengeResponse(challenge: challenge)
+        try await e2eIdentity.newOidcChallengeResponse(challenge: challenge)
     }
 
     public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {

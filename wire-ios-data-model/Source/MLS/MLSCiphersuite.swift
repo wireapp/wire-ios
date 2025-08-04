@@ -64,7 +64,7 @@ public enum MLSCipherSuite: Int, Codable, Equatable, CustomStringConvertible {
             .p521
         }
     }
-    
+
     public var ccCipherSuite: WireCoreCryptoUniffi.Ciphersuite {
         switch self {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:

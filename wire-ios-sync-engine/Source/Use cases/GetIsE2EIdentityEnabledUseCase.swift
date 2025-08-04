@@ -25,9 +25,6 @@ public protocol GetIsE2EIdentityEnabledUseCaseProtocol {
 }
 
 public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCaseProtocol {
-    enum Failure: Error {
-        case invalidCipherSuiteConversion
-    }
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let featureRepository: FeatureRepositoryInterface
 
@@ -40,13 +37,10 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     }
 
     public func invoke() async throws -> Bool {
-        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite
-        guard let ccCiphersuite = WireDataModel.MLSCipherSuite(rawValue: ciphersuite.rawValue)?.ccCipherSuite else {
-            throw Failure.invalidCipherSuiteConversion
-        }
+        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.perform {
-            try await $0.e2eiIsEnabled(ciphersuite: ccCiphersuite)
+            try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
         }
     }
 }

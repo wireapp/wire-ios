@@ -199,7 +199,8 @@ public final class MLSService: MLSServiceInterface {
                 let conversationMembers = try await $0.getClientIds(conversationId: parentGroupID.conversationId)
                     .compactMap { MLSClientID(data: $0.copyBytes()) }
 
-                let subconversationMembers = try await $0.getClientIds(conversationId: subconversationGroupID.conversationId)
+                let subconversationMembers = try await $0
+                    .getClientIds(conversationId: subconversationGroupID.conversationId)
                     .compactMap { MLSClientID(data: $0.copyBytes()) }
 
                 let members = conversationMembers.map {
@@ -638,7 +639,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
-            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.cipherSuite
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
@@ -695,7 +696,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [WireCoreCryptoUniffi.KeyPackage]()
 
         do {
-            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.cipherSuite
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
             keyPackages = try await coreCrypto.perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(
