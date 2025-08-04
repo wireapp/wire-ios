@@ -53,7 +53,6 @@ struct WireCellsImageAttachmentPreview: View {
     }
 }
 
-
 #Preview {
     WireCellsImageAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),

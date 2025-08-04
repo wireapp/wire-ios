@@ -43,11 +43,11 @@ extension FileIcon {
 
     static func make(type: UTType?, fileExtension: String?) -> FileIcon {
         if let type, let icon = FileIcon.make(type: type) {
-            return icon
+            icon
         } else if let fileExtension, let icon = FileIcon.make(fileExtension: fileExtension) {
-            return icon
+            icon
         } else {
-            return .other
+            .other
         }
     }
 
@@ -55,23 +55,23 @@ extension FileIcon {
         func icon(type: UTType) -> FileIcon? {
             switch type {
             case .archive:
-                return .archive
+                .archive
             case .audio:
-                return .audio
+                .audio
             case .script, .sourceCode, .xml, .html, .json:
-                return .code
+                .code
             case .image:
-                return .image
+                .image
             case .pdf:
-                return .pdf
+                .pdf
             case .presentation:
-                return .presentation
+                .presentation
             case .spreadsheet:
-                return .spreadsheet
+                .spreadsheet
             case .movie:
-                return .video
+                .video
             default:
-                return nil
+                nil
             }
         }
 
@@ -102,25 +102,25 @@ extension FileIcon {
     var resource: ImageResource {
         switch self {
         case .archive:
-            return .fileIconArchive
+            .fileIconArchive
         case .audio:
-            return .fileIconAudio
+            .fileIconAudio
         case .code:
-            return .fileIconCode
+            .fileIconCode
         case .document:
-            return .fileIconDoc
+            .fileIconDoc
         case .image:
-            return .fileIconImg
+            .fileIconImg
         case .other:
-            return .fileIconOther
+            .fileIconOther
         case .pdf:
-            return .fileIconPDF
+            .fileIconPDF
         case .presentation:
-            return .fileIconPresentation
+            .fileIconPresentation
         case .spreadsheet:
-            return .fileIconSpreadsheet
+            .fileIconSpreadsheet
         case .video:
-            return .fileIconVideo
+            .fileIconVideo
         }
     }
 

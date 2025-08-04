@@ -86,8 +86,7 @@ private struct AttachmentsCarouselItemView: View {
         }
     }
 
-    @ViewBuilder
-    var content: some View {
+    @ViewBuilder var content: some View {
         switch item.kind {
         case let .image(thumbnail):
             WireCellsImageAttachmentPreview(
@@ -153,7 +152,7 @@ private struct AttachmentsCarouselItemView: View {
 private extension AttachmentsCarouselItem {
 
     var aspectRatio: CGFloat {
-        switch kind {	
+        switch kind {
         case .image, .video:
             1
         case .audio, .document:
@@ -189,7 +188,7 @@ private extension AttachmentsCarouselItem.State {
 private struct CornerButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
-        return configuration
+        configuration
             .label
             .symbolRenderingMode(.palette)
             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color, ColorTheme.Buttons.Secondary.enabled.color)

@@ -45,7 +45,6 @@ struct WireCellsVideoAttachmentPreview: View {
                     ProgressView()
                 }
 
-                
                 if thumbnail != nil, !isError {
                     PlayIcon(isEnabled: canPlay)
                 }
@@ -71,7 +70,7 @@ private struct PlayIcon: View {
             .symbolRenderingMode(.palette)
             .foregroundStyle(
                 isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color,
-                isEnabled ? Theme.enabled.color: Theme.disabled.color
+                isEnabled ? Theme.enabled.color : Theme.disabled.color
             )
             .scaledToFit()
             .frame(width: 25, height: 25)

@@ -79,7 +79,6 @@ struct WireCellsDocumentAttachmentPreview: View {
     }
 }
 
-
 #Preview {
     WireCellsDocumentAttachmentPreview(
         headerIcon: Image(FileIcon.pdf.resource),
