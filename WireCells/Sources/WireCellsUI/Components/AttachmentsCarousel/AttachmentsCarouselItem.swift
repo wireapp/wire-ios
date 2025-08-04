@@ -39,14 +39,6 @@ public struct AttachmentsCarouselItem: Identifiable {
     public let name: String
     public let fileExtension: String?
     public let size: String
-
-    public init(id: UUID, state: State, kind: Kind, name: String, fileExtension: String?, size: String) {
-        self.id = id
-        self.state = state
-        self.kind = kind
-        self.name = name
-        self.fileExtension = fileExtension
-        self.size = size
-    }
+    let fileIcon: FileIcon
 
 }

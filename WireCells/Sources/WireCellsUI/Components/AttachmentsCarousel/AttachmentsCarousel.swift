@@ -18,6 +18,7 @@
 
 public import SwiftUI
 import WireDesign
+import WireFoundation
 
 public struct AttachmentsCarousel: View {
 
@@ -104,7 +105,7 @@ private struct AttachmentsCarouselItemView: View {
             )
         case .audio, .document:
             WireCellsDocumentAttachmentPreview(
-                headerIcon: Image(systemName: "text.document"),
+                headerIcon: Image(item.fileIcon.resource),
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,
                 progress: item.state.progress,
@@ -202,7 +203,8 @@ private extension AttachmentsCarouselItem.State {
                             ),
                             name: "Image",
                             fileExtension: "jpg",
-                            size: "1.2 MB"
+                            size: "1.2 MB",
+                            fileIcon: .image
                         ),
                         AttachmentsCarouselItem(
                             id: UUID(),
@@ -210,7 +212,8 @@ private extension AttachmentsCarouselItem.State {
                             kind: .video(thumbnail: nil),
                             name: "Video",
                             fileExtension: "mp4",
-                            size: "1.2 MB"
+                            size: "1.2 MB",
+                            fileIcon: .video
                         ),
                         AttachmentsCarouselItem(
                             id: UUID(),
@@ -218,7 +221,8 @@ private extension AttachmentsCarouselItem.State {
                             kind: .document,
                             name: "Doc",
                             fileExtension: "pdf",
-                            size: "1.2 MB"
+                            size: "1.2 MB",
+                            fileIcon: .pdf
                         )
                     ]
                 ),

@@ -60,6 +60,7 @@ private extension AttachmentsCarouselItem {
             name: name,
             fileExtension: fileExtension,
             size: draft.bytes.formatted(.byteCount(style: .decimal)),
+            fileIcon: .make(type: draft.fileType, fileExtension: fileExtension)
         )
     }
 

@@ -82,11 +82,11 @@ struct WireCellsDocumentAttachmentPreview: View {
 
 #Preview {
     WireCellsDocumentAttachmentPreview(
-        headerIcon: Image(systemName: "text.document"),
+        headerIcon: Image(FileIcon.pdf.resource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,
-        isError: true
+        isError: false
     )
     .frame(width: 222, height: 74)
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
