@@ -20,13 +20,15 @@ import WireDataModel
 import WireFoundation
 
 // sourcery: AutoMockable
-public protocol ResetMLSConversationUserDefaultsRepositoryProtocol {
+public protocol ResetMLSConversationLockRepositoryProtocol {
     func setInitiatedReset(conversationID: WireDataModel.QualifiedID)
     func wasResetInitiated(conversationID: WireDataModel.QualifiedID) -> Bool
     func removeResetInitiated(conversationID: WireDataModel.QualifiedID)
 }
 
-public struct ResetMLSConversationUserDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol {
+/// Used to synchronise access from 'Initiate' and 'Handle event' steps of reset broken MLS conversations
+/// When initiated we do not need to handle sent event if it's same device
+public struct ResetMLSConversationLockRepository: ResetMLSConversationLockRepositoryProtocol {
 
     enum Key: String, DefaultsKey {
         case resetMLSConversationInitiated

@@ -3452,7 +3452,7 @@ public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUs
 
 }
 
-public class MockResetMLSConversationUserDefaultsRepositoryProtocol: ResetMLSConversationUserDefaultsRepositoryProtocol {
+public class MockResetMLSConversationLockRepositoryProtocol: ResetMLSConversationLockRepositoryProtocol {
 
     // MARK: - Life cycle
 

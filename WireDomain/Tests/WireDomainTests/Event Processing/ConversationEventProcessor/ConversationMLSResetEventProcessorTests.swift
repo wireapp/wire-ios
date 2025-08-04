@@ -33,7 +33,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
     private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
-    private lazy var mockResetUserDefaultsRepository = MockResetMLSConversationUserDefaultsRepositoryProtocol()
+    private lazy var mockResetLockRepository = MockResetMLSConversationLockRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -64,14 +64,14 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
 
-        mockResetUserDefaultsRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
-        mockResetUserDefaultsRepository.wasResetInitiatedConversationID_MockValue = false
+        mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
+        mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
 
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
             featureConfigRepository: mockFeatureConfigRepository,
-            userDefaultsRepository: mockResetUserDefaultsRepository
+            lockRepository: mockResetLockRepository
 
         )
     }
@@ -141,7 +141,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testProcessEvent_DoNothingWhenInitiatedFromSameDevice() async throws {
 
-        mockResetUserDefaultsRepository.wasResetInitiatedConversationID_MockValue = true
+        mockResetLockRepository.wasResetInitiatedConversationID_MockValue = true
 
         // When
 
@@ -149,7 +149,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(mockResetUserDefaultsRepository.removeResetInitiatedConversationID_Invocations.count, 1)
+        XCTAssertEqual(mockResetLockRepository.removeResetInitiatedConversationID_Invocations.count, 1)
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
         XCTAssertEqual(
             conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,

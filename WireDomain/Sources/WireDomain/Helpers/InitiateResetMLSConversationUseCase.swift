@@ -35,20 +35,20 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     private let mlsService: MLSServiceInterface
     private let conversationLocalStore: ConversationLocalStoreProtocol
     private let conversationRepository: ConversationRepositoryProtocol
-    private let userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
+    private let lockRepository: ResetMLSConversationLockRepositoryProtocol
 
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
         conversationLocalStore: ConversationLocalStoreProtocol,
         conversationRepository: ConversationRepositoryProtocol,
-        userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
+        lockRepository: ResetMLSConversationLockRepositoryProtocol
     ) {
         self.api = api
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
         self.conversationRepository = conversationRepository
-        self.userDefaultsRepository = userDefaultsRepository
+        self.lockRepository = lockRepository
     }
 
     public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
@@ -66,7 +66,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
 
             attributes = [.conversationId: qualifiedID.safeForLoggingDescription]
 
-            userDefaultsRepository.setInitiatedReset(conversationID: qualifiedID)
+            lockRepository.setInitiatedReset(conversationID: qualifiedID)
 
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case started",
@@ -134,7 +134,7 @@ public extension InitiateResetMLSConversationUseCase {
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
             conversationRepository: conversationRepository,
-            userDefaultsRepository: ResetMLSConversationUserDefaultsRepository(
+            lockRepository: ResetMLSConversationLockRepository(
                 userID: userID
             )
         )

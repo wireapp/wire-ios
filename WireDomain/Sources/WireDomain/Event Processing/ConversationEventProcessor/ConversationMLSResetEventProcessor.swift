@@ -30,18 +30,18 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
-    private let userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
+    private let lockRepository: ResetMLSConversationLockRepositoryProtocol
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
-        userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
+        lockRepository: ResetMLSConversationLockRepositoryProtocol
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
         self.featureConfigRepository = featureConfigRepository
-        self.userDefaultsRepository = userDefaultsRepository
+        self.lockRepository = lockRepository
     }
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
@@ -56,13 +56,13 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
                 )
                 return
             }
-            guard !userDefaultsRepository
+            guard !lockRepository
                 .wasResetInitiated(conversationID: event.conversationID.toDomainModel()) else {
                 WireLogger.mls.info(
                     "Reset was initiated from this device thus no need to process it",
                     attributes: attributes
                 )
-                userDefaultsRepository.removeResetInitiated(conversationID: event.conversationID.toDomainModel())
+                lockRepository.removeResetInitiated(conversationID: event.conversationID.toDomainModel())
                 return
             }
 
