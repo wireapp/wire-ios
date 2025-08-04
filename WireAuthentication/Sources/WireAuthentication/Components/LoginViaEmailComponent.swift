@@ -86,17 +86,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         return VerificationCodeView(factory: factory)
     }
 
-    fileprivate func noHistoryComponent(result: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: result,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-    
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
-        NoHistoryView(factory: self.noHistoryComponent(result: result))
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
     }
 
     @MainActor
@@ -115,25 +108,6 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory {
-        VerificationCodeComponent(
-            parent: self,
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        )
-    }
-
-    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
-        personalAccountCreationComponent(
-            teamAccountCreationLink: teamAccountCreationLink
         )
     }
 
@@ -156,4 +130,32 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         ValidateEmailUseCase()
     }
 
+    // MARK: -  private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+    
+    private func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory {
+        VerificationCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        )
+    }
+    
+    private func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+    }
 }

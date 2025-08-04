@@ -65,9 +65,10 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
             router: dependency.router
         )
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
-        NoHistoryView(factory: self.noHistoryComponent(result: result))
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
     }
 
     // MARK: - Use cases
@@ -89,10 +90,10 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
     }
-    
+
     // MARK: - Private
-    
-    private func noHistoryComponent(result: AuthenticationResult) -> NoHistoryComponent {
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
             authenticationResult: result,
