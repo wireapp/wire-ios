@@ -105,7 +105,7 @@ final class TeamManageTests: WireUITestCase {
             member: teamMember1
         )
 
-        let  teamMember2Id = try await userHelper.registerUsersAsTeamMember(
+        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
             member: teamMember2
