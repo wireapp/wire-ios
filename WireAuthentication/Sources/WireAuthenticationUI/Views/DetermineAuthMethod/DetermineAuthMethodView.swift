@@ -26,15 +26,22 @@ package protocol DetermineAuthMethodFactory {
     @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
     @MainActor
-    func loginViaEmailFactory(
+    func loginView(
         email: String?,
-        canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
-    ) -> any LoginViaEmailFactory
+    ) -> LoginViaEmailView
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView
+
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+
 }
 
 package struct DetermineAuthMethodView: View {
@@ -157,30 +164,26 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
         switch destination {
-        case let .login(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: false,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
+        case let .login(email, didDetectDomainConflict, backendInfo):
+            viewModel.factory
+                .loginView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendInfo: backendInfo
+                )
         case let .loginOrRegister(
             email,
             didDetectDomainConflict,
             backendInfo
         ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: true,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
+            viewModel.factory
+                .loginOrRegisterView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendInfo: backendInfo
+                )
         case let .noHistory(authenticationResult):
-            NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
+            viewModel.factory.noHistoryView(result: authenticationResult)
         }
     }
 
