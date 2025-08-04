@@ -41,7 +41,7 @@ final class ConversationMessageCellTableViewAdapter<
     
     /// A view that contains the `cellView`.
     /// Will be either an invisible view with the same size as `cellView` or a chat bubble with a larger size.
-    let cellViewContainer: UIView
+    let cellViewContainer: ConversationMessageContainerView
 
     var cellDescription: C? {
         didSet {
@@ -64,15 +64,8 @@ final class ConversationMessageCellTableViewAdapter<
         self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
         
-        cellViewContainer = .init(frame: .zero)
+        cellViewContainer = ConversationMessageContainerView(content: cellView)
         cellViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        cellViewContainer.backgroundColor = .clear
-        
-        if DeveloperFlag.chatBubblesSimple.isOn {
-            //apply debug colors
-            cellViewContainer.backgroundColor = .yellow
-            cellView.backgroundColor = .red.withAlphaComponent(0.3)
-        }
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -81,7 +74,6 @@ final class ConversationMessageCellTableViewAdapter<
         backgroundColor = .clear
         isOpaque = false
 
-        cellViewContainer.addSubview(cellView)
         contentView.addSubview(cellViewContainer)
         
         self.leading = cellViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
@@ -90,9 +82,6 @@ final class ConversationMessageCellTableViewAdapter<
         self.bottom = contentView.bottomAnchor.constraint(equalTo: cellViewContainer.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
         
-        let margin: CGFloat = DeveloperFlag.chatBubblesSimple.isOn ? 6 : 0
-        self.cellView.fitIn(view: cellViewContainer, insets: .init(top: margin, left: margin, bottom: margin, right: margin))
-
         NSLayoutConstraint.activate([
             leading,
             trailing,
@@ -108,7 +97,7 @@ final class ConversationMessageCellTableViewAdapter<
         contentView.addGestureRecognizer(doubleTapGesture)
 
         self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
-        cellView.addGestureRecognizer(singleTapGesture)
+        cellViewContainer.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
     }
@@ -124,6 +113,7 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = cellDescription?.topMargin ?? 0
         bottom.constant = cellDescription?.bottomMargin ?? 0
+        cellViewContainer.isBubble = cellDescription?.shouldWrapInBubble ?? false
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
