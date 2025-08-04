@@ -190,6 +190,31 @@ class UserHelper {
             invitationCode: invitationCode
         )
     }
+
+    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
+        -> (convoId: UUID?, domain: String?) {
+        var conversationIDs = [QualifiedID]()
+
+        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+            conversationIDs.append(contentsOf: ids)
+        }
+
+        let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
+
+        let filtered = conversations.found.filter { conversation in
+            switch criteria {
+            case let .groupName(name):
+                conversation.name == name
+            case let .conversationType(type):
+                conversation.type == type
+            }
+        }
+
+        if let match = filtered.first {
+            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        }
+        return (nil, nil)
+    }
 }
 
 private extension BackendEnvironment {
@@ -200,6 +225,11 @@ private extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+enum FilterConversationsByCriteria {
+    case groupName(String)
+    case conversationType(ConversationType?)
 }
 
 private final class MockCookieStorage: CookieStorageProtocol {
