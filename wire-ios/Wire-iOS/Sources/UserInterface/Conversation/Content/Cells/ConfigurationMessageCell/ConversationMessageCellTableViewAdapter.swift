@@ -38,6 +38,10 @@ final class ConversationMessageCellTableViewAdapter<
 >: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
+    
+    /// A view that contains the `cellView`.
+    /// Will be either an invisible view with the same size as `cellView` or a chat bubble with a larger size.
+    let cellViewContainer: UIView
 
     var cellDescription: C? {
         didSet {
@@ -59,6 +63,16 @@ final class ConversationMessageCellTableViewAdapter<
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
+        
+        cellViewContainer = .init(frame: .zero)
+        cellViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        cellViewContainer.backgroundColor = .clear
+        
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            //apply debug colors
+            cellViewContainer.backgroundColor = .yellow
+            cellView.backgroundColor = .red.withAlphaComponent(0.3)
+        }
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -67,13 +81,17 @@ final class ConversationMessageCellTableViewAdapter<
         backgroundColor = .clear
         isOpaque = false
 
-        contentView.addSubview(cellView)
-
-        self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
+        cellViewContainer.addSubview(cellView)
+        contentView.addSubview(cellViewContainer)
+        
+        self.leading = cellViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+        self.trailing = cellViewContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        self.top = cellViewContainer.topAnchor.constraint(equalTo: contentView.topAnchor)
+        self.bottom = contentView.bottomAnchor.constraint(equalTo: cellViewContainer.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
+        
+        let margin: CGFloat = DeveloperFlag.chatBubblesSimple.isOn ? 6 : 0
+        self.cellView.fitIn(view: cellViewContainer, insets: .init(top: margin, left: margin, bottom: margin, right: margin))
 
         NSLayoutConstraint.activate([
             leading,
