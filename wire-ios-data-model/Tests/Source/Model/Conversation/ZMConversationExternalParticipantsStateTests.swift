@@ -126,19 +126,19 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             .group,
             selfUser: .memberOfHostingTeam,
             otherUsers: [.memberOfHostingTeam, .service],
-            expectedResult: [.visibleServices]
+            expectedResult: [.visibleApps]
         )
         assertMatrixRow(
             .group,
             selfUser: .personal,
             otherUsers: [.memberOfHostingTeam, .service],
-            expectedResult: [.visibleServices]
+            expectedResult: [.visibleApps]
         )
         assertMatrixRow(
             .group,
             selfUser: .external,
             otherUsers: [.memberOfHostingTeam, .service],
-            expectedResult: [.visibleServices]
+            expectedResult: [.visibleApps]
         )
 
         // Only Externals
@@ -155,7 +155,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             .group,
             selfUser: .memberOfHostingTeam,
             otherUsers: [.personal, .service, .external, .federated],
-            expectedResult: [.visibleGuests, .visibleServices, .visibleExternals, .visibleRemotes]
+            expectedResult: [.visibleGuests, .visibleApps, .visibleExternals, .visibleRemotes]
         )
     }
 
