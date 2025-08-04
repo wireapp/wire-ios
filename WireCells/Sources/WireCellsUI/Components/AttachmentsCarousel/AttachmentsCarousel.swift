@@ -52,6 +52,7 @@ public struct AttachmentsCarousel: View {
             }
             .padding(.horizontal, 12) // TODO: [WPB-17604] Don't hardcode but rely on system spacing
         }
+        .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .bottom)
     }
 
