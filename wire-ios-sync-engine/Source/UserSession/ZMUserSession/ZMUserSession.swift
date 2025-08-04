@@ -92,7 +92,7 @@ public final class ZMUserSession: NSObject {
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
-    public lazy var featureRepository = FeatureRepository(context: syncContext)
+    public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
 
@@ -133,37 +133,37 @@ public final class ZMUserSession: NSObject {
     }
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchFileSharing()
     }
 
     public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchSelfDeletingMessages()
     }
 
     public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchConversationGuestLinks()
     }
 
     public var classifiedDomainsFeature: Feature.ClassifiedDomains {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchClassifiedDomains()
     }
 
     public var e2eiFeature: Feature.E2EI {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchE2EI()
     }
 
     public var mlsFeature: Feature.MLS {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchMLS()
     }
 
     public var channelsFeature: Feature.Channels {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()
     }
 

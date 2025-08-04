@@ -175,7 +175,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
         let migrator = OneOnOneMigrator(mlsService: mlsService)
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
 
         await process(
             welcomeMessage: welcomeMessage,

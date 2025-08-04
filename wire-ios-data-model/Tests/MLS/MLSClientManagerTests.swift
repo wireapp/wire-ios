@@ -27,14 +27,14 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
     private var sut: MLSClientManager!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockMLService: MockMLSServiceInterface!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
 
     // MARK: - Life cycle
 
     override func setUp() {
         super.setUp()
 
-        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockMLService = MockMLSServiceInterface()
         sut = MLSClientManager(
@@ -44,7 +44,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
     }
 
     override func tearDown() {
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
         mockCoreCryptoProvider = nil
         mockMLService = nil
         sut = nil
@@ -54,7 +54,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
     func test_InitializeMLSClient_Success() async throws {
         // Mock
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
             config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         )
@@ -65,7 +65,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
         // Given
         BackendInfo.isMLSEnabled = true
-        let mlsFeature = mockFeatureRepository.fetchMLS()
+        let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
         let selfUser = await syncMOC.perform {
@@ -105,7 +105,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
     func test_InitializeMLSClient_Failed_MLSFeatureIsDisabled() async throws {
         // Mock
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .disabled,
             config: .init()
         )
@@ -116,7 +116,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
         // Given
         BackendInfo.isMLSEnabled = true
-        let mlsFeature = mockFeatureRepository.fetchMLS()
+        let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
         let selfUser = await syncMOC.perform {
@@ -156,7 +156,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
     func test_InitializeMLSClient_Failed_MLSClientAlreadyExists() async throws {
         // Mock
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
             config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         )
@@ -167,7 +167,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
         // Given
         BackendInfo.isMLSEnabled = true
-        let mlsFeature = mockFeatureRepository.fetchMLS()
+        let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
         let selfUser = await syncMOC.perform {
@@ -209,7 +209,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
     func test_InitializeMLSClient_Failed_MLSIsDisabledOnBackend() async throws {
         // Mock
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
             config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         )
@@ -220,7 +220,7 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
 
         // Given
         BackendInfo.isMLSEnabled = false
-        let mlsFeature = mockFeatureRepository.fetchMLS()
+        let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
         let selfUser = await syncMOC.perform {

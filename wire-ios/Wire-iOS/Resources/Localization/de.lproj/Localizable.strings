@@ -150,12 +150,12 @@
 "conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
 "conversation_list.filter.folders.title" = "Ordner";
+"conversation_list.filter_label.text" = "Gefiltert nach %@";
+"conversation_list.filter.remove_button.title" = "Entfernen";
 "conversation_list.filter.unread.title" = "Ungelesen";
 "conversation_list.filter.mentions.title" = "Erwähnungen";
 "conversation_list.filter.replies.title" = "Antworten";
 "conversation_list.filter.drafts.title" = "Entwürfe";
-"conversation_list.filter_label.text" = "Gefiltert nach %@";
-"conversation_list.filter.remove_button.title" = "Entfernen";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Beitreten";
@@ -173,16 +173,6 @@
 "conversation_list.empty_placeholder.favorite.link" = "So kennzeichnen Sie Unterhaltungen als Favoriten";
 "conversation_list.empty_placeholder.group.subheadline" = "Bislang sind Sie an keiner Gruppenunterhaltung beteiligt.\nBeginnen Sie eine neue Unterhaltung!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "Sie haben noch keine Kontakte. Suchen Sie nach Personen auf {{brandName}} und treten Sie in Kontakt.";
-
-// Conversation List - Empty states for filters
-"conversation_list.empty_state.unread.title" = "Keine ungelesenen Unterhaltungen";
-"conversation_list.empty_state.unread.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
-"conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
-"conversation_list.empty_state.mentions.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
-"conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
-"conversation_list.empty_state.replies.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
-"conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
-"conversation_list.empty_state.drafts.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 "conversation_list.empty_placeholder.oneonone.button" = "Mit Personen verbinden";
 
 "conversation_list.empty_placeholder.search.subheadline.phone" = "Es konnten keine Unterhaltungen gefunden werden.\n\nVerbinden Sie sich mit Personen oder erstellen Sie eine neue Gruppe:";
@@ -191,6 +181,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "Neue Unterhaltung";
 "conversation_list.empty_placeholder.search.button.ipad" = "Beginnen Sie eine neue Unterhaltung";
 "conversation_list.empty_placeholder.search.connect_button" = "Mit Personen verbinden";
+"conversation_list.empty_state.unread.title" = "Keine ungelesenen Unterhaltungen";
+"conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
+"conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
+"conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
+"conversation_list.empty_state.up_to_date.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";

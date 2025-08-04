@@ -27,7 +27,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     var sut: ProteusToMLSMigrationCoordinator!
     var mockStorage: MockProteusToMLSMigrationStorageInterface!
-    var mockFeatureRepository: MockFeatureRepositoryInterface!
+    var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSServiceInterface!
 
@@ -37,14 +37,14 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         super.setUp()
 
         mockStorage = MockProteusToMLSMigrationStorageInterface()
-        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSServiceInterface()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
             storage: mockStorage,
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             actionsProvider: mockActionsProvider
         )
 
@@ -56,7 +56,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockActionsProvider.syncUsersQualifiedIDsContext_MockMethod = { _, _ in }
         mockMLSService.conversationExistsGroupID_MockValue = true
         mockMLSService.joinGroupWith_MockMethod = { _ in }
-        mockFeatureRepository.fetchMLSMigration_MockValue = .init()
+        mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init()
 
         DeveloperFlag.storage = .temporary()
     }
@@ -66,7 +66,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     override func tearDown() {
         sut = nil
         mockStorage = nil
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
         DeveloperFlag.storage = .standard
@@ -252,7 +252,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
+        XCTAssertEqual(mockLegacyFeatureRepository.fetchMLS_Invocations.count, 0, file: file, line: line)
     }
 
     // MARK: - Migration finalisation
@@ -263,7 +263,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await createUserAndGroupConversation()
 
         // Mock that the finalisation time has not been reached
-        mockFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
+        mockLegacyFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
             status: .enabled,
             config: .init(finaliseRegardlessAfter: .distantFuture)
         )
@@ -399,7 +399,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // Set finalisation time
-        mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+        mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init(
             status: .enabled,
             config: .init(finaliseRegardlessAfter: finaliseRegardlessAfter)
         )
@@ -491,13 +491,13 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // Set MLS feature
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
             config: .init(supportedProtocols: isMLSProtocolSupported ? [.mls] : [])
         )
 
         // Set MLS Migration feature
-        mockFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
+        mockLegacyFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
             status: isMLSMigrationFeatureEnabled ? .enabled : .disabled,
             config: .init(startTime: startTime)
         )

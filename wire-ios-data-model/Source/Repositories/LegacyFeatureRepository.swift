@@ -20,7 +20,7 @@ import Foundation
 import WireLogging
 
 // sourcery: AutoMockable
-public protocol FeatureRepositoryInterface {
+public protocol LegacyFeatureRepositoryInterface {
 
     func fetchAppLock() -> Feature.AppLock
     func storeAppLock(_ appLock: Feature.AppLock)
@@ -49,6 +49,8 @@ public protocol FeatureRepositoryInterface {
     func storeChannels(_ channels: Feature.Channels)
 }
 
+/// **Do not use it for new code, use FeatureConfigRepository instead**
+///
 /// This class facilitates storage and retrieval of feature configs to and from
 /// the database.
 ///
@@ -59,12 +61,12 @@ public protocol FeatureRepositoryInterface {
 /// **Note:** fetching features can occur on any context, but updates should only
 /// take place on the sync context.
 
-public class FeatureRepository: FeatureRepositoryInterface {
+public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let logger = WireLogger(tag: "FeatureRepository")
+    private let logger = WireLogger(tag: "LegacyFeatureRepository")
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -568,7 +570,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
 }
 
-public extension FeatureRepository {
+public extension LegacyFeatureRepository {
 
     /// A type that represents the possible changes to feature configs.
     ///
