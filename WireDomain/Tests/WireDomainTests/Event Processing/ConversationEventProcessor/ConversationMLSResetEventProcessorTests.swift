@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-import WireDomainSupport
 import XCTest
 @testable import WireDomain
+@testable import WireDomainSupport
 @testable import WireNetwork
 
 final class ConversationMLSResetEventProcessorTests: XCTestCase {
@@ -32,7 +32,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
-    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
+    private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
+    private lazy var mockResetLockRepository = MockResetMLSConversationLockRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -44,8 +45,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        mockLegacyFeatureRepository = .init()
-        mockLegacyFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
+        mockFeatureConfigRepository = .init()
+        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -63,10 +64,14 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
 
+        mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
+        mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
+
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureRepository: mockLegacyFeatureRepository
+            featureConfigRepository: mockFeatureConfigRepository,
+            lockRepository: mockResetLockRepository
         )
     }
 
@@ -114,7 +119,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testProcessEvent_DoNothingWhenFFIsOff() async throws {
 
-        mockLegacyFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
+        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
             status: .disabled,
             config: .init(mlsConversationReset: false)
         )
@@ -133,6 +138,25 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         )
     }
 
+    func testProcessEvent_DoNothingWhenInitiatedFromSameDevice() async throws {
+
+        mockResetLockRepository.wasResetInitiatedConversationID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(mockResetLockRepository.removeResetInitiatedConversationID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            0
+        )
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
+    }
+
     func testNoConversationFound() async throws {
 
         // Given
@@ -149,12 +173,11 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         // Given
 
-        mlsService.wipeGroup_MockError = TestError(message: "some error")
+        let error = TestError(message: "some error")
+        mlsService.wipeGroup_MockError = error
 
         // When and Then
-        await XCTAssertThrowsErrorAsync(
-            ConversationMLSResetEventProcessor.Failure.failedToWipeMLSConversation
-        ) {
+        await XCTAssertThrowsErrorAsync(error) {
             try await self.sut.processEvent(Scaffolding.event)
         }
     }

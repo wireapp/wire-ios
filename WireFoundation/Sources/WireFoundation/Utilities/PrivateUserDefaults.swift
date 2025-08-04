@@ -41,8 +41,12 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
         "\(userID.uuidString)_"
     }
 
-    private func scopeKey(_ key: Key) -> String {
-        "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
+    private func scopeKey(_ key: Key, additionalScope: String? = nil) -> String {
+        var additional = ""
+        if let additionalScope {
+            additional = additionalScope + "_"
+        }
+        return "\(Self.scopePrefix(userID: userID))\(additional)\(key.rawValue)"
     }
 }
 
@@ -57,12 +61,12 @@ public extension PrivateUserDefaults {
         return UUID(uuidString: uuidString)
     }
 
-    func set(_ value: Bool, forKey key: Key) {
-        storage.set(value, forKey: scopeKey(key))
+    func set(_ value: Bool, forKey key: Key, additionalScope: String? = nil) {
+        storage.set(value, forKey: scopeKey(key, additionalScope: additionalScope))
     }
 
-    func bool(forKey key: Key) -> Bool {
-        storage.bool(forKey: scopeKey(key))
+    func bool(forKey key: Key, additionalScope: String? = nil) -> Bool {
+        storage.bool(forKey: scopeKey(key, additionalScope: additionalScope))
     }
 
     func set(_ value: Any?, forKey key: Key) {
@@ -89,8 +93,8 @@ public extension PrivateUserDefaults {
         storage.object(forKey: scopeKey(key)) as? Date
     }
 
-    func removeObject(forKey key: Key) {
-        storage.removeObject(forKey: scopeKey(key))
+    func removeObject(forKey key: Key, additionalScope: String? = nil) {
+        storage.removeObject(forKey: scopeKey(key, additionalScope: additionalScope))
     }
 
     func stringArray(forKey key: Key) -> [String]? {
