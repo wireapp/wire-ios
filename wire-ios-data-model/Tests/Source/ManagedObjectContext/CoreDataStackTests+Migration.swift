@@ -74,14 +74,14 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         // then
         disableZMLogError(true)
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await self.performMigration(accountIdentifier: uuid) { context in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
                 try context.save()
                 throw TestError.somethingWentWrong
             }
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong):
                 break
@@ -102,10 +102,10 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let uuid = UUID()
 
         // then
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await self.performMigration(accountIdentifier: uuid) { _ in }
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.MigrationError.missingLocalStore:
                 break
@@ -134,12 +134,12 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         // then
         disableZMLogError(true)
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await self.performMigration(accountIdentifier: uuid) { _ in
                 throw TestError.somethingWentWrong
             }
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong):
                 break

@@ -98,10 +98,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         // given
         _ = try await createStorageStackAndWaitForCompletion(userID: UUID())
 
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await createBackup(accountIdentifier: UUID())
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.BackupError.failedToRead:
                 // then
@@ -139,10 +139,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         // create empty file where backup needs to be saved to
         try Data().write(to: CoreDataStack.backupsDirectory)
 
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await createBackup(accountIdentifier: uuid)
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.BackupError.failedToWrite:
                 // then
@@ -187,10 +187,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.databaseKey = nil
         directory.viewContext.saveOrRollback()
 
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await createBackup(accountIdentifier: uuid, databaseKey: nil)
-        }) { error in
+        } errorHandler: { error in
             switch error {
             case CoreDataStack.BackupError.failedToWrite(
                 CoreDataStack.BackupError.missingEAREncryptionKey
@@ -212,7 +212,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        let _ = try await createBackup(accountIdentifier: uuid)
+        _ = try await createBackup(accountIdentifier: uuid)
 
         // then
         let fetchConversations = ZMConversation.sortedFetchRequest()
@@ -228,7 +228,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        let _ = try await createBackup(accountIdentifier: uuid)
+        _ = try await createBackup(accountIdentifier: uuid)
 
         // then
         let anotherDirectory = try await createStorageStackAndWaitForCompletion(userID: uuid)
@@ -245,7 +245,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let backup = try await createBackupAndDeleteOriginalAccount(accountIdentifier: uuid)
 
         // when
-        let _ = try await importBackup(
+        _ = try await importBackup(
             accountIdentifier: uuid,
             backup: backup,
             migrator: migrator
@@ -277,7 +277,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         clearStorageFolder()
 
         // when
-        let _ = try await importBackup(
+        _ = try await importBackup(
             accountIdentifier: uuid,
             backup: backup,
             migrator: migrator
@@ -300,14 +300,14 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let differentUUID = UUID()
 
         // Then
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // when
             try await importBackup(
                 accountIdentifier: differentUUID,
                 backup: backup,
                 migrator: migrator
             )
-        }) { error in
+        } errorHandler: { error in
             switch error as? CoreDataStack.BackupImportError {
             case .incompatibleBackup?: break
             default: XCTFail("unexpected error: \(error)")
@@ -321,13 +321,13 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let backup = DatabaseBaseTest.applicationContainer.appendingPathComponent("non-existing-backup")
 
         // Then
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             try await importBackup(
                 accountIdentifier: uuid,
                 backup: backup,
                 migrator: migrator
             )
-        }) { error in
+        } errorHandler: { error in
             switch error as? CoreDataStack.BackupImportError {
             case .failedToCopy?: break
             default: XCTFail("unexpected error: \(error)")
@@ -342,7 +342,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let backup = try await createBackupAndDeleteOriginalAccount(accountIdentifier: accountIdentifier)
 
         // when
-        let _ = try await importBackup(
+        _ = try await importBackup(
             accountIdentifier: accountIdentifier,
             backup: backup,
             migrator: migrator
