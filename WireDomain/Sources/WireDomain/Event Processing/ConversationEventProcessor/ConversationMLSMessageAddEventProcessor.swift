@@ -136,7 +136,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             sender: (senderID.id, senderID.domain),
             date: date
         )
-
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
             conversationID: conversationID.id,
