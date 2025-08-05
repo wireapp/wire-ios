@@ -43,13 +43,13 @@ public extension ChaCha20Poly1305 {
         public static func encrypt(message: Data, context: Data, key: Data) throws -> (ciphertext: Data, nonce: Data) {
             try initializeSodium()
 
-            let keyBytes = key.bytes
+            let keyBytes = [UInt8](key)
             try verifyKey(bytes: keyBytes)
 
-            let messageBytes = message.bytes
+            let messageBytes = [UInt8](message)
             let messageLength = UInt64(messageBytes.count)
 
-            let contextBytes = context.bytes
+            let contextBytes = [UInt8](context)
             let contextLength = UInt64(contextBytes.count)
 
             let nonceBytes = generateRandomNonceBytes()
@@ -71,7 +71,7 @@ public extension ChaCha20Poly1305 {
 
             try verifyCiphertext(length: actualCiphertextLength, messageLength: messageLength)
 
-            return (ciphertextBytes.data, nonceBytes.data)
+            return (Data(ciphertextBytes), Data(nonceBytes))
         }
 
         /// Decrypts a ciphertext with a public nonce and a key.
@@ -87,16 +87,16 @@ public extension ChaCha20Poly1305 {
         public static func decrypt(ciphertext: Data, nonce: Data, context: Data, key: Data) throws -> Data {
             try initializeSodium()
 
-            let keyBytes = key.bytes
+            let keyBytes = [UInt8](key)
             try verifyKey(bytes: keyBytes)
 
-            let nonceBytes = nonce.bytes
+            let nonceBytes = [UInt8](nonce)
             try verifyNonce(bytes: nonceBytes)
 
-            let ciphertextBytes = ciphertext.bytes
+            let ciphertextBytes = [UInt8](ciphertext)
             let ciphertextLength = UInt64(ciphertextBytes.count)
 
-            let contextBytes = context.bytes
+            let contextBytes = [UInt8](context)
             let contextLength = UInt64(contextBytes.count)
 
             var messageBytes = createByteArray(length: messageLength(forCiphertextLength: Int(ciphertextLength)))
