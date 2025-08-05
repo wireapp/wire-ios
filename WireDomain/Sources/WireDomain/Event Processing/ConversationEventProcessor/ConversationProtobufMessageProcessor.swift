@@ -295,7 +295,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
     }
 
     private enum ProcessProtobufMessageError: Error {
-        /// The `GenericMessage` instance's `validateFields()` method either returned `false` or the `content` is `nil`.
+        /// The `GenericMessage` instance's `validateFields()` method either returned `false` or its `content` is `nil`.
         case invalidMessage
     }
 
