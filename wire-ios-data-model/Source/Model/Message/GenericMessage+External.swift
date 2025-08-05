@@ -74,7 +74,8 @@ extension GenericMessage {
         let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(key: external.otrKey)
         guard
             let base64String = decryptedData?.base64String(),
-            let message = GenericMessage(withBase64String: base64String)
+            let message = GenericMessage(base64String),
+            message.validateFields()
         else { return nil }
 
         self = message

@@ -85,7 +85,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         }
 
         // Parse into GenericMessage
-        guard let genericMessage = GenericMessage(withBase64String: decryptedMessage.message) else {
+        guard let genericMessage = GenericMessage(decryptedMessage.message), genericMessage.validateFields() else {
             WireLogger.eventProcessing.warn("Can't read protobuf, abort processing", attributes: logAttributes)
             return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }

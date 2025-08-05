@@ -128,7 +128,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         from base64Message: String,
         externalData: String?
     ) async -> (GenericMessage, GenericMessage.OneOf_Content)? { // TODO: content not needed
-        var genericMessage = GenericMessage(withBase64String: base64Message)
+        var genericMessage = GenericMessage(base64Message)
 
         if let externalData,
            case let .some(.external(external)) = genericMessage?.content {
@@ -145,7 +145,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             }
         }
 
-        guard let genericMessage, let content = genericMessage.content else {
+        guard let genericMessage, genericMessage.validateFields(), let content = genericMessage.content else {
             return nil // TODO: don't abort, instead check the `unknownStrategy`
         }
 
@@ -177,7 +177,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         guard
             let base64String = decryptedData?.base64String(),
-            let message = GenericMessage(withBase64String: base64String)
+            let message = GenericMessage(base64String),
+            message.validateFields()
         else { return nil }
 
         return message
