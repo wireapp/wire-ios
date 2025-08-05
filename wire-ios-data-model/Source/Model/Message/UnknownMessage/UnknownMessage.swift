@@ -19,6 +19,8 @@
 import CoreData
 import Foundation
 
+/// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
+
 public final class UnknownMessage: ZMMessage {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
@@ -26,5 +28,7 @@ public final class UnknownMessage: ZMMessage {
     }
 
     @NSManaged public var myUnknownMessageDate: Date?
+
+    // TODO: version which has been tried
 
 }

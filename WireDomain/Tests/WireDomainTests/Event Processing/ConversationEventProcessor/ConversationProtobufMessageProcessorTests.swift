@@ -86,7 +86,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             { _, _, _, _, _, _ in
             }
 
-        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
+        let genericMessage = try XCTUnwrap(GenericMessage(Scaffolding.base64EncodedString))
 
         // When
 

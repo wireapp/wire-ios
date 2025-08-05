@@ -70,12 +70,13 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         // Get protobuf message
-        let protobufMessage = await getProtobufMessage(
+        let genericMessage = await getProtobufMessage(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
 
-        guard let (genericMessage, content) = protobufMessage else {
+        guard let genericMessage, genericMessage.validateFields() else {
+            // TODO: handle
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
@@ -89,7 +90,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         // Handle calling if there's one.
-
         if let callEventInfo = getCallEventInfo(
             event: event,
             genericMessage: genericMessage
@@ -127,29 +127,20 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
     private func getProtobufMessage(
         from base64Message: String,
         externalData: String?
-    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? { // TODO: content not needed
+    ) async -> GenericMessage? {
         var genericMessage = GenericMessage(base64Message)
 
-        if let externalData,
-           case let .some(.external(external)) = genericMessage?.content {
-
+        if let externalData, case let .some(.external(external)) = genericMessage?.content {
             /// Content message is external, we decrypt the external payload
             /// and turns it back into a generic non-external content message.
-            if let decryptedGenericMessage = decryptExternalMessage(
-                externalData: externalData,
-                external: external
-            ) {
+            if let decryptedGenericMessage = decryptExternalMessage(externalData: externalData, external: external) {
                 genericMessage = decryptedGenericMessage
             } else {
                 return nil
             }
         }
 
-        guard let genericMessage, genericMessage.validateFields(), let content = genericMessage.content else {
-            return nil // TODO: don't abort, instead check the `unknownStrategy`
-        }
-
-        return (genericMessage, content)
+        return genericMessage
     }
 
     private func decryptExternalMessage(

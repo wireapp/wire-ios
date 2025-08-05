@@ -320,4 +320,8 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
     }
 
+//    private func storeUnprocessedMessage() {
+//        //
+//    }
+
 }
