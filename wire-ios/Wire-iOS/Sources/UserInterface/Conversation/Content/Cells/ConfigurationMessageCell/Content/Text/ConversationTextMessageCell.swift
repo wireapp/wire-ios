@@ -55,7 +55,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            container?.isFromSelfUser = message?.isSentBySelfUser ?? false
+            let ownMessage: Bool = message?.isSentBySelfUser ?? false
+            container?.isFromSelfUser = ownMessage
+            configureTextColor(forOwnMessage: ownMessage)
         }
     }
     weak var delegate: ConversationMessageCellDelegate?
@@ -102,6 +104,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
         messageTextView.fitIn(view: self, insets: insets)
     }
+    
+    private func configureTextColor(forOwnMessage ownMessage: Bool) {
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            messageTextView.textColor = ownMessage ? .white : .black //TODO: use color palette
+        }
+    }
 
     func configure(with object: Configuration, animated: Bool) {
         messageTextView.attributedText = object.attributedText
@@ -114,6 +122,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         accessibilityLabel = messageTextView.attributedText.string
         
         container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {

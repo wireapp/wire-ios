@@ -30,6 +30,7 @@ final class ConversationMessageContainerView: UIView {
     
     static let bubbleEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 12, right: 12)
     
+    //TODO: use color palette
     static let bubbleColorOwn: UIColor = .init(_colorLiteralRed: 49.0/255, green: 102.0/255, blue: 194.0/255, alpha: 1)
     static let bubbleColorOther: UIColor = .init(_colorLiteralRed: 231.0/255, green: 234.0/255, blue: 236.0/255, alpha: 1)
 
@@ -76,6 +77,7 @@ private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
     func makeUIView(context: Context) -> ConversationMessageContainerView {
         let label = UILabel()
         label.text = "This is a text message."
+        label.textColor = isFromSelfUser ? .white : .black
         label.sizeToFit()
         let container = ConversationMessageContainerView(content: label)
         container.translatesAutoresizingMaskIntoConstraints = false
