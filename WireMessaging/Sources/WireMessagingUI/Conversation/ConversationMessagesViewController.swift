@@ -17,20 +17,16 @@
 //
 
 public import SwiftUI
+import Combine
 
 public final class ConversationMessagesViewController: UIViewController {
     
     let viewModel: any ConversationMessagesViewModelProtocol
-    
-    @MainActor
-    var messages: [MessageType] = []
-    
-    enum Section {
-        case main
-    }
-    
+        
     private var collectionView: UICollectionView!
-    private var dataSource: UICollectionViewDiffableDataSource<Section, MessageType>!
+    private var dataSource: UICollectionViewDiffableDataSource<MessagesSection, MessageType>!
+    
+    var cancellables = Set<AnyCancellable>()
     
     public init(viewModel: any ConversationMessagesViewModelProtocol) {
         self.viewModel = viewModel
@@ -46,15 +42,30 @@ public final class ConversationMessagesViewController: UIViewController {
         
         setupCollectionView()
         setupDataSource()
+                
         
-#if DEBUG
-        generateMessages()
-        simulateRandomUpdates()
-#endif
-        
-        applySnapshot()
+        viewModel.updatesPublisher.sink { update in
+            switch update {
+            case .initiallyLoaded(let snapshot):
+                self.dataSource.apply(snapshot)
+            }
+        }.store(in: &cancellables)
 
+        viewModel.onViewReady()
+        
+//        simulateRandomUpdates()
+        
     }
+    
+//    var timer: Timer?
+//    func simulateRandomUpdates() {
+//        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+//            guard let self else { return }
+//            Task {
+//                await self.performRandomUpdate()
+//            }
+//        }
+//    }
     
     private func setupCollectionView() {
         let layout = createLayout()
@@ -99,105 +110,26 @@ public final class ConversationMessagesViewController: UIViewController {
     }
 
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, MessageType>(collectionView: collectionView) { (collectionView, indexPath, message) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>(collectionView: collectionView) { (collectionView, indexPath, message) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
                 for: indexPath
             ) as! MessageCollectionViewCell
             
-            cell.messageType = self.messages[indexPath.row]
+            cell.messageType = message
 
             return cell
         }
     }
-
-    private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, MessageType>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(messages)
-        dataSource.apply(snapshot, animatingDifferences: false)
-    }
     
-#if DEBUG
-    func generateMessages() {
-        let base = "This is a line. "
-        messages = (0..<7).map { _ in
-            let repeatCount = Int.random(in: 1...5)
-            return .text(TextMessageViewModel(
-                content: AttributedString(
-                    stringLiteral: String(
-                        repeating: base,
-                        count: repeatCount
-                    )),
-                senderViewModel: Bool.random() ?
-                SenderViewModel(state: .exists("Sender")) : SenderViewModel(state: .empty)
-            ))
-        }
-    }
-    
-    @MainActor
-    func simulateRandomUpdates() {
-        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
-            Task { @MainActor in
-                
-                guard let message = self.messages.randomElement(),
-                      case let .text(randomVM) = message else {
-                    return
-                }
-                let base = "Updated line. "
-                var repeatCount = Int.random(in: 1...6)
-                DispatchQueue.main.async {
-                    randomVM.content = AttributedString(
-                        stringLiteral: String(repeating: base, count: repeatCount))
-                    let updateSenderAttributed = AttributedString(stringLiteral: String(
-                        repeating: "Updated Sender",
-                        count: repeatCount
-                    ))
-                    randomVM.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed) : SenderViewModel.State.empty
-                    
-                }
-                
-                guard let message = self.messages.randomElement(),
-                      case let .text(randomVM2) = message else {
-                    return
-                }
-                repeatCount = Int.random(in: 1...6)
-                DispatchQueue.main.async {
-                    randomVM2.content = AttributedString(
-                        stringLiteral: String(repeating: base, count: repeatCount))
-                    let updateSenderAttributed = AttributedString(stringLiteral: String(
-                        repeating: "Updated Sender",
-                        count: repeatCount
-                    ))
-                    randomVM2.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed) : SenderViewModel.State.empty
-                }
-                
-                
-                guard let message = self.messages.randomElement(),
-                      case let .text(randomVM3) = message else {
-                    return
-                }
-                repeatCount = Int.random(in: 1...6)
-                DispatchQueue.main.async {
-                    randomVM3.content = AttributedString(
-                        stringLiteral: String(repeating: base, count: repeatCount))
-                    let updateSenderAttributed = AttributedString(stringLiteral: String(
-                        repeating: "Updated Sender",
-                        count: repeatCount
-                    ))
-                    randomVM3.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed) : SenderViewModel.State.empty
-                }
-            }
-        }
-    }
-
-#endif
 }
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(
-            viewModel: ConversationMessagesViewModel()
+            viewModel: ConversationMessagesViewModel(
+                dataSource: ConversationMessagesDataSource()
+            )
         )
     }
 

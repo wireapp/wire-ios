@@ -20,7 +20,9 @@ import Foundation
 public import Combine
 
 public enum MessageUpdateType {
-    case messageAdded(MessageType)
+    
+    case initiallyLoaded(Snapshot)
+    // message added
     // loaded new messages, new or older
     // re-sent failed message
     // to be added other updates that happens to a conversation view
@@ -29,19 +31,28 @@ public enum MessageUpdateType {
 @MainActor
 public protocol ConversationMessagesViewModelProtocol {
     var updatesPublisher: AnyPublisher<MessageUpdateType, Never> { get }
+    func onViewReady()
 }
 
 @MainActor
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
-    
-    private var messages: [MessageType] = []
+        
+    private let dataSource: ConversationMessagesDataSource
 
     public var updatesPublisher: AnyPublisher<MessageUpdateType, Never> {
         updatesSubject.eraseToAnyPublisher()
     }
     private var updatesSubject = PassthroughSubject<MessageUpdateType, Never>()
     
-    public init() {
+    public init(dataSource: ConversationMessagesDataSource) {
+        self.dataSource = dataSource
         
+    }
+    
+    public func onViewReady() {
+        Task {
+            let initialLoadedSnapshot = await self.dataSource.loadInitialMessages()
+            updatesSubject.send(.initiallyLoaded(initialLoadedSnapshot))
+        }
     }
 }

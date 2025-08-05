@@ -33,7 +33,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = UINavigationController(
             rootViewController: ConversationMessagesViewController(
-                viewModel: ConversationMessagesViewModel()
+                viewModel: ConversationMessagesViewModel(
+                    dataSource: ConversationMessagesDataSource()
+                )
             )
         )
         window?.makeKeyAndVisible()
