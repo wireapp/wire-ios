@@ -19,17 +19,22 @@
 import UIKit
 import SwiftUI
 
-/// A view that contains a conversation message view.
-/// If `isBubble` is set to `true`, it will look like a chat bubble.
-/// Otherwise it will be an invisible wrapper for the message.
+/// A view that contains another `content` view.
+/// If `isBubble` is set to `true`, it will look like a chat bubble containing `content`.
+/// Otherwise it will be an invisible wrapper for `content`.
+/// Set `isFromSelfUser` to `true` to apply a different color to the chat bubble.
 final class ConversationMessageContainerView: UIView {
     let content: UIView
     
-    static let bubbleInnerPadding: CGFloat = 8
+    static let bubbleInnerPadding: CGFloat = 12
+    static let bubbleCornerRadius: CGFloat = 16
     
+    static let bubbleColorOwn: UIColor = .init(_colorLiteralRed: 49.0/255, green: 102.0/255, blue: 194.0/255, alpha: 1)
+    static let bubbleColorOther: UIColor = .init(_colorLiteralRed: 231.0/255, green: 234.0/255, blue: 236.0/255, alpha: 1)
+
     var isFromSelfUser: Bool = false {
         didSet {
-            content.backgroundColor = isFromSelfUser ? .blue.withAlphaComponent(0.3) : .red.withAlphaComponent(0.3)
+            self.backgroundColor = isBubble ? (isFromSelfUser ? Self.bubbleColorOwn : Self.bubbleColorOther) : .clear
             setNeedsLayout()
         }
     }
@@ -37,15 +42,14 @@ final class ConversationMessageContainerView: UIView {
     var isBubble: Bool = false {
         didSet {
             if isBubble {
-                self.backgroundColor = .yellow //TODO: remove
-                content.backgroundColor = .red.withAlphaComponent(0.3) //TODO: remove
-                
                 let padding = Self.bubbleInnerPadding
-                content.fitIn(view: self, insets: .init(top: padding, left: padding, bottom: padding, right: padding))
+                let insets = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+                content.fitIn(view: self, insets: insets)
             } else {
-                self.backgroundColor = .clear //TODO: remove
                 content.fitIn(view: self)
             }
+            
+            self.layer.cornerRadius = isBubble ? Self.bubbleCornerRadius : 0
             
             setNeedsLayout()
         }
