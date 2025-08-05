@@ -2359,24 +2359,24 @@ public class MockE2EIServiceInterface: E2EIServiceInterface {
 
     // MARK: - getNewOidcChallengeRequest
 
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations: [(idToken: String, refreshToken: String, nonce: String)] = []
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError: Error?
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod: ((String, String, String) async throws -> Data)?
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue: Data?
+    public var getNewOidcChallengeRequestIdTokenNonce_Invocations: [(idToken: String, nonce: String)] = []
+    public var getNewOidcChallengeRequestIdTokenNonce_MockError: Error?
+    public var getNewOidcChallengeRequestIdTokenNonce_MockMethod: ((String, String) async throws -> Data)?
+    public var getNewOidcChallengeRequestIdTokenNonce_MockValue: Data?
 
-    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
-        getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations.append((idToken: idToken, refreshToken: refreshToken, nonce: nonce))
+    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
+        getNewOidcChallengeRequestIdTokenNonce_Invocations.append((idToken: idToken, nonce: nonce))
 
-        if let error = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError {
+        if let error = getNewOidcChallengeRequestIdTokenNonce_MockError {
             throw error
         }
 
-        if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod {
-            return try await mock(idToken, refreshToken, nonce)
-        } else if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue {
+        if let mock = getNewOidcChallengeRequestIdTokenNonce_MockMethod {
+            return try await mock(idToken, nonce)
+        } else if let mock = getNewOidcChallengeRequestIdTokenNonce_MockValue {
             return mock
         } else {
-            fatalError("no mock for `getNewOidcChallengeRequestIdTokenRefreshTokenNonce`")
+            fatalError("no mock for `getNewOidcChallengeRequestIdTokenNonce`")
         }
     }
 
@@ -3669,10 +3669,10 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, context: NotificationContext)] = []
     var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError: Error?
-    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [KeyPackage])?
-    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [KeyPackage]?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [WireDataModel.KeyPackage])?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [WireDataModel.KeyPackage]?
 
-    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
+    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [WireDataModel.KeyPackage] {
         claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, ciphersuite: ciphersuite, excludedSelfClientID: excludedSelfClientID, context: context))
 
         if let error = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError {

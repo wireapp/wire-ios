@@ -17,39 +17,43 @@
 //
 
 import WireCoreCrypto
-// this is a manual mock because of following error:
-// Reference to generic type 'Result' requires arguments in <...>
-// Stored property cannot have covariant 'Self' type
-// Cannot convert return expression of type 'MockCoreCryptoProtocol' to return type 'Self'
 
-public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
+public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
-
     // MARK: - historyClient
 
-    public var historyClient_Invocations: [WireCoreCryptoUniffi.HistorySecret] = []
-    public var historyClient_MockError: Error?
-    public var historyClient_MockMethod: ((WireCoreCryptoUniffi.HistorySecret) async throws -> MockCoreCryptoProtocol)?
-    public var historyClient_MockValue: MockCoreCryptoProtocol?
+    public static var historyClient_Invocations: [WireCoreCryptoUniffi.HistorySecret] = []
+    public static var historyClient_MockError: Error?
+    public static var historyClient_MockMethod: (
+        (WireCoreCryptoUniffi.HistorySecret) async throws
+            -> MockCoreCryptoProtocol
+    )?
+    public static var historyClient_MockValue: MockCoreCryptoProtocol?
 
-    static public func historyClient(_ historySecret: WireCoreCryptoUniffi.HistorySecret) async throws -> MockCoreCryptoProtocol {
+    public static func historyClient(_ historySecret: WireCoreCryptoUniffi.HistorySecret) async throws -> Self {
         historyClient_Invocations.append(historySecret)
 
         if let error = historyClient_MockError {
             throw error
         }
-
-        if let mock = historyClient_MockMethod {
-            return try await mock(historySecret)
-        } else if let mock = historyClient_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `historyClient`")
+        if let mockMethod = historyClient_MockMethod {
+            guard let result = try await mockMethod(historySecret) as? Self else {
+                fatalError("Mock method did not return correct type")
+            }
+            return result
         }
+
+        if let mockValue = historyClient_MockValue {
+            guard let result = mockValue as? Self else {
+                fatalError("Mock value is not of expected type")
+            }
+            return result
+        }
+        fatalError("no mock for `historyClient`")
     }
 
     // MARK: - transaction<Result>
@@ -148,7 +152,10 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     public var isHistorySharingEnabledConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var isHistorySharingEnabledConversationId_MockError: Error?
-    public var isHistorySharingEnabledConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Bool)?
+    public var isHistorySharingEnabledConversationId_MockMethod: (
+        (WireCoreCryptoUniffi.ConversationId) async throws
+            -> Bool
+    )?
     public var isHistorySharingEnabledConversationId_MockValue: Bool?
 
     public func isHistorySharingEnabled(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> Bool {
@@ -169,10 +176,10 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     // MARK: - setLogger
 
-    public var setLogger_Invocations: [any WireCoreCryptoUniffi.CoreCryptoLogger] = []
-    public var setLogger_MockMethod: ((any WireCoreCryptoUniffi.CoreCryptoLogger) -> Void)?
+    public static var setLogger_Invocations: [any WireCoreCryptoUniffi.CoreCryptoLogger] = []
+    public static var setLogger_MockMethod: ((any WireCoreCryptoUniffi.CoreCryptoLogger) -> Void)?
 
-    public func setLogger(_ logger: any WireCoreCryptoUniffi.CoreCryptoLogger) {
+    public static func setLogger(_ logger: any WireCoreCryptoUniffi.CoreCryptoLogger) {
         setLogger_Invocations.append(logger)
 
         guard let mock = setLogger_MockMethod else {
@@ -184,10 +191,10 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     // MARK: - setMaxLogLevel
 
-    public var setMaxLogLevel_Invocations: [WireCoreCryptoUniffi.CoreCryptoLogLevel] = []
-    public var setMaxLogLevel_MockMethod: ((WireCoreCryptoUniffi.CoreCryptoLogLevel) -> Void)?
+    public static var setMaxLogLevel_Invocations: [WireCoreCryptoUniffi.CoreCryptoLogLevel] = []
+    public static var setMaxLogLevel_MockMethod: ((WireCoreCryptoUniffi.CoreCryptoLogLevel) -> Void)?
 
-    public func setMaxLogLevel(_ level: WireCoreCryptoUniffi.CoreCryptoLogLevel) {
+    public static func setMaxLogLevel(_ level: WireCoreCryptoUniffi.CoreCryptoLogLevel) {
         setMaxLogLevel_Invocations.append(level)
 
         guard let mock = setMaxLogLevel_MockMethod else {
@@ -199,11 +206,11 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     // MARK: - version
 
-    public var version_Invocations: [Void] = []
-    public var version_MockMethod: (() -> String)?
-    public var version_MockValue: String?
+    public static var version_Invocations: [Void] = []
+    public static var version_MockMethod: (() -> String)?
+    public static var version_MockValue: String?
 
-    public func version() -> String {
+    public static func version() -> String {
         version_Invocations.append(())
 
         if let mock = version_MockMethod {
@@ -217,11 +224,11 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     // MARK: - buildMetadata
 
-    public var buildMetadata_Invocations: [Void] = []
-    public var buildMetadata_MockMethod: (() -> WireCoreCryptoUniffi.BuildMetadata)?
-    public var buildMetadata_MockValue: WireCoreCryptoUniffi.BuildMetadata?
+    public static var buildMetadata_Invocations: [Void] = []
+    public static var buildMetadata_MockMethod: (() -> WireCoreCryptoUniffi.BuildMetadata)?
+    public static var buildMetadata_MockValue: WireCoreCryptoUniffi.BuildMetadata?
 
-    public func buildMetadata() -> WireCoreCryptoUniffi.BuildMetadata {
+    public static func buildMetadata() -> WireCoreCryptoUniffi.BuildMetadata {
         buildMetadata_Invocations.append(())
 
         if let mock = buildMetadata_MockMethod {

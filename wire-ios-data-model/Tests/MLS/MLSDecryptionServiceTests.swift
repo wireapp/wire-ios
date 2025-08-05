@@ -168,12 +168,11 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
             XCTAssertEqual($0, messageData)
             XCTAssertEqual($1, groupID)
-
             return DecryptedMessage(
                 message: messageData,
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!,
+                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
                 hasEpochChanged: false,
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,
@@ -215,7 +214,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 message: messageData,
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!,
+                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
                 hasEpochChanged: false,
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,
@@ -301,7 +300,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         message: messageData,
                         isActive: false,
                         commitDelay: nil,
-                        senderClientId: sender.rawValue.data(using: .utf8)!,
+                        senderClientId: WireCoreCryptoUniffi.ClientId(bytes: sender.rawValue.data(using: .utf8)!),
                         hasEpochChanged: false,
                         identity: .withBasicCredentials(),
                         crlNewDistributionPoints: nil
@@ -340,7 +339,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 message: messageData,
                 isActive: false,
                 commitDelay: nil,
-                senderClientId: senderData,
+                senderClientId: WireCoreCryptoUniffi.ClientId(bytes: senderData),
                 hasEpochChanged: false,
                 identity: .withBasicCredentials(),
                 bufferedMessages: nil,

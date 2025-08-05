@@ -32,7 +32,7 @@ public protocol E2EIServiceInterface {
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
     func createDpopToken(nonce: String) async throws -> String
     func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data
-    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data
+    func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data
     func setDPoPChallengeResponse(challenge: Data) async throws
     func setOIDCChallengeResponse(challenge: Data) async throws
     func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data
@@ -112,7 +112,7 @@ public final class E2EIService: E2EIServiceInterface {
         try await e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce)
     }
 
-    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
+    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
         try await e2eIdentity.newOidcChallengeRequest(
             idToken: idToken,
             previousNonce: nonce
