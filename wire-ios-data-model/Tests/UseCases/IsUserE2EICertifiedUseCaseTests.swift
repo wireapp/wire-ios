@@ -44,7 +44,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupOneOnOneConversations(in: context)
         setupClientIDs(in: context)
         let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockCoreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
@@ -78,7 +79,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         mockSafeCoreCrypto.coreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
-                XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
+                XCTAssertEqual(conversationID, MLSGroupID.init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")?.conversationId)
                 // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
                 XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
                 return [
@@ -252,7 +253,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockSafeCoreCrypto.coreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [
@@ -300,7 +302,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
+        let clientIds = clientIDs.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
+        mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIds
         mockSafeCoreCrypto.coreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
                 [

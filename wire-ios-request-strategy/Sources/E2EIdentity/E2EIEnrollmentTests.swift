@@ -291,7 +291,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
             expectedChallengeResponse
         }
-        mockE2eiService.getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod = { _, _, _ in
+        mockE2eiService.getNewOidcChallengeRequestIdTokenNonce_MockMethod = { _,_ in
             Data()
         }
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
