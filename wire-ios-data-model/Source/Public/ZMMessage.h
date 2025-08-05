@@ -111,7 +111,8 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMLSNotSupportedSelfUser,
     ZMSystemMessageTypeMLSNotSupportedOtherUser,
     ZMSystemMessageTypeChannelHistoryDepthModified,
-    ZMSystemMessageTypeUserRemovedFromTeam
+    ZMSystemMessageTypeUserRemovedFromTeam,
+    ZMSystemMessageTypeUnknownMessageReceived
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {

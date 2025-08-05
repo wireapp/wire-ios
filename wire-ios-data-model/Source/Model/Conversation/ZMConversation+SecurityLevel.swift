@@ -260,7 +260,7 @@ public extension ZMConversation {
 
     // MARK: - Messages
 
-    /// Creates a system message that inform that there are pontential lost messages, and that some users were added to
+    /// Creates a system message that inform that there are potential lost messages, and that some users were added to
     /// the conversation
     @objc
     func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {

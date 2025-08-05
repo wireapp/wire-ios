@@ -34,7 +34,11 @@ public extension GenericMessage {
             return nil
         }
 
-        var message = GenericMessage(withBase64String: base64Content)
+        guard let base64Content else { return nil }
+        var message = GenericMessage(base64Content)
+        if let message, !message.validateFields() {
+            return nil
+        }
 
         if case let .some(.external(external)) = message?.content {
             message = GenericMessage(from: updateEvent, withExternal: external)
