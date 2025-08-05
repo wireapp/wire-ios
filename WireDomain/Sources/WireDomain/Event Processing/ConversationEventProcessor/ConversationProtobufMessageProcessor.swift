@@ -39,7 +39,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
     public func processProtobufMessage(
         _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,
@@ -57,7 +56,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-        switch content {
+        switch message.content {
         case let .lastRead(lastRead):
 
             await conversationLocalStore.updateLastReadMessageTimestamp(
@@ -223,6 +222,10 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
         case .inCallHandRaise:
             break // Not handled yet, TODO: [WPB-11769] implement here
+
+        case .none:
+            // TODO: store as UnknownMessage
+            fatalError("TODO")
         }
     }
 

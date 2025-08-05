@@ -90,6 +90,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
 
+        /*
         guard let content = genericMessage.content else {
             switch genericMessage.unknownStrategy {
 
@@ -112,6 +113,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
                 return // TODO: store
             }
         }
+         */
 
         // Handle calling if there's one.
         if let callEventInfo = getCallEventInfo(
@@ -140,7 +142,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         // Process protobuf message
         try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,

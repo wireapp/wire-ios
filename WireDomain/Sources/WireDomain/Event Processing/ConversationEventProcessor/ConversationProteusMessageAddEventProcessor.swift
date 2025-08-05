@@ -115,7 +115,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         // Process protobuf message
         try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,
@@ -128,7 +127,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
     private func getProtobufMessage(
         from base64Message: String,
         externalData: String?
-    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
+    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? { // TODO: content not needed
         var genericMessage = GenericMessage(withBase64String: base64Message)
 
         if let externalData,
