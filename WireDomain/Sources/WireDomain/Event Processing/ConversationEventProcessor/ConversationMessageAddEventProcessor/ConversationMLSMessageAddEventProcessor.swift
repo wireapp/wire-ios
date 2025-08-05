@@ -20,8 +20,13 @@ import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 import WireNetwork
+import WireSystem
 
-struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
+struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol, ConversationMessageAddEventProcessorProtocol {
+
+    enum Failure: Error {
+        case mlsConversationNotFound
+    }
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
@@ -29,36 +34,49 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
     let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
     let onProcessedCallEvent: (CallEventInfo) -> Void
 
-    func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
-        let senderID = event.senderID
+    func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
         let conversationID = event.conversationID
-        let messageContent = event.message
-        let messageExternalData = event.externalData
-        let messageSenderClientID = event.messageSenderClientID
+        let senderID = event.senderID
         let date = event.timestamp
+        let decryptedMessages = event.decryptedMessages
 
-        // Message should be decrypted see `ProteusEventDecryptor`
-        guard let decryptedMessage = messageContent.decryptedMessage else {
-            return WireLogger.proteus.error(
-                "failed to add proteus message: there is no decrypted message to process"
+        guard !decryptedMessages.isEmpty else {
+            return WireLogger.proteus.warn(
+                "failed to add MLS message: there are no decrypted messages to process"
             )
         }
 
+        for decryptedMessage in decryptedMessages {
+            try await processDecryptedMessage(
+                decryptedMessage,
+                conversationID: conversationID,
+                senderID: senderID,
+                event: event,
+                date: date
+            )
+        }
+    }
+
+    private func processDecryptedMessage(
+        _ decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
+        conversationID: ConversationID,
+        senderID: UserID,
+        event: ConversationMLSMessageAddEvent,
+        date: Date?
+    ) async throws {
         guard let conversation = await conversationLocalStore.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
         ) else {
-            return WireLogger.proteus.error(
-                "failed to add proteus message: conversation not found in db"
-            )
+            throw Failure.mlsConversationNotFound
         }
 
         let logAttributes: LogAttributes = [
-            .messageType: "conversation.otr-message-add",
+            .messageType: "conversation.mls-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
-        // Ensure is not self conversation, sender is self user and conversation is not read-only
+        // Ensure is self conversation, sender is self user and conversation is not read-only
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
             senderID: senderID.id
@@ -69,28 +87,17 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        // Get protobuf message
-        let genericMessage = await getProtobufMessage(
-            from: decryptedMessage,
-            externalData: messageExternalData?.encryptedMessage
-        )
-
-        guard let genericMessage, genericMessage.validateFields() else {
-            WireLogger.eventProcessing.warn(
-                "Can't read protobuf, abort processing",
-                attributes: logAttributes
-            )
-
-            return await addInvalidSystemMessage(
-                senderID: senderID,
-                conversationID: conversationID,
-                date: date
-            )
+        // Parse into GenericMessage
+        guard
+            let genericMessage = GenericMessage(decryptedMessage.message), genericMessage.validateFields() else {
+            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing", attributes: logAttributes)
+            return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
 
         // Handle calling if there's one.
         if let callEventInfo = getCallEventInfo(
             event: event,
+            decryptedMessage: decryptedMessage,
             genericMessage: genericMessage
         ) {
             return onProcessedCallEvent(callEventInfo)
@@ -99,7 +106,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
             conversation: conversation,
             genericMessage: genericMessage,
-            date: date
+            date: date ?? .now
         )
 
         // Verifies that a sender of an update event is part of the conversation. If they are not,
@@ -108,7 +115,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             participantID: senderID.id,
             participantDomain: senderID.domain,
             in: conversation,
-            date: date.addingTimeInterval(-0.01)
+            date: date?.addingTimeInterval(-0.01) ?? .now
         )
 
         // Process protobuf message
@@ -117,84 +124,17 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,
-            senderClientID: messageSenderClientID,
-            date: date,
-            eventMessage: "conversation.otr-message-add"
-        )
-    }
-
-    private func getProtobufMessage(
-        from base64Message: String,
-        externalData: String?
-    ) async -> GenericMessage? {
-        var genericMessage = GenericMessage(base64Message)
-
-        if let externalData, case let .some(.external(external)) = genericMessage?.content {
-            /// Content message is external, we decrypt the external payload
-            /// and turns it back into a generic non-external content message.
-            if let decryptedGenericMessage = decryptExternalMessage(externalData: externalData, external: external) {
-                genericMessage = decryptedGenericMessage
-            } else {
-                return nil
-            }
-        }
-
-        return genericMessage
-    }
-
-    private func decryptExternalMessage(
-        externalData: String,
-        external: External
-    ) -> GenericMessage? {
-        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
-        /// message.
-        /// See `External` section from https://github.com/wireapp/generic-message-proto
-        /// See `External messages` section from
-        /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-
-        let externalData = Data(base64Encoded: externalData)
-        let externalSha256 = externalData?.zmSHA256Digest()
-
-        guard externalSha256 == external.sha256 else {
-            WireLogger.eventProcessing
-                .error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
-            return nil
-        }
-
-        let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
-            key: external.otrKey
-        )
-
-        guard
-            let base64String = decryptedData?.base64String(),
-            let message = GenericMessage(base64String),
-            message.validateFields()
-        else { return nil }
-
-        return message
-    }
-
-    private func addInvalidSystemMessage(
-        senderID: UserID,
-        conversationID: ConversationID,
-        date: Date
-    ) async {
-        let systemMessageType: SystemMessageType = .invalid(
-            sender: (senderID.id, senderID.domain),
-            date: date
-        )
-
-        await messageLocalStore.addSystemMessage(
-            messageType: systemMessageType,
-            conversationID: conversationID.id,
-            conversationDomain: conversationID.domain
+            senderClientID: decryptedMessage.senderClientID,
+            date: date ?? .now,
+            eventMessage: "conversation.mls-message-add"
         )
     }
 
     // MARK: - Calling
 
     func getCallEventInfo(
-        event: ConversationProteusMessageAddEvent,
+        event: ConversationMLSMessageAddEvent,
+        decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
         genericMessage: GenericMessage
     ) -> CallEventInfo? {
         guard genericMessage.hasCalling else {
@@ -215,13 +155,17 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         let callingConversationID = genericMessage.calling.qualifiedConversationID
         let senderID = event.senderID
         let eventTimestamp = event.timestamp
-        let clientID = event.messageSenderClientID
+        let clientID = decryptedMessage.senderClientID
 
         let conversationID = !callingConversationID.id
             .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.id
 
         let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
             .conversationID.domain
+
+        guard let clientID, let eventTimestamp else {
+            return nil
+        }
 
         return CallEventInfo(
             data: payload,
