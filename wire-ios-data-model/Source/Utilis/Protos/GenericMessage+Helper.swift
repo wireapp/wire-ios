@@ -22,7 +22,7 @@ import GenericMessageProtocol
 // MARK: - GenericMessage
 
 public extension GenericMessage {
-    init?(withBase64String base64String: String?) {
+    init?(withBase64String base64String: String?) { // TODO: why optional String?
         guard
             let string = base64String,
             let data = Data(base64Encoded: string),

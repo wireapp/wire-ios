@@ -147,7 +147,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         guard let genericMessage, let content = genericMessage.content else {
-            return nil
+            return nil // TODO: don't abort, instead check the `unknownStrategy`
         }
 
         return (genericMessage, content)

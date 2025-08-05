@@ -77,38 +77,43 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         ]
 
         // Ensure is self conversation, sender is self user and conversation is not read-only
-        guard await messageLocalStore.canAddMessage(
-            conversation: conversation,
-            senderID: senderID.id
-        ) else {
+        guard await messageLocalStore.canAddMessage(conversation: conversation, senderID: senderID.id) else {
             return WireLogger.eventProcessing.warn(
                 "Ignoring incoming message: illegal sender or conversation",
                 attributes: logAttributes
             )
         }
 
-        // Get protobuf message
-        let protobufMessage = await getProtobufMessage(
-            from: decryptedMessage.message
-        )
-
-        guard let (genericMessage, content) = protobufMessage else {
-            WireLogger.eventProcessing.warn(
-                "Can't read protobuf, abort processing",
-                attributes: logAttributes
-            )
-
-            return await addInvalidSystemMessage(
-                senderID: senderID,
-                conversationID: conversationID,
-                date: date ?? .now
-            )
+        // Parse into GenericMessage
+        guard let genericMessage = GenericMessage(withBase64String: decryptedMessage.message) else {
+            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing", attributes: logAttributes)
+            return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
 
-        // TODO: store
+        guard let content = genericMessage.content else {
+            switch genericMessage.unknownStrategy {
+
+            case .ignore:
+                return // Throw the message away without informing the user.
+
+            case .discardAndWarn:
+                fatalError("TODO")
+//                appendUnknownMessageReceivedSystemMessage(
+//                    fromSender: senderID,
+//                    atTime: updateEvent.timestamp ?? .now,
+//                    to: conversation,
+//                    in: moc
+//                )
+                return
+
+            case .warnUserAllowRetry:
+                // Store the message so that it can be parsed later (e.g. after an app update)
+                fatalError("TODO")
+                return // TODO: store
+            }
+        }
 
         // Handle calling if there's one.
-
         if let callEventInfo = getCallEventInfo(
             event: event,
             decryptedMessage: decryptedMessage,
@@ -145,45 +150,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
     }
 
-    // TODO: try to share code with the proteus counterpart
-    private func getProtobufMessage(
-        from base64Message: String
-    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        let genericMessage = GenericMessage(withBase64String: base64Message)
-
-        guard let genericMessage, let content = genericMessage.content else {
-            return nil
-        }
-
-//        if let content = genericMessage.content {
-//            return (genericMessage, content)
-//        }
-
-//        if genericMessage.isContentUnknown {
-//            switch message.unknownStrategy {
-//            case .ignore:
-//                // Throw the message away without informing the user.
-//                return nil
-//
-//            case .discardAndWarn:
-//                appendUnknownMessageReceivedSystemMessage(
-//                    fromSender: senderID,
-//                    atTime: updateEvent.timestamp ?? .now,
-//                    to: conversation,
-//                    in: moc
-//                )
-//                return nil
-//
-//            case .warnUserAllowRetry:
-//                // Continue to insert anyway, it'll be shown as an
-//                // unknown message in the conversation.
-//                break
-//            }
-//        }
-
-        return (genericMessage, content)
-    }
-
     private func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
@@ -199,6 +165,10 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
+    }
+
+    private func storeForLaterProcessingIfNeeded() {
+        //
     }
 
     // MARK: - Calling
