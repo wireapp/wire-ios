@@ -50,7 +50,7 @@ platform :ios do
     end
 
     before_all do |lane|
-        ensure_xcode_version(version: "26.0")
+        ensure_xcode_version
         create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
