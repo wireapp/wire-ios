@@ -26,10 +26,12 @@ public enum MessageUpdateType {
     // to be added other updates that happens to a conversation view
 }
 
+@MainActor
 public protocol ConversationMessagesViewModelProtocol {
     var updatesPublisher: AnyPublisher<MessageUpdateType, Never> { get }
 }
 
+@MainActor
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
     
     private var messages: [MessageType] = []
