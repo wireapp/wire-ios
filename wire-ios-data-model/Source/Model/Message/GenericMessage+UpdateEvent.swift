@@ -34,6 +34,7 @@ public extension GenericMessage {
             return nil
         }
 
+        guard let base64Content else { return nil }
         var message = GenericMessage(withBase64String: base64Content)
 
         if case let .some(.external(external)) = message?.content {

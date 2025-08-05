@@ -22,10 +22,9 @@ import GenericMessageProtocol
 // MARK: - GenericMessage
 
 public extension GenericMessage {
-    init?(withBase64String base64String: String?) { // TODO: why optional String?
+    init?(withBase64String base64String: String) {
         guard
-            let string = base64String,
-            let data = Data(base64Encoded: string),
+            let data = Data(base64Encoded: base64String),
             let message = GenericMessage.with({ try? $0.merge(serializedData: data) }).validatingFields()
         else { return nil }
         self = message
