@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireDataModel
 
-class PBMessageValidationTests: XCTestCase {
+final class PBMessageValidationTests: XCTestCase {
     // MARK: Generic Message
 
     func testThatItCreatesGenericMessageWithValidFields() {
@@ -35,7 +35,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
         }
 
-        XCTAssertNotNil(message.validatingFields())
+        XCTAssertTrue(message.validateFields())
     }
 
     func testThatItDoesNotCreateGenericMessageWithInvalidFields() {
@@ -48,7 +48,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "nonce"
         }
 
-        XCTAssertNil(message.validatingFields())
+        XCTAssertFalse(message.validateFields())
     }
 
     // MARK: Last Read
@@ -59,7 +59,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.lastReadTimestamp = 25_000
         }
 
-        XCTAssertNotNil(GenericMessage(content: lastRead).validatingFields())
+        XCTAssertTrue(GenericMessage(content: lastRead).validateFields())
     }
 
     func testThatItDoesNotCreateLastReadWithInvalidFields() {
@@ -68,7 +68,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.lastReadTimestamp = 25_000
         }
 
-        XCTAssertNil(GenericMessage(content: lastRead).validatingFields())
+        XCTAssertFalse(GenericMessage(content: lastRead).validateFields())
     }
 
     // MARK: Cleared
@@ -79,7 +79,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.clearedTimestamp = 25_000
         }
 
-        XCTAssertNotNil(GenericMessage(content: cleared).validatingFields())
+        XCTAssertTrue(GenericMessage(content: cleared).validateFields())
     }
 
     func testThatItDoesNotCreateClearedWithInvalidFields() {
@@ -88,7 +88,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.clearedTimestamp = 25_000
         }
 
-        XCTAssertNil(GenericMessage(content: cleared).validatingFields())
+        XCTAssertFalse(GenericMessage(content: cleared).validateFields())
     }
 
     // MARK: Message Hide
@@ -99,7 +99,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
 
-        XCTAssertNotNil(GenericMessage(content: messageHide).validatingFields())
+        XCTAssertTrue(GenericMessage(content: messageHide).validateFields())
     }
 
     func testThatItDoesNotCreateHideWithInvalidFields() {
@@ -110,21 +110,21 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
 
-        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+        XCTAssertFalse(GenericMessage(content: invalidMessageHide).validateFields())
 
         invalidMessageHide = MessageHide.with {
             $0.conversationID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
             $0.messageID = ""
         }
 
-        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+        XCTAssertFalse(GenericMessage(content: invalidMessageHide).validateFields())
 
         invalidMessageHide = MessageHide.with {
             $0.conversationID = ""
             $0.messageID = ""
         }
 
-        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+        XCTAssertFalse(GenericMessage(content: invalidMessageHide).validateFields())
     }
 
     // MARK: Message Delete
@@ -134,7 +134,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
 
-        XCTAssertNotNil(GenericMessage(content: messageDelete).validatingFields())
+        XCTAssertTrue(GenericMessage(content: messageDelete).validateFields())
     }
 
     func testThatItDoesNotCreateMessageDeleteWithInvalidFields() {
@@ -142,7 +142,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.messageID = "invalid"
         }
 
-        XCTAssertNil(GenericMessage(content: messageDelete).validatingFields())
+        XCTAssertFalse(GenericMessage(content: messageDelete).validateFields())
     }
 
     // MARK: Message Edit
@@ -154,7 +154,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.replacingMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
 
-        XCTAssertNotNil(GenericMessage(content: messageEdit).validatingFields())
+        XCTAssertTrue(GenericMessage(content: messageEdit).validateFields())
     }
 
     func testThatItDoesNotCreateMessageEditWithInvalidFields() {
@@ -163,7 +163,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
         }
 
-        XCTAssertNil(GenericMessage(content: messageEdit).validatingFields())
+        XCTAssertFalse(GenericMessage(content: messageEdit).validateFields())
     }
 
     // MARK: Confirmation
@@ -175,7 +175,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
         }
 
-        XCTAssertNotNil(GenericMessage(content: confirmation).validatingFields())
+        XCTAssertTrue(GenericMessage(content: confirmation).validateFields())
     }
 
     func testThatItDoesNotCreateConfirmationWithInvalidFields() {
@@ -187,7 +187,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
         }
 
-        XCTAssertNil(GenericMessage(content: confirmation).validatingFields())
+        XCTAssertFalse(GenericMessage(content: confirmation).validateFields())
 
         confirmation = Confirmation.with {
             $0.type = .delivered
@@ -195,7 +195,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229", "invalid"]
         }
 
-        XCTAssertNil(GenericMessage(content: confirmation).validatingFields())
+        XCTAssertFalse(GenericMessage(content: confirmation).validateFields())
     }
 
     // MARK: Reaction
@@ -206,7 +206,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.emoji = "🤩"
         }
 
-        XCTAssertNotNil(GenericMessage(content: reaction).validatingFields())
+        XCTAssertTrue(GenericMessage(content: reaction).validateFields())
     }
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
@@ -215,7 +215,7 @@ class PBMessageValidationTests: XCTestCase {
             $0.emoji = "🤩"
         }
 
-        XCTAssertNil(GenericMessage(content: reaction).validatingFields())
+        XCTAssertFalse(GenericMessage(content: reaction).validateFields())
     }
 
     // MARK: User ID
@@ -356,7 +356,11 @@ class PBMessageValidationTests: XCTestCase {
             $0.uploaded = assetRemoteData(id: assetId, token: assetToken!, domain: assetDomain!)
         }
 
-        return GenericMessage(content: asset).validatingFields()
+        let message = GenericMessage(content: asset)
+        if !message.validateFields() {
+            return nil
+        }
+        return message
     }
 
     private func assetRemoteData(id: String, token: String, domain: String) -> GenericMessageProtocol.Asset.RemoteData {
@@ -372,7 +376,7 @@ class PBMessageValidationTests: XCTestCase {
 
 }
 
-class ModelValidationTests: XCTestCase {
+final class ModelValidationTests: XCTestCase {
 
     // MARK: Generic Message
 
@@ -381,9 +385,8 @@ class ModelValidationTests: XCTestCase {
         let text = Text(content: "Hello hello hello")
         var genericMessage = GenericMessage(content: text)
         genericMessage.messageID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
-        let message = genericMessage.validatingFields()
-
-        XCTAssertNotNil(message)
+        let isValid = genericMessage.validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateGenericMessageWithInvalidFields() {
@@ -391,9 +394,8 @@ class ModelValidationTests: XCTestCase {
         let text = Text(content: "Hieeee!")
         var genericMessage = GenericMessage(content: text)
         genericMessage.messageID = "nonce"
-        let message = genericMessage.validatingFields()
-
-        XCTAssertNil(message)
+        let isValid = genericMessage.validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Last Read
@@ -406,9 +408,8 @@ class ModelValidationTests: XCTestCase {
         }
         let conversationID = QualifiedID(uuid: uuid, domain: "")
         let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: Date(timeIntervalSince1970: 25_000))
-        let message = GenericMessage(content: lastRead).validatingFields()
-
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: lastRead).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateLastReadWithInvalidFields() {
@@ -416,8 +417,8 @@ class ModelValidationTests: XCTestCase {
         let lastRead = LastRead.with {
             $0.lastReadTimestamp = 25_000
         }
-        let message = GenericMessage(content: lastRead).validatingFields()
-        XCTAssertNil(message)
+        let isValid = GenericMessage(content: lastRead).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Cleared
@@ -428,9 +429,8 @@ class ModelValidationTests: XCTestCase {
             timestamp: Date(timeIntervalSince1970: 25_000),
             conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!
         )
-        let message = GenericMessage(content: cleared).validatingFields()
-
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: cleared).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateClearedWithInvalidFields() {
@@ -439,9 +439,8 @@ class ModelValidationTests: XCTestCase {
             $0.clearedTimestamp = 25_000
             $0.conversationID = "wirewire"
         }
-        let message = GenericMessage(content: cleared).validatingFields()
-
-        XCTAssertNil(message)
+        let isValid = GenericMessage(content: cleared).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Message Hide
@@ -452,9 +451,8 @@ class ModelValidationTests: XCTestCase {
             conversationId: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!,
             messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!
         )
-        let message = GenericMessage(content: messageHide).validatingFields()
-
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: messageHide).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateHideWithInvalidFields() {
@@ -463,22 +461,22 @@ class ModelValidationTests: XCTestCase {
             $0.conversationID = ""
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
-        let invalidConversationHide = GenericMessage(content: invalidConversation).validatingFields()
-        XCTAssertNil(invalidConversationHide)
+        var isValid = GenericMessage(content: invalidConversation).validateFields()
+        XCTAssertFalse(isValid)
 
         let invalidMessage = MessageHide.with {
             $0.conversationID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
             $0.messageID = ""
         }
-        let invalidMessageHide = GenericMessage(content: invalidMessage).validatingFields()
-        XCTAssertNil(invalidMessageHide)
+        isValid = GenericMessage(content: invalidMessage).validateFields()
+        XCTAssertFalse(isValid)
 
         let invalidHide = MessageHide.with {
             $0.conversationID = ""
             $0.messageID = ""
         }
-        let invalidHideMessage = GenericMessage(content: invalidHide).validatingFields()
-        XCTAssertNil(invalidHideMessage)
+        isValid = GenericMessage(content: invalidHide).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Message Delete
@@ -486,8 +484,8 @@ class ModelValidationTests: XCTestCase {
     func testThatItCreatesMessageDeleteWithValidFields() {
 
         let delete = MessageDelete(messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
-        let message = GenericMessage(content: delete).validatingFields()
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: delete).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateMessageDeleteWithInvalidFields() {
@@ -495,8 +493,8 @@ class ModelValidationTests: XCTestCase {
         let delete = MessageDelete.with {
             $0.messageID = "invalid"
         }
-        let message = GenericMessage(content: delete).validatingFields()
-        XCTAssertNil(message)
+        let isValid = GenericMessage(content: delete).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Message Edit
@@ -508,8 +506,8 @@ class ModelValidationTests: XCTestCase {
             replacingMessageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!,
             text: text
         )
-        let message = GenericMessage(content: messageEdit).validatingFields()
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: messageEdit).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateMessageEditWithInvalidFields() {
@@ -519,8 +517,8 @@ class ModelValidationTests: XCTestCase {
             $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
             $0.text = text
         }
-        let message = GenericMessage(content: messageEdit).validatingFields()
-        XCTAssertNil(message)
+        let isValid = GenericMessage(content: messageEdit).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Message Confirmation
@@ -532,8 +530,8 @@ class ModelValidationTests: XCTestCase {
             $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
         }
-        let message = GenericMessage(content: confirmation).validatingFields()
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: confirmation).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateConfirmationWithInvalidFields() {
@@ -543,16 +541,16 @@ class ModelValidationTests: XCTestCase {
             $0.firstMessageID = "invalid"
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
         }
-        let invalidFirstIDMessage = GenericMessage(content: invalidFirstID).validatingFields()
-        XCTAssertNil(invalidFirstIDMessage)
+        var isValid = GenericMessage(content: invalidFirstID).validateFields()
+        XCTAssertFalse(isValid)
 
         let invalidArray = Confirmation.with {
             $0.type = .delivered
             $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
             $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229", "150"]
         }
-        let invalidArrayMessage = GenericMessage(content: invalidArray).validatingFields()
-        XCTAssertNil(invalidArrayMessage)
+        isValid = GenericMessage(content: invalidArray).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: Reaction
@@ -563,8 +561,8 @@ class ModelValidationTests: XCTestCase {
             emojis: ["🤩"],
             messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!
         )
-        let message = GenericMessage(content: reaction).validatingFields()
-        XCTAssertNotNil(message)
+        let isValid = GenericMessage(content: reaction).validateFields()
+        XCTAssertTrue(isValid)
     }
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
@@ -573,8 +571,8 @@ class ModelValidationTests: XCTestCase {
             $0.emoji = "🤩"
             $0.messageID = "Not-A-UUID"
         }
-        let message = GenericMessage(content: reaction).validatingFields()
-        XCTAssertNil(message)
+        let isValid = GenericMessage(content: reaction).validateFields()
+        XCTAssertFalse(isValid)
     }
 
     // MARK: User ID
@@ -731,6 +729,10 @@ class ModelValidationTests: XCTestCase {
             $0.assetDomain = assetDomain ?? ""
         }
 
-        return GenericMessage(content: asset).validatingFields()
+        let message = GenericMessage(content: asset)
+        if !message.validateFields() {
+            return nil
+        }
+        return message
     }
 }
