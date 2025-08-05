@@ -59,7 +59,7 @@ class DatabaseBaseTest: ZMTBaseTest {
         userID: UUID = UUID(),
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> CoreDataStack {
+    ) async throws -> CoreDataStack {
 
         // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
@@ -73,17 +73,7 @@ class DatabaseBaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        let exp = customExpectation(description: "should wait for loadStores to finish")
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0), file: file, line: line)
+        try await stack.load()
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)

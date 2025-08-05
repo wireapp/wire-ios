@@ -35,113 +35,122 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
     func performMigration(
         accountIdentifier: UUID,
         migration: @escaping (NSManagedObjectContext) throws -> Void
-    ) -> Result<Void, Error>? {
-        var result: Result<Void, Error>?
-        CoreDataStack.migrateLocalStorage(
+    ) async throws {
+        try await CoreDataStack.migrateLocalStorage(
             accountIdentifier: accountIdentifier,
             applicationContainer: DatabaseBaseTest.applicationContainer,
             dispatchGroup: dispatchGroup,
-            migration: migration,
-            completion: { result = $0 }
+            migration: migration
         )
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        return result
     }
 
     // MARK: - Migration tests
 
-    func testThatLocalStoreMigration_CanAlterTheDatabase() throws {
+    @MainActor
+    func testThatLocalStoreMigration_CanAlterTheDatabase() async throws {
         // given
         let metadataValue = 242
         let metadataKey = "hello"
         let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = try await createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { context in
+        try await performMigration(accountIdentifier: uuid) { context in
             context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
         }
 
         // then
-        guard case .success = result else { return XCTFail() }
-
-        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertEqual(storedValue, metadataValue)
     }
 
-    func testThatLocalStoreMigration_DoesNotAlterTheDatabase_WhenMigrationFails() throws {
+    @MainActor
+    func testThatLocalStoreMigration_DoesNotAlterTheDatabase_WhenMigrationFails() async throws {
         // given
         let metadataValue = 242
         let metadataKey = "hello"
         let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = try await createStorageStackAndWaitForCompletion(userID: uuid)
 
-        // when
-        var result: Result<Void, Error>?
-        performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { context in
+        // then
+        disableZMLogError(true)
+        await XCTAssertThrowsErrorAsync({
+            // when
+            try await self.performMigration(accountIdentifier: uuid) { context in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
                 try context.save()
                 throw TestError.somethingWentWrong
             }
+        }) { error in
+            switch error {
+            case CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong):
+                break
+            default:
+                XCTFail("unexpected error: \(error)")
+            }
         }
+        disableZMLogError(false)
 
         // then
-        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
-        else { return XCTFail() }
-
-        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertNil(storedValue)
     }
 
-    func testThatLocalStoreMigration_FailWhenLocalStoreDoesNotExist() throws {
+    func testThatLocalStoreMigration_FailWhenLocalStoreDoesNotExist() async throws {
         // given
         let uuid = UUID()
 
-        // when
-        var result: Result<Void, Error>?
-        performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { _ in }
-        }
-
         // then
-        guard case .failure(CoreDataStack.MigrationError.missingLocalStore) = result else { return XCTFail() }
+        await XCTAssertThrowsErrorAsync({
+            // when
+            try await self.performMigration(accountIdentifier: uuid) { _ in }
+        }) { error in
+            switch error {
+            case CoreDataStack.MigrationError.missingLocalStore:
+                break
+            default:
+                XCTFail("unexpected error: \(error)")
+            }
+        }
     }
 
-    func testThatLocalStoreMigration_DeletesTemporaryStore_OnSuccess() throws {
+    func testThatLocalStoreMigration_DeletesTemporaryStore_OnSuccess() async throws {
         // given
         let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = try await createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { _ in }
+        try await performMigration(accountIdentifier: uuid) { _ in }
 
         // then
-        guard case .success = result else { return XCTFail() }
-
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
 
-    func testThatLocalStoreMigration_DeletesTemporaryStore_OnFailure() throws {
+    func testThatLocalStoreMigration_DeletesTemporaryStore_OnFailure() async throws {
         // given
         let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
-
-        // when
-        var result: Result<Void, Error>?
-        performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { _ in
-                throw TestError.somethingWentWrong
-            }
-        }
+        _ = try await createStorageStackAndWaitForCompletion(userID: uuid)
 
         // then
-        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
-        else { return XCTFail() }
+        disableZMLogError(true)
+        await XCTAssertThrowsErrorAsync({
+            // when
+            try await self.performMigration(accountIdentifier: uuid) { _ in
+                throw TestError.somethingWentWrong
+            }
+        }) { error in
+            switch error {
+            case CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong):
+                break
+            default:
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+        disableZMLogError(false)
 
+        // then
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
 }
