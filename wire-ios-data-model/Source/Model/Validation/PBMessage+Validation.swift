@@ -88,7 +88,7 @@ public extension String {
 
 public extension GenericMessage {
     func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content else { return nil }
+        guard UUID.isValid(object: messageID), let content else { return nil } // TODO: validate content?
 
         switch content {
         case .text:
