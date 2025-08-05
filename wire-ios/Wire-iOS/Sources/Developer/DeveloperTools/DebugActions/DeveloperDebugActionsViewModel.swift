@@ -158,6 +158,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         Task { @MainActor in
             guard let conversation = await firstGroupConversation(of: selfClient, in: context, isMLS: true),
                   let mlsGroupID = conversation.mlsGroupID else {
+                WireLogger.mls.info("No MLS conversation to trigger initiate reset")
+
                 return
             }
 

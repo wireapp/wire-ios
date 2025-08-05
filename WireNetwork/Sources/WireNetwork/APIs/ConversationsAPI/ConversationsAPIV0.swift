@@ -325,7 +325,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var lastEvent: String?
     var lastEventTime: UTCTime?
     var legacyAccessRole: ConversationAccessRoleLegacyV0?
-    var members: QualifiedConversationMembers?
+    var members: QualifiedConversationMembersV0?
     var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?

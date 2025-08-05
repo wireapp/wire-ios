@@ -5491,3 +5491,8 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

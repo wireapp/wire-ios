@@ -30,6 +30,7 @@ public struct CreateGroupConversationParameters: Sendable {
     let legacyAccessRole: ConversationAccessRole?
     let teamID: UUID?
     let isReadReceiptsEnabled: Bool
+    let skipCreator: Bool?
 
     public init(
         groupType: ConversationGroupType,
@@ -42,7 +43,8 @@ public struct CreateGroupConversationParameters: Sendable {
         accessRoles: Set<ConversationAccessRole>,
         legacyAccessRole: ConversationAccessRole?,
         teamID: UUID?,
-        isReadReceiptsEnabled: Bool
+        isReadReceiptsEnabled: Bool,
+        skipCreator: Bool? = nil // until really used
     ) {
         self.groupType = groupType
         self.messageProtocol = messageProtocol
@@ -55,5 +57,6 @@ public struct CreateGroupConversationParameters: Sendable {
         self.legacyAccessRole = legacyAccessRole
         self.teamID = teamID
         self.isReadReceiptsEnabled = isReadReceiptsEnabled
+        self.skipCreator = skipCreator
     }
 }
