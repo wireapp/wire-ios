@@ -29,7 +29,7 @@ protocol ConversationMessageAddEventProcessorProtocol {
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
-    )
+    ) async
 
 }
 

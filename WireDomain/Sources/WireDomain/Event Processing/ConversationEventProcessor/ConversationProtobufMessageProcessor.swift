@@ -39,7 +39,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
     public func processProtobufMessage(
         _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,
@@ -47,6 +46,10 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         date: Date,
         eventMessage: String
     ) async throws {
+
+        guard message.validateFields(), let content = message.content else {
+            throw ProcessProtobufMessageError.invalidMessage
+        }
 
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
@@ -289,6 +292,11 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             senderDomain: sender.domain
         )
 
+    }
+
+    private enum ProcessProtobufMessageError: Error {
+        /// The `GenericMessage` instance's `validateFields()` method either returned `false` or the `content` is `nil`.
+        case invalidMessage
     }
 
 }
