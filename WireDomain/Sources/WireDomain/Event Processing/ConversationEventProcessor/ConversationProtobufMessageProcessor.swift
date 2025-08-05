@@ -226,6 +226,32 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case .none:
             // TODO: store as UnknownMessage
             fatalError("TODO")
+
+        /*
+        guard let content = genericMessage.content else {
+            switch genericMessage.unknownStrategy {
+
+            case .ignore:
+                return // Throw the message away without informing the user.
+
+            case .discardAndWarn:
+                fatalError("TODO")
+//                appendUnknownMessageReceivedSystemMessage(
+//                    fromSender: senderID,
+//                    atTime: updateEvent.timestamp ?? .now,
+//                    to: conversation,
+//                    in: moc
+//                )
+                return
+
+            case .warnUserAllowRetry:
+                // Store the message so that it can be parsed later (e.g. after an app update)
+                fatalError("TODO")
+                return // TODO: store
+            }
+        }
+         */
+
         }
     }
 

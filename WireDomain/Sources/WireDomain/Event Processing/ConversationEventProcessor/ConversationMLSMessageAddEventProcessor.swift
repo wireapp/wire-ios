@@ -90,31 +90,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
 
-        /*
-        guard let content = genericMessage.content else {
-            switch genericMessage.unknownStrategy {
-
-            case .ignore:
-                return // Throw the message away without informing the user.
-
-            case .discardAndWarn:
-                fatalError("TODO")
-//                appendUnknownMessageReceivedSystemMessage(
-//                    fromSender: senderID,
-//                    atTime: updateEvent.timestamp ?? .now,
-//                    to: conversation,
-//                    in: moc
-//                )
-                return
-
-            case .warnUserAllowRetry:
-                // Store the message so that it can be parsed later (e.g. after an app update)
-                fatalError("TODO")
-                return // TODO: store
-            }
-        }
-         */
-
         // Handle calling if there's one.
         if let callEventInfo = getCallEventInfo(
             event: event,
@@ -166,10 +141,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
-    }
-
-    private func storeForLaterProcessingIfNeeded() {
-        //
     }
 
     // MARK: - Calling
