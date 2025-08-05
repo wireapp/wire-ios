@@ -19,7 +19,8 @@
 import Foundation
 import WireNetwork
 
-/// The purpose of this protocol is sharing code between `ConversationMLSMessageAddEventProcessor` and `ConversationProteusMessageAddEventProcessor`.
+/// The purpose of this protocol is sharing code between `ConversationMLSMessageAddEventProcessor` and
+/// `ConversationProteusMessageAddEventProcessor`.
 
 protocol ConversationMessageAddEventProcessorProtocol {
 

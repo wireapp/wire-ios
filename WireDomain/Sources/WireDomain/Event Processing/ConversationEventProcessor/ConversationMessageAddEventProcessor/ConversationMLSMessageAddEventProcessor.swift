@@ -22,7 +22,8 @@ import WireLogging
 import WireNetwork
 import WireSystem
 
-struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol, ConversationMessageAddEventProcessorProtocol {
+struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol,
+    ConversationMessageAddEventProcessorProtocol {
 
     enum Failure: Error {
         case mlsConversationNotFound

@@ -21,7 +21,8 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol, ConversationMessageAddEventProcessorProtocol {
+struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol,
+    ConversationMessageAddEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
