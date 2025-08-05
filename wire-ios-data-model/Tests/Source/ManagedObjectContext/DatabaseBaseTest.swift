@@ -33,8 +33,8 @@ class DatabaseBaseTest: ZMTBaseTest {
 
     // MARK: - Init
 
-    public override func setUp() {
-        super.setUp()
+    public override func setUp() async throws {
+        try await super.setUp()
         clearStorageFolder()
         try! FileManager.default.createDirectory(at: Self.applicationContainer, withIntermediateDirectories: true)
     }

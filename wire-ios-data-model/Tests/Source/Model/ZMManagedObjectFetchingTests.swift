@@ -26,7 +26,6 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
     public override func setUp() async throws {
         try await super.setUp()
         mocs = try await createStorageStackAndWaitForCompletion()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         BackendInfo.isFederationEnabled = true
     }
 

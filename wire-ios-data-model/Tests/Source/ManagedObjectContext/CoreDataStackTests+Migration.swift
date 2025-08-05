@@ -39,7 +39,6 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         try await CoreDataStack.migrateLocalStorage(
             accountIdentifier: accountIdentifier,
             applicationContainer: DatabaseBaseTest.applicationContainer,
-            dispatchGroup: dispatchGroup,
             migration: migration
         )
     }

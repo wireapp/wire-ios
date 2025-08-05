@@ -141,8 +141,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
     private func migrateStoreToCurrentVersion(
         sourceVersion: String,
-        preMigrationAction: (NSManagedObjectContext) throws -> Void,
-        postMigrationAction: (NSManagedObjectContext) throws -> Void
+        preMigrationAction: @escaping (NSManagedObjectContext) throws -> Void,
+        postMigrationAction: @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
         // GIVEN
         let accountIdentifier = UUID()
@@ -161,7 +161,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
         // perform pre-migration action
         if let sourceContainer {
-            try preMigrationAction(sourceContainer.viewContext)
+            try await sourceContainer.viewContext.perform {
+                try preMigrationAction(sourceContainer.viewContext)
+            }
         }
 
         // release store before actual test
@@ -180,7 +182,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
         // THEN
         // perform post migration action
-        try postMigrationAction(stack.viewContext)
+        try await stack.viewContext.perform {
+            try postMigrationAction(stack.viewContext)
+        }
 
         try? FileManager.default.removeItem(at: applicationContainer)
     }

@@ -39,6 +39,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         ).appendingPersistentStoreLocation()
     }
 
+    @MainActor
     public override func setUp() async throws {
         try await super.setUp()
 
@@ -48,7 +49,6 @@ public class DiskDatabaseTest: ZMTBaseTest {
         cleanUp()
         try await createDatabase()
         setupCaches()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
 

@@ -60,14 +60,11 @@ extension CoreDataStack {
     /// - Parameters:
     ///   - accountIdentifier: identifier of account being backed up
     ///   - applicationContainer: shared application container
-    ///   - dispatchGroup: group for testing
     ///   - migration: block which performs the migration work
-    ///   - completion: called on main thread when done.
     @MainActor
     public static func migrateLocalStorage(
         accountIdentifier: UUID,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup,
         migration: @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
         let accountDirectory = Self.accountDataFolder(

@@ -169,8 +169,7 @@ public extension CoreDataStack {
     static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup
+        applicationContainer: URL
     ) async throws -> URL {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
             WireLogger.localStorage

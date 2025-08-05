@@ -97,21 +97,22 @@ extension SessionManager: APIVersionResolverDelegate {
                 DispatchQueue.main.async {
                     dispatchGroup.enter()
                     self.tearDownBackgroundSession(for: account.userIdentifier) {
-                        // 2. Migrate users and conversations
-                        CoreDataStack.migrateLocalStorage(
-                            accountIdentifier: account.userIdentifier,
-                            applicationContainer: self.sharedContainerURL,
-                            dispatchGroup: dispatchGroup,
-                            migration: {
-                                try $0.migrateToFederation()
-                            },
-                            completion: { result in
-                                if case .failure = result {
-                                    log.error("Failed to migrate account for federation")
-                                }
+                        Task {
+                            do {
+                                // 2. Migrate users and conversations
+                                try await CoreDataStack.migrateLocalStorage(
+                                    accountIdentifier: account.userIdentifier,
+                                    applicationContainer: self.sharedContainerURL,
+                                    migration: {
+                                        try $0.migrateToFederation()
+                                    }
+                                )
+                            } catch {
+                                log.error("Failed to migrate account for federation: \(error)")
                             }
-                        )
-                        dispatchGroup.leave()
+
+                            dispatchGroup.leave()
+                        }
                     }
                 }
             }

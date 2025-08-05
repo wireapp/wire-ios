@@ -210,6 +210,7 @@ struct DatabaseMigrationHelper {
 
     // MARK: - Migration Helpers
 
+    @MainActor
     func migrateStoreToCurrentVersion(
         sourceVersion: String,
         preMigrationAction: MigrationAction,

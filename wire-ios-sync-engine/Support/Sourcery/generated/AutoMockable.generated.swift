@@ -439,25 +439,25 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
     // MARK: - replacePersistentStore
 
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup)] = []
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError: Error?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL)] = []
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError: Error?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod: ((UUID, URL, URL) async throws -> URL)?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue: URL?
 
     @discardableResult
-    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
-        replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL) async throws -> URL {
+        replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer))
 
-        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError {
+        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError {
             throw error
         }
 
-        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod {
-            return try await mock(accountIdentifier, backupDirectory, applicationContainer, dispatchGroup)
-        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue {
+        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod {
+            return try await mock(accountIdentifier, backupDirectory, applicationContainer)
+        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue {
             return mock
         } else {
-            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup`")
+            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainer`")
         }
     }
 
