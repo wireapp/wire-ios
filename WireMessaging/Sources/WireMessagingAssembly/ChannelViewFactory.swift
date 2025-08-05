@@ -18,6 +18,7 @@
 
 public import SwiftUI
 public import WireMessagingDomain
+import UIKit
 import WireMessagingUI
 
 public class ChannelViewFactory {
@@ -25,7 +26,7 @@ public class ChannelViewFactory {
     public static func makeChannelAccessView(
         permission: ChannelAccessLevelPermission?,
         accentColor: Color,
-        repository: any ChannelAccessRepositoryProtocol
+        repository: any ChannelRepositoryProtocol
     ) -> UIViewController {
         let useCase = ChannelAccessUseCase(permission: permission, repository: repository)
         let viewModel = ChannelAccessViewModel(
@@ -33,5 +34,27 @@ public class ChannelViewFactory {
         )
 
         return ChannelAccessHostingController(viewModel: viewModel)
+    }
+
+    @MainActor
+    public static func makeChannelHistoryView(
+        historyDepth: String?,
+        accentColor: Color,
+        teamsURL: URL,
+        repository: any ChannelRepositoryProtocol
+    ) -> UIViewController {
+        let useCase = ChannelHistoryUseCase(
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repository),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repository)
+        )
+
+        let viewModel = ChannelHistoryViewModel(
+            historyDepth: historyDepth,
+            teamsURL: teamsURL,
+            accentColor: accentColor,
+            useCase: useCase
+        )
+
+        return ChannelHistoryHostingController(viewModel: viewModel)
     }
 }

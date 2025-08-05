@@ -20,14 +20,13 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
-import WireCellsAPI
-import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
@@ -221,7 +220,7 @@ final class ZClientViewController: UIViewController {
 
         let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
-                guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+                guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
                 switch change {
                 case .conferenceCallingIsAvailable:

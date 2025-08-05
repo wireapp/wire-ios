@@ -711,7 +711,7 @@ public extension WireCallCenterV3 {
             return true
         }
         guard let context = uiMOC else { return false }
-        let conferenceCalling = FeatureRepository(context: context).fetchConferenceCalling()
+        let conferenceCalling = LegacyFeatureRepository(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
     }
 
@@ -1182,7 +1182,7 @@ extension WireCallCenterV3 {
     private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
         guard
             let context = conversation.managedObjectContext,
-            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
+            let featureConfig = LegacyFeatureRepository(context: context).fetchConferenceCalling().config,
             featureConfig.useSFTForOneToOneCalls
         else {
             return .oneToOne

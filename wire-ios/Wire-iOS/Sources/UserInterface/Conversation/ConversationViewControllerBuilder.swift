@@ -17,9 +17,9 @@
 //
 
 import UIKit
-import WireCellsBindings
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingAssembly
 import WireSyncEngine
 
 @MainActor

@@ -2986,28 +2986,24 @@ internal enum L10n {
       }
       internal enum EmptyState {
         internal enum Drafts {
-          /// All your conversations are up to date
-          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.drafts.subtitle", fallback: "All your conversations are up to date")
           /// No drafts
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.drafts.title", fallback: "No drafts")
         }
         internal enum Mentions {
-          /// All your conversations are up to date
-          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.mentions.subtitle", fallback: "All your conversations are up to date")
           /// No mentions
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.mentions.title", fallback: "No mentions")
         }
         internal enum Replies {
-          /// All your conversations are up to date
-          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.replies.subtitle", fallback: "All your conversations are up to date")
           /// No replies
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No replies")
         }
         internal enum Unread {
-          /// All your conversations are up to date
-          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.unread.subtitle", fallback: "All your conversations are up to date")
           /// No unread conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.unread.title", fallback: "No unread conversations")
+        }
+        internal enum UpToDate {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.up_to_date.subtitle", fallback: "All your conversations are up to date")
         }
       }
       internal enum Filter {
@@ -3766,6 +3762,10 @@ internal enum L10n {
       internal enum AccessOptionsCell {
         /// Channel access
         internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
+      }
+      internal enum ChannelHistoryOptionsCell {
+        /// Conversation history
+        internal static let title = L10n.tr("Localizable", "group_details.channel_history_options_cell.title", fallback: "Conversation history")
       }
       internal enum ConversationAdminsHeader {
         /// Conversation admins

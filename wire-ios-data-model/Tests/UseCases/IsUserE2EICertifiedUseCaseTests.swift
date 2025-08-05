@@ -27,7 +27,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var selfUser: ZMUser!
     private var otherUser: ZMUser!
     private var mlsSelfConversation: ZMConversation!
@@ -48,12 +48,12 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        mockFeatureRepository = .init()
-        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
+        mockLegacyFeatureRepository = .init()
+        mockLegacyFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
         sut = .init(
             schedule: .immediate,
             coreCryptoProvider: mockCoreCryptoProvider,
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             featureRepositoryContext: context
         )
     }
@@ -62,7 +62,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         sut = nil
         mockCoreCryptoProvider = nil
         mockSafeCoreCrypto = nil
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
         clientIDs = nil
         selfUser = nil
         otherUser = nil

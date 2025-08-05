@@ -152,7 +152,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMLS() async throws {
         // given
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
         // then
         try await internalTest_UpdateConversationMemberLeave(
@@ -164,7 +164,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMixed() async throws {
         // given
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
         // then
         try await internalTest_UpdateConversationMemberLeave(
@@ -851,7 +851,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     }
 
     private func enableE2EI() {
-        FeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
     }
 
 }

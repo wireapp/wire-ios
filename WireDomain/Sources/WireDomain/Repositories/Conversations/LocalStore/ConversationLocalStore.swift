@@ -285,6 +285,21 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        historyDepth: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws {
+        let conversation = await fetchConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        await context.perform {
+            conversation?.channelHistoryDepth = historyDepth
+        }
+    }
+
     public func fetchServerTimeDelta() async -> TimeInterval {
         await context.perform { [context] in
             context.serverTimeDelta

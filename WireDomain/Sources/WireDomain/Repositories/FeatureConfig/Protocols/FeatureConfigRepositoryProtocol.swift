@@ -20,6 +20,7 @@ import Combine
 import WireDataModel
 import WireNetwork
 
+// sourcery: AutoMockable
 /// Facilitates access to feature configs related domain objects.
 protocol FeatureConfigRepositoryProtocol {
 
@@ -40,17 +41,6 @@ protocol FeatureConfigRepositoryProtocol {
 
     func observeFeatureStates() -> AnyPublisher<FeatureState, Never>
 
-    /// Fetches a feature config locally.
-    ///
-    /// - Parameter name: The feature name to fetch the config for.
-    /// - Parameter type: The type of config to retrieve.
-    /// - Returns: A `LocalFeature` object with a status and a config (if any).
-
-    func fetchFeatureConfig<T: Decodable>(
-        name: Feature.Name,
-        type: T.Type
-    ) async throws -> LocalFeature<T>
-
     /// Updates a feature config locally.
     ///
     /// - Parameter featureConfig: The feature config to update.
@@ -59,4 +49,8 @@ protocol FeatureConfigRepositoryProtocol {
         _ featureConfig: FeatureConfig
     ) async
 
+    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>
+    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config>
+    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
+    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
 }

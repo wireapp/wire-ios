@@ -182,13 +182,10 @@
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 "conversation_list.empty_state.unread.title" = "No unread conversations";
-"conversation_list.empty_state.unread.subtitle" = "All your conversations are up to date";
 "conversation_list.empty_state.mentions.title" = "No mentions";
-"conversation_list.empty_state.mentions.subtitle" = "All your conversations are up to date";
 "conversation_list.empty_state.replies.title" = "No replies";
-"conversation_list.empty_state.replies.subtitle" = "All your conversations are up to date";
 "conversation_list.empty_state.drafts.title" = "No drafts";
-"conversation_list.empty_state.drafts.subtitle" = "All your conversations are up to date";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
@@ -1086,6 +1083,7 @@
 "group_details.receipt_options_cell.title" = "Read receipts";
 "group_details.receipt_options_cell.description" = "When this is on, people can see when their messages in this conversation are read.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";

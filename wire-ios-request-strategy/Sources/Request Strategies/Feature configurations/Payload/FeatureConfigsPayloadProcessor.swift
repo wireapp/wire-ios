@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import protocol WireDataModel.FeatureRepositoryInterface
+import protocol WireDataModel.LegacyFeatureRepositoryInterface
 import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
 
-    func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
@@ -123,7 +123,7 @@ struct FeatureConfigsPayloadProcessor {
         }
     }
 
-    func processActionPayloadAPIV6(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayloadAPIV6(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayloadAPIV6.self, from: data)
 
         if let appLock = payload.appLock {
@@ -226,7 +226,7 @@ struct FeatureConfigsPayloadProcessor {
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface,
+        repository: LegacyFeatureRepositoryInterface,
         mlsClientManager: MLSClientManagerProtocol,
         in context: NSManagedObjectContext
     ) throws {

@@ -68,6 +68,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canModifyNotificationSettingsInConversation = false
     var canModifyGuestsAccessControlSettings = false
     var canModifyChannelAccessLevelSettings = false
+    var canModifyChannelHistorySettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
     var isPendingMetadataRefresh = false
@@ -266,6 +267,10 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
         canModifyChannelAccessLevelSettings
+    }
+
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool {
+        canModifyChannelHistorySettings
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {

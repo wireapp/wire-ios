@@ -784,7 +784,7 @@ final class MessageSenderTests: MessagingTestBase {
         let coreDataStack: CoreDataStack
         let initiateResetMLSConversationUseCase = WireRequestStrategySupport
             .MockInitiateResetMLSConversationUseCaseProtocol()
-        let featureRepository = MockFeatureRepositoryInterface()
+        let featureRepository = MockLegacyFeatureRepositoryInterface()
 
         init(coreDataStack: CoreDataStack) {
             self.coreDataStack = coreDataStack

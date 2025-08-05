@@ -85,7 +85,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -169,7 +169,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -375,7 +375,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
