@@ -86,7 +86,7 @@ private extension AttachmentsCarouselItem.Kind {
             self = .image(thumbnail: nil) // FIXME: [WPB-19266] Set image thumbnail data
         } else if value.conforms(to: .audiovisualContent) {
             self = .video(thumbnail: nil) // FIXME: [WPB-19267] Set video thumbnail data
-        } else if value.conforms(to: .audio, ) {
+        } else if value.conforms(to: .audio) {
             self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
         } else {
             self = .document
