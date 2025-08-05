@@ -39,8 +39,7 @@ final class ConversationMessageCellTableViewAdapter<
 
     let cellView: C.View
     
-    /// A view that contains the `cellView`.
-    /// Will be either an invisible view with the same size as `cellView` or a chat bubble with a larger size.
+    /// A view that wraps the `cellView` into a chat bubble for specific kinds of messages.
     let cellViewContainer: ConversationMessageContainerView
 
     var cellDescription: C? {
@@ -114,6 +113,7 @@ final class ConversationMessageCellTableViewAdapter<
         top.constant = cellDescription?.topMargin ?? 0
         bottom.constant = cellDescription?.bottomMargin ?? 0
         cellViewContainer.isBubble = cellDescription?.shouldWrapInBubble ?? false
+        cellViewContainer.isFromSelfUser = cellDescription?.message?.isSentBySelfUser ?? false
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

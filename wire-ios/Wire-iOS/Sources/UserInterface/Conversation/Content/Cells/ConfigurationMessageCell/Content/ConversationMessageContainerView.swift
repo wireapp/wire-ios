@@ -23,8 +23,13 @@ import SwiftUI
 /// If `isBubble` is set to `true`, it will look like a chat bubble.
 /// Otherwise it will be an invisible wrapper for the message.
 final class ConversationMessageContainerView: UIView {
-    var isFromSelfUser: Bool = false
     let content: UIView
+    
+    var isFromSelfUser: Bool = false {
+        didSet {
+            content.backgroundColor = isFromSelfUser ? .blue.withAlphaComponent(0.3) : .red.withAlphaComponent(0.3)
+        }
+    }
     
     var isBubble: Bool = false {
         didSet {
@@ -59,13 +64,17 @@ final class ConversationMessageContainerView: UIView {
 }
 
 private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
+    var isFromSelfUser: Bool
+    var isBubble: Bool
+    
     func makeUIView(context: Context) -> ConversationMessageContainerView {
         let label = UILabel()
         label.text = "This is a text message."
         label.sizeToFit()
         let container = ConversationMessageContainerView(content: label)
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.isBubble = true
+        container.isBubble = isBubble
+        container.isFromSelfUser = isFromSelfUser
         return container
     }
     
@@ -75,7 +84,14 @@ private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
 #Preview {
     ScrollView {
         VStack {
-            ConversationMessageContainerView_Preview()
+            ConversationMessageContainerView_Preview(isFromSelfUser: false, isBubble: true)
+        }
+        .padding()
+    }
+    
+    ScrollView {
+        VStack {
+            ConversationMessageContainerView_Preview(isFromSelfUser: true, isBubble: true)
         }
         .padding()
     }
