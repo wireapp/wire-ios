@@ -22,13 +22,13 @@ import GenericMessageProtocol
 // MARK: - GenericMessage
 
 public extension GenericMessage {
-    init?(withBase64String base64String: String?) {
-        guard
-            let string = base64String,
-            let data = Data(base64Encoded: string),
-            let message = GenericMessage.with({ try? $0.merge(serializedData: data) }).validatingFields()
-        else { return nil }
-        self = message
+
+    @nonobjc
+    init?(_ base64String: String) {
+        guard let data = Data(base64Encoded: base64String) else { return nil }
+        self = GenericMessage.with {
+            try? $0.merge(serializedData: data)
+        }
     }
 
     init(

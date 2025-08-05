@@ -70,12 +70,12 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         // Get protobuf message
-        let protobufMessage = await getProtobufMessage(
+        let genericMessage = await getProtobufMessage(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
 
-        guard let (genericMessage, content) = protobufMessage else {
+        guard let genericMessage, genericMessage.validateFields() else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
@@ -89,7 +89,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         // Handle calling if there's one.
-
         if let callEventInfo = getCallEventInfo(
             event: event,
             genericMessage: genericMessage
@@ -115,7 +114,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         // Process protobuf message
         try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,
@@ -128,29 +126,20 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
     private func getProtobufMessage(
         from base64Message: String,
         externalData: String?
-    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        var genericMessage = GenericMessage(withBase64String: base64Message)
+    ) async -> GenericMessage? {
+        var genericMessage = GenericMessage(base64Message)
 
-        if let externalData,
-           case let .some(.external(external)) = genericMessage?.content {
-
+        if let externalData, case let .some(.external(external)) = genericMessage?.content {
             /// Content message is external, we decrypt the external payload
             /// and turns it back into a generic non-external content message.
-            if let decryptedGenericMessage = decryptExternalMessage(
-                externalData: externalData,
-                external: external
-            ) {
+            if let decryptedGenericMessage = decryptExternalMessage(externalData: externalData, external: external) {
                 genericMessage = decryptedGenericMessage
             } else {
                 return nil
             }
         }
 
-        guard let genericMessage, let content = genericMessage.content else {
-            return nil
-        }
-
-        return (genericMessage, content)
+        return genericMessage
     }
 
     private func decryptExternalMessage(
@@ -176,11 +165,11 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             key: external.otrKey
         )
 
-        guard let message = GenericMessage(
-            withBase64String: decryptedData?.base64String()
-        ) else {
-            return nil
-        }
+        guard
+            let base64String = decryptedData?.base64String(),
+            let message = GenericMessage(base64String),
+            message.validateFields()
+        else { return nil }
 
         return message
     }
