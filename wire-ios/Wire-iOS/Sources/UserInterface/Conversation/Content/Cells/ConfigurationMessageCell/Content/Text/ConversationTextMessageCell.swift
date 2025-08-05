@@ -48,10 +48,16 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         return view
     }()
+    
+    private var container: ConversationMessageContainerView?
 
     var isSelected = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            container?.isFromSelfUser = message?.isSentBySelfUser ?? false
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -76,13 +82,25 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setup() {
         messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(messageTextView)
+
+        container = .init(content: messageTextView)
+        if let container {
+            container.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(container)
+        }
+        
         configureConstraints()
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let insets: UIEdgeInsets
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            let padding = ConversationMessageContainerView.bubbleInnerPadding
+            insets = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+        } else {
+            let margins = conversationHorizontalMargins
+            insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        }
         messageTextView.fitIn(view: self, insets: insets)
     }
 
@@ -95,6 +113,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             messageTextView.accessibilityIdentifier = "Message"
         }
         accessibilityLabel = messageTextView.attributedText.string
+        
+        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {

@@ -25,9 +25,12 @@ import SwiftUI
 final class ConversationMessageContainerView: UIView {
     let content: UIView
     
+    static let bubbleInnerPadding: CGFloat = 8
+    
     var isFromSelfUser: Bool = false {
         didSet {
             content.backgroundColor = isFromSelfUser ? .blue.withAlphaComponent(0.3) : .red.withAlphaComponent(0.3)
+            setNeedsLayout()
         }
     }
     
@@ -37,7 +40,7 @@ final class ConversationMessageContainerView: UIView {
                 self.backgroundColor = .yellow //TODO: remove
                 content.backgroundColor = .red.withAlphaComponent(0.3) //TODO: remove
                 
-                let padding: CGFloat = 8
+                let padding = Self.bubbleInnerPadding
                 content.fitIn(view: self, insets: .init(top: padding, left: padding, bottom: padding, right: padding))
             } else {
                 self.backgroundColor = .clear //TODO: remove
