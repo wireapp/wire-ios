@@ -21,7 +21,8 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol, ConversationMessageAddEventProcessorProtocol {
+struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol,
+    ConversationMessageAddEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
@@ -75,12 +76,11 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             externalData: messageExternalData?.encryptedMessage
         )
 
-        guard let genericMessage, genericMessage.validateFields() else {
+        guard let genericMessage, genericMessage.validateFields(), let content = genericMessage.content else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
             )
-
             return await addInvalidSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
@@ -112,8 +112,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
 
         // Process protobuf message
-        try await protobufMessageProcessor.processProtobufMessage(
-            genericMessage,
+        try await protobufMessageProcessor.processGenericMessage(
+            messageID: genericMessage.messageID,
+            messageContent: content,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,

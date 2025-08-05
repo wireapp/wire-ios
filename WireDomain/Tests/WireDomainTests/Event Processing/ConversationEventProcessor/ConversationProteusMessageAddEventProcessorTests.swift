@@ -88,8 +88,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _ in }
+            .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -110,7 +110,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
@@ -118,12 +118,12 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
 
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
-                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .first
         )
 
         // Ensuring large message payload has been correctly processed by protobuf processor.
-        switch processProtobufMessageInvocation.message.content {
+        switch processProtobufMessageInvocation.messageContent {
         case let .text(text):
             XCTAssertEqual(text.content, Scaffolding.mockDecryptedLargeMessagePayload)
         default:
@@ -144,8 +144,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _ in }
+            .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -166,7 +166,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
@@ -175,12 +175,12 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
 
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
-                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .first
         )
 
         // Ensuring regular message payload has been correctly processed by protobuf processor.
-        switch processProtobufMessageInvocation.message.content {
+        switch processProtobufMessageInvocation.messageContent {
         case let .text(text):
             let regularMessageText = "Everything"
             XCTAssertEqual(text.content, regularMessageText)

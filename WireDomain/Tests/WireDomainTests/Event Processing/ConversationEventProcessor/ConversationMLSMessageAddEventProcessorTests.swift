@@ -88,8 +88,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderID_MockValue = true
         protobufMessageProcessor
-            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
-            { _, _, _, _, _, _, _ in }
+            .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _, _ in }
 
         // When
 
@@ -101,7 +101,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 1)
         XCTAssertEqual(
             protobufMessageProcessor
-                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .processGenericMessageMessageIDMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
         )
