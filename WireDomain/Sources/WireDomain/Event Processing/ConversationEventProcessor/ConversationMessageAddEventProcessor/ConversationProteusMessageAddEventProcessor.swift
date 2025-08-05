@@ -21,7 +21,8 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
+struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol,
+    ConversationMessageAddEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
@@ -173,23 +174,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         else { return nil }
 
         return message
-    }
-
-    private func addInvalidSystemMessage(
-        senderID: UserID,
-        conversationID: ConversationID,
-        date: Date
-    ) async {
-        let systemMessageType: SystemMessageType = .invalid(
-            sender: (senderID.id, senderID.domain),
-            date: date
-        )
-
-        await messageLocalStore.addSystemMessage(
-            messageType: systemMessageType,
-            conversationID: conversationID.id,
-            conversationDomain: conversationID.domain
-        )
     }
 
     // MARK: - Calling

@@ -23,7 +23,6 @@ import GenericMessageProtocol
 
 public extension GenericMessage {
 
-    @nonobjc
     init?(_ base64String: String) {
         guard let data = Data(base64Encoded: base64String) else { return nil }
         self = GenericMessage.with {

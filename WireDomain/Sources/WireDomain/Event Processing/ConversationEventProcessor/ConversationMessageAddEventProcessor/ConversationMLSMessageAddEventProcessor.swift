@@ -22,7 +22,8 @@ import WireLogging
 import WireNetwork
 import WireSystem
 
-struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
+struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol,
+    ConversationMessageAddEventProcessorProtocol {
 
     enum Failure: Error {
         case mlsConversationNotFound
@@ -124,22 +125,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             senderClientID: decryptedMessage.senderClientID,
             date: date ?? .now,
             eventMessage: "conversation.mls-message-add"
-        )
-    }
-
-    private func addInvalidSystemMessage( // TODO: extract duplicated code
-        senderID: UserID,
-        conversationID: ConversationID,
-        date: Date
-    ) async {
-        let systemMessageType: SystemMessageType = .invalid(
-            sender: (senderID.id, senderID.domain),
-            date: date
-        )
-        await messageLocalStore.addSystemMessage(
-            messageType: systemMessageType,
-            conversationID: conversationID.id,
-            conversationDomain: conversationID.domain
         )
     }
 

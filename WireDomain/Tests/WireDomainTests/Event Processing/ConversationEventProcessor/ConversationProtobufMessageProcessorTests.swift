@@ -87,6 +87,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             }
 
         let genericMessage = try XCTUnwrap(GenericMessage(Scaffolding.base64EncodedString))
+        XCTAssertTrue(genericMessage.validateFields())
 
         // When
 

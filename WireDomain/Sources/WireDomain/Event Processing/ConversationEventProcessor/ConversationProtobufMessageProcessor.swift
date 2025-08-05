@@ -47,6 +47,10 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         eventMessage: String
     ) async throws {
 
+        guard message.validateFields(), let content = message.content else {
+            throw ProcessProtobufMessageError.invalidMessage
+        }
+
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
             .conversationId: conversationID.id.safeForLoggingDescription,
@@ -320,8 +324,9 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
     }
 
-//    private func storeUnprocessedMessage() {
-//        //
-//    }
+    private enum ProcessProtobufMessageError: Error {
+        /// The `GenericMessage` instance's `validateFields()` method either returned `false` or its `content` is `nil`.
+        case invalidMessage
+    }
 
 }
