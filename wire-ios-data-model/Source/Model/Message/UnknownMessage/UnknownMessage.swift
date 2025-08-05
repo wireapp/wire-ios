@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 
-public extension ZMConversation {
+/// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
 
-    /// Appends a "message invalid" system message
-    @objc @discardableResult
-    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        appendSystemMessage(
-            type: .invalid,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: date
-        )
+public final class UnknownMessage: ZMMessage {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
+        return NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
+
+    @NSManaged public var myUnknownMessageDate: Date?
+
+    // TODO: version which has been tried
+
 }

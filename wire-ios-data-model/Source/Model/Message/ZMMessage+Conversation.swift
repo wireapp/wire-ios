@@ -45,12 +45,14 @@ extension ZMMessage {
              .conversationOtrMessageAdd,
              .conversationMLSMessageAdd:
             // if event is otr message then payload should be already decrypted and should contain generic message data
-            let base64Content = payload.string(forKey: "data")
-            let message = GenericMessage(withBase64String: base64Content)
-            guard let  messageID = message?.messageID else {
+            if
+                let base64Content = payload.string(forKey: "data"),
+                let message = GenericMessage(base64Content),
+                message.validateFields() {
+                return UUID(uuidString: message.messageID)
+            } else {
                 return nil
             }
-            return UUID(uuidString: messageID)
         default:
             return nil
         }

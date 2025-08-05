@@ -1569,22 +1569,22 @@ public class MockConversationProtobufMessageProcessorProtocol: ConversationProto
 
     // MARK: - processProtobufMessage
 
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date, eventMessage: String)] = []
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockError: Error?
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, Date, String) async throws -> Void)?
+    public var processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations: [(message: GenericMessage, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date, eventMessage: String)] = []
+    public var processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockError: Error?
+    public var processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod: ((GenericMessage, ZMConversation, ConversationID, UserID, String?, Date, String) async throws -> Void)?
 
-    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date, eventMessage: String) async throws {
-        processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, date: date, eventMessage: eventMessage))
+    public func processProtobufMessage(_ message: GenericMessage, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, date: Date, eventMessage: String) async throws {
+        processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.append((message: message, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, date: date, eventMessage: eventMessage))
 
-        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockError {
+        if let error = processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockError {
             throw error
         }
 
-        guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod else {
-            fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage`")
+        guard let mock = processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod else {
+            fatalError("no mock for `processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage`")
         }
 
-        try await mock(message, content, conversation, conversationID, senderID, senderClientID, date, eventMessage)
+        try await mock(message, conversation, conversationID, senderID, senderClientID, date, eventMessage)
     }
 
 }

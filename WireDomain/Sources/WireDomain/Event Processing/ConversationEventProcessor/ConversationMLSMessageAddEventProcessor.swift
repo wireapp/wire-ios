@@ -77,36 +77,21 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         ]
 
         // Ensure is self conversation, sender is self user and conversation is not read-only
-        guard await messageLocalStore.canAddMessage(
-            conversation: conversation,
-            senderID: senderID.id
-        ) else {
+        guard await messageLocalStore.canAddMessage(conversation: conversation, senderID: senderID.id) else {
             return WireLogger.eventProcessing.warn(
                 "Ignoring incoming message: illegal sender or conversation",
                 attributes: logAttributes
             )
         }
 
-        // Get protobuf message
-        let protobufMessage = await getProtobufMessage(
-            from: decryptedMessage.message
-        )
-
-        guard let (genericMessage, content) = protobufMessage else {
-            WireLogger.eventProcessing.warn(
-                "Can't read protobuf, abort processing",
-                attributes: logAttributes
-            )
-
-            return await addInvalidSystemMessage(
-                senderID: senderID,
-                conversationID: conversationID,
-                date: date ?? .now
-            )
+        // Parse into GenericMessage
+        guard let genericMessage = GenericMessage(decryptedMessage.message), genericMessage.validateFields() else {
+            // TODO: handle
+            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing", attributes: logAttributes)
+            return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
 
         // Handle calling if there's one.
-
         if let callEventInfo = getCallEventInfo(
             event: event,
             decryptedMessage: decryptedMessage,
@@ -133,7 +118,6 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         // Process protobuf message
         try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,
@@ -143,19 +127,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
     }
 
-    private func getProtobufMessage(
-        from base64Message: String
-    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        let genericMessage = GenericMessage(withBase64String: base64Message)
-
-        guard let genericMessage, let content = genericMessage.content else {
-            return nil
-        }
-
-        return (genericMessage, content)
-    }
-
-    private func addInvalidSystemMessage(
+    private func addInvalidSystemMessage( // TODO: extract duplicated code
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
