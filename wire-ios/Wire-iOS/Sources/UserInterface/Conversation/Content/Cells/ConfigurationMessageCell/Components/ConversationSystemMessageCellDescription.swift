@@ -193,6 +193,16 @@ enum ConversationSystemMessageCellDescription {
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
+            if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
+                let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
+                    sender: sender,
+                    historyDepth: channelHistoryDepth,
+                    isNewConversation: true
+                )
+
+                cells.append(AnyConversationMessageCellDescription(cell))
+            }
+
             return cells
 
         case .failedToAddParticipants:
@@ -232,10 +242,15 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(unknownMessage)]
 
         case .channelHistoryDepthModified:
-            let cell = ConversationHistoryDepthChangedCellDescription(
+            let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
                 sender: sender,
-                text: systemMessageData.text
+                historyDepth: conversation.channelHistoryDepth,
+                isNewConversation: false
             )
+            return [AnyConversationMessageCellDescription(cell)]
+
+        case .userRemovedFromTeam:
+            let cell = UserRemovedFromTeamSystemMessageCellDescription()
             return [AnyConversationMessageCellDescription(cell)]
         }
 

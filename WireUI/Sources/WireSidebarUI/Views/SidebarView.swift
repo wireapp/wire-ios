@@ -26,6 +26,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
+    public var showUnreadFilters: Bool
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
@@ -42,6 +43,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     public init(
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
+        showUnreadFilters: Bool,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         supportAction: @escaping () -> Void,
@@ -50,6 +52,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
+        self.showUnreadFilters = showUnreadFilters
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
         self.supportAction = supportAction
@@ -115,18 +118,25 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader(Strings.ConversationFilter.title, addTopPadding: false)
-            let conversationFilters: [SidebarSelectableMenuItem] = [
-                .all,
-                .favorites,
-                .groups,
-                .channels,
-                .oneOnOne,
-                .folders,
-                .archive
-            ]
-            ForEach(conversationFilters, id: \.self) { conversationFilter in
-                selectableMenuItem(conversationFilter)
+
+            // Core filters
+            selectableMenuItem(.all)
+            selectableMenuItem(.favorites)
+            selectableMenuItem(.groups)
+            selectableMenuItem(.channels)
+            selectableMenuItem(.oneOnOne)
+
+            // Conditional unread filters
+            if showUnreadFilters {
+                selectableMenuItem(.unread)
+                selectableMenuItem(.mentions)
+                selectableMenuItem(.replies)
+                selectableMenuItem(.drafts)
             }
+
+            // Additional filters
+            selectableMenuItem(.folders)
+            selectableMenuItem(.archive)
         }
         .padding(.horizontal, 16)
     }
@@ -217,6 +227,30 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
             accessibilityLabel = Text(Labels.ConversationFilter.OneOnOneConversations.description)
+
+        case .unread:
+            text = Text(Strings.ConversationFilter.Unread.title)
+            icon = "1.square"
+            iconHighlighted = "1.square.fill"
+            accessibilityLabel = Text(Labels.ConversationFilter.Unread.description)
+
+        case .mentions:
+            text = Text(Strings.ConversationFilter.Mentions.title)
+            icon = "at"
+            iconHighlighted = "at"
+            accessibilityLabel = Text(Labels.ConversationFilter.Mentions.description)
+
+        case .replies:
+            text = Text(Strings.ConversationFilter.Replies.title)
+            icon = "arrowshape.turn.up.left"
+            iconHighlighted = "arrowshape.turn.up.left"
+            accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
+
+        case .drafts:
+            text = Text(Strings.ConversationFilter.Drafts.title)
+            icon = "pencil.and.ellipsis.rectangle"
+            iconHighlighted = "pencil.and.ellipsis.rectangle.fill"
+            accessibilityLabel = Text(Labels.ConversationFilter.Drafts.description)
 
         case .folders:
             text = Text(Strings.ConversationFilter.Folders.title)

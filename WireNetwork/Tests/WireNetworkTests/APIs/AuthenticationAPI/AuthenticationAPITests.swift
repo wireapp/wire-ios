@@ -159,6 +159,29 @@ final class AuthenticationAPITests: XCTestCase {
         )
     }
 
+    func testGetDomainRegistration_Response_Handling_V10_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.ok, "GetDomainRegistrationSuccessResponseV10")
+        ])
+
+        let sut = AuthenticationAPIV10(networkService: networkService)
+
+        // When
+        let response = try await sut.getDomainRegistration(forEmail: "email@example.com")
+
+        // Then
+        XCTAssertEqual(
+            response,
+            DomainRegistrationConfiguration(
+                backendURLString: "https://example.com",
+                domainRedirect: .none,
+                isCloudAccountAlreadyRegistered: false,
+                ssoCodeString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+            )
+        )
+    }
+
     func testGetDomainRegistration_ResponseWithNullValues_Handling_V8_Success() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
@@ -204,6 +227,36 @@ final class AuthenticationAPITests: XCTestCase {
         ])
 
         let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.serviceUnavailable) {
+            // When
+            try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
+    func testGetDomainRegistration_Response_Handling_V10_Invalid_Domain() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.badRequest, "GetDomainRegistrationErrorResponse_InvalidDomainV8") // same as in v8
+        ])
+
+        let sut = AuthenticationAPIV10(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidDomain) {
+            // When
+            try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
+    func testGetDomainRegistration_Response_Handling_V10_Service_Unavailable() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.serviceUnavailable, "GetDomainRegistrationErrorResponse_ServiceUnavailableV8") // same as in v8
+        ])
+
+        let sut = AuthenticationAPIV10(networkService: networkService)
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.serviceUnavailable) {

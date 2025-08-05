@@ -22,13 +22,13 @@ import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
-import WireCellsAPI
-import WireCellsBindings
-import WireCellsUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
+import WireMessagingAssembly
+import WireMessagingDomain
+import WireMessagingUI
 import WireNetwork
 import WireSyncEngine
 
@@ -463,7 +463,7 @@ final class ConversationInputBarViewController: UIViewController,
             object: nil,
             queue: .main
         ) { [weak self] note in
-            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
+            guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:

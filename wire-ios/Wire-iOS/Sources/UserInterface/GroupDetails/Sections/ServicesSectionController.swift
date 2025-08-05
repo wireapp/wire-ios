@@ -42,11 +42,11 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override var sectionTitle: String {
-        L10n.Localizable.Participants.Section.services(serviceUsers.count).localizedUppercase
+        L10n.Localizable.Participants.Section.apps(serviceUsers.count).localizedUppercase
     }
 
     override var sectionAccessibilityIdentifier: String {
-        "label.groupdetails.services"
+        "label.groupdetails.apps"
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -70,7 +70,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
         }
         cell.showSeparator = (serviceUsers.count - 1) != indexPath.row
         cell.accessoryIconView.isHidden = false
-        cell.accessibilityIdentifier = "participants.section.services.cell"
+        cell.accessibilityIdentifier = "participants.section.apps.cell"
         return cell
     }
 

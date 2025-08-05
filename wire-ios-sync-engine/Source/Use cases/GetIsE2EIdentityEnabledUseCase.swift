@@ -26,11 +26,11 @@ public protocol GetIsE2EIdentityEnabledUseCaseProtocol {
 
 public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRespository: FeatureRepositoryInterface
+        featureRespository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRespository

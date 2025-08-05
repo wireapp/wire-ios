@@ -154,6 +154,7 @@ open class AuthenticatedSessionFactory {
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: coreDataStack.applicationContainer,
             transportSession: transportSession,
             userId: account.userIdentifier,
             minTLSVersion: minTLSVersion,

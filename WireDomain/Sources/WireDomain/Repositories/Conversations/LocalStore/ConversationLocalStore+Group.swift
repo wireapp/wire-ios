@@ -26,10 +26,10 @@ extension ConversationLocalStore {
     // MARK: - User & Role
 
     func fetchUserAndRole(
-        from conversationMember: Conversation.Members.Member,
+        from conversationMember: Conversation.Members.Member?,
         for localConversation: ZMConversation
     ) -> (user: ZMUser, role: Role?)? {
-        guard let userID = conversationMember.id ?? conversationMember.qualifiedID?.uuid else {
+        guard let conversationMember, let userID = conversationMember.id ?? conversationMember.qualifiedID?.uuid else {
             return nil
         }
 

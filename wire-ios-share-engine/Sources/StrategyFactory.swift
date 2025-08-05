@@ -52,7 +52,7 @@ final class StrategyFactory {
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-            featureRepository: FeatureRepository(context: syncContext)
+            featureRepository: LegacyFeatureRepository(context: syncContext)
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }

@@ -24,6 +24,10 @@
 "sidebar.conversation_filter.groups.title" = "群组";
 "sidebar.conversation_filter.channels.title" = "频道";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "一对一对话";
+"sidebar.conversation_filter.unread.title" = "未读";
+"sidebar.conversation_filter.mentions.title" = "提及";
+"sidebar.conversation_filter.replies.title" = "回复";
+"sidebar.conversation_filter.drafts.title" = "草稿";
 "sidebar.conversation_filter.folders.title" = "文件夹";
 "sidebar.conversation_filter.archived.title" = "归档";
 

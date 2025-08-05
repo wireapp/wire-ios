@@ -26,17 +26,17 @@ package protocol LoginViaEmailFactory {
     @MainActor var viewModel: LoginViaEmailViewModel { get }
 
     @MainActor
-    func verificationCodeFactory(
+    func verifyLoginView(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory
+    ) -> VerificationCodeView
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 
     @MainActor
-    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView
 
 }
 
@@ -102,29 +102,20 @@ package struct LoginViaEmailView: View {
     @ViewBuilder
     func destinationView(_ destination: LoginViaEmailDestination) -> some View {
         switch destination {
-        case let .verifyLogin(
-            email,
-            password,
-            proxyCredentials
-        ):
-            VerificationCodeView(
-                factory: viewModel.factory.verificationCodeFactory(
+        case let .verifyLogin(email, password, proxyCredentials):
+            viewModel.factory
+                .verifyLoginView(
                     email: email,
                     password: password,
                     proxyCredentials: proxyCredentials
                 )
-            )
         case let .noHistory(authenticationResult):
-            NoHistoryView(
-                factory: viewModel.factory.noHistoryFactory(
-                    authenticationResult: authenticationResult
-                )
-            )
+            viewModel.factory.noHistoryView(result: authenticationResult)
         case .createPersonalAccount:
-            PersonalAccountCreationView(
-                factory: viewModel.factory
-                    .personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
-            )
+            viewModel.factory
+                .personalAccountCreationView(
+                    teamAccountCreationLink: viewModel.teamAccountCreationLink
+                )
         }
     }
 

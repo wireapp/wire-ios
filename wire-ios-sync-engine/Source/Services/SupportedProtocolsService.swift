@@ -32,7 +32,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let selfUserProvider: SelfUserProviderProtocol
     private let logger = WireLogger.supportedProtocols
 
@@ -40,13 +40,13 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
     public convenience init(context: NSManagedObjectContext) {
         self.init(
-            featureRepository: FeatureRepository(context: context),
+            featureRepository: LegacyFeatureRepository(context: context),
             selfUserProvider: WireDomain.SelfUserProvider(context: context)
         )
     }
 
     init(
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         selfUserProvider: SelfUserProviderProtocol
     ) {
         self.featureRepository = featureRepository

@@ -136,6 +136,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
 "conversation_list.search_bar.channelsPlaceholder" = "Поиск каналов";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
+"conversation_list.search_bar.unreadPlaceholder" = "Поиск непрочитанных бесед";
+"conversation_list.search_bar.mentionsPlaceholder" = "Поиск бесед с упоминаниями";
+"conversation_list.search_bar.repliesPlaceholder" = "Поиск бесед с ответами";
+"conversation_list.search_bar.draftsPlaceholder" = "Поиск бесед с черновиками";
 "conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
 
 
@@ -148,6 +152,10 @@
 "conversation_list.filter.folders.title" = "Папки";
 "conversation_list.filter_label.text" = "Отфильтровано по %@";
 "conversation_list.filter.remove_button.title" = "Удалить";
+"conversation_list.filter.unread.title" = "Непрочитано";
+"conversation_list.filter.mentions.title" = "Упоминания";
+"conversation_list.filter.replies.title" = "Ответы";
+"conversation_list.filter.drafts.title" = "Черновики";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Присоединиться";
@@ -173,6 +181,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
 "conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
 "conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
+"conversation_list.empty_state.unread.title" = "Нет непрочитанных бесед";
+"conversation_list.empty_state.mentions.title" = "Нет упоминаний";
+"conversation_list.empty_state.replies.title" = "Нет ответов";
+"conversation_list.empty_state.drafts.title" = "Нет черновиков";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -616,6 +629,13 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Отчеты о прочтении включены";
 
+// history depth
+"content.system.message_history_depth_initially_set_days" = "Новые участники могут видеть сообщения за последние %@ дн.";
+"content.system.message_history_depth_initially_set_weeks" = "Новые участники могут видеть сообщения за последние %@ нед.";
+"content.system.message_history_depth_modified_days" = "%@ установил историю бесед на %@ дн.";
+"content.system.message_history_depth_modified_weeks" = "%@ установил историю бесед на %@ нед.";
+"content.system.message_history_depth_modified_disabled" = "%@ отключил историю бесед";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "Эта беседа находится под юридическими ограничениями [ПОДРОБНЕЕ](%@)";
@@ -649,6 +669,9 @@
 "content.system.session_reset.self" = "Вам не смогли расшифровать некоторые из ваших сообщений, но проблема была решена. Это затронуло все беседы.";
 
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "Этот пользователь больше не доступен";
 
 "content.file.uploading" = "Отправка…";
 "content.file.downloading" = "Загрузка…";
@@ -1219,6 +1242,10 @@
 "self.settings.account_details.log_out.alert.title" = "Выйти";
 "self.settings.account_details.log_out.alert.message" = "История сообщений будет удалена с этого устройства.";
 "self.settings.account_details.log_out.alert.password" = "Пароль";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Выйти";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Удалить всю личную информацию и беседы на этом устройстве?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Выйти и очистить данные";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Выйти и сохранить данные";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Отчеты об использовании и сбоях";
@@ -1397,7 +1424,6 @@
 
 "self.settings.conversations.title" = "История";
 "self.settings.history_backup.title" = "Резервное копирование или восстановление";
-"self.settings.history_backup.error.title" = "Ошибка";
 "self.settings.history_backup.set_email.title" = "Настройте email и пароль.";
 "self.settings.history_backup.set_email.message" = "Для создания резервной копии истории бесед вам потребуется email и пароль. Вы можете сделать это в настройках учетной записи.";
 

@@ -31,7 +31,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var callNotificationStyle: CallNotificationStyle = .pushNotifications
     var accountManager: AccountManager = try! .init(
         currentAppVersion: "1.0.0",
-        sharedDirectory: accountManagerURL,
+        directory: accountManagerURL,
         defaults: .temporary()
     )
     var backgroundUserSessions: [UUID: ZMUserSession] = [:]
