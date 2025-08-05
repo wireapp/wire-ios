@@ -26,8 +26,9 @@ import SwiftUI
 final class ConversationMessageContainerView: UIView {
     let content: UIView
     
-    static let bubbleInnerPadding: CGFloat = 12
     static let bubbleCornerRadius: CGFloat = 16
+    
+    static let bubbleEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 12, right: 12)
     
     static let bubbleColorOwn: UIColor = .init(_colorLiteralRed: 49.0/255, green: 102.0/255, blue: 194.0/255, alpha: 1)
     static let bubbleColorOther: UIColor = .init(_colorLiteralRed: 231.0/255, green: 234.0/255, blue: 236.0/255, alpha: 1)
@@ -42,9 +43,7 @@ final class ConversationMessageContainerView: UIView {
     var isBubble: Bool = false {
         didSet {
             if isBubble {
-                let padding = Self.bubbleInnerPadding
-                let insets = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
-                content.fitIn(view: self, insets: insets)
+                content.fitIn(view: self, insets: Self.bubbleEdgeInsets)
             } else {
                 content.fitIn(view: self)
             }

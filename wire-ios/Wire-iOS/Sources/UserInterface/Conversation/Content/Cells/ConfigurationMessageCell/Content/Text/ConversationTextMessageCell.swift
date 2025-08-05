@@ -95,8 +95,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     private func configureConstraints() {
         let insets: UIEdgeInsets
         if DeveloperFlag.chatBubblesSimple.isOn {
-            let padding = ConversationMessageContainerView.bubbleInnerPadding
-            insets = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+            insets = ConversationMessageContainerView.bubbleEdgeInsets
         } else {
             let margins = conversationHorizontalMargins
             insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
