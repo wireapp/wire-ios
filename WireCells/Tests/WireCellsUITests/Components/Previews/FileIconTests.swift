@@ -67,7 +67,7 @@ struct FileIconTests {
         (extension: "DOCX", expected: FileIcon.document),
         (extension: "Java", expected: FileIcon.code),
         // Test unknown extension (should default to .other)
-        (extension: "foo", expected: FileIcon.other),
+        (extension: "foo", expected: FileIcon.other)
     ])
     func makeFileIconWithExtension(fileExtension: String, expectedIcon: FileIcon) {
         #expect(FileIcon.make(type: nil, fileExtension: fileExtension) == expectedIcon)

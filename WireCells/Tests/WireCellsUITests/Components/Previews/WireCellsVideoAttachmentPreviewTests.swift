@@ -17,12 +17,12 @@
 //
 
 import SwiftUI
-import XCTest
 import WireTestingPackage
+import XCTest
 
 @testable import WireCellsUI
 
-class WireCellsVideoAttachmentPreviewTests: XCTestCase {
+final class WireCellsVideoAttachmentPreviewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -42,7 +42,7 @@ class WireCellsVideoAttachmentPreviewTests: XCTestCase {
             (thumbnail: nil, progress: 0.5, isError: true, canPlay: true),
             (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: false, canPlay: false),
             (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: false, canPlay: true),
-            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: true, canPlay: true),
+            (thumbnail: Image(.rectangularPlaceholder), progress: 0.5, isError: true, canPlay: true)
         ]
 
         for (index, testCase) in testCases.enumerated() {

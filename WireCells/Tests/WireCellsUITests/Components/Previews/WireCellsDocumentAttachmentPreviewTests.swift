@@ -17,14 +17,14 @@
 //
 
 import SwiftUI
-import XCTest
-import WireFoundation
 import WireDesign
+import WireFoundation
 import WireTestingPackage
+import XCTest
 
 @testable import WireCellsUI
 
-class WireCellsDocumentAttachmentPreviewTests: XCTestCase {
+final class WireCellsDocumentAttachmentPreviewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -39,29 +39,30 @@ class WireCellsDocumentAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] = [
-            (
-                headerIcon: Image(FileIcon.pdf.resource),
-                headerText: "PDF (336 KB)",
-                labelText: "short file name",
-                progress: nil,
-                isError: false
-            ),
-            (
-                headerIcon: Image(FileIcon.pdf.resource),
-                headerText: "PDF (336 KB)",
-                labelText: "this is a file with a medium name that wraps",
-                progress: 0.5,
-                isError: false
-            ),
-            (
-                headerIcon: Image(FileIcon.pdf.resource),
-                headerText: "PDF (336 KB)",
-                labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
-                progress: 1,
-                isError: true
-            )
-        ]
+        let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] =
+            [
+                (
+                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "short file name",
+                    progress: nil,
+                    isError: false
+                ),
+                (
+                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "this is a file with a medium name that wraps",
+                    progress: 0.5,
+                    isError: false
+                ),
+                (
+                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
+                    progress: 1,
+                    isError: true
+                )
+            ]
 
         for (index, testCase) in testCases.enumerated() {
             let view = WireCellsDocumentAttachmentPreview(
