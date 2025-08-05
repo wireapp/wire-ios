@@ -37,9 +37,9 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         self.userLocalStore = userLocalStore
     }
 
-    public func processGenericMessage(
-        messageID: String,
-        messageContent: GenericMessage.OneOf_Content,
+    public func processProtobufMessage(
+        _ message: GenericMessage,
+        content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,
@@ -48,22 +48,16 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         eventMessage: String
     ) async throws {
 
-        // TODO: delete
-        let message = GenericMessage.with { message in
-            message.messageID = messageID
-            message.content = messageContent
-        }
-
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
             .conversationId: conversationID.id.safeForLoggingDescription,
-            .nonce: UUID(uuidString: messageID) ?? "<nil>"
+            .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
         ]
-        WireLogger.eventProcessing.debug("Processing:\n\(messageID): \(messageContent)")
+        WireLogger.eventProcessing.debug("Processing:\n\(message)")
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-        switch messageContent {
+        switch content {
         case let .lastRead(lastRead):
 
             await conversationLocalStore.updateLastReadMessageTimestamp(

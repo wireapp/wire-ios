@@ -27,9 +27,8 @@ import WireNetwork
 /// Wire client.
 public protocol ConversationProtobufMessageProcessorProtocol {
 
-    func processGenericMessage(
-        messageID: String,
-        messageContent: GenericMessage.OneOf_Content,
+    func processProtobufMessage(
+        _ message: GenericMessage,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,

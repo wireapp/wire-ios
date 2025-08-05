@@ -22,8 +22,7 @@ import WireLogging
 import WireNetwork
 import WireSystem
 
-struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol,
-    ConversationMessageAddEventProcessorProtocol {
+struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol, ConversationMessageAddEventProcessorProtocol {
 
     enum Failure: Error {
         case mlsConversationNotFound
@@ -90,10 +89,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         // Parse into GenericMessage
         guard
-            let genericMessage = GenericMessage(decryptedMessage.message),
-            genericMessage.validateFields(),
-            let content = genericMessage.content
-        else {
+            let genericMessage = GenericMessage(decryptedMessage.message), genericMessage.validateFields() else {
             WireLogger.eventProcessing.warn("Can't read protobuf, abort processing", attributes: logAttributes)
             return await addInvalidSystemMessage(senderID: senderID, conversationID: conversationID, date: date ?? .now)
         }
@@ -123,9 +119,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
 
         // Process protobuf message
-        try await protobufMessageProcessor.processGenericMessage(
-            messageID: genericMessage.messageID,
-            messageContent: content,
+        try await protobufMessageProcessor.processProtobufMessage(
+            genericMessage,
             conversation: conversation,
             conversationID: conversationID,
             senderID: senderID,

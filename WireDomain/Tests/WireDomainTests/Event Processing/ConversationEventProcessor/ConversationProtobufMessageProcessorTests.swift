@@ -86,15 +86,14 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             { _, _, _, _, _, _ in
             }
 
-        let genericMessage = try XCTUnwrap(GenericMessage(Scaffolding.base64EncodedString))
-        XCTAssertTrue(genericMessage.validateFields())
+        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
         let content = try XCTUnwrap(genericMessage.content) // .text
 
         // When
 
-        try await sut.processGenericMessage(
-            messageID: genericMessage.messageID,
-            messageContent: content,
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: content,
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -129,9 +128,9 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         }
 
         // When
-        try await sut.processGenericMessage(
-            messageID: genericMessage.messageID,
-            messageContent: try XCTUnwrap(genericMessage.content),
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -165,9 +164,9 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         }
 
         // When
-        try await sut.processGenericMessage(
-            messageID: genericMessage.messageID,
-            messageContent: try XCTUnwrap(genericMessage.content),
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
