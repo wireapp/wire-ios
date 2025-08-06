@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 public import WireMessagingDomain
-@preconcurrency import QuickLookThumbnailing
+import QuickLookThumbnailing
 import UniformTypeIdentifiers
 import WireLogging
 
@@ -29,6 +29,8 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
     private enum Constants {
         static let thumbnailSize = CGSize(width: 74, height: 74)
     }
+
+    private let thumbnailGenerator: any ThumbnailGenerator
 
     private var drafts: [WireCellsDraft] = []
     private var thumbnails: [UUID: UIImage] = [:]
@@ -40,8 +42,9 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
         self.init(items: [])
     }
 
-    init(items: [AttachmentsCarouselItem]) {
+    init(items: [AttachmentsCarouselItem], thumbnailGenerator: any ThumbnailGenerator = QLThumbnailGenerator.shared) {
         self.items = items
+        self.thumbnailGenerator = thumbnailGenerator
     }
 
     public func update(with drafts: [WireCellsDraft]) {
@@ -72,16 +75,13 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent)
         else { return }
 
-        let request = QLThumbnailGenerator.Request(
-            fileAt: draft.assetURL,
-            size: Constants.thumbnailSize,
-            scale: UIScreen.main.scale,
-            representationTypes: .thumbnail
-        )
-
         do {
-            let result = try await QLThumbnailGenerator.shared.generateBestRepresentation(for: request)
-            thumbnails[draft.versionID] = result.uiImage
+            let thumbnail = try await thumbnailGenerator.generateThumbnail(
+                fileAt: draft.assetURL,
+                size: Constants.thumbnailSize,
+                scale: UIScreen.main.scale
+            )
+            thumbnails[draft.versionID] = thumbnail
             refreshItems()
         } catch {
             WireLogger.wireCells.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
