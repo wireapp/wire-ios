@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import WireDesign
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -55,9 +56,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            let ownMessage: Bool = message?.isSentBySelfUser ?? false
-            container?.isFromSelfUser = ownMessage
-            configureTextColor(forOwnMessage: ownMessage)
+            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            let isOwnMessage = message.isSentBySelfUser
+            let userColor = message.senderUser?.accentColor ?? .clear
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
     weak var delegate: ConversationMessageCellDelegate?
@@ -107,7 +110,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         if DeveloperFlag.chatBubblesSimple.isOn {
-            messageTextView.textColor = ownMessage ? .white : .black //TODO: use color palette
+            let ownColor = SemanticColors.ChatBubbleSimple.foregroundOwnMessage
+            let otherColor = SemanticColors.ChatBubbleSimple.foregroundOtherMessage
+            messageTextView.textColor = ownMessage ? ownColor : otherColor
         }
     }
 

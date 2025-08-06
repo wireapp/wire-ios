@@ -18,11 +18,12 @@
 
 import UIKit
 import SwiftUI
+import WireDesign
 
 /// A view that contains another `content` view.
 /// If `isBubble` is set to `true`, it will look like a chat bubble containing `content`.
 /// Otherwise it will be an invisible wrapper for `content`.
-/// Set `isFromSelfUser` to `true` to apply a different color to the chat bubble.
+/// Set `bubbleStyle` to change the color of the bubble.
 final class ConversationMessageContainerView: UIView {
     let content: UIView
     
@@ -30,13 +31,23 @@ final class ConversationMessageContainerView: UIView {
     
     static let bubbleEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 12, right: 12)
     
-    //TODO: use color palette
-    static let bubbleColorOwn: UIColor = .init(_colorLiteralRed: 49.0/255, green: 102.0/255, blue: 194.0/255, alpha: 1)
-    static let bubbleColorOther: UIColor = .init(_colorLiteralRed: 231.0/255, green: 234.0/255, blue: 236.0/255, alpha: 1)
-
-    var isFromSelfUser: Bool = false {
+    enum BubbleStyle {
+        case ownMessage(userColor: UIColor)
+        case otherMessage
+    }
+    
+    var bubbleStyle: BubbleStyle = .otherMessage {
         didSet {
-            self.backgroundColor = isBubble ? (isFromSelfUser ? Self.bubbleColorOwn : Self.bubbleColorOther) : .clear
+            self.backgroundColor = if isBubble {
+                switch bubbleStyle {
+                case .otherMessage:
+                    SemanticColors.ChatBubbleSimple.backgroundOtherMessage
+                case .ownMessage(userColor: let color):
+                    color
+                }
+            } else {
+                .clear
+            }
             setNeedsLayout()
         }
     }
@@ -71,18 +82,21 @@ final class ConversationMessageContainerView: UIView {
 }
 
 private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
-    var isFromSelfUser: Bool
+    var bubbleStyle: ConversationMessageContainerView.BubbleStyle
     var isBubble: Bool
     
     func makeUIView(context: Context) -> ConversationMessageContainerView {
         let label = UILabel()
         label.text = "This is a text message."
-        label.textColor = isFromSelfUser ? .white : .black
+        label.textColor = switch bubbleStyle {
+        case .ownMessage: .white
+        case .otherMessage: .black
+        }
         label.sizeToFit()
         let container = ConversationMessageContainerView(content: label)
         container.translatesAutoresizingMaskIntoConstraints = false
         container.isBubble = isBubble
-        container.isFromSelfUser = isFromSelfUser
+        container.bubbleStyle = bubbleStyle
         return container
     }
     
@@ -92,14 +106,14 @@ private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
 #Preview {
     ScrollView {
         VStack {
-            ConversationMessageContainerView_Preview(isFromSelfUser: false, isBubble: true)
+            ConversationMessageContainerView_Preview(bubbleStyle: .otherMessage, isBubble: true)
         }
         .padding()
     }
     
     ScrollView {
         VStack {
-            ConversationMessageContainerView_Preview(isFromSelfUser: true, isBubble: true)
+            ConversationMessageContainerView_Preview(bubbleStyle: .ownMessage(userColor: .blue), isBubble: true)
         }
         .padding()
     }
