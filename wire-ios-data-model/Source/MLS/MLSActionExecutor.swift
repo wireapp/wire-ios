@@ -243,7 +243,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 let crlNewDistributionPoints = try await coreCrypto.perform {
                     try await $0.addClientsToConversation(
                         conversationId: groupID.conversationId,
-                        keyPackages: invitees.compactMap(\.ccKeyPackage)
+                        keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
                     )
                 }
 
@@ -324,7 +324,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
-                let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
+                let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationInitBundle = try await coreCrypto.perform {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                     return try await $0.joinByExternalCommit(

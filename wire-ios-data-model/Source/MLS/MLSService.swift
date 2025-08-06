@@ -1099,7 +1099,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
-            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
@@ -1156,7 +1156,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [WireCoreCryptoUniffi.KeyPackage]()
 
         do {
-            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             keyPackages = try await coreCrypto.perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(

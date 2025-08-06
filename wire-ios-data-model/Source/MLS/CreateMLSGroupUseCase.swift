@@ -131,13 +131,13 @@ extension CreateMLSGroupUseCase {
     ) async throws -> MLSCipherSuite {
         do {
             let config = ConversationConfiguration(
-                ciphersuite: ciphersuite.ccCipherSuite,
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.ccCipherSuite)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.coreCryptoCipherSuite)
                 try await $0.createConversation(
                     conversationId: groupID.conversationId,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
