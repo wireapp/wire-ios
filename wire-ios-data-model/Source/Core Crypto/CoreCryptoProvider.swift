@@ -54,6 +54,9 @@ public protocol CoreCryptoProviderProtocol {
     ///   - epochObserver: observer which will be informed on epoch changes
     func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async
 
+    /// Update the CC database key
+    func updateDatabaseKey() async throws
+
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -139,6 +142,18 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         } catch {
             WireLogger.mls.error("Failed to register epoch observer: \(error)")
         }
+    }
+
+    public func updateDatabaseKey() async throws {
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
+        let configuration = try await provider.createInitialConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            userID: selfUserID,
+            createKeyIfNeeded: allowCreation
+        )
+
+        try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {

@@ -1651,7 +1651,8 @@ extension ZMUserSession {
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal
-            )
+            ),
+            AppVersionMigration_4_2_1(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 

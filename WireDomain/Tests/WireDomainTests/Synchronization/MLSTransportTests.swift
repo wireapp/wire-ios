@@ -51,10 +51,10 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
 
         // Then
-        XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle.toAPIModel()])
+        XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle])
     }
 
     func testOnSendCommitBundle_ConversationEventsAreForwaredToConversationEventProcessor() async throws {
@@ -63,7 +63,7 @@ final class MLSTransportTests: XCTestCase {
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [Scaffolding.conversationEvent])
@@ -75,7 +75,7 @@ final class MLSTransportTests: XCTestCase {
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [])
@@ -86,10 +86,10 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
 
         // Then
-        XCTAssertEqual(result, .success)
+        XCTAssertEqual(result, MlsTransportResponse.success)
     }
 
     func testOnSendCommitBundle_ReturnsAbortWhenThereIsAnError() async throws {
@@ -97,10 +97,10 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockError = MLSAPIError.mlsStaleMessage
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
 
         // Then
-        XCTAssertEqual(result, .abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
+        XCTAssertEqual(result, MlsTransportResponse.abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
     }
 
     enum Scaffolding {
@@ -122,8 +122,8 @@ final class MLSTransportTests: XCTestCase {
             GroupInfoBundle(
                 encryptionType: .plaintext,
                 ratchetTreeType: .full,
-                payload: .random()
-            )
+                payload: GroupInfo(bytes: .random())
+            ).payload.copyBytes()
         )
 
         static let conversationEvent = ConversationEvent.typing(
@@ -138,5 +138,20 @@ final class MLSTransportTests: XCTestCase {
 
         static let unknownUpdateEvent = UpdateEvent.unknown(eventType: "Unknown event")
 
+    }
+}
+
+extension WireNetwork.CommitBundle {
+    var ccCommitBundle: WireCoreCryptoUniffi.CommitBundle {
+        .init(
+            welcome: welcome != nil ? Welcome(bytes: welcome!) : nil,
+            commit: commit,
+            groupInfo: GroupInfoBundle(
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
+                payload: GroupInfo(bytes: groupInfo)
+            ),
+            encryptedMessage: nil
+        )
     }
 }

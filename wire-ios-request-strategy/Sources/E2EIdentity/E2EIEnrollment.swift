@@ -66,7 +66,6 @@ public protocol E2EIEnrollmentInterface {
     /// Validate OIDC challenge.
     func validateOIDCChallenge(
         idToken: String,
-        refreshToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge
     ) async throws -> ChallengeResponse
@@ -311,7 +310,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
     public func validateOIDCChallenge(
         idToken: String,
-        refreshToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge
     ) async throws -> ChallengeResponse {
@@ -320,7 +318,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         do {
             let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(
                 idToken: idToken,
-                refreshToken: refreshToken,
                 nonce: prevNonce
             )
             let apiResponse = try await acmeApi.sendChallengeRequest(

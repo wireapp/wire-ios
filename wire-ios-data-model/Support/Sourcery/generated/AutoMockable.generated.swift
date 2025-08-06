@@ -1832,6 +1832,26 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
         mock()
     }
 
+    // MARK: - updateKey
+
+    public var updateKeyPathOldKeyNewKey_Invocations: [(path: String, oldKey: Data, newKey: Data)] = []
+    public var updateKeyPathOldKeyNewKey_MockError: Error?
+    public var updateKeyPathOldKeyNewKey_MockMethod: ((String, Data, Data) async throws -> Void)?
+
+    public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
+        updateKeyPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+
+        if let error = updateKeyPathOldKeyNewKey_MockError {
+            throw error
+        }
+
+        guard let mock = updateKeyPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `updateKeyPathOldKeyNewKey`")
+        }
+
+        try await mock(path, oldKey, newKey)
+    }
+
 }
 
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
@@ -1935,6 +1955,26 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         }
 
         await mock(epochObserver)
+    }
+
+    // MARK: - updateDatabaseKey
+
+    public var updateDatabaseKey_Invocations: [Void] = []
+    public var updateDatabaseKey_MockError: Error?
+    public var updateDatabaseKey_MockMethod: (() async throws -> Void)?
+
+    public func updateDatabaseKey() async throws {
+        updateDatabaseKey_Invocations.append(())
+
+        if let error = updateDatabaseKey_MockError {
+            throw error
+        }
+
+        guard let mock = updateDatabaseKey_MockMethod else {
+            fatalError("no mock for `updateDatabaseKey`")
+        }
+
+        try await mock()
     }
 
 }
