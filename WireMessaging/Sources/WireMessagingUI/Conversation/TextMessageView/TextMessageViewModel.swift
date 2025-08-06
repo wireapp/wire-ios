@@ -20,19 +20,20 @@ import SwiftUI
 public import Foundation
 
 public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
-    
+
     public let id = UUID()
     @Published var content: AttributedString
-    
+
     @Published var senderViewModel: SenderViewModel
 
-    init(content: AttributedString,
-         senderViewModel: SenderViewModel
+    init(
+        content: AttributedString,
+        senderViewModel: SenderViewModel
     ) {
         self.content = content
         self.senderViewModel = senderViewModel
     }
-    
+
     public static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
         lhs.id == rhs.id
     }

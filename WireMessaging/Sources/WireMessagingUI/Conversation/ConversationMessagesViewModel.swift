@@ -19,7 +19,7 @@
 import Foundation
 
 public enum MessageUpdateType: Sendable {
-    
+
     case initiallyLoaded(MessagesSnapshot)
     case messageAdded(MessagesSnapshot)
     // message added
@@ -36,20 +36,20 @@ public protocol ConversationMessagesViewModelProtocol {
 
 @MainActor
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
-        
+
     private let dataSource: any ConversationMessagesDataSourceProtocol
 
     public init(dataSource: any ConversationMessagesDataSourceProtocol) {
         self.dataSource = dataSource
     }
-    
+
     public func updatesStream() async -> AsyncStream<MessageUpdateType> {
         await dataSource.updatesStream()
     }
-    
+
     public func onViewReady() {
         Task {
-            await self.dataSource.loadInitialMessages()
+            await dataSource.loadInitialMessages()
         }
-    }    
+    }
 }

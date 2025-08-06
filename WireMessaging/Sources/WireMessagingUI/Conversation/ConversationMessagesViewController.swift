@@ -20,49 +20,52 @@ public import SwiftUI
 import Combine
 
 public final class ConversationMessagesViewController: UIViewController {
-    
+
+    typealias DataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>
+
     let viewModel: any ConversationMessagesViewModelProtocol
-        
+
     private var collectionView: UICollectionView!
-    private var dataSource: UICollectionViewDiffableDataSource<MessagesSection, MessageType>!
-    
+    private var dataSource: DataSource!
+
     var cancellables = Set<AnyCancellable>()
-    
+
     public init(viewModel: any ConversationMessagesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError()
     }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupCollectionView()
         setupDataSource()
-                
+
         Task {
             await self.observeUpdates()
         }
-        
+
         viewModel.onViewReady()
-        
+
     }
-    
+
     private func observeUpdates() async {
         let stream = await viewModel.updatesStream()
         for await update in stream {
             switch update {
-            case .initiallyLoaded(let snapshot):
+            case let .initiallyLoaded(snapshot):
                 await dataSource.apply(snapshot)
-            case .messageAdded(let snapshot):
+            case let .messageAdded(snapshot):
                 await dataSource.apply(snapshot)
             }
         }
     }
-        
+
     private func setupCollectionView() {
         let layout = createLayout()
 
@@ -76,7 +79,7 @@ public final class ConversationMessagesViewController: UIViewController {
                 MessageCollectionViewCell.self,
                 forCellWithReuseIdentifier: MessageCollectionViewCell.reuseIdentifier
             )
-        
+
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -85,13 +88,13 @@ public final class ConversationMessagesViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-    
+
     private func createLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(44)
         )
-        
+
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
@@ -106,18 +109,22 @@ public final class ConversationMessagesViewController: UIViewController {
     }
 
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>(collectionView: collectionView) { (collectionView, indexPath, message) -> UICollectionViewCell? in
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
-                for: indexPath
-            ) as! MessageCollectionViewCell
-            
-            cell.messageType = message
+        dataSource =
+            DataSource(collectionView: collectionView) { collectionView, indexPath, message -> UICollectionViewCell? in
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
+                    for: indexPath
+                ) as? MessageCollectionViewCell else {
+                    return UICollectionViewCell
+                    ()
+                }
 
-            return cell
-        }
+                cell.messageType = message
+
+                return cell
+            }
     }
-    
+
 }
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {

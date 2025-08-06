@@ -19,14 +19,14 @@
 import Foundation
 
 class SenderViewModel: ObservableObject {
-    
+
     enum State {
         case empty
         case exists(AttributedString)
     }
-    
+
     @Published var state: State
-    
+
     init(state: State) {
         self.state = state
     }

@@ -19,15 +19,15 @@
 public import Foundation
 
 public struct UserModel: Sendable {
-    
+
     public let remoteIdentifier: UUID
     public let name: String?
     public let handle: String?
-    
+
     public init(remoteIdentifier: UUID, name: String?, handle: String?) {
         self.remoteIdentifier = remoteIdentifier
         self.name = name
         self.handle = handle
     }
-    
+
 }

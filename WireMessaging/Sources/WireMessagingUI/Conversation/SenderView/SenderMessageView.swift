@@ -27,7 +27,7 @@ struct SenderMessageView: View {
             switch model.state {
             case .empty:
                 EmptyView()
-            case .exists(let name):
+            case let .exists(name):
                 Text(name)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)

@@ -19,13 +19,13 @@
 import Foundation
 
 public enum MessageType: Hashable, Identifiable, Sendable {
-    
+
     public var id: ObjectIdentifier {
         switch self {
-        case .text(let vm): return vm.id
+        case let .text(vm): vm.id
         }
     }
 
     case text(TextMessageViewModel)
-    
+
 }

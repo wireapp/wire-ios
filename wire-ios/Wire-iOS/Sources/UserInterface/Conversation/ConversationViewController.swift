@@ -152,7 +152,8 @@ final class ConversationViewController: UIViewController {
             ConversationMessagesViewController(
                 viewModel: ConversationMessagesViewModel(
                     dataSource: ConversationMessagesDataSource()
-                ))
+                )
+            )
         } else {
             ConversationContentViewController(
                 conversation: conversation,

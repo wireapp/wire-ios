@@ -16,23 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 class MessageCollectionViewCell: UICollectionViewCell {
-    
+
     // reuse identifier for each message type
     static let reuseIdentifier = "MessageCollectionViewCell"
 
     var messageType: MessageType? {
         didSet {
-            guard let messageType = messageType else { return }
+            guard let messageType else { return }
             switch messageType {
-            case .text(let viewModel):
+            case let .text(viewModel):
                 let config = UIHostingConfiguration {
                     TextMessageView(viewModel: viewModel)
                 }
-                self.contentConfiguration = config
+                contentConfiguration = config
             }
         }
     }

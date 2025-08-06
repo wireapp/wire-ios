@@ -19,21 +19,21 @@
 import SwiftUI
 
 struct TextMessageView: View {
-    
+
     @ObservedObject var viewModel: TextMessageViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            
+
             SenderMessageView(model: viewModel.senderViewModel)
-            
+
             text
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
 
     }
-    
+
     @ViewBuilder private var text: some View {
         Text(viewModel.content)
             .multilineTextAlignment(.center)
@@ -44,4 +44,3 @@ struct TextMessageView: View {
     }
 
 }
-
