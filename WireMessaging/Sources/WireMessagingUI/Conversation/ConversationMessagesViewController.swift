@@ -115,8 +115,7 @@ public final class ConversationMessagesViewController: UIViewController {
                     withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
                     for: indexPath
                 ) as? MessageCollectionViewCell else {
-                    return UICollectionViewCell
-                    ()
+                    return UICollectionViewCell()
                 }
 
                 cell.messageType = message
