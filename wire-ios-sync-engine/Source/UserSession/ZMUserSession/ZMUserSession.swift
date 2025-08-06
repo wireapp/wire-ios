@@ -1672,7 +1672,8 @@ extension ZMUserSession {
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager
-            )
+            ),
+            AppVersionMigration_4_2_1(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 

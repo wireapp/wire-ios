@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol CoreCryptoKeyMigrationManagerProtocol {
+import Foundation
+import WireCoreCrypto
+import WireDomain
 
-    var isMigrationNeeded: Bool { get }
+/// **Issue:**: Use the new CC method to update the database key.
+struct AppVersionMigration_4_2_1: AppVersionMigration {
 
-    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws
+    let version: SemanticVersion  = "4.2.1"
+    let coreCryptoProvider: CoreCryptoProviderProtocol
 
-    func markMigrationAsSkipped()
-
-    func updateKey(path: String, oldKey: Data, newKey: Data) async throws
+    func perform() async throws {
+        try await coreCryptoProvider.updateDatabaseKey()
+    }
 
 }
