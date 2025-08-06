@@ -305,7 +305,6 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         let result = try await sut.validateOIDCChallenge(
             idToken: "idToken",
-            refreshToken: "refreshToken",
             prevNonce: "Nonce",
             acmeChallenge: acmeChallenge
         )
