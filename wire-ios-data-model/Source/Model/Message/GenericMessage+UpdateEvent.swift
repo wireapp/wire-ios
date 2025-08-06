@@ -22,21 +22,19 @@ import GenericMessageProtocol
 public extension GenericMessage {
 
     init?(from updateEvent: ZMUpdateEvent) {
-        guard let base64Content = updateEvent.genericMessageBase64Content else {
-            return nil
-        }
 
-        var message = GenericMessage(base64Content)
-        if let message, !message.validateFields() {
-            return nil
-        }
+        guard let base64Content = updateEvent.genericMessageBase64Content else { return nil }
+
+        var message = GenericMessage.validatedMessage(from: base64Content)
 
         if case let .some(.external(external)) = message?.content {
             message = GenericMessage(from: updateEvent, withExternal: external)
         }
 
         guard let unwrappedMessage = message else { return nil }
+
         self = unwrappedMessage
+
     }
 
     static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
@@ -64,7 +62,6 @@ extension ZMUpdateEvent {
 
         default:
             nil
-
         }
     }
 
