@@ -53,20 +53,8 @@ public final class ConversationMessagesViewController: UIViewController {
 
         viewModel.onViewReady()
         
-//        simulateRandomUpdates()
-        
     }
-    
-//    var timer: Timer?
-//    func simulateRandomUpdates() {
-//        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-//            guard let self else { return }
-//            Task {
-//                await self.performRandomUpdate()
-//            }
-//        }
-//    }
-    
+        
     private func setupCollectionView() {
         let layout = createLayout()
 

@@ -24,11 +24,15 @@ public enum MessagesSection: Sendable {
     case main
 }
 
-public typealias Snapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+public typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+
+public protocol ConversationMessagesDataSourceProtocol: Sendable {
+    func loadInitialMessages() async -> MessagesSnapshot
+}
 
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
-public actor ConversationMessagesDataSource {
+public actor ConversationMessagesDataSource: ConversationMessagesDataSourceProtocol {
     
     public init() {
         
@@ -48,14 +52,14 @@ public actor ConversationMessagesDataSource {
         
     }
     
-    func loadInitialMessages() async -> Snapshot {
+    public func loadInitialMessages() async -> MessagesSnapshot {
 #if DEBUG
         generateMessages()
         Task {
             await timerLoop()
         }
 #endif
-        var snapshot = Snapshot()
+        var snapshot = MessagesSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(messages)
         return snapshot

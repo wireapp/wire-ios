@@ -37,14 +37,14 @@ public protocol ConversationMessagesViewModelProtocol {
 @MainActor
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
         
-    private let dataSource: ConversationMessagesDataSource
+    private let dataSource: any ConversationMessagesDataSourceProtocol
 
     public var updatesPublisher: AnyPublisher<MessageUpdateType, Never> {
         updatesSubject.eraseToAnyPublisher()
     }
     private var updatesSubject = PassthroughSubject<MessageUpdateType, Never>()
     
-    public init(dataSource: ConversationMessagesDataSource) {
+    public init(dataSource: any ConversationMessagesDataSourceProtocol) {
         self.dataSource = dataSource
         
     }
