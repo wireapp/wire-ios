@@ -204,10 +204,7 @@
       location = "group:WireBackup">
    </FileRef>
    <FileRef
-      location = "group:WireCells">
-   </FileRef>
-   <FileRef
-      location = "group:WireMessaging">
+      location = "group:WireData">
    </FileRef>
    <FileRef
       location = "container:WireDebug">
@@ -220,6 +217,9 @@
    </FileRef>
    <FileRef
       location = "group:WireLogging">
+   </FileRef>
+   <FileRef
+      location = "group:WireMessaging">
    </FileRef>
    <FileRef
       location = "group:WireNetwork">

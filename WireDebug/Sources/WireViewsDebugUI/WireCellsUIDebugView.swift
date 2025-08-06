@@ -18,7 +18,7 @@
 
 public import SwiftUI
 
-import WireCellsUI
+import WireMessagingUI
 
 public struct WireCellsUIDebugView: View {
 

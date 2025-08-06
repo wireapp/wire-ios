@@ -29,7 +29,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let featureRepositoryContext: NSManagedObjectContext
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
@@ -37,7 +37,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Life cycle
 
     init(
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
         accountId: UUID
@@ -75,7 +75,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
+                let notificationObject = LegacyFeatureRepository.FeatureChange.e2eIEnabled
                 NotificationCenter.default.post(
                     name: .featureDidChangeNotification,
                     object: notificationObject

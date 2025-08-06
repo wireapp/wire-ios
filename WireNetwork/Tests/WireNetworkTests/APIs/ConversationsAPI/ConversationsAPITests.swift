@@ -895,10 +895,10 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testCreateGroupConversation_givenV8_And_Next_Versions_AndSuccessResponse200_thenVerifyResponse() async throws {
+    func testCreateGroupConversation_givenV8_And_V9_AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let supportedVersions = APIVersion.v8.andNextVersions
+        let supportedVersions = [APIVersion.v8, APIVersion.v9]
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testCreateGroupConversation_givenV8AndSuccessResponse200"),
             count: supportedVersions.count
@@ -921,6 +921,70 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(conversation.access, [.private])
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV10_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v10.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV10AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(
+                conversation.id?.uuidString,
+                "99DB9768-04E3-4B5D-9268-831B6A25C4AB"
+            )
+            XCTAssertNotNil(conversation.members?.selfMember)
+        }
+    }
+
+    func testCreateGroupConversation_givenV10_AndNoSelfMember_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v10.andNextVersions
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV10_EmptySelfMember_SuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(
+                conversation.id?.uuidString,
+                "99DB9768-04E3-4B5D-9268-831B6A25C4AB"
+            )
+            XCTAssertNil(conversation.members?.selfMember)
+            XCTAssertNotNil(conversation.members)
         }
     }
 
@@ -1650,7 +1714,8 @@ final class ConversationsAPITests: XCTestCase {
             accessRoles: [.teamMember],
             legacyAccessRole: .teamMember,
             teamID: .mockID1,
-            isReadReceiptsEnabled: true
+            isReadReceiptsEnabled: true,
+            skipCreator: false
         )
 
         static let createChannelParameters = CreateGroupConversationParameters(

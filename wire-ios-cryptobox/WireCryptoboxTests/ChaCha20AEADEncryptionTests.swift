@@ -76,7 +76,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
     func testThatItFailsToDecryptIfKeyIsMalformed() throws {
         // Given
         let ciphertext = generateRandomCiphertext(length: 8)
-        let nonce = Sut.generateRandomNonceBytes().data
+        let nonce = Data(Sut.generateRandomNonceBytes())
         let keyOfWrongLength = Data.zmRandomSHA256Key().dropLast()
 
         do {
@@ -93,7 +93,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
     func testThatItFailsToDecryptIfNonceIsMalformed() throws {
         // Given
         let ciphertext = generateRandomCiphertext(length: 8)
-        let nonceOfWrongLength = Sut.generateRandomNonceBytes().data.dropLast()
+        let nonceOfWrongLength = Data(Sut.generateRandomNonceBytes()).dropLast()
         let key = Data.zmRandomSHA256Key()
 
         do {
@@ -130,7 +130,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
         // Given
         let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
-        let randomNonce = Sut.generateRandomNonceBytes().data
+        let randomNonce = Data(Sut.generateRandomNonceBytes())
 
         let (ciphertext, _) = try Sut.encrypt(message: message, context: context, key: key)
 
@@ -149,7 +149,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
         // Given
         let message = Data("Hello, world".utf8)
         let key = Data.zmRandomSHA256Key()
-        let randomNonce = Sut.generateRandomNonceBytes().data
+        let randomNonce = Data(Sut.generateRandomNonceBytes())
 
         let (ciphertext, _) = try Sut.encrypt(message: message, context: context, key: key)
 

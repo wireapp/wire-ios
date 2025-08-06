@@ -51,6 +51,8 @@ import WireCoreCrypto
 
 
 
+
+
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle
@@ -358,6 +360,10 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
+    // MARK: - channelHistoryDepth
+
+    public var channelHistoryDepth: String?
+
     // MARK: - wireCellName
 
     public var wireCellName: String {
@@ -403,7 +409,7 @@ public class MockConversationLike: ConversationLike {
 
 }
 
-public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
+public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 
@@ -3076,378 +3082,6 @@ public class MockEARServiceInterface: EARServiceInterface {
 
 }
 
-public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchAppLock
-
-    public var fetchAppLock_Invocations: [Void] = []
-    public var fetchAppLock_MockMethod: (() -> Feature.AppLock)?
-    public var fetchAppLock_MockValue: Feature.AppLock?
-
-    public func fetchAppLock() -> Feature.AppLock {
-        fetchAppLock_Invocations.append(())
-
-        if let mock = fetchAppLock_MockMethod {
-            return mock()
-        } else if let mock = fetchAppLock_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAppLock`")
-        }
-    }
-
-    // MARK: - storeAppLock
-
-    public var storeAppLock_Invocations: [Feature.AppLock] = []
-    public var storeAppLock_MockMethod: ((Feature.AppLock) -> Void)?
-
-    public func storeAppLock(_ appLock: Feature.AppLock) {
-        storeAppLock_Invocations.append(appLock)
-
-        guard let mock = storeAppLock_MockMethod else {
-            fatalError("no mock for `storeAppLock`")
-        }
-
-        mock(appLock)
-    }
-
-    // MARK: - fetchConferenceCalling
-
-    public var fetchConferenceCalling_Invocations: [Void] = []
-    public var fetchConferenceCalling_MockMethod: (() -> Feature.ConferenceCalling)?
-    public var fetchConferenceCalling_MockValue: Feature.ConferenceCalling?
-
-    public func fetchConferenceCalling() -> Feature.ConferenceCalling {
-        fetchConferenceCalling_Invocations.append(())
-
-        if let mock = fetchConferenceCalling_MockMethod {
-            return mock()
-        } else if let mock = fetchConferenceCalling_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchConferenceCalling`")
-        }
-    }
-
-    // MARK: - storeConferenceCalling
-
-    public var storeConferenceCalling_Invocations: [Feature.ConferenceCalling] = []
-    public var storeConferenceCalling_MockMethod: ((Feature.ConferenceCalling) -> Void)?
-
-    public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
-        storeConferenceCalling_Invocations.append(conferenceCalling)
-
-        guard let mock = storeConferenceCalling_MockMethod else {
-            fatalError("no mock for `storeConferenceCalling`")
-        }
-
-        mock(conferenceCalling)
-    }
-
-    // MARK: - fetchFileSharing
-
-    public var fetchFileSharing_Invocations: [Void] = []
-    public var fetchFileSharing_MockMethod: (() -> Feature.FileSharing)?
-    public var fetchFileSharing_MockValue: Feature.FileSharing?
-
-    public func fetchFileSharing() -> Feature.FileSharing {
-        fetchFileSharing_Invocations.append(())
-
-        if let mock = fetchFileSharing_MockMethod {
-            return mock()
-        } else if let mock = fetchFileSharing_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchFileSharing`")
-        }
-    }
-
-    // MARK: - storeFileSharing
-
-    public var storeFileSharing_Invocations: [Feature.FileSharing] = []
-    public var storeFileSharing_MockMethod: ((Feature.FileSharing) -> Void)?
-
-    public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
-        storeFileSharing_Invocations.append(fileSharing)
-
-        guard let mock = storeFileSharing_MockMethod else {
-            fatalError("no mock for `storeFileSharing`")
-        }
-
-        mock(fileSharing)
-    }
-
-    // MARK: - fetchSelfDeletingMesssages
-
-    public var fetchSelfDeletingMesssages_Invocations: [Void] = []
-    public var fetchSelfDeletingMesssages_MockMethod: (() -> Feature.SelfDeletingMessages)?
-    public var fetchSelfDeletingMesssages_MockValue: Feature.SelfDeletingMessages?
-
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
-        fetchSelfDeletingMesssages_Invocations.append(())
-
-        if let mock = fetchSelfDeletingMesssages_MockMethod {
-            return mock()
-        } else if let mock = fetchSelfDeletingMesssages_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchSelfDeletingMesssages`")
-        }
-    }
-
-    // MARK: - storeSelfDeletingMessages
-
-    public var storeSelfDeletingMessages_Invocations: [Feature.SelfDeletingMessages] = []
-    public var storeSelfDeletingMessages_MockMethod: ((Feature.SelfDeletingMessages) -> Void)?
-
-    public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
-        storeSelfDeletingMessages_Invocations.append(selfDeletingMessages)
-
-        guard let mock = storeSelfDeletingMessages_MockMethod else {
-            fatalError("no mock for `storeSelfDeletingMessages`")
-        }
-
-        mock(selfDeletingMessages)
-    }
-
-    // MARK: - fetchConversationGuestLinks
-
-    public var fetchConversationGuestLinks_Invocations: [Void] = []
-    public var fetchConversationGuestLinks_MockMethod: (() -> Feature.ConversationGuestLinks)?
-    public var fetchConversationGuestLinks_MockValue: Feature.ConversationGuestLinks?
-
-    public func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks {
-        fetchConversationGuestLinks_Invocations.append(())
-
-        if let mock = fetchConversationGuestLinks_MockMethod {
-            return mock()
-        } else if let mock = fetchConversationGuestLinks_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchConversationGuestLinks`")
-        }
-    }
-
-    // MARK: - storeConversationGuestLinks
-
-    public var storeConversationGuestLinks_Invocations: [Feature.ConversationGuestLinks] = []
-    public var storeConversationGuestLinks_MockMethod: ((Feature.ConversationGuestLinks) -> Void)?
-
-    public func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks) {
-        storeConversationGuestLinks_Invocations.append(conversationGuestLinks)
-
-        guard let mock = storeConversationGuestLinks_MockMethod else {
-            fatalError("no mock for `storeConversationGuestLinks`")
-        }
-
-        mock(conversationGuestLinks)
-    }
-
-    // MARK: - fetchClassifiedDomains
-
-    public var fetchClassifiedDomains_Invocations: [Void] = []
-    public var fetchClassifiedDomains_MockMethod: (() -> Feature.ClassifiedDomains)?
-    public var fetchClassifiedDomains_MockValue: Feature.ClassifiedDomains?
-
-    public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
-        fetchClassifiedDomains_Invocations.append(())
-
-        if let mock = fetchClassifiedDomains_MockMethod {
-            return mock()
-        } else if let mock = fetchClassifiedDomains_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchClassifiedDomains`")
-        }
-    }
-
-    // MARK: - storeClassifiedDomains
-
-    public var storeClassifiedDomains_Invocations: [Feature.ClassifiedDomains] = []
-    public var storeClassifiedDomains_MockMethod: ((Feature.ClassifiedDomains) -> Void)?
-
-    public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
-        storeClassifiedDomains_Invocations.append(classifiedDomains)
-
-        guard let mock = storeClassifiedDomains_MockMethod else {
-            fatalError("no mock for `storeClassifiedDomains`")
-        }
-
-        mock(classifiedDomains)
-    }
-
-    // MARK: - fetchDigitalSignature
-
-    public var fetchDigitalSignature_Invocations: [Void] = []
-    public var fetchDigitalSignature_MockMethod: (() -> Feature.DigitalSignature)?
-    public var fetchDigitalSignature_MockValue: Feature.DigitalSignature?
-
-    public func fetchDigitalSignature() -> Feature.DigitalSignature {
-        fetchDigitalSignature_Invocations.append(())
-
-        if let mock = fetchDigitalSignature_MockMethod {
-            return mock()
-        } else if let mock = fetchDigitalSignature_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchDigitalSignature`")
-        }
-    }
-
-    // MARK: - storeDigitalSignature
-
-    public var storeDigitalSignature_Invocations: [Feature.DigitalSignature] = []
-    public var storeDigitalSignature_MockMethod: ((Feature.DigitalSignature) -> Void)?
-
-    public func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature) {
-        storeDigitalSignature_Invocations.append(digitalSignature)
-
-        guard let mock = storeDigitalSignature_MockMethod else {
-            fatalError("no mock for `storeDigitalSignature`")
-        }
-
-        mock(digitalSignature)
-    }
-
-    // MARK: - fetchMLS
-
-    public var fetchMLS_Invocations: [Void] = []
-    public var fetchMLS_MockMethod: (() -> Feature.MLS)?
-    public var fetchMLS_MockValue: Feature.MLS?
-
-    public func fetchMLS() -> Feature.MLS {
-        fetchMLS_Invocations.append(())
-
-        if let mock = fetchMLS_MockMethod {
-            return mock()
-        } else if let mock = fetchMLS_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLS`")
-        }
-    }
-
-    // MARK: - storeMLS
-
-    public var storeMLS_Invocations: [Feature.MLS] = []
-    public var storeMLS_MockMethod: ((Feature.MLS) -> Void)?
-
-    public func storeMLS(_ mls: Feature.MLS) {
-        storeMLS_Invocations.append(mls)
-
-        guard let mock = storeMLS_MockMethod else {
-            fatalError("no mock for `storeMLS`")
-        }
-
-        mock(mls)
-    }
-
-    // MARK: - fetchE2EI
-
-    public var fetchE2EI_Invocations: [Void] = []
-    public var fetchE2EI_MockMethod: (() -> Feature.E2EI)?
-    public var fetchE2EI_MockValue: Feature.E2EI?
-
-    public func fetchE2EI() -> Feature.E2EI {
-        fetchE2EI_Invocations.append(())
-
-        if let mock = fetchE2EI_MockMethod {
-            return mock()
-        } else if let mock = fetchE2EI_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchE2EI`")
-        }
-    }
-
-    // MARK: - storeE2EI
-
-    public var storeE2EI_Invocations: [Feature.E2EI] = []
-    public var storeE2EI_MockMethod: ((Feature.E2EI) -> Void)?
-
-    public func storeE2EI(_ e2ei: Feature.E2EI) {
-        storeE2EI_Invocations.append(e2ei)
-
-        guard let mock = storeE2EI_MockMethod else {
-            fatalError("no mock for `storeE2EI`")
-        }
-
-        mock(e2ei)
-    }
-
-    // MARK: - fetchMLSMigration
-
-    public var fetchMLSMigration_Invocations: [Void] = []
-    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
-    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
-
-    public func fetchMLSMigration() -> Feature.MLSMigration {
-        fetchMLSMigration_Invocations.append(())
-
-        if let mock = fetchMLSMigration_MockMethod {
-            return mock()
-        } else if let mock = fetchMLSMigration_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLSMigration`")
-        }
-    }
-
-    // MARK: - storeMLSMigration
-
-    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
-    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
-
-    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
-        storeMLSMigration_Invocations.append(mlsMigration)
-
-        guard let mock = storeMLSMigration_MockMethod else {
-            fatalError("no mock for `storeMLSMigration`")
-        }
-
-        mock(mlsMigration)
-    }
-
-    // MARK: - fetchChannels
-
-    public var fetchChannels_Invocations: [Void] = []
-    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
-    public var fetchChannels_MockValue: Feature.Channels?
-
-    public func fetchChannels() -> Feature.Channels {
-        fetchChannels_Invocations.append(())
-
-        if let mock = fetchChannels_MockMethod {
-            return mock()
-        } else if let mock = fetchChannels_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchChannels`")
-        }
-    }
-
-    // MARK: - storeChannels
-
-    public var storeChannels_Invocations: [Feature.Channels] = []
-    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
-
-    public func storeChannels(_ channels: Feature.Channels) {
-        storeChannels_Invocations.append(channels)
-
-        guard let mock = storeChannels_MockMethod else {
-            fatalError("no mock for `storeChannels`")
-        }
-
-        mock(channels)
-    }
-
-}
-
 class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle
@@ -3681,6 +3315,411 @@ public class MockLegacyConversationEventProcessorProtocol: LegacyConversationEve
         }
 
         await mock(events)
+    }
+
+}
+
+public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchAppLock
+
+    public var fetchAppLock_Invocations: [Void] = []
+    public var fetchAppLock_MockMethod: (() -> Feature.AppLock)?
+    public var fetchAppLock_MockValue: Feature.AppLock?
+
+    public func fetchAppLock() -> Feature.AppLock {
+        fetchAppLock_Invocations.append(())
+
+        if let mock = fetchAppLock_MockMethod {
+            return mock()
+        } else if let mock = fetchAppLock_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAppLock`")
+        }
+    }
+
+    // MARK: - storeAppLock
+
+    public var storeAppLock_Invocations: [Feature.AppLock] = []
+    public var storeAppLock_MockMethod: ((Feature.AppLock) -> Void)?
+
+    public func storeAppLock(_ appLock: Feature.AppLock) {
+        storeAppLock_Invocations.append(appLock)
+
+        guard let mock = storeAppLock_MockMethod else {
+            fatalError("no mock for `storeAppLock`")
+        }
+
+        mock(appLock)
+    }
+
+    // MARK: - fetchConferenceCalling
+
+    public var fetchConferenceCalling_Invocations: [Void] = []
+    public var fetchConferenceCalling_MockMethod: (() -> Feature.ConferenceCalling)?
+    public var fetchConferenceCalling_MockValue: Feature.ConferenceCalling?
+
+    public func fetchConferenceCalling() -> Feature.ConferenceCalling {
+        fetchConferenceCalling_Invocations.append(())
+
+        if let mock = fetchConferenceCalling_MockMethod {
+            return mock()
+        } else if let mock = fetchConferenceCalling_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConferenceCalling`")
+        }
+    }
+
+    // MARK: - storeConferenceCalling
+
+    public var storeConferenceCalling_Invocations: [Feature.ConferenceCalling] = []
+    public var storeConferenceCalling_MockMethod: ((Feature.ConferenceCalling) -> Void)?
+
+    public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
+        storeConferenceCalling_Invocations.append(conferenceCalling)
+
+        guard let mock = storeConferenceCalling_MockMethod else {
+            fatalError("no mock for `storeConferenceCalling`")
+        }
+
+        mock(conferenceCalling)
+    }
+
+    // MARK: - fetchFileSharing
+
+    public var fetchFileSharing_Invocations: [Void] = []
+    public var fetchFileSharing_MockMethod: (() -> Feature.FileSharing)?
+    public var fetchFileSharing_MockValue: Feature.FileSharing?
+
+    public func fetchFileSharing() -> Feature.FileSharing {
+        fetchFileSharing_Invocations.append(())
+
+        if let mock = fetchFileSharing_MockMethod {
+            return mock()
+        } else if let mock = fetchFileSharing_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchFileSharing`")
+        }
+    }
+
+    // MARK: - storeFileSharing
+
+    public var storeFileSharing_Invocations: [Feature.FileSharing] = []
+    public var storeFileSharing_MockMethod: ((Feature.FileSharing) -> Void)?
+
+    public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
+        storeFileSharing_Invocations.append(fileSharing)
+
+        guard let mock = storeFileSharing_MockMethod else {
+            fatalError("no mock for `storeFileSharing`")
+        }
+
+        mock(fileSharing)
+    }
+
+    // MARK: - fetchSelfDeletingMessages
+
+    public var fetchSelfDeletingMessages_Invocations: [Void] = []
+    public var fetchSelfDeletingMessages_MockMethod: (() -> Feature.SelfDeletingMessages)?
+    public var fetchSelfDeletingMessages_MockValue: Feature.SelfDeletingMessages?
+
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
+        fetchSelfDeletingMessages_Invocations.append(())
+
+        if let mock = fetchSelfDeletingMessages_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfDeletingMessages_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfDeletingMessages`")
+        }
+    }
+
+    // MARK: - storeSelfDeletingMessages
+
+    public var storeSelfDeletingMessages_Invocations: [Feature.SelfDeletingMessages] = []
+    public var storeSelfDeletingMessages_MockMethod: ((Feature.SelfDeletingMessages) -> Void)?
+
+    public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
+        storeSelfDeletingMessages_Invocations.append(selfDeletingMessages)
+
+        guard let mock = storeSelfDeletingMessages_MockMethod else {
+            fatalError("no mock for `storeSelfDeletingMessages`")
+        }
+
+        mock(selfDeletingMessages)
+    }
+
+    // MARK: - fetchAllowedGlobalOperations
+
+    public var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowedGlobalOperations_MockMethod: (() async -> Feature.AllowedGlobalOperations)?
+    public var fetchAllowedGlobalOperations_MockValue: Feature.AllowedGlobalOperations?
+
+    public func fetchAllowedGlobalOperations() async -> Feature.AllowedGlobalOperations {
+        fetchAllowedGlobalOperations_Invocations.append(())
+
+        if let mock = fetchAllowedGlobalOperations_MockMethod {
+            return await mock()
+        } else if let mock = fetchAllowedGlobalOperations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllowedGlobalOperations`")
+        }
+    }
+
+    // MARK: - storeAllowedGlobalOperations
+
+    public var storeAllowedGlobalOperations_Invocations: [Feature.AllowedGlobalOperations] = []
+    public var storeAllowedGlobalOperations_MockMethod: ((Feature.AllowedGlobalOperations) -> Void)?
+
+    public func storeAllowedGlobalOperations(_ resetMLSConversations: Feature.AllowedGlobalOperations) {
+        storeAllowedGlobalOperations_Invocations.append(resetMLSConversations)
+
+        guard let mock = storeAllowedGlobalOperations_MockMethod else {
+            fatalError("no mock for `storeAllowedGlobalOperations`")
+        }
+
+        mock(resetMLSConversations)
+    }
+
+    // MARK: - fetchConversationGuestLinks
+
+    public var fetchConversationGuestLinks_Invocations: [Void] = []
+    public var fetchConversationGuestLinks_MockMethod: (() -> Feature.ConversationGuestLinks)?
+    public var fetchConversationGuestLinks_MockValue: Feature.ConversationGuestLinks?
+
+    public func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks {
+        fetchConversationGuestLinks_Invocations.append(())
+
+        if let mock = fetchConversationGuestLinks_MockMethod {
+            return mock()
+        } else if let mock = fetchConversationGuestLinks_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationGuestLinks`")
+        }
+    }
+
+    // MARK: - storeConversationGuestLinks
+
+    public var storeConversationGuestLinks_Invocations: [Feature.ConversationGuestLinks] = []
+    public var storeConversationGuestLinks_MockMethod: ((Feature.ConversationGuestLinks) -> Void)?
+
+    public func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks) {
+        storeConversationGuestLinks_Invocations.append(conversationGuestLinks)
+
+        guard let mock = storeConversationGuestLinks_MockMethod else {
+            fatalError("no mock for `storeConversationGuestLinks`")
+        }
+
+        mock(conversationGuestLinks)
+    }
+
+    // MARK: - fetchClassifiedDomains
+
+    public var fetchClassifiedDomains_Invocations: [Void] = []
+    public var fetchClassifiedDomains_MockMethod: (() -> Feature.ClassifiedDomains)?
+    public var fetchClassifiedDomains_MockValue: Feature.ClassifiedDomains?
+
+    public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
+        fetchClassifiedDomains_Invocations.append(())
+
+        if let mock = fetchClassifiedDomains_MockMethod {
+            return mock()
+        } else if let mock = fetchClassifiedDomains_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchClassifiedDomains`")
+        }
+    }
+
+    // MARK: - storeClassifiedDomains
+
+    public var storeClassifiedDomains_Invocations: [Feature.ClassifiedDomains] = []
+    public var storeClassifiedDomains_MockMethod: ((Feature.ClassifiedDomains) -> Void)?
+
+    public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
+        storeClassifiedDomains_Invocations.append(classifiedDomains)
+
+        guard let mock = storeClassifiedDomains_MockMethod else {
+            fatalError("no mock for `storeClassifiedDomains`")
+        }
+
+        mock(classifiedDomains)
+    }
+
+    // MARK: - fetchDigitalSignature
+
+    public var fetchDigitalSignature_Invocations: [Void] = []
+    public var fetchDigitalSignature_MockMethod: (() -> Feature.DigitalSignature)?
+    public var fetchDigitalSignature_MockValue: Feature.DigitalSignature?
+
+    public func fetchDigitalSignature() -> Feature.DigitalSignature {
+        fetchDigitalSignature_Invocations.append(())
+
+        if let mock = fetchDigitalSignature_MockMethod {
+            return mock()
+        } else if let mock = fetchDigitalSignature_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchDigitalSignature`")
+        }
+    }
+
+    // MARK: - storeDigitalSignature
+
+    public var storeDigitalSignature_Invocations: [Feature.DigitalSignature] = []
+    public var storeDigitalSignature_MockMethod: ((Feature.DigitalSignature) -> Void)?
+
+    public func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature) {
+        storeDigitalSignature_Invocations.append(digitalSignature)
+
+        guard let mock = storeDigitalSignature_MockMethod else {
+            fatalError("no mock for `storeDigitalSignature`")
+        }
+
+        mock(digitalSignature)
+    }
+
+    // MARK: - fetchMLS
+
+    public var fetchMLS_Invocations: [Void] = []
+    public var fetchMLS_MockMethod: (() -> Feature.MLS)?
+    public var fetchMLS_MockValue: Feature.MLS?
+
+    public func fetchMLS() -> Feature.MLS {
+        fetchMLS_Invocations.append(())
+
+        if let mock = fetchMLS_MockMethod {
+            return mock()
+        } else if let mock = fetchMLS_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLS`")
+        }
+    }
+
+    // MARK: - storeMLS
+
+    public var storeMLS_Invocations: [Feature.MLS] = []
+    public var storeMLS_MockMethod: ((Feature.MLS) -> Void)?
+
+    public func storeMLS(_ mls: Feature.MLS) {
+        storeMLS_Invocations.append(mls)
+
+        guard let mock = storeMLS_MockMethod else {
+            fatalError("no mock for `storeMLS`")
+        }
+
+        mock(mls)
+    }
+
+    // MARK: - fetchE2EI
+
+    public var fetchE2EI_Invocations: [Void] = []
+    public var fetchE2EI_MockMethod: (() -> Feature.E2EI)?
+    public var fetchE2EI_MockValue: Feature.E2EI?
+
+    public func fetchE2EI() -> Feature.E2EI {
+        fetchE2EI_Invocations.append(())
+
+        if let mock = fetchE2EI_MockMethod {
+            return mock()
+        } else if let mock = fetchE2EI_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EI`")
+        }
+    }
+
+    // MARK: - storeE2EI
+
+    public var storeE2EI_Invocations: [Feature.E2EI] = []
+    public var storeE2EI_MockMethod: ((Feature.E2EI) -> Void)?
+
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        storeE2EI_Invocations.append(e2ei)
+
+        guard let mock = storeE2EI_MockMethod else {
+            fatalError("no mock for `storeE2EI`")
+        }
+
+        mock(e2ei)
+    }
+
+    // MARK: - fetchMLSMigration
+
+    public var fetchMLSMigration_Invocations: [Void] = []
+    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
+    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        fetchMLSMigration_Invocations.append(())
+
+        if let mock = fetchMLSMigration_MockMethod {
+            return mock()
+        } else if let mock = fetchMLSMigration_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigration`")
+        }
+    }
+
+    // MARK: - storeMLSMigration
+
+    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
+    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        storeMLSMigration_Invocations.append(mlsMigration)
+
+        guard let mock = storeMLSMigration_MockMethod else {
+            fatalError("no mock for `storeMLSMigration`")
+        }
+
+        mock(mlsMigration)
+    }
+
+    // MARK: - fetchChannels
+
+    public var fetchChannels_Invocations: [Void] = []
+    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
+    public var fetchChannels_MockValue: Feature.Channels?
+
+    public func fetchChannels() -> Feature.Channels {
+        fetchChannels_Invocations.append(())
+
+        if let mock = fetchChannels_MockMethod {
+            return mock()
+        } else if let mock = fetchChannels_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChannels`")
+        }
+    }
+
+    // MARK: - storeChannels
+
+    public var storeChannels_Invocations: [Feature.Channels] = []
+    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
+
+    public func storeChannels(_ channels: Feature.Channels) {
+        storeChannels_Invocations.append(channels)
+
+        guard let mock = storeChannels_MockMethod else {
+            fatalError("no mock for `storeChannels`")
+        }
+
+        mock(channels)
     }
 
 }
@@ -4711,6 +4750,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         mock(delegate)
     }
 
+    // MARK: - setResetBrokenMLSConversationDelegate
+
+    public var setResetBrokenMLSConversationDelegate_Invocations: [any ResetBrokenMLSConversationDelegate] = []
+    public var setResetBrokenMLSConversationDelegate_MockMethod: ((any ResetBrokenMLSConversationDelegate) -> Void)?
+
+    public func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate) {
+        setResetBrokenMLSConversationDelegate_Invocations.append(delegate)
+
+        guard let mock = setResetBrokenMLSConversationDelegate_MockMethod else {
+            fatalError("no mock for `setResetBrokenMLSConversationDelegate`")
+        }
+
+        mock(delegate)
+    }
+
     // MARK: - onNewCRLsDistributionPoints
 
     public var onNewCRLsDistributionPoints_Invocations: [Void] = []
@@ -5284,6 +5338,30 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
     var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
 
+
+}
+
+public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - didCatchBrokenMLSConversation
+
+    public var didCatchBrokenMLSConversationGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
+    public var didCatchBrokenMLSConversationGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        didCatchBrokenMLSConversationGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = didCatchBrokenMLSConversationGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `didCatchBrokenMLSConversationGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
 
 }
 

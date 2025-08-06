@@ -60,6 +60,16 @@ public extension ZMConversation {
         )
     }
 
+    func appendUserRemovedFromTeamSystemMessage(user: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .userRemovedFromTeam,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
     func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
         appendSystemMessage(
             type: .failedToAddParticipants,

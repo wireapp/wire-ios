@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import protocol WireDataModel.FeatureRepositoryInterface
+import protocol WireDataModel.LegacyFeatureRepositoryInterface
 import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
 
-    func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
@@ -95,6 +95,15 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
 
+        if let allowedGlobalOperations = payload.allowedGlobalOperations {
+            repository.storeAllowedGlobalOperations(
+                Feature.AllowedGlobalOperations(
+                    status: allowedGlobalOperations.status,
+                    config: allowedGlobalOperations.config
+                )
+            )
+        }
+
         if let mlsMigration = payload.mlsMigration {
             repository.storeMLSMigration(
                 Feature.MLSMigration(
@@ -114,7 +123,7 @@ struct FeatureConfigsPayloadProcessor {
         }
     }
 
-    func processActionPayloadAPIV6(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayloadAPIV6(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayloadAPIV6.self, from: data)
 
         if let appLock = payload.appLock {
@@ -217,7 +226,7 @@ struct FeatureConfigsPayloadProcessor {
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface,
+        repository: LegacyFeatureRepositoryInterface,
         mlsClientManager: MLSClientManagerProtocol,
         in context: NSManagedObjectContext
     ) throws {
@@ -249,6 +258,16 @@ struct FeatureConfigsPayloadProcessor {
                 from: data
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+
+        case .allowedGlobalOperations:
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
+                from: data
+            )
+            repository.storeAllowedGlobalOperations(.init(
+                status: response.status,
+                config: response.config
+            ))
 
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)

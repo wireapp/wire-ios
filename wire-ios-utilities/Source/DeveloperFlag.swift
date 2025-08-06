@@ -35,7 +35,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireCells
     case wireCellsManualAuthentication
     case consumableNotifications
+    case disablePushChannelBatching
     case multibackend
+    case newRegistration
+    case showUnreadConversationsFilter
+    case channelsHistory
+    case chatBubbles
+    case chatBubblesSimple
 
     public var description: String {
         switch self {
@@ -78,8 +84,26 @@ public enum DeveloperFlag: String, CaseIterable {
         case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
 
+        case .disablePushChannelBatching:
+            "Turn on to disable batching while app is live"
+
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
+
+        case .newRegistration:
+            "Turn on to use the new registration flow"
+
+        case .showUnreadConversationsFilter:
+            "Turn on to show the new conversation filter options"
+
+        case .channelsHistory:
+            "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
+
+        case .chatBubblesSimple:
+            "Turn on the simplified version of chat bubbles"
         }
     }
 

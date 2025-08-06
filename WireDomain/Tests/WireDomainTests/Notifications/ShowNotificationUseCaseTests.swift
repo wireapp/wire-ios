@@ -44,7 +44,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
             accountManager: try AccountManager(
                 currentAppVersion: "1.0.0",
-                sharedDirectory: url,
+                directory: url,
                 defaults: .temporary()
             ),
             databaseSaver: databaseSaver

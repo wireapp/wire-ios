@@ -25,7 +25,7 @@ extension Payload {
             case others
         }
 
-        let selfMember: ConversationMember
+        let selfMember: ConversationMember?
         let others: [ConversationMember]
     }
 }

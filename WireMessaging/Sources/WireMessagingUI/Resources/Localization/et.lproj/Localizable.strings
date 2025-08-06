@@ -17,6 +17,8 @@
 //
 
 "general.loading" = "Laadimine…";
+"general.confirm" = "OK";
+"general.failure" = "Midagi läks valesti";
 
 // Channel Access level
 "channel_access_level.public" = "Public";
@@ -69,3 +71,26 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Lugemiskinnitused";
 "conversation.creationForm.readReceipts.description" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.channelHistory.upgradeBanner.button" = "Upgrade now";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Conversation history";
+"conversation.channelHistory.picker.off" = "Väljas";
+"conversation.channelHistory.picker.oneDay" = "1 day";
+"conversation.channelHistory.picker.oneWeek" = "1 week";
+"conversation.channelHistory.picker.fourWeeks" = "4 weeks";
+"conversation.channelHistory.picker.unlimited" = "Unlimited";
+"conversation.channelHistory.picker.custom" = "Custom";
+"conversation.channelHistory.customPicker.days" = "Days";
+"conversation.channelHistory.customPicker.weeks" = "Weeks";
+"conversation.channelHistory.share.sectionFootnote" = "You can share conversation history with new channel members. This way, they can also see older messages and files.\nWhen you set it to off, channel members won't see any conversation history.";
+"conversation.channelHistory.navigationTitle" = "Conversation history";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
+"conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
+"conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.retry" = "Retry";
+"conversation.draft.attachmentMenu.remove" = "Remove File";

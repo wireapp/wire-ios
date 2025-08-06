@@ -81,15 +81,17 @@ public final class AccountManager: NSObject {
 
     /// Create a new `AccountManager`.
     ///
-    /// - parameter sharedDirectory: The directory of the shared container.
+    /// - parameter currentAppVersion: The current semantic version of the app.
+    /// - parameter directory: The directory to store account data.
+    /// - parameter defaults: User defaults for storage.
 
     public init(
         currentAppVersion: String,
-        sharedDirectory: URL,
+        directory: URL,
         defaults: UserDefaults = .shared()!
     ) throws {
         self.currentAppVersion = currentAppVersion
-        self.store = try AccountStore(root: sharedDirectory)
+        self.store = try AccountStore(directory: directory)
         self.defaults = defaults
         super.init()
         refreshCache()
@@ -173,7 +175,7 @@ public final class AccountManager: NSObject {
     /// given URL, including the selected account.
 
     public static func delete(at root: URL) {
-        AccountStore.delete(at: root)
+        AccountStore.delete(directory: AccountURLs(root: root).accounts)
         UserDefaults.shared().selectedAccountIdentifier = nil
     }
 

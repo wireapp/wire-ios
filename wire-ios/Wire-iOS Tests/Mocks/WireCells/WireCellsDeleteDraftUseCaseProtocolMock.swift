@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireCellsAPI
+import WireMessagingDomain
 
 final class WireCellsDeleteDraftUseCaseProtocolMock: WireCellsDeleteDraftUseCaseProtocol {
 

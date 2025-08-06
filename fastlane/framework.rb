@@ -7,10 +7,10 @@ class Framework
             "WireAnalytics",
             "WireAuthentication",
             "WireBackup",
-            "WireCells",
-            "WireMessaging",
+            "WireData",
             "WireDomain",
             "WireFoundation",
+            "WireMessaging",
             "WireUI",
             "wire-ios",
             "wire-ios-canvas",
@@ -41,6 +41,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireAuthentication"])
+        frameworks["wire-ios"].add_dependency(frameworks["WireData"])
         frameworks["wire-ios"].add_dependency(frameworks["WireMessaging"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
 
@@ -62,6 +63,7 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireFoundation"])
+        frameworks["wire-ios-data-model"].add_dependency(frameworks["WireData"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-testing"]) # included in WireDataModelTests
 
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
@@ -73,7 +75,8 @@ class Framework
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
 
         frameworks["wire-ios-link-preview"].add_dependency(frameworks["wire-ios-utilities"])
-
+        frameworks["wire-ios-link-preview"].add_dependency(frameworks["WireFoundation"])
+        
         frameworks["wire-ios-images"].add_dependency(frameworks["wire-ios-utilities"])
 
         frameworks["wire-ios-utilities"].add_dependency(frameworks["wire-ios-system"])
@@ -93,9 +96,6 @@ class Framework
         frameworks["WireAuthentication"].add_dependency(frameworks["WireUI"])
 
         frameworks["WireBackup"].add_dependency(frameworks["WireFoundation"])
-
-        frameworks["WireCells"].add_dependency(frameworks["WireFoundation"])
-        frameworks["WireCells"].add_dependency(frameworks["WireUI"])
 
         frameworks["WireMessaging"].add_dependency(frameworks["WireFoundation"])
 
@@ -141,8 +141,8 @@ class Framework
             "Ziphy"
         when "WireBackup"
             "WireBackupAll"
-        when "WireCells"
-            "WireCellsAll"
+        when "WireData"
+            "WireDataAll"
         when "WireMessaging"
             "WireMessagingAll" # use a custom scheme that includes all targets in the package
         when "WireDomain"

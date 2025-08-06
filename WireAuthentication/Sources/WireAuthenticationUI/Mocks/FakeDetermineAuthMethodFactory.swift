@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
@@ -43,16 +44,19 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         return viewModel
     }
 
-    func loginViaEmailFactory(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: WireAuthenticationAPI.BackendInfo
-    ) -> any LoginViaEmailFactory {
+    func loginView(email: String?, didDetectDomainConflict: Bool, backendInfo: BackendInfo) -> LoginViaEmailView {
         fatalError()
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView {
+        fatalError()
+    }
+
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
 

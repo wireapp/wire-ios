@@ -17,6 +17,8 @@
 //
 
 "general.loading" = "Загрузка…";
+"general.confirm" = "OK";
+"general.failure" = "Что-то пошло не так";
 
 // Channel Access level
 "channel_access_level.public" = "Публичный";
@@ -69,3 +71,26 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Показывать старые сообщения?";
+"conversation.channelHistory.upgradeBanner.message" = "Перейдите на платный план, чтобы открыть участникам канала всю историю.";
+"conversation.channelHistory.upgradeBanner.button" = "Перейти сейчас";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Закрыть баннер";
+"conversation.channelHistory.picker.title" = "История беседы";
+"conversation.channelHistory.picker.off" = "Откл.";
+"conversation.channelHistory.picker.oneDay" = "1 день";
+"conversation.channelHistory.picker.oneWeek" = "1 неделя";
+"conversation.channelHistory.picker.fourWeeks" = "4 недели";
+"conversation.channelHistory.picker.unlimited" = "Неограничено";
+"conversation.channelHistory.picker.custom" = "Пользовательская";
+"conversation.channelHistory.customPicker.days" = "Дн.";
+"conversation.channelHistory.customPicker.weeks" = "Нед.";
+"conversation.channelHistory.share.sectionFootnote" = "Вы можете поделиться историей переписки с новыми участниками канала. Таким образом, они также смогут просматривать старые сообщения и файлы.\\Если вы отключите эту функцию, участники канала не будут видеть историю переписки.";
+"conversation.channelHistory.navigationTitle" = "История беседы";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Выберите период. Когда участники присоединяются к этому каналу, они могут просматривать историю за этот период времени.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Произошла ошибка при получении параметров глубины истории канала.";
+"conversation.channelHistory.updateHistoryDepth.error" = "Произошла ошибка при обновлении глубины истории канала.";
+"conversation.file.preview.open" = "Открыть предпросмотр";
+"conversation.draft.attachmentMenu.retry" = "Повторить";
+"conversation.draft.attachmentMenu.remove" = "Удалить файл";

@@ -81,7 +81,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -89,43 +88,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
         )
-    }
-
-    func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
-        // Mock
-
-        let feature = await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .conversationGuestLinks,
-                in: context
-            ) { $0.status = .enabled }
-
-            return Feature.fetch(
-                name: .conversationGuestLinks,
-                context: context
-            )
-        }
-
-        featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.storeFeatureNeedsToNotifyUser(
-            true,
-            name: .conversationGuestLinks
-        )
-
-        // Then
-
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_Invocations.count, 1)
     }
 
     func testFetchFeatureConfig_It_Invokes_Local_Store_Methods_And_Retrieves_Correct_Config() async throws {
@@ -155,10 +121,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let localFeature = try await sut.fetchFeatureConfig(
-            name: .appLock,
-            type: Feature.AppLock.Config.self
-        )
+        let localFeature = try await sut.fetchAppLock()
 
         // Then
 
@@ -206,7 +169,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -217,8 +179,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -301,7 +261,13 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 status: .enabled,
                 allowedToCreateChannels: .admins,
                 allowedToOpenChannels: .everyone
-            ))
+            )),
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
+                    status: .enabled,
+                    resetMLSConversations: true
+                )
+            )
         ]
 
     }

@@ -257,7 +257,7 @@ final class ParticipantsCellViewModel {
 
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
-        return L10n.Localizable.Content.System.Services.warning
+        return L10n.Localizable.Content.System.Apps.warning
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {

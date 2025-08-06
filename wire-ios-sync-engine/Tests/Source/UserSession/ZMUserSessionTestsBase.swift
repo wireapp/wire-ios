@@ -113,6 +113,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.finish()
         }
         mockMLSService.setSyncDelegate_MockMethod = { _ in }
+        mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
@@ -199,6 +200,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,

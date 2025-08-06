@@ -17,6 +17,8 @@
 //
 
 "general.loading" = "载入中...";
+"general.confirm" = "好";
+"general.failure" = "好像出了点问题。";
 
 // Channel Access level
 "channel_access_level.public" = "公开";
@@ -69,3 +71,26 @@
 
 "conversation.creationForm.readReceipts.toggle" = "已读回执";
 "conversation.creationForm.readReceipts.description" = "当这启用时, 参与者可以看到他们在此对话中的消息何时已阅读。";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "显示较早的消息吗？";
+"conversation.channelHistory.upgradeBanner.message" = "升级到付费计划，为频道成员提供完整的历史记录。";
+"conversation.channelHistory.upgradeBanner.button" = "立即升级";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "关闭横幅";
+"conversation.channelHistory.picker.title" = "对话历史记录";
+"conversation.channelHistory.picker.off" = "关闭";
+"conversation.channelHistory.picker.oneDay" = "1 天";
+"conversation.channelHistory.picker.oneWeek" = "1 周";
+"conversation.channelHistory.picker.fourWeeks" = "4 周";
+"conversation.channelHistory.picker.unlimited" = "无限制";
+"conversation.channelHistory.picker.custom" = "自定义";
+"conversation.channelHistory.customPicker.days" = "天";
+"conversation.channelHistory.customPicker.weeks" = "周";
+"conversation.channelHistory.share.sectionFootnote" = "您可以与新的频道成员共享对话历史记录。这样，他们也可以看到较早的消息和文件。\n当您将其设置为关闭时，频道成员将看不到任何对话历史记录。";
+"conversation.channelHistory.navigationTitle" = "对话历史记录";
+"conversation.creationForm.channelHistory.sectionFootnote" = "选择时间段。参与者加入此频道后，可以关注该时间段内的历史记录。";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "获取频道历史深度选项时发生错误。";
+"conversation.channelHistory.updateHistoryDepth.error" = "更新频道历史深度时发生错误。";
+"conversation.file.preview.open" = "打开预览";
+"conversation.draft.attachmentMenu.retry" = "重试";
+"conversation.draft.attachmentMenu.remove" = "移除文件";
