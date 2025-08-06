@@ -26,6 +26,11 @@ public struct MessageModel: Sendable {
 
     public let sender: UserModel
     public let kind: Kind
+    
+    public init(sender: UserModel, kind: Kind) {
+        self.sender = sender
+        self.kind = kind
+    }
 }
 
 public struct SystemMessageModel: Sendable {
@@ -37,5 +42,9 @@ public struct ImageMessageModel: Sendable {
 }
 
 public struct TextMessageModel: Sendable {
+    public let text: String
     
+    public init(text: String) {
+        self.text = text
+    }
 }

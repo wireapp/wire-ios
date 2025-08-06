@@ -41,7 +41,7 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
             self.updatesStreamContinuation = continuation
         }
     }
-
+    
     public init() {
         
     }
@@ -114,17 +114,32 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
 #if DEBUG
     func generateMessages() {
         let base = "This is a line. "
-        messages = (0..<7).map { _ in
+        let modelMessages: [MessageModel] = (0..<7).map { _ in
             let repeatCount = Int.random(in: 1...5)
-            return .text(TextMessageViewModel(
-                content: AttributedString(
-                    stringLiteral: String(
-                        repeating: base,
-                        count: repeatCount
-                    )),
-                senderViewModel: Bool.random() ?
-                SenderViewModel(state: .exists("Sender")) : SenderViewModel(state: .empty)
-            ))
+            return MessageModel(
+                sender: .init(
+                    remoteIdentifier: .init(),
+                    name: "Sender",
+                    handle: nil),
+                kind: .text(.init(text: String(repeating: base,count: repeatCount)))
+            )
+        }
+        
+        messages = modelMessages.map { model in
+            switch model.kind {
+            case .text(let textModel):
+                MessageType.text(
+                    TextMessageViewModel(
+                        content: AttributedString(stringLiteral: textModel.text),
+                        senderViewModel: Bool.random() ?
+                        SenderViewModel(state: .exists(AttributedString(stringLiteral: model.sender.name ?? ""))) : SenderViewModel(
+                            state: .empty
+                        )
+                    )
+                )
+            default: fatalError()
+            }
+            
         }
     }
     
@@ -142,7 +157,7 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
             updatesStreamContinuation?.yield(.messageAdded(snapshot))
         }
     }
-        
+    
     private var isRunning = true
     private func updatesTimerLoop() async {
         Task {
@@ -153,12 +168,12 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
         while isRunning {
             // Do your actor-safe update
             performRandomUpdate()
-
+            
             // Sleep for 2 seconds (2_000_000_000 nanoseconds)
             try? await Task.sleep(nanoseconds: 2_000_000_000)
         }
     }
-
+    
     private func performRandomUpdate() {
         guard let message = messages.randomElement(), case let .text(randomVM) = message else {
             return
@@ -168,8 +183,8 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
             let repeatCount = Int.random(in: 1...6)
             randomVM.content = AttributedString(stringLiteral: String(repeating: base, count: repeatCount))
             let updateSenderAttributed = AttributedString(
-                stringLiteral: String(repeating: "Updated Sender", count: repeatCount
-            ))
+                stringLiteral: String(repeating: "Updated Sender", count: repeatCount)
+            )
             randomVM.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed) : SenderViewModel.State.empty
         }
     }
