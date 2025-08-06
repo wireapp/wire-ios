@@ -28,7 +28,7 @@ import WireNetwork
 public protocol ConversationProtobufMessageProcessorProtocol {
 
     func processProtobufMessage(
-        _ message: GenericMessage, // TODO: undo changes (restore content)? or better replace message by id and content (strategy?)
+        _ message: GenericMessage,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,

@@ -21,7 +21,7 @@ import GenericMessageProtocol
 
 public extension GenericMessage {
     init?(from updateEvent: ZMUpdateEvent) {
-        let base64Content: String?
+        let base64Content: String? // TODO: extract?
 
         switch updateEvent.type {
         case .conversationClientMessageAdd:

@@ -309,7 +309,8 @@
         <attribute name="text" optional="YES" attributeType="String"/>
     </entity>
     <entity name="UnknownMessage" representedClassName=".UnknownMessage" parentEntity="Message" syncable="YES">
-        <attribute name="myUnknownMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="appVersion" optional="YES" attributeType="String"/>
+        <attribute name="payload" optional="YES" attributeType="Binary"/>
     </entity>
     <entity name="User" representedClassName="ZMUser" syncable="YES">
         <attribute name="accentColorValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>

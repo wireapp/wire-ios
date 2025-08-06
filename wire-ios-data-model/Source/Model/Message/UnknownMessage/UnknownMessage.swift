@@ -21,14 +21,19 @@ import Foundation
 
 /// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
 
-public final class UnknownMessage: ZMMessage {
+public final class UnknownMessage: ZMOTRMessage {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
         return NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
 
-    @NSManaged public var myUnknownMessageDate: Date?
+    /// The latest app version which tried to process this message and failed.
+    /// This field is used for querying so that parsing attempts are made only once per app version.
 
-    // TODO: version which has been tried
+    @NSManaged public var appVersion: String?
+
+    /// The data which is supposed to be parsed into a `GenericMessage`.
+
+    @NSManaged public var payload: Data?
 
 }
