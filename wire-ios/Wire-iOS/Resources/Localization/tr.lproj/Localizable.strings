@@ -32,7 +32,6 @@
 "general.decline" = "Hayır , Teşekkürler";
 "general.failure" = "Bir şeyler yanlış gitti";
 "general.failure.try_again" = "Lütfen tekrar deneyin.";
-"general.service" = "Hizmet";
 "general.off" = "Kapalı";
 "general.on" = "Açık";
 "general.loading" = "Yükleniyor…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "Oluştur";
 
 "peoplepicker.header.people" = "İnsanlar";
-"peoplepicker.header.services" = "Servisler";
-"peoplepicker.services.open_conversation.item" = "Konuşma aç";
-"peoplepicker.services.add_service.button" = "Hizmet ekle";
-"peoplepicker.services.add_service.error.title" = "Hizmet eklenemiyor";
-"peoplepicker.services.add_service.error.default" = "Hizmet şu anda kullanılamıyor";
-"peoplepicker.services.add_service.error.full" = "Sohbet dolu";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Konuşma aç";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Kişi yok.";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Davet gönder";
 "peoplepicker.no_matching_results.action.share_contacts" = "Kişileri paylaş";
 "peoplepicker.no_matching_results.action.learn_more" = "Daha fazla bilgi";
-"peoplepicker.no_matching_results.action.manage_services" = "Hizmetleri yönet";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Wire'daki insanları isim veya @kullanıcıadı'na göre bulun";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Herkes burada.";
-"peoplepicker.no_matching_results.message.services" = "Sonuç yok.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Hizmetler, iş akışınızı iyileştirebilecek yardımcılardır.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Hizmetler, iş akışınızı iyileştirebilecek yardımcılardır. Onları etkinleştirmek için yöneticinize sorun.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "Davet gönderildi";
 "peoplepicker.send_invitation.dialog.message" = "2 hafta için kullanılabilir. Süresi dolduğunda yenisini gönderebilirsiniz.";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "İnsanları takıma katılmaya davet edin";
 "peoplepicker.quick-action.open-conversation" = "Aç";
-"peoplepicker.quick-action.admin-services" = "Hizmetleri yönet";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Sohbet dolu";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Misafirlere izin ver";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "Okundu bilgisi";
 "conversation.create.receipts.subtitle" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
 "conversation.create.mls.title" = "Protocol";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "İleti silindi.";
 
 // Conversation banner
-"conversation.banner.guests" = "Guests";
-"conversation.banner.services" = "Servisler";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " ve ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Arama";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -488,7 +479,7 @@
 "content.system.other_removed_you" = "%@, seni sildi";
 "content.system.you_removed_other" = "%@'i sildiniz";
 
-"content.system.services.warning" = "Hizmetler bu sohbetin içeriğine erişebilir";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
 // Placeholder contains a single name, e.g "Alice"
@@ -900,7 +891,7 @@
 "participants.title" = "Ayrıntılar";
 "participants.all.title" = "İnsanlar";
 "participants.section.participants" = "Kişiler (%d)";
-"participants.section.services" = "Hizmetler (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Ayarlar";
 "participants.footer.add_title" = "Katılımcı ekle";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1026,7 +1017,7 @@
 "profile.read_receipts_disabled_memo.header" = "OKUNDU BİLGİLERİNİ DEVRE DIŞI BIRAKTINIZ";
 "profile.read_receipts_memo.body" = "Her iki taraf da okundu bilgisini açarsa, mesajların ne zaman okunduğunu görebilirsiniz.\n\nBu seçeneği hesap ayarlarınızdan değiştirebilirsiniz.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Bilgi";
 
@@ -1068,21 +1059,22 @@
 "device.type.unknown" = "Bilinmiyor";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Guests";
 "group_details.guest_options_cell.enabled" = "Açık";
 "group_details.guest_options_cell.disabled" = "Kapalı";
-"group_details.services_options_cell.title" = "Servisler";
-"group_details.services_options_cell.enabled" = "Açık";
-"group_details.services_options_cell.disabled" = "Kapalı";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Açık";
+"group_details.apps_options_cell.disabled" = "Kapalı";
 "group_details.timeout_options_cell.title" = "Kendini yok eden iletiler";
 "group_details.notification_options_cell.title" = "Bildirimler";
 "group_details.notification_options_cell.description" = "Her şeyden (sesli ve görüntülü aramalar dahil) veya yalnızca biri sizden bahsettiğinde veya mesajlarınızdan birini yanıtladığında size bildirim gelebilir.";
 "group_details.receipt_options_cell.title" = "Okundu bilgisi";
 "group_details.receipt_options_cell.description" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1532,12 +1524,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "Kaldır";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Kaldır";
 
 
 // Registration
