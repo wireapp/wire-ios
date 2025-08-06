@@ -20,17 +20,17 @@ import Foundation
 import WireFoundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
-    
+
     let networkService: any NetworkServiceProtocol
-    
+
     init(networkService: any NetworkServiceProtocol) {
         self.networkService = networkService
     }
-    
+
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     func login(
         email: String,
         password: String,
@@ -44,7 +44,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             verificationCode: verificationCode,
             label: label
         )
-        
+
         let encodedJSON: Data
         do {
             encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
@@ -52,27 +52,27 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             assertionFailure("failed to encode body")
             throw AuthenticationAPIError.invalidRequestBody
         }
-        
+
         let request = try URLRequestBuilder(path: path)
             .withBody(encodedJSON, contentType: .json)
             .withMethod(.post)
             .withQueryItem(name: "persist", value: "true")
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
+
         guard
             let responseURL = response.url,
             let responseHeaders = response.allHeaderFields as? [String: String]
         else {
             throw AuthenticationAPIError.invalidResponse
         }
-        
+
         let cookies = HTTPCookie.cookies(
             withResponseHeaderFields: responseHeaders,
             for: responseURL
         )
-        
+
         let accessToken = try ResponseParser()
             .success(
                 code: .ok,
@@ -107,53 +107,53 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 code: response.statusCode,
                 data: data
             )
-        
+
         return (cookies, accessToken)
     }
-    
+
     func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {
         guard !domain.isEmpty,
               let encodedDomain = domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         else {
             throw AuthenticationAPIError.invalidDomain
         }
-        
+
         let path = "/custom-backend/by-domain/\(encodedDomain)"
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
+
         return try ResponseParser()
             .success(code: .ok, type: DomainInfoV0.self)
             .failure(code: .notFound, label: "custom-backend-not-found", error: AuthenticationAPIError.configNotFound)
             .failure(code: .notFound, error: AuthenticationAPIError.domainNotFound)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
-    
+
     // Move to separate api
     func validateLoginToken(ssoCode: UUID) async throws {
         let path = "/sso/initiate-login/\(ssoCode.uuidString)"
         let request = try URLRequestBuilder(path: path)
             .withMethod(.head)
             .build()
-        
+
         let (_, response) = try await networkService.executeRequest(request)
         if let error = AuthenticationAPIError.SSOLoginError(responseCode: response.statusCode) {
             throw error
         }
-        
+
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: nil)
     }
-    
+
     // Move to separate api
     func getSSOCode() async throws -> UUID? {
         let path = "/sso/settings"
@@ -161,37 +161,37 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.get)
             .withAcceptType(.json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
         let payload = try ResponseParser()
             .success(code: .ok, type: SSOSettingsResponseV0.self)
             .parse(code: response.statusCode, data: data)
-        
+
         return payload.defaultSSOCode
     }
-    
+
     func requestVerificationCode(for email: String) async throws {
         let path = "\(pathPrefix)/verification-code/send"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RequestVerificationCodeRequestBodyV0(
                 action: "login",
                 email: email
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
         return try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     func getActivationCode(forEmail email: String) async throws -> (code: String, key: String) {
         let path = "/i/users/activation-code?email=\(email)"
         let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
@@ -199,54 +199,54 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withMethod(.get)
             .addingHeader(field: "Authorization", value: "Basic \(auth)")
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
+
         guard
             let responseURL = response.url,
             let responseHeaders = response.allHeaderFields as? [String: String]
         else {
             throw AuthenticationAPIError.invalidResponse
         }
-        
+
         let payload = try ResponseParser()
             .success(code: .ok, type: ActivationCodeV0.self)
             .parse(code: response.statusCode, data: data)
-        
+
         return (payload.code, payload.key)
-        
+
     }
-    
+
     func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie] {
         let path = "\(pathPrefix)/register"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RegisterAccountRequestBodyV0(email: email, name: name, password: password)
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
+
         guard
             let responseURL = response.url,
             let responseHeaders = response.allHeaderFields as? [String: String]
         else {
             throw AuthenticationAPIError.invalidResponse
         }
-        
+
         return HTTPCookie.cookies(
             withResponseHeaderFields: responseHeaders,
             for: responseURL
         )
     }
-    
+
     func activateUser(email: String, key: String, code: String) async throws {
         let path = "\(pathPrefix)/activate"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             ActivateRequestBodyV0(
                 key: key,
@@ -255,34 +255,34 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 dryrun: false
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
+
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
     }
-    
+
     func requestEmailVerificationCode(for email: String) async throws {
         let path = "\(pathPrefix)/activate/send"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RequestEmailVerificationCodeBodyV0(
                 email: email,
                 locale: Locale.formattedLocaleIdentifier
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
         return try ResponseParser()
             .success(code: .ok)
@@ -308,7 +308,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             )
             .parse(code: response.statusCode, data: data)
     }
-    
+
     func registerAccount(
         email: String,
         emailCode: String,
@@ -317,7 +317,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         label: String
     ) async throws -> (cookie: [HTTPCookie], userId: UUID?) {
         let path = "\(pathPrefix)/register"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RegisterPersonalAccountBodyV0(
                 email: email,
@@ -328,12 +328,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 password: password
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
         guard
             let responseURL = response.url,
@@ -341,12 +341,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         else {
             throw AuthenticationAPIError.invalidResponse
         }
-        
+
         let cookies = HTTPCookie.cookies(
             withResponseHeaderFields: responseHeaders,
             for: responseURL
         )
-        
+
         let userKey = try ResponseParser()
             .success(
                 code: .created,
@@ -403,15 +403,15 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             )
         return (cookies, userKey.uuid)
     }
-    
+
     func registerTeamOwner(
         email: String,
         password: String,
         name: String,
         teamName: String
-    ) async throws -> (teamId: UUID, id: String) {
+    ) async throws -> (teamId: UUID?, qualifiedId: QualifiedID) {
         let path = "\(pathPrefix)/register"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RegisterTeamOwnerBodyV0(
                 email: email,
@@ -424,21 +424,21 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 )
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
-        let payload = try ResponseParser()
+
+        let apiResponse = try ResponseParser()
             .success(code: .created, type: RegisterUserResponseV0.self)
             .parse(code: response.statusCode, data: data)
-        
-        return (payload.team, payload.id)
+
+        return (apiResponse.teamID, apiResponse.qualifiedID)
     }
-    
+
     func registerTeamMember(
         email: String,
         password: String,
@@ -446,7 +446,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         invitationCode: String
     ) async throws -> QualifiedID {
         let path = "\(pathPrefix)/register"
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             RegisterTeamMemberBodyV0(
                 email: email,
@@ -455,67 +455,111 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 team_code: invitationCode
             )
         )
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
-        
-        return try ResponseParser()
-        //NEEDS FIXING  QualifiedIDV0 Below
-            .success(code: .created, type: QualifiedIDV0.self)
+
+        let apiResponse = try ResponseParser()
+            .success(code: .created, type: RegisterUserResponseV0.self)
             .parse(code: response.statusCode, data: data)
+
+        return apiResponse.qualifiedID
     }
-    
+
     func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String {
         let path = "/i/teams/invitation-code?team=\(teamID)&invitation_id=\(invitationID)"
         let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .addingHeader(field: "Authorization", value: "Basic \(auth)")
             .build()
-        
+
         let (data, response) = try await networkService.executeRequest(request)
         let payload = try ResponseParser()
             .success(code: .ok, type: InvitationCodeResponseV0.self)
             .parse(code: response.statusCode, data: data)
-        
+
         return payload.code
     }
 }
 
-    private struct RegisterAccountRequestBodyV0: Encodable {
-        var email: String
+private struct RegisterAccountRequestBodyV0: Encodable {
+    var email: String
+    var name: String
+    var password: String
+}
+
+private struct ActivateRequestBodyV0: Encodable {
+    var key: String
+    var code: String
+    var email: String
+    var dryrun: Bool
+}
+
+private struct RegisterTeamOwnerBodyV0: Encodable {
+    var email: String
+    var password: String
+    var name: String
+    var team: TeamInfo
+
+    struct TeamInfo: Encodable {
         var name: String
-        var password: String
+        var icon: String
+        var binding: Bool
+    }
+}
+
+private struct RegisterTeamMemberBodyV0: Encodable {
+    var email: String
+    var password: String
+    var name: String
+    var team_code: String
+}
+
+struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
+
+    let accentID: Int
+    let assets: [UserAssetV0]?
+    let email: String?
+    let id: String
+    let locale: String
+    let managedBy: ManagedByV0?
+    let name: String
+    let picture: [String]?
+    let qualifiedID: QualifiedIDV0
+    let status: String?
+    let teamID: UUID?
+
+    enum CodingKeys: String, CodingKey {
+        case accentID = "accent_id"
+        case assets, email
+        case id
+        case locale
+        case managedBy = "managed_by"
+        case name, picture
+        case qualifiedID = "qualified_id"
+        case status
+        case teamID = "team"
     }
 
-    private struct ActivateRequestBodyV0: Encodable {
-        var key: String
-        var code: String
-        var email: String
-        var dryrun: Bool
+    func toAPIModel() -> RegisterUserResponse {
+        RegisterUserResponse(
+            id: id,
+            qualifiedID: qualifiedID.toAPIModel(),
+            name: name,
+            teamID: teamID,
+            accentID: accentID,
+            managedBy: managedBy?.toAPIModel(),
+            assets: assets?.map { $0.toAPIModel() },
+            picture: picture,
+            email: email,
+            status: status,
+            supportedProtocols: [.proteus]
+        )
     }
-
-    private struct RegisterTeamOwnerBodyV0: Encodable {
-        var email: String
-        var password: String
-        var name: String
-        var team: TeamInfo
-
-        struct TeamInfo: Encodable {
-            var name: String
-            var icon: String
-            var binding: Bool
-        }
-    }
-
-    private struct RegisterTeamMemberBodyV0: Encodable {
-        var email: String
-        var password: String
-        var name: String
-        var team_code: String
-    }
+}

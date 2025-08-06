@@ -125,7 +125,7 @@ public protocol AuthenticationAPI: Sendable {
             password: String,
             name: String,
             teamName: String
-        ) async throws -> (teamId: UUID, id: String)
+        ) async throws -> (teamId: UUID?, qualifiedId: QualifiedID)
     #endif
 
     /// Get invitation code from invitation ID

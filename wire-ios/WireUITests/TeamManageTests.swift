@@ -90,25 +90,21 @@ final class TeamManageTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let teamOwner = try await userHelper.registerUserAsTeamOwner()
-        let teamMember1 = UserGenerator.generateUniqueUserInfo()
-        let teamMember2 = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let accessToken = try await userHelper.fetchAccessToken(
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
+        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
             teamID: teamOwner.teamID!,
-            member: teamMember1
         )
 
-        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
+        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
             teamID: teamOwner.teamID!,
-            member: teamMember2
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
@@ -130,5 +126,39 @@ final class TeamManageTests: WireUITestCase {
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
         )
+    }
+
+    @MainActor
+    func test_TeamOwner_Test123() async throws {
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        let (qualifiedIdMember1, teamMember1) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamOwner.teamID!,
+        )
+
+        let (qualifiedIdMember2, teamMember2) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamOwner.teamID!,
+        )
+
+        try await userHelper.createGroupConversations(
+            qualifiedId1: qualifiedIdMember1,
+            qualifiedId2: qualifiedIdMember2,
+            owner: teamOwner,
+            groupName: "Test123"
+        )
+
+        let firstTimePage = try app.loginUser(email: teamMember1.email, password: teamMember1.password)
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+            .setUsername(teamMember1.username)
+
+        print()
+
     }
 }

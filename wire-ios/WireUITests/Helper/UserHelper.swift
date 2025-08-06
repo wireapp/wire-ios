@@ -138,10 +138,10 @@ class UserHelper {
         }
     }
 
-    func registerUserAsTeamOwner() async throws -> UserInfo {
+    func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
-        let (teamID, id) = try await authenticationAPI.registerTeamOwner(
+        let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
             email: teamOwner.email,
             password: teamOwner.password,
             name: teamOwner.name,
@@ -149,9 +149,8 @@ class UserHelper {
         )
 
         teamOwner.teamID = teamID
-        teamOwner.id = id
         createdUsers.append(teamOwner)
-        return teamOwner
+        return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
     func fetchAccessToken(email: String, password: String) async throws -> String {
@@ -173,7 +172,7 @@ class UserHelper {
         ownerAccessToken: String,
         teamID: UUID
     ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
-        
+
         let teamMember = UserGenerator.generateUniqueUserInfo()
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
@@ -228,26 +227,30 @@ class UserHelper {
         return (nil, nil)
     }
 
-    func createGroupConversations(memberUser: UserInfo, groupName: String) async throws {
-        // NEED FIXING
-//        _ = try await BackendClient.loginViaAPI(email: memberUser.email, password: memberUser.password)
-//        let selfUser = try await selfUserAPI.getSelfUser()
+    func createGroupConversations(
+        qualifiedId1: QualifiedID,
+        qualifiedId2: QualifiedID,
+        owner: UserInfo,
+        groupName: String
+    ) async throws {
 
-//        let params = CreateGroupConversationParameters(
-//            groupType: .group,
-//            messageProtocol: .proteus,
-//            creatorClientID: "deprecated",
-//            qualifiedUserIDs: [selfUser.qualifiedID],
-//            unqualifiedUserIDs: [],
-//            name: groupName,
-//            accessMode: [.invite, .code],
-//            accessRoles: [.teamMember, .guest],
-//            legacyAccessRole: nil,
-//            teamID: selfUser.teamID,
-//            isReadReceiptsEnabled: true
-//        )
+        let params = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .proteus,
+            creatorClientID: "deprecated",
+            qualifiedUserIDs: [qualifiedId1, qualifiedId2],
+            unqualifiedUserIDs: [],
+            name: groupName,
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember, .guest, .service, .nonTeamMember],
+            legacyAccessRole: nil,
+            teamID: owner.teamID,
+            isReadReceiptsEnabled: true
+        )
 
-//        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
+        _ = try await fetchAccessToken(email: owner.email, password: owner.password)
+
+        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 }
 
