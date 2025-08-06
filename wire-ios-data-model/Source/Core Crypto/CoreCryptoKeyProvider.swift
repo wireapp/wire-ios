@@ -51,7 +51,7 @@ public class CoreCryptoKeyProvider {
             let item = CoreCryptoKeychainItem()
             let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
             try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
-    
+
             try KeychainManager.deleteItem(item)
             try KeychainManager.storeItem(item, value: newKey)
         }

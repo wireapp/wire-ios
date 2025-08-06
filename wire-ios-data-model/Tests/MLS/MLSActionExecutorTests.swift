@@ -298,7 +298,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )]
 
         let mockCommit = Data.random()
-        let mockWelcome =  Welcome(bytes: Data.random())
+        let mockWelcome = Welcome(bytes: Data.random())
         let mockUpdateEvent = mockMemberJoinUpdateEvent()
         let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
@@ -321,7 +321,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockAddClientsArguments.first?.0, groupID.conversationId)
 
         XCTAssertEqual(mockAddClientsArguments.count, keyPackages.compactMap(\.ccKeyPackage).count)
-        XCTAssertEqual(mockAddClientsArguments.first?.1.map{ $0.copyBytes() }, keyPackages.compactMap(\.ccKeyPackage).map { $0.copyBytes() })
+        XCTAssertEqual(
+            mockAddClientsArguments.first?.1.map { $0.copyBytes() },
+            keyPackages.compactMap(\.ccKeyPackage).map { $0.copyBytes() }
+        )
         // Then the commit bundle was sent.
         let expectedCommitBundle = CommitBundle(
             welcome: mockWelcome,
@@ -455,7 +458,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto creates conversation init bundle
         XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
-        XCTAssertEqual(mockJoinByExternalCommitArguments.first?.copyBytes(), GroupInfo(bytes: mockGroupInfo).copyBytes())
+        XCTAssertEqual(
+            mockJoinByExternalCommitArguments.first?.copyBytes(),
+            GroupInfo(bytes: mockGroupInfo).copyBytes()
+        )
     }
 
     func test_JoinGroup_PublishesNewDistributionPoints() async throws {

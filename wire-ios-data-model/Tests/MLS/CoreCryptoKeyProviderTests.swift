@@ -133,7 +133,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockCoreCryptoKeyMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
-        
+
         let newKey = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
         XCTAssertNotEqual(oldKey, newKey)
     }
