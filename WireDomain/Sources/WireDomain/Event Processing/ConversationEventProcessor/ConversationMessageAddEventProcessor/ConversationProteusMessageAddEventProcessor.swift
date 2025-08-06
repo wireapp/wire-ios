@@ -76,7 +76,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             externalData: messageExternalData?.encryptedMessage
         )
 
-        guard let genericMessage, genericMessage.validateFields() else {
+        guard let genericMessage else {
             // TODO: handle
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
