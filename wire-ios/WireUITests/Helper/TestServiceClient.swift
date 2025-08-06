@@ -172,14 +172,9 @@ class TestServiceClient {
         }
     }
 
-    func fileToBase64String(filePath: String) -> String? {
-        let fileURL = URL(fileURLWithPath: filePath)
-        do {
-            let fileData = try Data(contentsOf: fileURL)
-            return fileData.base64EncodedString()
-        } catch {
-            return nil
-        }
+    func fileToBase64String(filePath: String) throws -> String {
+        let fileData = try Data(contentsOf: URL(fileURLWithPath: filePath))
+        return fileData.base64EncodedString()
     }
 
     func sendFile(
@@ -190,9 +185,6 @@ class TestServiceClient {
         convoId: UUID,
         domain: String,
         timeoutMillis: Int = 0,
-        otherAlgorithm: Bool = false,
-        otherHash: Bool = false,
-        invalidHash: Bool = false
 
     ) async throws {
 
@@ -209,12 +201,9 @@ class TestServiceClient {
 
         var body: [String: Any] = [
             "conversationId": convoId.uuidString.lowercased(),
-            "data": fileToBase64String(filePath: filepath)!,
+            "data": try fileToBase64String(filePath: filepath),
             "fileName": fileName,
-            "type": type,
-            "otherAlgorithm": otherAlgorithm,
-            "otherHash": otherHash,
-            "invalidHash": invalidHash
+            "type": type
         ]
 
         if domain != "staging.zinfra.io" {

@@ -129,7 +129,9 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamOwner_Test123() async throws {
+    func test_TeamOwner_VerifyMessagesSentByMemberInGroup() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+        let messageFromMember1 = UserGenerator.generateRandomMessage()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
@@ -139,26 +141,72 @@ final class TeamManageTests: WireUITestCase {
 
         let (qualifiedIdMember1, teamMember1) = try await userHelper.registerUsersAsTeamMember(
             ownerAccessToken: ownerAccessToken,
-            teamID: teamOwner.teamID!,
+            teamID: try XCTUnwrap(teamOwner.teamID)
         )
 
         let (qualifiedIdMember2, teamMember2) = try await userHelper.registerUsersAsTeamMember(
             ownerAccessToken: ownerAccessToken,
-            teamID: teamOwner.teamID!,
+            teamID: try XCTUnwrap(teamOwner.teamID)
         )
 
         try await userHelper.createGroupConversations(
             qualifiedId1: qualifiedIdMember1,
             qualifiedId2: qualifiedIdMember2,
             owner: teamOwner,
-            groupName: "Test123"
+            groupName: groupName
         )
 
-        let firstTimePage = try app.loginUser(email: teamMember1.email, password: teamMember1.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
-            .setUsername(teamMember1.username)
+        // Login as owner
+        let conversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
 
-        print()
+        // Get conversation ID and domain
+        let (convoId, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
+        let convoUUID = try XCTUnwrap(convoId)
+        let convoDomain = try XCTUnwrap(domain)
 
+        // Send text from member 1
+        try await testServiceClient.sendText(
+            user: teamMember1,
+            text: messageFromMember1,
+            convoId: convoUUID,
+            domain: convoDomain
+        )
+
+        func getFileInfo(from path: String) -> (name: String, ext: String) {
+            let url = URL(fileURLWithPath: path)
+            return (url.deletingPathExtension().lastPathComponent, url.pathExtension)
+        }
+
+        let basePath = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData")
+
+        let imagePath = basePath.appendingPathComponent("Img/testing.jpg").path
+        let audioPath = basePath.appendingPathComponent("Audio/test.m4a").path
+
+        let (imageName, imageExt) = getFileInfo(from: imagePath)
+        let (audioName, audioExt) = getFileInfo(from: audioPath)
+
+        // Send image file
+        try await testServiceClient.sendFile(
+            type: imageExt,
+            user: teamMember2,
+            fileName: imageName,
+            filepath: imagePath,
+            convoId: convoUUID,
+            domain: convoDomain
+        )
+
+        // Send audio file
+        try await testServiceClient.sendFile(
+            type: audioExt,
+            user: teamMember2,
+            fileName: audioName,
+            filepath: audioPath,
+            convoId: convoUUID,
+            domain: convoDomain
+        )
     }
 }
