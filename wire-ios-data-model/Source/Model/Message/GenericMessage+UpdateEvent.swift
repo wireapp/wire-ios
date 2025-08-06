@@ -20,21 +20,12 @@ import Foundation
 import GenericMessageProtocol
 
 public extension GenericMessage {
-    init?(from updateEvent: ZMUpdateEvent) {
-        let base64Content: String? // TODO: extract?
 
-        switch updateEvent.type {
-        case .conversationClientMessageAdd:
-            base64Content = updateEvent.payload.string(forKey: "data")
-        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "text")
-        case .conversationOtrAssetAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "info")
-        default:
+    init?(from updateEvent: ZMUpdateEvent) {
+        guard let base64Content = updateEvent.genericMessageBase64Content else {
             return nil
         }
 
-        guard let base64Content else { return nil }
         var message = GenericMessage(base64Content)
         if let message, !message.validateFields() {
             return nil
@@ -54,4 +45,27 @@ public extension GenericMessage {
         }
         return ZMClientMessage.self
     }
+
+}
+
+extension ZMUpdateEvent {
+
+    var genericMessageBase64Content: String? {
+        switch type {
+
+        case .conversationClientMessageAdd:
+            payload.string(forKey: "data")
+
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "text")
+
+        case .conversationOtrAssetAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "info")
+
+        default:
+            nil
+
+        }
+    }
+
 }
