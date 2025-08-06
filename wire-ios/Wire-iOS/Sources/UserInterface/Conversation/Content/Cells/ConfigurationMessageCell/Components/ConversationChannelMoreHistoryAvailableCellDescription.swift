@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationChannelMoreHistoryAvailableCellDescription: ConversationMessageCellDescription {
+final class ConversationChannelHistoryAvailableCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
 

@@ -110,8 +110,6 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMLSMigrationPotentialGap,
     ZMSystemMessageTypeMLSNotSupportedSelfUser,
     ZMSystemMessageTypeMLSNotSupportedOtherUser,
-    ZMSystemMessageTypeMoreHistoryAvailable,
-    ZMSystemMessageTypeNoMoreHistoryAvailable,
     ZMSystemMessageTypeChannelHistoryDepthModified
 };
 

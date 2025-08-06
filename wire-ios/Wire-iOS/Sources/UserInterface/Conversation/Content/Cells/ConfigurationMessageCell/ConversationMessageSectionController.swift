@@ -489,7 +489,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        (context.isFirstUnreadMessage || context.isFirstMessageOfTheDay) && !message.isSystem
+        context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {

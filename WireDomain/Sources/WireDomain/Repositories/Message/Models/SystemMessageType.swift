@@ -116,9 +116,4 @@ public enum SystemMessageType: Sendable {
         sender: QualifiedID,
         newHistoryDepth: String?
     )
-
-    case channelHistoryAvailability(
-        hasMore: Bool
-    )
-
 }

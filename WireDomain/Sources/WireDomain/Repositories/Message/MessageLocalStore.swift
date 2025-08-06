@@ -920,35 +920,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
-
-        case let .channelHistoryAvailability(hasMore):
-
-            // Deletes the currently displayed system messages:
-            // 1. when new history messages are displayed and there are more messages to show up, same system message
-            // must be removed and repositioned to the top of the latest messages.
-            // 2. when there is no more history message, system message must be removed and replaced by the "no more
-            // history" system message.
-            await deleteChannelHistoryAvailabilitySystemMessages(
-                conversation: conversation
-            )
-
-            // Setup a date that is older than all other messages so this system message always shows up on top of the
-            // rest.
-            let oldestMessageTimestamp = await fetchOldestMessageTimestamp()
-            let timestamp = oldestMessageTimestamp?.addingTimeInterval(-.oneMinute) ?? .distantPast
-
-            let systemMessage = await createSystemMessage(
-                messageType: hasMore ? .moreHistoryAvailable : .noMoreHistoryAvailable,
-                timestamp: timestamp
-            )
-
-            return [systemMessage]
         }
     }
 
     private func createSystemMessage(
         messageType: ZMSystemMessageType,
-        sender: ZMUser? = nil,
+        sender: ZMUser,
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,
@@ -983,54 +960,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.domains = domains
 
             return systemMessage
-        }
-    }
-
-    private func deleteChannelHistoryAvailabilitySystemMessages(
-        conversation: ZMConversation
-    ) async {
-        await context.perform {
-            let fetchRequest = NSFetchRequest<ZMSystemMessage>(
-                entityName: ZMSystemMessage.entityName()
-            )
-
-            let predicate = NSPredicate(
-                format: "systemMessageType == %d OR systemMessageType == %d",
-                ZMSystemMessageType.moreHistoryAvailable.rawValue,
-                ZMSystemMessageType.noMoreHistoryAvailable.rawValue
-            )
-
-            fetchRequest.predicate = predicate
-
-            do {
-                let results = try fetchRequest.execute()
-                conversation.removeAllMessages(Set(results))
-
-            } catch {
-                WireLogger.localStorage.error(
-                    "Failed to delete system messages: \(error)"
-                )
-            }
-        }
-    }
-
-    private func fetchOldestMessageTimestamp() async -> Date? {
-        await context.perform { [context] in
-            let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
-
-            let sort = NSSortDescriptor(
-                key: #keyPath(ZMMessage.serverTimestamp),
-                ascending: true
-            )
-            fetchRequest.sortDescriptors = [sort]
-
-            do {
-                let results = try context.fetch(fetchRequest)
-                return results.first?.serverTimestamp
-            } catch {
-                return nil
-            }
-
         }
     }
 

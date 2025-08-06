@@ -588,7 +588,6 @@
 				ConversationCell/ConversationRenamedCellTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
-				ConversationCell/ConversationSystemMessageHistoryAvailableSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
 				ConversationCell/LocationMessageCellTests.swift,
 				ConversationCell/MarkDownSnapshotTests.swift,
