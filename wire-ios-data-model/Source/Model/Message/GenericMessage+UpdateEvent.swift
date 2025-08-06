@@ -62,7 +62,6 @@ extension ZMUpdateEvent {
 
         default:
             nil
-
         }
     }
 
