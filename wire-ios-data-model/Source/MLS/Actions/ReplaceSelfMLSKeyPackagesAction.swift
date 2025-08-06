@@ -61,8 +61,8 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
 
     public init(
         clientID: String,
-        keyPackages: [String], // TODO: change to WireCoreCryptoUniffi.KeyPackage ?
-        ciphersuite: MLSCipherSuite, // TODO: change to new?
+        keyPackages: [String],
+        ciphersuite: MLSCipherSuite,
         resultHandler: ResultHandler? = nil
     ) {
         self.clientID = clientID

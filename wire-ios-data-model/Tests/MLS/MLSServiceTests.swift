@@ -200,7 +200,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
             switch groupID {
             case parentGroupID.conversationId:
-                return [member1, member2, member3].compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.rawValue.utf8Data!) }
+                return [member1, member2, member3]
+                    .compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.rawValue.utf8Data!) }
 
             case subconversationGroupID.conversationId:
                 return [member1, member2].compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.rawValue.utf8Data!) }
@@ -1416,7 +1417,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform {
             // mock conversation epoch
             self.mockCoreCryptoContext.conversationEpochConversationId_MockMethod = { groupID in
-                let isOutOfSync = (groupID == outOfSyncGroupID1.conversationId) || (groupID == outOfSyncGroupID2.conversationId)
+                let isOutOfSync = (groupID == outOfSyncGroupID1.conversationId) ||
+                    (groupID == outOfSyncGroupID2.conversationId)
 
                 return isOutOfSync ? currentEpoch - 1 : currentEpoch
             }
@@ -1731,7 +1733,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let uploadKeypackagesInvocations = mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations
         XCTAssertEqual(uploadKeypackagesInvocations.count, 1)
         XCTAssertEqual(uploadKeypackagesInvocations.first?.clientID, clientID)
-        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.copyBytes().base64EncodedString() })
+        XCTAssertEqual(
+            uploadKeypackagesInvocations.first?.keyPackages,
+            keyPackages.map { $0.copyBytes().base64EncodedString() }
+        )
     }
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() async {
@@ -3081,20 +3086,20 @@ extension ConversationConfiguration: @retroactive Equatable {
         lhs: ConversationConfiguration,
         rhs: ConversationConfiguration
     ) -> Bool {
-        return lhs.ciphersuite == rhs.ciphersuite &&
-        lhs.externalSenders == rhs.externalSenders &&
-        lhs.custom == rhs.custom
+        lhs.ciphersuite == rhs.ciphersuite &&
+            lhs.externalSenders == rhs.externalSenders &&
+            lhs.custom == rhs.custom
     }
 }
 
 extension ExternalSenderKey: @retroactive Equatable {
     public static func == (lhs: ExternalSenderKey, rhs: ExternalSenderKey) -> Bool {
-        return lhs.copyBytes() == rhs.copyBytes()
+        lhs.copyBytes() == rhs.copyBytes()
     }
 }
 
 extension ClientId: @retroactive Equatable {
     public static func == (lhs: ClientId, rhs: ClientId) -> Bool {
-        return lhs.copyBytes() == rhs.copyBytes()
+        lhs.copyBytes() == rhs.copyBytes()
     }
 }

@@ -79,7 +79,10 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         mockSafeCoreCrypto.coreCryptoContext
             .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
-                XCTAssertEqual(conversationID, MLSGroupID.init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")?.conversationId)
+                XCTAssertEqual(
+                    conversationID,
+                    MLSGroupID(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")?.conversationId
+                )
                 // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
                 XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
                 return [
