@@ -208,5 +208,8 @@ final class TeamManageTests: WireUITestCase {
             convoId: convoUUID,
             domain: convoDomain
         )
+        
+        
+        //NEEDS FIXING - add verification of these messages
     }
 }
