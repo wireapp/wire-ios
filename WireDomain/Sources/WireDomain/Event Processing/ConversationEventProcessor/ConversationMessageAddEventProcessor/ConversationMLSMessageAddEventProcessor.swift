@@ -78,7 +78,10 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         ]
 
         // Ensure is self conversation, sender is self user and conversation is not read-only
-        guard await messageLocalStore.canAddMessage(conversation: conversation, senderID: senderID.id) else {
+        guard await messageLocalStore.canAddMessage(
+            conversation: conversation,
+            senderID: senderID.id
+        ) else {
             return WireLogger.eventProcessing.warn(
                 "Ignoring incoming message: illegal sender or conversation",
                 attributes: logAttributes
