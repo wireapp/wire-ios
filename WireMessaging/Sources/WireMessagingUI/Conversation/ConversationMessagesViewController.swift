@@ -43,16 +43,24 @@ public final class ConversationMessagesViewController: UIViewController {
         setupCollectionView()
         setupDataSource()
                 
+        Task {
+            await self.observeUpdates()
+        }
         
-        viewModel.updatesPublisher.sink { update in
-            switch update {
-            case .initiallyLoaded(let snapshot):
-                self.dataSource.apply(snapshot)
-            }
-        }.store(in: &cancellables)
-
         viewModel.onViewReady()
         
+    }
+    
+    private func observeUpdates() async {
+        let stream = await viewModel.updatesStream()
+        for await update in stream {
+            switch update {
+            case .initiallyLoaded(let snapshot):
+                await dataSource.apply(snapshot)
+            case .messageAdded(let snapshot):
+                await dataSource.apply(snapshot)
+            }
+        }
     }
         
     private func setupCollectionView() {

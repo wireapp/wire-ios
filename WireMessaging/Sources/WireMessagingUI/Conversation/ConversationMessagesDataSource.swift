@@ -27,19 +27,28 @@ public enum MessagesSection: Sendable {
 public typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
 
 public protocol ConversationMessagesDataSourceProtocol: Sendable {
-    func loadInitialMessages() async -> MessagesSnapshot
+    func updatesStream() async -> AsyncStream<MessageUpdateType>
+    func loadInitialMessages() async
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
-public actor ConversationMessagesDataSource: ConversationMessagesDataSourceProtocol {
+public actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
     
+    private var updatesStreamContinuation: AsyncStream<MessageUpdateType>.Continuation?
+    public func updatesStream() async -> AsyncStream<MessageUpdateType> {
+        return AsyncStream { continuation in
+            self.updatesStreamContinuation = continuation
+        }
+    }
+
     public init() {
         
     }
     
     // store cached message view models
     private var messages: [MessageType] = []
+    private var snapshot = MessagesSnapshot()
     
     // performs search
     func search(queries: [String]) {
@@ -52,17 +61,17 @@ public actor ConversationMessagesDataSource: ConversationMessagesDataSourceProto
         
     }
     
-    public func loadInitialMessages() async -> MessagesSnapshot {
+    public func loadInitialMessages() async {
 #if DEBUG
         generateMessages()
+        simulateAddingMessage()
         Task {
             await timerLoop()
         }
 #endif
-        var snapshot = MessagesSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(messages)
-        return snapshot
+        updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
     }
     
     // load message near some other provided message
@@ -118,9 +127,29 @@ public actor ConversationMessagesDataSource: ConversationMessagesDataSourceProto
             ))
         }
     }
+    
+    private func simulateAddingMessage() {
+        Task {
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            let message: MessageType =
+                .text(TextMessageViewModel(
+                    content: AttributedString(stringLiteral: "New message added"),
+                    senderViewModel: Bool.random() ?
+                    SenderViewModel(state: .exists("Sender")) : SenderViewModel(state: .empty)
+                ))
+            messages.append(message)
+            snapshot.appendItems([message])
+            updatesStreamContinuation?.yield(.messageAdded(snapshot))
+        }
+    }
         
     private var isRunning = true
     private func timerLoop() async {
+        Task {
+            try? await Task.sleep(nanoseconds: 10_000_000_000)
+            isRunning = false
+        }
+        
         while isRunning {
             // Do your actor-safe update
             performRandomUpdate()
