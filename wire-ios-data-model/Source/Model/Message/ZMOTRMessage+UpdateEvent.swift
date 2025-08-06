@@ -80,10 +80,10 @@ extension ZMOTRMessage {
             case .warnUserAllowRetry:
                 // Append a placeholder message to the conversation and store the unprocessed event data.
                 return appendUnknownMessage(
-                    messageID: UUID(transportString: message.messageID) ?? UUID(),
+                    messageID: message.messageID,
                     senderID: senderID,
-                    serverTimestamp: updateEvent.timestamp ?? .now,
-                    payload: Data(), // TODO: pass actual payload
+                    serverTimestamp: updateEvent.timestamp,
+                    base64Payload: updateEvent.genericMessageBase64Content,
                     conversation: conversation,
                     context: context,
                     logAttributes: updateEvent.logAttributes
@@ -330,16 +330,25 @@ extension ZMOTRMessage {
     }
 
     private static func appendUnknownMessage(
-        messageID: UUID,
+        messageID: String?,
         senderID: UUID,
-        serverTimestamp: Date,
-        payload: Data,
+        serverTimestamp: Date?,
+        base64Payload: String?,
         conversation: ZMConversation,
         context: NSManagedObjectContext,
         logAttributes: LogAttributes
     ) -> ZMOTRMessage? {
         do {
             WireLogger.eventProcessing.warn("Failed to parse GenericMessage from payload, inserting unknown message")
+
+            guard let messageID, let messageID = UUID(transportString: messageID) else {
+                WireLogger.eventProcessing.warn("Failed to convert message ID to UUID")
+                return nil
+            }
+            guard let base64Payload, let payload = Data(base64Encoded: base64Payload) else {
+                WireLogger.eventProcessing.warn("Failed to convert base64 string to Data")
+                return nil
+            }
 
             let sender = ZMUser.fetchOrCreate(
                 with: senderID,
@@ -350,7 +359,7 @@ extension ZMOTRMessage {
             return try conversation.appendUnknownMessage(
                 messageID: messageID,
                 sender: sender,
-                serverTimestamp: serverTimestamp,
+                serverTimestamp: serverTimestamp ?? .now,
                 payload: payload
             )
 
