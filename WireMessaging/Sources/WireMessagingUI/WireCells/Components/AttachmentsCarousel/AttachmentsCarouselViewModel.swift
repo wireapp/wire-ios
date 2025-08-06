@@ -30,13 +30,8 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
         static let thumbnailSize = CGSize(width: 74, height: 74)
     }
 
-    fileprivate struct ThumbnailID: Hashable {
-        let nodeID: UUID
-        let versionID: UUID
-    }
-
     private var drafts: [WireCellsDraft] = []
-    private var thumbnails: [ThumbnailID: UIImage] = [:]
+    private var thumbnails: [UUID: UIImage] = [:]
     private var generatingThumbnailIDs: Set<UUID> = []
 
     @Published private(set) var items: [AttachmentsCarouselItem]
@@ -66,13 +61,13 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
     }
 
     private func refreshItems() {
-        items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.thumbnailID]) }
+        items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.versionID]) }
     }
 
     private func generateThumbnail(for draft: WireCellsDraft) async {
         guard
             !generatingThumbnailIDs.contains(draft.nodeID),
-            thumbnails[draft.thumbnailID] == nil,
+            thumbnails[draft.versionID] == nil,
             let fileType = draft.fileType,
             fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent)
         else { return }
@@ -86,7 +81,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
 
         do {
             let result = try await QLThumbnailGenerator.shared.generateBestRepresentation(for: request)
-            thumbnails[draft.thumbnailID] = result.uiImage
+            thumbnails[draft.versionID] = result.uiImage
             refreshItems()
         } catch {
             WireLogger.wireCells.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
@@ -161,10 +156,6 @@ private extension WireCellsDraft {
     var nameAndExtension: (name: String, extension: String) {
         let url = URL(fileURLWithPath: name)
         return (name: url.deletingPathExtension().lastPathComponent, extension: url.pathExtension)
-    }
-
-    var thumbnailID: AttachmentsCarouselViewModel.ThumbnailID {
-        AttachmentsCarouselViewModel.ThumbnailID(nodeID: nodeID, versionID: versionID)
     }
 
 }
