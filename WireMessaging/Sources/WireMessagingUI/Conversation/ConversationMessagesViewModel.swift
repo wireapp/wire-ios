@@ -18,23 +18,15 @@
 
 import Foundation
 
-public enum MessageUpdateType: Sendable {
-
-    case initiallyLoaded(MessagesSnapshot)
-    case messageAdded(MessagesSnapshot)
-    // message added
-    // loaded new messages, new or older
-    // re-sent failed message
-    // to be added other updates that happens to a conversation view
-}
-
 @MainActor
 public protocol ConversationMessagesViewModelProtocol {
-    func updatesStream() async -> AsyncStream<MessageUpdateType>
+    func updatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
 }
 
 @MainActor
+// Not much doing at the moment, will be more later
+// One of the main responsibilities is being MainActor to serve view
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
 
     private let dataSource: any ConversationMessagesDataSourceProtocol
@@ -43,7 +35,7 @@ public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtoc
         self.dataSource = dataSource
     }
 
-    public func updatesStream() async -> AsyncStream<MessageUpdateType> {
+    public func updatesStream() async -> AsyncStream<MessagesUpdate> {
         await dataSource.updatesStream()
     }
 

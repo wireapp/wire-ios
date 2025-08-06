@@ -22,6 +22,7 @@ import UIKit
 class MessageCollectionViewCell: UICollectionViewCell {
 
     // reuse identifier for each message type
+    // one for now, later will be improved
     static let reuseIdentifier = "MessageCollectionViewCell"
 
     var messageType: MessageType? {

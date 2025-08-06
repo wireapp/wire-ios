@@ -16,17 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+public import Foundation
 
-public enum MessageType: Hashable, Identifiable, Sendable {
+public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
 
-    public var id: ObjectIdentifier {
-        switch self {
-        case let .text(vm): vm.id
-        }
+    public let id = UUID()
+
+    @Published var content: AttributedString
+
+    @Published var senderViewModel: SenderViewModel
+
+    init(
+        content: AttributedString,
+        senderViewModel: SenderViewModel
+    ) {
+        self.content = content
+        self.senderViewModel = senderViewModel
     }
 
-    case text(TextMessageViewModel)
-    // case image, video, system, etc
+    public static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 
 }

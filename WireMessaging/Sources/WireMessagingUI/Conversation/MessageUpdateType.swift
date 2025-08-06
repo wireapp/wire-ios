@@ -16,30 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-public import Foundation
+import Foundation
 
-public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
+public enum MessagesUpdate: Sendable {
 
-    public let id = UUID()
-    @Published var content: AttributedString
-
-    @Published var senderViewModel: SenderViewModel
-
-    init(
-        content: AttributedString,
-        senderViewModel: SenderViewModel
-    ) {
-        self.content = content
-        self.senderViewModel = senderViewModel
-    }
-
-    public static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+    case initiallyLoaded(MessagesSnapshot)
+    case messageAdded(MessagesSnapshot)
+    // later to be added more updates like:
+    // loaded new messages, new or older
+    // re-sent failed message
+    // to be added other updates that happens to a conversation view
 
 }

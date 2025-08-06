@@ -21,13 +21,14 @@ public import UIKit
 import WireMessagingDomain
 
 public enum MessagesSection: Sendable {
+    // one section for now, later we'd have probably one section for a day
     case main
 }
 
 public typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
 
 public protocol ConversationMessagesDataSourceProtocol: Sendable {
-    func updatesStream() async -> AsyncStream<MessageUpdateType>
+    func updatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
 }
 
@@ -35,13 +36,16 @@ public protocol ConversationMessagesDataSourceProtocol: Sendable {
 /// Does all calculations in background
 public actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
-    private var updatesStreamContinuation: AsyncStream<MessageUpdateType>.Continuation?
-    public func updatesStream() async -> AsyncStream<MessageUpdateType> {
+    // AsyncStream because Combine's AnyPublisher is not Sendable
+    private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
+    public func updatesStream() async -> AsyncStream<MessagesUpdate> {
         AsyncStream { continuation in
             self.updatesStreamContinuation = continuation
         }
     }
 
+    // here on later stages will be injected uses cases and
+    // provider to ask for publishers needed for View Models
     public init() {}
 
     // store cached message view models
@@ -97,9 +101,12 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
 
     // MARK: - Handle notifications about something changed
 
+    // here will be subscribed to any messages updates notifications
+    // and start processing them
     private func subscribeToNotifications() {}
 
     #if DEBUG
+        // Temp Dev code
         func generateMessages() {
             let base = "This is a line. "
             let modelMessages: [MessageModel] = (0 ..< 7).map { _ in
