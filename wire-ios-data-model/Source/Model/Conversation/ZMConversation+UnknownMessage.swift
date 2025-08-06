@@ -20,7 +20,6 @@ public import Foundation
 
 public extension ZMConversation {
 
-    @discardableResult
     func appendUnknownMessage(
         messageID: UUID,
         sender: ZMUser,
@@ -40,6 +39,7 @@ public extension ZMConversation {
         unknownMessage.serverTimestamp = serverTimestamp
         unknownMessage.payload = payload
         return unknownMessage
+
     }
 
     enum AppendUnknownMessageError: Error {

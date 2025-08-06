@@ -82,7 +82,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
             )
-
             return await addInvalidSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,

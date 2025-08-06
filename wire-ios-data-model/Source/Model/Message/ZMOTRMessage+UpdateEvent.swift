@@ -69,7 +69,6 @@ extension ZMOTRMessage {
                 // Throw the message away without informing the user.
                 return nil
             case .discardAndWarn:
-                // TODO: system message only
                 appendUnknownMessageReceivedSystemMessage(
                     fromSender: senderID,
                     atTime: updateEvent.timestamp ?? .now,
