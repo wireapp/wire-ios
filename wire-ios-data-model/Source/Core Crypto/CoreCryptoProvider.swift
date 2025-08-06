@@ -105,7 +105,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
-        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
+        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCrypto()
         _ = try await coreCrypto.perform { context in
             try await context.mlsInit(
@@ -265,7 +265,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         // Initialise MLS if we have previously registered an MLS client
         if let mlsClientID {
-            let cipherSuite = await featureRespository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
+            let cipherSuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             try await coreCrypto.perform { try await $0.mlsInit(
                 clientId: .init(bytes: mlsClientID.data),
                 ciphersuites: [cipherSuite],
@@ -334,7 +334,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
-            ciphersuite: ciphersuite.ccCipherSuite,
+            ciphersuite: ciphersuite.coreCryptoCipherSuite,
             credentialType: credentialType
         )
         let keyData = Data(keyBytes)

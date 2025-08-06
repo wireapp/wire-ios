@@ -51,7 +51,7 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle])
@@ -63,7 +63,7 @@ final class MLSTransportTests: XCTestCase {
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [Scaffolding.conversationEvent])
@@ -75,7 +75,7 @@ final class MLSTransportTests: XCTestCase {
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
-        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
+        _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [])
@@ -86,7 +86,7 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockValue = []
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(result, MlsTransportResponse.success)
@@ -97,7 +97,7 @@ final class MLSTransportTests: XCTestCase {
         mlsAPI.postCommitBundle_MockError = MLSAPIError.mlsStaleMessage
 
         // When
-        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.ccCommitBundle)
+        let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
         XCTAssertEqual(result, MlsTransportResponse.abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
@@ -142,7 +142,7 @@ final class MLSTransportTests: XCTestCase {
 }
 
 extension WireNetwork.CommitBundle {
-    var ccCommitBundle: WireCoreCryptoUniffi.CommitBundle {
+    var coreCryptoCommitBundle: WireCoreCryptoUniffi.CommitBundle {
         .init(
             welcome: welcome != nil ? Welcome(bytes: welcome!) : nil,
             commit: commit,

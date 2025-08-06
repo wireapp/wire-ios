@@ -320,10 +320,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockAddClientsArguments.count, 1)
         XCTAssertEqual(mockAddClientsArguments.first?.0, groupID.conversationId)
 
-        XCTAssertEqual(mockAddClientsArguments.count, keyPackages.compactMap(\.ccKeyPackage).count)
+        XCTAssertEqual(mockAddClientsArguments.count, keyPackages.compactMap(\.coreCryptoKeyPackage).count)
         XCTAssertEqual(
             mockAddClientsArguments.first?.1.map { $0.copyBytes() },
-            keyPackages.compactMap(\.ccKeyPackage).map { $0.copyBytes() }
+            keyPackages.compactMap(\.coreCryptoKeyPackage).map { $0.copyBytes() }
         )
         // Then the commit bundle was sent.
         let expectedCommitBundle = CommitBundle(

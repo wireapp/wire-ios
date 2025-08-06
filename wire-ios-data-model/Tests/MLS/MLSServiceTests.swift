@@ -374,7 +374,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: removalKey)
         )
         let expectedConfig = ConversationConfiguration(
-            ciphersuite: defaultCipherSuite.ccCipherSuite,
+            ciphersuite: defaultCipherSuite.coreCryptoCipherSuite,
             externalSenders: [ExternalSenderKey(bytes: removalKey)],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -402,7 +402,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
-            ciphersuite: defaultCipherSuite.ccCipherSuite,
+            ciphersuite: defaultCipherSuite.coreCryptoCipherSuite,
             externalSenders: [],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -480,7 +480,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
         let expectedConfig = ConversationConfiguration(
-            ciphersuite: defaultCipherSuite.ccCipherSuite,
+            ciphersuite: defaultCipherSuite.coreCryptoCipherSuite,
             externalSenders: [ExternalSenderKey(bytes: removalKey)],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -520,7 +520,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             MLSUser(id: UUID(), domain: "example.com")
         ]
         let expectedConfig = ConversationConfiguration(
-            ciphersuite: defaultCipherSuite.ccCipherSuite,
+            ciphersuite: defaultCipherSuite.coreCryptoCipherSuite,
             externalSenders: [ExternalSenderKey(bytes: removalKey)],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -583,7 +583,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         ]
         let usersIncludingSelf = users + [mlsSelfUser]
         let expectedConfig = ConversationConfiguration(
-            ciphersuite: defaultCipherSuite.ccCipherSuite,
+            ciphersuite: defaultCipherSuite.coreCryptoCipherSuite,
             externalSenders: [ExternalSenderKey(bytes: removalKey)],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
