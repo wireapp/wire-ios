@@ -171,6 +171,71 @@ class TestServiceClient {
             throw RuntimeError("Error \(pureResponse.description)")
         }
     }
+
+    func fileToBase64String(filePath: String) -> String? {
+        let fileURL = URL(fileURLWithPath: filePath)
+        do {
+            let fileData = try Data(contentsOf: fileURL)
+            return fileData.base64EncodedString()
+        } catch {
+            return nil
+        }
+    }
+
+    func sendFile(
+        type: String,
+        user: UserInfo,
+        fileName: String,
+        filepath: String,
+        convoId: UUID,
+        domain: String,
+        timeoutMillis: Int = 0,
+        otherAlgorithm: Bool = false,
+        otherHash: Bool = false,
+        invalidHash: Bool = false
+
+    ) async throws {
+
+        let instanceId = try await getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil,
+            deviceName: nil
+        )
+
+        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendFile")
+        guard let requestUrl = url else { fatalError("Invalid URL") }
+
+        var body: [String: Any] = [
+            "conversationId": convoId.uuidString.lowercased(),
+            "data": fileToBase64String(filePath: filepath)!,
+            "fileName": fileName,
+            "type": type,
+            "otherAlgorithm": otherAlgorithm,
+            "otherHash": otherHash,
+            "invalidHash": invalidHash
+        ]
+
+        if domain != "staging.zinfra.io" {
+            body["conversationDomain"] = domain
+        }
+
+        if timeoutMillis > 0 {
+            body["messageTimer"] = timeoutMillis
+        }
+
+        let (responseData, response) = try await sendHttpRequest(
+            url: String(describing: requestUrl),
+            body: body,
+            requestType: "POST"
+        )
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+    }
 }
 
 private struct CreateInstaceResponse: Decodable {
