@@ -74,7 +74,11 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            12
+        }
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell

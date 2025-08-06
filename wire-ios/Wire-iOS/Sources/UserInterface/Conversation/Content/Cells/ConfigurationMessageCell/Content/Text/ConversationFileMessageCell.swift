@@ -55,9 +55,15 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        containerView.shape = .rounded(radius: 12)
+        let cornerRadius: CGFloat = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            12
+        }
+        
+        containerView.shape = .rounded(radius: cornerRadius)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true
