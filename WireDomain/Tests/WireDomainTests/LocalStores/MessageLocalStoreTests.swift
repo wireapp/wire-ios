@@ -81,6 +81,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
         // Given a regular message to add to a conversation
         let genericMessage = try XCTUnwrap(GenericMessage(Scaffolding.base64EncodedString))
+        XCTAssertTrue(genericMessage.validateFields())
 
         // When
 
