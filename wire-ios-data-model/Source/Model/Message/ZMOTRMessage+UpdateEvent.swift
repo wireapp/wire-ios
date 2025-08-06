@@ -63,7 +63,7 @@ extension ZMOTRMessage {
             return nil
         }
 
-        if message.isContentUnknown {
+        if message.content == nil {
             switch message.unknownStrategy {
             case .ignore:
                 // Throw the message away without informing the user.
