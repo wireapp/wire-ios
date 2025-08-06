@@ -66,7 +66,7 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
         generateMessages()
         simulateAddingMessage()
         Task {
-            await timerLoop()
+            await updatesTimerLoop()
         }
 #endif
         snapshot.appendSections([.main])
@@ -144,7 +144,7 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
     }
         
     private var isRunning = true
-    private func timerLoop() async {
+    private func updatesTimerLoop() async {
         Task {
             try? await Task.sleep(nanoseconds: 10_000_000_000)
             isRunning = false
@@ -160,54 +160,17 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
     }
 
     private func performRandomUpdate() {
-        
-        guard let message = messages.randomElement(),
-              case let .text(randomVM) = message else {
+        guard let message = messages.randomElement(), case let .text(randomVM) = message else {
             return
         }
-        let base = "Updated line. "
         DispatchQueue.main.async {
+            let base = "Updated line. "
             let repeatCount = Int.random(in: 1...6)
-            randomVM.content = AttributedString(
-                stringLiteral: String(repeating: base, count: repeatCount))
-            let updateSenderAttributed = AttributedString(stringLiteral: String(
-                repeating: "Updated Sender",
-                count: repeatCount
+            randomVM.content = AttributedString(stringLiteral: String(repeating: base, count: repeatCount))
+            let updateSenderAttributed = AttributedString(
+                stringLiteral: String(repeating: "Updated Sender", count: repeatCount
             ))
             randomVM.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed) : SenderViewModel.State.empty
-            
-        }
-        
-        guard let message = self.messages.randomElement(),
-              case let .text(randomVM2) = message else {
-            return
-        }
-        DispatchQueue.main.async {
-            let repeatCount = Int.random(in: 1...6)
-            randomVM2.content = AttributedString(
-                stringLiteral: String(repeating: base, count: repeatCount))
-            let updateSenderAttributed2 = AttributedString(stringLiteral: String(
-                repeating: "Updated Sender",
-                count: repeatCount
-            ))
-            randomVM2.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed2) : SenderViewModel.State.empty
-        }
-        
-        
-        guard let message = self.messages.randomElement(),
-              case let .text(randomVM3) = message else {
-            return
-        }
-        DispatchQueue.main.async {
-            let repeatCount = Int.random(in: 1...6)
-            
-            randomVM3.content = AttributedString(
-                stringLiteral: String(repeating: base, count: repeatCount))
-            let updateSenderAttributed3 = AttributedString(stringLiteral: String(
-                repeating: "Updated Sender",
-                count: repeatCount
-            ))
-            randomVM3.senderViewModel.state = Bool.random() ? SenderViewModel.State.exists(updateSenderAttributed3) : SenderViewModel.State.empty
         }
     }
     
