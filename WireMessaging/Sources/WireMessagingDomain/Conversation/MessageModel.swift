@@ -33,6 +33,7 @@ public struct MessageModel: Sendable {
     }
 }
 
+// To be refined later
 public struct SystemMessageModel: Sendable {}
 
 public struct ImageMessageModel: Sendable {}

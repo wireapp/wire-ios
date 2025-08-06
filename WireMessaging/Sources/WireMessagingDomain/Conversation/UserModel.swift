@@ -19,7 +19,7 @@
 public import Foundation
 
 public struct UserModel: Sendable {
-
+    // To be refined later
     public let remoteIdentifier: UUID
     public let name: String?
     public let handle: String?

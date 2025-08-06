@@ -27,6 +27,7 @@ public protocol ConversationMessagesViewModelProtocol {
 @MainActor
 // Not much doing at the moment, will be more later
 // One of the main responsibilities is being MainActor to serve view
+// since DataSource is actor and works on background thread
 public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
 
     private let dataSource: any ConversationMessagesDataSourceProtocol
