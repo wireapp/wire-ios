@@ -41,8 +41,8 @@ final class UnknownMessageReceivedCellDescription: ConversationMessageCellDescri
     let containsHighlightableContent = false
 
     init() {
-        configuration = L10n.Localizable.Content.System.UnknownMessageReceived.body
-        accessibilityLabel = configuration
+        self.configuration = L10n.Localizable.Content.System.UnknownMessageReceived.body
+        self.accessibilityLabel = configuration
     }
 
 }

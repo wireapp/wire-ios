@@ -23,24 +23,20 @@ import GenericMessageProtocol
 
 public extension GenericMessage {
 
-    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. If the
-    /// result of the subsequent call to `validateFields()` returns `false`, the message instance is discarded.
+    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. If
+    /// `true` is passed for the `validate` argument, the initializer fails if `validateFields()` returns false.
 
-    static func validatedMessage(from base64String: String) -> GenericMessage? {
-        let message = nonValidatedMessage(from: base64String)
-        guard let message, message.validateFields() else { return nil }
-        return message
-    }
-
-    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. The
-    /// instance is returned as is and not being validated further.
-
-    static func nonValidatedMessage(from base64String: String) -> GenericMessage? {
-        Data(base64Encoded: base64String).map { data in
+    init?(
+        from base64String: String,
+        validate: Bool
+    ) {
+        let genericMessage = Data(base64Encoded: base64String).map { data in
             GenericMessage.with { message in
                 try? message.merge(serializedData: data)
             }
         }
+        guard let genericMessage, !validate || genericMessage.validateFields() else { return nil }
+        self = genericMessage
     }
 
     init(

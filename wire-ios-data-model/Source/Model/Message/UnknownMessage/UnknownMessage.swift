@@ -19,12 +19,14 @@
 import CoreData
 import Foundation
 
-/// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
+/// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an
+/// `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
 
 public final class UnknownMessage: ZMOTRMessage {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
-        return NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
+        NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
 
     /// The latest app version which tried to process this message and failed.
