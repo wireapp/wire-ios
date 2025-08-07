@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 import WireDesign
 
 /// A view that contains another `content` view.
@@ -26,23 +26,23 @@ import WireDesign
 /// Set `bubbleStyle` to change the color of the bubble.
 final class ConversationMessageContainerView: UIView {
     let content: UIView
-    
+
     static let bubbleCornerRadius: CGFloat = 16
-    
+
     static let bubbleEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 12, right: 12)
-    
+
     enum BubbleStyle {
         case ownMessage(userColor: UIColor)
         case otherMessage
     }
-    
+
     var bubbleStyle: BubbleStyle = .otherMessage {
         didSet {
-            self.backgroundColor = if isBubble {
+            backgroundColor = if isBubble {
                 switch bubbleStyle {
                 case .otherMessage:
                     SemanticColors.ChatBubbleSimple.backgroundOtherMessage
-                case .ownMessage(userColor: let color):
+                case let .ownMessage(userColor: color):
                     color
                 }
             } else {
@@ -51,7 +51,7 @@ final class ConversationMessageContainerView: UIView {
             setNeedsLayout()
         }
     }
-    
+
     var isBubble: Bool = false {
         didSet {
             if isBubble {
@@ -59,22 +59,22 @@ final class ConversationMessageContainerView: UIView {
             } else {
                 content.fitIn(view: self)
             }
-            
-            self.layer.cornerRadius = isBubble ? Self.bubbleCornerRadius : 0
-            
+
+            layer.cornerRadius = isBubble ? Self.bubbleCornerRadius : 0
+
             setNeedsLayout()
         }
     }
-    
+
     init(content: UIView) {
         self.content = content
-        
+
         super.init(frame: .zero)
-        
+
         self.backgroundColor = .clear
         addSubview(content)
     }
-    
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -84,7 +84,7 @@ final class ConversationMessageContainerView: UIView {
 private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
     var bubbleStyle: ConversationMessageContainerView.BubbleStyle
     var isBubble: Bool
-    
+
     func makeUIView(context: Context) -> ConversationMessageContainerView {
         let label = UILabel()
         label.text = "This is a text message."
@@ -99,7 +99,7 @@ private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
         container.bubbleStyle = bubbleStyle
         return container
     }
-    
+
     func updateUIView(_ view: ConversationMessageContainerView, context: Context) {}
 }
 
@@ -110,7 +110,7 @@ private struct ConversationMessageContainerView_Preview: UIViewRepresentable {
         }
         .padding()
     }
-    
+
     ScrollView {
         VStack {
             ConversationMessageContainerView_Preview(bubbleStyle: .ownMessage(userColor: .blue), isBubble: true)

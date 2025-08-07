@@ -59,7 +59,7 @@ final class ConversationMessageCellTableViewAdapter<
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         focusStyle = .custom
@@ -68,13 +68,13 @@ final class ConversationMessageCellTableViewAdapter<
         isOpaque = false
 
         contentView.addSubview(cellView)
-        
+
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
         self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        
+
         NSLayoutConstraint.activate([
             leading,
             trailing,

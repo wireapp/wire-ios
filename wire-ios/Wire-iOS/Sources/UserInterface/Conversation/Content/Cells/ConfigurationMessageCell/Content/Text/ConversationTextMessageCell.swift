@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireDesign
+import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -49,7 +49,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         return view
     }()
-    
+
     private var container: ConversationMessageContainerView?
 
     var isSelected = false
@@ -63,6 +63,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -93,7 +94,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             container.translatesAutoresizingMaskIntoConstraints = false
             addSubview(container)
         }
-        
+
         configureConstraints()
     }
 
@@ -107,7 +108,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
         messageTextView.fitIn(view: self, insets: insets)
     }
-    
+
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         if DeveloperFlag.chatBubblesSimple.isOn {
             let ownColor = SemanticColors.ChatBubbleSimple.foregroundOwnMessage
@@ -125,7 +126,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             messageTextView.accessibilityIdentifier = "Message"
         }
         accessibilityLabel = messageTextView.attributedText.string
-        
+
         container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }

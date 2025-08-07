@@ -61,7 +61,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
         } else {
             12
         }
-        
+
         containerView.shape = .rounded(radius: cornerRadius)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = cornerRadius
