@@ -151,7 +151,8 @@ final class ConversationViewController: UIViewController {
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
-                    conversation: conversation
+                    conversationObjectID: conversation.objectID,
+                    context: userSession.contextProvider.newBackgroundContext()
                 )
             )
         } else {

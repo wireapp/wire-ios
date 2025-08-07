@@ -17,31 +17,51 @@
 //
 
 import WireMessagingDomain
-import CoreData
+@preconcurrency import CoreData
 @preconcurrency import WireDataModel
 
 final class LoadConversationMessagesRepository: LoadConversationMessagesRepositoryProtocol {
     
-    private let conversation: ZMConversation
+    private let conversationObjectID: NSManagedObjectID
+    private let context: NSManagedObjectContext
     
-    init(conversation: ZMConversation) {
-        self.conversation = conversation
+    private var conversation: ZMConversation?
+    
+    init(
+        conversationObjectID: NSManagedObjectID,
+        context: NSManagedObjectContext
+    ) {
+        self.conversationObjectID = conversationObjectID
+        self.context = context
+    }
+    
+    private func getConversation() async -> ZMConversation? {
+        if let conversation {
+            return conversation
+        }
+        
+        conversation = await context.perform { [conversationObjectID, context] in
+            try? context.existingObject(with: conversationObjectID) as? ZMConversation
+        }
+        return conversation
     }
     
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
+        guard let conversation = await getConversation() else {
+            return []
+        }
         
-        // FIX ME: use background thread
-        await conversation.managedObjectContext!.perform { [unowned self] in
-            let fetchRequest = fetchRequest()
-            fetchRequest
-                .fetchLimit = limit +
-                5 // We need to fetch a bit more than requested so that there is overlap between messages in different
-            // fetches
+        return await context.perform { [unowned self] in
+            let fetchRequest = fetchRequest(conversation: conversation)
+            
+            // We need to fetch a bit more than requested so that there is overlap between messages in different
+            fetchRequest.fetchLimit = limit + 5
+            
             fetchRequest.fetchOffset = offset
 
             let fetchController = NSFetchedResultsController<ZMMessage>(
                 fetchRequest: fetchRequest,
-                managedObjectContext: conversation.managedObjectContext!,
+                managedObjectContext: context,
                 sectionNameKeyPath: nil,
                 cacheName: nil
             )
@@ -49,13 +69,12 @@ final class LoadConversationMessagesRepository: LoadConversationMessagesReposito
     //        fetchController?.delegate = self
             try! fetchController.performFetch()
 
-            let objects = (fetchController.fetchedObjects ?? [])
+            return (fetchController.fetchedObjects ?? [])
                 .map { $0.toDomain()}
-            return objects
         }
     }
     
-    private func fetchRequest() -> NSFetchRequest<ZMMessage> {
+    private func fetchRequest(conversation: ZMConversation) -> NSFetchRequest<ZMMessage> {
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
         fetchRequest.predicate = conversation.visibleMessagesPredicate
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
