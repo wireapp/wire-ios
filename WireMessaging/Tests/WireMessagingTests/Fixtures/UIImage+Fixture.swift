@@ -16,29 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+import UIKit
 
-public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
+@testable import WireMessagingUI
 
-    public enum State: Sendable, Equatable {
-        case uploading(progress: Double)
-        case uploaded
-        case failed
+extension UIImage {
+
+    static func fixture() -> UIImage {
+        UIImage(resource: .dropdown) 
     }
-
-    public enum Kind: Sendable, Equatable {
-        case image(thumbnail: UIImage?)
-        case video(thumbnail: UIImage?)
-        case audio(samples: [Double]?)
-        case document
-    }
-
-    public var id: UUID
-    public var state: State
-    public var kind: Kind
-    public var name: String
-    public var fileExtension: String?
-    public var size: String
-    var fileIcon: FileIcon
 
 }

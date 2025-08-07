@@ -72,7 +72,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             !generatingThumbnailIDs.contains(draft.nodeID),
             thumbnails[draft.versionID] == nil,
             let fileType = draft.fileType,
-            fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent)
+            fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent) // FIXME: But not audio
         else { return }
 
         do {
@@ -140,10 +140,10 @@ private extension AttachmentsCarouselItem.Kind {
 
         if value.conforms(to: .image) {
             self = .image(thumbnail: thumbnail)
+        } else if value.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
         } else if value.conforms(to: .audiovisualContent) {
             self = .video(thumbnail: thumbnail)
-        } else if value.conforms(to: .audio) {
-            self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
         } else {
             self = .document
         }
