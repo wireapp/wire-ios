@@ -22,6 +22,8 @@ import WireCryptobox
 import WireDataModel
 import WireLogging
 
+import os // TODO: delete
+
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     enum Failure: Error {
@@ -113,15 +115,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         guard let conversation else { return }
 
-        let systemMessages = await createSystemMessages(
+        let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "message-local-store")
+        logger.warning("before creating system message")
+        let systemMessages = await createSystemMessages( // TODO: never returning from here
             from: messageType,
             conversation: conversation
         )
+        logger.fault("after creating system message")
 
         await addSystemMessages(
             systemMessages,
             to: conversation
         )
+        logger.fault("after adding system message")
     }
 
     public func addPotentialGapSystemMessage() async throws {

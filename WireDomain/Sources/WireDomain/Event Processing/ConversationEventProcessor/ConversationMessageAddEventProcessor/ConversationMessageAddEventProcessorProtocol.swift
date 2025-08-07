@@ -52,7 +52,7 @@ extension ConversationMessageAddEventProcessorProtocol {
         conversationID: ConversationID,
         date: Date
     ) async {
-        let systemMessageType: SystemMessageType = .invalid(
+        let systemMessageType: SystemMessageType = .invalid( // TODO: invalid? 
             sender: (senderID.id, senderID.domain),
             date: date
         )
