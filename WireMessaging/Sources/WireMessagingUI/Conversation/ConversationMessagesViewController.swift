@@ -65,6 +65,8 @@ package final class ConversationMessagesViewController: UIViewController {
             }
         }
     }
+    
+    private let reuseIdentifier: String = "MessageCell"
 
     private func setupCollectionView() {
         let layout = createLayout()
@@ -76,8 +78,8 @@ package final class ConversationMessagesViewController: UIViewController {
 
         collectionView
             .register(
-                MessageCollectionViewCell.self,
-                forCellWithReuseIdentifier: MessageCollectionViewCell.reuseIdentifier
+                UICollectionViewCell.self,
+                forCellWithReuseIdentifier: reuseIdentifier
             )
 
         view.addSubview(collectionView)
@@ -110,18 +112,27 @@ package final class ConversationMessagesViewController: UIViewController {
 
     private func setupDataSource() {
         dataSource =
-            DataSource(collectionView: collectionView) { collectionView, indexPath, message -> UICollectionViewCell? in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
-                    for: indexPath
-                ) as? MessageCollectionViewCell else {
-                    return UICollectionViewCell()
-                }
-
-                cell.messageType = message
-
-                return cell
+        DataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, message -> UICollectionViewCell? in
+            guard let self else { return UICollectionViewCell() }
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: reuseIdentifier,
+                for: indexPath
+            )
+            
+            self.setContent(cell: cell, message: message)
+            
+            return cell
+        }
+    }
+    
+    private func setContent(cell: UICollectionViewCell, message: MessageType) {
+        switch message {
+        case let .text(viewModel):
+            let config = UIHostingConfiguration {
+                TextMessageView(viewModel: viewModel)
             }
+            cell.contentConfiguration = config
+        }
     }
 
 }
