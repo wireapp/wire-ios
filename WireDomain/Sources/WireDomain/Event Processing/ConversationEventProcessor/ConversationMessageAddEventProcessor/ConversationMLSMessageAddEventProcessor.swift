@@ -110,7 +110,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
                 payload: payload,
                 senderID: senderID,
                 conversationID: conversationID,
-                unknownStrategy: genericMessage.unknownStrategy
+                unknownStrategy: genericMessage.unknownStrategy,
+                date: date ?? .now
             )
         }
 

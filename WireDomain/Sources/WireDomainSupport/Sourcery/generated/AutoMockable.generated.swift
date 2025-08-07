@@ -2536,17 +2536,17 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - addUnknownMessage
 
-    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayload_Invocations: [(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data)] = []
-    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayload_MockMethod: ((UUID, UUID, String?, UUID, String, Data) async -> Void)?
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations: [(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date)] = []
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod: ((UUID, UUID, String?, UUID, String, Data, Date) async -> Void)?
 
-    public func addUnknownMessage(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data) async {
-        addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayload_Invocations.append((messageID: messageID, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, payload: payload))
+    public func addUnknownMessage(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date) async {
+        addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations.append((messageID: messageID, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, payload: payload, date: date))
 
-        guard let mock = addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayload_MockMethod else {
-            fatalError("no mock for `addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayload`")
+        guard let mock = addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod else {
+            fatalError("no mock for `addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate`")
         }
 
-        await mock(messageID, conversationID, conversationDomain, senderID, senderDomain, payload)
+        await mock(messageID, conversationID, conversationDomain, senderID, senderDomain, payload, date)
     }
 
     // MARK: - canAddMessage

@@ -281,7 +281,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationDomain: String?,
         senderID: UUID,
         senderDomain: String,
-        payload: Data
+        payload: Data,
+        date: Date
     ) async {
         await context.perform { [self] in
             guard let conversation = ZMConversation.fetch(
@@ -294,6 +295,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 nonce: messageID,
                 managedObjectContext: context
             )
+            unknownMessage.serverTimestamp = date
             finalizeMessageUpdate(
                 message: unknownMessage,
                 senderID: senderID,

@@ -122,7 +122,8 @@ public protocol MessageLocalStoreProtocol {
         conversationDomain: String?,
         senderID: UUID,
         senderDomain: String,
-        payload: Data
+        payload: Data,
+        date: Date
     ) async
 
     /// Checks whether a message can be added to the conversation.

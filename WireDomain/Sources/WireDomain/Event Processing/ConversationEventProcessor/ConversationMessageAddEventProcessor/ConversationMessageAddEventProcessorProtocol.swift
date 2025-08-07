@@ -39,7 +39,8 @@ protocol ConversationMessageAddEventProcessorProtocol {
         payload: Data,
         senderID: WireNetwork.QualifiedID,
         conversationID: WireNetwork.QualifiedID,
-        unknownStrategy: GenericMessage.UnknownStrategy
+        unknownStrategy: GenericMessage.UnknownStrategy,
+        date: Date
     ) async
 
 }
@@ -67,13 +68,18 @@ extension ConversationMessageAddEventProcessorProtocol {
         payload: Data,
         senderID: WireNetwork.QualifiedID,
         conversationID: WireNetwork.QualifiedID,
-        unknownStrategy: GenericMessage.UnknownStrategy
+        unknownStrategy: GenericMessage.UnknownStrategy,
+        date: Date
     ) async {
         switch unknownStrategy {
         case .ignore:
             return
         case .discardAndWarn:
-            fatalError("TODO")
+            await addInvalidSystemMessage(
+                senderID: senderID,
+                conversationID: conversationID,
+                date: date
+            )
         case .warnUserAllowRetry:
             await messageLocalStore.addUnknownMessage(
                 messageID: UUID(transportString: messageID) ?? UUID(),
@@ -81,7 +87,8 @@ extension ConversationMessageAddEventProcessorProtocol {
                 conversationDomain: conversationID.domain,
                 senderID: senderID.id,
                 senderDomain: senderID.domain,
-                payload: payload
+                payload: payload,
+                date: date
             )
         }
     }
