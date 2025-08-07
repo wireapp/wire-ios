@@ -72,7 +72,7 @@ final class TeamManageTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
-            .openUserAccountPageForUser(with: memberUser.name)
+            .openUserAccountPageForUser(with: memberUser.username)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
