@@ -91,7 +91,7 @@ final class ConversationChannelHistoryAvailableCell: UIView, ConversationMessage
 
     private func setupViews() {
         containerView.backgroundColor = SemanticColors.Label.textDefaultWhite
-        containerView.layer.cornerRadius = 15
+        containerView.layer.cornerRadius = 10
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
 
@@ -113,8 +113,8 @@ final class ConversationChannelHistoryAvailableCell: UIView, ConversationMessage
         let padding: CGFloat = 10
 
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 10),
-            imageView.heightAnchor.constraint(equalToConstant: 10)
+            imageView.widthAnchor.constraint(equalToConstant: padding),
+            imageView.heightAnchor.constraint(equalToConstant: padding)
         ])
 
         NSLayoutConstraint.activate([

@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDesign
 @testable import Wire
 
 final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: ConversationMessageSnapshotTestCase {
@@ -98,7 +99,10 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
             messageType: .newConversation
         )
 
-        verify(message: message)
+        verify(
+            message: message,
+            snapshotBackgroundColor: SemanticColors.View.backgroundConversationList
+        )
     }
 
     // MARK: - Helpers
