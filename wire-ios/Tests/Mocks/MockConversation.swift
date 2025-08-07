@@ -90,7 +90,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
 
     var channelHistoryDepth: String? = ""
-    
+
     var hasMoreHistory: Bool = false
 
     var wireCellName: String = ""

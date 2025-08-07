@@ -187,7 +187,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             contentWidth: width,
             userDefaults: mockUserDefaults
         )
-        
+
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical

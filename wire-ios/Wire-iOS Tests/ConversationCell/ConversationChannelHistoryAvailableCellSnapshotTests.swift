@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDesign
 import WireTestingPackage
+import XCTest
 @testable import Wire
 
 final class ConversationChannelHistoryAvailableCellSnapshotTests: XCTestCase {
@@ -49,15 +49,15 @@ final class ConversationChannelHistoryAvailableCellSnapshotTests: XCTestCase {
 
     func testChannelHistoryHasMoreHistory_LightTheme() {
         let view = makeSut(hasMoreHistory: true)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view)
     }
-    
+
     func testChannelHistoryHasMoreHistory_DarkTheme() {
         let view = makeSut(hasMoreHistory: true)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: view)
@@ -65,22 +65,22 @@ final class ConversationChannelHistoryAvailableCellSnapshotTests: XCTestCase {
 
     func testChannelHistoryHasNoMoreHistory_LightTheme() {
         let view = makeSut(hasMoreHistory: false)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view)
     }
-    
+
     func testChannelHistoryHasNoMoreHistory_DarkTheme() {
         let view = makeSut(hasMoreHistory: false)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: view)
     }
-    
+
     // MARK: - Helpers
-    
+
     private func makeSut(hasMoreHistory: Bool) -> UIView {
         sut = ConversationChannelHistoryAvailableCellDescription(hasMoreHistory: hasMoreHistory)
         let view = sut.makeView()
@@ -89,7 +89,7 @@ final class ConversationChannelHistoryAvailableCellSnapshotTests: XCTestCase {
         wrapperView.backgroundColor = SemanticColors.View.backgroundConversationList
         wrapperView.addSubview(view)
         view.frame = wrapperView.bounds
-        
+
         return view
     }
 

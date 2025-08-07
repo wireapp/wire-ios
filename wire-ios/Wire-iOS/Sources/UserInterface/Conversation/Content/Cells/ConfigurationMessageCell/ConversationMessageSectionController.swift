@@ -425,10 +425,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
-        
+
         if let conversation = message.conversationLike,
-            conversation.isChannel == true,
-            conversation.channelHistoryDepth != nil {
+           conversation.isChannel == true,
+           conversation.channelHistoryDepth != nil {
             let description = ConversationChannelHistoryAvailableCellDescription(
                 hasMoreHistory: conversation.hasMoreHistory
             )
