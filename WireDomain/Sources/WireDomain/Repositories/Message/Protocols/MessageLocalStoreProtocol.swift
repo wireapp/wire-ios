@@ -106,7 +106,23 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String
     ) async
 
+    // TODO: fix comment
+    /// <#Description#>
+    /// - Parameters:
+    ///   - messageID: <#messageID description#>
+    ///   - conversationID: <#conversationID description#>
+    ///   - conversationDomain: <#conversationDomain description#>
+    ///   - senderID: <#senderID description#>
+    ///   - senderDomain: <#senderDomain description#>
+    ///   - payload: <#payload description#>
+
     func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data
     ) async
 
     /// Checks whether a message can be added to the conversation.

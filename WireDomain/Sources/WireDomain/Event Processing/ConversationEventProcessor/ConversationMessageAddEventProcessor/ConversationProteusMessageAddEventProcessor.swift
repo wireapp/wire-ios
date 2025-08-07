@@ -89,7 +89,10 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         if genericMessage.content == nil {
             return await handleNilContent(
+                messageID: genericMessage.messageID,
                 payload: payload,
+                senderID: senderID,
+                conversationID: conversationID,
                 unknownStrategy: genericMessage.unknownStrategy
             )
         }

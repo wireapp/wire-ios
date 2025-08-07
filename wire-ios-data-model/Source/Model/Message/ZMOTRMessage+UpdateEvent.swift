@@ -346,7 +346,8 @@ extension ZMOTRMessage {
                 WireLogger.eventProcessing.warn("updateEvent.senderUUID is nil", attributes: logAttributes)
                 return nil
             }
-            guard let base64Payload = updateEvent.genericMessageBase64Content, let payload = Data(base64Encoded: base64Payload) else {
+            guard let base64Payload = updateEvent.genericMessageBase64Content,
+                  let payload = Data(base64Encoded: base64Payload) else {
                 WireLogger.eventProcessing.warn("Failed to convert base64 string to Data", attributes: logAttributes)
                 return nil
             }

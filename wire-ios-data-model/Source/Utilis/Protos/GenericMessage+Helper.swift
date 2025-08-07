@@ -34,7 +34,8 @@ public extension GenericMessage {
         self.init(from: data, validate: validate)
     }
 
-    /// Deserializes a `GenericMessage` instance from the provided data. If `true` is passed for the `validate` argument, the initializer fails if `validateFields()` returns false.
+    /// Deserializes a `GenericMessage` instance from the provided data. If `true` is passed for the `validate`
+    /// argument, the initializer fails if `validateFields()` returns false.
 
     init?(
         from data: Data,

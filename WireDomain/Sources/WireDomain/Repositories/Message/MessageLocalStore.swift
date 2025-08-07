@@ -214,7 +214,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             finalizeMessageUpdate(
-                clientMessage: clientMessage,
+                message: clientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -267,7 +267,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             finalizeMessageUpdate(
-                clientMessage: assetClientMessage,
+                message: assetClientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -275,8 +275,32 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
-    public func addUnknownMessage() async {
-        fatalError("TODO")
+    public func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data
+    ) async {
+        await context.perform { [self] in
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            ) else { return }
+
+            let unknownMessage = UnknownMessage(
+                nonce: messageID,
+                managedObjectContext: context
+            )
+            finalizeMessageUpdate(
+                message: unknownMessage,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                conversation: conversation
+            )
+        }
     }
 
     public func deleteMessageForSelf(
@@ -474,7 +498,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     private func finalizeMessageUpdate(
-        clientMessage: ZMOTRMessage,
+        message: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
         conversation: ZMConversation
@@ -485,13 +509,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             in: context
         )
 
-        clientMessage.visibleInConversation = conversation
-        clientMessage.sender = sender
-        updateQuoteRelationships(message: clientMessage)
-        conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
-        clientMessage.unarchiveIfNeeded(conversation)
-        clientMessage.updateCategoryCache()
-        clientMessage.markAsSent()
+        message.visibleInConversation = conversation
+        message.sender = sender
+        updateQuoteRelationships(message: message)
+        conversation.updateTimestampsAfterUpdatingMessage(message)
+        message.unarchiveIfNeeded(conversation)
+        message.updateCategoryCache()
+        message.markAsSent()
     }
 
     private func createSystemMessages(
