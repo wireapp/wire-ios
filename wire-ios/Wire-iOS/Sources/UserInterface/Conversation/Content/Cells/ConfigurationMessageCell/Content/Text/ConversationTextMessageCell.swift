@@ -110,11 +110,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        if DeveloperFlag.chatBubblesSimple.isOn {
-            let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
-            let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
-            messageTextView.textColor = ownMessage ? ownColor : otherColor
-        }
+        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
+        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        messageTextView.textColor = ownMessage ? ownColor : otherColor
     }
 
     func configure(with object: Configuration, animated: Bool) {
