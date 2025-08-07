@@ -19,6 +19,8 @@
 import Testing
 import UIKit
 
+@preconcurrency import Combine
+
 @testable import WireMessagingDomain
 @testable import WireMessagingUI
 
@@ -27,9 +29,24 @@ final class AttachmentsCarouselViewModelTests {
 
     private let thumbnailGenerator = ThumbnailGeneratorMock()
     private lazy var sut = AttachmentsCarouselViewModel(items: [], thumbnailGenerator: thumbnailGenerator)
+    private var capturedItems: [[AttachmentsCarouselItem]] = []
+    private var cancellables: Set<AnyCancellable> = []
+
+    init() {
+        sut.$items.dropFirst().sink { [weak self] items in
+            self?.capturedItems.append(items)
+        }.store(in: &cancellables)
+    }
 
     @Test func updateWhenSuccess() async throws {
-        // GIVEN
+        let token = sut.$items.sink { value in
+            print("BEGIN")
+            print(value.map { $0.kind })
+            print("END")
+        }
+
+
+        // given
         var imageDraft = WireCellsDraft.fixture(
             fileType: .jpeg,
             status: .uploading(progress: 0.5),
@@ -61,10 +78,10 @@ final class AttachmentsCarouselViewModelTests {
         var capturesUpdates: [[AttachmentsCarouselItem]] = []
         let itemUpdates = sut.$items.values
 
-        // WHEN
+        // when
         sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
 
-        // THEN 3 updates are expected to be published - an immediate update, and 2 further updates as the image & video
+        // then 3 updates are expected to be published - an immediate update, and 2 further updates as the image & video
         // thumbnails are generated - wait and capture them
         for await update in itemUpdates.prefix(3) { capturesUpdates.append(update) }
 
@@ -121,8 +138,7 @@ final class AttachmentsCarouselViewModelTests {
         videoItem.kind = .video(thumbnail: UIImage.fixture())
         #expect(capturesUpdates[2] == [imageItem, videoItem, audioItem, documentItem])
 
-
-        // WHEN upload completes
+        // when upload completes
         imageDraft.status = .uploaded(isDraft: true)
         videoDraft.status = .uploaded(isDraft: true)
         audioDraft.status = .uploaded(isDraft: true)
@@ -130,7 +146,7 @@ final class AttachmentsCarouselViewModelTests {
 
         sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
 
-        // THEN a final update is expected - wait and capture it
+        // then a final update is expected - wait and capture it
         for await update in itemUpdates.prefix(1) { capturesUpdates.append(update) }
 
         try #require(capturesUpdates.count == 4)
@@ -140,6 +156,53 @@ final class AttachmentsCarouselViewModelTests {
         audioItem.state = .uploaded
         documentItem.state = .uploaded
         #expect(capturesUpdates[3] == [imageItem, videoItem, audioItem, documentItem])
+    }
+
+    @Test func updateWhenFailure() async throws {
+        // given
+        var documentDraft = WireCellsDraft.fixture(
+            fileType: .spreadsheet,
+            status: .uploading(progress: 0.5),
+            name: "spreadsheet.xlsx",
+            bytes: 2_000_000,
+        )
+
+        // when
+        sut.update(with: [documentDraft])
+
+        documentDraft.status = .failed(error: .fileNotFound)
+        sut.update(with: [documentDraft])
+
+        try await awaitUntilCapturedItemsCount(2)
+
+        // then
+        try #require(capturedItems.count == 2)
+
+        // update 1 - document uploading
+        var documentItem = AttachmentsCarouselItem(
+            id: documentDraft.nodeID,
+            state: .uploading(progress: 0.5),
+            kind: .document,
+            name: "spreadsheet",
+            fileExtension: "xlsx",
+            size: "2 MB",
+            fileIcon: .spreadsheet
+        )
+        #expect(capturedItems[0] == [documentItem])
+
+        // update 2 - document upload failed
+        documentItem.state = .failed
+        #expect(capturedItems[1] == [documentItem])
+    }
+
+    func awaitUntilCapturedItemsCount(_ count: Int) async throws {
+        guard capturedItems.count < count else { return }
+
+        for await _ in sut.$items.values {
+            if capturedItems.count >= count {
+                break
+            }
+        }
     }
 
 }
