@@ -64,6 +64,8 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
     }
 
     private func refreshItems() {
+        print("REFRESH ITEMS")
+
         items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.versionID]) }
     }
 
@@ -72,7 +74,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             !generatingThumbnailIDs.contains(draft.nodeID),
             thumbnails[draft.versionID] == nil,
             let fileType = draft.fileType,
-            fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent) // FIXME: But not audio
+            (fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent)) && !fileType.conforms(to: .audio)
         else { return }
 
         do {

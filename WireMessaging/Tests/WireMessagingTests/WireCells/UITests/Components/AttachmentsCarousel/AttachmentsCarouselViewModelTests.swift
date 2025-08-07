@@ -19,7 +19,7 @@
 import Testing
 import UIKit
 
-@preconcurrency import Combine
+import Combine
 
 @testable import WireMessagingDomain
 @testable import WireMessagingUI
@@ -39,13 +39,6 @@ final class AttachmentsCarouselViewModelTests {
     }
 
     @Test func updateWhenSuccess() async throws {
-        let token = sut.$items.sink { value in
-            print("BEGIN")
-            print(value.map { $0.kind })
-            print("END")
-        }
-
-
         // given
         var imageDraft = WireCellsDraft.fixture(
             fileType: .jpeg,
@@ -75,17 +68,13 @@ final class AttachmentsCarouselViewModelTests {
             bytes: 2_000_000,
         )
 
-        var capturesUpdates: [[AttachmentsCarouselItem]] = []
-        let itemUpdates = sut.$items.values
-
         // when
         sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
 
-        // then 3 updates are expected to be published - an immediate update, and 2 further updates as the image & video
-        // thumbnails are generated - wait and capture them
-        for await update in itemUpdates.prefix(3) { capturesUpdates.append(update) }
+        try await awaitUntilCapturedItemsCount(3)
 
-        try #require(capturesUpdates.count == 3)
+        // then 3 updates are expected to be published - an immediate update, and 2 further updates as the image & video
+        // thumbnails are generated
 
         // update 1 - all items are uploading
         var imageItem = AttachmentsCarouselItem(
@@ -127,16 +116,16 @@ final class AttachmentsCarouselViewModelTests {
             size: "2 MB",
             fileIcon: .spreadsheet
         )
-        #expect(capturesUpdates[0] == [imageItem, videoItem, audioItem, documentItem])
+        #expect(capturedItems[0] == [imageItem, videoItem, audioItem, documentItem])
 
         // update 2 - all items are uploading, but image OR video thumbnail is generated - it's non deterministic so
         // just a sanity check
-        #expect(capturesUpdates[1].map { $0.id } == [imageItem.id, videoItem.id, audioItem.id, documentItem.id])
+        #expect(capturedItems[1].map { $0.id } == [imageItem.id, videoItem.id, audioItem.id, documentItem.id])
 
         // update 3 - all items are uploading, but image AND video thumbnails are generated
         imageItem.kind = .image(thumbnail: UIImage.fixture())
         videoItem.kind = .video(thumbnail: UIImage.fixture())
-        #expect(capturesUpdates[2] == [imageItem, videoItem, audioItem, documentItem])
+        #expect(capturedItems[2] == [imageItem, videoItem, audioItem, documentItem])
 
         // when upload completes
         imageDraft.status = .uploaded(isDraft: true)
@@ -146,16 +135,14 @@ final class AttachmentsCarouselViewModelTests {
 
         sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
 
-        // then a final update is expected - wait and capture it
-        for await update in itemUpdates.prefix(1) { capturesUpdates.append(update) }
+        try await awaitUntilCapturedItemsCount(4)
 
-        try #require(capturesUpdates.count == 4)
-
+        // then a final update is expected
         imageItem.state = .uploaded
         videoItem.state = .uploaded
         audioItem.state = .uploaded
         documentItem.state = .uploaded
-        #expect(capturesUpdates[3] == [imageItem, videoItem, audioItem, documentItem])
+        #expect(capturedItems[3] == [imageItem, videoItem, audioItem, documentItem])
     }
 
     @Test func updateWhenFailure() async throws {
