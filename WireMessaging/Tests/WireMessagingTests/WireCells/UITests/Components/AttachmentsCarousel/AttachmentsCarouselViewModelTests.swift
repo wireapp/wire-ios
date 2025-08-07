@@ -26,13 +26,10 @@ import UIKit
 final class AttachmentsCarouselViewModelTests {
 
     private let thumbnailGenerator = ThumbnailGeneratorMock()
+    private lazy var sut = AttachmentsCarouselViewModel(items: [], thumbnailGenerator: thumbnailGenerator)
 
     @Test func updateWhenSuccess() async throws {
-        let sut = AttachmentsCarouselViewModel(items: [], thumbnailGenerator: thumbnailGenerator)
-        var capturesUpdates: [[AttachmentsCarouselItem]] = []
-
-        let itemUpdates = sut.$items.values
-
+        // GIVEN
         var imageDraft = WireCellsDraft.fixture(
             fileType: .jpeg,
             status: .uploading(progress: 0.5),
@@ -61,27 +58,19 @@ final class AttachmentsCarouselViewModelTests {
             bytes: 2_000_000,
         )
 
+        var capturesUpdates: [[AttachmentsCarouselItem]] = []
+        let itemUpdates = sut.$items.values
+
+        // WHEN
         sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
 
-        for await update in itemUpdates.prefix(3) {
-            capturesUpdates.append(update)
-        }
+        // THEN 3 updates are expected to be published - an immediate update, and 2 further updates as the image & video
+        // thumbnails are generated - wait and capture them
+        for await update in itemUpdates.prefix(3) { capturesUpdates.append(update) }
 
-        // when uploading completes
-        imageDraft.status = .uploaded(isDraft: true)
-        videoDraft.status = .uploaded(isDraft: true)
-        audioDraft.status = .uploaded(isDraft: true)
-        documentDraft.status = .uploaded(isDraft: true)
+        try #require(capturesUpdates.count == 3)
 
-
-        sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
-
-        // wait for the next update
-        for await update in itemUpdates.prefix(1) { capturesUpdates.append(update) }
-
-        // then
-
-        // first update
+        // update 1 - all items are uploading
         var imageItem = AttachmentsCarouselItem(
             id: imageDraft.nodeID,
             state: .uploading(progress: 0.5),
@@ -121,20 +110,31 @@ final class AttachmentsCarouselViewModelTests {
             size: "2 MB",
             fileIcon: .spreadsheet
         )
-
-        try #require(capturesUpdates.count == 4)
         #expect(capturesUpdates[0] == [imageItem, videoItem, audioItem, documentItem])
 
-        // second update
-        // Either the image OR video thumbnail has been generated so it is hard to test. Lets just sanity check.
+        // update 2 - all items are uploading, but image OR video thumbnail is generated - it's non deterministic so
+        // just a sanity check
         #expect(capturesUpdates[1].map { $0.id } == [imageItem.id, videoItem.id, audioItem.id, documentItem.id])
 
-        // third update
+        // update 3 - all items are uploading, but image AND video thumbnails are generated
         imageItem.kind = .image(thumbnail: UIImage.fixture())
         videoItem.kind = .video(thumbnail: UIImage.fixture())
         #expect(capturesUpdates[2] == [imageItem, videoItem, audioItem, documentItem])
 
-        // forth update
+
+        // WHEN upload completes
+        imageDraft.status = .uploaded(isDraft: true)
+        videoDraft.status = .uploaded(isDraft: true)
+        audioDraft.status = .uploaded(isDraft: true)
+        documentDraft.status = .uploaded(isDraft: true)
+
+        sut.update(with: [imageDraft, videoDraft, audioDraft, documentDraft])
+
+        // THEN a final update is expected - wait and capture it
+        for await update in itemUpdates.prefix(1) { capturesUpdates.append(update) }
+
+        try #require(capturesUpdates.count == 4)
+
         imageItem.state = .uploaded
         videoItem.state = .uploaded
         audioItem.state = .uploaded
