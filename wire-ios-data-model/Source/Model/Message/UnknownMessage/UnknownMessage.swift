@@ -34,7 +34,7 @@ public final class UnknownMessage: ZMOTRMessage {
 
     @NSManaged public var appVersion: String?
 
-    /// The data which is supposed to be parsed into a `GenericMessage`.
+    /// The data which can be parsed into a `GenericMessage`.
 
     @NSManaged public var payload: Data?
 
