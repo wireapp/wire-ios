@@ -160,12 +160,6 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
-    
-    /// Boolean to check for wrapping message content in Bubble
-    var shouldWrapInBubble: Bool { get }
-    
-    /// Boolean to check for aligning message content for Bubbles
-    var shouldAlignMessageContentForBubbles: Bool { get }
 
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
