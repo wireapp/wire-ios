@@ -32,7 +32,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
-    private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
     private lazy var mockResetLockRepository = MockResetMLSConversationLockRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
@@ -45,11 +44,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        mockFeatureConfigRepository = .init()
-        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
-            status: .enabled,
-            config: .init(mlsConversationReset: true)
-        )
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -70,7 +64,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureConfigRepository: mockFeatureConfigRepository,
             lockRepository: mockResetLockRepository
 
         )
@@ -116,27 +109,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
                     MLSGroupID(Scaffolding.newMLSGroupIDData)
                 )
             }
-    }
-
-    func testProcessEvent_DoNothingWhenFFIsOff() async throws {
-
-        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
-            status: .disabled,
-            config: .init(mlsConversationReset: false)
-        )
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
-
-        XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
-            0
-        )
     }
 
     func testProcessEvent_DoNothingWhenInitiatedFromSameDevice() async throws {
