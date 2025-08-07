@@ -55,7 +55,7 @@ extension ZMOTRMessage {
             return nil
         }
 
-        guard let message = GenericMessage(from: updateEvent, validate: true) else {
+        guard let message = GenericMessage(from: updateEvent, validate: false) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
                 attributes: updateEvent.logAttributes
@@ -63,29 +63,27 @@ extension ZMOTRMessage {
             return nil
         }
 
+        // handle unsupported message types (protobuf declaration might have been updated, message from newer clients)
         if message.content == nil {
-            switch message.unknownStrategy {
+            return switch message.unknownStrategy {
             case .ignore:
                 // Throw the message away without informing the user.
-                return nil
+                nil
             case .discardAndWarn:
+                // Let the user know, that the app should be updated, then ignore the event.
                 appendUnknownMessageReceivedSystemMessage(
                     fromSender: senderID,
                     atTime: updateEvent.timestamp ?? .now,
                     to: conversation,
                     in: context
                 )
-                return nil
             case .warnUserAllowRetry:
                 // Append a placeholder message to the conversation and store the unprocessed event data.
-                return appendUnknownMessage(
+                appendUnknownMessage(
+                    for: updateEvent,
                     messageID: message.messageID,
-                    senderID: senderID,
-                    serverTimestamp: updateEvent.timestamp,
-                    base64Payload: updateEvent.genericMessageBase64Content,
                     conversation: conversation,
-                    context: context,
-                    logAttributes: updateEvent.logAttributes
+                    context: context
                 )
             }
         }
@@ -313,7 +311,7 @@ extension ZMOTRMessage {
         atTime time: Date,
         to conversation: ZMConversation,
         in context: NSManagedObjectContext
-    ) {
+    ) -> ZMOTRMessage? {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
             domain: nil,
@@ -326,26 +324,29 @@ extension ZMOTRMessage {
             clients: nil,
             timestamp: time
         )
+        return nil
     }
 
     private static func appendUnknownMessage(
+        for updateEvent: ZMUpdateEvent,
         messageID: String?,
-        senderID: UUID,
-        serverTimestamp: Date?,
-        base64Payload: String?,
         conversation: ZMConversation,
-        context: NSManagedObjectContext,
-        logAttributes: LogAttributes
+        context: NSManagedObjectContext
     ) -> ZMOTRMessage? {
         do {
+            let logAttributes = updateEvent.logAttributes
             WireLogger.eventProcessing.warn("Failed to parse GenericMessage from payload, inserting unknown message")
 
             guard let messageID, let messageID = UUID(transportString: messageID) else {
-                WireLogger.eventProcessing.warn("Failed to convert message ID to UUID")
+                WireLogger.eventProcessing.warn("Failed to convert message ID to UUID", attributes: logAttributes)
                 return nil
             }
-            guard let base64Payload, let payload = Data(base64Encoded: base64Payload) else {
-                WireLogger.eventProcessing.warn("Failed to convert base64 string to Data")
+            guard let senderID = updateEvent.senderUUID else {
+                WireLogger.eventProcessing.warn("updateEvent.senderUUID is nil", attributes: logAttributes)
+                return nil
+            }
+            guard let base64Payload = updateEvent.genericMessageBase64Content, let payload = Data(base64Encoded: base64Payload) else {
+                WireLogger.eventProcessing.warn("Failed to convert base64 string to Data", attributes: logAttributes)
                 return nil
             }
 
@@ -358,7 +359,7 @@ extension ZMOTRMessage {
             return try conversation.appendUnknownMessage(
                 messageID: messageID,
                 sender: sender,
-                serverTimestamp: serverTimestamp ?? .now,
+                serverTimestamp: updateEvent.timestamp ?? .now,
                 payload: payload
             )
 
