@@ -242,7 +242,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
-        if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
+        if let genericMessage = GenericMessage(from: event, validate: true), genericMessage.hasCalling {
             Self.logger.debug("process call event", attributes: [.eventId: event.safeUUID])
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),

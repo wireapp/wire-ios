@@ -55,7 +55,7 @@ extension ZMOTRMessage {
             return nil
         }
 
-        guard let message = GenericMessage(from: updateEvent) else {
+        guard let message = GenericMessage(from: updateEvent, validate: true) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
                 attributes: updateEvent.logAttributes

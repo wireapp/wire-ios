@@ -286,7 +286,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             else { return }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
         } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
-            if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
+            if let message = GenericMessage(from: event, validate: true), message.hasText || message.hasEdited {
                 typing.setIsTyping(false, for: user, in: conversation)
             }
         } else if event.type == .conversationMemberLeave {
