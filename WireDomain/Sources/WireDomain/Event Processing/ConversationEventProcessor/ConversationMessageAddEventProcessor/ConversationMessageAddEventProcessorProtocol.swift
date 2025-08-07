@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import GenericMessageProtocol
 
 /// The purpose of this protocol is sharing code between `ConversationMLSMessageAddEventProcessor` and
 /// `ConversationProteusMessageAddEventProcessor`.
@@ -30,6 +31,11 @@ protocol ConversationMessageAddEventProcessorProtocol {
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
+    ) async
+
+    func handleNilContent(
+        payload: Data,
+        unknownStrategy: GenericMessage.UnknownStrategy
     ) async
 
 }
@@ -50,6 +56,21 @@ extension ConversationMessageAddEventProcessorProtocol {
             conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
+    }
+
+    func handleNilContent(
+        payload: Data,
+        unknownStrategy: GenericMessage.UnknownStrategy
+    ) async {
+        switch unknownStrategy {
+        case .ignore:
+            fatalError("TODO")
+        case .discardAndWarn:
+            fatalError("TODO")
+        case .warnUserAllowRetry:
+            fatalError("TODO")
+            // await messageLocalStore.addUnknownMessage()
+        }
     }
 
 }

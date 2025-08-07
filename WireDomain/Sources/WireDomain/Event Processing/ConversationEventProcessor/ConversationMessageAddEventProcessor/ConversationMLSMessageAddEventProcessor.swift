@@ -89,7 +89,10 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         }
 
         // Parse into GenericMessage
-        guard let genericMessage = GenericMessage(from: decryptedMessage.message, validate: false) else {
+        guard
+            let payload = Data(base64Encoded: decryptedMessage.message),
+            let genericMessage = GenericMessage(from: payload, validate: false)
+        else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
@@ -102,7 +105,10 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         }
 
         if genericMessage.content == nil {
-            fatalError("TODO: handle")
+            return await handleNilContent(
+                payload: payload,
+                unknownStrategy: genericMessage.unknownStrategy
+            )
         }
 
         // Handle calling if there's one.

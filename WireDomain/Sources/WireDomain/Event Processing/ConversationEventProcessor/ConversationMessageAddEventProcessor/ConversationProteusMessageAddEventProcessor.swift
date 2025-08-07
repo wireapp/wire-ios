@@ -89,7 +89,10 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         if genericMessage.content == nil {
-            fatalError("TODO: handle")
+            fatalError("TODO")
+            // handleNilContent(
+            //     event: event
+            // )
         }
 
         // Handle calling if there's one.
@@ -127,7 +130,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
     }
 
-    private func getProtobufMessage(
+    private func getProtobufMessage( // TODO: rename getProtobufPayload
         from base64Message: String,
         externalData: String?
     ) async -> GenericMessage? {
@@ -169,8 +172,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             key: external.otrKey
         )
 
-        guard let base64String = decryptedData?.base64String() else { return nil }
-        return GenericMessage(from: base64String, validate: false)
+        guard let decryptedData else { return nil }
+        return GenericMessage(from: decryptedData, validate: false)
     }
 
     // MARK: - Calling

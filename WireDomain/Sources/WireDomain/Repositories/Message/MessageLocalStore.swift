@@ -275,6 +275,10 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
+    public func addUnknownMessage() async {
+        fatalError("TODO")
+    }
+
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
         in conversation: ZMConversation

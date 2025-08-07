@@ -106,6 +106,9 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String
     ) async
 
+    func addUnknownMessage(
+    ) async
+
     /// Checks whether a message can be added to the conversation.
     /// - Parameters:
     ///     - conversation: The conversation to add the message to.

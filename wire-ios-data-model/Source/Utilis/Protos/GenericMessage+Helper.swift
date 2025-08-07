@@ -30,12 +30,20 @@ public extension GenericMessage {
         from base64String: String,
         validate: Bool
     ) {
-        let genericMessage = Data(base64Encoded: base64String).map { data in
-            GenericMessage.with { message in
-                try? message.merge(serializedData: data)
-            }
+        guard let data = Data(base64Encoded: base64String) else { return nil }
+        self.init(from: data, validate: validate)
+    }
+
+    /// Deserializes a `GenericMessage` instance from the provided data. If `true` is passed for the `validate` argument, the initializer fails if `validateFields()` returns false.
+
+    init?(
+        from data: Data,
+        validate: Bool
+    ) {
+        let genericMessage = GenericMessage.with { message in
+            try? message.merge(serializedData: data)
         }
-        guard let genericMessage, !validate || genericMessage.validateFields() else { return nil }
+        guard !validate || genericMessage.validateFields() else { return nil }
         self = genericMessage
     }
 

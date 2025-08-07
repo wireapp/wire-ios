@@ -2534,6 +2534,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(assetClientMessage, isNewMessage, genericMessage, conversation, senderID, senderDomain)
     }
 
+    // MARK: - addUnknownMessage
+
+    public var addUnknownMessage_Invocations: [Void] = []
+    public var addUnknownMessage_MockMethod: (() async -> Void)?
+
+    public func addUnknownMessage() async {
+        addUnknownMessage_Invocations.append(())
+
+        guard let mock = addUnknownMessage_MockMethod else {
+            fatalError("no mock for `addUnknownMessage`")
+        }
+
+        await mock()
+    }
+
     // MARK: - canAddMessage
 
     public var canAddMessageConversationSenderID_Invocations: [(conversation: ZMConversation, senderID: UUID)] = []
