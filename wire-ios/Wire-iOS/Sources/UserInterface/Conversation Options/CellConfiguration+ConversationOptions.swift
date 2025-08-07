@@ -55,15 +55,15 @@ extension CellConfiguration {
         )
     }
 
-    static func allowServicesToggle(
+    static func allowAppsToggle(
         get: @escaping () -> Bool,
         set: @escaping (Bool, UIView) -> Void
     ) -> CellConfiguration {
         .iconToggle(
-            title: L10n.Localizable.ServicesOptions.AllowServices.title,
-            subtitle: L10n.Localizable.ServicesOptions.AllowServices.subtitle,
-            identifier: "toggle.guestoptions.allowservices",
-            titleIdentifier: "label.guestoptions.services.description",
+            title: L10n.Localizable.AppsOptions.AllowApps.title,
+            subtitle: L10n.Localizable.AppsOptions.AllowApps.subtitle,
+            identifier: "toggle.guestoptions.allowapps",
+            titleIdentifier: "label.guestoptions.apps.description",
             icon: nil,
             color: nil,
             isEnabled: true,

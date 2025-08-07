@@ -177,17 +177,17 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
 private struct StorableConversationMembers: Equatable, Codable, Sendable {
 
     let others: [StorableConversationMember]
-    let selfMember: StorableConversationMember
+    let selfMember: StorableConversationMember?
 
     init(_ value: WireNetwork.Conversation.Members) {
         self.others = value.others.map { StorableConversationMember($0) }
-        self.selfMember = StorableConversationMember(value.selfMember)
+        self.selfMember = value.selfMember.map { StorableConversationMember($0) }
     }
 
     func toAPIModel() -> WireNetwork.Conversation.Members {
         .init(
             others: others.map { $0.toAPIModel() },
-            selfMember: selfMember.toAPIModel()
+            selfMember: selfMember?.toAPIModel()
         )
     }
 
