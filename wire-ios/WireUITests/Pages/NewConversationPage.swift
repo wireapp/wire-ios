@@ -65,4 +65,8 @@ class NewConversationPage: PageModel {
         return try ConversationsPage()
     }
 
+    func tapNewGroupButton() throws -> CreateGroupPage {
+        newGroupButton.tap()
+        return try CreateGroupPage()
+    }
 }

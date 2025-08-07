@@ -93,5 +93,4 @@ class ConversationsPage: PageModel {
     func getNameLabel() -> String? {
         conversationCell.label as? String
     }
-
 }
