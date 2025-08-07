@@ -23,19 +23,19 @@ public protocol LoadConversationMessagesRepositoryProtocol: Sendable {
 }
 
 // sourcery: AutoMockable
-public protocol LoadConversationMessagesUseCaseProtocol: Sendable {
+package protocol LoadConversationMessagesUseCaseProtocol: Sendable {
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel]
 }
 
-public final class LoadConversationMessagesUseCase: LoadConversationMessagesUseCaseProtocol {
+package final class LoadConversationMessagesUseCase: LoadConversationMessagesUseCaseProtocol {
     
     private let repo: any LoadConversationMessagesRepositoryProtocol
     
-    public init(repo: any LoadConversationMessagesRepositoryProtocol) {
+    package init(repo: any LoadConversationMessagesRepositoryProtocol) {
         self.repo = repo
     }
     
-    public func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
+    package func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         await repo.loadMessages(offset: offset, limit: limit)
     }
 }

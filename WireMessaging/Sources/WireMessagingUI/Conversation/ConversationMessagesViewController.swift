@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+package import SwiftUI
 import Combine
 
-// TODO: make not public 
-public final class ConversationMessagesViewController: UIViewController {
+package final class ConversationMessagesViewController: UIViewController {
 
     typealias DataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>
 
@@ -31,17 +30,17 @@ public final class ConversationMessagesViewController: UIViewController {
 
     var cancellables = Set<AnyCancellable>()
 
-    public init(viewModel: any ConversationMessagesViewModelProtocol) {
+    package init(viewModel: any ConversationMessagesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    package required init?(coder: NSCoder) {
         fatalError()
     }
 
-    public override func viewDidLoad() {
+    package override func viewDidLoad() {
         super.viewDidLoad()
 
         setupCollectionView()
@@ -127,7 +126,7 @@ public final class ConversationMessagesViewController: UIViewController {
 
 }
 
-import WireMessagingDomainSupport
+@testable import WireMessagingDomainSupport
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(

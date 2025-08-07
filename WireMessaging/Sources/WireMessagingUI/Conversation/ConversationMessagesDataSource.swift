@@ -17,28 +17,28 @@
 //
 
 import Foundation
-public import UIKit
-public import WireMessagingDomain
+package import UIKit
+package import WireMessagingDomain
 
-public enum MessagesSection: Sendable {
+package enum MessagesSection: Sendable {
     // one section for now, later we'd have probably one section for a day
     case main
 }
 
-public typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
 
-public protocol ConversationMessagesDataSourceProtocol: Sendable {
+package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
-public actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
+package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
-    public func updatesStream() async -> AsyncStream<MessagesUpdate> {
+    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         AsyncStream { continuation in
             self.updatesStreamContinuation = continuation
         }
@@ -48,7 +48,7 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
-    public init(loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol) {
+    package init(loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol) {
         self.loadMessagesUseCase = loadMessagesUseCase
     }
 
@@ -63,12 +63,12 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
     // in result whole content is recalculated since environment changes
     func invalidateContent() {}
 
-    public func loadInitialMessages() async {
+    package func loadInitialMessages() async {
         #if DEBUG
-//            simulateAddingMessage()
-//            Task {
-//                await updatesTimerLoop()
-//            }
+            simulateAddingMessage()
+            Task {
+                await updatesTimerLoop()
+            }
         #endif
         let messages = await loadMessagesUseCase.loadMessages(offset: 0, limit: 100)
         

@@ -17,11 +17,11 @@
 //
 
 import SwiftUI
-public import Foundation
+package import Foundation
 
-public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
+package class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
 
-    public let id = UUID()
+    package let id = UUID()
 
     @Published var content: AttributedString
 
@@ -35,11 +35,11 @@ public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @un
         self.senderViewModel = senderViewModel
     }
 
-    public static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
+    package static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
         lhs.id == rhs.id
     }
 
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 

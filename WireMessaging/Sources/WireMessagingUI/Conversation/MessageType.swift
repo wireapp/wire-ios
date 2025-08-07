@@ -18,9 +18,9 @@
 
 import Foundation
 
-public enum MessageType: Hashable, Identifiable, Sendable {
+package enum MessageType: Hashable, Identifiable, Sendable {
 
-    public var id: ObjectIdentifier {
+    package var id: ObjectIdentifier {
         switch self {
         case let .text(vm): vm.id
         }

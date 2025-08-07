@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum MessagesUpdate: Sendable {
+package enum MessagesUpdate: Sendable {
 
     case initiallyLoaded(MessagesSnapshot)
     case messageAdded(MessagesSnapshot)
