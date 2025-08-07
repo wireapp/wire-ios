@@ -25,9 +25,9 @@ import WireCoreCrypto
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     /// The `featureRepository` operates on a context, so every operation must be dispatched
-    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// on that context's queue. Since `LegacyFeatureRepositoryInterface` doesn't contain any
     /// `context` property, we inject the context here.
     private let featureRepositoryContext: NSManagedObjectContext
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
@@ -37,7 +37,7 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     ///   - isUserE2EICertifiedUseCase: The use case which contains the actual business logic.
     public init(
         context: NSManagedObjectContext,
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {

@@ -54,7 +54,7 @@ extension SearchGroup {
         case .people:
             L10n.Localizable.Peoplepicker.Header.people
         case .services:
-            L10n.Localizable.Peoplepicker.Header.services
+            L10n.Localizable.Peoplepicker.Header.apps
         }
     }
 }

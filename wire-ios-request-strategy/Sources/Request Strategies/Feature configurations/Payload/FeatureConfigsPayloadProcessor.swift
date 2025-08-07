@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import protocol WireDataModel.FeatureRepositoryInterface
+import protocol WireDataModel.LegacyFeatureRepositoryInterface
 import WireLogging
 
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
 
-    func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
 
         if let appLock = payload.appLock {
@@ -96,8 +96,8 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let allowedGlobalOperations = payload.allowedGlobalOperations {
-            repository.storeAllowGlobalOperations(
-                Feature.AllowGlobalOperations(
+            repository.storeAllowedGlobalOperations(
+                Feature.AllowedGlobalOperations(
                     status: allowedGlobalOperations.status,
                     config: allowedGlobalOperations.config
                 )
@@ -123,7 +123,7 @@ struct FeatureConfigsPayloadProcessor {
         }
     }
 
-    func processActionPayloadAPIV6(data: Data, repository: FeatureRepositoryInterface) throws {
+    func processActionPayloadAPIV6(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayloadAPIV6.self, from: data)
 
         if let appLock = payload.appLock {
@@ -226,7 +226,7 @@ struct FeatureConfigsPayloadProcessor {
     func processEventPayload(
         data: Data,
         featureName: Feature.Name,
-        repository: FeatureRepositoryInterface,
+        repository: LegacyFeatureRepositoryInterface,
         mlsClientManager: MLSClientManagerProtocol,
         in context: NSManagedObjectContext
     ) throws {
@@ -259,12 +259,12 @@ struct FeatureConfigsPayloadProcessor {
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
-        case .allowGlobalOperations:
+        case .allowedGlobalOperations:
             let response = try decoder.decode(
-                FeatureStatusWithConfig<Feature.AllowGlobalOperations.Config>.self,
+                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
                 from: data
             )
-            repository.storeAllowGlobalOperations(.init(
+            repository.storeAllowedGlobalOperations(.init(
                 status: response.status,
                 config: response.config
             ))

@@ -136,6 +136,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     func testForOptionsForTeamUserInTeamConversation() {
         // GIVEN
+        DeveloperFlag.channelsHistory.enable(true, storage: .temporary())
         setSelfUserInTeam()
         mockSelfUser.teamRole = .member
 
@@ -145,6 +146,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyReadReceiptSettingsInConversation = true
         mockSelfUser.canModifyGuestsAccessControlSettings = true
         mockSelfUser.canModifyChannelAccessLevelSettings = true
+        mockSelfUser.canModifyChannelHistorySettings = true
 
         createGroupConversation()
         mockConversation.teamType = MockTeam()

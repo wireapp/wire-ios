@@ -903,35 +903,6 @@ extension UserClient {
         )
     }
 
-    /// Migrates from old session identifier to new session identifier if needed.
-
-    public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
-        guard
-            let sessionIdentifier_V1,
-            let sessionIdentifier = sessionIdentifier_V2
-        else {
-            return
-        }
-
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V1,
-            to: sessionIdentifier
-        )
-    }
-
-    public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
-        guard
-            let sessionIdentifier_V2,
-            let sessionIdentifier = sessionIdentifier_V3
-        else {
-            return
-        }
-
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V2.rawValue,
-            to: sessionIdentifier
-        )
-    }
 }
 
 // MARK: - Proteus Session ID
@@ -944,11 +915,6 @@ extension UserClient {
         } else {
             proteusSessionID_V3
         }
-    }
-
-    private var proteusSessionID_V1: ProteusSessionID? {
-        guard let clientID = remoteIdentifier else { return nil }
-        return ProteusSessionID(fromLegacyV1Identifier: clientID)
     }
 
     private var proteusSessionID_V2: ProteusSessionID? {

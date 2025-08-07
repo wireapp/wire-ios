@@ -51,6 +51,8 @@ import Combine
 
 
 
+
+
 public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
 
     // MARK: - Life cycle
@@ -382,7 +384,7 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
 
 }
 
-public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdaterProtocol {
+public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdaterProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 
@@ -421,7 +423,7 @@ public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdate
 
 }
 
-public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStorageProtocol {
+public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStorageProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 
@@ -486,7 +488,7 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
 }
 
-public class MockImportLegacyBackupStreamDecryptorProtocol: ImportLegacyBackupStreamDecryptorProtocol {
+public class MockImportLegacyBackupStreamDecryptorProtocol: ImportLegacyBackupStreamDecryptorProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 

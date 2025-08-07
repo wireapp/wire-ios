@@ -32,7 +32,6 @@
 "general.decline" = "Nie, dzięki!";
 "general.failure" = "Coś poszło nie tak";
 "general.failure.try_again" = "Proszę spróbować ponownie.";
-"general.service" = "Usługa";
 "general.off" = "Wyłączony";
 "general.on" = "Włączone";
 "general.loading" = "Wczytuje…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "Utwórz";
 
 "peoplepicker.header.people" = "Osoby";
-"peoplepicker.header.services" = "Usługi";
-"peoplepicker.services.open_conversation.item" = "Otwórz konwersację";
-"peoplepicker.services.add_service.button" = "Dodaj usługę";
-"peoplepicker.services.add_service.error.title" = "Usługa nie może zostać dodana";
-"peoplepicker.services.add_service.error.default" = "W tej chwili usługa jest niedostępna";
-"peoplepicker.services.add_service.error.full" = "Ta rozmowa jest przepełniona";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Otwórz konwersację";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Brak kontaktów.";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Wyślij zaproszenie";
 "peoplepicker.no_matching_results.action.share_contacts" = "Udostępnij kontakty";
 "peoplepicker.no_matching_results.action.learn_more" = "Dowiedz się więcej";
-"peoplepicker.no_matching_results.action.manage_services" = "Zarządzaj usługami";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Znajdź osoby w Wire według imienia lub @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Znajdź osoby w Wire według imienia lub @username\n\nZnajdź osoby w innej domenie przez @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Wszyscy są tutaj.";
-"peoplepicker.no_matching_results.message.services" = "Brak wyników.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Usługi to pomocnicy, którzy mogą poprawić Twoje workflow.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Usługi to pomocnicy, którzy mogą poprawić Twoje workflow. Aby je włączyć, skontaktuj się z administratorem.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "Zaproszenie zostało wysłane";
 "peoplepicker.send_invitation.dialog.message" = "To może służyć do 2 tygodni. Wyślij nowe, jeśli wygaśnie.";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "Zaproś osoby do zespołu";
 "peoplepicker.quick-action.open-conversation" = "Otwórz";
-"peoplepicker.quick-action.admin-services" = "Zarządzaj usługami";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
 
-"add_participants.alert.title" = "Ta rozmowa jest przepełniona";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -136,6 +135,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
+"conversation_list.search_bar.mentionsPlaceholder" = "Search conversations with mentions";
+"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
+"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -148,6 +151,10 @@
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Usuń";
+"conversation_list.filter.unread.title" = "Unread";
+"conversation_list.filter.mentions.title" = "Mentions";
+"conversation_list.filter.replies.title" = "Replies";
+"conversation_list.filter.drafts.title" = "Drafts";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Dołącz";
@@ -173,6 +180,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.mentions.title" = "No mentions";
+"conversation_list.empty_state.replies.title" = "No replies";
+"conversation_list.empty_state.drafts.title" = "No drafts";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "w kontaktach";
@@ -339,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Zezwalaj na gości";
 "conversation.create.guests.subtitle" = "Wyraź zgodę na dołączenie do rozmowy osób spoza twojej drużyny.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "Potwierdzenie odczytu";
 "conversation.create.receipts.subtitle" = "Gdy włączone, rozmówcy mogą zobaczyć, kiedy ich wiadomości zostały odczytane w tej rozmowie.";
 "conversation.create.mls.title" = "Protocol";
@@ -365,29 +377,21 @@
 "conversation.alert.message_deleted" = "Wiadomość została usunięta.";
 
 // Conversation banner
-"conversation.banner.guests" = "Goście";
-"conversation.banner.services" = "Usługi";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ jest obecny";
-"conversation.banner.are_active" = "%@ są aktywne";
-"conversation.banner.separator" = " i ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Wyszukaj";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -475,7 +479,7 @@
 "content.system.other_removed_you" = "%@ usunął Ciebie";
 "content.system.you_removed_other" = "Usunąłeś %@";
 
-"content.system.services.warning" = "Usługi mają dostęp do treści tej rozmowy";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
 // Placeholder contains a single name, e.g "Alice"
@@ -617,8 +621,11 @@
 "content.system.message_read_receipt_on_add_to_group" = "Potwierdzenia odczytu są włączone";
 
 // history depth
-"content.system.message_history_depth" = "%@ set conversation history to %@";
-"content.system.message_history_depth_disabled" = "%@ disabled conversation history";
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
+"content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
 
@@ -884,7 +891,7 @@
 "participants.title" = "Szczegóły";
 "participants.all.title" = "Kontakty";
 "participants.section.participants" = "Ludzie (%d)";
-"participants.section.services" = "Usługi (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Opcje";
 "participants.footer.add_title" = "Dodaj uczestników";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1010,7 +1017,7 @@
 "profile.read_receipts_disabled_memo.header" = "WYŁĄCZYŁEŚ POWIADOMIENIE O ODCZYTANIU WIADOMOŚCI";
 "profile.read_receipts_memo.body" = "Jeśli obie strony włączą informacje o odczytaniu, będziesz mógł zobaczyć kiedy wiadomość została odczytana.\n\nMożesz zmienić tę opcję w ustawieniach konta.";
 
-"profile.group_admin_status_memo.body" = "Kiedy to jest włączone, administrator może dodawać lub usuwać osoby i usługi, aktualizować ustawienia grupy i zmienić rolę uczestników.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Informacja";
 
@@ -1052,21 +1059,22 @@
 "device.type.unknown" = "Nieznane";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Goście";
 "group_details.guest_options_cell.enabled" = "Włączone";
 "group_details.guest_options_cell.disabled" = "Wyłączony";
-"group_details.services_options_cell.title" = "Usługi";
-"group_details.services_options_cell.enabled" = "Włączone";
-"group_details.services_options_cell.disabled" = "Wyłączony";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Włączone";
+"group_details.apps_options_cell.disabled" = "Wyłącz";
 "group_details.timeout_options_cell.title" = "Samoniszczące się wiadomości";
 "group_details.notification_options_cell.title" = "Powiadomienia";
 "group_details.notification_options_cell.description" = "Możesz być powiadamiany o wszystkich wiadomościach (w tym rozmowach audio i wideo) lub tylko wtedy, gdy ktoś wspomni o Tobie lub odpowie na jedną z Twoich wiadomości.";
 "group_details.receipt_options_cell.title" = "Potwierdzenie odczytu";
 "group_details.receipt_options_cell.description" = "Gdy włączone, rozmówcy mogą zobaczyć, kiedy ich wiadomości zostały odczytane w tej rozmowie.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1516,12 +1524,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Dowiedz się więcej o linkach dla gości";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "Usuń";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Usuń";
 
 
 // Registration

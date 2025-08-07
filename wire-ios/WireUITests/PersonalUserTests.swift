@@ -62,13 +62,10 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
-        let user = try await userManager.createPersonalUser()
+        let user = try await userHelper.createPersonalUser()
 
-        _ = try WelcomePage()
-            .enterEmailOrSSO(user.email)
-            .enterPassword(user.password)
-            .acceptFirstTimeAlert()
-            .acceptPopup()
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+        _ = try  firstTimePage.acceptPopup()
             .openSettings()
             .openAccountSettings()
             .logout()

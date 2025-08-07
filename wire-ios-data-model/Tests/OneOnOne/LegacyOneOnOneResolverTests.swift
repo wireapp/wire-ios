@@ -28,14 +28,14 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
     private var mockMigrator: MockActorOneOnOneMigrator!
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
-    private var mockRepository: MockFeatureRepositoryInterface!
+    private var mockRepository: MockLegacyFeatureRepositoryInterface!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
     override func setUp() async throws {
         try await super.setUp()
 
-        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository = MockLegacyFeatureRepositoryInterface()
         mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
 
         coreDataStackHelper = CoreDataStackHelper()

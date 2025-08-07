@@ -169,8 +169,8 @@ extension SyncEventsStep {
         )
     }
 
-    var featureRepository: any FeatureRepositoryInterface {
-        FeatureRepository(context: dependency.coreData.syncContext)
+    var featureRepository: any LegacyFeatureRepositoryInterface {
+        LegacyFeatureRepository(context: dependency.coreData.syncContext)
     }
 
     var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {

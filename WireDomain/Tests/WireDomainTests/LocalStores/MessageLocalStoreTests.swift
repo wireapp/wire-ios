@@ -80,7 +80,7 @@ final class MessageLocalStoreTests: XCTestCase {
         }
 
         // Given a regular message to add to a conversation
-        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
+        let genericMessage = try XCTUnwrap(GenericMessage.validatedMessage(from: Scaffolding.base64EncodedString))
 
         // When
 
@@ -274,7 +274,7 @@ final class MessageLocalStoreTests: XCTestCase {
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
             .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date),
-            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1), newHistoryDepth: "13 days")
+            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1))
         ]
     }
 

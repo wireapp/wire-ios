@@ -62,26 +62,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func fetchFeatureConfig<T: Decodable>(
-        name: Feature.Name,
-        type: T.Type
-    ) async throws -> LocalFeature<T> {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
-
-        if let config = featureConfig.config {
-            let decoder = JSONDecoder()
-            let config = try decoder.decode(type, from: config)
-
-            return LocalFeature(status: featureConfig.status, config: config)
-        }
-
-        return LocalFeature(status: featureConfig.status, config: nil)
-    }
-
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
@@ -98,6 +78,34 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
 
         await sendFeatureState(for: featureConfig)
+    }
+
+    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+        try await fetchFeatureConfig(
+            name: .allowedGlobalOperations,
+            type: Feature.AllowedGlobalOperations.Config.self
+        )
+    }
+
+    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+        try await fetchFeatureConfig(
+            name: .mls,
+            type: Feature.MLS.Config.self
+        )
+    }
+
+    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+        try await fetchFeatureConfig(
+            name: .mlsMigration,
+            type: Feature.MLSMigration.Config.self
+        )
+    }
+
+    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+        try await fetchFeatureConfig(
+            name: .appLock,
+            type: Feature.AppLock.Config.self
+        )
     }
 
     // MARK: - Private
@@ -189,9 +197,9 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: channelsFeatureConfig.status == .enabled
             )
 
-        case let .allowGlobalOperations(config):
+        case let .allowedGlobalOperations(config):
             return FeatureState(
-                name: .allowGlobalOperations,
+                name: .allowedGlobalOperations,
                 isEnabled: config.status == .enabled
             )
 
@@ -296,9 +304,9 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 channelsFeatureConfig.toDomainModel()
             )
 
-        case let .allowGlobalOperations(config):
+        case let .allowedGlobalOperations(config):
             return (
-                .allowGlobalOperations,
+                .allowedGlobalOperations,
                 config.status == .enabled,
                 config.toDomainModel()
             )
@@ -312,4 +320,23 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
+    private func fetchFeatureConfig<T: Decodable>(
+        name: Feature.Name,
+        type: T.Type
+    ) async throws -> LocalFeature<T> {
+        let feature = try await featureConfigLocalStore.fetchFeature(
+            name: name
+        )
+
+        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
+
+        if let config = featureConfig.config {
+            let decoder = JSONDecoder()
+            let config = try decoder.decode(type, from: config)
+
+            return LocalFeature(status: featureConfig.status, config: config)
+        }
+
+        return LocalFeature(status: featureConfig.status, config: nil)
+    }
 }

@@ -43,7 +43,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var userDefaultsTestSuite: UserDefaults!
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
-    var mockFeatureRepository: MockFeatureRepositoryInterface!
+    var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     var resetMLSConversationDelegate = MockResetBrokenMLSConversationDelegate()
 
     let groupID = MLSGroupID(.init([1, 2, 3]))
@@ -68,7 +68,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         userDefaultsTestSuite = UserDefaults.temporary()
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
-        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
 
         mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
@@ -80,12 +80,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = []
 
-        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
             status: .enabled,
             config: .init(defaultCipherSuite: defaultCipherSuite)
         )
 
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = Feature.AllowGlobalOperations(
+        mockLegacyFeatureRepository.fetchAllowedGlobalOperations_MockValue = Feature.AllowedGlobalOperations(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -108,7 +108,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             actionsProvider: mockActionsProvider,
             delegate: self,
             userID: userIdentifier,
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
         sut.setSyncDelegate(mockSyncDelegate)
@@ -2882,7 +2882,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
         XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockFeatureRepository.fetchAllowGlobalOperations_Invocations.count, 1)
+        XCTAssertEqual(mockLegacyFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
         XCTAssertEqual(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.count, 1)
         let invocation = try XCTUnwrap(
             resetMLSConversationDelegate
@@ -2896,8 +2896,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
 
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = Feature
-            .AllowGlobalOperations(
+        mockLegacyFeatureRepository.fetchAllowedGlobalOperations_MockValue = Feature
+            .AllowedGlobalOperations(
                 status: .disabled,
                 config: .init(mlsConversationReset: true)
             )
@@ -2926,7 +2926,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
         XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockFeatureRepository.fetchAllowGlobalOperations_Invocations.count, 1)
+        XCTAssertEqual(mockLegacyFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
         XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
     }
 

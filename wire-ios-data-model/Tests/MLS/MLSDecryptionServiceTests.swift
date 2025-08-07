@@ -126,7 +126,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // Given
         let groupID = MLSGroupID.random()
-        let messageBytes = Data.random().bytes
+        let messageBytes = [UInt8](Data.random())
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: nil,
@@ -142,7 +142,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // When
         let results = try await sut.decrypt(
-            message: messageBytes.data.base64EncodedString(),
+            message: Data(messageBytes).base64EncodedString(),
             for: groupID,
             subconversationType: nil,
             context: nil
@@ -246,7 +246,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
         let messageData = Data.random()
-        let sender = MLSClientID.random()
 
         mockSubconversationGroupIDRepository
             .fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID

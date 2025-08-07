@@ -625,7 +625,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .disabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .disabled))
             BackendInfo.apiVersion = .v5
 
             // then
@@ -785,13 +785,13 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
     @objc
     private func enableMLS() {
-        FeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
         BackendInfo.apiVersion = .v5
         BackendInfo.isMLSEnabled = true
     }
 
     @objc
     private func enableE2EI() {
-        FeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
+        LegacyFeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
     }
 }
