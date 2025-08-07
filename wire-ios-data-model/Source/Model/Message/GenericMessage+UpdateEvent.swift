@@ -20,28 +20,21 @@ import Foundation
 import GenericMessageProtocol
 
 public extension GenericMessage {
+
     init?(from updateEvent: ZMUpdateEvent) {
-        let base64Content: String?
 
-        switch updateEvent.type {
-        case .conversationClientMessageAdd:
-            base64Content = updateEvent.payload.string(forKey: "data")
-        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "text")
-        case .conversationOtrAssetAdd:
-            base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "info")
-        default:
-            return nil
-        }
+        guard let base64Content = updateEvent.genericMessageBase64Content else { return nil }
 
-        var message = GenericMessage(withBase64String: base64Content)
+        var message = GenericMessage.validatedMessage(from: base64Content)
 
         if case let .some(.external(external)) = message?.content {
             message = GenericMessage(from: updateEvent, withExternal: external)
         }
 
         guard let unwrappedMessage = message else { return nil }
+
         self = unwrappedMessage
+
     }
 
     static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
@@ -50,4 +43,26 @@ public extension GenericMessage {
         }
         return ZMClientMessage.self
     }
+
+}
+
+extension ZMUpdateEvent {
+
+    var genericMessageBase64Content: String? {
+        switch type {
+
+        case .conversationClientMessageAdd:
+            payload.string(forKey: "data")
+
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "text")
+
+        case .conversationOtrAssetAdd:
+            payload.dictionary(forKey: "data")?.string(forKey: "info")
+
+        default:
+            nil
+        }
+    }
+
 }
