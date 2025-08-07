@@ -23,6 +23,7 @@ import WireLogging
 import WireRequestStrategy
 import WireSystem
 import WireUtilities
+import WireFoundation
 
 protocol OAuthUseCaseInterface {
 

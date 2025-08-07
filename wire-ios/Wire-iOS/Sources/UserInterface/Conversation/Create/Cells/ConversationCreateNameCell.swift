@@ -31,10 +31,7 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         color: SemanticColors.Label.textUserPropertyCellName
     )
 
-    let textField = WireTextField(
-        frame: CGRect.zero,
-        isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
-    )
+    let textField = WireTextField(frame: CGRect.zero)
 
     private var cancellables = Set<AnyCancellable>()
 

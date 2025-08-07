@@ -61,19 +61,13 @@ final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapa
 
     // MARK: Initialization
 
-    /// Init with kind for keyboard style and validator type. Default is .unknown
-    ///
-    /// - Parameters:
-    /// - isContextMenuAllowed: show or hide the context menu
-    init(
-        isContextMenuAllowed: Bool
-    ) {
+    init() {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
-        super.init(frame: .zero, isContextMenuAllowed: isContextMenuAllowed)
+        super.init(frame: .zero)
         setupTextFieldProperties()
 
         tintColor = .accent()

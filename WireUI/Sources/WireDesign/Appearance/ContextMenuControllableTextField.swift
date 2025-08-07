@@ -18,26 +18,17 @@
 
 import SwiftUI
 import UIKit
+//import Foundation
 
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.
 ///
-/// Use `isContextMenuAllowed` to enable or restrict specific actions.
 /// This base class is designed to be subclassed by custom UITextField implementations
 /// that require consistent context menu behavior across the app.
 open class ContextMenuControllableUITextField: UITextField {
 
-    private let isContextMenuAllowed: Bool
-
-    public init(frame: CGRect, isContextMenuAllowed: Bool) {
-        self.isContextMenuAllowed = isContextMenuAllowed
-
-        super.init(frame: frame)
-    }
-
-    @available(*, unavailable)
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private var isContextMenuAllowed: Bool {
+        true//SecurityFlags.clipboard.isEnabled
     }
 
     public override func canPerformAction(
@@ -68,29 +59,23 @@ open class ContextMenuControllableUITextField: UITextField {
 public struct ContextMenuControllableTextField: UIViewRepresentable {
     @Binding var text: String
     var placeholder: String
-    var isContextMenuAllowed: Bool
     var isSecureTextEntry: Bool
     var placeholderColor: Color?
 
     public init(
         text: Binding<String>,
         placeholder: String,
-        isContextMenuAllowed: Bool = true,
         isSecureTextEntry: Bool = false,
         placeholderColor: Color? = nil
     ) {
         self._text = text
         self.placeholder = placeholder
-        self.isContextMenuAllowed = isContextMenuAllowed
         self.isSecureTextEntry = isSecureTextEntry
         self.placeholderColor = placeholderColor
     }
 
     public func makeUIView(context: Context) -> UITextField {
-        let textField = ContextMenuControllableUITextField(
-            frame: CGRect.zero,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+        let textField = ContextMenuControllableUITextField(frame: CGRect.zero)
         textField.placeholder = placeholder
         textField.delegate = context.coordinator
         textField.text = text

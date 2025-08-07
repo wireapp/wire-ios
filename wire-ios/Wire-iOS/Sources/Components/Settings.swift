@@ -21,6 +21,7 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 import WireSystem
+import WireFoundation
 
 enum SettingsLastScreen: Int {
     case none = 0

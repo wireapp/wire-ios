@@ -26,7 +26,6 @@ struct ToggleablePasswordField: View {
     var placeholder: String
     var placeholderColor: Color
     var focusOnAppear = true
-    var isContextMenuAllowed: Bool
 
     @State private var isPasswordVisible = false
 
@@ -78,7 +77,6 @@ struct ToggleablePasswordField: View {
         ContextMenuControllableTextField(
             text: $password,
             placeholder: placeholder,
-            isContextMenuAllowed: isContextMenuAllowed,
             isSecureTextEntry: false,
             placeholderColor: placeholderColor
         )
@@ -92,7 +90,6 @@ struct ToggleablePasswordField: View {
         ContextMenuControllableTextField(
             text: $password,
             placeholder: placeholder,
-            isContextMenuAllowed: isContextMenuAllowed,
             isSecureTextEntry: true,
             placeholderColor: placeholderColor
         )
@@ -130,8 +127,7 @@ struct ToggleablePasswordField: View {
     ToggleablePasswordField(
         password: .constant(""),
         placeholder: "Placeholder Text",
-        placeholderColor: BaseColorPalette.Neutrals.black.color,
-        isContextMenuAllowed: true
+        placeholderColor: BaseColorPalette.Neutrals.black.color
     )
     .tint(.purple)
     .padding()

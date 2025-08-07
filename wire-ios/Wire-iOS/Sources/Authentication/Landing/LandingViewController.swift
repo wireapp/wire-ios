@@ -23,6 +23,7 @@ import WireDomain
 import WireSyncEngine
 import WireSystem
 import WireTransport
+import WireFoundation
 
 protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()

@@ -27,6 +27,7 @@ import WireNotificationEngine
 import WireRequestStrategy
 import WireSyncEngine
 import WireUtilities
+import WireFoundation
 
 protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])

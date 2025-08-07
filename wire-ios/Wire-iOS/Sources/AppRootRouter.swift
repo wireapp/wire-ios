@@ -22,6 +22,7 @@ import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireFoundation
 
 // MARK: - AppRootRouter
 

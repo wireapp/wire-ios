@@ -29,7 +29,6 @@ struct EnterPasswordPreview: View {
                 EnterPasswordView(
                     password: $password,
                     passwordIsWrong: $isPasswordWrong,
-                    isContextMenuAllowed: true,
                     continueAction: { _ in },
                     cancelAction: {}
                 )

@@ -42,7 +42,6 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
             password: .constant("invalid"),
             passwordIsWrong: .constant(true),
             focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -62,7 +61,6 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
             password: .constant("G00dPassword!"),
             passwordIsWrong: .constant(false),
             focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -82,7 +80,6 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
             password: .constant(""),
             passwordIsWrong: .constant(false),
             focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true,
             continueAction: { _ in },
             cancelAction: {}
         )
@@ -99,7 +96,6 @@ final class EnterPasswordViewSnapshotTests: XCTestCase {
             password: .constant(""),
             passwordIsWrong: .constant(false),
             focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true,
             continueAction: { _ in },
             cancelAction: {}
         )

@@ -163,9 +163,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-                .canUseClipboard
+            textFieldAttributes: textFieldAttributes
         )
         setupTextFieldProperties()
 

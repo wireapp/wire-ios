@@ -24,6 +24,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput

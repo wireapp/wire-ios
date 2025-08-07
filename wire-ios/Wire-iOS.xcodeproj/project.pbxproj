@@ -50,6 +50,7 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		06F60ADC2E44870900A11F10 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 06F60ADB2E44870900A11F10 /* WireFoundation */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
@@ -892,6 +893,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06F60ADC2E44870900A11F10 /* WireFoundation in Frameworks */,
 				591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */,
 				59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */,
 				EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */,
@@ -2771,6 +2773,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
 			productName = AppAuthCore;
+		};
+		06F60ADB2E44870900A11F10 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 		407831AC2AC4636F005C2978 /* DifferenceKit */ = {
 			isa = XCSwiftPackageProductDependency;

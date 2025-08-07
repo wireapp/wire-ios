@@ -22,6 +22,7 @@ import WireAuthentication
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
+import WireFoundation
 
 /// A type of view controller that can be managed by an authentication coordinator.
 

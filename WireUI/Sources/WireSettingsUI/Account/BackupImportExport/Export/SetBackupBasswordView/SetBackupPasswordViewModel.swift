@@ -34,18 +34,15 @@ final class SetBackupPasswordViewModel: ObservableObject {
     private let passwordValidator: any BackupPasswordValidatorProtocol
     private let setPasswordAction: (_ password: String) -> Void
     private let cancelAction: () -> Void
-    let isContextMenuAllowed: Bool
 
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,
         cancelAction: @escaping () -> Void,
-        setPasswordAction: @escaping (_ password: String) -> Void,
-        isContextMenuAllowed: Bool
+        setPasswordAction: @escaping (_ password: String) -> Void
     ) {
         self.passwordValidator = passwordValidator
         self.cancelAction = cancelAction
         self.setPasswordAction = setPasswordAction
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     private func validatePassword() {

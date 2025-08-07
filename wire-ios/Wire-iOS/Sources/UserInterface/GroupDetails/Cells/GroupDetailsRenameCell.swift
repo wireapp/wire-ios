@@ -26,9 +26,7 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
 
     let verifiedIconView = UIImageView()
     let accessoryIconView = UIImageView()
-    let titleTextField = SimpleTextField(
-        isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
-    )
+    let titleTextField = SimpleTextField()
     var contentStackView: UIStackView!
 
     override init(frame: CGRect) {

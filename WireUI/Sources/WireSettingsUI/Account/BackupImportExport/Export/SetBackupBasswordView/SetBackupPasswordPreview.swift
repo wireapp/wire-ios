@@ -28,8 +28,7 @@ struct SetBackupPasswordPreview: View {
                 BackupImportExportBuilder.previewBuilder
                     .buildSetBackupPasswordView(
                         cancelAction: {},
-                        setPasswordAction: { _ in },
-                        isContextMenuAllowed: true
+                        setPasswordAction: { _ in }
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.medium])

@@ -88,7 +88,6 @@ public struct CreateFolder: View {
             ContextMenuControllableTextField(
                 text: $viewModel.name,
                 placeholder: localizedString("folder.creation.name.placeholder"),
-                isContextMenuAllowed: viewModel.isContextMenuAllowed,
                 isSecureTextEntry: false
             )
             .padding(.horizontal, 8)
@@ -143,8 +142,7 @@ public struct CreateFolder: View {
 #Preview {
     CreateFolder(
         viewModel: CreateFolderViewModel(
-            useCase: PreviewCreateFolderUseCase(),
-            isContextMenuAllowed: true
+            useCase: PreviewCreateFolderUseCase()
         ),
         conversationName: "iOS Team",
         onFolderCreated: { _ in }

@@ -39,7 +39,6 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isAlertPresented = false
 
     @Published private(set) var importProgress = Float()
-    let isContextMenuAllowed: Bool
 
     private var importTask: Task<Void, Never>?
 
@@ -51,11 +50,9 @@ final class ImportBackupViewModel: ObservableObject {
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         logger: any LoggerProtocol,
-        isContextMenuAllowed: Bool
     ) {
         self.importBackupUseCase = importBackupUseCase
         self.logger = logger
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Methods

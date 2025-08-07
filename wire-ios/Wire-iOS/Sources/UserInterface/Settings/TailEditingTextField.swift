@@ -25,8 +25,8 @@ import WireDesign
 /// can be used "as-is" without any additional configuration.
 class TailEditingTextField: ContextMenuControllableUITextField {
 
-    override init(frame: CGRect, isContextMenuAllowed: Bool) {
-        super.init(frame: frame, isContextMenuAllowed: isContextMenuAllowed)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
     }
 

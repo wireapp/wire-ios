@@ -86,19 +86,17 @@ open class AccessoryTextField: ContextMenuControllableUITextField, DynamicTypeCa
     ///   - leftInset: placeholder left inset
     ///   - accessoryTrailingInset: accessory stack right inset
     ///   - textFieldAttributes: text field attributes
-    ///   - isContextMenuAllowed: show or hide the context menu
     public init(
         leftInset: CGFloat = 8,
         accessoryTrailingInset: CGFloat = 16,
-        textFieldAttributes: Attributes,
-        isContextMenuAllowed: Bool
+        textFieldAttributes: Attributes
     ) {
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
         self.textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
         self.accessoryTrailingInset = accessoryTrailingInset
         self.textFieldAttributes = textFieldAttributes
-        super.init(frame: .zero, isContextMenuAllowed: isContextMenuAllowed)
+        super.init(frame: .zero)
         setupViews()
         setupTextField(with: textFieldAttributes)
     }

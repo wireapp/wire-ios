@@ -64,15 +64,13 @@ final class PasscodeTextField: AccessoryTextField {
     override init(
         leftInset: CGFloat,
         accessoryTrailingInset: CGFloat,
-        textFieldAttributes: Attributes,
-        isContextMenuAllowed: Bool
+        textFieldAttributes: Attributes
     ) {
 
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: isContextMenuAllowed
+            textFieldAttributes: textFieldAttributes
         )
 
         setupView()
@@ -123,8 +121,7 @@ extension PasscodeTextField {
 extension PasscodeTextField {
 
     static func createPasscodeTextField(
-        delegate: PasscodeTextFieldDelegate?,
-        isContextMenuAllowed: Bool
+        delegate: PasscodeTextFieldDelegate?
     ) -> PasscodeTextField {
         let textFieldAttributes = AccessoryTextField.Attributes(
             textFont: .normalMediumFont,
@@ -138,8 +135,7 @@ extension PasscodeTextField {
         let textField = PasscodeTextField(
             leftInset: 0,
             accessoryTrailingInset: 0,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: isContextMenuAllowed
+            textFieldAttributes: textFieldAttributes
         )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal

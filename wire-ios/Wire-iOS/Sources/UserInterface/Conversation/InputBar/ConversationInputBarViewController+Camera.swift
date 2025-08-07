@@ -23,6 +23,7 @@ import WireCommonComponents
 import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
+import WireFoundation
 
 final class StatusBarVideoEditorController: UIVideoEditorController {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {

@@ -39,9 +39,7 @@ struct FolderPickerBuilder {
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
-            updateConversationFolderUseCase: useCase,
-            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-                .canUseClipboard
+            updateConversationFolderUseCase: useCase
         )
 
         return FolderPickerHostingController(

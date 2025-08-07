@@ -341,10 +341,7 @@ final class SettingsValueCell: SettingsTableCell {
 
 final class SettingsTextCell: SettingsTableCell,
     UITextFieldDelegate {
-    var textInput: UITextField = TailEditingTextField(
-        frame: CGRect.zero,
-        isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
-    )
+    var textInput: UITextField = TailEditingTextField(frame: CGRect.zero)
 
     override func setup() {
         super.setup()

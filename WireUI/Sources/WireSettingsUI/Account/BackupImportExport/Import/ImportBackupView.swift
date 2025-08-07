@@ -54,7 +54,6 @@ struct ImportBackupView: View {
                     EnterPasswordView(
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
-                        isContextMenuAllowed: viewModel.isContextMenuAllowed,
                         continueAction: { viewModel.enterPassword($0) },
                         cancelAction: viewModel.reset
                     )
