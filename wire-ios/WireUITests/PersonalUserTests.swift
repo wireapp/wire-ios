@@ -74,14 +74,11 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func test_PersonalAccountLifecycle() async throws {
-        let userA = try await userManager.createPersonalUser()
-        let userB = try await userManager.createPersonalUser()
+        let userA = try await userHelper.createPersonalUser()
+        let userB = try await userHelper.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"
 
-        let userDetailsPage = try WelcomePage()
-            .enterEmailOrSSO(userA.email)
-            .enterPassword(userA.password)
-            .acceptFirstTimeAlert()
+        let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
@@ -91,14 +88,12 @@ final class PersonalUsersTests: WireUITestCase {
         let userNameB = try XCTUnwrap(userDetailsPage.getUserName())
         XCTAssertEqual(userNameB, "@\(userB.username)", "username didn't match @\(userB.username)")
 
-        let connectionRequestsPage = try userDetailsPage.sendConnectionRequest()
+        _ = try userDetailsPage.sendConnectionRequest()
             .closeProfilePage()
             .closeNewConversationPage()
             .openUserAccountPageForUser(with: userA.name)
             .tapAddAccountOrTeamButton()
-            .enterEmailOrSSO(userB.email)
-            .enterPassword(userB.password)
-            .acceptFirstTimeAlert()
+        let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup()
             .openPendingRequest()
 

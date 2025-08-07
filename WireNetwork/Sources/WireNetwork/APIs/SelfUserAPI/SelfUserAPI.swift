@@ -39,7 +39,7 @@ public protocol SelfUserAPI {
     #endif
 
     /// update user handle
-    /// - Parameter handle: updated handle  info
+    /// - Parameter handle: updated handle info
     #if DEBUG
         func updateHandle(accessToken: String, handle: String) async throws
     #endif
