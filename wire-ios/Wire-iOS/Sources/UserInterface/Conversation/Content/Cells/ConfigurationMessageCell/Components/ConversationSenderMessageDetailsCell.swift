@@ -50,6 +50,10 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
+    
+    private var existingConstraints: [NSLayoutConstraint] = []
+    private var chatBubbleConstraints: [NSLayoutConstraint] = []
+    
 
     var isSelected: Bool = false
 
@@ -90,8 +94,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         label.accessibilityIdentifier = "author.name"
         label.numberOfLines = 0
 
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
 
@@ -153,11 +157,17 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             greaterThanOrEqualTo: avatar.bottomAnchor,
             constant: 3
         )
-
+        
+        existingConstraints = [
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)]
+        
+        chatBubbleConstraints = [
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)]
+        
+        
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
-
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
@@ -174,6 +184,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             availabilityIndicatorView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 3),
             availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
+        
+        if DeveloperFlag.chatBubblesSimple.isOn  {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     private func configureAuthorLabel(object: Configuration) {
@@ -293,7 +309,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
-
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
 
