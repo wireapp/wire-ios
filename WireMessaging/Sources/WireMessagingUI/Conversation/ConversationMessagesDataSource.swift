@@ -70,7 +70,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
                 await updatesTimerLoop()
             }
         #endif
-        let messages = await loadMessagesUseCase.loadMessages(offset: 0, limit: 100)
+        let messages = await loadMessagesUseCase.loadMessages(offset: 0)
 
         snapshot.appendSections([.main])
         snapshot.appendItems(messages.toUIModel())
@@ -166,23 +166,26 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
 extension [MessageModel] {
     func toUIModel() -> [MessageType] {
-        map { model in
-            switch model.kind {
-            case let .text(textModel):
-                MessageType.text(
-                    TextMessageViewModel(
-                        content: AttributedString(stringLiteral: textModel.text ?? ""),
-                        senderViewModel: Bool.random() ?
-                            SenderViewModel(state: .exists(AttributedString(
-                                stringLiteral: model.sender?
-                                    .name ?? ""
-                            ))) : SenderViewModel(
-                                state: .empty
-                            )
-                    )
-                )
-            default: fatalError()
+        map { $0.toUIModel() }
+    }
+}
+
+extension MessageModel {
+    func toUIModel() -> MessageType {
+        switch kind {
+        case let .text(textModel):
+            let senderState: SenderViewModel.State = if Bool.random() {
+                .exists(AttributedString(stringLiteral: sender?.name ?? ""))
+            } else {
+                .empty
             }
+            return MessageType.text(
+                TextMessageViewModel(
+                    content: AttributedString(stringLiteral: textModel.text ?? ""),
+                    senderViewModel: SenderViewModel(state: senderState)
+                )
+            )
+        default: fatalError()
         }
     }
 }
