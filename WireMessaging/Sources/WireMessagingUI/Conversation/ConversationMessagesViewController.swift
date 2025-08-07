@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
 import Combine
+package import SwiftUI
 
 package final class ConversationMessagesViewController: UIViewController {
 
@@ -65,7 +65,7 @@ package final class ConversationMessagesViewController: UIViewController {
             }
         }
     }
-    
+
     private let reuseIdentifier: String = "MessageCell"
 
     private func setupCollectionView() {
@@ -112,19 +112,21 @@ package final class ConversationMessagesViewController: UIViewController {
 
     private func setupDataSource() {
         dataSource =
-        DataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, message -> UICollectionViewCell? in
-            guard let self else { return UICollectionViewCell() }
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: reuseIdentifier,
-                for: indexPath
-            )
-            
-            self.setContent(cell: cell, message: message)
-            
-            return cell
-        }
+            DataSource(
+                collectionView: collectionView
+            ) { [weak self] collectionView, indexPath, message -> UICollectionViewCell? in
+                guard let self else { return UICollectionViewCell() }
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: reuseIdentifier,
+                    for: indexPath
+                )
+
+                setContent(cell: cell, message: message)
+
+                return cell
+            }
     }
-    
+
     private func setContent(cell: UICollectionViewCell, message: MessageType) {
         switch message {
         case let .text(viewModel):
@@ -138,6 +140,7 @@ package final class ConversationMessagesViewController: UIViewController {
 }
 
 @testable import WireMessagingDomainSupport
+
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(

@@ -28,13 +28,13 @@ package protocol LoadConversationMessagesUseCaseProtocol: Sendable {
 }
 
 package final class LoadConversationMessagesUseCase: LoadConversationMessagesUseCaseProtocol {
-    
+
     private let repo: any LoadConversationMessagesRepositoryProtocol
-    
+
     package init(repo: any LoadConversationMessagesRepositoryProtocol) {
         self.repo = repo
     }
-    
+
     package func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         await repo.loadMessages(offset: offset, limit: limit)
     }

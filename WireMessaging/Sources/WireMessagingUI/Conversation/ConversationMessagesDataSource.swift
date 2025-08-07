@@ -43,7 +43,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
             self.updatesStreamContinuation = continuation
         }
     }
-    
+
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
 
     // here on later stages will be injected uses cases and
@@ -71,7 +71,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
             }
         #endif
         let messages = await loadMessagesUseCase.loadMessages(offset: 0, limit: 100)
-        
+
         snapshot.appendSections([.main])
         snapshot.appendItems(messages.toUIModel())
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
@@ -164,7 +164,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
 }
 
-extension Array where Element == MessageModel {
+extension [MessageModel] {
     func toUIModel() -> [MessageType] {
         map { model in
             switch model.kind {
@@ -173,12 +173,12 @@ extension Array where Element == MessageModel {
                     TextMessageViewModel(
                         content: AttributedString(stringLiteral: textModel.text ?? ""),
                         senderViewModel: Bool.random() ?
-                        SenderViewModel(state: .exists(AttributedString(
-                            stringLiteral: model.sender?
-                                .name ?? ""
-                        ))) : SenderViewModel(
-                            state: .empty
-                        )
+                            SenderViewModel(state: .exists(AttributedString(
+                                stringLiteral: model.sender?
+                                    .name ?? ""
+                            ))) : SenderViewModel(
+                                state: .empty
+                            )
                     )
                 )
             default: fatalError()

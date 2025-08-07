@@ -23,7 +23,7 @@ struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
 
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         let base = "This is a line. "
-        let modelMessages: [MessageModel] = (0 ..< 7).map { _ in
+        return (0 ..< 7).map { _ in
             let repeatCount = Int.random(in: 1 ... 5)
             return MessageModel(
                 sender: .init(
@@ -34,6 +34,5 @@ struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
                 kind: .text(.init(text: String(repeating: base, count: repeatCount)))
             )
         }
-        return modelMessages
     }
 }

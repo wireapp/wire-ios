@@ -20,8 +20,8 @@ public import UIKit
 import WireMessagingUI
 public import WireMessagingDomain
 
-public final class WireMessagingAssembly {
-    
+public enum WireMessagingAssembly {
+
     @MainActor
     public static func makeConversationScreen(
         loadMessagesRepo: any LoadConversationMessagesRepositoryProtocol
