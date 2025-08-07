@@ -111,8 +111,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         if DeveloperFlag.chatBubblesSimple.isOn {
-            let ownColor = SemanticColors.ChatBubbleSimple.foregroundOwnMessage
-            let otherColor = SemanticColors.ChatBubbleSimple.foregroundOtherMessage
+            let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
+            let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
             messageTextView.textColor = ownMessage ? ownColor : otherColor
         }
     }
