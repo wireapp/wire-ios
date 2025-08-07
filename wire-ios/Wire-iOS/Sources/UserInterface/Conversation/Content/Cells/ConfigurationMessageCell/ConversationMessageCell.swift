@@ -201,21 +201,6 @@ extension ConversationMessageCellDescription {
     var isAccessibilityElement: Bool {
         false
     }
-    
-    var shouldWrapInBubble: Bool {
-        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
-            return false
-        }
-        return message.isText
-    }
-    
-    
-    var shouldAlignMessageContentForBubbles: Bool {
-        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
-            return false
-        }
-        return message.isAudio || message.isFile || message.isVideo || message.isImage || message.isLocation || message.isPDF
-    }
 
     var topMargin: CGFloat {
         get { objc_getAssociatedObject(self, &topMarginKey) as? CGFloat ?? 2 }
