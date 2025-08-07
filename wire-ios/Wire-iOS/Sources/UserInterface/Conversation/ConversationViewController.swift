@@ -149,9 +149,9 @@ final class ConversationViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
-            ConversationMessagesViewController(
-                viewModel: ConversationMessagesViewModel(
-                    dataSource: ConversationMessagesDataSource()
+            WireMessagingAssembly.makeConversationScreen(
+                loadMessagesRepo: LoadConversationMessagesRepository(
+                    conversation: conversation
                 )
             )
         } else {

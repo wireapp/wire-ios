@@ -11,9 +11,10 @@
 		CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */; };
 		E45380B12DEDCCBF0018F560 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B02DEDCCBF0018F560 /* WireFoundation */; };
 		E45380B32DEDCCDE0018F560 /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */; };
-		E4630A9A2E420B6800265B70 /* WireMessagingUI in Frameworks */ = {isa = PBXBuildFile; productRef = E4630A992E420B6800265B70 /* WireMessagingUI */; };
 		E46489712E25051D00405FBB /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = E46489702E25051D00405FBB /* WireNetwork */; };
 		E46489732E25052200405FBB /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E46489722E25052200405FBB /* WireNetworkSupport */; };
+		E4AA01992E44AED70013EEBF /* WireMessagingAssembly in Frameworks */ = {isa = PBXBuildFile; productRef = E4AA01982E44AED70013EEBF /* WireMessagingAssembly */; };
+		E4AA019B2E44AEE80013EEBF /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = E4AA019A2E44AEE80013EEBF /* WireMessagingDomain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,7 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4630A9A2E420B6800265B70 /* WireMessagingUI in Frameworks */,
+				E4AA019B2E44AEE80013EEBF /* WireMessagingDomain in Frameworks */,
+				E4AA01992E44AED70013EEBF /* WireMessagingAssembly in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +148,8 @@
 			);
 			name = WIreChatBubbles;
 			packageProductDependencies = (
-				E4630A992E420B6800265B70 /* WireMessagingUI */,
+				E4AA01982E44AED70013EEBF /* WireMessagingAssembly */,
+				E4AA019A2E44AEE80013EEBF /* WireMessagingDomain */,
 			);
 			productName = WIreChatBubbles;
 			productReference = E4630A842E420B1300265B70 /* WIreChatBubbles.app */;
@@ -507,10 +510,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMultiBackendUI;
 		};
-		E4630A992E420B6800265B70 /* WireMessagingUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireMessagingUI;
-		};
 		E46489702E25051D00405FBB /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
@@ -518,6 +517,14 @@
 		E46489722E25052200405FBB /* WireNetworkSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetworkSupport;
+		};
+		E4AA01982E44AED70013EEBF /* WireMessagingAssembly */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingAssembly;
+		};
+		E4AA019A2E44AEE80013EEBF /* WireMessagingDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingDomain;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -19,6 +19,7 @@
 public import SwiftUI
 import Combine
 
+// TODO: make not public 
 public final class ConversationMessagesViewController: UIViewController {
 
     typealias DataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>
@@ -126,11 +127,14 @@ public final class ConversationMessagesViewController: UIViewController {
 
 }
 
+import WireMessagingDomainSupport
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource()
+                dataSource: ConversationMessagesDataSource(
+                    loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol()
+                )
             )
         )
     }

@@ -16,23 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
-import WireMessagingUI
-public import WireMessagingDomain
+import Foundation
+import WireMessagingDomain
 
-public final class WireMessagingAssembly {
-    
-    @MainActor
-    public static func makeConversationScreen(
-        loadMessagesRepo: any LoadConversationMessagesRepositoryProtocol
-    ) -> UIViewController {
-        ConversationMessagesViewController(
-            viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo)
-                )
+struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
+
+    func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
+        let base = "This is a line. "
+        let modelMessages: [MessageModel] = (0 ..< 7).map { _ in
+            let repeatCount = Int.random(in: 1 ... 5)
+            return MessageModel(
+                sender: .init(
+                    remoteIdentifier: .init(),
+                    name: "Sender",
+                    handle: nil
+                ),
+                kind: .text(.init(text: String(repeating: base, count: repeatCount)))
             )
-        )
+        }
+        return modelMessages
     }
-
 }
