@@ -41,7 +41,7 @@ public protocol SelfUserAPI {
     /// update user handle
     /// - Parameter handle: updated handle  info
     #if DEBUG
-        func updateHandle(handle: String) async throws
+        func updateHandle(accessToken: String, handle: String) async throws
     #endif
 
     /// Delete a team

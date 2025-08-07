@@ -32,7 +32,7 @@ final class TeamManageTests: WireUITestCase {
             .acceptFirstTimeAlert()
             .acceptPopup()
 
-        var userAccountPage = try conversationPage.openUserAccount()
+        var userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
         let teamCreationStepsPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
@@ -42,7 +42,7 @@ final class TeamManageTests: WireUITestCase {
 
         conversationPage = try teamCreationStepsPage.tapBackToWireButton()
 
-        userAccountPage = try conversationPage.openUserAccount()
+        userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -85,7 +85,7 @@ final class TeamManageTests: WireUITestCase {
             .acceptFirstTimeAlert()
             .acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
-            .openUserAccount()
+            .openUserAccountPageForUser(with: memberUser.username)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
@@ -95,6 +95,5 @@ final class TeamManageTests: WireUITestCase {
             .openAccountSettings()
             .logout()
             .enterPassword(memberUser.password)
-
     }
 }

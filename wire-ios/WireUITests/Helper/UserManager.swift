@@ -70,8 +70,16 @@ class UserManager {
         // Activate user
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
 
+        // get accessToken for current user
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user.email,
+            password: user.password,
+            verificationCode: nil,
+            label: nil
+        )
+
         // Set username
-        try await selfUserAPI.updateHandle(handle: user.username)
+        try await selfUserAPI.updateHandle(accessToken: accessToken.token, handle: user.username)
 
         createdUsers.append(user)
         return user
