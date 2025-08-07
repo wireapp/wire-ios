@@ -128,7 +128,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         from base64Message: String,
         externalData: String?
     ) async -> GenericMessage? {
-        guard var genericMessage = GenericMessage.validatedMessage(from: base64Message) else { return nil }
+        guard var genericMessage = GenericMessage(from: base64Message, validate: true) else { return nil }
 
         if let externalData, case let .some(.external(external)) = genericMessage.content {
             /// Content message is external, we decrypt the external payload
@@ -167,7 +167,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
 
         guard let base64String = decryptedData?.base64String() else { return nil }
-        return GenericMessage.validatedMessage(from: base64String)
+        return GenericMessage(from: base64String, validate: true)
     }
 
     // MARK: - Calling

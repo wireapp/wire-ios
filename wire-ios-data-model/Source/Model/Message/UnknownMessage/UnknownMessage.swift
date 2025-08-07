@@ -25,7 +25,7 @@ import Foundation
 public final class UnknownMessage: ZMOTRMessage {
 
     @nonobjc
-    public class func fetchRequest() -> NSFetchRequest<UnknownMessage> {
+    public static func fetchRequest() -> NSFetchRequest<UnknownMessage> {
         NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
 

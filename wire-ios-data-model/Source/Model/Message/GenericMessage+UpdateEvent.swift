@@ -25,10 +25,10 @@ public extension GenericMessage {
 
         guard let base64Content = updateEvent.genericMessageBase64Content else { return nil }
 
-        var message = GenericMessage.validatedMessage(from: base64Content)
+        var message = GenericMessage(from: base64Content, validate: true) // TODO: pass validate
 
         if case let .some(.external(external)) = message?.content {
-            message = GenericMessage(from: updateEvent, withExternal: external)
+            message = GenericMessage(from: updateEvent, withExternal: external, validate: true) // TODO: pass validate
         }
 
         guard let unwrappedMessage = message else { return nil }

@@ -89,7 +89,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         }
 
         // Parse into GenericMessage
-        guard let genericMessage = GenericMessage.validatedMessage(from: decryptedMessage.message) else {
+        guard let genericMessage = GenericMessage(from: decryptedMessage.message, validate: true) else {
             // TODO: handle
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",

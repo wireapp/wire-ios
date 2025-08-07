@@ -27,7 +27,7 @@ struct ProtobufMessageDecoder {
         from base64Message: String,
         externalData: String? = nil
     ) -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        var genericMessage = GenericMessage.validatedMessage(from: base64Message)
+        var genericMessage = GenericMessage(from: base64Message, validate: true)
 
         // If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
         // message.
@@ -73,7 +73,7 @@ struct ProtobufMessageDecoder {
 
         guard
             let base64String = decryptedData?.base64String(),
-            let message = GenericMessage.validatedMessage(from: base64String)
+            let message = GenericMessage(from: base64String, validate: true)
         else { return nil }
 
         return message

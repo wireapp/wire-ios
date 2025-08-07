@@ -80,7 +80,7 @@ final class MessageLocalStoreTests: XCTestCase {
         }
 
         // Given a regular message to add to a conversation
-        let genericMessage = try XCTUnwrap(GenericMessage.validatedMessage(from: Scaffolding.base64EncodedString))
+        let genericMessage = try XCTUnwrap(GenericMessage(from: Scaffolding.base64EncodedString, validate: true))
 
         // When
 

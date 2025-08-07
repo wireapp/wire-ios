@@ -944,7 +944,7 @@ extension ClientMessageTests {
             )
 
             // when
-            let message = GenericMessage(from: messageEvent!, withExternal: external)
+            let message = GenericMessage(from: messageEvent!, withExternal: external, validate: true)
 
             // then
             XCTAssertNotNil(message)
