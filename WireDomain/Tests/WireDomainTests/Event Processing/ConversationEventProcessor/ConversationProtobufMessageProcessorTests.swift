@@ -86,14 +86,12 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             { _, _, _, _, _, _ in
             }
 
-        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
-        let content = try XCTUnwrap(genericMessage.content) // .text
+        let genericMessage = try XCTUnwrap(GenericMessage.validatedMessage(from: Scaffolding.base64EncodedString))
 
         // When
 
         try await sut.processProtobufMessage(
             genericMessage,
-            content: content,
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -130,7 +128,6 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         // When
         try await sut.processProtobufMessage(
             genericMessage,
-            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
@@ -166,7 +163,6 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         // When
         try await sut.processProtobufMessage(
             genericMessage,
-            content: try XCTUnwrap(genericMessage.content),
             conversation: conversation,
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
