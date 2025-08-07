@@ -116,7 +116,8 @@ public struct KeyPackage: Codable, Equatable {
 
 extension KeyPackage {
     var coreCryptoKeyPackage: WireCoreCryptoUniffi.KeyPackage {
-        .init(bytes: Data(keyPackage.utf8))
+        .init(bytes: keyPackage.base64DecodedData!)
+       // Data(keyPackage.utf8))
     }
 
 }
