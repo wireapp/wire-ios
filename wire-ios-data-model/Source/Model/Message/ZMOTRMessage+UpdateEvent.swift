@@ -65,6 +65,7 @@ extension ZMOTRMessage {
 
         // handle unsupported message types (protobuf declaration might have been updated, message from newer clients)
         if message.content == nil {
+            // TODO: test flow manually and automatically
             return switch message.unknownStrategy {
             case .ignore:
                 // Throw the message away without informing the user.
