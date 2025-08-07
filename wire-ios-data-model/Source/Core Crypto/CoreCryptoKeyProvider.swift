@@ -77,13 +77,16 @@ public class CoreCryptoKeyProvider {
 
     private func fetchCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
-        return try KeychainManager.fetchItem(item)
+        let key: Data = try KeychainManager.fetchItem(item)
+        WireLogger.coreCrypto.info("Temp logs, key: \(key.base64EncodedString())")
+        return key
     }
 
     private func createCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
         let key = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: key)
+        WireLogger.coreCrypto.info("Temp logs, key: \(key.base64EncodedString())")
         return key
     }
 
