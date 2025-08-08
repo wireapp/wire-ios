@@ -39,7 +39,7 @@ package final class ConversationMessagesViewController: UIViewController {
     package required init?(coder: NSCoder) {
         fatalError()
     }
-    
+
     private var observeTask: Task<Void, Never>?
 
     package override func viewDidLoad() {
@@ -54,10 +54,10 @@ package final class ConversationMessagesViewController: UIViewController {
 
         viewModel.onViewReady()
     }
-    
+
     package override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         observeTask?.cancel()
         observeTask = nil
     }
