@@ -67,13 +67,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:WireCells",
-        "identifier" : "WireCellsUITests",
-        "name" : "WireCellsUITests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:WireUI",
         "identifier" : "WireMainNavigationUITests",
         "name" : "WireMainNavigationUITests"

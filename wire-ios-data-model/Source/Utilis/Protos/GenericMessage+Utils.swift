@@ -19,12 +19,6 @@
 import Foundation
 import GenericMessageProtocol
 
-extension GenericMessage {
-    var knownMessage: Bool {
-        content != nil
-    }
-}
-
 public extension ImageAsset {
     init(
         mediumProperties: ZMIImageProperties?,

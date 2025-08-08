@@ -32,7 +32,6 @@
 "general.decline" = "不了，謝謝";
 "general.failure" = "出了點問題";
 "general.failure.try_again" = "請再試一次。";
-"general.service" = "服務";
 "general.off" = "關閉";
 "general.on" = "開啟";
 "general.loading" = "載入中...";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "建立";
 
 "peoplepicker.header.people" = "聯絡人";
-"peoplepicker.header.services" = "服務";
-"peoplepicker.services.open_conversation.item" = "開啟對話";
-"peoplepicker.services.add_service.button" = "新增服務";
-"peoplepicker.services.add_service.error.title" = "無法加入服務";
-"peoplepicker.services.add_service.error.default" = "服務暫時無法使用";
-"peoplepicker.services.add_service.error.full" = "對話人數已達上限";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "開啟對話";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "沒有連絡人。";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "發送邀請";
 "peoplepicker.no_matching_results.action.share_contacts" = "分享通訊錄";
 "peoplepicker.no_matching_results.action.learn_more" = "瞭解詳情";
-"peoplepicker.no_matching_results.action.manage_services" = "管理服務";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "依照使用者名稱或@別名在Wire尋找";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "依照使用者名稱或@別名在Wire尋找\n依照使用者名稱或@別名@網域在其它網域尋找";
 "peoplepicker.no_matching_results.message.users_all_added" = "大家都已加入";
-"peoplepicker.no_matching_results.message.services" = "沒有結果。";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "服務可改善你的工作流程。";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "服務可改善你的工作流程。如要啟用它們，請詢問您的管理員。";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "已送出邀請";
 "peoplepicker.send_invitation.dialog.message" = "連結兩週內有效。如逾期請重新發送。";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "邀請其他人加入團隊";
 "peoplepicker.quick-action.open-conversation" = "開啟";
-"peoplepicker.quick-action.admin-services" = "管理服務";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
 
-"add_participants.alert.title" = "對話人數已達上限";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "允許訪客";
 "conversation.create.guests.subtitle" = "開放這個對話與團隊以外的訪客。";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
 "conversation.create.mls.title" = "Protocol";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "此訊息已刪除。";
 
 // Conversation banner
-"conversation.banner.guests" = "訪客";
-"conversation.banner.services" = "服務";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = "和";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "搜索";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -488,7 +479,7 @@
 "content.system.other_removed_you" = "%@移除了您";
 "content.system.you_removed_other" = "您移除了%@";
 
-"content.system.services.warning" = "服務可以存取這個對話內容";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
 // Placeholder contains a single name, e.g "Alice"
@@ -900,7 +891,7 @@
 "participants.title" = "詳細資訊";
 "participants.all.title" = "聯絡人";
 "participants.section.participants" = "參與者(%d)";
-"participants.section.services" = "服務 (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "選項";
 "participants.footer.add_title" = "加入參與者";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1026,7 +1017,7 @@
 "profile.read_receipts_disabled_memo.header" = "您已停用讀取回條";
 "profile.read_receipts_memo.body" = "如果雙方都打開讀取回條，則可以查看何時讀取信息。您可以在帳戶設置中更改此選項。";
 
-"profile.group_admin_status_memo.body" = "開啓該選項後，管理員可以添加或移除用戶或服務，更新群組設定，變更參與者角色。";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "資訊";
 
@@ -1068,21 +1059,22 @@
 "device.type.unknown" = "未知";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "訪客";
 "group_details.guest_options_cell.enabled" = "開啟";
 "group_details.guest_options_cell.disabled" = "關閉";
-"group_details.services_options_cell.title" = "服務";
-"group_details.services_options_cell.enabled" = "開啟";
-"group_details.services_options_cell.disabled" = "關閉";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "開啟";
+"group_details.apps_options_cell.disabled" = "關閉";
 "group_details.timeout_options_cell.title" = "自動刪除訊息";
 "group_details.notification_options_cell.title" = "通知";
 "group_details.notification_options_cell.description" = "您可以收到有關所有內容 (包括音訊和視頻通話) 的通知, 或者僅當有人提及您或回復您的訊息時才會收到通知。";
 "group_details.receipt_options_cell.title" = "讀取回條";
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1532,12 +1524,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "移除";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "移除";
 
 
 // Registration
