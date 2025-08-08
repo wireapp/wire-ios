@@ -46,8 +46,8 @@ extension ZMUserSession {
     var refreshUsersMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
             // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
+            guard let context = self?.syncContext else { return }
+            context.perform {
 
                 let fetchRequest = ZMUser
                     .sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
@@ -64,8 +64,8 @@ extension ZMUserSession {
     var refreshConversationsMissingMetadataAction: RecurringAction {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
+            guard let context = self?.syncContext else { return }
+            context.perform {
 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
@@ -83,8 +83,8 @@ extension ZMUserSession {
     var refreshTeamMetadataAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
 
-            guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait {
+            guard let context = self?.syncContext else { return }
+            context.perform {
 
                 guard let team = ZMUser.selfUser(in: context).team else { return }
                 team.refreshMetadata()
