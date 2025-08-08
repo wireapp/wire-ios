@@ -23,7 +23,7 @@ import XCTest
 
 final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase {
     
-    private let record: Bool? = true
+    private let record: Bool? = nil
     
     // MARK: - setUp
 
