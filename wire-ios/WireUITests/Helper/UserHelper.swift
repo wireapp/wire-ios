@@ -91,6 +91,10 @@ class UserHelper {
         )
 
         // Set username
+        // Injecting the accessToken here ensures that when creating more than one user,
+        // the handle update request uses the correct (new) user's token. Without this,
+        // the old user's accessToken is reused, causing the new handle to be applied
+        // to the wrong user and resulting in a mismatch.
         try await selfUserAPI.updateHandle(accessToken: accessToken.token, handle: user.username)
 
         createdUsers.append(user)
