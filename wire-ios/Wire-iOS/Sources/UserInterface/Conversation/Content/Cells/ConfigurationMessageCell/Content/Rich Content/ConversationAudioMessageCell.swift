@@ -43,6 +43,9 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
+    
+    private var existingConstraints: [NSLayoutConstraint] = []
+    private var chatBubbleConstraints: [NSLayoutConstraint] = []
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,15 +59,9 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = if DeveloperFlag.chatBubblesSimple.isOn {
-            ConversationMessageContainerView.bubbleCornerRadius
-        } else {
-            12
-        }
-
-        containerView.shape = .rounded(radius: cornerRadius)
+        containerView.shape = .rounded(radius: 12)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = cornerRadius
+        containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true
@@ -76,15 +73,27 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
+        existingConstraints = [ containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left), containerView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: -margins.right)]
+        chatBubbleConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor)
+        ]
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
+        
+        if DeveloperFlag.chatBubblesSimple.isOn  {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -138,6 +147,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     weak var message: ZMConversationMessage? {
         didSet {
