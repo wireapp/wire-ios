@@ -1050,17 +1050,16 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: NetworkState = if isNetworkOnline {
-            if isPerformingSync {
-                .onlineSynchronizing
-            } else {
-                .online
+        networkState = {
+            switch (isNetworkOnline, isPerformingSync) {
+            case (true, true):
+                return .onlineSynchronizing
+            case (true, false):
+                return .online
+            case (false, _):
+                return .offline
             }
-        } else {
-            .offline
-        }
-
-        networkState = state
+        }()
     }
 }
 
@@ -1201,30 +1200,25 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func didStartIncrementalSync() {
         WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = true
-            self?.updateNetworkState()
+        Task {
+            await showSyncBar(true)
         }
     }
 
+    @MainActor
+    private func showSyncBar(_ show: Bool) {
+        isPerformingSync = show
+        updateNetworkState()
+    }
+
     func didFinishIncrementalSync(isRecovering: Bool) {
+        Task {
+            await showSyncBar(false)
+        }
+
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync", attributes: .incrementalSync)
-
-            func showSyncBar(_ show: Bool) {
-                managedObjectContext.performGroupedBlock { [weak self] in
-                    self?.isPerformingSync = show
-                    self?.updateNetworkState()
-                }
-            }
-
-            showSyncBar(true)
-            
-            guard !isRecovering else {
-                // in case of recovery, we don't need more
-                return showSyncBar(false)
-            }
 
             WaitingGroupTask(context: syncContext) { [weak self] in
                 guard let self else { return }
@@ -1258,7 +1252,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 await resolveOneOnOneConversationsIfNeeded()
 
                 // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
-                showSyncBar(false)
             }
 
             recurringActionService.performActionsIfNeeded()
