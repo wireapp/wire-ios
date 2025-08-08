@@ -42,6 +42,7 @@ final class AttachmentsCarouselViewModelTests {
     func updateWhenSuccess() async throws {
         // given
         var imageDraft = WireCellsDraft.fixture(
+            versionID: UUID(),
             fileType: .jpeg,
             status: .uploading(progress: 0.5),
             name: "image.jpg",
@@ -49,6 +50,7 @@ final class AttachmentsCarouselViewModelTests {
         )
 
         var videoDraft = WireCellsDraft.fixture(
+            versionID: UUID(),
             fileType: .mpeg4Movie,
             status: .uploading(progress: 0.5),
             name: "video.mp4",
@@ -56,6 +58,7 @@ final class AttachmentsCarouselViewModelTests {
         )
 
         var audioDraft = WireCellsDraft.fixture(
+            versionID: UUID(),
             fileType: .mp3,
             status: .uploading(progress: 0.5),
             name: "audio.mp3",
@@ -63,6 +66,7 @@ final class AttachmentsCarouselViewModelTests {
         )
 
         var documentDraft = WireCellsDraft.fixture(
+            versionID: UUID(),
             fileType: .spreadsheet,
             status: .uploading(progress: 0.5),
             name: "spreadsheet.xlsx",
@@ -150,6 +154,7 @@ final class AttachmentsCarouselViewModelTests {
     func updateWhenFailure() async throws {
         // given
         var documentDraft = WireCellsDraft.fixture(
+            versionID: UUID(),
             fileType: .spreadsheet,
             status: .uploading(progress: 0.5),
             name: "spreadsheet.xlsx",
