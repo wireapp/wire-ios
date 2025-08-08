@@ -1220,12 +1220,7 @@ extension ZMUserSession: SyncAgentDelegate {
             }
 
             showSyncBar(true)
-
-            NotificationInContext(
-                name: .quickSyncCompletedNotification,
-                context: notificationContext
-            ).post()
-
+            
             guard !isRecovering else {
                 // in case of recovery, we don't need more
                 return showSyncBar(false)
