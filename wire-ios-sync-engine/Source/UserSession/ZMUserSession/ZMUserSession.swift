@@ -1212,51 +1212,47 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishIncrementalSync(isRecovering: Bool) {
+        WireLogger.sync.debug(
+            "did finish incremental sync (isRecovering: \(isRecovering))",
+            attributes: .incrementalSync
+        )
+
         Task {
             await showSyncBar(false)
-        }
+            await fetchBackendMLSPublicKeys()
+            await fetchAndStoreFeatureConfig()
 
-        syncContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            WireLogger.sync.debug("did finish incremental sync", attributes: .incrementalSync)
-
-            WaitingGroupTask(context: syncContext) { [weak self] in
-                guard let self else { return }
-                await fetchBackendMLSPublicKeys()
-                await fetchAndStoreFeatureConfig()
-
-                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                    let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
-                    let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-                    return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
-                }
-
-                if let qualifiedSelfClientID {
-                    await mlsClientManager.initializeMLSClientIfNeeded(
-                        for: qualifiedSelfClientID,
-                        hasRegisteredMLSClient: hasRegisteredMLSClient,
-                        mlsFeature: mlsFeature
-                    )
-                } else {
-                    WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-                }
-
-                if !isRecovering, mlsFeature.isEnabled {
-                    Task.detached { [mlsService] in
-                        // we don't need to wait for this, as it can take a while to finish
-                        await mlsService.commitPendingProposalsIfNeeded()
-                    }
-                }
-
-                await calculateSelfSupportedProtocolsIfNeeded()
-                await resolveOneOnOneConversationsIfNeeded()
-
-                // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
-            recurringActionService.performActionsIfNeeded()
-            performPostQuickSyncE2EIActions()
+            if let qualifiedSelfClientID {
+                await mlsClientManager.initializeMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature
+                )
+            } else {
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            }
+
+            if !isRecovering, mlsFeature.isEnabled {
+                Task.detached { [mlsService] in
+                    // we don't need to wait for this, as it can take a while to finish
+                    await mlsService.commitPendingProposalsIfNeeded()
+                }
+            }
+
+            await calculateSelfSupportedProtocolsIfNeeded()
+            await resolveOneOnOneConversationsIfNeeded()
+
+            // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
         }
+
+        recurringActionService.performActionsIfNeeded()
+        performPostQuickSyncE2EIActions()
     }
 
     /// Calculate supported protocols for self user in case they are empty
