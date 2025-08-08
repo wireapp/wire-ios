@@ -22,9 +22,9 @@ import XCTest
 @testable import Wire
 
 final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase {
-    
+
     private let record: Bool? = nil
-    
+
     // MARK: - setUp
 
     override func setUp() {
@@ -38,14 +38,14 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
         DeveloperFlag.chatBubblesSimple.enable(false, storage: .temporary())
         super.tearDown()
     }
-    
+
     // MARK: - Snapshot Tests
-    
+
     func testSelfMessageDefaultColor() {
         let message = createMessage(isFromSelfUser: true)
         verify(message: message, record: record)
     }
-    
+
     func testSelfMessagePurpleColor() {
         let message = createMessage(isFromSelfUser: true, color: .purple)
         verify(message: message, record: record)
@@ -55,7 +55,7 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
         let message = createMessage(isFromSelfUser: false)
         verify(message: message, record: record)
     }
-    
+
     // MARK: - Helper Methods
 
     func createMessage(
@@ -68,7 +68,7 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
         let message = MockMessageFactory.textMessage(withText: withText)
         let user = MockUserType.createConnectedUser(name: userName, isSelfUser: isFromSelfUser, color: color)
         message.senderUser = user
-        
+
         return message
     }
 }
