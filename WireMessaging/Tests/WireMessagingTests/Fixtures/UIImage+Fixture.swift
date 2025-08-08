@@ -23,7 +23,7 @@ import UIKit
 extension UIImage {
 
     static func fixture() -> UIImage {
-        UIImage(resource: .dropdown) 
+        UIImage(resource: .dropdown)
     }
 
 }

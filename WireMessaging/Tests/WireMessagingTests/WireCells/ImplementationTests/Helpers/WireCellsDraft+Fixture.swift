@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireMessagingDomain
 import UniformTypeIdentifiers
+import WireMessagingDomain
 
 extension WireCellsDraft {
     static func fixture(

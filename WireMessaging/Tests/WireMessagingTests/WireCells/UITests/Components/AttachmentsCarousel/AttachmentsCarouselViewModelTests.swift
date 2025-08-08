@@ -38,7 +38,8 @@ final class AttachmentsCarouselViewModelTests {
         }.store(in: &cancellables)
     }
 
-    @Test func updateWhenSuccess() async throws {
+    @Test
+    func updateWhenSuccess() async throws {
         // given
         var imageDraft = WireCellsDraft.fixture(
             fileType: .jpeg,
@@ -120,7 +121,7 @@ final class AttachmentsCarouselViewModelTests {
 
         // update 2 - all items are uploading, but image OR video thumbnail is generated - it's non deterministic so
         // just a sanity check
-        #expect(capturedItems[1].map { $0.id } == [imageItem.id, videoItem.id, audioItem.id, documentItem.id])
+        #expect(capturedItems[1].map(\.id) == [imageItem.id, videoItem.id, audioItem.id, documentItem.id])
 
         // update 3 - all items are uploading, but image AND video thumbnails are generated
         imageItem.kind = .image(thumbnail: UIImage.fixture())
@@ -145,7 +146,8 @@ final class AttachmentsCarouselViewModelTests {
         #expect(capturedItems[3] == [imageItem, videoItem, audioItem, documentItem])
     }
 
-    @Test func updateWhenFailure() async throws {
+    @Test
+    func updateWhenFailure() async throws {
         // given
         var documentDraft = WireCellsDraft.fixture(
             fileType: .spreadsheet,
@@ -185,10 +187,8 @@ final class AttachmentsCarouselViewModelTests {
     func awaitUntilCapturedItemsCount(_ count: Int) async throws {
         guard capturedItems.count < count else { return }
 
-        for await _ in sut.$items.values {
-            if capturedItems.count >= count {
-                break
-            }
+        for await _ in sut.$items.values where capturedItems.count >= count {
+            break
         }
     }
 
@@ -197,7 +197,7 @@ final class AttachmentsCarouselViewModelTests {
 private actor ThumbnailGeneratorMock: ThumbnailGenerator {
 
     func generateThumbnail(fileAt url: URL, size: CGSize, scale: Double) async throws -> UIImage {
-        return UIImage.fixture()
+        UIImage.fixture()
     }
 
 }
