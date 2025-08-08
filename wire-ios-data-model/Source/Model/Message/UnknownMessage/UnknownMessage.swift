@@ -22,7 +22,12 @@ import Foundation
 /// Temporarily stores raw data retrieved from an `ConversationMLSMessageAddEvent` or an
 /// `ConversationProteusMessageAddEvent` which couldn't be parsed into a `GenericMessage` yet.
 
+@objcMembers
 public final class UnknownMessage: ZMOTRMessage {
+
+    public override static func entityName() -> String {
+        "UnknownMessage"
+    }
 
     @nonobjc
     public static func fetchRequest() -> NSFetchRequest<UnknownMessage> {
