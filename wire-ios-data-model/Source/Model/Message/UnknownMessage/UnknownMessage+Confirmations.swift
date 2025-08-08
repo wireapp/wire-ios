@@ -19,7 +19,7 @@
 extension UnknownMessage {
 
     public override var needsReadConfirmation: Bool {
-        true
+        false // as long as the message can't be displayed properly, don't send a read receipt
     }
 
 }
