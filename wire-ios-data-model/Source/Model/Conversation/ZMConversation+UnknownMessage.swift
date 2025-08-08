@@ -38,6 +38,16 @@ public extension ZMConversation {
         unknownMessage.sender = sender
         unknownMessage.serverTimestamp = serverTimestamp
         unknownMessage.payload = payload
+
+        // TODO: needed? maybe use append(...)
+        /*
+        unknownMessage.visibleInConversation = self
+        updateTimestampsAfterUpdatingMessage(unknownMessage)
+        unknownMessage.unarchiveIfNeeded(self)
+        unknownMessage.updateCategoryCache()
+        unknownMessage.markAsSent()
+         */
+
         return unknownMessage
 
     }
