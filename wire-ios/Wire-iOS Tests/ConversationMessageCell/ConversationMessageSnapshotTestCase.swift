@@ -187,7 +187,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             contentWidth: width,
             userDefaults: mockUserDefaults
         )
-        let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
+        let views = section.cellDescriptionsForTesting.map { $0.instance.makeView(message) }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
         stackView.spacing = 2
@@ -212,7 +212,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 private extension ConversationMessageCellDescription {
 
-    func makeView() -> UIView {
+    func makeView(_ message: ZMConversationMessage) -> UIView {
         let view = View()
         let container = UIView()
 
@@ -227,6 +227,7 @@ private extension ConversationMessageCellDescription {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
 
         view.configure(with: configuration, animated: false)
+        view.message = message
 
         return container
     }
