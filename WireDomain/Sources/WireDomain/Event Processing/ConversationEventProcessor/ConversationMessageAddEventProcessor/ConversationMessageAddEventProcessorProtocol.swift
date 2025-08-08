@@ -28,6 +28,12 @@ protocol ConversationMessageAddEventProcessorProtocol {
 
     var messageLocalStore: any MessageLocalStoreProtocol { get }
 
+    func addUnknownSystemMessage(
+        senderID: UserID,
+        conversationID: ConversationID,
+        date: Date
+    ) async
+
     func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
@@ -47,12 +53,28 @@ protocol ConversationMessageAddEventProcessorProtocol {
 
 extension ConversationMessageAddEventProcessorProtocol {
 
+    func addUnknownSystemMessage(
+        senderID: UserID,
+        conversationID: ConversationID,
+        date: Date
+    ) async {
+        let systemMessageType: SystemMessageType = .unknownMessageReceived(
+            sender: (senderID.id, senderID.domain),
+            date: date
+        )
+        await messageLocalStore.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain
+        )
+    }
+
     func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
     ) async {
-        let systemMessageType: SystemMessageType = .invalid( // TODO: invalid? 
+        let systemMessageType: SystemMessageType = .invalid(
             sender: (senderID.id, senderID.domain),
             date: date
         )
@@ -75,7 +97,7 @@ extension ConversationMessageAddEventProcessorProtocol {
         case .ignore:
             return
         case .discardAndWarn:
-            await addInvalidSystemMessage(
+            await addUnknownSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
                 date: date

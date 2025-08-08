@@ -221,6 +221,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.conversationNameChanged])
         case let .readReceiptsStatus(isEnabled, _, _):
             (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
+        case .unknownMessageReceived:
+            (messagesCount: 1, [.unknownMessageReceived])
         case .invalid:
             (messagesCount: 1, [.invalid])
         case .decryptionFailed:
