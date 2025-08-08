@@ -69,11 +69,13 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
 
     private func generateThumbnail(for draft: WireCellsDraft) async {
         guard
-            !generatingThumbnailIDs.contains(draft.nodeID),
+            !generatingThumbnailIDs.contains(draft.versionID),
             thumbnails[draft.versionID] == nil,
             let fileType = draft.fileType,
             fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent), !fileType.conforms(to: .audio)
         else { return }
+
+        generatingThumbnailIDs.insert(draft.versionID)
 
         do {
             let thumbnail = try await thumbnailGenerator.generateThumbnail(
@@ -87,7 +89,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             WireLogger.wireCells.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
         }
 
-        generatingThumbnailIDs.remove(draft.nodeID)
+        generatingThumbnailIDs.remove(draft.versionID)
     }
 
 }
