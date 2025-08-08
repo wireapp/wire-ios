@@ -39,9 +39,9 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     // AsyncStream because Combine's AnyPublisher is not Sendable
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     package func updatesStream() async -> AsyncStream<MessagesUpdate> {
-        AsyncStream { continuation in
-            self.updatesStreamContinuation = continuation
-        }
+        let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
+        updatesStreamContinuation = continuation
+        return stream
     }
 
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
