@@ -19,7 +19,7 @@
 import SwiftUI
 package import Foundation
 
-package class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
+package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Sendable {
 
     package let id = UUID()
 

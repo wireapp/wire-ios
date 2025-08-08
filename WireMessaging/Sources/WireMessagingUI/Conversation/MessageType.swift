@@ -18,13 +18,7 @@
 
 import Foundation
 
-package enum MessageType: Hashable, Identifiable, Sendable {
-
-    package var id: ObjectIdentifier {
-        switch self {
-        case let .text(vm): vm.id
-        }
-    }
+package enum MessageType: Hashable, Sendable {
 
     case text(TextMessageViewModel)
     // case image, video, system, etc
