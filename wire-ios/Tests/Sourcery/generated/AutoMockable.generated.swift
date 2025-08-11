@@ -28,10 +28,12 @@ import CoreLocation
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
-import WireCellsAPI
+import WireMessagingDomain
 
 @testable import Wire
 @testable import WireCommonComponents
+
+
 
 
 

@@ -88,7 +88,7 @@ struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
 
         let useCase = ChannelAccessUseCase(
             permission: .everyone,
-            repository: MockChannelAccessRepositoryProtocol()
+            repository: MockChannelRepositoryProtocol()
         )
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 

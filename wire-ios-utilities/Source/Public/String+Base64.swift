@@ -29,7 +29,9 @@ public extension String {
     }
 
     var base64EncodedBytes: [Byte]? {
-        base64EncodedData?.bytes
+        base64EncodedData.map { data in
+            [UInt8](data)
+        }
     }
 
     var base64EncodedString: String? {
@@ -41,7 +43,9 @@ public extension String {
     }
 
     var base64DecodedBytes: [Byte]? {
-        base64DecodedData?.bytes
+        base64DecodedData.map { data in
+            [UInt8](data)
+        }
     }
 
 }

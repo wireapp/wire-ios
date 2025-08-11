@@ -95,9 +95,9 @@
         "package": "GenericMessageProtocol",
         "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
         "state": {
-          "branch": "chore/add-package.swift-WPB-10203",
-          "revision": "f955407c5c51f50d7dc1e5d27fadb18c43260760",
-          "version": null
+          "branch": null,
+          "revision": "bc03f619b3ed2ed2d8472b360624928313fe598f",
+          "version": "1.53.0"
         }
       },
       {

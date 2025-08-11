@@ -460,6 +460,16 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async
 
+    /// Stores the conversation history depth (for channels only) locally.
+    /// - Parameters
+    ///     - historyDepth: The history depth (one day, one week, four weeks..)
+
+    func storeConversation(
+        historyDepth: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws
+
     func fetchServerTimeDelta() async -> TimeInterval
 
 }
