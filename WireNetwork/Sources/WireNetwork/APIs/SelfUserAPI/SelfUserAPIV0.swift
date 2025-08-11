@@ -86,7 +86,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func updateHandle(accessToken access_token: String, handle: String) async throws {
+    func updateHandle(handle: String) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(
             UpdateHandleRequestBodyV0(handle: handle)
         )
@@ -94,10 +94,9 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
         let request = try URLRequestBuilder(path: "\(resourcePath)/handle")
             .withMethod(.put)
             .withBody(body, contentType: .json)
-            .addingHeader(field: "Authorization", value: "Bearer \(access_token)")
             .build()
 
-        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: false)
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
