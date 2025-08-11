@@ -246,7 +246,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                         keyPackages: invitees.compactMap(\.coreCryptoKeyPackage)
                     )
                 }
-                //keyPackages: invitees.compactMap(\.keyPackage.base64DecodedData)
                 if let newDistributionPoints = CRLsDistributionPoints(
                     from: crlNewDistributionPoints
                 ) {
