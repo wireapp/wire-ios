@@ -18,7 +18,7 @@
 
 import SwiftUI
 import UIKit
-//import Foundation
+import WireFoundation
 
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.
@@ -28,7 +28,7 @@ import UIKit
 open class ContextMenuControllableUITextField: UITextField {
 
     private var isContextMenuAllowed: Bool {
-        true//SecurityFlags.clipboard.isEnabled
+        SecurityFlags.clipboard.isEnabled
     }
 
     public override func canPerformAction(
