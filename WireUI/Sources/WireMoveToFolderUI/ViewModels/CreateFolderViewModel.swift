@@ -31,13 +31,11 @@ public final class CreateFolderViewModel: ObservableObject {
     }
 
     private let useCase: any CreateConversationFolderUseCaseProtocol
-    let isContextMenuAllowed: Bool
 
     // MARK: - Lifecycle
 
-    public init(useCase: any CreateConversationFolderUseCaseProtocol, isContextMenuAllowed: Bool) {
+    public init(useCase: any CreateConversationFolderUseCaseProtocol) {
         self.useCase = useCase
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface

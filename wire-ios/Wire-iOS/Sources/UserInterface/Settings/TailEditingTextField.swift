@@ -25,9 +25,11 @@ import WireDesign
 /// with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
 /// can be used "as-is" without any additional configuration.
 class TailEditingTextField: ContextMenuControllableUITextField {
-
     init(frame: CGRect) {
-        super.init(frame: frame, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
+        super.init(
+            frame: frame,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
         setup()
     }
 

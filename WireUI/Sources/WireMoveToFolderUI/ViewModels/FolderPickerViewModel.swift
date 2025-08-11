@@ -28,20 +28,17 @@ public final class FolderPickerViewModel: ObservableObject {
     private let conversation: Conversation
     private let directory: any FolderDirectoryTypeProtocol
     private let updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
-    let isContextMenuAllowed: Bool
 
     // MARK: - Initialization
 
     public init(
         conversation: Conversation,
         directory: any FolderDirectoryTypeProtocol,
-        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol,
-        isContextMenuAllowed: Bool
+        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
     ) {
         self.conversation = conversation
         self.directory = directory
         self.updateConversationFolderUseCase = updateConversationFolderUseCase
-        self.isContextMenuAllowed = isContextMenuAllowed
         loadFolders()
     }
 

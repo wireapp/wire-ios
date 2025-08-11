@@ -86,6 +86,7 @@ open class AccessoryTextField: ContextMenuControllableUITextField, DynamicTypeCa
     ///   - leftInset: placeholder left inset
     ///   - accessoryTrailingInset: accessory stack right inset
     ///   - textFieldAttributes: text field attributes
+    ///   - isContextMenuAllowed: enable or restrict context menu actions
     public init(
         leftInset: CGFloat = 8,
         accessoryTrailingInset: CGFloat = 16,

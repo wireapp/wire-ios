@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 
@@ -123,8 +124,7 @@ extension PasscodeTextField {
 extension PasscodeTextField {
 
     static func createPasscodeTextField(
-        delegate: PasscodeTextFieldDelegate?,
-        isContextMenuAllowed: Bool
+        delegate: PasscodeTextFieldDelegate?
     ) -> PasscodeTextField {
         let textFieldAttributes = AccessoryTextField.Attributes(
             textFont: .normalMediumFont,
@@ -139,7 +139,7 @@ extension PasscodeTextField {
             leftInset: 0,
             accessoryTrailingInset: 0,
             textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: isContextMenuAllowed
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal

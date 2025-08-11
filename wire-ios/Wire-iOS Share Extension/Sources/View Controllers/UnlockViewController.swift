@@ -52,10 +52,7 @@ final class UnlockViewController: UIViewController {
     }()
 
     private lazy var passcodeTextField: PasscodeTextField = {
-        let textField = PasscodeTextField.createPasscodeTextField(
-            delegate: self,
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-        )
+        let textField = PasscodeTextField.createPasscodeTextField(delegate: self)
         textField.isSecureTextEntry = true
         textField.autocapitalizationType = .none
 

@@ -24,15 +24,18 @@ public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
     private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
+    private let isContextMenuAllowed: Bool
     let conversationName: String
 
     public init(
         viewModel: FolderPickerViewModel,
         createFolderUseCase: any CreateConversationFolderUseCaseProtocol,
+        isContextMenuAllowed: Bool,
         conversationName: String
     ) {
         self.viewModel = viewModel
         self.createFolderUseCase = createFolderUseCase
+        self.isContextMenuAllowed = isContextMenuAllowed
         self.conversationName = conversationName
     }
 
@@ -63,8 +66,7 @@ public struct FolderPicker: View {
                     NavigationLink {
                         CreateFolder(
                             viewModel: CreateFolderViewModel(
-                                useCase: createFolderUseCase,
-                                isContextMenuAllowed: viewModel.isContextMenuAllowed
+                                useCase: createFolderUseCase
                             ),
                             conversationName: conversationName,
                             onFolderCreated: { [weak viewModel] createdFolder in
@@ -80,7 +82,8 @@ public struct FolderPicker: View {
                                         )
                                     }
                                 }
-                            }
+                            },
+                            isContextMenuAllowed: isContextMenuAllowed
                         )
                     } label: {
                         Image(systemName: "plus")
@@ -128,9 +131,11 @@ public struct FolderPicker: View {
                     Folder(identifier: UUID(), name: "Personal")
                 ]
             ),
-            updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase(),
-            isContextMenuAllowed: true,
-        ), createFolderUseCase: PreviewCreateConversationFolderUseCase(), conversationName: "Test"
+            updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
+        ),
+        createFolderUseCase: PreviewCreateConversationFolderUseCase(),
+        isContextMenuAllowed: true,
+        conversationName: "Test"
     )
 }
 

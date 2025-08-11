@@ -50,7 +50,7 @@ class WireTextField: ContextMenuControllableUITextField {
 
     // MARK: - Initialization
 
-     init(frame: CGRect) {
+    init(frame: CGRect) {
         super.init(frame: frame, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setup()
     }

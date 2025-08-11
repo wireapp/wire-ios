@@ -85,8 +85,7 @@ public struct BackupImportExportBuilder {
             setBackupPasswordView: {
                 buildSetBackupPasswordView(
                     cancelAction: { [weak viewModel] in viewModel?.cancel() },
-                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) },
-                    isContextMenuAllowed: isContextMenuAllowed
+                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) }
                 )
             },
             creatingBackupProgressView: {
@@ -102,18 +101,16 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildSetBackupPasswordView(
         cancelAction: @escaping () -> Void,
-        setPasswordAction: @escaping (_ password: String) -> Void,
-        isContextMenuAllowed: Bool
+        setPasswordAction: @escaping (_ password: String) -> Void
     ) -> some View {
 
         let setBackupPasswordViewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: cancelAction,
             setPasswordAction: setPasswordAction,
-            isContextMenuAllowed: isContextMenuAllowed
         )
 
-        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 
@@ -122,10 +119,9 @@ public struct BackupImportExportBuilder {
 
         let viewModel = ImportBackupViewModel(
             importBackupUseCase: importBackupUseCase,
-            logger: importBackupLogger,
-            isContextMenuAllowed: isContextMenuAllowed
+            logger: importBackupLogger
         )
-        ImportBackupView(viewModel: viewModel)
+        ImportBackupView(viewModel: viewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 }

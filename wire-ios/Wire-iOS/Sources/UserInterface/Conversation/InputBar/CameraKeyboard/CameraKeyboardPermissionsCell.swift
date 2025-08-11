@@ -19,7 +19,6 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireFoundation
 
 enum DeniedAuthorizationType {
     case camera

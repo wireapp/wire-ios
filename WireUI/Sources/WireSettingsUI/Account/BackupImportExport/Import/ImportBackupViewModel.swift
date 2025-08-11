@@ -44,18 +44,15 @@ final class ImportBackupViewModel: ObservableObject {
 
     private let logger: any LoggerProtocol
     private let fileManager = FileManager.default
-    let isContextMenuAllowed: Bool
 
     private typealias Strings = L10n.Localizable.ImportBackup
 
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
         logger: any LoggerProtocol,
-        isContextMenuAllowed: Bool
     ) {
         self.importBackupUseCase = importBackupUseCase
         self.logger = logger
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Methods

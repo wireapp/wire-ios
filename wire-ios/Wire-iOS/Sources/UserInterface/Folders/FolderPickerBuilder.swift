@@ -40,13 +40,13 @@ struct FolderPickerBuilder {
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
-            updateConversationFolderUseCase: useCase,
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            updateConversationFolderUseCase: useCase
         )
 
         return FolderPickerHostingController(
             viewModel: viewModel,
             createFolderUseCase: createConversationFolderUseCase,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled,
             conversationName: conversationName
         )
     }

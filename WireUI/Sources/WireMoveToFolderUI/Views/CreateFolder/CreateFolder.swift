@@ -28,15 +28,18 @@ public struct CreateFolder: View {
     @ObservedObject private var viewModel: CreateFolderViewModel
     private let conversationName: String
     private let onFolderCreated: (Folder) -> Void
+    private let isContextMenuAllowed: Bool
 
     public init(
         viewModel: CreateFolderViewModel,
         conversationName: String,
-        onFolderCreated: @escaping (Folder) -> Void
+        onFolderCreated: @escaping (Folder) -> Void,
+        isContextMenuAllowed: Bool
     ) {
         self.viewModel = viewModel
         self.conversationName = conversationName
         self.onFolderCreated = onFolderCreated
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     public var body: some View {
@@ -89,7 +92,7 @@ public struct CreateFolder: View {
                 text: $viewModel.name,
                 placeholder: localizedString("folder.creation.name.placeholder"),
                 isSecureTextEntry: false,
-                isContextMenuAllowed: viewModel.isContextMenuAllowed
+                isContextMenuAllowed: isContextMenuAllowed
             )
             .padding(.horizontal, 8)
             .frame(height: 48)
@@ -143,11 +146,11 @@ public struct CreateFolder: View {
 #Preview {
     CreateFolder(
         viewModel: CreateFolderViewModel(
-            useCase: PreviewCreateFolderUseCase(),
-            isContextMenuAllowed: true
+            useCase: PreviewCreateFolderUseCase()
         ),
         conversationName: "iOS Team",
-        onFolderCreated: { _ in }
+        onFolderCreated: { _ in },
+        isContextMenuAllowed: true
     )
 }
 
