@@ -265,18 +265,41 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testGetConversations_givenV0_thenItValidatesArguments() async throws {
+        // given
+        let sut = ConversationsAPIV0(apiService: MockAPIServiceProtocol())
+
+        // when
+        await XCTAssertThrowsErrorAsync {
+            _ = try await sut.getConversations(for: [])
+        } errorHandler: { error in
+            switch error {
+            case ConversationsAPIError.illegalArgument:
+                break
+            default:
+                XCTFail("unexpected error")
+            }
+        }
+    }
+
     func testGetConversations_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV0AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV0(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
         // when
+        let list = try await api.getConversations(for: ids)
+
         // then
-        let list = try await api.getConversations(for: [])
         XCTAssertEqual(list.found.count, 1)
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
@@ -289,12 +312,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV0(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch ConversationsAPIError.invalidBody {
+            // then
             XCTAssertTrue(true)
         } catch {
             XCTFail("expected error 'ConversationsAPIError.invalidBody'")
@@ -309,12 +338,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV0(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch let error as FailureResponse {
+            // then
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
@@ -324,16 +359,22 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV2AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV2AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV2(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
         // when
+        let list = try await api.getConversations(for: ids)
+
         // then
-        let list = try await api.getConversations(for: [])
         XCTAssertEqual(list.found.count, 1)
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
@@ -346,12 +387,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV2(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch ConversationsAPIError.invalidBody {
+            // then
             XCTAssertTrue(true)
         } catch {
             XCTFail("expected error 'ConversationsAPIError.invalidBody'")
@@ -367,12 +414,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV2(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch let error as FailureResponse {
+            // then
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
@@ -382,16 +435,22 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV3AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV3(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
         // when
+        let list = try await api.getConversations(for: ids)
+
         // then
-        let list = try await api.getConversations(for: [])
         XCTAssertEqual(list.found.count, 1)
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
@@ -408,12 +467,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV3(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch ConversationsAPIError.invalidBody {
+            // then
             XCTAssertTrue(true)
         } catch {
             XCTFail("expected error 'ConversationsAPIError.invalidBody'")
@@ -428,12 +493,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV3(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch let error as FailureResponse {
+            // then
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
@@ -443,16 +514,22 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV5AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV5AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV5(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
         // when
+        let list = try await api.getConversations(for: ids)
+
         // then
-        let list = try await api.getConversations(for: [])
         XCTAssertEqual(list.found.count, 1)
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
@@ -470,12 +547,18 @@ final class ConversationsAPITests: XCTestCase {
         )
 
         let api = ConversationsAPIV5(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
-        // when
-        // then
         do {
-            _ = try await api.getConversations(for: [])
+            // when
+            _ = try await api.getConversations(for: ids)
         } catch let error as FailureResponse {
+            // then
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
@@ -485,16 +568,22 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV8AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV8AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV8(apiService: apiService)
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
 
         // when
+        let list = try await api.getConversations(for: ids)
+
         // then
-        let list = try await api.getConversations(for: [])
         XCTAssertEqual(list.found.count, 1)
         XCTAssertEqual(list.notFound.count, 1)
         XCTAssertEqual(list.failed.count, 1)
