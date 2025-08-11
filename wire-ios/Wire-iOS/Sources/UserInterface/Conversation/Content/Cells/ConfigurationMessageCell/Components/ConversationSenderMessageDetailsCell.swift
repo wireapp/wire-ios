@@ -159,15 +159,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         )
         
         existingConstraints = [
+            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)]
         
         chatBubbleConstraints = [
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24 + 12)),
+            authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
             authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)]
         
         
         NSLayoutConstraint.activate([
-            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
