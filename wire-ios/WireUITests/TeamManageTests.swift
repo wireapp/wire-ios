@@ -161,17 +161,14 @@ final class TeamManageTests: WireUITestCase {
             groupName: groupName
         )
 
-        // Login as owner
         let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
 
-        // Get conversation ID and domain
         let (convoId, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
         let convoUUID = try XCTUnwrap(convoId)
         let convoDomain = try XCTUnwrap(domain)
 
-        // Send text from member 1
         try await testServiceClient.sendText(
             user: teamMembers[0],
             text: messageFromMember1,
@@ -191,12 +188,11 @@ final class TeamManageTests: WireUITestCase {
         let imagePath = basePath.appendingPathComponent("Img/testImage.jpg").path
         let audioPath = basePath.appendingPathComponent("Audio/testAudio.m4a").path
 
-        let (imageName, imageExt) = getFileInfo(from: imagePath)
-        let (audioName, audioExt) = getFileInfo(from: audioPath)
+        let (imageName, imageExtension) = getFileInfo(from: imagePath)
+        let (audioName, audioExtension) = getFileInfo(from: audioPath)
 
-        // Send image file from member 2
         try await testServiceClient.sendFile(
-            type: imageExt,
+            type: imageExtension,
             user: teamMembers[1],
             fileName: imageName,
             filepath: imagePath,
@@ -204,9 +200,8 @@ final class TeamManageTests: WireUITestCase {
             domain: convoDomain
         )
 
-        // Send audio file from member 3
         try await testServiceClient.sendFile(
-            type: audioExt,
+            type: imageExtension,
             user: teamMembers[2],
             fileName: audioName,
             filepath: audioPath,
@@ -219,6 +214,11 @@ final class TeamManageTests: WireUITestCase {
             fetchedGroupName,
             groupName,
             "Group name \(fetchedGroupName) didn't match expected value \(groupName)"
+        )
+
+        XCTAssertTrue(
+            try conversationsPage.waitUntilLastMessageReceivedByTestService(with: teamMembers[2].name),
+            "Last message not received within 5 seconds by \(teamMembers[2].name)"
         )
 
         let activeConversationPage = try conversationsPage.openConversation()
