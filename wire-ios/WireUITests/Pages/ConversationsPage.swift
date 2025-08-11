@@ -36,9 +36,17 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
     }
 
+    var conversationCell: XCUIElement {
+        app.buttons["title"]
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
+    }
+
+    func getGroupName() -> String? {
+        conversationCell.label as? String
     }
 
     func openUserAccount() throws -> UserAccountPage {
@@ -49,5 +57,12 @@ class ConversationsPage: PageModel {
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
         plusButtonToCreateGroup.tap()
         return try NewConversationPage()
+    }
+
+    func openConversation() throws -> ActiveConversationPage {
+        if conversationCell.waitForExistence(timeout: 5) {
+            conversationCell.tap()
+        }
+        return try ActiveConversationPage()
     }
 }

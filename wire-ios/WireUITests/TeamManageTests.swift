@@ -129,7 +129,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamOwner_VerifyMessagesSentByMemberInGroup() async throws {
+    func test_TeamOwner_VerifyMessagesAndFileSentByMembersInGroup() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromMember1 = UserGenerator.generateRandomMessage()
 
@@ -149,15 +149,21 @@ final class TeamManageTests: WireUITestCase {
             teamID: try XCTUnwrap(teamOwner.teamID)
         )
 
+        let (qualifiedIdMember3, teamMember3) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: try XCTUnwrap(teamOwner.teamID)
+        )
+
         try await userHelper.createGroupConversations(
             qualifiedId1: qualifiedIdMember1,
             qualifiedId2: qualifiedIdMember2,
+            qualifiedId3: qualifiedIdMember3,
             owner: teamOwner,
             groupName: groupName
         )
 
         // Login as owner
-        let conversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
 
@@ -183,13 +189,13 @@ final class TeamManageTests: WireUITestCase {
             .deletingLastPathComponent()
             .appendingPathComponent("TestServicesData")
 
-        let imagePath = basePath.appendingPathComponent("Img/testing.jpg").path
-        let audioPath = basePath.appendingPathComponent("Audio/test.m4a").path
+        let imagePath = basePath.appendingPathComponent("Img/testImage.jpg").path
+        let audioPath = basePath.appendingPathComponent("Audio/testAudio.m4a").path
 
         let (imageName, imageExt) = getFileInfo(from: imagePath)
         let (audioName, audioExt) = getFileInfo(from: audioPath)
 
-        // Send image file
+        // Send image file from member 2
         try await testServiceClient.sendFile(
             type: imageExt,
             user: teamMember2,
@@ -199,17 +205,43 @@ final class TeamManageTests: WireUITestCase {
             domain: convoDomain
         )
 
-        // Send audio file
+        // Send audio file from member 3
         try await testServiceClient.sendFile(
             type: audioExt,
-            user: teamMember2,
+            user: teamMember3,
             fileName: audioName,
             filepath: audioPath,
             convoId: convoUUID,
             domain: convoDomain
         )
-        
-        
-        //NEEDS FIXING - add verification of these messages
+
+        let returnedGroupName = conversationsPage.getGroupName()
+        XCTAssertEqual(
+            returnedGroupName,
+            groupName,
+            "Group name \(returnedGroupName) didn't match expected value \(groupName)"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+        let fetchMessages = activeConversationPage.fetchMessages()
+        let fetchFileNames = activeConversationPage.fetchFileNames()
+        let fetchSenders = activeConversationPage.fetchSenders()
+
+        XCTAssertTrue(
+            fetchFileNames[0].contains(audioName.uppercased()) && fetchSenders[0].contains(teamMember3.name),
+            "Either expected message '\(audioName)' not found or not sent by \(teamMember2.name)"
+        )
+
+        XCTAssertTrue(
+            fetchFileNames[1].contains(imageName.uppercased()) &&
+                fetchSenders[1].contains(teamMember2.name),
+            "Either expected message '\(imageName)' not found or not sent by \(teamMember2.name)"
+        )
+
+        XCTAssertTrue(
+            fetchMessages[0].contains(messageFromMember1) &&
+                fetchSenders[2].contains(teamMember1.name),
+            "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
+        )
     }
 }
