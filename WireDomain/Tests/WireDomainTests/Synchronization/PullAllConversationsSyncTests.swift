@@ -131,9 +131,9 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
 
         try XCTAssertCount(api.getConversationsFor_Invocations, count: 3)
-        XCTAssertEqual(api.getConversationsFor_Invocations[0], Array(Scaffolding.tooManyConverationIDs[0..<1000]))
-        XCTAssertEqual(api.getConversationsFor_Invocations[1], Array(Scaffolding.tooManyConverationIDs[1000..<2000]))
-        XCTAssertEqual(api.getConversationsFor_Invocations[2], Array(Scaffolding.tooManyConverationIDs[2000..<2500]))
+        XCTAssertEqual(api.getConversationsFor_Invocations[0], Array(Scaffolding.tooManyConverationIDs[0 ..< 1000]))
+        XCTAssertEqual(api.getConversationsFor_Invocations[1], Array(Scaffolding.tooManyConverationIDs[1000 ..< 2000]))
+        XCTAssertEqual(api.getConversationsFor_Invocations[2], Array(Scaffolding.tooManyConverationIDs[2000 ..< 2500]))
 
         XCTAssertEqual(journal[.isConversationSyncRequired], false)
     }
@@ -215,7 +215,7 @@ private enum Scaffolding {
         ]
     }
 
-    static var tooManyConverationIDs = (1...2500).map { _ in
+    static var tooManyConverationIDs = (1 ... 2500).map { _ in
         QualifiedID(id: UUID(), domain: "example.com")
     }
 
