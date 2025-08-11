@@ -59,7 +59,40 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
             }
         }
 
-        let conversations = try await api.getConversations(for: conversationIDs)
+        guard !conversationIDs.isEmpty else {
+            return
+        }
+
+        // We'll fetch the conversations in chunks and let them run in
+        // parallel.
+        try await withThrowingTaskGroup { group in
+            // Backend allows fetching max 1000 at a time.
+            let chunks = stride(
+                from: conversationIDs.startIndex,
+                to: conversationIDs.endIndex,
+                by: 1000
+            ).map { startIndex in
+                let endIndex = min(startIndex + 1000, conversationIDs.endIndex)
+                return Array(conversationIDs[startIndex ..< endIndex])
+            }
+
+            // Enqueue each task.
+            for chunk in chunks {
+                group.addTask { [weak self] in
+                    try await self?.pullConversations(ids: chunk)
+                }
+            }
+
+            // Wait for all tasks to complete, if any fail the
+            // group will fail.
+            while try await group.next() != nil {}
+        }
+
+        journal[.isConversationSyncRequired] = false
+    }
+
+    private func pullConversations(ids: [QualifiedID]) async throws {
+        let conversations = try await api.getConversations(for: ids)
 
         for conversation in conversations.found {
             await store.storeConversation(
@@ -84,8 +117,6 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
                 conversationDomain: id.domain
             )
         }
-
-        journal[.isConversationSyncRequired] = false
     }
 
 }
