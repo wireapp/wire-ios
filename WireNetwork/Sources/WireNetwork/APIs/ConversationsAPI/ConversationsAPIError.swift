@@ -91,4 +91,7 @@ public enum ConversationsAPIError: Error {
     /// Permission unchanged
     case permissionsUnchanged
 
+    /// An illegal argument was passed.
+    case illegalArgument(message: String)
+
 }
