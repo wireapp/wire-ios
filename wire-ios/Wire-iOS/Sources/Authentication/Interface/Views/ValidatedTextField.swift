@@ -17,10 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireCommonComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
 

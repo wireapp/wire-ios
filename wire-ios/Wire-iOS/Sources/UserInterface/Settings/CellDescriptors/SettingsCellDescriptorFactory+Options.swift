@@ -21,7 +21,6 @@ import UIKit
 import WireCommonComponents
 import WireSettingsUI
 import WireSyncEngine
-import WireFoundation
 
 extension SettingsCellDescriptorFactory {
 

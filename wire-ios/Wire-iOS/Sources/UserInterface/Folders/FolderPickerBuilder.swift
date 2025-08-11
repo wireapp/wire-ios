@@ -18,10 +18,10 @@
 
 import SwiftUI
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
-import WireCommonComponents
 
 struct FolderPickerBuilder {
     @MainActor

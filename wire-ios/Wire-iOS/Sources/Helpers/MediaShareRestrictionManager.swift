@@ -19,7 +19,6 @@
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireFoundation
 
 enum ShareableMediaSource: CaseIterable {
     case camera

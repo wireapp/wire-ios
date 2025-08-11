@@ -25,7 +25,6 @@ import WireCoreCrypto
 import WireCountly
 import WireLogging
 import WireSyncEngine
-import WireFoundation
 
 enum ApplicationLaunchType {
     case unknown

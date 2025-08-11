@@ -341,7 +341,10 @@ final class SettingsValueCell: SettingsTableCell {
 
 final class SettingsTextCell: SettingsTableCell,
     UITextFieldDelegate {
-    var textInput: UITextField = TailEditingTextField(frame: CGRect.zero, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
+    var textInput: UITextField = TailEditingTextField(
+        frame: CGRect.zero,
+        isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+    )
 
     override func setup() {
         super.setup()

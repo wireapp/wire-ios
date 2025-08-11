@@ -19,7 +19,6 @@
 import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
-import WireFoundation
 
 extension Notification.Name {
     static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")

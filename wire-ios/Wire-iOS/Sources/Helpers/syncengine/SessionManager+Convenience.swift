@@ -21,7 +21,6 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireFoundation
 
 extension SessionManager {
     static var shared: SessionManager? {

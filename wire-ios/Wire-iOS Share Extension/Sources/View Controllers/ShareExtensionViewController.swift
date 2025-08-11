@@ -29,7 +29,6 @@ import WireDomain
 import WireLinkPreview
 import WireLogging
 import WireShareEngine
-import WireFoundation
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")

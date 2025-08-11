@@ -23,7 +23,6 @@ import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireFoundation
 
 private let zmLog = ZMSLog(tag: "UI")
 
