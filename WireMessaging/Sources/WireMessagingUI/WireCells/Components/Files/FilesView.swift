@@ -17,16 +17,41 @@
 //
 
 import SwiftUI
+import WireDesign
 
 package struct FilesView: View {
     @ObservedObject var viewModel: FilesViewModel
+    @Environment(\.dismiss) var dismiss
+
+    private typealias Strings = L10n.Localizable.Conversation.WireCells
+    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
     package init(viewModel: FilesViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-        Text("")
+        NavigationStack {
+            Text("")
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text(Strings.Files.navigationTitle)
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(SemanticColors.Label.textDefault.color)
+                    }
+
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(.close)
+                                .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        }
+                        .accessibilityLabel(Accessibility.Files.close)
+                        .accessibilityIdentifier("close")
+                    }
+                }
+        }
     }
 }
 

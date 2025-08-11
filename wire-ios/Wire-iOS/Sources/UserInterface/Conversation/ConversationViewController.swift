@@ -857,11 +857,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
-        let filesNavigationController = wireCellsFactory
+        let filesView = wireCellsFactory
             .makeFilesView()
-            .wrapInNavigationController()
 
-        filesNavigationController.presentOverAll(animated: true)
+        filesView.presentOverAll(animated: true)
     }
 
 }
