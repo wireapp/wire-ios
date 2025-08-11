@@ -59,40 +59,64 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
             }
         }
 
-        while !conversationIDs.isEmpty {
-            // Fetch max 1000 at a time.
-            let idsToFetch = Array(conversationIDs.prefix(1000))
-            conversationIDs.removeFirst(idsToFetch.count)
+        guard !conversationIDs.isEmpty else {
+            return
+        }
 
-            let conversations = try await api.getConversations(for: idsToFetch)
-
-            for conversation in conversations.found {
-                await store.storeConversation(
-                    conversation.toDomainModel(),
-                    timestamp: .now,
-                    isFederationEnabled: isFederationEnabled,
-                    isMLSEnabled: isMLSEnabled
-                )
+        // We'll fetch the conversations in chunks and let them run in
+        // parallel.
+        try await withThrowingTaskGroup { group in
+            // Backend allows fetching max 1000 at a time.
+            let chunks = stride(
+                from: conversationIDs.startIndex,
+                to: conversationIDs.endIndex,
+                by: 1000
+            ).map { startIndex in
+                let endIndex = min(startIndex + 1000, conversationIDs.endIndex)
+                return Array(conversationIDs[startIndex ..< endIndex])
             }
 
-            for id in conversations.notFound {
-                await store.storeConversation(
-                    needsBackendUpdate: true,
-                    conversationID: id.id,
-                    conversationDomain: id.domain
-                )
+            // Enqueue each task.
+            for chunk in chunks {
+                group.addTask { [weak self] in
+                    try await self?.pullConversations(ids: chunk)
+                }
             }
 
-            for id in conversations.failed {
-                await store.storeFailedConversation(
-                    conversationID: id.id,
-                    conversationDomain: id.domain
-                )
-            }
-
+            // Wait for all tasks to complete, if any fail the
+            // group will fail.
+            while try await group.next() != nil {}
         }
 
         journal[.isConversationSyncRequired] = false
+    }
+
+    private func pullConversations(ids: [QualifiedID]) async throws {
+        let conversations = try await api.getConversations(for: ids)
+
+        for conversation in conversations.found {
+            await store.storeConversation(
+                conversation.toDomainModel(),
+                timestamp: .now,
+                isFederationEnabled: isFederationEnabled,
+                isMLSEnabled: isMLSEnabled
+            )
+        }
+
+        for id in conversations.notFound {
+            await store.storeConversation(
+                needsBackendUpdate: true,
+                conversationID: id.id,
+                conversationDomain: id.domain
+            )
+        }
+
+        for id in conversations.failed {
+            await store.storeFailedConversation(
+                conversationID: id.id,
+                conversationDomain: id.domain
+            )
+        }
     }
 
 }
