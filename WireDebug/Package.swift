@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "WireAuthentication", path: "../WireAuthentication"),
-        .package(name: "WireCells", path: "../WireCells"),
+        .package(name: "WireMessaging", path: "../WireMessaging"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WireUI")
@@ -25,7 +25,7 @@ let package = Package(
             name: "WireViewsDebugUI",
             dependencies: [
                 .product(name: "WireAuthenticationUI", package: "WireAuthentication"),
-                .product(name: "WireCellsUI", package: "WireCells"),
+                .product(name: "WireMessagingUI", package: "WireMessaging"),
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI")

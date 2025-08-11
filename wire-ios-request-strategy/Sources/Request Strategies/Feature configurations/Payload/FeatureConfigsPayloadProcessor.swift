@@ -96,8 +96,8 @@ struct FeatureConfigsPayloadProcessor {
         }
 
         if let allowedGlobalOperations = payload.allowedGlobalOperations {
-            repository.storeAllowGlobalOperations(
-                Feature.AllowGlobalOperations(
+            repository.storeAllowedGlobalOperations(
+                Feature.AllowedGlobalOperations(
                     status: allowedGlobalOperations.status,
                     config: allowedGlobalOperations.config
                 )
@@ -259,12 +259,12 @@ struct FeatureConfigsPayloadProcessor {
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
-        case .allowGlobalOperations:
+        case .allowedGlobalOperations:
             let response = try decoder.decode(
-                FeatureStatusWithConfig<Feature.AllowGlobalOperations.Config>.self,
+                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
                 from: data
             )
-            repository.storeAllowGlobalOperations(.init(
+            repository.storeAllowedGlobalOperations(.init(
                 status: response.status,
                 config: response.config
             ))

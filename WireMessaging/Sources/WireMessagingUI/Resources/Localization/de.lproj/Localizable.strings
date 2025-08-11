@@ -17,6 +17,8 @@
 //
 
 "general.loading" = "Wird geladen…";
+"general.confirm" = "OK";
+"general.failure" = "Ein Fehler ist aufgetreten";
 
 // Channel Access level
 "channel_access_level.public" = "Öffentlich";
@@ -84,5 +86,11 @@
 "conversation.channelHistory.picker.custom" = "Benutzerdefiniert";
 "conversation.channelHistory.customPicker.days" = "Tage";
 "conversation.channelHistory.customPicker.weeks" = "Wochen";
+"conversation.channelHistory.share.sectionFootnote" = "Sie können den Gesprächsverlauf mit neuen Channel-Mitgliedern teilen. Damit können auch sie ältere Nachrichten und Dateien sehen. Wenn Sie diese Option ausschalten, sehen Channel-Mitglieder keinen Gesprächsverlauf.";
 "conversation.channelHistory.navigationTitle" = "Gesprächsverlauf";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Wählen Sie einen Zeitraum. Wenn Teilnehmer diesem Channel beitreten, können sie den Verlauf für diese Zeitspanne verfolgen.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
+"conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
+"conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.retry" = "Wiederholen";
+"conversation.draft.attachmentMenu.remove" = "Remove File";

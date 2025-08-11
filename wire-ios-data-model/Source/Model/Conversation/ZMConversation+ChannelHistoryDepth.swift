@@ -23,7 +23,17 @@ public extension ZMConversation {
     // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
 
     var channelHistoryDepth: String? {
-        nil
+        get {
+            nil
+        }
+
+        set {}
+    }
+
+    // TODO: [WPB-18470] Encrypted history messages will be stored in DB - return true if array has encrypted messages, false if empty (meaning all history messages have been decrypted and shown to the user)
+
+    var hasMoreHistory: Bool {
+        true
     }
 
 }

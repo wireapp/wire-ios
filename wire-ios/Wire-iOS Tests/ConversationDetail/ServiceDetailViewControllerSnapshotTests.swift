@@ -33,7 +33,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func setUp() async throws {
         try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        serviceUser = .createServiceUser(name: "ServiceUser")
+        serviceUser = .createServiceUser(name: "AppUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
     }

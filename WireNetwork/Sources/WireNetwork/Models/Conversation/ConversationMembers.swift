@@ -28,7 +28,7 @@ public extension Conversation {
 
         /// The self user.
 
-        public let selfMember: Member
+        public let selfMember: Member?
 
         enum CodingKeys: String, CodingKey {
 
@@ -39,7 +39,7 @@ public extension Conversation {
 
         public init(
             others: [Conversation.Member],
-            selfMember: Conversation.Member
+            selfMember: Conversation.Member?
         ) {
             self.others = others
             self.selfMember = selfMember

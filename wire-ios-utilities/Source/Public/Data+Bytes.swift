@@ -22,10 +22,6 @@ public typealias Byte = UInt8
 
 public extension Data {
 
-    var bytes: [Byte] {
-        [Byte](self)
-    }
-
     static func random(byteCount: UInt = 8) -> Data {
         Data([Byte].random(length: byteCount))
     }
@@ -33,10 +29,6 @@ public extension Data {
 }
 
 public extension [Byte] {
-
-    var data: Data {
-        Data(self)
-    }
 
     static func random(length: UInt = 8) -> [Byte] {
         (0 ..< length).map { _ in
