@@ -140,7 +140,6 @@ final class TeamManageTests: WireUITestCase {
             password: teamOwner.password
         )
         let teamID = try XCTUnwrap(teamOwner.teamID)
-
         let countOfMembers = 3
 
         var qualifiedIds: [QualifiedID] = []

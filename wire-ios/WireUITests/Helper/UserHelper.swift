@@ -246,7 +246,13 @@ class UserHelper {
             isReadReceiptsEnabled: true
         )
 
-        _ = try await fetchAccessToken(email: owner.email, password: owner.password)
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: owner.email,
+            password: owner.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
 
         let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
     }
