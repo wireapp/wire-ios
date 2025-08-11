@@ -364,6 +364,15 @@ public class MockConversationLike: ConversationLike {
 
     public var channelHistoryDepth: String?
 
+    // MARK: - hasMoreHistory
+
+    public var hasMoreHistory: Bool {
+        get { return underlyingHasMoreHistory }
+        set(value) { underlyingHasMoreHistory = value }
+    }
+
+    public var underlyingHasMoreHistory: Bool!
+
     // MARK: - wireCellName
 
     public var wireCellName: String {
