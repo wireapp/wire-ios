@@ -107,7 +107,7 @@ public struct BackupImportExportBuilder {
         let setBackupPasswordViewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: cancelAction,
-            setPasswordAction: setPasswordAction,
+            setPasswordAction: setPasswordAction
         )
 
         SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)

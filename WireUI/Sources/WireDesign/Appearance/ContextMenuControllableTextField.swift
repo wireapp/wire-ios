@@ -25,6 +25,7 @@ import UIKit
 /// Use `isContextMenuAllowed` to enable or restrict specific actions.
 /// This base class is designed to be subclassed by custom UITextField implementations
 /// that require consistent context menu behavior across the app.
+// TODO: [WPB-19321] Enforce to use it and remove isContextMenuAllowed from the parameters
 open class ContextMenuControllableUITextField: UITextField {
 
     private let isContextMenuAllowed: Bool

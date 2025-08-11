@@ -18,7 +18,7 @@
 
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TextView")
 
