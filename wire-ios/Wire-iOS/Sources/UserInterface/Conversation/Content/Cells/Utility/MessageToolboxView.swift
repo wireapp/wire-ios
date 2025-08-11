@@ -68,6 +68,9 @@ final class MessageToolboxView: UIView {
         stack.alignment = .center
         return stack
     }()
+    
+    private var existingConstraints: [NSLayoutConstraint] = []
+    private var chatBubbleConstraints: [NSLayoutConstraint] = []
 
     lazy var font = FontSpec.smallRegularFont.font!
     lazy var color = SemanticColors.Label.textMessageDetails
@@ -209,23 +212,47 @@ final class MessageToolboxView: UIView {
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        [separatorView, contentStack, messageFailureView].forEach(addSubview)
+        if DeveloperFlag.chatBubblesSimple.isOn  {
+            [separatorView,
+             contentStack,
+             messageFailureView].forEach(addSubview)
+        } else {
+            [
+             contentStack,
+             messageFailureView].forEach(addSubview)
+        }
 
         statusImageView.constraintToSquare(sideLength: 13)
     }
 
     private func createConstraints() {
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-
+        
+        existingConstraints = [
             separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.topAnchor.constraint(equalTo: topAnchor),
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
+            contentStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
+            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            )]
+        
+        chatBubbleConstraints = [ contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor
+             )]
 
+        NSLayoutConstraint.activate([
             timestampSeparatorLabel.leadingAnchor.constraint(equalTo: timestampSeparatorContainer.leadingAnchor),
             timestampSeparatorLabel.centerYAnchor.constraint(equalTo: timestampSeparatorContainer.centerYAnchor),
             timestampSeparatorContainer.trailingAnchor.constraint(equalTo: timestampSeparatorLabel.trailingAnchor),
@@ -235,19 +262,9 @@ final class MessageToolboxView: UIView {
             statusSeparatorContainer.trailingAnchor.constraint(equalTo: statusSeparatorLabel.trailingAnchor),
 
             // statusTextView align vertically center
-            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 2),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            messageFailureView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
+            
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
@@ -259,6 +276,13 @@ final class MessageToolboxView: UIView {
             countdownView.topAnchor.constraint(greaterThanOrEqualTo: countdownContainer.topAnchor),
             countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
+        
+        if DeveloperFlag.chatBubblesSimple.isOn  {
+            separatorView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     // MARK: - Lifecycle
