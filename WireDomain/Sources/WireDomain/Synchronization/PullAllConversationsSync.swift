@@ -59,30 +59,37 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
             }
         }
 
-        let conversations = try await api.getConversations(for: conversationIDs)
+        while !conversationIDs.isEmpty {
+            // Fetch max 1000 at a time.
+            let idsToFetch = Array(conversationIDs.prefix(1000))
+            conversationIDs.removeFirst(idsToFetch.count)
 
-        for conversation in conversations.found {
-            await store.storeConversation(
-                conversation.toDomainModel(),
-                timestamp: .now,
-                isFederationEnabled: isFederationEnabled,
-                isMLSEnabled: isMLSEnabled
-            )
-        }
+            let conversations = try await api.getConversations(for: idsToFetch)
 
-        for id in conversations.notFound {
-            await store.storeConversation(
-                needsBackendUpdate: true,
-                conversationID: id.id,
-                conversationDomain: id.domain
-            )
-        }
+            for conversation in conversations.found {
+                await store.storeConversation(
+                    conversation.toDomainModel(),
+                    timestamp: .now,
+                    isFederationEnabled: isFederationEnabled,
+                    isMLSEnabled: isMLSEnabled
+                )
+            }
 
-        for id in conversations.failed {
-            await store.storeFailedConversation(
-                conversationID: id.id,
-                conversationDomain: id.domain
-            )
+            for id in conversations.notFound {
+                await store.storeConversation(
+                    needsBackendUpdate: true,
+                    conversationID: id.id,
+                    conversationDomain: id.domain
+                )
+            }
+
+            for id in conversations.failed {
+                await store.storeFailedConversation(
+                    conversationID: id.id,
+                    conversationDomain: id.domain
+                )
+            }
+
         }
 
         journal[.isConversationSyncRequired] = false
