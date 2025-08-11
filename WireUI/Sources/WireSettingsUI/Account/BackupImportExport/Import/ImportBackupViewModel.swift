@@ -49,7 +49,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     init(
         importBackupUseCase: any ImportBackupUseCaseProtocol,
-        logger: any LoggerProtocol,
+        logger: any LoggerProtocol
     ) {
         self.importBackupUseCase = importBackupUseCase
         self.logger = logger

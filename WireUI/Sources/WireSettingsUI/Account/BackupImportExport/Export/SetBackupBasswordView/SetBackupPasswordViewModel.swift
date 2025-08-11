@@ -38,7 +38,7 @@ final class SetBackupPasswordViewModel: ObservableObject {
     init(
         passwordValidator: any BackupPasswordValidatorProtocol,
         cancelAction: @escaping () -> Void,
-        setPasswordAction: @escaping (_ password: String) -> Void,
+        setPasswordAction: @escaping (_ password: String) -> Void
     ) {
         self.passwordValidator = passwordValidator
         self.cancelAction = cancelAction

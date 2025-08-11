@@ -65,9 +65,7 @@ public struct FolderPicker: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
                         CreateFolder(
-                            viewModel: CreateFolderViewModel(
-                                useCase: createFolderUseCase
-                            ),
+                            viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
                             conversationName: conversationName,
                             onFolderCreated: { [weak viewModel] createdFolder in
                                 guard let viewModel else { return }
