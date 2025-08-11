@@ -228,9 +228,9 @@ class MockAuthManager: AuthenticationManagerProtocol {
     }
 
     var accessToken: WireNetwork.AccessToken?
-    
+
     func getValidAccessToken() async throws -> WireNetwork.AccessToken {
-        guard let accessToken = accessToken else {
+        guard let accessToken else {
             throw AccessTokenError.notImplemented
         }
         return accessToken
