@@ -18,19 +18,28 @@
 
 import SwiftUI
 import UIKit
-import WireFoundation
 
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.
 ///
+/// Use `isContextMenuAllowed` to enable or restrict specific actions.
 /// This base class is designed to be subclassed by custom UITextField implementations
 /// that require consistent context menu behavior across the app.
 open class ContextMenuControllableUITextField: UITextField {
 
-    private var isContextMenuAllowed: Bool {
-        SecurityFlags.clipboard.isEnabled
+    private let isContextMenuAllowed: Bool
+
+    public init(frame: CGRect, isContextMenuAllowed: Bool) {
+        self.isContextMenuAllowed = isContextMenuAllowed
+
+        super.init(frame: frame)
     }
 
+    @available(*, unavailable)
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func canPerformAction(
         _ action: Selector,
         withSender sender: Any?
@@ -58,24 +67,30 @@ open class ContextMenuControllableUITextField: UITextField {
 
 public struct ContextMenuControllableTextField: UIViewRepresentable {
     @Binding var text: String
-    var placeholder: String
-    var isSecureTextEntry: Bool
-    var placeholderColor: Color?
+    let placeholder: String
+    let isSecureTextEntry: Bool
+    let placeholderColor: Color?
+    let isContextMenuAllowed: Bool
 
     public init(
         text: Binding<String>,
         placeholder: String,
         isSecureTextEntry: Bool = false,
-        placeholderColor: Color? = nil
+        placeholderColor: Color? = nil,
+        isContextMenuAllowed: Bool
     ) {
         self._text = text
         self.placeholder = placeholder
         self.isSecureTextEntry = isSecureTextEntry
         self.placeholderColor = placeholderColor
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     public func makeUIView(context: Context) -> UITextField {
-        let textField = ContextMenuControllableUITextField(frame: CGRect.zero)
+        let textField = ContextMenuControllableUITextField(
+            frame: .zero,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
         textField.placeholder = placeholder
         textField.delegate = context.coordinator
         textField.text = text

@@ -44,7 +44,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
         let viewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: {},
-            setPasswordAction: { _ in }
+            setPasswordAction: { _ in },
+            isContextMenuAllowed: true
         )
         viewModel.password = "invalid"
         let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
@@ -63,7 +64,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
         let viewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: {},
-            setPasswordAction: { _ in }
+            setPasswordAction: { _ in },
+            isContextMenuAllowed: true
         )
         viewModel.password = "G00dPassword"
         let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
@@ -82,7 +84,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
         let viewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: {},
-            setPasswordAction: { _ in }
+            setPasswordAction: { _ in },
+            isContextMenuAllowed: true
         )
         let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
             .frame(width: screenBounds.width, height: screenBounds.height)
@@ -97,7 +100,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
         let viewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: {},
-            setPasswordAction: { _ in }
+            setPasswordAction: { _ in },
+            isContextMenuAllowed: true
         )
         let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
             .frame(width: screenBounds.width, height: screenBounds.height)

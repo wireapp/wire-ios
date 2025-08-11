@@ -55,7 +55,8 @@ struct ImportBackupView: View {
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
                         continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: viewModel.reset
+                        cancelAction: viewModel.reset,
+                        isContextMenuAllowed: viewModel.isContextMenuAllowed
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])

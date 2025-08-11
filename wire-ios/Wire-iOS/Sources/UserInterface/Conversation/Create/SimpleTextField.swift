@@ -67,7 +67,7 @@ final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapa
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
-        super.init(frame: .zero)
+        super.init(frame: .zero, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setupTextFieldProperties()
 
         tintColor = .accent()

@@ -20,6 +20,7 @@ import UIKit
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireCommonComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
 
@@ -163,7 +164,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
         setupTextFieldProperties()
 

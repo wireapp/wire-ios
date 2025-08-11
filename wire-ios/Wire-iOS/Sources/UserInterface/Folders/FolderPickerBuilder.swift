@@ -21,6 +21,7 @@ import UIKit
 import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
+import WireCommonComponents
 
 struct FolderPickerBuilder {
     @MainActor
@@ -39,7 +40,8 @@ struct FolderPickerBuilder {
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
-            updateConversationFolderUseCase: useCase
+            updateConversationFolderUseCase: useCase,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
 
         return FolderPickerHostingController(

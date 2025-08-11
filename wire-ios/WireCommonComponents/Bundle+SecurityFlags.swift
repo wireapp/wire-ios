@@ -18,76 +18,76 @@
 
 import Foundation
 
-//public enum SecurityFlags {
-//
-//    case generateLinkPreviews
-//    case forceConstantBitRateCalls
-//    case customBackend
-//    case cameraRoll
-//    case maxNumberAccounts
-//    case fileSharing
-//    case locationSharing
-//    case forceCallKitDisabled
-//    case clipboard
-//    case collapseOwnMessages
-//    case openLinksExternally
-//
-//    /// Whether encryption at rest is enabled and can't be disabled.
-//
-//    case forceEncryptionAtRest
-//
-//    /// The minimum TLS version supported by the app.
-//
-//    case minTLSVersion
-//
-//    /// Whether an embedded user agent should be used for IDP authentication.
-//
-//    case useEmbeddedIDPUserAgent
-//
-//    var bundleKey: String {
-//        switch self {
-//        case .maxNumberAccounts:
-//            "MaxNumberAccounts"
-//        case .generateLinkPreviews:
-//            "GenerateLinkPreviewEnabled"
-//        case .forceConstantBitRateCalls:
-//            "ForceCBREnabled"
-//        case .customBackend:
-//            "CustomBackendEnabled"
-//        case .cameraRoll:
-//            "CameraRollEnabled"
-//        case .forceEncryptionAtRest:
-//            "ForceEncryptionAtRestEnabled"
-//        case .fileSharing:
-//            "FileSharingEnabled"
-//        case .locationSharing:
-//            "LocationSharingEnabled"
-//        case .forceCallKitDisabled:
-//            "ForceCallKitDisabled"
-//        case .minTLSVersion:
-//            "MinTLSVersion"
-//        case .clipboard:
-//            "ClipboardEnabled"
-//        case .collapseOwnMessages:
-//            "CollapseOwnMessages"
-//        case .useEmbeddedIDPUserAgent:
-//            "UseEmbeddedIDPUserAgent"
-//        case .openLinksExternally:
-//            "OpenLinksExternally"
-//        }
-//    }
-//
-//    public var intValue: Int? {
-//        guard let string = stringValue else { return nil }
-//        return Int(string)
-//    }
-//
-//    public var stringValue: String? {
-//        Bundle.appMainBundle.infoForKey(bundleKey)
-//    }
-//
-//    public var isEnabled: Bool {
-//        stringValue == "1"
-//    }
-//
-//}
+public enum SecurityFlags {
+
+    case generateLinkPreviews
+    case forceConstantBitRateCalls
+    case customBackend
+    case cameraRoll
+    case maxNumberAccounts
+    case fileSharing
+    case locationSharing
+    case forceCallKitDisabled
+    case clipboard
+    case collapseOwnMessages
+    case openLinksExternally
+
+    /// Whether encryption at rest is enabled and can't be disabled.
+
+    case forceEncryptionAtRest
+
+    /// The minimum TLS version supported by the app.
+
+    case minTLSVersion
+
+    /// Whether an embedded user agent should be used for IDP authentication.
+
+    case useEmbeddedIDPUserAgent
+
+    var bundleKey: String {
+        switch self {
+        case .maxNumberAccounts:
+            "MaxNumberAccounts"
+        case .generateLinkPreviews:
+            "GenerateLinkPreviewEnabled"
+        case .forceConstantBitRateCalls:
+            "ForceCBREnabled"
+        case .customBackend:
+            "CustomBackendEnabled"
+        case .cameraRoll:
+            "CameraRollEnabled"
+        case .forceEncryptionAtRest:
+            "ForceEncryptionAtRestEnabled"
+        case .fileSharing:
+            "FileSharingEnabled"
+        case .locationSharing:
+            "LocationSharingEnabled"
+        case .forceCallKitDisabled:
+            "ForceCallKitDisabled"
+        case .minTLSVersion:
+            "MinTLSVersion"
+        case .clipboard:
+            "ClipboardEnabled"
+        case .collapseOwnMessages:
+            "CollapseOwnMessages"
+        case .useEmbeddedIDPUserAgent:
+            "UseEmbeddedIDPUserAgent"
+        case .openLinksExternally:
+            "OpenLinksExternally"
+        }
+    }
+
+    public var intValue: Int? {
+        guard let string = stringValue else { return nil }
+        return Int(string)
+    }
+
+    public var stringValue: String? {
+        Bundle.appMainBundle.infoForKey(bundleKey)
+    }
+
+    public var isEnabled: Bool {
+        stringValue == "1"
+    }
+
+}
