@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 
 /// @abstract The purpose of this subclass of UITextField is to give the possibility to edit the right-aligned text
@@ -25,8 +26,8 @@ import WireDesign
 /// can be used "as-is" without any additional configuration.
 class TailEditingTextField: ContextMenuControllableUITextField {
 
-    override init(frame: CGRect, isContextMenuAllowed: Bool) {
-        super.init(frame: frame, isContextMenuAllowed: isContextMenuAllowed)
+    init(frame: CGRect) {
+        super.init(frame: frame, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setup()
     }
 

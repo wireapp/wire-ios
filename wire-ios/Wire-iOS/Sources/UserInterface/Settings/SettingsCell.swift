@@ -19,7 +19,6 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 
 enum SettingsCellPreview {
     case none
@@ -341,10 +340,7 @@ final class SettingsValueCell: SettingsTableCell {
 
 final class SettingsTextCell: SettingsTableCell,
     UITextFieldDelegate {
-    var textInput: UITextField = TailEditingTextField(
-        frame: CGRect.zero,
-        isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-    )
+    var textInput: UITextField = TailEditingTextField(frame: CGRect.zero)
 
     override func setup() {
         super.setup()

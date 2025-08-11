@@ -18,7 +18,6 @@
 
 import UIKit
 import WireCommonComponents
-import WireFoundation
 
 class DragInteractionRestrictionTextView: TextView {
 
