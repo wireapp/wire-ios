@@ -228,9 +228,7 @@ class UserHelper {
     }
 
     func createGroupConversations(
-        qualifiedId1: QualifiedID,
-        qualifiedId2: QualifiedID,
-        qualifiedId3: QualifiedID,
+        qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String
     ) async throws {
@@ -239,7 +237,7 @@ class UserHelper {
             groupType: .group,
             messageProtocol: .proteus,
             creatorClientID: "deprecated",
-            qualifiedUserIDs: [qualifiedId1, qualifiedId2, qualifiedId3],
+            qualifiedUserIDs: qualifiedIds,
             unqualifiedUserIDs: [],
             name: groupName,
             accessMode: [.invite, .code],

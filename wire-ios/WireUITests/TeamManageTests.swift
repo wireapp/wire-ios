@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 final class TeamManageTests: WireUITestCase {
@@ -138,26 +139,24 @@ final class TeamManageTests: WireUITestCase {
             email: teamOwner.email,
             password: teamOwner.password
         )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
 
-        let (qualifiedIdMember1, teamMember1) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: try XCTUnwrap(teamOwner.teamID)
-        )
+        let countOfMembers = 3
 
-        let (qualifiedIdMember2, teamMember2) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: try XCTUnwrap(teamOwner.teamID)
-        )
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
 
-        let (qualifiedIdMember3, teamMember3) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: try XCTUnwrap(teamOwner.teamID)
-        )
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
 
         try await userHelper.createGroupConversations(
-            qualifiedId1: qualifiedIdMember1,
-            qualifiedId2: qualifiedIdMember2,
-            qualifiedId3: qualifiedIdMember3,
+            qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
         )
@@ -174,7 +173,7 @@ final class TeamManageTests: WireUITestCase {
 
         // Send text from member 1
         try await testServiceClient.sendText(
-            user: teamMember1,
+            user: teamMembers[0],
             text: messageFromMember1,
             convoId: convoUUID,
             domain: convoDomain
@@ -198,7 +197,7 @@ final class TeamManageTests: WireUITestCase {
         // Send image file from member 2
         try await testServiceClient.sendFile(
             type: imageExt,
-            user: teamMember2,
+            user: teamMembers[1],
             fileName: imageName,
             filepath: imagePath,
             convoId: convoUUID,
@@ -208,18 +207,18 @@ final class TeamManageTests: WireUITestCase {
         // Send audio file from member 3
         try await testServiceClient.sendFile(
             type: audioExt,
-            user: teamMember3,
+            user: teamMembers[2],
             fileName: audioName,
             filepath: audioPath,
             convoId: convoUUID,
             domain: convoDomain
         )
 
-        let returnedGroupName = conversationsPage.getGroupName()
+        let fetchedGroupName = try XCTUnwrap(conversationsPage.getGroupName())
         XCTAssertEqual(
-            returnedGroupName,
+            fetchedGroupName,
             groupName,
-            "Group name \(returnedGroupName) didn't match expected value \(groupName)"
+            "Group name \(fetchedGroupName) didn't match expected value \(groupName)"
         )
 
         let activeConversationPage = try conversationsPage.openConversation()
@@ -228,19 +227,19 @@ final class TeamManageTests: WireUITestCase {
         let fetchSenders = activeConversationPage.fetchSenders()
 
         XCTAssertTrue(
-            fetchFileNames[0].contains(audioName.uppercased()) && fetchSenders[0].contains(teamMember3.name),
-            "Either expected message '\(audioName)' not found or not sent by \(teamMember2.name)"
+            fetchFileNames[0].contains(audioName.uppercased()) && fetchSenders[0].contains(teamMembers[2].name),
+            "Either expected message '\(audioName)' not found or not sent by \(teamMembers[2].name)"
         )
 
         XCTAssertTrue(
             fetchFileNames[1].contains(imageName.uppercased()) &&
-                fetchSenders[1].contains(teamMember2.name),
-            "Either expected message '\(imageName)' not found or not sent by \(teamMember2.name)"
+                fetchSenders[1].contains(teamMembers[1].name),
+            "Either expected message '\(imageName)' not found or not sent by \(teamMembers[1].name)"
         )
 
         XCTAssertTrue(
             fetchMessages[0].contains(messageFromMember1) &&
-                fetchSenders[2].contains(teamMember1.name),
+                fetchSenders[2].contains(teamMembers[0].name),
             "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
         )
     }
