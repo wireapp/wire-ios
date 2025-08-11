@@ -75,7 +75,6 @@ package final class FilesHostingController: UIHostingController<FilesView> {
 
 }
 
-
 struct FilesHostingController_Previews: PreviewProvider {
     static var previews: some View {
         FilesHostingControllerPreview()
