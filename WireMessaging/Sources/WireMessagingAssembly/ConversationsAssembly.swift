@@ -32,13 +32,12 @@ public enum WireMessagingAssembly {
                 dataSource: ConversationMessagesDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
                     monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
-                    senderStatePublisherProvider: AnySenderStatePublisherProvider( { model in
-                        let state: SenderViewModel.State = if let name = model?.name {
-                            .exists(AttributedString(name + " updated"))
-                        } else {
-                            .empty
+                    senderNamePublisherProvider: AnySenderNamePublisherProvider( { model in
+                        var name = ""
+                        if let modelName = model?.name {
+                            name = modelName + " updated"
                         }
-                        return Just(state)
+                        return Just(name)
                             .delay(for: .seconds(3), scheduler: DispatchQueue.main)
                             .eraseToAnyPublisher()
                     })

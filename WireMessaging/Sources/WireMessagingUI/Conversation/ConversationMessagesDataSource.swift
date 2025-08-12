@@ -27,7 +27,8 @@ package enum MessagesSection: Sendable {
 }
 
 package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
-package typealias SenderStatePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<SenderViewModel.State, Never>?
+package typealias SenderNamePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<String, Never>
+package typealias SenderAttributedNamePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<AttributedString, Never>
 
 package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
@@ -36,12 +37,16 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
 }
 
 
-package struct AnySenderStatePublisherProvider: @unchecked Sendable {
+package struct AnySenderNamePublisherProvider: @unchecked Sendable {
     
-    package let closure: SenderStatePublisherProvider
+    package let closure: SenderAttributedNamePublisherProvider
     
-    package init(_ closure: @escaping SenderStatePublisherProvider) {
-        self.closure = closure
+    package init(_ closure: @escaping SenderNamePublisherProvider) {
+        self.closure = { model in
+            closure(model) // returns publisher or just raw sender name string, domain model
+                .map { AttributedString($0) } // maps to UI model, attributed string
+                .eraseToAnyPublisher()
+        }
     }
 }
 
@@ -60,18 +65,18 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
     private let monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
-    private let senderStatePublisherProvider: AnySenderStatePublisherProvider
+    private let senderNamePublisherProvider: AnySenderNamePublisherProvider
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
     package init(
         loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol,
         monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol,
-        senderStatePublisherProvider: AnySenderStatePublisherProvider
+        senderNamePublisherProvider: AnySenderNamePublisherProvider
     ) {
         self.loadMessagesUseCase = loadMessagesUseCase
         self.monitorMessagesUseCase = monitorMessagesUseCase
-        self.senderStatePublisherProvider = senderStatePublisherProvider
+        self.senderNamePublisherProvider = senderNamePublisherProvider
     }
 
     // store cached message view models
@@ -124,7 +129,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
                     senderViewModel: SenderViewModel(
                         state: senderState,
-                        statePublisher: senderStatePublisherProvider.closure(model.sender)
+                        statePublisher: senderNamePublisherProvider.closure(model.sender)
                     )
                 )
             )
