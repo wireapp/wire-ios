@@ -319,6 +319,10 @@ struct FeatureConfigsPayloadProcessor {
         case .consumableNotifications:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConsumableNotifications(.init(status: response.status))
+
+        case .chatBubblesSimple:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeChatBubblesSimple(.init(status: response.status))
         }
     }
 
