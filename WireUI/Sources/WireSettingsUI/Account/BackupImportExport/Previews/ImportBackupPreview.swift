@@ -25,7 +25,8 @@ func ImportBackupPreview() -> some View {
             viewModel: ImportBackupViewModel(
                 importBackupUseCase: PreviewImportBackupUseCase(),
                 logger: PreviewLogger()
-            )
+            ),
+            isContextMenuAllowed: true
         )
     }
     .listStyle(.grouped)

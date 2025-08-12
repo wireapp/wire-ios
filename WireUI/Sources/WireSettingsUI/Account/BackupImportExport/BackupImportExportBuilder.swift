@@ -32,6 +32,7 @@ public struct BackupImportExportBuilder {
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
     let wireAccentColorMapping: WireAccentColorMapping
+    let isContextMenuAllowed: Bool
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -41,7 +42,8 @@ public struct BackupImportExportBuilder {
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
         wireAccentColorMapping: WireAccentColorMapping,
-        wireAccentColor: WireAccentColor
+        wireAccentColor: WireAccentColor,
+        isContextMenuAllowed: Bool
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
@@ -51,6 +53,7 @@ public struct BackupImportExportBuilder {
         self.importBackupLogger = importBackupLogger
         self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     @MainActor
@@ -107,7 +110,7 @@ public struct BackupImportExportBuilder {
             setPasswordAction: setPasswordAction
         )
 
-        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 
@@ -118,7 +121,7 @@ public struct BackupImportExportBuilder {
             importBackupUseCase: importBackupUseCase,
             logger: importBackupLogger
         )
-        ImportBackupView(viewModel: viewModel)
+        ImportBackupView(viewModel: viewModel, isContextMenuAllowed: isContextMenuAllowed)
 
     }
 }
@@ -136,7 +139,8 @@ extension BackupImportExportBuilder {
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: .purple
+            wireAccentColor: .purple,
+            isContextMenuAllowed: true
         )
     }
 }
