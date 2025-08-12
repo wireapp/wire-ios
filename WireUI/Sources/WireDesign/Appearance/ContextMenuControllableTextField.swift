@@ -68,10 +68,10 @@ open class ContextMenuControllableUITextField: UITextField {
 
 public struct ContextMenuControllableTextField: UIViewRepresentable {
     @Binding var text: String
-    let placeholder: String
-    let isSecureTextEntry: Bool
-    let placeholderColor: Color?
-    let isContextMenuAllowed: Bool
+    private let placeholder: String
+    private let isSecureTextEntry: Bool
+    private let placeholderColor: Color?
+    private let isContextMenuAllowed: Bool
 
     public init(
         text: Binding<String>,
