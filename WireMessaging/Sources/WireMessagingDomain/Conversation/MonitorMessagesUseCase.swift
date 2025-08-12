@@ -32,13 +32,13 @@ public protocol MonitorMessagesRepositoryProtocol {
 }
 
 package struct MonitorMessagesUseCase: MonitorMessagesUseCaseProtocol {
-    
+
     package var messagesUpdatesStream: AsyncStream<MessagesUpdate> {
         repo.messagesUpdatesStream
     }
-    
+
     private let repo: any MonitorMessagesRepositoryProtocol
-    
+
     package init(repo: any MonitorMessagesRepositoryProtocol) {
         self.repo = repo
     }

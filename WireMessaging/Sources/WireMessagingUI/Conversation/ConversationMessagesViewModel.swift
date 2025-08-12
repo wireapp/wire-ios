@@ -46,7 +46,7 @@ package struct ConversationMessagesViewModel: ConversationMessagesViewModelProto
             await dataSource.loadInitialMessages()
         }
     }
-    
+
     package func onWillDisappear() {
         Task { [dataSource] in
             await dataSource.reset()

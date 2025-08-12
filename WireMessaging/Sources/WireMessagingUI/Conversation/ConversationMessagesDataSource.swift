@@ -38,7 +38,7 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
 package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
-    // As it's a stream, has to be one subscriber only 
+    // As it's a stream, has to be one subscriber only
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
@@ -78,24 +78,24 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
         snapshot.appendSections([.main])
         snapshot.appendItems(messages.reversed().toUIModel())
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
-        
+
         observeTask = Task { [weak self] in
             guard let self else { return }
-            await self.observeChanges()
+            await observeChanges()
         }
     }
-    
+
     private func observeChanges() async {
         for await event in monitorMessagesUseCase.messagesUpdatesStream {
             switch event {
             case let .inserted(model):
                 let uiModel = model.toUIModel()
                 snapshot.appendItems([uiModel])
-                updatesStreamContinuation?.yield(.messageAdded(self.snapshot))
+                updatesStreamContinuation?.yield(.messageAdded(snapshot))
             }
         }
     }
-    
+
     package func reset() async {
         observeTask?.cancel()
         observeTask = nil
@@ -147,7 +147,7 @@ extension MessageModel {
         switch kind {
         case let .text(textModel):
             let senderState: SenderViewModel.State = if let name = sender?.name {
-                .exists(AttributedString(stringLiteral: name ))
+                .exists(AttributedString(stringLiteral: name))
             } else {
                 .empty
             }

@@ -20,12 +20,13 @@
 @preconcurrency import WireDataModel
 import WireMessagingDomain
 
-final class LoadConversationMessagesRepository: NSObject, LoadConversationMessagesRepositoryProtocol, MonitorMessagesRepositoryProtocol {
+final class LoadConversationMessagesRepository: NSObject, LoadConversationMessagesRepositoryProtocol,
+    MonitorMessagesRepositoryProtocol {
 
     private let conversationObjectID: NSManagedObjectID
     private let backgroundContext: NSManagedObjectContext
     private let viewContext: NSManagedObjectContext
-    
+
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     lazy var messagesUpdatesStream: AsyncStream<MessagesUpdate> = {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
@@ -44,7 +45,7 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
         self.backgroundContext = backgroundContext
         self.viewContext = viewContext
         super.init()
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(contextDidSave),
@@ -52,8 +53,9 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
             object: viewContext
         )
     }
-    
-    @objc private func contextDidSave(notification: Notification) {
+
+    @objc
+    private func contextDidSave(notification: Notification) {
         backgroundContext.perform { [weak self] in
             self?.backgroundContext.mergeChanges(fromContextDidSave: notification)
         }
@@ -69,7 +71,7 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
         }
         return conversation
     }
-    
+
     var fetchController: NSFetchedResultsController<ZMMessage>?
 
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
@@ -94,7 +96,7 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
 
             fetchController.delegate = self
             self.fetchController = fetchController
-            
+
             try! fetchController.performFetch()
             return (fetchController.fetchedObjects ?? [])
                 .map { $0.toDomain() }
@@ -111,12 +113,12 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
 }
 
 extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate {
-    
+
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // no-op
         // maybe start batching
         print("DS: controllerWillChangeContent")
-        
+
     }
 
     func controller(
@@ -130,7 +132,7 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
         }
-        
+
         switch changeType {
         case .insert:
             if let message = anObject as? ZMMessage {
