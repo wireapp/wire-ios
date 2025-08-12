@@ -27,6 +27,11 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
+    
+    /// Override the base property to identify this as a ping cell.
+    override var isPingCell: Bool {
+        return true
+    }
 
     struct Configuration: Equatable {
         let pingColor: UIColor
@@ -152,6 +157,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

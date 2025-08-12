@@ -30,9 +30,16 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     let topContentView = UIView()
     let bottomContentView = UIView()
     let labelFont: UIFont = .mediumFont
+    
+    /// A computed property that subclasses can override to identify themselves.
+    var isPingCell: Bool {
+        return false
+    }
 
     private var containerWidthConstraint: NSLayoutConstraint!
+    private var imageContainerLeadingConstraint: NSLayoutConstraint!
     private var textLabelTrailingConstraint: NSLayoutConstraint!
+    private var textLabelLeadingConstraint: NSLayoutConstraint!
     private var textLabelTopConstraint: NSLayoutConstraint!
     private var topContentViewTrailingConstraint: NSLayoutConstraint!
 
@@ -110,28 +117,41 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         bottomContentView.translatesAutoresizingMaskIntoConstraints = false
         lineView.translatesAutoresizingMaskIntoConstraints = false
 
-        topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: trailingTextMargin
-        )
         let topContentViewWidthConstraint = topContentView.widthAnchor.constraint(equalToConstant: 0)
         topContentViewWidthConstraint.priority = .defaultLow
-        containerWidthConstraint = imageContainer.widthAnchor
-            .constraint(equalToConstant: conversationHorizontalMargins.left)
-        textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: trailingTextMargin
-        )
         textLabelTopConstraint = textLabel.topAnchor.constraint(equalTo: topContentView.bottomAnchor)
 
         // We want the content view to at least be below the image container
         let contentViewTopConstraint = bottomContentView.topAnchor.constraint(equalTo: imageContainer.bottomAnchor)
         contentViewTopConstraint.priority = .defaultLow
 
+        if DeveloperFlag.chatBubblesSimple.isOn && isPingCell {
+            topContentViewTrailingConstraint =  topContentView.trailingAnchor.constraint(
+                            equalTo: trailingAnchor)
+            containerWidthConstraint = imageContainer.widthAnchor
+                            .constraint(equalToConstant: 32.0)
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24.0 + 12.0))
+            textLabelLeadingConstraint =             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 16.0)
+            textLabelTrailingConstraint =           textLabel.trailingAnchor.constraint(
+                                equalTo: trailingAnchor)
+        } else {
+            topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: trailingTextMargin
+            )
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
+            containerWidthConstraint = imageContainer.widthAnchor
+                .constraint(equalToConstant: conversationHorizontalMargins.left)
+            textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
+            textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: trailingTextMargin
+            )
+        }
         NSLayoutConstraint.activate([
             // imageContainer
             containerWidthConstraint,
-            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageContainerLeadingConstraint,
             imageContainer.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0),
             imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
             imageContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: 0),
@@ -149,8 +169,8 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             topContentViewWidthConstraint,
 
             // textLabel
-            textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             textLabelTopConstraint,
+            textLabelLeadingConstraint,
             textLabelTrailingConstraint,
 
             // lineView
@@ -170,9 +190,15 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        containerWidthConstraint.constant = conversationHorizontalMargins.left
-        textLabelTrailingConstraint.constant = trailingTextMargin
-        topContentViewTrailingConstraint.constant = trailingTextMargin
+        if DeveloperFlag.chatBubblesSimple.isOn && isPingCell {
+            containerWidthConstraint.constant = 32.0
+            textLabelTrailingConstraint.constant = 0
+            topContentViewTrailingConstraint.constant = 0
+        } else {
+            containerWidthConstraint.constant = conversationHorizontalMargins.left
+            textLabelTrailingConstraint.constant = trailingTextMargin
+            topContentViewTrailingConstraint.constant = trailingTextMargin
+        }
     }
 
     // MARK: - UITextViewDelegate
