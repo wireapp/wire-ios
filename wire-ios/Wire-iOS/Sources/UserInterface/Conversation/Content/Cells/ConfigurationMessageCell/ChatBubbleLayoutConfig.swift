@@ -20,7 +20,5 @@ import Foundation
 
 public enum ChatBubbleLayoutConfig {
     static let ownMessageMinimumLeadingDistance = 104.0
-    static let ownMessageTrailingDistance: CGFloat = 16.0
     static let otherMessageMinimumTrailingDistance: CGFloat = 72.0
-    static let otherMessageLeadingDistance: CGFloat = 56.0
 }

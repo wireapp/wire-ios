@@ -81,10 +81,10 @@ final class ConversationMessageCellTableViewAdapter<
         
         
         existingHorizontalConstraints = [leading, trailing]
-        ownMessagesHorizontalConstraints = [ cellView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant:  ChatBubbleLayoutConfig.ownMessageMinimumLeadingDistance), cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -ChatBubbleLayoutConfig.ownMessageTrailingDistance)
+        ownMessagesHorizontalConstraints = [ cellView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant:  ChatBubbleLayoutConfig.ownMessageMinimumLeadingDistance), cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -conversationHorizontalMargins.right)
         ]
         othersMessagesHorizontalConstraints = [
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: ChatBubbleLayoutConfig.otherMessageLeadingDistance),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: conversationHorizontalMargins.left),
             cellView.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -ChatBubbleLayoutConfig.otherMessageMinimumTrailingDistance)
         ]
         
@@ -119,8 +119,7 @@ final class ConversationMessageCellTableViewAdapter<
            bottom.constant = cellDescription?.bottomMargin ?? 0
            
            // Deactivate all horizontal constraints before applying new ones.
-        NSLayoutConstraint.deactivate(existingHorizontalConstraints +
-                                       ownMessagesHorizontalConstraints +
+        NSLayoutConstraint.deactivate(ownMessagesHorizontalConstraints +
                                        othersMessagesHorizontalConstraints)
    
            if cellDescription?.shouldAlignMessageContentForBubbles == true {
@@ -139,7 +138,6 @@ final class ConversationMessageCellTableViewAdapter<
        }
     
     private func setupExistingLayout() {
-        NSLayoutConstraint.deactivate(ownMessagesHorizontalConstraints + othersMessagesHorizontalConstraints)
         NSLayoutConstraint.activate(existingHorizontalConstraints)
     }
 
