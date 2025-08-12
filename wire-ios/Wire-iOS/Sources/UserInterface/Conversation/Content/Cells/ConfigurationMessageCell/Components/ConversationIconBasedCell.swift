@@ -130,8 +130,8 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         if DeveloperFlag.chatBubblesSimple.isOn && shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint = imageContainer.widthAnchor
                             .constraint(equalToConstant: 32.0)
-            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(32.0 + 8.0))
-            textLabelLeadingConstraint =             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 8.0)
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(32.0 + 12.0))
+            textLabelLeadingConstraint =             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 12.0)
             textLabelTrailingConstraint =           textLabel.trailingAnchor.constraint(
                                 equalTo: trailingAnchor)
         } else {
