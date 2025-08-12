@@ -400,14 +400,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
-        guard
-            let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(
-                account: selectedAccount,
-                userSession: userSession,
-                trackingManager: trackingManager
-            )
-        else {
+        guard let authenticatedRouter = buildAuthenticatedRouter(
+            account: userSession.contextProvider.account,
+            userSession: userSession,
+            trackingManager: trackingManager
+        ) else {
             completion()
             return
         }
