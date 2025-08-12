@@ -63,7 +63,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
-        searchDirectory.updateIncompleteMetadataIfNeeded()
+        await searchDirectory.updateIncompleteMetadataIfNeeded()
 
         let (selfDomain, team) = await context.perform {
             let selfUser = ZMUser.selfUser(in: self.context)
