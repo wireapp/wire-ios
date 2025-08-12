@@ -19,13 +19,13 @@
 import SwiftUI
 import UIKit
 
+// TODO: [WPB-19321] Enforce to use it and remove isContextMenuAllowed from the parameters
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.
 ///
 /// Use `isContextMenuAllowed` to enable or restrict specific actions.
 /// This base class is designed to be subclassed by custom UITextField implementations
 /// that require consistent context menu behavior across the app.
-// TODO: [WPB-19321] Enforce to use it and remove isContextMenuAllowed from the parameters
 open class ContextMenuControllableUITextField: UITextField {
 
     private let isContextMenuAllowed: Bool
@@ -96,6 +96,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.text = text
         textField.autocorrectionType = .no
+        textField.adjustsFontForContentSizeCategory = true
         if isSecureTextEntry {
             textField.isSecureTextEntry = true
             textField.textContentType = .oneTimeCode
