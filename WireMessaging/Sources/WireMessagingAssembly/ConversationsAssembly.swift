@@ -19,28 +19,21 @@
 public import UIKit
 import WireMessagingUI
 public import WireMessagingDomain
-public import Combine
+import Combine
 
 public enum WireMessagingAssembly {
 
     @MainActor
     public static func makeConversationScreen(
-        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol)
+        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol),
+        senderNamePublisherProvider: @escaping SenderNamePublisherProvider
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationMessagesDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
                     monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
-                    senderNamePublisherProvider: AnySenderNamePublisherProvider( { model in
-                        var name = ""
-                        if let modelName = model?.name {
-                            name = modelName + " updated"
-                        }
-                        return Just(name)
-                            .delay(for: .seconds(3), scheduler: DispatchQueue.main)
-                            .eraseToAnyPublisher()
-                    })
+                    senderNamePublisherProvider: AnySenderNamePublisherProvider(senderNamePublisherProvider)
                 )
             )
         )

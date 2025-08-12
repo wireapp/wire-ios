@@ -27,27 +27,11 @@ package enum MessagesSection: Sendable {
 }
 
 package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
-package typealias SenderNamePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<String, Never>
-package typealias SenderAttributedNamePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<AttributedString, Never>
 
 package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
     func reset() async
-}
-
-
-package struct AnySenderNamePublisherProvider: @unchecked Sendable {
-    
-    package let closure: SenderAttributedNamePublisherProvider
-    
-    package init(_ closure: @escaping SenderNamePublisherProvider) {
-        self.closure = { model in
-            closure(model) // returns publisher or just raw sender name string, domain model
-                .map { AttributedString($0) } // maps to UI model, attributed string
-                .eraseToAnyPublisher()
-        }
-    }
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
