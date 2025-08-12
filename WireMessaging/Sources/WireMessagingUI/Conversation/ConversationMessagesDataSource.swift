@@ -79,10 +79,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
         snapshot.appendItems(messages.reversed().toUIModel())
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
 
-        observeTask = Task { [weak self] in
-            guard let self else { return }
-            await observeChanges()
-        }
+        subscribeToNotifications()
     }
 
     private func observeChanges() async {
@@ -97,6 +94,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     }
 
     package func reset() async {
+        // Need to be called to clean up subscription and avoid memory leak
         observeTask?.cancel()
         observeTask = nil
     }
@@ -132,7 +130,12 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
     // here will be subscribed to any messages updates notifications
     // and start processing them
-    private func subscribeToNotifications() {}
+    private func subscribeToNotifications() {
+        observeTask = Task { [weak self] in
+            guard let self else { return }
+            await observeChanges()
+        }
+    }
 
 }
 
