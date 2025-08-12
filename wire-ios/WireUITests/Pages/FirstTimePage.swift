@@ -20,7 +20,6 @@ import XCTest
 
 /// Page for popup on first time user login
 class FirstTimePage: PageModel {
-
     override var pageMainElement: XCUIElement {
         okButton
     }
