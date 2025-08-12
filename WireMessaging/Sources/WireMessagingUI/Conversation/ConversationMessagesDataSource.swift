@@ -17,6 +17,7 @@
 //
 
 import Foundation
+package import Combine
 package import UIKit
 package import WireMessagingDomain
 
@@ -26,6 +27,7 @@ package enum MessagesSection: Sendable {
 }
 
 package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+package typealias SenderStatePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<SenderViewModel.State, Never>?
 
 package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
@@ -33,12 +35,22 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func reset() async
 }
 
+
+package struct AnySenderStatePublisherProvider: @unchecked Sendable {
+    
+    package let closure: SenderStatePublisherProvider
+    
+    package init(_ closure: @escaping SenderStatePublisherProvider) {
+        self.closure = closure
+    }
+}
+
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
 package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
-    // As it's a stream, has to be one subscriber only 
+    // As it's a stream, has to be one subscriber only
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
@@ -48,15 +60,18 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
     private let monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
+    private let senderStatePublisherProvider: AnySenderStatePublisherProvider
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
     package init(
         loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol,
-        monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
+        monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol,
+        senderStatePublisherProvider: AnySenderStatePublisherProvider
     ) {
         self.loadMessagesUseCase = loadMessagesUseCase
         self.monitorMessagesUseCase = monitorMessagesUseCase
+        self.senderStatePublisherProvider = senderStatePublisherProvider
     }
 
     // store cached message view models
@@ -76,7 +91,10 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
         let messages = await loadMessagesUseCase.loadMessages(offset: 0)
 
         snapshot.appendSections([.main])
-        snapshot.appendItems(messages.reversed().toUIModel())
+        snapshot.appendItems(messages
+            .reversed()
+            .map { mapToUIModel($0) }
+        )
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
         
         observeTask = Task { [weak self] in
@@ -89,11 +107,33 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
         for await event in monitorMessagesUseCase.messagesUpdatesStream {
             switch event {
             case let .inserted(model):
-                let uiModel = model.toUIModel()
+                let uiModel = mapToUIModel(model)
                 snapshot.appendItems([uiModel])
                 updatesStreamContinuation?.yield(.messageAdded(self.snapshot))
             }
         }
+    }
+    
+    private func mapToUIModel(_ model: MessageModel) -> MessageType {
+        switch model.kind {
+        case let .text(textModel):
+            let senderState: SenderViewModel.State = if let name = model.sender?.name {
+                .exists(AttributedString(stringLiteral: name ))
+            } else {
+                .empty
+            }
+            return MessageType.text(
+                TextMessageViewModel(
+                    content: AttributedString(stringLiteral: textModel.text ?? ""),
+                    senderViewModel: SenderViewModel(
+                        state: senderState,
+                        statePublisher: senderStatePublisherProvider.closure(model.sender)
+                    )
+                )
+            )
+        default: fatalError()
+        }
+
     }
     
     package func reset() async {
@@ -134,30 +174,4 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     // and start processing them
     private func subscribeToNotifications() {}
 
-}
-
-extension [MessageModel] {
-    func toUIModel() -> [MessageType] {
-        map { $0.toUIModel() }
-    }
-}
-
-extension MessageModel {
-    func toUIModel() -> MessageType {
-        switch kind {
-        case let .text(textModel):
-            let senderState: SenderViewModel.State = if let name = sender?.name {
-                .exists(AttributedString(stringLiteral: name ))
-            } else {
-                .empty
-            }
-            return MessageType.text(
-                TextMessageViewModel(
-                    content: AttributedString(stringLiteral: textModel.text ?? ""),
-                    senderViewModel: SenderViewModel(state: senderState)
-                )
-            )
-        default: fatalError()
-        }
-    }
 }

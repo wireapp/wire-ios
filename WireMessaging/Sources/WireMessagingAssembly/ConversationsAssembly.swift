@@ -19,6 +19,7 @@
 public import UIKit
 import WireMessagingUI
 public import WireMessagingDomain
+public import Combine
 
 public enum WireMessagingAssembly {
 
@@ -30,7 +31,17 @@ public enum WireMessagingAssembly {
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationMessagesDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
-                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo)
+                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
+                    senderStatePublisherProvider: AnySenderStatePublisherProvider( { model in
+                        let state: SenderViewModel.State = if let name = model?.name {
+                            .exists(AttributedString(name + " updated"))
+                        } else {
+                            .empty
+                        }
+                        return Just(state)
+                            .delay(for: .seconds(3), scheduler: DispatchQueue.main)
+                            .eraseToAnyPublisher()
+                    })
                 )
             )
         )

@@ -16,18 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
+package import Combine
 
-class SenderViewModel: ObservableObject {
+package class SenderViewModel: ObservableObject {
 
-    enum State {
+    package enum State {
         case empty
         case exists(AttributedString)
     }
 
     @Published var state: State
+    
+    private var cancellables: Set<AnyCancellable> = []
 
-    init(state: State) {
+    package init(state: State, statePublisher: AnyPublisher<State, Never>?) {
         self.state = state
+        statePublisher?.sink { [weak self] in
+            self?.state = $0
+        }.store(in: &cancellables)
     }
 }
