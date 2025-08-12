@@ -1050,16 +1050,14 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        networkState = {
-            switch (isNetworkOnline, isPerformingSync) {
-            case (true, true):
-                return .onlineSynchronizing
-            case (true, false):
-                return .online
-            case (false, _):
-                return .offline
-            }
-        }()
+        networkState = switch (isNetworkOnline, isPerformingSync) {
+        case (true, true):
+            .onlineSynchronizing
+        case (true, false):
+            .online
+        case (false, _):
+            .offline
+        }
     }
 }
 
@@ -1254,7 +1252,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
             // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
 
-            await recurringActionService.performActionsIfNeeded() 
+            await recurringActionService.performActionsIfNeeded()
         }
 
         performPostQuickSyncE2EIActions()

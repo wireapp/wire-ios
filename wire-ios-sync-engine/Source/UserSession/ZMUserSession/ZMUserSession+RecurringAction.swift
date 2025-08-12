@@ -26,13 +26,13 @@ extension ZMUserSession {
         .init(id: #function, interval: .oneDay) { [weak self] in
             guard
                 let self,
-                await self.viewContext.perform({ self.mlsFeature.isEnabled })
+                await viewContext.perform({ self.mlsFeature.isEnabled })
             else {
                 return
             }
 
             do {
-                try await self.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
             } catch {
                 WireLogger.mls
                     .error(
