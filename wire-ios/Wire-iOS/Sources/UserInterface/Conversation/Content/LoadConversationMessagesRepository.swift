@@ -38,19 +38,19 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
 
     init(
         conversationObjectID: NSManagedObjectID,
-        viewContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
         backgroundContext: NSManagedObjectContext
     ) {
         self.conversationObjectID = conversationObjectID
         self.backgroundContext = backgroundContext
-        self.viewContext = viewContext
+        self.viewContext = syncContext
         super.init()
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(contextDidSave),
             name: .NSManagedObjectContextDidSave,
-            object: viewContext
+            object: syncContext
         )
     }
 
