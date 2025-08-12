@@ -38,6 +38,7 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
 package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
+    // As it's a stream, has to be one subscriber only 
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
