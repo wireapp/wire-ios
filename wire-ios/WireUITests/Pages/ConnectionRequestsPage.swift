@@ -16,24 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-public extension ZMConversation {
+class ConnectionRequestsPage: PageModel {
 
-    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
-
-    var channelHistoryDepth: String? {
-        get {
-            nil
-        }
-
-        set {}
+    override var pageMainElement: XCUIElement {
+        acceptRequestButton
     }
 
-    // TODO: [WPB-18470] Encrypted history messages will be stored in DB - return true if array has encrypted messages, false if empty (meaning all history messages have been decrypted and shown to the user)
+    var acceptRequestButton: XCUIElement {
+        app.buttons["accept"]
+    }
 
-    var hasMoreHistory: Bool {
-        true
+    var userNameInfo: XCUIElement {
+        app.staticTexts["username"].firstMatch
+    }
+
+    func acceptConnectionRequest() throws -> ActiveConversationPage {
+        acceptRequestButton.tap()
+        return try ActiveConversationPage()
+    }
+
+    func getUserName() -> String? {
+        userNameInfo.label as? String
     }
 
 }

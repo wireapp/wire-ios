@@ -187,6 +187,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             contentWidth: width,
             userDefaults: mockUserDefaults
         )
+
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView(message) }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
@@ -210,7 +211,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 }
 
-private extension ConversationMessageCellDescription {
+extension ConversationMessageCellDescription {
 
     func makeView(_ message: ZMConversationMessage) -> UIView {
         let view = View()

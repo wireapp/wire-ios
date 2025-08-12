@@ -583,6 +583,7 @@
 				ConversationAvatarViewTests.swift,
 				ConversationCell/BurstTimestampSenderMessageCellDescriptionTests.swift,
 				ConversationCell/CompositeMessageCellTests.swift,
+				ConversationCell/ConversationChannelHistoryAvailableCellSnapshotTests.swift,
 				ConversationCell/ConversationRenamedCellTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
