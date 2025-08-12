@@ -32,7 +32,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     let labelFont: UIFont = .mediumFont
     
     /// A computed property that subclasses can override to identify themselves.
-    var isPingCell: Bool {
+    var shouldRemoveInnerPaddingForBubbles: Bool {
         return false
     }
 
@@ -124,21 +124,17 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         // We want the content view to at least be below the image container
         let contentViewTopConstraint = bottomContentView.topAnchor.constraint(equalTo: imageContainer.bottomAnchor)
         contentViewTopConstraint.priority = .defaultLow
+        topContentViewTrailingConstraint =  topContentView.trailingAnchor.constraint(
+                        equalTo: trailingAnchor)
 
-        if DeveloperFlag.chatBubblesSimple.isOn && isPingCell {
-            topContentViewTrailingConstraint =  topContentView.trailingAnchor.constraint(
-                            equalTo: trailingAnchor)
+        if DeveloperFlag.chatBubblesSimple.isOn && shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint = imageContainer.widthAnchor
                             .constraint(equalToConstant: 32.0)
-            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24.0 + 12.0))
-            textLabelLeadingConstraint =             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 16.0)
+            imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(32.0 + 8.0))
+            textLabelLeadingConstraint =             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor, constant: 8.0)
             textLabelTrailingConstraint =           textLabel.trailingAnchor.constraint(
                                 equalTo: trailingAnchor)
         } else {
-            topContentViewTrailingConstraint = topContentView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: trailingTextMargin
-            )
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
             containerWidthConstraint = imageContainer.widthAnchor
                 .constraint(equalToConstant: conversationHorizontalMargins.left)
@@ -190,14 +186,13 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if DeveloperFlag.chatBubblesSimple.isOn && isPingCell {
+        topContentViewTrailingConstraint.constant = trailingTextMargin
+        if DeveloperFlag.chatBubblesSimple.isOn && shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
-            topContentViewTrailingConstraint.constant = 0
         } else {
             containerWidthConstraint.constant = conversationHorizontalMargins.left
             textLabelTrailingConstraint.constant = trailingTextMargin
-            topContentViewTrailingConstraint.constant = trailingTextMargin
         }
     }
 

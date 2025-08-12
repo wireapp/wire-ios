@@ -29,7 +29,7 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
     var configuration: Configuration?
     
     /// Override the base property to identify this as a ping cell.
-    override var isPingCell: Bool {
+    override var shouldRemoveInnerPaddingForBubbles: Bool {
         return true
     }
 
