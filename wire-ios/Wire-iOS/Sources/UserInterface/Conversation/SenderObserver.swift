@@ -18,14 +18,13 @@
 
 import Combine
 import WireDataModel
+import WireMessagingDomain
 
-public protocol SenderObserverProtocol {
-    var authorChangedPublisher: AnyPublisher<String, Never>? { get }
-}
-
-final class SenderObserver: SenderObserverProtocol {
+final class SenderObserver: SenderNameObserverProtocol {
         
     var authorChangedPublisher: AnyPublisher<String, Never>?
+    
+    // later to add publisher for avatar
     
     init(
         userID: NSManagedObjectID,

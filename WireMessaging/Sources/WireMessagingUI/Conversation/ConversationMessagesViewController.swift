@@ -167,8 +167,8 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
                 dataSource: ConversationMessagesDataSource(
                     loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol(),
                     monitorMessagesUseCase: MockMonitorMessagesUseCaseProtocol(),
-                    senderNamePublisherProvider: AnySenderNamePublisherProvider( { _ in
-                        Empty().eraseToAnyPublisher()
+                    senderNameObserverProvider: AnySenderNameObserverProvider({ model in
+                        nil
                     })
                 )
             )

@@ -49,18 +49,18 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
     private let monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
-    private let senderNamePublisherProvider: AnySenderNamePublisherProvider
+    private let senderNameObserverProvider: AnySenderNameObserverProvider
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
     package init(
         loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol,
         monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol,
-        senderNamePublisherProvider: AnySenderNamePublisherProvider
+        senderNameObserverProvider: AnySenderNameObserverProvider
     ) {
         self.loadMessagesUseCase = loadMessagesUseCase
         self.monitorMessagesUseCase = monitorMessagesUseCase
-        self.senderNamePublisherProvider = senderNamePublisherProvider
+        self.senderNameObserverProvider = senderNameObserverProvider
     }
 
     // store cached message view models
@@ -113,7 +113,8 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
                     senderViewModel: SenderViewModel(
                         state: senderState,
-                        statePublisher: senderNamePublisherProvider.closure(model.sender)
+                        statePublisher: senderNameObserverProvider
+                            .get(for: model.sender)?.authorChangedPublisher
                     )
                 )
             )

@@ -32,7 +32,7 @@ final class MessagesIndividualUpdatesFactory {
     
     var dict = [NSManagedObjectID: SenderObserver]()
     
-    func makeSenderNamePublisher(user: UserModel?) -> SenderObserverProtocol? {
+    func makeSenderNameObserver(user: UserModel?) -> SenderNameObserverProtocol? {
     
         guard let user else {
             return nil

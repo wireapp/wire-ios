@@ -161,11 +161,8 @@ final class ConversationViewController: UIViewController {
                     syncContext: userSession.contextProvider.syncContext,
                     backgroundContext: userSession.contextProvider.newBackgroundContext()
                 ),
-                senderNamePublisherProvider: { [individualChangesFactory] model in
-                    individualChangesFactory
-                        .makeSenderNamePublisher(
-                            user: model
-                        )?.authorChangedPublisher
+                senderNameObserverProvider: { [individualChangesFactory] model in
+                    individualChangesFactory.makeSenderNameObserver(user: model)
                 }
             )
         } else {

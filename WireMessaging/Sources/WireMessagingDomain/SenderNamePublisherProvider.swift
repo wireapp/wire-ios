@@ -19,4 +19,8 @@
 import Foundation
 public import Combine
 
-public typealias SenderNamePublisherProvider = @Sendable (UserModel?) -> AnyPublisher<String, Never>?
+public protocol SenderNameObserverProtocol {
+    var authorChangedPublisher: AnyPublisher<String, Never>? { get }
+}
+
+public typealias SenderNameObserverProvider = (UserModel?) -> (any SenderNameObserverProtocol)?
