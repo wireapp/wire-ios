@@ -125,7 +125,7 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = groupConversationPage.getSentMessages()
+        let sentMessages = try XCTUnwrap(groupConversationPage.getSentMessages())
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"

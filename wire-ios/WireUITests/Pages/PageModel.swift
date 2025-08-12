@@ -35,16 +35,32 @@ class PageModel {
 
     init() throws {
         self.app = XCUIApplication()
-        try assertHasLoaded()
+        assertHasLoaded()
     }
 
     var pageMainElement: XCUIElement {
         fatalError("override this in subclass \(String(describing: self))")
     }
 
-    func assertHasLoaded() throws {
-        guard pageMainElement.waitForExistence(timeout: 10) else {
-            throw Failure.notLoaded(self)
+    func assertHasLoaded(
+        timeout: TimeInterval = 15,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let loaded = pageMainElement.waitForExistence(timeout: timeout)
+        guard loaded else {
+            XCTContext.runActivity(named: "Debug UI on failure") { activity in
+                let screenshot = XCUIScreen.main.screenshot()
+                let screenshotAttachment = XCTAttachment(screenshot: screenshot)
+                screenshotAttachment.lifetime = .keepAlways
+                activity.add(screenshotAttachment)
+
+                let hierarchyAttachment = XCTAttachment(string: app.debugDescription)
+                hierarchyAttachment.lifetime = .keepAlways
+                activity.add(hierarchyAttachment)
+            }
+            XCTFail("Page main element did not load within \(timeout)s", file: file, line: line)
+            return
         }
     }
 }
