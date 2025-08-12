@@ -150,9 +150,9 @@ package final class ConversationMessagesViewController: UIViewController {
 
     func scrollToLastItem(animated: Bool = true) {
         let lastItem = max(collectionView.numberOfItems(inSection: 0) - 1, 0)
-        
-        guard lastItem >= 0 else { return }
-        
+
+        guard lastItem > 0 else { return }
+
         let indexPath = IndexPath(item: lastItem, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .bottom, animated: animated)
     }
