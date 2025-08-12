@@ -1219,6 +1219,10 @@ extension ZMUserSession: SyncAgentDelegate {
 
         Task {
             await showSyncBar(false)
+        }
+
+        WaitingGroupTask(context: syncContext) { [weak self] in
+            guard let self else { return }
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
@@ -1249,9 +1253,10 @@ extension ZMUserSession: SyncAgentDelegate {
             await resolveOneOnOneConversationsIfNeeded()
 
             // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
+
+            await recurringActionService.performActionsIfNeeded() 
         }
 
-        recurringActionService.performActionsIfNeeded()
         performPostQuickSyncE2EIActions()
     }
 
