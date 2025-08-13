@@ -167,7 +167,8 @@ final class TeamManageTests: WireUITestCase {
         let (convoId, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
         let convoUUID = try XCTUnwrap(convoId)
         let convoDomain = try XCTUnwrap(domain)
-
+        
+        // member1 send text
         try await testServiceClient.sendText(
             user: teamMembers[0],
             text: messageFromMember1,
@@ -189,7 +190,8 @@ final class TeamManageTests: WireUITestCase {
 
         let (imageName, imageExtension) = getFileInfo(from: imagePath)
         let (audioName, audioExtension) = getFileInfo(from: audioPath)
-
+        
+        // member2 send image
         try await testServiceClient.sendFile(
             type: imageExtension,
             user: teamMembers[1],
@@ -198,7 +200,8 @@ final class TeamManageTests: WireUITestCase {
             convoId: convoUUID,
             domain: convoDomain
         )
-
+        
+        // member3 send audio
         try await testServiceClient.sendFile(
             type: imageExtension,
             user: teamMembers[2],
