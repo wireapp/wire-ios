@@ -161,6 +161,7 @@ final class MessageToolboxView: UIView {
 
     fileprivate let separatorView = UIView()
     fileprivate var previousLayoutBounds: CGRect = .zero
+    private lazy var noHeightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
     // MARK: - Initialization
 
@@ -315,6 +316,7 @@ final class MessageToolboxView: UIView {
         _ message: ZMConversationMessage,
         animated: Bool = false
     ) {
+        noHeightConstraint.isActive = false
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
@@ -325,6 +327,7 @@ final class MessageToolboxView: UIView {
 
     func setAllContentHidden() {
         contentStack.arrangedSubviews.forEach { $0.isHidden = true }
+        noHeightConstraint.isActive = false
     }
 
     private func hideAndCleanStatusLabel() {
