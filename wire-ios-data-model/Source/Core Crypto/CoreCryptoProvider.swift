@@ -57,6 +57,9 @@ public protocol CoreCryptoProviderProtocol {
     /// Update the CC database key
     func updateDatabaseKey() async throws
 
+    /// Reset coreCrypto instance
+    func reset()
+
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -68,7 +71,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
-    private var coreCrypto: SafeCoreCrypto?
+    private nonisolated(unsafe) var coreCrypto: SafeCoreCrypto?
     private var loadingCoreCrypto = false
     private var initialisatingMLS = false
     private var hasInitialisedMLS = false
@@ -168,6 +171,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
         mlsTransport = transport
+    }
+
+    public nonisolated func reset() {
+        coreCrypto = nil
     }
 
     private func registerMlsTransportIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
