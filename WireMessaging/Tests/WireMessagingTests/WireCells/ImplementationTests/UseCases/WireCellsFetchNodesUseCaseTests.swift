@@ -18,8 +18,8 @@
 
 import Testing
 
-@testable import WireMessagingDomainSupport
 @testable import WireMessagingDomain
+@testable import WireMessagingDomainSupport
 
 struct WireCellsFetchNodesUseCaseTests {
 
@@ -36,7 +36,8 @@ struct WireCellsFetchNodesUseCaseTests {
         )
     }
 
-    @Test func testInvoke_withoutSearchTermAndToken() async throws {
+    @Test
+    func testInvoke_withoutSearchTermAndToken() async throws {
         // Given
         let someNode = WireCellsNode.fixture()
         repository.getNodes_MockValue = (nodes: [someNode], nextOffset: 30)
@@ -59,7 +60,8 @@ struct WireCellsFetchNodesUseCaseTests {
         )
     }
 
-    @Test func testInvoke_withSearchTermAndToken() async throws {
+    @Test
+    func testInvoke_withSearchTermAndToken() async throws {
         // Given
         let someNode = WireCellsNode.fixture()
         repository.getNodes_MockValue = (nodes: [someNode], nextOffset: nil)
