@@ -24,3 +24,10 @@ public protocol SenderNameObserverProtocol {
 }
 
 public typealias SenderNameObserverProvider = (UserModel?) -> (any SenderNameObserverProtocol)?
+
+
+public protocol ReactionsObserverProtocol {
+    var reactionsPublisher: AnyPublisher<ReactionsModel, Never>? { get }
+}
+
+public typealias ReactionsObserverProvider = (MessageModel) -> (any ReactionsObserverProtocol)?

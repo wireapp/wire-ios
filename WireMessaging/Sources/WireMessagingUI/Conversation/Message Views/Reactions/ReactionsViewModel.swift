@@ -32,11 +32,15 @@ class ReactionsViewModel: ObservableObject {
 
     init(
         state: State,
-        publisher: AnyPublisher<[(String, Int)], Never>?
+        publisher: AnyPublisher<[String: Int], Never>?
     ) {
         self.state = state
-//        namePublisher?.sink { [weak self] name in
-//            self?.state = .exists(AttributedString(name))
-//        }.store(in: &cancellables)
+        publisher?.sink { [weak self] reactions in
+            if reactions.count > 0 {
+                self?.state = .exists(reactions)
+            } else {
+                self?.state = .empty
+            }
+        }.store(in: &cancellables)
     }
 }

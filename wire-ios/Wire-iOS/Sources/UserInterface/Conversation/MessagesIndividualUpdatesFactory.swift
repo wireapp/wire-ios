@@ -23,7 +23,8 @@ import WireMessagingDomain
 final actor MessagesIndividualUpdatesFactory {
 
     private let context: NSManagedObjectContext
-    private var dict = [NSManagedObjectID: SenderObserver]()
+    private var senderObservers = [NSManagedObjectID: SenderObserver]()
+    private var messageObservers = [NSManagedObjectID: ReactionsObserver]()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -34,7 +35,7 @@ final actor MessagesIndividualUpdatesFactory {
             return nil
         }
 
-        if let observer = dict[objectID] {
+        if let observer = senderObservers[objectID] {
             return observer
         }
 
@@ -43,8 +44,28 @@ final actor MessagesIndividualUpdatesFactory {
             viewContext: context
         )
 
-        dict[objectID] = observer
+        senderObservers[objectID] = observer
 
         return observer
+    }
+    
+    func makeReactionsObserver(message: MessageModel) -> ReactionsObserverProtocol? {
+        guard let objectID = message.objectID as? NSManagedObjectID else {
+            return nil
+        }
+
+        if let observer = messageObservers[objectID] {
+            return observer
+        }
+
+        let observer = ReactionsObserver(
+            messageID: objectID,
+            viewContext: context
+        )
+
+        messageObservers[objectID] = observer
+
+        return observer
+
     }
 }

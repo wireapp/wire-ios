@@ -44,6 +44,39 @@ final class SenderObserver: SenderNameObserverProtocol {
     }
 }
 
+final class ReactionsObserver: ReactionsObserverProtocol {
+    
+    var reactionsPublisher: AnyPublisher<ReactionsModel, Never>?
+    
+    init(
+        messageID: NSManagedObjectID,
+        viewContext: NSManagedObjectContext
+    ) {
+        viewContext.performAndWait { [weak self, viewContext] in
+            guard let message = try? viewContext.existingObject(with: messageID) as? ZMMessage else {
+                return
+            }
+
+            self?.reactionsPublisher = NSManagedObject.publisher(for: message, in: viewContext)
+                .map {
+                    $0.usersReaction
+                        .mapValues { users in
+                            users.map { user in
+                                UserModel(
+                                    objectID: user.objectId,
+                                    remoteIdentifier: user.remoteIdentifier,
+                                    name: user.name,
+                                    handle: user.handle
+                                )
+                            }
+                        }
+                }
+                .eraseToAnyPublisher()
+        }
+    }
+
+}
+
 extension NSManagedObject {
     static func publisher<T: NSManagedObject>(
         for managedObject: T,

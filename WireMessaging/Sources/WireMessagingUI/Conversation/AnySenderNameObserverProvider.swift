@@ -17,21 +17,30 @@
 //
 
 package import WireMessagingDomain
+import Combine
 
 // Need to be wrapped to type eraser as @unchecked Sendable to be able to pass to datasource actor
 // also performs mapping of domain model which is just raw string
 // to UI model which is Attributed string
-package struct AnySenderNameObserverProvider: @unchecked Sendable {
+package struct AnyObserverProvider: @unchecked Sendable {
 
-    private var observerProvider: SenderNameObserverProvider?
+    package let senderNameObserverProvider: SenderNameObserverProvider?
+    package let reactionsObserverProvider: ReactionsObserverProvider?
 
     package init(
-        _ observerProvider: SenderNameObserverProvider?
+        senderNameObserverProvider: SenderNameObserverProvider?,
+        reactionsObserverProvider: ReactionsObserverProvider?
     ) {
-        self.observerProvider = observerProvider
+        self.senderNameObserverProvider = senderNameObserverProvider
+        self.reactionsObserverProvider = reactionsObserverProvider
     }
-
-    func get(for model: UserModel?) -> (any SenderNameObserverProtocol)? {
-        observerProvider?(model)
+    
+    func get(for message: MessageModel) -> AnyPublisher<[String: Int], Never>? {
+        if let publisher = reactionsObserverProvider?(message)?.reactionsPublisher {
+            return publisher
+                .map { $0.mapValues { $0.count } }
+                .eraseToAnyPublisher()
+        }
+        return nil
     }
 }

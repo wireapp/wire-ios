@@ -26,11 +26,18 @@ public struct MessageModel: Sendable {
         case text(TextMessageModel)
     }
 
+    public let objectID: any Sendable
     public let sender: UserModel?
     public let kind: Kind
     public let reactions: ReactionsModel
-
-    public init(sender: UserModel?, kind: Kind, reactions: [String : [UserModel]]) {
+    
+    public init(
+        objectID: any Sendable,
+        sender: UserModel?,
+        kind: Kind,
+        reactions: ReactionsModel
+    ) {
+        self.objectID = objectID
         self.sender = sender
         self.kind = kind
         self.reactions = reactions

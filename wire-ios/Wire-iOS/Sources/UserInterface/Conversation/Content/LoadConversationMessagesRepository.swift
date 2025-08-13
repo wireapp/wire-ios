@@ -160,6 +160,7 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
 extension ZMMessage {
     func toDomain() -> MessageModel {
         MessageModel(
+            objectID: objectID,
             sender: sender?.toDomain(),
             kind: getMessageKind(),
             reactions: reactions.toDomain()

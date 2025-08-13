@@ -26,14 +26,18 @@ public enum WireMessagingAssembly {
     @MainActor
     public static func makeConversationScreen(
         loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol),
-        senderNameObserverProvider: SenderNameObserverProvider?
+        senderNameObserverProvider: SenderNameObserverProvider?,
+        reactionsObserverProvider: ReactionsObserverProvider?
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
                     monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
-                    senderNameObserverProvider: AnySenderNameObserverProvider(senderNameObserverProvider)
+                    observersProvider: AnyObserverProvider(
+                        senderNameObserverProvider: senderNameObserverProvider,
+                        reactionsObserverProvider: reactionsObserverProvider
+                    )
                 )
             )
         )
