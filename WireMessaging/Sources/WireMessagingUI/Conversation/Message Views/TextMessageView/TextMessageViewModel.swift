@@ -16,15 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+public import Foundation
 
-struct RecurringAction {
+public class TextMessageViewModel: ObservableObject, Identifiable, Hashable, @unchecked Sendable {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    public let id = UUID()
 
-    func callAsFunction() async {
-        await perform()
+    @Published var content: AttributedString
+
+    @Published var senderViewModel: SenderViewModel
+
+    init(
+        content: AttributedString,
+        senderViewModel: SenderViewModel
+    ) {
+        self.content = content
+        self.senderViewModel = senderViewModel
     }
+
+    public static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
 }

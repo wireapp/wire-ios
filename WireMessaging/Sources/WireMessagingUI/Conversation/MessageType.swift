@@ -18,13 +18,15 @@
 
 import Foundation
 
-struct RecurringAction {
+public enum MessageType: Hashable, Identifiable, Sendable {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
-
-    func callAsFunction() async {
-        await perform()
+    public var id: ObjectIdentifier {
+        switch self {
+        case let .text(vm): vm.id
+        }
     }
+
+    case text(TextMessageViewModel)
+    // case image, video, system, etc
+
 }
