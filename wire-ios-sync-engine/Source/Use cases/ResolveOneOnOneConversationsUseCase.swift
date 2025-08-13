@@ -36,6 +36,8 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 
+    private static var didResolve = false
+
     func invoke() async throws {
         let oldProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
@@ -54,7 +56,17 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         }
 
         if newProtocols.contains(.mls) {
-            try await resolver.resolveAllOneOnOneConversations(in: context)
+            guard !Self.didResolve else {
+                return
+            }
+
+            do {
+                try await resolver.resolveAllOneOnOneConversations(in: context)
+                didResolve = true
+            } catch {
+                didResolve = true
+                throw error
+            }
         }
     }
 
