@@ -32,11 +32,11 @@ package class SenderViewModel: ObservableObject {
 
     package init(
         state: State,
-        statePublisher: AnyPublisher<AttributedString, Never>?
+        namePublisher: AnyPublisher<String, Never>?
     ) {
         self.state = state
-        statePublisher?.sink { [weak self] name in
-            self?.state = .exists(name)
+        namePublisher?.sink { [weak self] name in
+            self?.state = .exists(AttributedString(name))
         }.store(in: &cancellables)
     }
 }

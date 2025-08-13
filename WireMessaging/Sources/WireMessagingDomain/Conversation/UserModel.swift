@@ -18,9 +18,13 @@
 
 public import Foundation
 
+// To be refined later
 public struct UserModel: Sendable {
-    // To be refined later
+        
+    // 'objectID' to abstract id from data layer hide behind abstract 'any Sendable'
+    // used as a way to map domain models back to data models
     public let objectID: any Sendable
+    
     public let remoteIdentifier: UUID
     public let name: String?
     public let handle: String?

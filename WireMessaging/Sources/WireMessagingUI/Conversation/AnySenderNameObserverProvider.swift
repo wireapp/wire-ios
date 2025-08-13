@@ -16,13 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Combine
 package import WireMessagingDomain
-package import Foundation
-
-package protocol SenderAttributedNameObserverProtocol {
-    var authorChangedPublisher: AnyPublisher<AttributedString, Never>? { get }
-}
 
 // Need to be wrapped to type eraser as @unchecked Sendable to be able to pass to datasource actor
 // also performs mapping of domain model which is just raw string
@@ -37,26 +31,7 @@ package struct AnySenderNameObserverProvider: @unchecked Sendable {
         self.observerProvider = observerProvider
     }
 
-    func get(for model: UserModel?) -> (any SenderAttributedNameObserverProtocol)? {
-        SenderAttributedNameObserver(nameObserver: observerProvider?(model))
+    func get(for model: UserModel?) -> (any SenderNameObserverProtocol)? {
+        observerProvider?(model)
     }
-}
-
-// Mapper from raw sender name as string (domain) to Attributed string (UI layer)
-package class SenderAttributedNameObserver: SenderAttributedNameObserverProtocol {
-
-    package var authorChangedPublisher: AnyPublisher<AttributedString, Never>?
-
-    private let nameObserver: (any SenderNameObserverProtocol)?
-
-    package init(nameObserver: (any SenderNameObserverProtocol)?) {
-        self.nameObserver = nameObserver
-        if let publisher = nameObserver?.authorChangedPublisher {
-            self.authorChangedPublisher = publisher
-                .map { AttributedString($0) } // maps to UI model, attributed string
-                .removeDuplicates()
-                .eraseToAnyPublisher()
-        }
-    }
-
 }

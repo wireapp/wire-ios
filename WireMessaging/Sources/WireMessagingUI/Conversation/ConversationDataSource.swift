@@ -113,7 +113,7 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
                     senderViewModel: SenderViewModel(
                         state: senderState,
-                        statePublisher: senderNameObserverProvider
+                        namePublisher: senderNameObserverProvider
                             .get(for: model.sender)?.authorChangedPublisher
                     )
                 )
