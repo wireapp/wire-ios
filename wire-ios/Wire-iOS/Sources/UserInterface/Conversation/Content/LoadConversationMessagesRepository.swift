@@ -161,7 +161,8 @@ extension ZMMessage {
     func toDomain() -> MessageModel {
         MessageModel(
             sender: sender?.toDomain(),
-            kind: getMessageKind()
+            kind: getMessageKind(),
+            reactions: reactions.toDomain()
         )
     }
 
@@ -181,5 +182,16 @@ extension ZMUser {
             name: name,
             handle: handle
         )
+    }
+}
+
+extension Set where Element == Reaction {
+    func toDomain() -> ReactionsModel {
+        Array(self)
+            .partition(by: \.unicodeValue)
+            .mapValues {
+                $0.flatMap(\.users)
+                    .map { $0.toDomain() }
+            }
     }
 }

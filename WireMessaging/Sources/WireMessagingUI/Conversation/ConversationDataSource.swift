@@ -108,6 +108,12 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
             } else {
                 .empty
             }
+            
+            let reactionsState: ReactionsViewModel.State = if model.reactions.count > 0 {
+                .exists(model.reactions.mapValues { $0.count } )
+            } else {
+                .empty
+            }
             return ConversationElement.text(
                 TextMessageViewModel(
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
@@ -117,7 +123,7 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
                             .get(for: model.sender)?.authorChangedPublisher
                     ),
                     reactionsViewModel: ReactionsViewModel(
-                        state: .exists([("HI", 3), ("Bye", 1)]),
+                        state: reactionsState,
                         publisher: nil
                     )
                 )

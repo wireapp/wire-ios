@@ -36,9 +36,9 @@ public enum TransportReaction: UInt32 {
 @objcMembers
 open class Reaction: ZMManagedObject {
 
-    @NSManaged var unicodeValue: String?
+    @NSManaged public var unicodeValue: String?
     @NSManaged var message: ZMMessage?
-    @NSManaged var users: Set<ZMUser>
+    @NSManaged public var users: Set<ZMUser>
     @NSManaged private var firstReactionDate: Date?
 
     public var creationDate: Date {

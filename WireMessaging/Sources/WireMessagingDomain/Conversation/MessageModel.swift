@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public typealias ReactionsModel = [String: [UserModel]]
+
 public struct MessageModel: Sendable {
 
     public enum Kind: Sendable {
@@ -26,10 +28,12 @@ public struct MessageModel: Sendable {
 
     public let sender: UserModel?
     public let kind: Kind
+    public let reactions: ReactionsModel
 
-    public init(sender: UserModel?, kind: Kind) {
+    public init(sender: UserModel?, kind: Kind, reactions: [String : [UserModel]]) {
         self.sender = sender
         self.kind = kind
+        self.reactions = reactions
     }
 }
 

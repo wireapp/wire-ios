@@ -40,7 +40,7 @@ struct ReactionsView: View {
 #Preview {
     ReactionsView(
         viewModel: .init(
-            state: .exists([("😂", 1)]),
+            state: .exists(["😂": 1]),
             publisher: nil
         )
     )

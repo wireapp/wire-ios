@@ -23,7 +23,7 @@ class ReactionsViewModel: ObservableObject {
 
     package enum State {
         case empty
-        case exists([(String, Int)])
+        case exists([String: Int])
     }
 
     @Published var state: State
