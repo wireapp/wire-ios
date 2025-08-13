@@ -62,9 +62,9 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
 
             do {
                 try await resolver.resolveAllOneOnOneConversations(in: context)
-                didResolve = true
+                Self.didResolve = true
             } catch {
-                didResolve = true
+                Self.didResolve = true
                 throw error
             }
         }
