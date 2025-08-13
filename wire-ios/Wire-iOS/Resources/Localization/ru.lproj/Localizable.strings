@@ -482,6 +482,9 @@
 "content.system.apps.warning" = "Приложения имеют доступ к контенту этой беседы";
 
 "content.system.missing_messages" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
+"content.system.message_more_history_available" = "Загрузка истории бесед...";
+"content.system.message_no_more_history_available" = "Вы попали в топ 🥳\nВы видите все доступные сообщения.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %@.";
 
