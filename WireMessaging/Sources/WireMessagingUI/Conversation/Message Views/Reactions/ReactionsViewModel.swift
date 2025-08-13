@@ -16,22 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import Combine
 
-struct SenderMessageView: View {
+class ReactionsViewModel: ObservableObject {
 
-    @ObservedObject var viewModel: SenderViewModel
+    package enum State {
+        case empty
+        case exists([(String, Int)])
+    }
 
-    var body: some View {
-        HStack(spacing: 0) {
-            switch viewModel.state {
-            case .empty:
-                EmptyView()
-            case let .exists(name):
-                Text(name)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+    @Published var state: State
+
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(
+        state: State,
+        publisher: AnyPublisher<[(String, Int)], Never>?
+    ) {
+        self.state = state
+//        namePublisher?.sink { [weak self] name in
+//            self?.state = .exists(AttributedString(name))
+//        }.store(in: &cancellables)
     }
 }

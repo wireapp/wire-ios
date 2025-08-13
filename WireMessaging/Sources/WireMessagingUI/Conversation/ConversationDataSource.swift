@@ -115,6 +115,10 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
                         state: senderState,
                         namePublisher: senderNameObserverProvider
                             .get(for: model.sender)?.authorChangedPublisher
+                    ),
+                    reactionsViewModel: ReactionsViewModel(
+                        state: .exists([("HI", 3), ("Bye", 1)]),
+                        publisher: nil
                     )
                 )
             )

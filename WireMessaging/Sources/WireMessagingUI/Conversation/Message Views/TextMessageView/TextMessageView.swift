@@ -25,9 +25,11 @@ struct TextMessageView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
 
-            SenderMessageView(model: viewModel.senderViewModel)
+            SenderMessageView(viewModel: viewModel.senderViewModel)
 
             text
+            
+            ReactionsView(viewModel: viewModel.reactionsViewModel)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)

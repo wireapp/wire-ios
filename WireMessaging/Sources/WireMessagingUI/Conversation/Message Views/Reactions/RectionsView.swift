@@ -18,20 +18,30 @@
 
 import SwiftUI
 
-struct SenderMessageView: View {
-
-    @ObservedObject var viewModel: SenderViewModel
-
+struct ReactionsView: View {
+    
+    @ObservedObject var viewModel: ReactionsViewModel
+    
     var body: some View {
         HStack(spacing: 0) {
             switch viewModel.state {
             case .empty:
                 EmptyView()
-            case let .exists(name):
-                Text(name)
+            case let .exists(reactions):
+                Text(reactions.map { "\($0.0): \($0.1)"}.joined(separator: " "))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+
     }
+}
+
+#Preview {
+    ReactionsView(
+        viewModel: .init(
+            state: .exists([("😂", 1)]),
+            publisher: nil
+        )
+    )
 }

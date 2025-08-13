@@ -26,13 +26,16 @@ package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Senda
     @Published var content: AttributedString
 
     @Published var senderViewModel: SenderViewModel
+    @Published var reactionsViewModel: ReactionsViewModel
 
     init(
         content: AttributedString,
-        senderViewModel: SenderViewModel
+        senderViewModel: SenderViewModel,
+        reactionsViewModel: ReactionsViewModel
     ) {
         self.content = content
         self.senderViewModel = senderViewModel
+        self.reactionsViewModel = reactionsViewModel
     }
 
     package static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
