@@ -17,34 +17,34 @@
 //
 
 import Foundation
-import WireMessagingDomain
 import WireDataModel
+import WireMessagingDomain
 
 final actor MessagesIndividualUpdatesFactory {
-    
+
     private let context: NSManagedObjectContext
     private var dict = [NSManagedObjectID: SenderObserver]()
-    
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
-    
+
     func makeSenderNameObserver(user: UserModel?) -> SenderNameObserverProtocol? {
         guard let objectID = user?.objectID as? NSManagedObjectID else {
             return nil
         }
-        
+
         if let observer = dict[objectID] {
             return observer
         }
-        
+
         let observer = SenderObserver(
             userID: objectID,
             viewContext: context
         )
-        
+
         dict[objectID] = observer
-        
+
         return observer
     }
 }

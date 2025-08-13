@@ -27,7 +27,7 @@ package class SenderViewModel: ObservableObject {
     }
 
     @Published var state: State
-    
+
     private var cancellables: Set<AnyCancellable> = []
 
     package init(

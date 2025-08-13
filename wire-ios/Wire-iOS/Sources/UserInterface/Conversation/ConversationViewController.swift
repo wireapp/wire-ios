@@ -130,9 +130,9 @@ final class ConversationViewController: UIViewController {
         guard let viewController else { return nil }
         return UINavigationController(rootViewController: viewController)
     }
-    
+
     private let individualChangesFactory: MessagesIndividualUpdatesFactory
-        
+
     required init(
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
@@ -150,7 +150,7 @@ final class ConversationViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
-        
+
         self.individualChangesFactory = MessagesIndividualUpdatesFactory(
             context: userSession.contextProvider.viewContext
         )

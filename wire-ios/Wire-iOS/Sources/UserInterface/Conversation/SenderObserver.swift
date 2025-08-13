@@ -21,26 +21,26 @@ import WireDataModel
 import WireMessagingDomain
 
 final class SenderObserver: SenderNameObserverProtocol {
-        
+
     var authorChangedPublisher: AnyPublisher<String, Never>?
-    
+
     // later to add publisher for avatar
-    
+
     init(
         userID: NSManagedObjectID,
         viewContext: NSManagedObjectContext
     ) {
-        viewContext.performAndWait { [weak self, viewContext] in // TODO: make async?
+        viewContext.performAndWait { [weak self, viewContext] in
             guard let user = try? viewContext.existingObject(with: userID) as? ZMUser else {
                 return
             }
-                
+
             self?.authorChangedPublisher = NSManagedObject.publisher(for: user, in: viewContext)
                 .map { $0.name ?? "" }
                 .removeDuplicates()
                 .eraseToAnyPublisher()
         }
-        
+
     }
 }
 
@@ -57,9 +57,9 @@ extension NSManagedObject {
             if let updated = notification.userInfo?[NSUpdatedObjectIDsKey] as? Set<NSManagedObjectID>,
                updated.contains(managedObject.objectID),
                let updatedObject = context.object(with: managedObject.objectID) as? T {
-                return updatedObject
+                updatedObject
             } else {
-                return nil
+                nil
             }
         }
         .eraseToAnyPublisher()

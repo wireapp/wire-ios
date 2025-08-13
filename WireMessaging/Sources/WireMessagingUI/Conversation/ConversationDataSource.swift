@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 package import UIKit
 package import WireMessagingDomain
 
@@ -79,9 +79,10 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
         let messages = await loadMessagesUseCase.loadMessages(offset: 0)
 
         snapshot.appendSections([.main])
-        snapshot.appendItems(messages
-            .reversed()
-            .map { mapToUIModel($0) }
+        snapshot.appendItems(
+            messages
+                .reversed()
+                .map { mapToUIModel($0) }
         )
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
 
@@ -98,12 +99,12 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
             }
         }
     }
-    
+
     private func mapToUIModel(_ model: MessageModel) -> ConversationElement {
         switch model.kind {
         case let .text(textModel):
             let senderState: SenderViewModel.State = if let name = model.sender?.name {
-                .exists(AttributedString(stringLiteral: name ))
+                .exists(AttributedString(stringLiteral: name))
             } else {
                 .empty
             }
@@ -121,7 +122,7 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
         }
 
     }
-    
+
     package func reset() async {
         // Need to be called to clean up subscription and avoid memory leak
         observeTask?.cancel()
