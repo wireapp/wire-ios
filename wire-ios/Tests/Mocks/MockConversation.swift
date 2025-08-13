@@ -91,6 +91,8 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var channelHistoryDepth: String? = ""
 
+    var hasMoreHistory: Bool = false
+
     var wireCellName: String = ""
 }
 

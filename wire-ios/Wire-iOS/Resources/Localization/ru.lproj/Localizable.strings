@@ -32,7 +32,6 @@
 "general.decline" = "Нет, спасибо";
 "general.failure" = "Что-то пошло не так";
 "general.failure.try_again" = "Пожалуйста, попробуйте еще раз.";
-"general.service" = "Сервис";
 "general.off" = "Откл.";
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "Создать";
 
 "peoplepicker.header.people" = "Контакты";
-"peoplepicker.header.services" = "Сервисы";
-"peoplepicker.services.open_conversation.item" = "Открыть беседу";
-"peoplepicker.services.add_service.button" = "Добавить сервис";
-"peoplepicker.services.add_service.error.title" = "Не удается добавить сервис";
-"peoplepicker.services.add_service.error.default" = "В данный момент сервис недоступен";
-"peoplepicker.services.add_service.error.full" = "Беседа переполнена";
+"peoplepicker.header.apps" = "Приложения";
+"peoplepicker.apps.open_conversation.item" = "Открыть беседу";
+"peoplepicker.apps.add_app.button" = "Добавить приложение";
+"peoplepicker.apps.add_app.error.title" = "Не удается добавить приложение";
+"peoplepicker.apps.add_app.error.default" = "В данный момент приложение недоступно";
+"peoplepicker.apps.add_app.error.full" = "Беседа переполнена";
 
 "peoplepicker.no_contacts_title" = "Нет контактов.";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Отправить приглашение";
 "peoplepicker.no_matching_results.action.share_contacts" = "Обмен контактами";
 "peoplepicker.no_matching_results.action.learn_more" = "Подробнее";
-"peoplepicker.no_matching_results.action.manage_services" = "Управление сервисами";
+"peoplepicker.no_matching_results.action.manage_apps" = "Управление приложениями";
 
 "peoplepicker.no_matching_results.message.users" = "Найти пользователей в Wire, используя имя или @псевдоним";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Найти пользователей в Wire, используя имя или @псевдоним\n\nНайти пользователей в другом домене, используя @псевдоним@домен";
 "peoplepicker.no_matching_results.message.users_all_added" = "Все пользователи добавлены.";
-"peoplepicker.no_matching_results.message.services" = "Нет результатов";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Сервисы - это помощники, которые могут улучшить ваш рабочий процесс.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Сервисы - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы включить их, обратитесь к администратору.";
+"peoplepicker.no_matching_results.message.apps" = "Ничего не найдено.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Приложения - это помощники, которые могут улучшить ваш рабочий процесс. Чтобы включить их, обратитесь к администратору.";
 
 "peoplepicker.send_invitation.dialog.title" = "Приглашение отправлено";
 "peoplepicker.send_invitation.dialog.message" = "Оно будет актуально в течение 2 недель. Вы можете отправить новое приглашение, если срок этого истечет.";
@@ -101,7 +100,7 @@
 
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
-"peoplepicker.quick-action.admin-services" = "Управление сервисами";
+"peoplepicker.quick-action.admin-apps" = "Управление приложениями";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
@@ -185,7 +184,7 @@
 "conversation_list.empty_state.mentions.title" = "Нет упоминаний";
 "conversation_list.empty_state.replies.title" = "Нет ответов";
 "conversation_list.empty_state.drafts.title" = "Нет черновиков";
-"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
+"conversation_list.empty_state.up_to_date.subtitle" = "Все ваши беседы актуальны";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
-"conversation.create.services.title" = "Разрешить сервисы";
-"conversation.create.services.subtitle" = "Открыть эту беседу для сервисов.";
+"conversation.create.apps.title" = "Разрешить приложения";
+"conversation.create.apps.subtitle" = "Открыть эту беседу для приложений.";
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "Сообщение удалено.";
 
 // Conversation banner
-"conversation.banner.guests" = "Гости";
-"conversation.banner.services" = "Сервисы";
-"conversation.banner.externals" = "Внешние";
-"conversation.banner.remotes" = "Федеративные пользователи";
-"conversation.banner.are_present" = "%@ присутствуют";
-"conversation.banner.are_active" = "%@ активны";
-"conversation.banner.separator" = " и ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Присутствуют федеративные пользователи, внешние пользователи, гости и сервисы";
+"conversation.banner.remotes_externals_guests_apps_present" = "Присутствуют федеративные пользователи, внешние пользователи, гости и приложения";
 "conversation.banner.remotes_externals_guests_present" = "Присутствуют федеративные пользователи, внешние пользователи и гости";
-"conversation.banner.remotes_externals_services_present" = "Присутствуют федеративные пользователи, внешние пользователи и сервисы";
-"conversation.banner.remotes_guests_services_present" = "Присутствуют федеративные пользователи, гости и сервисы";
-"conversation.banner.externals_guests_services_present" = "Присутствуют внешние участники, гости и сервисы";
+"conversation.banner.remotes_externals_apps_present" = "Присутствуют федеративные пользователи, внешние пользователи и приложения";
+"conversation.banner.remotes_guests_apps_present" = "Присутствуют федеративные пользователи, гости и приложения";
+"conversation.banner.externals_guests_apps_present" = "Присутствуют внешние участники, гости и приложения";
 "conversation.banner.remotes_externals_present" = "Присутствуют федеративные и внешние пользователи";
 "conversation.banner.remotes_guests_present" = "Присутствуют федеративные пользователи и гости";
-"conversation.banner.remotes_services_present" = "Присутствуют федеративные пользователи и сервисы";
+"conversation.banner.remotes_apps_present" = "Присутствуют федеративные пользователи и приложения";
 "conversation.banner.externals_guests_present" = "Присутствуют внешние участники и гости";
-"conversation.banner.externals_services_present" = "Присутствуют внешние участники и сервисы";
-"conversation.banner.guests_services_present" = "Присутствуют гости и сервисы";
+"conversation.banner.externals_apps_present" = "Присутствуют внешние участники и приложения";
+"conversation.banner.guests_apps_present" = "Присутствуют гости и приложения";
 "conversation.banner.remotes_present" = "Присутствуют федеративные пользователи";
 "conversation.banner.externals_present" = "Присутствуют внешние участники";
 "conversation.banner.guests_present" = "Присутствуют гости";
-"conversation.banner.services_active" = "Сервисы активны";
+"conversation.banner.apps_active" = "Приложения активны";
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
@@ -488,9 +479,12 @@
 "content.system.other_removed_you" = "%@ удалил вас";
 "content.system.you_removed_other" = "Вы удалили %@";
 
-"content.system.services.warning" = "Сервисы имеют доступ к контенту этой беседы";
+"content.system.apps.warning" = "Приложения имеют доступ к контенту этой беседы";
 
 "content.system.missing_messages" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
+"content.system.message_more_history_available" = "Загрузка истории бесед...";
+"content.system.message_no_more_history_available" = "Вы попали в топ 🥳\nВы видите все доступные сообщения.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %@.";
 
@@ -900,7 +894,7 @@
 "participants.title" = "Детали";
 "participants.all.title" = "Контакты";
 "participants.section.participants" = "Участники (%d)";
-"participants.section.services" = "Сервисы (%d)";
+"participants.section.apps" = "Приложения (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
 "participants.section.name.footer" = "К беседе могут присоединиться до %@ участников.";
@@ -1026,7 +1020,7 @@
 "profile.read_receipts_disabled_memo.header" = "У ВАС ОТКЛЮЧЕНЫ ОТЧЕТЫ О ПРОЧТЕНИИ";
 "profile.read_receipts_memo.body" = "Если обе стороны включат отчеты о прочтении, вы сможете видеть когда были прочитаны ваши сообщения.\n\nЭтот параметр можно изменить в настройках вашего аккаунта.";
 
-"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и сервисы, обновлять настройки групп, а также изменять роли участников.";
+"profile.group_admin_status_memo.body" = "Администратор может добавлять или удалять пользователей и приложения, обновлять настройки групп, а также изменять роли участников.";
 
 "profile.extended_metadata.header" = "Информация";
 
@@ -1068,21 +1062,22 @@
 "device.type.unknown" = "Неизвестное";
 
 // Bot
-"participants.services.remove_integration.button" = "Удалить сервис";
+"participants.apps.remove_integration.button" = "Удалить приложение";
 
 // Group details
 "group_details.guest_options_cell.title" = "Гости";
 "group_details.guest_options_cell.enabled" = "Вкл.";
 "group_details.guest_options_cell.disabled" = "Выкл.";
-"group_details.services_options_cell.title" = "Сервисы";
-"group_details.services_options_cell.enabled" = "Вкл.";
-"group_details.services_options_cell.disabled" = "Откл.";
+"group_details.apps_options_cell.title" = "Приложения";
+"group_details.apps_options_cell.enabled" = "Вкл.";
+"group_details.apps_options_cell.disabled" = "Откл.";
 "group_details.timeout_options_cell.title" = "Самоудаляющиеся сообщения";
 "group_details.notification_options_cell.title" = "Уведомления";
 "group_details.notification_options_cell.description" = "Вы можете получать уведомления обо всем (включая аудио- и видеовызовы) или только когда кто-то упоминает вас или отвечает на одно из ваших сообщений.";
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "group_details.access_options_cell.title" = "";
+"group_details.channel_history_options_cell.title" = "История беседы";
 
 "group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";
@@ -1532,12 +1527,12 @@
 "join.group.conversation.alert.joinAction.title" = "Присоединиться к беседе";
 "join.group.conversation.alert.learnMoreAction.title" = "Узнать больше о гостевых ссылках";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Разрешить сервисы";
-"services_options.allow_services.subtitle" = "Открыть эту беседу для сервисов.";
-"services_options.remove_services.message" = "Текущие сервисы будут удалены из беседы. Новые сервисы допущены не будут.";
-"services_options.remove_services.action" = "Удалить";
+"apps_options.allow_apps.title" = "Разрешить приложения";
+"apps_options.allow_apps.subtitle" = "Открыть эту беседу для приложений.";
+"apps_options.remove_apps.message" = "Все приложения будут удалены из разговора. Новые приложения допущены не будут.";
+"apps_options.remove_apps.action" = "Удалить";
 
 
 // Registration

@@ -110,9 +110,9 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: StorableChannelsFeatureConfig.Permission(config.allowedToOpenChannels)
                 )
             )
-        case let .allowGlobalOperations(config):
-            .allowGlobalOperations(
-                StorableAllowGlobalOperationsFeatureConfig(
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                StorableAllowedGlobalOperationsFeatureConfig(
                     status: StorableFeatureConfigStatus(config.status),
                     resetMLSConversations: config.resetMLSConversations
                 )
@@ -208,9 +208,9 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: config.allowedToOpenChannels.toAPIModel()
                 )
             )
-        case let .allowGlobalOperations(config):
-            .allowGlobalOperations(
-                AllowGlobalOperationsFeatureConfig(
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
                     status: config.status.toAPIModel(),
                     resetMLSConversations: config.resetMLSConversations
                 )
@@ -242,7 +242,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case mlsMigration(StorableMLSMigrationFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
-    case allowGlobalOperations(StorableAllowGlobalOperationsFeatureConfig)
+    case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -340,7 +340,7 @@ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
 
 }
 
-struct StorableAllowGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
+struct StorableAllowedGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let resetMLSConversations: Bool

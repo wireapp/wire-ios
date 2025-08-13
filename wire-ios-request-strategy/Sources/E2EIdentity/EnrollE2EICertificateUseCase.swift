@@ -186,7 +186,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             prevNonce: finalizeResponse.acmeResponse.nonce
         )
 
-        guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
+        guard let certificateChain = String(bytes: [UInt8](certificateRequest.response), encoding: .utf8) else {
             throw Failure.failedToDecodeCertificate
         }
 

@@ -74,6 +74,7 @@ extension ZMOTRMessage {
             .messageType: updateEvent.safeType
         ]
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
+
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(
             message: message,

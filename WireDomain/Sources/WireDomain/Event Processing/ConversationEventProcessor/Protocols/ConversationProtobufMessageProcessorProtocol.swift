@@ -29,7 +29,6 @@ public protocol ConversationProtobufMessageProcessorProtocol {
 
     func processProtobufMessage(
         _ message: GenericMessage,
-        content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
         conversationID: ConversationID,
         senderID: UserID,
