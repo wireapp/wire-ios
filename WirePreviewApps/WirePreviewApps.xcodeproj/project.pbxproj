@@ -11,18 +11,38 @@
 		CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */; };
 		E45380B12DEDCCBF0018F560 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B02DEDCCBF0018F560 /* WireFoundation */; };
 		E45380B32DEDCCDE0018F560 /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */; };
+		E4630A9A2E420B6800265B70 /* WireMessagingUI in Frameworks */ = {isa = PBXBuildFile; productRef = E4630A992E420B6800265B70 /* WireMessagingUI */; };
 		E46489712E25051D00405FBB /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = E46489702E25051D00405FBB /* WireNetwork */; };
 		E46489732E25052200405FBB /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E46489722E25052200405FBB /* WireNetworkSupport */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CB342A0C2D53976B00810BE0 /* WireAuthenticationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireAuthenticationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4630A842E420B1300265B70 /* WIreChatBubbles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WIreChatBubbles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E4630A972E420B1400265B70 /* Exceptions for "WIreChatBubbles" folder in "WIreChatBubbles" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E4630A832E420B1300265B70 /* WIreChatBubbles */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CB342A0D2D53976B00810BE0 /* WireAuthenticationApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WireAuthenticationApp;
+			sourceTree = "<group>";
+		};
+		E4630A852E420B1300265B70 /* WIreChatBubbles */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E4630A972E420B1400265B70 /* Exceptions for "WIreChatBubbles" folder in "WIreChatBubbles" target */,
+			);
+			path = WIreChatBubbles;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -41,6 +61,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4630A812E420B1300265B70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E4630A9A2E420B6800265B70 /* WireMessagingUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -48,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				CB342A0D2D53976B00810BE0 /* WireAuthenticationApp */,
+				E4630A852E420B1300265B70 /* WIreChatBubbles */,
 				CB342A1A2D53984600810BE0 /* Frameworks */,
 				CB3429EF2D53972F00810BE0 /* Products */,
 			);
@@ -57,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				CB342A0C2D53976B00810BE0 /* WireAuthenticationApp.app */,
+				E4630A842E420B1300265B70 /* WIreChatBubbles.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +129,29 @@
 			productReference = CB342A0C2D53976B00810BE0 /* WireAuthenticationApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E4630A832E420B1300265B70 /* WIreChatBubbles */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4630A982E420B1400265B70 /* Build configuration list for PBXNativeTarget "WIreChatBubbles" */;
+			buildPhases = (
+				E4630A802E420B1300265B70 /* Sources */,
+				E4630A812E420B1300265B70 /* Frameworks */,
+				E4630A822E420B1300265B70 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E4630A852E420B1300265B70 /* WIreChatBubbles */,
+			);
+			name = WIreChatBubbles;
+			packageProductDependencies = (
+				E4630A992E420B6800265B70 /* WireMessagingUI */,
+			);
+			productName = WIreChatBubbles;
+			productReference = E4630A842E420B1300265B70 /* WIreChatBubbles.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -106,11 +159,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					CB342A0B2D53976B00810BE0 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					E4630A832E420B1300265B70 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -129,6 +185,7 @@
 			projectRoot = "";
 			targets = (
 				CB342A0B2D53976B00810BE0 /* WireAuthenticationApp */,
+				E4630A832E420B1300265B70 /* WIreChatBubbles */,
 			);
 		};
 /* End PBXProject section */
@@ -141,10 +198,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4630A822E420B1300265B70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CB342A082D53976B00810BE0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4630A802E420B1300265B70 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -331,6 +402,62 @@
 			};
 			name = Release;
 		};
+		E4630A952E420B1400265B70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WIreChatBubbles/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WIreChatBubbles;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E4630A962E420B1400265B70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WIreChatBubbles/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WIreChatBubbles;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -348,6 +475,15 @@
 			buildConfigurations = (
 				CB342A182D53976C00810BE0 /* Debug */,
 				CB342A192D53976C00810BE0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E4630A982E420B1400265B70 /* Build configuration list for PBXNativeTarget "WIreChatBubbles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4630A952E420B1400265B70 /* Debug */,
+				E4630A962E420B1400265B70 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -370,6 +506,10 @@
 		E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMultiBackendUI;
+		};
+		E4630A992E420B6800265B70 /* WireMessagingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingUI;
 		};
 		E46489702E25051D00405FBB /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
