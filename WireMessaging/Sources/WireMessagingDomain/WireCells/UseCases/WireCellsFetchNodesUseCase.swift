@@ -39,7 +39,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         isRecursive: Bool,
         nodeType: WireCellsNodeType,
         deletionStatus: WireCellsNodeDeletionStatus,
-        pageSize: Int,
+        pageSize: Int = 30,
         repository: any WireCellsNodesRepositoryProtocol
     ) {
         self.root = root

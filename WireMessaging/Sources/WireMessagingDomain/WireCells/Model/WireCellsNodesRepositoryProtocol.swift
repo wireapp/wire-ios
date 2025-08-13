@@ -28,10 +28,10 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
 
 }
 
-package struct WireCellsGetNodesRequest {
+package struct WireCellsGetNodesRequest: Equatable, Sendable {
 
     /// Filters the results of the request.
-    package struct Filter {
+    package struct Filter: Equatable, Sendable {
 
         /// The `DeletionStatus` of the node.
         package let deletionStatus: WireCellsNodeDeletionStatus
@@ -44,7 +44,7 @@ package struct WireCellsGetNodesRequest {
     }
 
     /// The scope of the request.
-    package struct Scope {
+    package struct Scope: Equatable, Sendable {
 
         /// The root locator for the search. If no root is provided, the search will return nodes for all conversations.
         package let root: WireCellsNodeLocator?

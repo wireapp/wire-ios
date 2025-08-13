@@ -17,7 +17,7 @@
 //
 
 /// An opaque token used for fetching the next page in Wire Cells APIs.
-package struct WireCellsPageToken: Sendable {
+package struct WireCellsPageToken: Sendable, Equatable {
 
     /// The offset of the next page.
     let offset: Int

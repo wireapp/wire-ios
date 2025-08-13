@@ -19,7 +19,7 @@
 package import Foundation
 
 /// A means of locating a node.
-package enum WireCellsNodeLocator {
+package enum WireCellsNodeLocator: Equatable {
 
     /// The path to the node.
     case path(String)
