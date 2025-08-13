@@ -23,7 +23,8 @@ import WireLogging
 // sourcery: AutoMockable
 public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
-    func invoke() async throws
+    @discardableResult
+    func invoke() async throws -> Bool
 
 }
 
@@ -36,9 +37,8 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 
-    static var didResolve = false
-
-    func invoke() async throws {
+    @discardableResult
+    func invoke() async throws -> Bool {
         let oldProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.supportedProtocols
@@ -56,18 +56,15 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         }
 
         if newProtocols.contains(.mls) {
-            guard !Self.didResolve else {
-                return
-            }
-
             do {
                 try await resolver.resolveAllOneOnOneConversations(in: context)
-                Self.didResolve = true
+                return true
             } catch {
-                Self.didResolve = true
                 throw error
             }
         }
+
+        return false
     }
 
     private func calculateSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
