@@ -112,23 +112,25 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         obfuscationView.translatesAutoresizingMaskIntoConstraints = false
         addressContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
-
+        
         let margins = conversationHorizontalMargins
-        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let containerInsets: UIEdgeInsets = DeveloperFlag.chatBubblesSimple.isOn
+        ? .zero
+        : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
-
+        
         NSLayoutConstraint.activate([
             // containerView
             containerView.heightAnchor.constraint(equalToConstant: 160),
-
+            
             // addressContainerView
             addressContainerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             addressContainerView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             addressContainerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             addressContainerView.heightAnchor.constraint(equalToConstant: 42),
-
+            
             // addressLabel
             addressLabel.leadingAnchor.constraint(equalTo: addressContainerView.leadingAnchor, constant: 12),
             addressLabel.topAnchor.constraint(equalTo: addressContainerView.topAnchor),
@@ -214,6 +216,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
