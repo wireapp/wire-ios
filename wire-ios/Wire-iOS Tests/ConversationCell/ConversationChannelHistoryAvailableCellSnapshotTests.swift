@@ -83,8 +83,7 @@ final class ConversationChannelHistoryAvailableCellSnapshotTests: XCTestCase {
 
     private func makeSut(hasMoreHistory: Bool) -> UIView {
         sut = ConversationChannelHistoryAvailableCellDescription(hasMoreHistory: hasMoreHistory)
-        let message = MockMessageFactory.textMessage(withText: "test")
-        let view = sut.makeView(message)
+        let view = sut.makeView()
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         let wrapperView = UIView(frame: .init(x: 0, y: 0, width: 375, height: hasMoreHistory ? 40 : 50))
         wrapperView.backgroundColor = SemanticColors.View.backgroundConversationList

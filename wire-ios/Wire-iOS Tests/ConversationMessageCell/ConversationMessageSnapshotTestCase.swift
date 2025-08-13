@@ -213,7 +213,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 extension ConversationMessageCellDescription {
 
-    func makeView(_ message: ZMConversationMessage) -> UIView {
+    func makeView(_ message: ZMConversationMessage? = nil) -> UIView {
         let view = View()
         let container = UIView()
 
@@ -228,7 +228,9 @@ extension ConversationMessageCellDescription {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
 
         view.configure(with: configuration, animated: false)
-        view.message = message
+        if let message {
+            view.message = message
+        }
 
         return container
     }
