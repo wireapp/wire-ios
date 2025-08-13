@@ -32,4 +32,41 @@ class NewConversationPage: PageModel {
         newGroupButton.tap()
         return try CreateGroupPage()
     }
+
+    var searchByNameOrUsernameSearchBox: XCUIElement {
+        app.descendants(matching: .any)["Search by name or username"].firstMatch
+    }
+
+    var cancelButtonOnSearchedUserPage: XCUIElement {
+        app.buttons["Cancel"]
+    }
+
+    var cancelButtonOnNewConversation: XCUIElement {
+        app.buttons["cancel"]
+    }
+
+    func tapSearchBox() -> NewConversationPage {
+        searchByNameOrUsernameSearchBox.tap()
+        return self
+    }
+
+    var searchedUserCell: XCUIElement {
+        app.descendants(matching: .any)["user_cell.username"].firstMatch
+    }
+
+    func searchUserByUserHandle(_ handle: String) -> NewConversationPage {
+        searchByNameOrUsernameSearchBox.typeText(handle)
+        return self
+    }
+
+    func tapSearchedUserCell() throws -> UserDetailsPage {
+        searchedUserCell.tap()
+        return try UserDetailsPage()
+    }
+
+    func closeNewConversationPage() throws -> ConversationsPage {
+        cancelButtonOnSearchedUserPage.tap()
+        cancelButtonOnNewConversation.tap()
+        return try ConversationsPage()
+    }
 }

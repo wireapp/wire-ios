@@ -32,7 +32,6 @@
 "general.decline" = "لا، شكرًا";
 "general.failure" = "حدث خطأ";
 "general.failure.try_again" = "من فضلك حاول مرة أخرى.";
-"general.service" = "خدمة";
 "general.off" = "غير مفعل";
 "general.on" = "مفعل";
 "general.loading" = "جارِ التحميل…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "إنشاء";
 
 "peoplepicker.header.people" = "أشخاص";
-"peoplepicker.header.services" = "الخدمات";
-"peoplepicker.services.open_conversation.item" = "افتح المحادثة";
-"peoplepicker.services.add_service.button" = "أضف خدمة";
-"peoplepicker.services.add_service.error.title" = "لا يمكن إضافة الخدمة";
-"peoplepicker.services.add_service.error.default" = "هذه الخدمة غير متاحة بهذه اللحظة";
-"peoplepicker.services.add_service.error.full" = "المحادثة مكتملة العدد";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "افتح المحادثة";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "لا توجد جهات اتصال.";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "إرسال دعوة";
 "peoplepicker.no_matching_results.action.share_contacts" = "مشاركة جهات الاتصال";
 "peoplepicker.no_matching_results.action.learn_more" = "معرفة المزيد";
-"peoplepicker.no_matching_results.action.manage_services" = "إدارة الخدمات";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "الجميع حاضرون.";
-"peoplepicker.no_matching_results.message.services" = "لا توجد نتائج.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Services are helpers that can improve your workflow.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Services are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "تم إرسال الدعوة";
 "peoplepicker.send_invitation.dialog.message" = "يمكن استخدامها لمدة أسبوعين. حال انتهاء صلاحيتها أرسل واحدة جديدة.";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "ادعُ أشخاصًا إلى الانضمام إلى الفريق";
 "peoplepicker.quick-action.open-conversation" = "افتح";
-"peoplepicker.quick-action.admin-services" = "إدارة الخدمات";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "المحادثة مكتملة العدد";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "اسمح بالضيوف";
 "conversation.create.guests.subtitle" = "إتاحة هذه المحادثة لأشخاص خارج فريقك.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "إشعار بالقراءة";
 "conversation.create.receipts.subtitle" = "When this is on, people can see when their messages in this conversation are read.";
 "conversation.create.mls.title" = "Protocol";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "The message is deleted.";
 
 // Conversation banner
-"conversation.banner.guests" = "Guests";
-"conversation.banner.services" = "الخدمات";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " and ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "ابحث";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -488,9 +479,12 @@
 "content.system.other_removed_you" = "قام %@ بإزالتك";
 "content.system.you_removed_other" = "قمت بإزالة %@";
 
-"content.system.services.warning" = "الخدمات لديها وصول لمحتوى هذه المحادثة";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -900,7 +894,7 @@
 "participants.title" = "التفاصيل";
 "participants.all.title" = "أشخاص";
 "participants.section.participants" = "أشخاص (%d)";
-"participants.section.services" = "خدمات (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "الخيارات";
 "participants.footer.add_title" = "إضافة مشاركين";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1026,7 +1020,7 @@
 "profile.read_receipts_disabled_memo.header" = "لقد عطّلتَ إيصالات القراءة";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Information";
 
@@ -1068,21 +1062,22 @@
 "device.type.unknown" = "غير معروف";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Guests";
 "group_details.guest_options_cell.enabled" = "مفعل";
 "group_details.guest_options_cell.disabled" = "غير مفعل";
-"group_details.services_options_cell.title" = "الخدمات";
-"group_details.services_options_cell.enabled" = "مفعل";
-"group_details.services_options_cell.disabled" = "غير مفعل";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "مفعل";
+"group_details.apps_options_cell.disabled" = "غير مفعل";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
 "group_details.notification_options_cell.title" = "الإشعارات";
 "group_details.notification_options_cell.description" = "You can be notified about everything (including audio and video calls) or only when someone mentions you or replies to one of your messages.";
 "group_details.receipt_options_cell.title" = "إشعار بالقراءة";
 "group_details.receipt_options_cell.description" = "When this is on, people can see when their messages in this conversation are read.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1532,12 +1527,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "إزالة";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "إزالة";
 
 
 // Registration

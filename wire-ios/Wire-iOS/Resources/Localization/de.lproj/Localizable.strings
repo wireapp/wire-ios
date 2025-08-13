@@ -184,7 +184,7 @@
 "conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
 "conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
 "conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
-"conversation_list.empty_state.up_to_date.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
+"conversation_list.empty_state.up_to_date.subtitle" = "All Ihre Unterhaltungen sind auf dem neuesten Stand";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -482,6 +482,9 @@
 "content.system.apps.warning" = "Apps haben Zugriff auf den Inhalt dieser Unterhaltung";
 
 "content.system.missing_messages" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.";
+"content.system.message_more_history_available" = "Gesprächsverlauf wird geladen…";
+"content.system.message_no_more_history_available" = "🥳 Sie können jetzt alle verfügbaren Nachrichten lesen.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %@ hinzugefügt.";
 

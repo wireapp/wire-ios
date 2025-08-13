@@ -32,7 +32,6 @@
 "general.decline" = "不要です";
 "general.failure" = "何か問題があります";
 "general.failure.try_again" = "もう一度やり直してください。";
-"general.service" = "サービス";
 "general.off" = "オフ";
 "general.on" = "オン";
 "general.loading" = "読み込み中…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "新規作成";
 
 "peoplepicker.header.people" = "会話";
-"peoplepicker.header.services" = "サービス";
-"peoplepicker.services.open_conversation.item" = "会話を始めます";
-"peoplepicker.services.add_service.button" = "サービスを追加";
-"peoplepicker.services.add_service.error.title" = "サービスを追加できません。";
-"peoplepicker.services.add_service.error.default" = "現在、サービスはご利用いただけません。";
-"peoplepicker.services.add_service.error.full" = "会話数が上限に達しました。";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "会話を始めます";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "連絡先がありません";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "招待状を送信します";
 "peoplepicker.no_matching_results.action.share_contacts" = "連絡先を共有します";
 "peoplepicker.no_matching_results.action.learn_more" = "もっと知る";
-"peoplepicker.no_matching_results.action.manage_services" = "サービスを管理";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Wireで名前または@usernameで人を見つけます";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "全員がいます。";
-"peoplepicker.no_matching_results.message.services" = "結果はありません";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "サービスはあなたのワークフローを改善に役立ちます。";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "あなたのワークフローを改善するサービスです。サービスを有効にするには、管理者に問い合わせてください。";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "招待状を送信しました";
 "peoplepicker.send_invitation.dialog.message" = "2週間使用できます。\n期限が切れた時は新しいものを送ります";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
-"peoplepicker.quick-action.admin-services" = "サービスを管理";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "会話数が上限に達しました。";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "ゲストアクセスを許可";
 "conversation.create.guests.subtitle" = "チーム外の人々にこの会話を公開します。";
-"conversation.create.services.title" = "サービスを許可";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "開封通知";
 "conversation.create.receipts.subtitle" = "この設定がオンのとき、この会話内のメッセージが読まれたかどうか確認できます。";
 "conversation.create.mls.title" = "Protocol";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "メッセージは削除されました。";
 
 // Conversation banner
-"conversation.banner.guests" = "ゲスト";
-"conversation.banner.services" = "サービス";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " and ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "検索";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -488,9 +479,12 @@
 "content.system.other_removed_you" = "%@はあなたを削除しました";
 "content.system.you_removed_other" = "あなたは%@を削除しました";
 
-"content.system.services.warning" = "サービスはこの会議のコンテンツにアクセスできます";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -900,7 +894,7 @@
 "participants.title" = "詳細";
 "participants.all.title" = "会話";
 "participants.section.participants" = "人 (%d)";
-"participants.section.services" = "サービス (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "オプション";
 "participants.footer.add_title" = "参加者を追加";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1026,7 +1020,7 @@
 "profile.read_receipts_disabled_memo.header" = "開封通知を無効にします";
 "profile.read_receipts_memo.body" = "両者が開封通知をオンにした場合に、メッセージが開封されたかが分かります。\nあなたの アカウント設定 から、この設定を変更することができます。";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "情報";
 
@@ -1068,21 +1062,22 @@
 "device.type.unknown" = "不明";
 
 // Bot
-"participants.services.remove_integration.button" = "サービスを削除";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "ゲスト";
 "group_details.guest_options_cell.enabled" = "オン";
 "group_details.guest_options_cell.disabled" = "オフ";
-"group_details.services_options_cell.title" = "サービス";
-"group_details.services_options_cell.enabled" = "オン";
-"group_details.services_options_cell.disabled" = "オフ";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "オン";
+"group_details.apps_options_cell.disabled" = "オフ";
 "group_details.timeout_options_cell.title" = "自動削除メッセージ";
 "group_details.notification_options_cell.title" = "通知センター";
 "group_details.notification_options_cell.description" = "あなたは、すべて（オーディオとビデオ通話を含みます）または、メンションされた時のみに、通知をすることができます。";
 "group_details.receipt_options_cell.title" = "開封通知";
 "group_details.receipt_options_cell.description" = "この設定がオンのとき、この会話内のメッセージが読まれたかどうか確認できます。";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1532,12 +1527,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "サービスを許可";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "削除";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "削除";
 
 
 // Registration
