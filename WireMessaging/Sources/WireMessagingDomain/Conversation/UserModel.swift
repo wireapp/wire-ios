@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-struct RecurringAction {
+public struct UserModel: Sendable {
+    // To be refined later
+    public let remoteIdentifier: UUID
+    public let name: String?
+    public let handle: String?
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
-
-    func callAsFunction() async {
-        await perform()
+    public init(remoteIdentifier: UUID, name: String?, handle: String?) {
+        self.remoteIdentifier = remoteIdentifier
+        self.name = name
+        self.handle = handle
     }
+
 }

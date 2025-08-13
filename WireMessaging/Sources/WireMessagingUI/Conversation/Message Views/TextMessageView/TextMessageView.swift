@@ -16,8 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-public extension NSNotification.Name {
-    static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
+struct TextMessageView: View {
+
+    @ObservedObject var viewModel: TextMessageViewModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+
+            SenderMessageView(model: viewModel.senderViewModel)
+
+            text
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+
+    }
+
+    @ViewBuilder private var text: some View {
+        Text(viewModel.content)
+            .multilineTextAlignment(.center)
+            .font(.footnote)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 12)
+            .layoutPriority(1)
+    }
+
 }

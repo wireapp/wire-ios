@@ -149,7 +149,11 @@ final class ConversationViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
-            ConversationMessagesViewController()
+            ConversationMessagesViewController(
+                viewModel: ConversationMessagesViewModel(
+                    dataSource: ConversationMessagesDataSource()
+                )
+            )
         } else {
             ConversationContentViewController(
                 conversation: conversation,

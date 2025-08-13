@@ -18,13 +18,13 @@
 
 import Foundation
 
-struct RecurringAction {
+public enum MessagesUpdate: Sendable {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    case initiallyLoaded(MessagesSnapshot)
+    case messageAdded(MessagesSnapshot)
+    // later to be added more updates like:
+    // loaded new messages, new or older
+    // re-sent failed message
+    // to be added other updates that happens to a conversation view
 
-    func callAsFunction() async {
-        await perform()
-    }
 }

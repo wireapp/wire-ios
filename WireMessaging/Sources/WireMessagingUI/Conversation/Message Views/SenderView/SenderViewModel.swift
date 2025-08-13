@@ -18,13 +18,16 @@
 
 import Foundation
 
-struct RecurringAction {
+class SenderViewModel: ObservableObject {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    enum State {
+        case empty
+        case exists(AttributedString)
+    }
 
-    func callAsFunction() async {
-        await perform()
+    @Published var state: State
+
+    init(state: State) {
+        self.state = state
     }
 }

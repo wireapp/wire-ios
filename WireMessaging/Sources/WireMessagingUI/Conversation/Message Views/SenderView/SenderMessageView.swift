@@ -16,15 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-struct RecurringAction {
+struct SenderMessageView: View {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    @ObservedObject var model: SenderViewModel
 
-    func callAsFunction() async {
-        await perform()
+    var body: some View {
+        HStack(spacing: 0) {
+            switch model.state {
+            case .empty:
+                EmptyView()
+            case let .exists(name):
+                Text(name)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }

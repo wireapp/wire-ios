@@ -16,15 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public struct MessageModel: Sendable {
 
-struct RecurringAction {
+    public enum Kind: Sendable {
+        case system(SystemMessageModel)
+        case image(ImageMessageModel)
+        case text(TextMessageModel)
+    }
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    public let sender: UserModel
+    public let kind: Kind
 
-    func callAsFunction() async {
-        await perform()
+    public init(sender: UserModel, kind: Kind) {
+        self.sender = sender
+        self.kind = kind
+    }
+}
+
+// To be refined later
+public struct SystemMessageModel: Sendable {}
+
+public struct ImageMessageModel: Sendable {}
+
+public struct TextMessageModel: Sendable {
+    public let text: String
+
+    public init(text: String) {
+        self.text = text
     }
 }

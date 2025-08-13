@@ -16,15 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import UIKit
 
-struct RecurringAction {
+class MessageCollectionViewCell: UICollectionViewCell {
 
-    let id: String
-    let interval: TimeInterval
-    let perform: () async -> Void
+    // reuse identifier for each message type
+    // one for now, later will be improved
+    static let reuseIdentifier = "MessageCollectionViewCell"
 
-    func callAsFunction() async {
-        await perform()
+    var messageType: MessageType? {
+        didSet {
+            guard let messageType else { return }
+            switch messageType {
+            case let .text(viewModel):
+                let config = UIHostingConfiguration {
+                    TextMessageView(viewModel: viewModel)
+                }
+                contentConfiguration = config
+            }
+        }
     }
 }
