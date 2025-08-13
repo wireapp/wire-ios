@@ -167,8 +167,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
-        isAccessibilityElement = true
-        accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+        
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
 }
