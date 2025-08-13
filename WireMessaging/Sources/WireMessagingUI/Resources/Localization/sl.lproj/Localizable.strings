@@ -17,6 +17,8 @@
 //
 
 "general.loading" = "Loading…";
+"general.confirm" = "V redu";
+"general.failure" = "Nekaj je šlo narobe";
 
 // Channel Access level
 "channel_access_level.public" = "Public";
@@ -84,5 +86,11 @@
 "conversation.channelHistory.picker.custom" = "Custom";
 "conversation.channelHistory.customPicker.days" = "Days";
 "conversation.channelHistory.customPicker.weeks" = "Weeks";
+"conversation.channelHistory.share.sectionFootnote" = "You can share conversation history with new channel members. This way, they can also see older messages and files.\nWhen you set it to off, channel members won't see any conversation history.";
 "conversation.channelHistory.navigationTitle" = "Conversation history";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
+"conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
+"conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.retry" = "Retry";
+"conversation.draft.attachmentMenu.remove" = "Remove File";

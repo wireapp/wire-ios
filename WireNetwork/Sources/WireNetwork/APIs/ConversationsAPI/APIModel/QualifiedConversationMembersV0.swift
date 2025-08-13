@@ -16,24 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A configuration for the *Reset MLS Conversations* feature.
+import Foundation
 
-public struct AllowGlobalOperationsFeatureConfig: Equatable, Sendable {
-
-    /// The feature's status.
-
-    public let status: FeatureConfigStatus
-
-    /// Configuration that tells weather to reset MLS conversations or not
-
-    public let resetMLSConversations: Bool
-
-    public init(
-        status: FeatureConfigStatus,
-        resetMLSConversations: Bool = false
-    ) {
-        self.status = status
-        self.resetMLSConversations = resetMLSConversations
+struct QualifiedConversationMembersV0: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case others
+        case selfMember = "self"
     }
 
+    let others: [QualifiedConversationMember]
+    let selfMember: QualifiedConversationMember
+
+    func toAPIModel() -> Conversation.Members {
+        Conversation.Members(
+            others: others.map { $0.toAPIModel() },
+            selfMember: selfMember.toAPIModel()
+        )
+    }
 }

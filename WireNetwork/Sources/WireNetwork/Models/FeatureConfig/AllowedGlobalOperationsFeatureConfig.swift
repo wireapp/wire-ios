@@ -16,8 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// A configuration for the *Reset MLS Conversations* feature.
 
-public extension NSNotification.Name {
-    static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
+public struct AllowedGlobalOperationsFeatureConfig: Equatable, Sendable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    /// Configuration that tells weather to reset MLS conversations or not
+
+    public let resetMLSConversations: Bool
+
+    public init(
+        status: FeatureConfigStatus,
+        resetMLSConversations: Bool = false
+    ) {
+        self.status = status
+        self.resetMLSConversations = resetMLSConversations
+    }
+
 }

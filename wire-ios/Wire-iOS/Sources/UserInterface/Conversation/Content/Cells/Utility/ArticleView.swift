@@ -72,7 +72,11 @@ final class ArticleView: UIView {
     private func setupViews() {
         accessibilityElements = [imageView, messageLabel, authorLabel]
         backgroundColor = containerColor
-        layer.cornerRadius = 4
+        layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            4
+        }
         clipsToBounds = true
         accessibilityIdentifier = "linkPreview"
 
