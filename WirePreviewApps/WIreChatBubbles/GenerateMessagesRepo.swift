@@ -16,31 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-package import Foundation
+import Foundation
+import WireMessagingDomain
 
-package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Sendable {
+struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
 
-    package let id = UUID()
-
-    @Published var content: AttributedString
-
-    @Published var senderViewModel: SenderViewModel
-
-    init(
-        content: AttributedString,
-        senderViewModel: SenderViewModel
-    ) {
-        self.content = content
-        self.senderViewModel = senderViewModel
+    func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
+        let base = "This is a line. "
+        return (0 ..< 7).map { _ in
+            let repeatCount = Int.random(in: 1 ... 5)
+            return MessageModel(
+                sender: .init(
+                    remoteIdentifier: .init(),
+                    name: "Sender",
+                    handle: nil
+                ),
+                kind: .text(.init(text: String(repeating: base, count: repeatCount)))
+            )
+        }
     }
-
-    package static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    package func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
 }

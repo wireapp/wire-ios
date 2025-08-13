@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
 import Combine
+package import SwiftUI
 
-public final class ConversationMessagesViewController: UIViewController {
+package final class ConversationMessagesViewController: UIViewController {
 
     typealias DataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>
 
@@ -30,28 +30,36 @@ public final class ConversationMessagesViewController: UIViewController {
 
     var cancellables = Set<AnyCancellable>()
 
-    public init(viewModel: any ConversationMessagesViewModelProtocol) {
+    package init(viewModel: any ConversationMessagesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    package required init?(coder: NSCoder) {
         fatalError()
     }
 
-    public override func viewDidLoad() {
+    private var observeTask: Task<Void, Never>?
+
+    package override func viewDidLoad() {
         super.viewDidLoad()
 
         setupCollectionView()
         setupDataSource()
 
-        Task {
-            await self.observeUpdates()
+        observeTask = Task { [weak self] in
+            await self?.observeUpdates()
         }
 
         viewModel.onViewReady()
+    }
 
+    package override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        observeTask?.cancel()
+        observeTask = nil
     }
 
     private func observeUpdates() async {
@@ -66,6 +74,8 @@ public final class ConversationMessagesViewController: UIViewController {
         }
     }
 
+    private let reuseIdentifier: String = "MessageCell"
+
     private func setupCollectionView() {
         let layout = createLayout()
 
@@ -76,8 +86,8 @@ public final class ConversationMessagesViewController: UIViewController {
 
         collectionView
             .register(
-                MessageCollectionViewCell.self,
-                forCellWithReuseIdentifier: MessageCollectionViewCell.reuseIdentifier
+                UICollectionViewCell.self,
+                forCellWithReuseIdentifier: reuseIdentifier
             )
 
         view.addSubview(collectionView)
@@ -110,27 +120,42 @@ public final class ConversationMessagesViewController: UIViewController {
 
     private func setupDataSource() {
         dataSource =
-            DataSource(collectionView: collectionView) { collectionView, indexPath, message -> UICollectionViewCell? in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: MessageCollectionViewCell.reuseIdentifier,
+            DataSource(
+                collectionView: collectionView
+            ) { [weak self] collectionView, indexPath, message -> UICollectionViewCell? in
+                guard let self else { return UICollectionViewCell() }
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: reuseIdentifier,
                     for: indexPath
-                ) as? MessageCollectionViewCell else {
-                    return UICollectionViewCell()
-                }
+                )
 
-                cell.messageType = message
+                setContent(cell: cell, message: message)
 
                 return cell
             }
     }
 
+    private func setContent(cell: UICollectionViewCell, message: MessageType) {
+        switch message {
+        case let .text(viewModel):
+            let config = UIHostingConfiguration {
+                TextMessageView(viewModel: viewModel)
+            }
+            cell.contentConfiguration = config
+        }
+    }
+
 }
+
+@testable import WireMessagingDomainSupport
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource()
+                dataSource: ConversationMessagesDataSource(
+                    loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol()
+                )
             )
         )
     }
