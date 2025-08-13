@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-class WireTextField: UITextField {
+class WireTextField: ContextMenuControllableUITextField {
 
     // MARK: - Properties
 
@@ -50,14 +50,14 @@ class WireTextField: UITextField {
 
     // MARK: - Initialization
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(frame: CGRect) {
+        super.init(frame: frame, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
         setup()
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
     // MARK: - Setup

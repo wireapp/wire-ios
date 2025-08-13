@@ -30,7 +30,8 @@ struct EnterPasswordPreview: View {
                     password: $password,
                     passwordIsWrong: $isPasswordWrong,
                     continueAction: { _ in },
-                    cancelAction: {}
+                    cancelAction: {},
+                    isContextMenuAllowed: true
                 )
                 .presentationDetents([.medium])
                 .interactiveDismissDisabled()

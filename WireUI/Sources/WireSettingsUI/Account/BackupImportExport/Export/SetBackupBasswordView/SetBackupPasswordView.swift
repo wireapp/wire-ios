@@ -25,12 +25,23 @@ struct SetBackupPasswordView: View {
     @StateObject var viewModel: SetBackupPasswordViewModel
 
     var focusPasswordFieldOnAppear = true
+    private let isContextMenuAllowed: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
+
+    init(
+        viewModel: SetBackupPasswordViewModel,
+        focusPasswordFieldOnAppear: Bool = true,
+        isContextMenuAllowed: Bool
+    ) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.focusPasswordFieldOnAppear = focusPasswordFieldOnAppear
+        self.isContextMenuAllowed = isContextMenuAllowed
+    }
 
     var body: some View {
         NavigationStack {
@@ -96,7 +107,8 @@ struct SetBackupPasswordView: View {
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
             placeholderColor: passwordFieldPlaceholderColor,
-            focusOnAppear: focusPasswordFieldOnAppear
+            focusOnAppear: focusPasswordFieldOnAppear,
+            isContextMenuAllowed: isContextMenuAllowed
         )
         .tint(passwordFieldBorderColor)
     }
