@@ -20,45 +20,31 @@ import Foundation
 import WireMessagingDomain
 import WireDataModel
 
-final class MessagesIndividualUpdatesFactory {
+final actor MessagesIndividualUpdatesFactory {
     
     private let context: NSManagedObjectContext
+    private var dict = [NSManagedObjectID: SenderObserver]()
     
-    init(
-        context: NSManagedObjectContext
-    ) {
+    init(context: NSManagedObjectContext) {
         self.context = context
     }
     
-    var dict = [NSManagedObjectID: SenderObserver]()
-    
     func makeSenderNameObserver(user: UserModel?) -> SenderNameObserverProtocol? {
-    
-        guard let user else {
+        guard let objectID = user?.objectID as? NSManagedObjectID else {
             return nil
         }
         
-        let zmUser = context.performAndWait {
-            ZMUser.fetch(
-                with: user.remoteIdentifier,
-                in: context
-            )
-        }
-        guard let zmUser else {
-            return nil
-        }
-        
-        if let observer = dict[zmUser.objectID] {
+        if let observer = dict[objectID] {
             return observer
         }
         
         let observer = SenderObserver(
-            userID: zmUser.objectID,
+            userID: objectID,
             viewContext: context
         )
-        dict[zmUser.objectID] = observer
+        
+        dict[objectID] = observer
+        
         return observer
     }
-    
-    // todo: clear if needed
 }
