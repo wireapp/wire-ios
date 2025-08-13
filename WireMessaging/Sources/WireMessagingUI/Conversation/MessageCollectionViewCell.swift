@@ -16,21 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import UIKit
 
-struct QualifiedConversationMembers: Decodable, ToAPIModelConvertible {
-    enum CodingKeys: String, CodingKey {
-        case others
-        case selfMember = "self"
-    }
+class MessageCollectionViewCell: UICollectionViewCell {
 
-    let others: [QualifiedConversationMember]
-    let selfMember: QualifiedConversationMember
+    // reuse identifier for each message type
+    // one for now, later will be improved
+    static let reuseIdentifier = "MessageCollectionViewCell"
 
-    func toAPIModel() -> Conversation.Members {
-        Conversation.Members(
-            others: others.map { $0.toAPIModel() },
-            selfMember: selfMember.toAPIModel()
-        )
+    var messageType: MessageType? {
+        didSet {
+            guard let messageType else { return }
+            switch messageType {
+            case let .text(viewModel):
+                let config = UIHostingConfiguration {
+                    TextMessageView(viewModel: viewModel)
+                }
+                contentConfiguration = config
+            }
+        }
     }
 }

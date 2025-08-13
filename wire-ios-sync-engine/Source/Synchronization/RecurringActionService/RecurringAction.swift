@@ -22,9 +22,9 @@ struct RecurringAction {
 
     let id: String
     let interval: TimeInterval
-    let perform: () -> Void
+    let perform: () async -> Void
 
-    func callAsFunction() {
-        perform()
+    func callAsFunction() async {
+        await perform()
     }
 }

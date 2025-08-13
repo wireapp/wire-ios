@@ -53,34 +53,17 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             else {
                 return action.fail(with: .malformedResponse)
             }
-
-            let ed25519RemovalKey = payload.removal.ed25519
-                .flatMap(\.base64DecodedBytes)
-                .map(\.data)
-
-            let ed448RemovalKey = payload.removal.ed448
-                .flatMap(\.base64DecodedBytes)
-                .map(\.data)
-
-            let p256RemovalKey = payload.removal.p256
-                .flatMap(\.base64DecodedBytes)
-                .map(\.data)
-
-            let p384RemovalKey = payload.removal.p384
-                .flatMap(\.base64DecodedBytes)
-                .map(\.data)
-
-            let p521RemovalKey = payload.removal.p521
-                .flatMap(\.base64DecodedBytes)
-                .map(\.data)
-
-            action.succeed(with: Action.Result(removal: .init(
-                ed25519: ed25519RemovalKey,
-                ed448: ed448RemovalKey,
-                p256: p256RemovalKey,
-                p384: p384RemovalKey,
-                p521: p521RemovalKey
-            )))
+            action.succeed(
+                with: Action.Result(
+                    removal: .init(
+                        ed25519: payload.removal.ed25519?.base64DecodedData,
+                        ed448: payload.removal.ed448?.base64DecodedData,
+                        p256: payload.removal.p256?.base64DecodedData,
+                        p384: payload.removal.p384?.base64DecodedData,
+                        p521: payload.removal.p521?.base64DecodedData
+                    )
+                )
+            )
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)

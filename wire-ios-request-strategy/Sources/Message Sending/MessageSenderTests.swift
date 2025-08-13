@@ -793,7 +793,7 @@ final class MessageSenderTests: MessagingTestBase {
 
             initiateResetMLSConversationUseCase.invokeGroupIDEpoch_MockMethod = { _, _ in }
 
-            featureRepository.fetchAllowGlobalOperations_MockValue = .init(
+            featureRepository.fetchAllowedGlobalOperations_MockValue = .init(
                 status: .enabled,
                 config: .init(mlsConversationReset: true)
             )
@@ -856,7 +856,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withResetMLSConversationsFeatureOff() -> Arrangement {
-            featureRepository.fetchAllowGlobalOperations_MockValue = .init(
+            featureRepository.fetchAllowedGlobalOperations_MockValue = .init(
                 status: .disabled,
                 config: .init(mlsConversationReset: false)
             )

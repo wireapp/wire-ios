@@ -24,65 +24,74 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     enum Failure: Error {
         case conversationNotFound
-        case invalidArguments
-        case failedToWipeMLSConversation
+        case failedToGetMLSGroupIDs
     }
 
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let featureRepository: any LegacyFeatureRepositoryInterface
+    private let lockRepository: ResetMLSConversationLockRepositoryProtocol
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        featureRepository: any LegacyFeatureRepositoryInterface
+        lockRepository: ResetMLSConversationLockRepositoryProtocol
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
-        self.featureRepository = featureRepository
+        self.lockRepository = lockRepository
     }
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
-
-        let feature = await featureRepository.fetchAllowGlobalOperations()
-        guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
-            WireLogger.mls.debug(
-                "No need to process reset broken MLS conversation, FF is OFF"
-            )
-            return
-        }
-
-        WireLogger.mls.info("MLS event processor is processing reset broken MLS conversation")
-
-        let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
-        let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
-        guard
-            let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
-            let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
-        else {
-            WireLogger.mls.error("Failed to get old and new group IDs to reset MLS conversation")
-            throw Failure.invalidArguments
-        }
-
-        guard let localConversation = await conversationLocalStore
-            .fetchConversation(id: event.conversationID.id, domain: event.conversationID.domain) else {
-            WireLogger.mls.error("Failed to get local conversation to reset MLS conversation")
-            throw Failure.conversationNotFound
-        }
-
         do {
+            let attributes: LogAttributes = [.conversationId: event.conversationID.id.safeForLoggingDescription]
+
+            guard !lockRepository
+                .wasResetInitiated(conversationID: event.conversationID.toDomainModel()) else {
+                WireLogger.mls.info(
+                    "Reset was initiated from this device thus no need to process it",
+                    attributes: attributes
+                )
+                lockRepository.removeResetInitiated(conversationID: event.conversationID.toDomainModel())
+                return
+            }
+
+            WireLogger.mls.info(
+                "MLS event processor is processing reset broken MLS conversation",
+                attributes: attributes
+            )
+
+            let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
+            let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
+            guard
+                let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
+                let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
+            else {
+                throw Failure.failedToGetMLSGroupIDs
+            }
+
+            guard let localConversation = await conversationLocalStore
+                .fetchConversation(id: event.conversationID.id, domain: event.conversationID.domain) else {
+                WireLogger.mls.error(
+                    "Failed to get local conversation to reset MLS conversation",
+                    attributes: attributes
+                )
+                throw Failure.conversationNotFound
+            }
+
             try await mlsService.wipeGroup(oldMLSGroupID)
+
+            await conversationLocalStore.storeMLSConversationPendingJoin(
+                newMLSGroupID: newMLSGroupID,
+                conversation: localConversation
+            )
+
+            WireLogger.mls.info(
+                "MLS event processor is finished processing reset broken MLS conversation",
+                attributes: attributes
+            )
+
         } catch {
-            WireLogger.mls.error("Failed to wipe group in order to reset MLS conversation")
-            throw Failure.failedToWipeMLSConversation
+            throw error
         }
-
-        await conversationLocalStore.storeMLSConversationPendingJoin(
-            newMLSGroupID: newMLSGroupID,
-            conversation: localConversation
-        )
-
-        WireLogger.mls.info("MLS event processor is finished processing reset broken MLS conversation")
     }
-
 }

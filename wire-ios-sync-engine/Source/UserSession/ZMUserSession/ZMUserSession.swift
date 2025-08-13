@@ -715,11 +715,14 @@ public final class ZMUserSession: NSObject {
             },
             searchUsersCache: dependencies.caches.searchUsers,
             initiateResetMLSConversationUseCaseFactory: { [weak self] context in
-                guard let self else {
+                guard let self, let repo = clientSessionComponent?.conversationRepository else {
                     fatal("userSession not reachable")
                 }
                 // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
-                return makeInitiateResetMLSConversationUseCase(context: context)
+                return makeInitiateResetMLSConversationUseCase(
+                    context: context,
+                    conversationRepository: repo
+                )
             }
         )
     }
@@ -1040,17 +1043,14 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: NetworkState = if isNetworkOnline {
-            if isPerformingSync {
-                .onlineSynchronizing
-            } else {
-                .online
-            }
-        } else {
+        networkState = switch (isNetworkOnline, isPerformingSync) {
+        case (true, true):
+            .onlineSynchronizing
+        case (true, false):
+            .online
+        case (false, _):
             .offline
         }
-
-        networkState = state
     }
 }
 
@@ -1191,74 +1191,64 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func didStartIncrementalSync() {
         WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = true
-            self?.updateNetworkState()
+        Task {
+            await showSyncBar(true)
         }
     }
 
+    @MainActor
+    private func showSyncBar(_ show: Bool) {
+        isPerformingSync = show
+        updateNetworkState()
+    }
+
     func didFinishIncrementalSync(isRecovering: Bool) {
-        syncContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            WireLogger.sync.debug("did finish incremental sync", attributes: .incrementalSync)
+        WireLogger.sync.debug(
+            "did finish incremental sync (isRecovering: \(isRecovering))",
+            attributes: .incrementalSync
+        )
 
-            func showSyncBar(_ show: Bool) {
-                managedObjectContext.performGroupedBlock { [weak self] in
-                    self?.isPerformingSync = show
-                    self?.updateNetworkState()
-                }
-            }
-
-            showSyncBar(true)
-
-            NotificationInContext(
-                name: .quickSyncCompletedNotification,
-                context: notificationContext
-            ).post()
-
-            guard !isRecovering else {
-                // in case of recovery, we don't need more
-                return showSyncBar(false)
-            }
-
-            WaitingGroupTask(context: syncContext) { [weak self] in
-                guard let self else { return }
-                await fetchBackendMLSPublicKeys()
-                await fetchAndStoreFeatureConfig()
-
-                let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                    let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
-                    let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-                    return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
-                }
-
-                if let qualifiedSelfClientID {
-                    await mlsClientManager.initializeMLSClientIfNeeded(
-                        for: qualifiedSelfClientID,
-                        hasRegisteredMLSClient: hasRegisteredMLSClient,
-                        mlsFeature: mlsFeature
-                    )
-                } else {
-                    WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-                }
-
-                if !isRecovering, mlsFeature.isEnabled {
-                    Task.detached { [mlsService] in
-                        // we don't need to wait for this, as it can take a while to finish
-                        await mlsService.commitPendingProposalsIfNeeded()
-                    }
-                }
-
-                await calculateSelfSupportedProtocolsIfNeeded()
-                await resolveOneOnOneConversationsIfNeeded()
-
-                // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
-                showSyncBar(false)
-            }
-
-            recurringActionService.performActionsIfNeeded()
-            performPostQuickSyncE2EIActions()
+        Task {
+            await showSyncBar(false)
         }
+
+        WaitingGroupTask(context: syncContext) { [weak self] in
+            guard let self else { return }
+            await fetchBackendMLSPublicKeys()
+            await fetchAndStoreFeatureConfig()
+
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+            }
+
+            if let qualifiedSelfClientID {
+                await mlsClientManager.initializeMLSClientIfNeeded(
+                    for: qualifiedSelfClientID,
+                    hasRegisteredMLSClient: hasRegisteredMLSClient,
+                    mlsFeature: mlsFeature
+                )
+            } else {
+                WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
+            }
+
+            if !isRecovering, mlsFeature.isEnabled {
+                Task.detached { [mlsService] in
+                    // we don't need to wait for this, as it can take a while to finish
+                    await mlsService.commitPendingProposalsIfNeeded()
+                }
+            }
+
+            await calculateSelfSupportedProtocolsIfNeeded()
+            await resolveOneOnOneConversationsIfNeeded()
+
+            // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
+
+            await recurringActionService.performActionsIfNeeded()
+        }
+
+        performPostQuickSyncE2EIActions()
     }
 
     /// Calculate supported protocols for self user in case they are empty
@@ -1296,7 +1286,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func makeInitiateResetMLSConversationUseCase(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        conversationRepository: ConversationRepositoryProtocol
     ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
         let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
 
@@ -1305,7 +1296,9 @@ extension ZMUserSession: SyncAgentDelegate {
                 apiService: apiService,
                 apiVersion: apiVersion,
                 mlsService: mlsService,
-                context: context
+                conversationRepository: conversationRepository,
+                context: context,
+                userID: userId
             )
     }
 
