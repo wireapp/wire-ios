@@ -156,6 +156,14 @@ public extension ZMUser {
         )) || isChannelAdmin(conversation)
     }
 
+    @objc(canModifyChannelHistoryDepthSettingsInConversation:)
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool {
+        (conversation.isChannel && hasRoleWithAction(
+            actionName: ConversationAction.modifyAddPermission.name,
+            conversation: conversation
+        )) || isChannelAdmin(conversation)
+    }
+
     @objc(canModifyGuestsAccessControlSettingsInConversation:)
     func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group,

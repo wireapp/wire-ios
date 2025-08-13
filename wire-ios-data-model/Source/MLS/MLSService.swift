@@ -63,7 +63,7 @@ public final class MLSService: MLSServiceInterface {
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
@@ -102,7 +102,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         userDefaults: UserDefaults,
         userID: UUID
     ) {
@@ -130,7 +130,7 @@ public final class MLSService: MLSServiceInterface {
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
         userID: UUID,
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
@@ -1550,7 +1550,7 @@ public final class MLSService: MLSServiceInterface {
                 throw MLSRetryError.nonRecoverableError(reason)
 
             case .resetBrokenMLSConversation:
-                let feature = await featureRepository.fetchAllowGlobalOperations()
+                let feature = await featureRepository.fetchAllowedGlobalOperations()
                 guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",

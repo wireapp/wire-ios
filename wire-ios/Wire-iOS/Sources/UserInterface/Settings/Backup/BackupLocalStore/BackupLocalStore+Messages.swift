@@ -77,7 +77,6 @@ extension BackupLocalStore {
 
         try await processor.processProtobufMessage(
             genericMessage,
-            content: genericMessage.content!,
             conversation: conversation,
             conversationID: conversationID,
             senderID: backupMessage.senderUserID,

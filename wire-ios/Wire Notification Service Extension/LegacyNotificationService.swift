@@ -57,9 +57,10 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private lazy var accountManager: AccountManager? = {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let accountURLs = AccountURLs(root: sharedContainerURL)
         return try? AccountManager(
             currentAppVersion: currentAppVersion,
-            sharedDirectory: sharedContainerURL
+            directory: accountURLs.accounts
         )
     }()
 

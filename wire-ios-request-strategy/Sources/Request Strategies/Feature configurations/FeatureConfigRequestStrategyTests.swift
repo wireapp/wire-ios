@@ -28,7 +28,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     var sut: FeatureConfigRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockMLSClientManager: MockMLSClientManagerProtocol!
-    var featureRepository: FeatureRepository!
+    var featureRepository: LegacyFeatureRepository!
 
     // MARK: - Life cycle
 

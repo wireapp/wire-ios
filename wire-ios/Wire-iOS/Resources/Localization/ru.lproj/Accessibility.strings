@@ -236,6 +236,10 @@
 "conversationsList.filter_menu_options.groups.description" = "Показать все групповые беседы";
 "conversationsList.filter_menu_options.channels.description" = "Показать все беседы каналов";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Показать все беседы 1:1";
+"conversationsList.filter_menu_options.unread.description" = "Показать все непрочитанные беседы";
+"conversationsList.filter_menu_options.mentions.description" = "Показать все беседы с упоминаниями";
+"conversationsList.filter_menu_options.replies.description" = "Показать все беседы с ответами";
+"conversationsList.filter_menu_options.drafts.description" = "Показать все беседы с черновиками сообщений";
 "conversationsList.filter_menu_options.folders.description" = "Папки";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "Все беседы, выбраны";
@@ -244,6 +248,11 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Каналы, выбраны";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Беседы один на один, выбраны";
 "conversationsList.filter_menu_options.folders.selected.description" = "Папка, выбрана";
+"conversationsList.filter_menu_options.unread.selected.description" = "Непрочитано, выбрано";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Упоминания, выбрано";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Черновики, выбрано";
+"conversationsList.filter_menu_options.replies.selected.description" = "Ответы, выбрано";
+
 
 "conversationsList.filter_view.removeButton.descritpion" = "Удалить фильтр бесед";
 

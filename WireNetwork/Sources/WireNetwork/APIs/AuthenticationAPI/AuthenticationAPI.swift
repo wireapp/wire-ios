@@ -67,6 +67,13 @@ public protocol AuthenticationAPI: Sendable {
 
     func requestVerificationCode(for email: String) async throws
 
+    /// Get Activation key & code for email
+    /// - Parameter email: email of user
+    /// - Returns: Code & Key
+    #if DEBUG
+        func getActivationCode(forEmail email: String) async throws -> (code: String, key: String)
+    #endif
+
     /// Register Personal Account
     /// - Parameters:
     ///   - name: name of the user
@@ -104,4 +111,45 @@ public protocol AuthenticationAPI: Sendable {
         password: String,
         label: String
     ) async throws -> (cookie: [HTTPCookie], userId: UUID?)
+
+    /// Register user as team owner
+    /// - Parameters:
+    ///   - email: Owner email
+    ///   - password: Owner password
+    ///   - name: Owner name
+    ///   - teamName: team name
+    /// - Returns: teamID
+    #if DEBUG
+        func registerTeamOwner(
+            email: String,
+            password: String,
+            name: String,
+            teamName: String
+        ) async throws -> (teamId: UUID, id: String)
+    #endif
+
+    /// Get invitation code from invitation ID
+    /// - Parameters:
+    ///   - teamID: teamID for invitation code required
+    ///   - invitationID: invitationID
+    /// - Returns: Invitation code
+    #if DEBUG
+        func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String
+    #endif
+
+    /// Register member to team
+    /// - Parameters:
+    ///   - email: member email
+    ///   - password: member password
+    ///   - name: member name
+    ///   - invitationCode: invitation Code to register in team
+    /// - Returns: registered user-id
+    #if DEBUG
+        func registerTeamMember(
+            email: String,
+            password: String,
+            name: String,
+            invitationCode: String
+        ) async throws -> String
+    #endif
 }

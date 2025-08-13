@@ -192,7 +192,7 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
         if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
@@ -958,7 +958,7 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
         guard mlsFeature.isEnabled else { return }
 
         await mlsEventProcessor.updateConversationIfNeeded(
@@ -1080,11 +1080,11 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchUserAndRole(
-        from payload: Payload.ConversationMember,
+        from payload: Payload.ConversationMember?,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+        guard let payload, let userID = payload.id ?? payload.qualifiedID?.uuid else {
             return nil
         }
 

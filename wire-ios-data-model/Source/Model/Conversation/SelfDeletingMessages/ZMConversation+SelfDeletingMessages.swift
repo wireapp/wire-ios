@@ -125,7 +125,7 @@ public extension ZMConversation {
 
     private var selfDeletingMessagesFeature: Feature.SelfDeletingMessages? {
         guard let context = managedObjectContext else { return nil }
-        return FeatureRepository(context: context).fetchSelfDeletingMessages()
+        return LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
     }
 
 }

@@ -17,11 +17,11 @@
 //
 
 import UIKit
-import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingAssembly
 import WireMessagingUI
 import WireSyncEngine
 
@@ -60,7 +60,7 @@ final class ConversationViewController: UIViewController {
 
     @objc
     func gotoBottom(_: Any?) {
-        contentViewController.tableView.scrollToBottom(animated: true)
+        contentViewController?.tableView.scrollToBottom(animated: true)
     }
 
     var conversation: ZMConversation {
@@ -77,7 +77,12 @@ final class ConversationViewController: UIViewController {
 
     private(set) var startCallController: ConversationCallController!
 
-    let contentViewController: ConversationContentViewController
+    let exchangeableContentViewController: UIViewController
+
+    var contentViewController: ConversationContentViewController? {
+        exchangeableContentViewController as? ConversationContentViewController
+    }
+
     let inputBarController: ConversationInputBarViewController
 
     var collectionController: CollectionsViewController?
@@ -143,14 +148,22 @@ final class ConversationViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
-        self.contentViewController = ConversationContentViewController(
-            conversation: conversation,
-            message: visibleMessage,
-            mediaPlaybackManager: mediaPlaybackManager,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
-        )
+        self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
+            ConversationMessagesViewController(
+                viewModel: ConversationMessagesViewModel(
+                    dataSource: ConversationMessagesDataSource()
+                )
+            )
+        } else {
+            ConversationContentViewController(
+                conversation: conversation,
+                message: visibleMessage,
+                mediaPlaybackManager: mediaPlaybackManager,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
+            )
+        }
 
         self.getParticipantImageSourceUseCase = getParticipantImageSourceUseCase
 
@@ -199,7 +212,7 @@ final class ConversationViewController: UIViewController {
         dismissCollectionIfNecessary()
 
         hideAndDestroyParticipantsPopover()
-        contentViewController.delegate = nil
+        contentViewController?.delegate = nil
     }
 
     private var observationToken: SelfUnregisteringNotificationCenterToken?
@@ -244,11 +257,11 @@ final class ConversationViewController: UIViewController {
         setupInputBarController()
         setupContentViewController()
 
-        contentViewController.tableView.pannableView = inputBarController.view
+        contentViewController?.tableView.pannableView = inputBarController.view
 
         setupMediaBarViewController()
 
-        addToSelf(contentViewController)
+        addToSelf(exchangeableContentViewController)
         addToSelf(inputBarController)
         addToSelf(conversationBarController)
 
@@ -256,7 +269,7 @@ final class ConversationViewController: UIViewController {
         createConstraints()
         updateInputBarVisibility()
 
-        if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted {
+        if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
         }
 
@@ -317,7 +330,7 @@ final class ConversationViewController: UIViewController {
     }
 
     func scroll(to message: ZMConversationMessage?) {
-        contentViewController.scroll(to: message, completion: nil)
+        contentViewController?.scroll(to: message, completion: nil)
     }
 
     // MARK: - Device orientation
@@ -368,11 +381,11 @@ final class ConversationViewController: UIViewController {
     }
 
     private func setupContentViewController() {
-        contentViewController.delegate = self
-        contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        contentViewController.bottomMargin = 16
-        inputBarController.mentionsView = contentViewController.mentionsSearchResultsViewController
-        contentViewController.mentionsSearchResultsViewController.delegate = inputBarController
+        contentViewController?.delegate = self
+        exchangeableContentViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        contentViewController?.bottomMargin = 16
+        inputBarController.mentionsView = contentViewController?.mentionsSearchResultsViewController
+        contentViewController?.mentionsSearchResultsViewController.delegate = inputBarController
     }
 
     private func setupMediaBarViewController() {
@@ -387,7 +400,7 @@ final class ConversationViewController: UIViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
            let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
            conversation === mediaPlayingMessage.conversationLike {
-            contentViewController.scroll(to: mediaPlayingMessage, completion: nil)
+            contentViewController?.scroll(to: mediaPlayingMessage, completion: nil)
         }
     }
 
@@ -659,7 +672,7 @@ extension ConversationViewController: ZMConversationObserver {
             updateRightNavigationItemsButtons()
             updateLeftNavigationBarItems()
             updateOutgoingConnectionVisibility()
-            contentViewController.updateTableViewHeaderView()
+            contentViewController?.updateTableViewHeaderView()
             updateInputBarVisibility()
         }
 
@@ -725,7 +738,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         mentions: [Mention],
         replyingTo message: ZMConversationMessage?
     ) {
-        contentViewController.scrollToBottomIfNeeded()
+        contentViewController?.scrollToBottomIfNeeded()
         inputBarController.sendController.sendTextMessage(
             text,
             attachments: attachments,
@@ -737,11 +750,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController)
         -> Bool {
-        if !contentViewController.isScrolledToBottom, !controller.isEditingMessage,
+        let isScrolledToBottom = contentViewController?.isScrolledToBottom ?? false
+
+        if !isScrolledToBottom, !controller.isEditingMessage,
            !controller.isReplyingToMessage {
             collectionController = nil
-            contentViewController.searchQueries = []
-            contentViewController.scrollToBottomIfNeeded()
+            contentViewController?.searchQueries = []
+            contentViewController?.scrollToBottomIfNeeded()
         }
 
         return true
@@ -756,7 +771,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         withText newText: String?,
         mentions: [Mention]
     ) {
-        contentViewController.didFinishEditing(message)
+        contentViewController?.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
                !newText.isEmpty {
@@ -769,22 +784,27 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {
-        contentViewController.didFinishEditing(message)
+        contentViewController?.didFinishEditing(message)
     }
 
     func conversationInputBarViewControllerWants(toShow message: ZMConversationMessage) {
-        contentViewController.scroll(to: message) { _ in
-            self.contentViewController.highlight(message)
+        contentViewController?.scroll(to: message) { _ in
+            self.contentViewController?.highlight(message)
         }
     }
 
     func conversationInputBarViewControllerEditLastMessage() {
-        contentViewController.editLastMessage()
+        contentViewController?.editLastMessage()
     }
 
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
         userSession.enqueue {
-            self.conversation.draftMessage = message
+            // Clear draft if text is empty, otherwise save it
+            if message.text.isEmpty {
+                self.conversation.draftMessage = nil
+            } else {
+                self.conversation.draftMessage = message
+            }
         }
     }
 

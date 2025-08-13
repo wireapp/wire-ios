@@ -82,4 +82,19 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
         return await mock(feature)
     }
 
+    // MARK: - isFeatureEnabled
+
+    var isFeatureEnabled_Invocations: [WireDataModel.Feature] = []
+    var isFeatureEnabled_ReturnValue: Bool?
+
+    func isFeatureEnabled(feature: WireDataModel.Feature) async -> Bool {
+        isFeatureEnabled_Invocations.append(feature)
+
+        guard let mock = isFeatureEnabled_ReturnValue else {
+            fatal("no mock for `isFeatureEnabled`")
+        }
+
+        return mock
+    }
+
 }

@@ -22,27 +22,20 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
-        let user = try await userManager.createPersonalUser()
+        let user = try await userHelper.createPersonalUser()
 
-        let welcomePage = try WelcomePage()
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+        var userAccountPage = try  firstTimePage.acceptPopup()
+            .openUserAccountPageForUser(with: user.name)
 
-        var conversationPage = try welcomePage
-            .enterEmailOrSSO(user.email)
-            .enterPassword(user.password)
-            .acceptFirstTimeAlert()
-            .acceptPopup()
-
-        var userAccountPage = try conversationPage.openUserAccount()
-
-        let teamCreationStepsPage = try userAccountPage
+        var conversationPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
+            .tapBackToWireButton()
 
-        conversationPage = try teamCreationStepsPage.tapBackToWireButton()
-
-        userAccountPage = try conversationPage.openUserAccount()
+        userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -58,7 +51,7 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
-        let owner = try await userManager.createPersonalUser()
+        let owner = try await userHelper.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
         let teamID = try await BackendClient.upgradePersonalToTeam(
             email: owner.email,
@@ -76,16 +69,10 @@ final class TeamManageTests: WireUITestCase {
         let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
-        let welcomePage = try WelcomePage()
-
-        let loginPage = try welcomePage
-            .enterEmailOrSSO(memberUser.email)
-
-        let userAccountPage = try loginPage.enterPassword(memberUser.password)
-            .acceptFirstTimeAlert()
-            .acceptPopupOnTeamMemberSetup()
+        let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
+        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
-            .openUserAccount()
+            .openUserAccountPageForUser(with: memberUser.username)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
@@ -95,6 +82,53 @@ final class TeamManageTests: WireUITestCase {
             .openAccountSettings()
             .logout()
             .enterPassword(memberUser.password)
+    }
 
+    @MainActor
+    func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+        let messageFromOwner = UserGenerator.generateRandomMessage()
+
+        let teamOwner = try await userHelper.registerUserAsTeamOwner()
+        let teamMember1 = UserGenerator.generateUniqueUserInfo()
+        let teamMember2 = UserGenerator.generateUniqueUserInfo()
+
+        let accessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
+            accessToken: accessToken,
+            teamID: teamOwner.teamID!,
+            member: teamMember1
+        )
+
+        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
+            accessToken: accessToken,
+            teamID: teamOwner.teamID!,
+            member: teamMember2
+        )
+
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
+
+        let groupConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
+            .doneSelectingMembers()
+            .sendMessage(input: messageFromOwner)
+
+        let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
+        XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
+
+        let sentMessages = try XCTUnwrap(groupConversationPage.getSentMessages())
+        XCTAssertTrue(
+            sentMessages.contains(messageFromOwner),
+            "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
+        )
     }
 }

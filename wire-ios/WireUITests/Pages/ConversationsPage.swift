@@ -19,17 +19,32 @@
 import XCTest
 
 class ConversationsPage: PageModel {
-    var profileButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["account_profile_image_view"]
-        return elementsQuery.firstMatch
+    override var pageMainElement: XCUIElement {
+        conversationsPageLabel
     }
 
-    override var pageMainElement: XCUIElement {
-        profileButton
+    var conversationsPageLabel: XCUIElement {
+        app.staticTexts["Conversations"]
     }
 
     var settingsButton: XCUIElement {
-        app.descendants(matching: .any)["bottomBarSettingsButton"].firstMatch
+        app.buttons["bottomBarSettingsButton"]
+    }
+
+    var plusButtonToCreateGroup: XCUIElement {
+        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+    }
+
+    var conversationCell: XCUIElement {
+        app.buttons["title"]
+    }
+
+    var blockButtonOnMoreOptions: XCUIElement {
+        app.buttons["Block…"]
+    }
+
+    var blockButtonOnBottomSheet: XCUIElement {
+        app.buttons["Block"]
     }
 
     func openSettings() throws -> SettingsPage {
@@ -37,8 +52,45 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
-    func openUserAccount() throws -> UserAccountPage {
-        profileButton.tap()
+    func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
+        let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
+        let button = app.buttons.containing(predicate).firstMatch
+        button.tap()
         return try UserAccountPage()
     }
+
+    func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
+        plusButtonToCreateGroup.tap()
+        return try NewConversationPage()
+    }
+
+    func openPendingRequest() throws -> ConnectionRequestsPage {
+        if conversationCell.waitForExistence(timeout: 5) {
+            conversationCell.tap()
+        }
+        return try ConnectionRequestsPage()
+    }
+
+    func openConversation() throws -> ActiveConversationPage {
+        if conversationCell.waitForExistence(timeout: 5) {
+            conversationCell.tap()
+        }
+        return try ActiveConversationPage()
+    }
+
+    func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
+        conversationCell.press(forDuration: 1.0)
+        return try ConversationsPage()
+    }
+
+    func blockUser() throws -> ConversationsPage {
+        blockButtonOnMoreOptions.tap()
+        blockButtonOnBottomSheet.tap()
+        return self
+    }
+
+    func getNameLabel() -> String? {
+        conversationCell.label as? String
+    }
+
 }

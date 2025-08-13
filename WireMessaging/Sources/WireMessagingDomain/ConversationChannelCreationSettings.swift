@@ -24,7 +24,7 @@ public struct ConversationChannelCreationSettings: Equatable, Hashable {
     public let servicesAllowed: Bool
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
-    public let historyDepth: Int?
+    public let historyDepth: String?
 
     package init(
         channelName: String,
@@ -32,7 +32,7 @@ public struct ConversationChannelCreationSettings: Equatable, Hashable {
         servicesAllowed: Bool,
         guestsAllowed: Bool,
         readReceiptsEnabled: Bool,
-        historyDepth: Int?
+        historyDepth: String?
     ) {
         self.channelName = channelName
             .trimmingCharacters(in: .whitespacesAndNewlines)
