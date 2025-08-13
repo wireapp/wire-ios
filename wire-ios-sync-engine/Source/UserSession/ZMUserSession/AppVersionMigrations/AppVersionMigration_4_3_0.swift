@@ -21,9 +21,9 @@ import WireCoreCrypto
 import WireDomain
 
 /// **Issue:**: Use the new CC method to update the database key.
-struct AppVersionMigration_4_2_1: AppVersionMigration {
+struct AppVersionMigration_4_3_0: AppVersionMigration {
 
-    let version: SemanticVersion = "4.2.1"
+    let version: SemanticVersion = "4.3.0"
     let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {

@@ -16,7 +16,7 @@
 		01C774292D9EF01400A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774282D9EF01400A2FF07 /* WireAVS */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */; };
-		061210652E424D8800A40810 /* AppVersionMigration_4_2_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061210642E424D8800A40810 /* AppVersionMigration_4_2_1.swift */; };
+		061210652E424D8800A40810 /* AppVersionMigration_4_3_0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061210642E424D8800A40810 /* AppVersionMigration_4_3_0.swift */; };
 		061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
 		06239126274DB73A0065A72D /* StartLoginURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */; };
 		063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625690E264AE6560041C17B /* CallClosedReason.swift */; };
@@ -608,7 +608,7 @@
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
 		01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_2_0.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
-		061210642E424D8800A40810 /* AppVersionMigration_4_2_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_2_1.swift; sourceTree = "<group>"; };
+		061210642E424D8800A40810 /* AppVersionMigration_4_3_0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_3_0.swift; sourceTree = "<group>"; };
 		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
 		0625690E264AE6560041C17B /* CallClosedReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallClosedReason.swift; sourceTree = "<group>"; };
@@ -2267,7 +2267,7 @@
 			children = (
 				34B448372E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift */,
 				015E2F8A2E26A53A00470025 /* AppVersionMigration_4_2_0.swift */,
-				061210642E424D8800A40810 /* AppVersionMigration_4_2_1.swift */,
+				061210642E424D8800A40810 /* AppVersionMigration_4_3_0.swift */,
 			);
 			path = AppVersionMigrations;
 			sourceTree = "<group>";
@@ -3121,7 +3121,7 @@
 				A913C02223A7EDFB0048CE74 /* TeamRolesDownloadRequestStrategy.swift in Sources */,
 				E955D3DF2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift in Sources */,
 				E662328D2BF4BBED002B680A /* ZMUserSession+MLS.swift in Sources */,
-				061210652E424D8800A40810 /* AppVersionMigration_4_2_1.swift in Sources */,
+				061210652E424D8800A40810 /* AppVersionMigration_4_3_0.swift in Sources */,
 				597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */,
 				59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */,
 				EEE6D3FA2D4A32F500F0E687 /* ZMSyncStateDelegate.swift in Sources */,

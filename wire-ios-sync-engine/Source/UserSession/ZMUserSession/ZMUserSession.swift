@@ -1673,7 +1673,7 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_2_1(coreCryptoProvider: coreCryptoProvider)
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 
