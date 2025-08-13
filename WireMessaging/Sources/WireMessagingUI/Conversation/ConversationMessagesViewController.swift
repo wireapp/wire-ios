@@ -21,7 +21,7 @@ package import SwiftUI
 
 package final class ConversationMessagesViewController: UIViewController {
 
-    typealias DataSource = UICollectionViewDiffableDataSource<MessagesSection, MessageType>
+    typealias DataSource = UICollectionViewDiffableDataSource<ConversationSection, ConversationElement>
 
     let viewModel: any ConversationMessagesViewModelProtocol
 
@@ -64,7 +64,7 @@ package final class ConversationMessagesViewController: UIViewController {
     }
 
     private func observeUpdates() async {
-        let stream = await viewModel.updatesStream()
+        let stream = await viewModel.makeUpdatesStream()
         for await update in stream {
             switch update {
             case let .initiallyLoaded(snapshot):
@@ -138,7 +138,7 @@ package final class ConversationMessagesViewController: UIViewController {
             }
     }
 
-    private func setContent(cell: UICollectionViewCell, message: MessageType) {
+    private func setContent(cell: UICollectionViewCell, message: ConversationElement) {
         switch message {
         case let .text(viewModel):
             let config = UIHostingConfiguration {

@@ -18,7 +18,7 @@
 
 import Foundation
 
-package enum MessageType: Hashable, Sendable {
+package enum ConversationElement: Hashable, Sendable {
 
     case text(TextMessageViewModel)
     // case image, video, system, etc

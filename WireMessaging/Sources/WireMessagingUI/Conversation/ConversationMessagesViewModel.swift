@@ -20,7 +20,7 @@ import Foundation
 
 @MainActor
 package protocol ConversationMessagesViewModelProtocol {
-    func updatesStream() async -> AsyncStream<MessagesUpdate>
+    func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
     func onWillDisappear()
 }
@@ -37,8 +37,8 @@ package struct ConversationMessagesViewModel: ConversationMessagesViewModelProto
         self.dataSource = dataSource
     }
 
-    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
-        await dataSource.updatesStream()
+    package func makeUpdatesStream() async -> AsyncStream<MessagesUpdate> {
+        await dataSource.makeUpdatesStream()
     }
 
     package func onViewReady() {

@@ -20,8 +20,8 @@ import Foundation
 
 package enum MessagesUpdate: Sendable {
 
-    case initiallyLoaded(MessagesSnapshot)
-    case messageAdded(MessagesSnapshot)
+    case initiallyLoaded(ConversationSnapshot)
+    case messageAdded(ConversationSnapshot)
     // later to be added more updates like:
     // loaded new messages, new or older
     // re-sent failed message

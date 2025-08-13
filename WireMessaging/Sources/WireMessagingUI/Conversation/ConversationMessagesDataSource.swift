@@ -17,19 +17,19 @@
 //
 
 import Foundation
-package import Combine
+import Combine
 package import UIKit
 package import WireMessagingDomain
 
-package enum MessagesSection: Sendable {
+package enum ConversationSection: Sendable {
     // one section for now, later we'd have probably one section for a day
     case main
 }
 
-package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+package typealias ConversationSnapshot = NSDiffableDataSourceSnapshot<ConversationSection, ConversationElement>
 
 package protocol ConversationMessagesDataSourceProtocol: Sendable {
-    func updatesStream() async -> AsyncStream<MessagesUpdate>
+    func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
     func reset() async
 }
@@ -41,7 +41,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     // AsyncStream because Combine's AnyPublisher is not Sendable
     // As it's a stream, has to be one subscriber only
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
-    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
+    package func makeUpdatesStream() async -> AsyncStream<MessagesUpdate> {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
         updatesStreamContinuation = continuation
         return stream
@@ -64,8 +64,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     }
 
     // store cached message view models
-    private var messages: [MessageType] = []
-    private var snapshot = MessagesSnapshot()
+    private var snapshot = ConversationSnapshot()
 
     private var observeTask: Task<Void, Never>?
 
@@ -100,7 +99,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
         }
     }
     
-    private func mapToUIModel(_ model: MessageModel) -> MessageType {
+    private func mapToUIModel(_ model: MessageModel) -> ConversationElement {
         switch model.kind {
         case let .text(textModel):
             let senderState: SenderViewModel.State = if let name = model.sender?.name {
@@ -108,7 +107,7 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
             } else {
                 .empty
             }
-            return MessageType.text(
+            return ConversationElement.text(
                 TextMessageViewModel(
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
                     senderViewModel: SenderViewModel(
