@@ -1578,6 +1578,7 @@ public final class MLSService: MLSServiceInterface {
                     epoch = Int64(conversation.epoch)
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
+                brokenGroupIDs.remove(groupID)
             }
         }
     }
