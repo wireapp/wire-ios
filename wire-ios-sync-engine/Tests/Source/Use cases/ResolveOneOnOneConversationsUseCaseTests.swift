@@ -56,6 +56,8 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
                 self.mockPullSelfUserClients
             }
         )
+
+        ResolveOneOnOneConversationsUseCase.didResolve = false
     }
 
     // MARK: - tearDown

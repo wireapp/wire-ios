@@ -36,7 +36,7 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 
-    private static var didResolve = false
+    static var didResolve = false
 
     func invoke() async throws {
         let oldProtocols = await context.perform {
