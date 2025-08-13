@@ -30,7 +30,7 @@ public enum WireMessagingAssembly {
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
+                dataSource: ConversationDataSource(
                     loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
                     monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo),
                     senderNameObserverProvider: AnySenderNameObserverProvider(senderNameObserverProvider)

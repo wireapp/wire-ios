@@ -28,7 +28,7 @@ package enum ConversationSection: Sendable {
 
 package typealias ConversationSnapshot = NSDiffableDataSourceSnapshot<ConversationSection, ConversationElement>
 
-package protocol ConversationMessagesDataSourceProtocol: Sendable {
+package protocol ConversationDataSourceProtocol: Sendable {
     func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
     func reset() async
@@ -36,7 +36,7 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
 
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
-package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
+package actor ConversationDataSource: @preconcurrency ConversationDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
     // As it's a stream, has to be one subscriber only

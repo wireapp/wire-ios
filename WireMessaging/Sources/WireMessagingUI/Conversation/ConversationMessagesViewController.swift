@@ -164,7 +164,7 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
+                dataSource: ConversationDataSource(
                     loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol(),
                     monitorMessagesUseCase: MockMonitorMessagesUseCaseProtocol(),
                     senderNameObserverProvider: AnySenderNameObserverProvider({ model in

@@ -31,9 +31,9 @@ package protocol ConversationMessagesViewModelProtocol {
 // since DataSource is actor and works on background thread
 package struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
 
-    private let dataSource: any ConversationMessagesDataSourceProtocol
+    private let dataSource: any ConversationDataSourceProtocol
 
-    package init(dataSource: any ConversationMessagesDataSourceProtocol) {
+    package init(dataSource: any ConversationDataSourceProtocol) {
         self.dataSource = dataSource
     }
 
