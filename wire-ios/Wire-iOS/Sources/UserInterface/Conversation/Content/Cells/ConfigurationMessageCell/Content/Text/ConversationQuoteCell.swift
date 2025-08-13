@@ -323,13 +323,10 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     private func configureConstraints() {
-        let insets: UIEdgeInsets
-        if DeveloperFlag.chatBubblesSimple.isOn {
-            insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        } else {
-            let margins = conversationHorizontalMargins
-            insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        }
+        let margins = conversationHorizontalMargins
+        let insets: UIEdgeInsets = DeveloperFlag.chatBubblesSimple.isOn
+        ? .zero
+        : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         container.fitIn(view: self, insets: insets)
     }
 
