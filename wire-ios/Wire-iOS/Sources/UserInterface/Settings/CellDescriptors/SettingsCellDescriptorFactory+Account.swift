@@ -435,12 +435,8 @@ extension SettingsCellDescriptorFactory {
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-<<<<<<< HEAD
-            wireAccentColor: selfUser.accentColor ?? .default
-=======
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default,
+            wireAccentColor: selfUser.accentColor ?? .default,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
->>>>>>> be09cc2e37 (feat: Disable long-tap (Autofill) for Col1 - WPB-18850 (#3377))
         )
     }
 
