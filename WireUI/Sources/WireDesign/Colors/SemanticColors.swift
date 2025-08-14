@@ -281,6 +281,12 @@ public enum SemanticColors {
         public static let turquoise = UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
     }
+
+    public enum ChatBubble {
+        public static let backgroundOtherMessage = UIColor(light: .gray30, dark: .gray100)
+        public static let foregroundOwnMessage = UIColor(light: .white, dark: .black)
+        public static let foregroundOtherMessage = UIColor(light: .black, dark: .white)
+    }
 }
 
 private extension UIColor {
