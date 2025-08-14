@@ -49,7 +49,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     var isSelected: Bool = false
     var currentAttachment: LinkAttachment?
     var attachmentViewHeightRatioConstraint: NSLayoutConstraint?
-    
+
     private var existingConstraints: [NSLayoutConstraint] = []
     private var chatBubbleConstraints: [NSLayoutConstraint] = []
 
@@ -84,7 +84,10 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         widthConstraint.priority = .defaultHigh
 
         let margins = conversationHorizontalMargins
-        existingConstraints = [ attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left), attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right)]
+        existingConstraints = [
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right)
+        ]
         chatBubbleConstraints = [
             attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
@@ -95,8 +98,8 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
-        
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)

@@ -157,7 +157,7 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
-    
+
     /// Boolean to check for aligning message content for Bubbles
     var shouldAlignMessageContentForBubbles: Bool { get }
 
@@ -200,7 +200,7 @@ extension ConversationMessageCellDescription {
     var supportsActions: Bool {
         false
     }
-    
+
     var shouldAlignMessageContentForBubbles: Bool {
         false
     }

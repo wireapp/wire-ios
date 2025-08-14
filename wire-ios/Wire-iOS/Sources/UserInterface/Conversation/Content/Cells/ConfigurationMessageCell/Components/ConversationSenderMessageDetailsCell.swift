@@ -50,10 +50,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
-    
+
     private var existingConstraints: [NSLayoutConstraint] = []
     private var chatBubbleConstraints: [NSLayoutConstraint] = []
-    
 
     var isSelected: Bool = false
 
@@ -157,17 +156,18 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             greaterThanOrEqualTo: avatar.bottomAnchor,
             constant: 3
         )
-        
+
         existingConstraints = [
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)]
-        
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)
+        ]
+
         chatBubbleConstraints = [
             avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24 + 12)),
             authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
-            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)]
-        
-        
+            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ]
+
         NSLayoutConstraint.activate([
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
@@ -185,8 +185,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             availabilityIndicatorView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 3),
             availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
-        
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)

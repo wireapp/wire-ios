@@ -68,7 +68,7 @@ final class MessageToolboxView: UIView {
         stack.alignment = .center
         return stack
     }()
-    
+
     private var existingConstraints: [NSLayoutConstraint] = []
     private var chatBubbleConstraints: [NSLayoutConstraint] = []
 
@@ -212,14 +212,17 @@ final class MessageToolboxView: UIView {
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        if DeveloperFlag.chatBubblesSimple.isOn  {
-            [separatorView,
-             contentStack,
-             messageFailureView].forEach(addSubview)
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            [
+                separatorView,
+                contentStack,
+                messageFailureView
+            ].forEach(addSubview)
         } else {
             [
-             contentStack,
-             messageFailureView].forEach(addSubview)
+                contentStack,
+                messageFailureView
+            ].forEach(addSubview)
         }
 
         statusImageView.constraintToSquare(sideLength: 13)
@@ -228,13 +231,13 @@ final class MessageToolboxView: UIView {
     private func createConstraints() {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         existingConstraints = [
             separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.topAnchor.constraint(equalTo: topAnchor),
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
+
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             contentStack.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
@@ -244,13 +247,17 @@ final class MessageToolboxView: UIView {
             messageFailureView.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
                 constant: -conversationHorizontalMargins.right
-            )]
-        
-        chatBubbleConstraints = [ contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            )
+        ]
+
+        chatBubbleConstraints = [
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor
-             )]
+            messageFailureView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        ]
 
         NSLayoutConstraint.activate([
             timestampSeparatorLabel.leadingAnchor.constraint(equalTo: timestampSeparatorContainer.leadingAnchor),
@@ -264,7 +271,7 @@ final class MessageToolboxView: UIView {
             // statusTextView align vertically center
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 2),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
+
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
@@ -276,8 +283,8 @@ final class MessageToolboxView: UIView {
             countdownView.topAnchor.constraint(greaterThanOrEqualTo: countdownContainer.topAnchor),
             countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
-        
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
             separatorView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
@@ -317,7 +324,7 @@ final class MessageToolboxView: UIView {
         animated: Bool = false
     ) {
         noHeightConstraint.isActive = false
-        
+
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)

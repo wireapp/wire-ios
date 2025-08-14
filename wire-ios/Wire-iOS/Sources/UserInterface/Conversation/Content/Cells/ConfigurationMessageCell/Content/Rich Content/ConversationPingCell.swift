@@ -27,10 +27,10 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
-    
+
     /// Override the base property to identify this as a ping cell.
     override var shouldRemoveInnerPaddingForBubbles: Bool {
-        return true
+        true
     }
 
     struct Configuration: Equatable {

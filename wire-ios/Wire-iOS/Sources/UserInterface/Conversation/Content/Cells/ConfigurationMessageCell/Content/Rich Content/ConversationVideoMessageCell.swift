@@ -43,7 +43,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
-    
+
     private var existingConstraints: [NSLayoutConstraint] = []
     private var chatBubbleConstraints: [NSLayoutConstraint] = []
 
@@ -81,13 +81,18 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        existingConstraints = [ containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left), containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right)]
+        existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
         chatBubbleConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(
-                equalTo: trailingAnchor)
+                equalTo: trailingAnchor
+            )
         ]
 
         NSLayoutConstraint.activate([
@@ -95,8 +100,8 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
             containerView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
-        
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)

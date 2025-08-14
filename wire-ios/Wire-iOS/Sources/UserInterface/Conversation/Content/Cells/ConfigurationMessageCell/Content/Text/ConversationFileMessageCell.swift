@@ -44,7 +44,6 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
     private var existingConstraints: [NSLayoutConstraint] = []
     private var chatBubbleConstraints: [NSLayoutConstraint] = []
-    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -80,13 +79,18 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        existingConstraints = [ containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left), containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right)]
+        existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
         chatBubbleConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(
-                equalTo: trailingAnchor)
+                equalTo: trailingAnchor
+            )
         ]
 
         NSLayoutConstraint.activate([
@@ -94,8 +98,8 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
             containerView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
-        
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)

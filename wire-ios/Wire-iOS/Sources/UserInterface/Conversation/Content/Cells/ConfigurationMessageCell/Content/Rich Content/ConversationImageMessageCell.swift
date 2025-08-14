@@ -96,17 +96,22 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-        
-        existingConstraints = [ containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left), containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right)]
-    
+
+        existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
+
         chatBubbleConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(
-                equalTo: trailingAnchor)
+                equalTo: trailingAnchor
+            )
         ]
-        
+
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
         widthConstraint?.priority = .defaultHigh
@@ -118,7 +123,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             widthConstraint!,
             heightConstraint!
         ])
-        if DeveloperFlag.chatBubblesSimple.isOn  {
+        if DeveloperFlag.chatBubblesSimple.isOn {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -207,7 +212,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    
+
     let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     var accessibilityIdentifier: String? {

@@ -27,7 +27,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     typealias View = MessageReactionsCell
     let configuration: View.Configuration
-    
+
     let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
 
     init(message: ZMConversationMessage) {
