@@ -116,4 +116,26 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertEqual(mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_Invocations.count, 1)
     }
 
+    func test_itPerformsKeyUpdate() async throws {
+        // GIVEN
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
+        let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, _, _ in }
+        mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
+        mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_MockMethod = {}
+
+        let item = CoreCryptoKeychainItem()
+        let oldKey = try KeychainManager.generateKey(numberOfBytes: 32)
+        try KeychainManager.storeItem(item, value: oldKey)
+
+        // WHEN
+        try? await sut.updateDatabaseKey(path: "")
+
+        // THEN
+        XCTAssertEqual(mockCoreCryptoKeyMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
+
+        let newKey = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
+        XCTAssertNotEqual(oldKey, newKey)
+    }
+
 }

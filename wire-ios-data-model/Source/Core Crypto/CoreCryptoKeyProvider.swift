@@ -46,6 +46,17 @@ public class CoreCryptoKeyProvider {
         }
     }
 
+    public func updateDatabaseKey(path: String) async throws {
+        if let oldKey = try? fetchCoreCryptoKey() {
+            let item = CoreCryptoKeychainItem()
+            let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
+            try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
+
+            try KeychainManager.deleteItem(item)
+            try KeychainManager.storeItem(item, value: newKey)
+        }
+    }
+
     private func migrateKeyIfNeeded(path: String) async throws {
         WireLogger.coreCrypto.info("Migrating core crypto key...")
 

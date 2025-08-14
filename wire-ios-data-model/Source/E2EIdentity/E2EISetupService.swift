@@ -118,7 +118,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         isUpgradingClient: Bool,
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
-        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
         return try await coreCrypto.perform {
