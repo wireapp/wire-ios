@@ -147,14 +147,12 @@ package final class ConversationMessagesViewController: UIViewController {
 
 }
 
-@testable import WireMessagingDomainSupport
-
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol()
+                    loadMessagesUseCase: LoadConversationMessagesUseCase()
                 )
             )
         )
