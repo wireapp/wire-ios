@@ -42,6 +42,12 @@ public struct MessageModel: Sendable {
         self.kind = kind
         self.reactions = reactions
     }
+    
+    public func hasReactions() -> Bool {
+        reactions.contains { _, users in
+            !users.isEmpty
+        }
+    }
 }
 
 // To be refined later
@@ -54,5 +60,13 @@ public struct TextMessageModel: Sendable {
 
     public init(text: String?) {
         self.text = text
+    }
+}
+
+extension ReactionsModel {
+    public func hasReactions() -> Bool {
+        contains { _, users in
+            !users.isEmpty
+        }
     }
 }

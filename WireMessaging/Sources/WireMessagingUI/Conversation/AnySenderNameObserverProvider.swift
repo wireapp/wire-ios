@@ -35,12 +35,7 @@ package struct AnyObserverProvider: @unchecked Sendable {
         self.reactionsObserverProvider = reactionsObserverProvider
     }
     
-    func get(for message: MessageModel) -> AnyPublisher<[String: Int], Never>? {
-        if let publisher = reactionsObserverProvider?(message)?.reactionsPublisher {
-            return publisher
-                .map { $0.mapValues { $0.count } }
-                .eraseToAnyPublisher()
-        }
-        return nil
+    func get(for message: MessageModel) -> AnyPublisher<ReactionsModel, Never>? {
+        reactionsObserverProvider?(message)?.reactionsPublisher
     }
 }

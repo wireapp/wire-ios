@@ -150,6 +150,7 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
         for changeType: NSFetchedResultsChangeType
     ) {
         // no-op
+        print("DS: didChange sectionInfo")
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {

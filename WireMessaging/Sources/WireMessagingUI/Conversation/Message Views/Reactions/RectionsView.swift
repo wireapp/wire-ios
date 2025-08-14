@@ -28,7 +28,8 @@ struct ReactionsView: View {
             case .empty:
                 EmptyView()
             case let .exists(reactions):
-                Text(reactions.map { "\($0.0): \($0.1)"}.joined(separator: " "))
+                Text(reactions.map { "\($0.0): \($0.1.count)"
+                    }.joined(separator: " "))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -37,10 +38,20 @@ struct ReactionsView: View {
     }
 }
 
+import WireMessagingDomain
 #Preview {
     ReactionsView(
         viewModel: .init(
-            state: .exists(["😂": 1]),
+            state: .exists(
+                ["😂": [
+                    UserModel(
+                        objectID: UUID(),
+                        remoteIdentifier: UUID(),
+                        name: "User",
+                        handle: "@handle"
+                    )
+                ]]
+),
             publisher: nil
         )
     )

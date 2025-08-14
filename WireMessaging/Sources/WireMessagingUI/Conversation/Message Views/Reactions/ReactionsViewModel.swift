@@ -18,12 +18,13 @@
 
 import Foundation
 import Combine
+import WireMessagingDomain
 
 class ReactionsViewModel: ObservableObject {
 
     package enum State {
         case empty
-        case exists([String: Int])
+        case exists(ReactionsModel)
     }
 
     @Published var state: State
@@ -32,15 +33,15 @@ class ReactionsViewModel: ObservableObject {
 
     init(
         state: State,
-        publisher: AnyPublisher<[String: Int], Never>?
+        publisher: AnyPublisher<ReactionsModel, Never>?
     ) {
         self.state = state
         publisher?.sink { [weak self] reactions in
-            if reactions.count > 0 {
-                self?.state = .exists(reactions)
-            } else {
-                self?.state = .empty
-            }
+            self?.state = Self.state(from: reactions)
         }.store(in: &cancellables)
+    }
+    
+    static func state(from reactions: ReactionsModel) -> State {
+        reactions.hasReactions() ? .exists(reactions): .empty
     }
 }
