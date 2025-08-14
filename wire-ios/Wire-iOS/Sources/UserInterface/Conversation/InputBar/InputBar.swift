@@ -363,7 +363,7 @@ final class InputBar: UIView {
         if DeveloperFlag.wireCells.isOn {
             NSLayoutConstraint.activate([
                 attachmentsContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
-                attachmentsContainer.heightAnchor.constraint(equalToConstant: 74)
+                attachmentsContainer.heightAnchor.constraint(equalToConstant: 82)
             ])
         }
 
