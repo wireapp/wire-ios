@@ -76,7 +76,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
             return try await coreCrypto.perform { try await $0.encryptMessage(
-                conversationId: groupID.data,
+                conversationId: groupID.conversationId,
                 message: message
             ) }
         } catch {

@@ -30,10 +30,9 @@ public protocol E2EIServiceInterface {
     func setOrderResponse(order: Data) async throws -> NewAcmeOrder
     func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data
     func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
-    func getOAuthRefreshToken() async throws -> String
     func createDpopToken(nonce: String) async throws -> String
     func getNewDpopChallengeRequest(accessToken: String, nonce: String) async throws -> Data
-    func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data
+    func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data
     func setDPoPChallengeResponse(challenge: Data) async throws
     func setOIDCChallengeResponse(challenge: Data) async throws
     func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data
@@ -105,10 +104,6 @@ public final class E2EIService: E2EIServiceInterface {
         try await e2eIdentity.newAuthzResponse(authz: authz)
     }
 
-    public func getOAuthRefreshToken() async throws -> String {
-        try await e2eIdentity.getRefreshToken()
-    }
-
     public func createDpopToken(nonce: String) async throws -> String {
         try await e2eIdentity.createDpopToken(expirySecs: defaultDPoPTokenExpiry, backendNonce: nonce)
     }
@@ -117,10 +112,9 @@ public final class E2EIService: E2EIServiceInterface {
         try await e2eIdentity.newDpopChallengeRequest(accessToken: accessToken, previousNonce: nonce)
     }
 
-    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
+    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
         try await e2eIdentity.newOidcChallengeRequest(
             idToken: idToken,
-            refreshToken: refreshToken,
             previousNonce: nonce
         )
     }
@@ -130,13 +124,7 @@ public final class E2EIService: E2EIServiceInterface {
     }
 
     public func setOIDCChallengeResponse(challenge: Data) async throws {
-        try await coreCrypto.perform {
-            guard let coreCrypto = $0 as? CoreCryptoContext else {
-                throw E2EIServiceFailure.missingCoreCrypto
-            }
-
-            return try await self.e2eIdentity.newOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
-        }
+        try await e2eIdentity.newOidcChallengeResponse(challenge: challenge)
     }
 
     public func checkOrderRequest(orderUrl: String, nonce: String) async throws -> Data {
