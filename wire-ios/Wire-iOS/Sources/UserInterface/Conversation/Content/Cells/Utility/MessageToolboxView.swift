@@ -212,11 +212,13 @@ final class MessageToolboxView: UIView {
         ].forEach(contentStack.addArrangedSubview)
 
         if DeveloperFlag.chatBubblesSimple.isOn {
-            [   contentStack,
+            [
+                contentStack,
                 messageFailureView
             ].forEach(addSubview)
         } else {
-            [   separatorView,
+            [
+                separatorView,
                 contentStack,
                 messageFailureView
             ].forEach(addSubview)
