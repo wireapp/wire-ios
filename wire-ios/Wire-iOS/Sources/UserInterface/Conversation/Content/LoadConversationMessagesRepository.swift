@@ -116,9 +116,6 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
 
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // no-op
-        // maybe start batching
-        print("DS: controllerWillChangeContent")
-
     }
 
     func controller(
@@ -154,7 +151,7 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DS: controllerDidChangeContent")
+        // no-op
     }
 }
 

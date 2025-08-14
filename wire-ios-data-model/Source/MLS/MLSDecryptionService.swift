@@ -274,8 +274,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         return nil
     }
 
-    private func senderClientId(from data: ClientId) throws -> MLSClientID {
-        guard let clientID = MLSClientID(data: data) else {
+    private func senderClientId(from clientID: ClientId) throws -> MLSClientID {
+        guard let clientID = MLSClientID(data: clientID.copyBytes()) else {
             throw MLSMessageDecryptionError.failedToDecodeSenderClientID
         }
         return clientID
