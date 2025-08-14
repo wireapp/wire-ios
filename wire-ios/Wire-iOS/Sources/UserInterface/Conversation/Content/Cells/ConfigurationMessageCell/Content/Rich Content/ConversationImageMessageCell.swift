@@ -52,6 +52,9 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
+    private var existingConstraints: [NSLayoutConstraint] = []
+    private var chatBubbleConstraints: [NSLayoutConstraint] = []
+
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
@@ -91,13 +94,23 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let trailing = containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right
-        )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+
+        existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
+
+        chatBubbleConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        ]
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -105,13 +118,16 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         heightConstraint?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom,
             widthConstraint!,
             heightConstraint!
         ])
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -196,6 +212,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
