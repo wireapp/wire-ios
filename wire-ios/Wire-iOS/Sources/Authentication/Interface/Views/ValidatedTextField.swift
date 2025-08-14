@@ -49,6 +49,10 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     weak var textFieldValidationDelegate: TextFieldValidationDelegate?
     weak var validatedTextFieldDelegate: ValidatedTextFieldDelegate?
 
+    var isContextMenuAllowed: Bool {
+        SecurityFlags.clipboard.isEnabled
+    }
+
     override var text: String? {
         didSet {
             validateInput()
@@ -166,7 +170,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             textFieldAttributes: textFieldAttributes,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
-        setupTextFieldProperties()
 
         setup()
         setupTextFieldProperties()
@@ -210,12 +213,17 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             autocorrectionType = .no
             autocapitalizationType = .none
             accessibilityIdentifier = "EmailField"
-            textContentType = .emailAddress
+            textContentType = isContextMenuAllowed ? .emailAddress : .none
         case let .password(rules, isNew):
-            isSecureTextEntry = true
             accessibilityIdentifier = "PasswordField"
             autocapitalizationType = .none
-            textContentType = isNew ? .newPassword : .password
+            if isContextMenuAllowed {
+                isSecureTextEntry = true
+                textContentType = isNew ? .newPassword : .password
+            } else {
+                isSecureTextEntry = false
+                textContentType = .none
+            }
             passwordRules = rules.textInputPasswordRules
         case let .name(isTeam):
             autocapitalizationType = .words
@@ -224,18 +232,23 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         case .username:
             autocapitalizationType = .none
             accessibilityIdentifier = "UsernameField"
-            textContentType = .username
+            textContentType = isContextMenuAllowed ? .username : .none
         case .unknown:
             keyboardType = .asciiCapable
             textContentType = nil
         case let .passcode(rules, isNew):
+            if isContextMenuAllowed {
+                isSecureTextEntry = true
+                // Hack: disable auto fill passcode
+                textContentType = .oneTimeCode
+            } else {
+                isSecureTextEntry = false
+                textContentType = .none
+            }
             keyboardType = .asciiCapable
-            isSecureTextEntry = true
             accessibilityIdentifier = "PasscodeField"
             autocapitalizationType = .none
             returnKeyType = isNew ? .default : .continue
-            // Hack: disable auto fill passcode
-            textContentType = .oneTimeCode
             passwordRules = rules.textInputPasswordRules
         }
     }
