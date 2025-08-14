@@ -33,7 +33,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         super.setUp()
 
         resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
-        resolveOneOnOneConversations.invoke_MockMethod = {}
+        resolveOneOnOneConversations.invoke_MockMethod = { true }
 
         syncMOC.performGroupedAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
