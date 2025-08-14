@@ -317,6 +317,7 @@ final class MessageToolboxView: UIView {
         animated: Bool = false
     ) {
         noHeightConstraint.isActive = false
+        
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
