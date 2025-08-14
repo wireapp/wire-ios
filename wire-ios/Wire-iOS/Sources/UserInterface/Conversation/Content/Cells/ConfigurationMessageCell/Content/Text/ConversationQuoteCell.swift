@@ -352,7 +352,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     let supportsActions = false
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     weak var message: ZMConversationMessage? {
         didSet {

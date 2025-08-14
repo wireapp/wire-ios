@@ -173,7 +173,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     weak var message: ZMConversationMessage? {
         didSet {

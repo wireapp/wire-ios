@@ -128,7 +128,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
