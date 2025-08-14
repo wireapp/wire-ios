@@ -239,6 +239,9 @@ public final class ZMUserSession: NSObject {
         managedObjectContext.conversationListDirectory()
     }
 
+    // To prevent too eagerly resolving all conversations.
+    var didAlreadyResolveAllOneOnOnes = false
+
     public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
@@ -1328,11 +1331,12 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard mlsFeature.isEnabled else { return }
+        guard mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
         let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
-            try await resolveOneOnOneUseCase.invoke()
+            let didResolve = try await resolveOneOnOneUseCase.invoke()
+            didAlreadyResolveAllOneOnOnes = didResolve
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
@@ -1657,7 +1661,8 @@ extension ZMUserSession {
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager
-            )
+            ),
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 
