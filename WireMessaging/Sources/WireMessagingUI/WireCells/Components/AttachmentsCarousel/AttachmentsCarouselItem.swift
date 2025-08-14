@@ -17,7 +17,6 @@
 //
 
 public import UIKit
-public import UniformTypeIdentifiers
 
 public struct AttachmentsCarouselItem: Identifiable {
 
@@ -28,24 +27,18 @@ public struct AttachmentsCarouselItem: Identifiable {
     }
 
     public enum Kind {
-        case image(thumbnail: UIImage)
-        case video(thumbnail: UIImage)
-        case audio(samples: [Double])
-        case document(type: UTType?)
+        case image(thumbnail: UIImage?)
+        case video(thumbnail: UIImage?)
+        case audio(samples: [Double]?)
+        case document
     }
 
     public let id: UUID
     public let state: State
     public let kind: Kind
     public let name: String
+    public let fileExtension: String?
     public let size: String
-
-    public init(id: UUID, state: State, kind: Kind, name: String, size: String) {
-        self.id = id
-        self.state = state
-        self.kind = kind
-        self.name = name
-        self.size = size
-    }
+    let fileIcon: FileIcon
 
 }
