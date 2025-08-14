@@ -22,16 +22,16 @@ import XCTest
 
 @testable import WireDataModel
 
-class GenericMessageTests: XCTestCase {
+final class GenericMessageTests: XCTestCase {
 
     func testThatConsidersTextMessageTypeAsKnownMessage() {
         let textMessageType = GenericMessage(content: Text(content: "hello"))
-        XCTAssertTrue(textMessageType.knownMessage)
+        XCTAssertNotNil(textMessageType.content)
     }
 
     func testThatItConsidersKnockMessageTypeAsKnownMessage() {
         let knockMessageType = GenericMessage(content: Knock())
-        XCTAssertTrue(knockMessageType.knownMessage)
+        XCTAssertNotNil(knockMessageType.content)
     }
 
     func testThatItConsidersLastReadMessageTypeAsKnownMessage() {
@@ -40,12 +40,12 @@ class GenericMessageTests: XCTestCase {
             conversationID: conversationID,
             lastReadTimestamp: Date()
         ))
-        XCTAssertTrue(lastReadMessageType.knownMessage)
+        XCTAssertNotNil(lastReadMessageType.content)
     }
 
     func testThatItConsidersClearedMessageTypeAsKnownMessage() {
         let clearedMessageType = GenericMessage(content: Cleared(timestamp: Date(), conversationID: UUID.create()))
-        XCTAssertTrue(clearedMessageType.knownMessage)
+        XCTAssertNotNil(clearedMessageType.content)
     }
 
     func testThatItConsidersExternalMessageTypeAsKnownMessage() {
@@ -53,17 +53,17 @@ class GenericMessageTests: XCTestCase {
         let otrKey = Data(base64Encoded: "4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w=")!
         let externalMessageType = GenericMessage(content: External(withOTRKey: otrKey, sha256: sha256))
 
-        XCTAssertTrue(externalMessageType.knownMessage)
+        XCTAssertNotNil(externalMessageType.content)
     }
 
     func testThatItConsidersResetSessionMessageTypeAsKnownMessage() {
         let resetSessionMessageType = GenericMessage(clientAction: .resetSession)
-        XCTAssertTrue(resetSessionMessageType.knownMessage)
+        XCTAssertNotNil(resetSessionMessageType.content)
     }
 
     func testThatItConsidersCallingMessageTypeAsKnownMessage() {
         let callingMessageType = GenericMessage(content: Calling(content: "Calling", conversationId: .random()))
-        XCTAssertTrue(callingMessageType.knownMessage)
+        XCTAssertNotNil(callingMessageType.content)
     }
 
     func testThatItConsidersAssetMessageTypeAsKnownMessage() {
@@ -72,7 +72,7 @@ class GenericMessageTests: XCTestCase {
             mimeType: "image/jpeg",
             size: 0
         ))
-        XCTAssertTrue(assetMessageType.knownMessage)
+        XCTAssertNotNil(assetMessageType.content)
     }
 
     func testThatItConsidersHidingMessageTypeAsKnownMessage() {
@@ -80,17 +80,17 @@ class GenericMessageTests: XCTestCase {
             conversationId: UUID.create(),
             messageId: UUID.create()
         ))
-        XCTAssertTrue(hideMessageType.knownMessage)
+        XCTAssertNotNil(hideMessageType.content)
     }
 
     func testThatItConsidersLocationMessageTypeAsKnownMessage() {
         let locationMessageType = GenericMessage(content: Location(latitude: 1, longitude: 2))
-        XCTAssertTrue(locationMessageType.knownMessage)
+        XCTAssertNotNil(locationMessageType.content)
     }
 
     func testThatItConsidersDeletionMessageTypeAsKnownMessage() {
         let deletionMessageType = GenericMessage(content: MessageDelete(messageId: UUID.create()))
-        XCTAssertTrue(deletionMessageType.knownMessage)
+        XCTAssertNotNil(deletionMessageType.content)
     }
 
     func testThatItConsidersCreatingReactionMessageTypeAsKnownMessage() {
@@ -98,11 +98,11 @@ class GenericMessageTests: XCTestCase {
             emojis: ["❤️"],
             messageID: UUID.create()
         ))
-        XCTAssertTrue(creatingReactionMessageType.knownMessage)
+        XCTAssertNotNil(creatingReactionMessageType.content)
     }
 
     func testThatItConsidersAvailabilityMessageTypeAsKnownMessage() {
         let awayAvailabilityMessageType = GenericMessage(content: GenericMessageProtocol.Availability(.away))
-        XCTAssertTrue(awayAvailabilityMessageType.knownMessage)
+        XCTAssertNotNil(awayAvailabilityMessageType.content)
     }
 }

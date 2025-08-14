@@ -87,32 +87,32 @@ public extension String {
 // MARK: Generic Message
 
 public extension GenericMessage {
-    func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content else { return nil }
+    func validateFields() -> Bool {
+        guard UUID.isValid(object: messageID), let content else { return false }
 
         switch content {
         case .text:
-            guard text.validatingFields() != nil else { return nil }
+            guard text.validatingFields() != nil else { return false }
         case .lastRead:
-            guard lastRead.validatingFields() != nil else { return nil }
+            guard lastRead.validatingFields() != nil else { return false }
         case .cleared:
-            guard cleared.validatingFields() != nil else { return nil }
+            guard cleared.validatingFields() != nil else { return false }
         case .hidden:
-            guard hidden.validatingFields() != nil else { return nil }
+            guard hidden.validatingFields() != nil else { return false }
         case .deleted:
-            guard deleted.validatingFields() != nil else { return nil }
+            guard deleted.validatingFields() != nil else { return false }
         case .edited:
-            guard edited.validatingFields() != nil else { return nil }
+            guard edited.validatingFields() != nil else { return false }
         case .confirmation:
-            guard confirmation.validatingFields() != nil else { return nil }
+            guard confirmation.validatingFields() != nil else { return false }
         case .reaction:
-            guard reaction.validatingFields() != nil else { return nil }
+            guard reaction.validatingFields() != nil else { return false }
         case .asset:
-            guard asset.validatingFields() != nil else { return nil }
+            guard asset.validatingFields() != nil else { return false }
         default:
             break
         }
-        return self
+        return true
     }
 }
 

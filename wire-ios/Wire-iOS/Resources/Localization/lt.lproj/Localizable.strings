@@ -32,7 +32,6 @@
 "general.decline" = "Ne, dėkui";
 "general.failure" = "Kažkas nutiko";
 "general.failure.try_again" = "Bandykite dar kartą.";
-"general.service" = "Paslauga";
 "general.off" = "Išjungta";
 "general.on" = "Įjungta";
 "general.loading" = "Kraunama…";
@@ -72,12 +71,12 @@
 "peoplepicker.group.create" = "Kurti";
 
 "peoplepicker.header.people" = "Žmonės";
-"peoplepicker.header.services" = "Paslaugos";
-"peoplepicker.services.open_conversation.item" = "Atverti pokalbį";
-"peoplepicker.services.add_service.button" = "Pridėti paslaugą";
-"peoplepicker.services.add_service.error.title" = "Paslauga negali būti pridėta";
-"peoplepicker.services.add_service.error.default" = "Paslauga šiuo metu negalima";
-"peoplepicker.services.add_service.error.full" = "Susirašinėjimas pilnas";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Atverti pokalbį";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "Nėra kontaktų.";
 
@@ -86,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Siųsti pakvietimą";
 "peoplepicker.no_matching_results.action.share_contacts" = "Dalintis kontaktais";
 "peoplepicker.no_matching_results.action.learn_more" = "Sužinoti daugiau";
-"peoplepicker.no_matching_results.action.manage_services" = "Valdyti tarnybas";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Visi jau čia.";
-"peoplepicker.no_matching_results.message.services" = "Rezultatų nėra.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Tarnybos yra pagalbininkai, kurie padeda pagerinti darbo eigą.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Tarnybos yra pagalbininkai, kurie padeda pagerinti darbo eigą. Norėdami jomis naudotis, prašykite savo administratoriaus.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "Pakvietimas išsiųstas";
 "peoplepicker.send_invitation.dialog.message" = "Pakvietimą galima naudoti 2 savaites. Išsiųskite naują jei galiojimas baigėsi.";
@@ -101,11 +100,11 @@
 
 "peoplepicker.invite_team_members" = "Kvieskite žmonių prisijungti prie komandos";
 "peoplepicker.quick-action.open-conversation" = "Atverti";
-"peoplepicker.quick-action.admin-services" = "Valdyti paslaugas";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Susirašinėjimas pilnas";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
@@ -352,8 +351,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Leisti svečius";
 "conversation.create.guests.subtitle" = "Leiskite matyti šį susirašinėjimą žmonėms nesantiems komandoje.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "Perskaitymo patvirtinimai";
 "conversation.create.receipts.subtitle" = "Įjungus, žmonės gali matyti ar jų žinutės buvo perskaitytos.";
 "conversation.create.mls.title" = "Protocol";
@@ -378,29 +377,21 @@
 "conversation.alert.message_deleted" = "Žinutė ištrinta.";
 
 // Conversation banner
-"conversation.banner.guests" = "Svečių";
-"conversation.banner.services" = "Paslaugos";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
-"conversation.banner.are_present" = "%@ are present";
-"conversation.banner.are_active" = "%@ are active";
-"conversation.banner.separator" = " and ";
-
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_apps_present" = "Federated users, externals, guests and apps are present";
 "conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_apps_present" = "Federated users, externals and apps are present";
+"conversation.banner.remotes_guests_apps_present" = "Federated users, guests and apps are present";
+"conversation.banner.externals_guests_apps_present" = "Externals, guests and apps are present";
 "conversation.banner.remotes_externals_present" = "Federated users and externals are present";
 "conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.remotes_apps_present" = "Federated users and apps are present";
 "conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.externals_apps_present" = "Externals and apps are present";
+"conversation.banner.guests_apps_present" = "Guests and apps are present";
 "conversation.banner.remotes_present" = "Federated users are present";
 "conversation.banner.externals_present" = "Externals are present";
 "conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.apps_active" = "Apps are active";
 
 "conversation.action.search" = "Ieškoti";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -488,9 +479,12 @@
 "content.system.other_removed_you" = "%@ jus pašalino";
 "content.system.you_removed_other" = "Jūs pašalinote pašnekovą %@";
 
-"content.system.services.warning" = "Paslaugos turi galimybę matyti šio susirašinėjimo turinį";
+"content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -900,7 +894,7 @@
 "participants.title" = "Išsamiau";
 "participants.all.title" = "Žmonės";
 "participants.section.participants" = "Žmonės (%d)";
-"participants.section.services" = "Paslaugos (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Parinktys";
 "participants.footer.add_title" = "Pridėti dalyvių";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
@@ -1026,7 +1020,7 @@
 "profile.read_receipts_disabled_memo.header" = "JŪS IŠUNGĖTE PERSKAITYMO PATVIRTINIMUS";
 "profile.read_receipts_memo.body" = "Jei abi pusės įjungia perskaitymo patvirtinimus, jūs galite matyti kai žinutė buvo perskaityta. \n\nGalite tai pakeisti paskyros nustatymuose.";
 
-"profile.group_admin_status_memo.body" = "Kai aktyvuota, administratorius gali pridėti arba pašalinti pašnekovus ir paslaugas, keisti grupės nustatymus, ir keisti pašnekovų roles.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Informacija";
 
@@ -1068,21 +1062,22 @@
 "device.type.unknown" = "Nežinoma";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Svečių";
 "group_details.guest_options_cell.enabled" = "Įjungta";
 "group_details.guest_options_cell.disabled" = "Išjungta";
-"group_details.services_options_cell.title" = "Paslaugos";
-"group_details.services_options_cell.enabled" = "Įjungta";
-"group_details.services_options_cell.disabled" = "Išjungta";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "Įjungta";
+"group_details.apps_options_cell.disabled" = "Išjungta";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
 "group_details.notification_options_cell.title" = "Pranešimai";
 "group_details.notification_options_cell.description" = "Jūms bus pranešta apie viską (įskaitant garso ir vaizdo skambučius) arba tik kai kažkas jus pamini arba atsako į jūsų žinutę.";
 "group_details.receipt_options_cell.title" = "Perskaitymo patvirtinimai";
 "group_details.receipt_options_cell.description" = "Įjungus, žmonės gali matyti ar jų žinutės buvo perskaitytos.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1532,12 +1527,12 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
-// Services Options
+// Apps Options
 
-"services_options.allow_services.title" = "Allow services";
-"services_options.allow_services.subtitle" = "Open this conversation to services.";
-"services_options.remove_services.message" = "Current services will be removed from the conversation. New services will not be allowed.";
-"services_options.remove_services.action" = "Šalinti";
+"apps_options.allow_apps.title" = "Allow apps";
+"apps_options.allow_apps.subtitle" = "Open this conversation to apps.";
+"apps_options.remove_apps.message" = "Current apps will be removed from the conversation. New apps will not be allowed.";
+"apps_options.remove_apps.action" = "Šalinti";
 
 
 // Registration

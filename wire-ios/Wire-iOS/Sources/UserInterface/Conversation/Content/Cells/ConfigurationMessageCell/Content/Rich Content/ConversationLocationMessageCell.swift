@@ -74,7 +74,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            12
+        }
         containerView.clipsToBounds = true
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor

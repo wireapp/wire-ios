@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireReusableUIComponents
 
 struct ToggleablePasswordField: View {
 
@@ -25,6 +26,7 @@ struct ToggleablePasswordField: View {
     var placeholder: String
     var placeholderColor: Color
     var focusOnAppear = true
+    var isContextMenuAllowed: Bool
 
     @State private var isPasswordVisible = false
 
@@ -73,11 +75,13 @@ struct ToggleablePasswordField: View {
     }
 
     @ViewBuilder private var textField: some View {
-        TextField(text: $password) {
-            Text(placeholder)
-                .font(.body)
-                .foregroundStyle(placeholderColor)
-        }
+        ContextMenuControllableTextField(
+            text: $password,
+            placeholder: placeholder,
+            isSecureTextEntry: false,
+            placeholderColor: placeholderColor,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
         .textContentType(.password)
         .autocapitalization(.none)
         .focused($focusedField, equals: .textField)
@@ -85,11 +89,13 @@ struct ToggleablePasswordField: View {
     }
 
     @ViewBuilder private var secureField: some View {
-        SecureField(text: $password) {
-            Text(placeholder)
-                .font(.body)
-                .foregroundStyle(placeholderColor)
-        }
+        ContextMenuControllableTextField(
+            text: $password,
+            placeholder: placeholder,
+            isSecureTextEntry: true,
+            placeholderColor: placeholderColor,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
         .textContentType(.password)
         .focused($focusedField, equals: .secureField)
         .accessibilityIdentifier("password input")
@@ -124,7 +130,8 @@ struct ToggleablePasswordField: View {
     ToggleablePasswordField(
         password: .constant(""),
         placeholder: "Placeholder Text",
-        placeholderColor: BaseColorPalette.Neutrals.black.color
+        placeholderColor: BaseColorPalette.Neutrals.black.color,
+        isContextMenuAllowed: true
     )
     .tint(.purple)
     .padding()

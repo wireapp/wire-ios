@@ -49,6 +49,10 @@ class UserAccountPage: PageModel {
         app.descendants(matching: .any)["close"].firstMatch
     }
 
+    var addAccountOrTeamButton: XCUIElement {
+        app.descendants(matching: .any)["Add Account or TeamField"]
+    }
+
     func tapCreateTeamButtonAndContinue() throws -> TeamSetupStepsPage {
         createTeamButton.tap()
         return try TeamSetupStepsPage()
@@ -61,6 +65,18 @@ class UserAccountPage: PageModel {
 
     func getTeamName() -> String? {
         teamNameOnAccountPage.value as? String
+    }
+
+    func tapAddAccountOrTeamButton() throws -> WelcomePage {
+        addAccountOrTeamButton.tap()
+        return try WelcomePage()
+    }
+
+    func switchUserAccountForUser(withName name: String) throws -> ConversationsPage {
+        let predicate = NSPredicate(format: "value BEGINSWITH %@", name)
+        let button = app.buttons.containing(predicate).firstMatch
+        button.tap()
+        return try ConversationsPage()
     }
 
 }
