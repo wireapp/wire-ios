@@ -47,7 +47,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
-"peoplepicker.navigation_header.title" = "New conversation";
+"peoplepicker.navigation_header.title" = "Nueva conversación";
 "peoplepicker.search_placeholder" = "Buscar por nombre o usuario";
 "peoplepicker.header.top_people" = "Contactos favoritos";
 "peoplepicker.button.create_conversation" = "Create Group";
