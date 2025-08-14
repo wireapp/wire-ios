@@ -67,6 +67,7 @@ public final class MLSService: MLSServiceInterface {
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
+    private var brokenGroupIDs: Set<MLSGroupID> = []
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -1368,7 +1369,12 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
 
-            guard let groupID, let timestamp else {
+            guard
+                let groupID,
+                // The pending proposal will always fail and cause
+                // recovery too many recovery syncs.
+                !brokenGroupIDs.contains(groupID),
+                let timestamp else {
                 continue
             }
 
@@ -1557,6 +1563,7 @@ public final class MLSService: MLSServiceInterface {
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                     )
+                    brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
                 }
 
@@ -1572,6 +1579,7 @@ public final class MLSService: MLSServiceInterface {
                     epoch = Int64(conversation.epoch)
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
+                brokenGroupIDs.remove(groupID)
             }
         }
     }
