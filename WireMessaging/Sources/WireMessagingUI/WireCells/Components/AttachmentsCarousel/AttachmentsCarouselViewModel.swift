@@ -51,13 +51,25 @@ private extension AttachmentsCarouselItem {
             return nil
         }
 
+        let (name, fileExtension) = draft.nameAndExtension
+
         self.init(
             id: draft.nodeID,
             state: state,
             kind: AttachmentsCarouselItem.Kind(draft.fileType),
-            name: draft.name,
-            size: draft.bytes.formatted(.byteCount(style: .memory))
+            name: name,
+            fileExtension: fileExtension,
+            size: draft.bytes.formatted(.byteCount(style: .decimal)),
+            fileIcon: .make(type: draft.fileType, fileExtension: fileExtension)
         )
+    }
+
+    private static func nameAndExtension(from fileName: String) -> (name: String, extension: String?) {
+        guard let url = URL(string: fileName) else {
+            return (name: fileName, extension: nil)
+        }
+
+        return (name: url.deletingPathExtension().lastPathComponent, extension: url.pathExtension)
     }
 
 }
@@ -66,20 +78,28 @@ private extension AttachmentsCarouselItem.Kind {
 
     init(_ value: UTType?) {
         guard let value else {
-            self = .document(type: nil)
+            self = .document
             return
         }
 
-        // FIXME: [WPB-17604] Set preview data i.e. thumbnail or audio samples
         if value.conforms(to: .image) {
-            self = .image(thumbnail: UIImage())
+            self = .image(thumbnail: nil) // FIXME: [WPB-19266] Set image thumbnail data
         } else if value.conforms(to: .audiovisualContent) {
-            self = .video(thumbnail: UIImage())
+            self = .video(thumbnail: nil) // FIXME: [WPB-19267] Set video thumbnail data
         } else if value.conforms(to: .audio) {
-            self = .audio(samples: [])
+            self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
         } else {
-            self = .document(type: value)
+            self = .document
         }
+    }
+
+}
+
+private extension WireCellsDraft {
+
+    var nameAndExtension: (name: String, extension: String) {
+        let url = URL(fileURLWithPath: name)
+        return (name: url.deletingPathExtension().lastPathComponent, extension: url.pathExtension)
     }
 
 }

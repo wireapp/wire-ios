@@ -24,6 +24,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
@@ -1108,6 +1109,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
         addChild(carouselViewController)
         carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false

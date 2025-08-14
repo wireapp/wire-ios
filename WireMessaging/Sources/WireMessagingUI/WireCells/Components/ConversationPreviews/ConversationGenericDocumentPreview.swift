@@ -19,6 +19,7 @@
 public import SwiftUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 public struct ConversationGenericDocumentPreview: View {
     let headerIcon: Image
