@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireCoreCrypto
-import WireNetwork
+import WireDomain
 
-extension WireCoreCryptoUniffi.CommitBundle {
+/// **Issue:**: Use the new CC method to update the database key.
+struct AppVersionMigration_4_3_0: AppVersionMigration {
 
-    func toAPIModel() -> WireNetwork.CommitBundle {
-        WireNetwork.CommitBundle(
-            welcome: welcome?.copyBytes(),
-            commit: commit,
-            groupInfo: groupInfo.payload.copyBytes()
-        )
+    let version: SemanticVersion = "4.3.0"
+    let coreCryptoProvider: CoreCryptoProviderProtocol
+
+    func perform() async throws {
+        try await coreCryptoProvider.updateDatabaseKey()
     }
+
 }
