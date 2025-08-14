@@ -57,9 +57,6 @@ public protocol CoreCryptoProviderProtocol {
     /// Update the CC database key
     func updateDatabaseKey() async throws
 
-    /// Reset coreCrypto instance
-    func reset()
-
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -157,6 +154,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         )
 
         try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
+        reset()
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
@@ -173,7 +171,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         mlsTransport = transport
     }
 
-    public nonisolated func reset() {
+    private func reset() {
         coreCrypto = nil
     }
 

@@ -1977,21 +1977,6 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         try await mock()
     }
 
-    // MARK: - reset
-
-    public var reset_Invocations: [Void] = []
-    public var reset_MockMethod: (() -> Void)?
-
-    public func reset() {
-        reset_Invocations.append(())
-
-        guard let mock = reset_MockMethod else {
-            fatalError("no mock for `reset`")
-        }
-
-        mock()
-    }
-
 }
 
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
