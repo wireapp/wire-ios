@@ -59,7 +59,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // get the values required for the call to Core Crypto
         let (conversationID, mlsGroupID) = await conversationContext.perform(schedule: schedule) {
-            (conversation.remoteIdentifier!, conversation.mlsGroupID?.data)
+            (conversation.remoteIdentifier!, conversation.mlsGroupID)
         }
         guard let mlsGroupID else {
             throw Error.failedToGetMLSGroupID(conversationID)
@@ -73,7 +73,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         let userIdentities = try await coreCrypto.perform { coreCrypto in
             // get MLS group members
             let allUserIdentities = try await coreCrypto.getUserIdentities(
-                conversationId: mlsGroupID,
+                conversationId: mlsGroupID.conversationId,
                 userIds: [userID]
             )
 

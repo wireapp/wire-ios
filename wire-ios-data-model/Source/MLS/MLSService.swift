@@ -190,18 +190,19 @@ public final class MLSService: MLSServiceInterface {
             let keyLength: UInt32 = 32
 
             return try await coreCrypto.perform {
-                let epoch = try await $0.conversationEpoch(conversationId: subconversationGroupID.data)
+                let epoch = try await $0.conversationEpoch(conversationId: subconversationGroupID.conversationId)
 
-                let keyData = try await $0.exportSecretKey(
-                    conversationId: subconversationGroupID.data,
+                let secretKey = try await $0.exportSecretKey(
+                    conversationId: subconversationGroupID.conversationId,
                     keyLength: keyLength
                 )
 
-                let conversationMembers = try await $0.getClientIds(conversationId: parentGroupID.data)
-                    .compactMap { MLSClientID(data: $0) }
+                let conversationMembers = try await $0.getClientIds(conversationId: parentGroupID.conversationId)
+                    .compactMap { MLSClientID(data: $0.copyBytes()) }
 
-                let subconversationMembers = try await $0.getClientIds(conversationId: subconversationGroupID.data)
-                    .compactMap { MLSClientID(data: $0) }
+                let subconversationMembers = try await $0
+                    .getClientIds(conversationId: subconversationGroupID.conversationId)
+                    .compactMap { MLSClientID(data: $0.copyBytes()) }
 
                 let members = conversationMembers.map {
                     MLSConferenceInfo.Member(
@@ -212,7 +213,7 @@ public final class MLSService: MLSServiceInterface {
 
                 return MLSConferenceInfo(
                     epoch: epoch,
-                    keyData: keyData,
+                    keyData: secretKey.copyBytes(),
                     members: members
                 )
             }
@@ -225,8 +226,8 @@ public final class MLSService: MLSServiceInterface {
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
             return try await coreCrypto.perform {
-                try await $0.getClientIds(conversationId: subconversationGroupID.data).compactMap {
-                    MLSClientID(data: $0)
+                try await $0.getClientIds(conversationId: subconversationGroupID.conversationId).compactMap {
+                    MLSClientID(data: $0.copyBytes())
                 }
             }
         } catch {
@@ -535,7 +536,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
-            let clientIds = clientIds.compactMap(\.rawValue.utf8Data)
+            let clientIds = clientIds.compactMap(\.rawValue.utf8Data).map { ClientId(bytes: $0) }
             try await mlsActionExecutor.removeClients(clientIds, from: groupID)
         } catch {
             logger
@@ -557,7 +558,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             try await coreCrypto.perform { [self] in
                 guard try await $0.conversationExists(
-                    conversationId: groupID.data
+                    conversationId: groupID.conversationId
                 ) else {
                     return logger.info(
                         "conversation doesn't exist, nothing to wipe..",
@@ -565,7 +566,7 @@ public final class MLSService: MLSServiceInterface {
                     )
                 }
                 try await $0.wipeConversation(
-                    conversationId: groupID.data
+                    conversationId: groupID.conversationId
                 )
 
                 logger.info(
@@ -639,7 +640,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
@@ -693,10 +694,10 @@ public final class MLSService: MLSServiceInterface {
     private func generateKeyPackages(amountRequested: UInt32) async throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
-        var keyPackages = [Data]()
+        var keyPackages = [WireCoreCryptoUniffi.KeyPackage]()
 
         do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             keyPackages = try await coreCrypto.perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(
@@ -716,7 +717,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map { $0.base64EncodedString() }
+        return keyPackages.map { $0.copyBytes().base64EncodedString() }
     }
 
     private func uploadKeyPackages(
@@ -751,7 +752,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("checking if group (\(groupID)) exists...")
         let result = try await coreCrypto.perform { coreCrypto in
-            try await coreCrypto.conversationExists(conversationId: groupID.data)
+            try await coreCrypto.conversationExists(conversationId: groupID.conversationId)
         }
         logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
         return result
@@ -1096,7 +1097,7 @@ public final class MLSService: MLSServiceInterface {
         guard let groupID, let epoch else { return false }
 
         do {
-            let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.data)
+            let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.conversationId)
 
             logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
             return localEpoch < epoch
@@ -1828,7 +1829,7 @@ public final class MLSService: MLSServiceInterface {
             )
 
             try await coreCrypto.perform {
-                try await $0.wipeConversation(conversationId: subconversationGroupID.data)
+                try await $0.wipeConversation(conversationId: subconversationGroupID.conversationId)
             }
         } catch {
             logger
@@ -1851,7 +1852,7 @@ public final class MLSService: MLSServiceInterface {
         onEpochChangedSubject.eraseToAnyPublisher()
     }
 
-    public func epochChanged(conversationId: Data, epoch: UInt64) async throws {
+    public func epochChanged(conversationId: WireCoreCryptoUniffi.ConversationId, epoch: UInt64) async throws {
         onEpochChangedSubject.send(MLSGroupID(conversationId))
     }
 

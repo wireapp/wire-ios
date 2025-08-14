@@ -55,14 +55,14 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> Void
+    typealias AddMembersMock = ([WireDataModel.KeyPackage], MLSGroupID) async throws -> Void
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws {
+    func addMembers(_ keyPackages: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
