@@ -258,13 +258,13 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         rightStack.centerYAnchor
             .constraint(
-                equalTo: container.firstBaselineAnchor,
+                equalTo: messageTextView.firstBaselineAnchor,
                 constant: -5
             ).isActive = true
 
         avatar.centerYAnchor
             .constraint(
-                equalTo: container.firstBaselineAnchor,
+                equalTo: messageTextView.firstBaselineAnchor,
                 constant: -5
             ).isActive = true
 
