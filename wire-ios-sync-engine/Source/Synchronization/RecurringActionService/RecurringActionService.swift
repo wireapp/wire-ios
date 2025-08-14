@@ -42,7 +42,7 @@ final class RecurringActionService: RecurringActionServiceInterface {
         actionsByID[action.id] = action
     }
 
-    public func performActionsIfNeeded() {
+    public func performActionsIfNeeded() async {
         let now = dateProvider.now
 
         for (id, action) in actionsByID {
@@ -50,15 +50,15 @@ final class RecurringActionService: RecurringActionServiceInterface {
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
 
             if (lastActionDate + action.interval) <= now {
-                action()
+                await action()
                 persistLastCheckDate(for: id)
             }
         }
     }
 
-    public func forcePerformAction(id: String) {
+    public func forcePerformAction(id: String) async {
         guard let action = actionsByID[id] else { return }
-        action()
+        await action()
         persistLastCheckDate(for: id)
     }
 
