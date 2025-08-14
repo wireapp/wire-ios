@@ -115,8 +115,10 @@ public struct KeyPackage: Codable, Equatable {
 }
 
 extension KeyPackage {
-    var coreCryptoKeyPackage: WireCoreCryptoUniffi.KeyPackage {
-        .init(bytes: Data(keyPackage.utf8))
+    var coreCryptoKeyPackage: WireCoreCryptoUniffi.KeyPackage? {
+        guard let decodedData = keyPackage.base64DecodedData else {
+            return nil
+        }
+        return .init(bytes: decodedData)
     }
-
 }

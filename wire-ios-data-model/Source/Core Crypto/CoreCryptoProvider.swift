@@ -68,7 +68,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
-    private nonisolated(unsafe) var coreCrypto: SafeCoreCrypto?
+    private var coreCrypto: SafeCoreCrypto?
     private var loadingCoreCrypto = false
     private var initialisatingMLS = false
     private var hasInitialisedMLS = false
