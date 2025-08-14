@@ -28,17 +28,20 @@ struct WireCellsFetchNodesUseCaseTests {
 
     init() {
         self.sut = WireCellsFetchNodesUseCase(
-            root: .path("some/path"),
-            isRecursive: true,
-            nodeType: .leaf,
-            deletionStatus: .notDeleted,
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
             repository: repository
         )
+        repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
     }
 
     @Test
-    func testInvoke_withoutSearchTermAndToken() async throws {
+    func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
+        let sut = WireCellsFetchNodesUseCase(
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
+            repository: repository
+        )
+
         let someNode = WireCellsNode.fixture()
         repository.getNodes_MockValue = (nodes: [someNode], nextOffset: 30)
 
@@ -61,27 +64,34 @@ struct WireCellsFetchNodesUseCaseTests {
     }
 
     @Test
-    func testInvoke_withSearchTermAndToken() async throws {
+    func testInvoke_pagination() async throws {
         // Given
-        let someNode = WireCellsNode.fixture()
-        repository.getNodes_MockValue = (nodes: [someNode], nextOffset: nil)
+        repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
 
         // When
-        let (nodes, token) = try await sut.invoke(searchTerm: "foo", token: WireCellsPageToken(offset: 30))
+        let (_, token) = try await sut.invoke(searchTerm: nil, token: nil)
 
         // Then
-        #expect(nodes == [someNode])
-        #expect(token == nil)
-        #expect(
-            repository.getNodes_Invocations == [
-                WireCellsGetNodesRequest(
-                    scope: .init(root: .path("some/path"), isRecursive: true),
-                    filter: .init(deletionStatus: .notDeleted, text: "foo", type: .leaf),
-                    limit: 30,
-                    offset: 30
-                )
-            ]
-        )
+        #expect(token?.offset == 30)
+        #expect(repository.getNodes_Invocations.last?.offset == 0)
+
+        // When
+        let (_, _) = try await sut.invoke(searchTerm: nil, token: token)
+
+        // Then
+        #expect(repository.getNodes_Invocations.last?.offset == 30)
+    }
+
+    @Test
+    func testInvoke_searchTerm() async throws {
+        // When
+        let (_, _) = try await sut.invoke(searchTerm: nil, token: nil)
+        let (_, _) = try await sut.invoke(searchTerm: "foo", token: nil)
+
+        // Then
+        try #require(repository.getNodes_Invocations.count == 2)
+        #expect(repository.getNodes_Invocations[0].filter.text == nil)
+        #expect(repository.getNodes_Invocations[1].filter.text == "foo")
     }
 
 }

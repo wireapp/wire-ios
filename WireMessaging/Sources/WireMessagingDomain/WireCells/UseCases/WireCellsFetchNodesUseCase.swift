@@ -19,34 +19,46 @@
 /// Fetches `WireCellNodes`s for the given parameters.
 package struct WireCellsFetchNodesUseCase: Sendable {
 
-    private let root: WireCellsNodeLocator?
-    private let isRecursive: Bool
-    private let nodeType: WireCellsNodeType
-    private let deletionStatus: WireCellsNodeDeletionStatus
-    private let pageSize: Int
+    package struct Configuration: Sendable {
+
+        /// The root container for the nodes. If `nil`, nodes for all conversations will be returned.
+        let root: WireCellsNodeLocator?
+
+        /// Whether to fetch nodes recursively from the root container.
+        let isRecursive: Bool
+
+        /// The type of nodes to fetch.
+        let nodeType: WireCellsNodeType
+
+        /// The deletion status of the nodes to fetch.
+        let deletionStatus: WireCellsNodeDeletionStatus
+
+        /// The maximum number of nodes to fetch.
+        let pageSize: Int = 30
+
+        /// A `Configuration` suitable for the conversation file view.
+        package static func conversationFileView(root: WireCellsNodeLocator) -> Configuration {
+            Configuration(
+                root: root,
+                isRecursive: true,
+                nodeType: .leaf,
+                deletionStatus: .notDeleted
+            )
+        }
+    }
+
+    private let configuration: Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
-    ///   - root: The root container for the nodes. If `nil`, nodes for all conversations will be returned.
-    ///   - recursive: Whether to fetch nodes recursively from the root container.
-    ///   - nodeType: The type of nodes to fetch.
-    ///   - deletionStatus: The deletion status of the nodes to fetch.
-    ///   - pageSize: The maximum number of nodes to fetch.
+    ///   - configuration: The configuration for the use case.
     ///   - repository: The repository to use for fetching nodes.
     package init(
-        root: WireCellsNodeLocator?,
-        isRecursive: Bool,
-        nodeType: WireCellsNodeType,
-        deletionStatus: WireCellsNodeDeletionStatus,
-        pageSize: Int = 30,
+        configuration: Configuration,
         repository: any WireCellsNodesRepositoryProtocol
     ) {
-        self.root = root
-        self.isRecursive = isRecursive
-        self.nodeType = nodeType
-        self.deletionStatus = deletionStatus
-        self.pageSize = pageSize
+        self.configuration = configuration
         self.repository = repository
     }
 
@@ -64,15 +76,15 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         let offset = token?.offset ?? 0
         let request = WireCellsGetNodesRequest(
             scope: WireCellsGetNodesRequest.Scope(
-                root: root,
-                isRecursive: isRecursive
+                root: configuration.root,
+                isRecursive: configuration.isRecursive
             ),
             filter: WireCellsGetNodesRequest.Filter(
-                deletionStatus: deletionStatus,
+                deletionStatus: configuration.deletionStatus,
                 text: searchTerm,
-                type: nodeType
+                type: configuration.nodeType
             ),
-            limit: pageSize,
+            limit: configuration.pageSize,
             offset: offset
         )
         let (nodes, nextOffset) = try await repository.getNodes(request)
