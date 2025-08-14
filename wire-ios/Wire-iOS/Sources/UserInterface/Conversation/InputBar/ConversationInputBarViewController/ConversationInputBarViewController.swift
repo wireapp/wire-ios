@@ -234,7 +234,7 @@ final class ConversationInputBarViewController: UIViewController,
     private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
-    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
+    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
