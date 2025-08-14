@@ -327,7 +327,7 @@ final class MessageToolboxView: UIView {
 
     func setAllContentHidden() {
         contentStack.arrangedSubviews.forEach { $0.isHidden = true }
-        noHeightConstraint.isActive = false
+        noHeightConstraint.isActive = true
     }
 
     private func hideAndCleanStatusLabel() {
