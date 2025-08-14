@@ -18,30 +18,32 @@
 
 import XCTest
 
-class SelectParticipantsPage: PageModel {
+class DeviceRecentBackupsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        searchByName
+        recentsPageLabel
     }
 
-    var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+    var recentsPageLabel: XCUIElement {
+        app.staticTexts["Recents"]
     }
 
-    var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+    var searchField: XCUIElement {
+        app.searchFields["Search"]
     }
 
-    func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
-        for prefix in prefixes {
-            let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
-            matchingCell.tap()
+    var backupFile: (String) -> XCUIElement {
+        { name in
+            let predicate = NSPredicate(format: "identifier CONTAINS %@", name)
+            return self.app.cells.matching(predicate).firstMatch
         }
-        return self
     }
 
-    func doneSelectingMembers() throws -> ActiveConversationPage {
-        doneButton.tap()
-        return try ActiveConversationPage()
+    func searchAndSelectBackupFile(withName name: String) throws -> SetPasswordPage {
+        let trimmedNameWithoutExtension = name.components(separatedBy: ".").dropLast().joined(separator: ".")
+        searchField.tap()
+        searchField.typeText(trimmedNameWithoutExtension)
+        backupFile(name).tap()
+        return try SetPasswordPage()
     }
 }

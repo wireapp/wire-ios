@@ -18,30 +18,30 @@
 
 import XCTest
 
-class SelectParticipantsPage: PageModel {
+class SaveBackupFileBottomSheetPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        searchByName
+        saveToFilesOption
     }
 
-    var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+    var saveToFilesOption: XCUIElement {
+        app.cells["Save to Files"]
     }
 
-    var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+    func getBackupFileName() -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateString = formatter.string(from: Date())
+
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", "WireBackup-\(dateString)")
+        let element = app.otherElements.matching(predicate).firstMatch
+
+        return element.exists ? element.label : nil
     }
 
-    func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
-        for prefix in prefixes {
-            let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
-            matchingCell.tap()
-        }
-        return self
+    func tapSaveToFilesOnBottomSheet() throws -> OnMyiPhonePage {
+        saveToFilesOption.tap()
+        return try OnMyiPhonePage()
     }
 
-    func doneSelectingMembers() throws -> ActiveConversationPage {
-        doneButton.tap()
-        return try ActiveConversationPage()
-    }
 }

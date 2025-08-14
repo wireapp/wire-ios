@@ -18,30 +18,22 @@
 
 import XCTest
 
-class SelectParticipantsPage: PageModel {
+class OnMyiPhonePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        searchByName
+        onMyiPhonePageLabel
     }
 
-    var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+    var onMyiPhonePageLabel: XCUIElement {
+        app.staticTexts["On My iPhone"]
     }
 
-    var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+    var saveButton: XCUIElement {
+        app.buttons["Save"]
     }
 
-    func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
-        for prefix in prefixes {
-            let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
-            matchingCell.tap()
-        }
-        return self
-    }
-
-    func doneSelectingMembers() throws -> ActiveConversationPage {
-        doneButton.tap()
-        return try ActiveConversationPage()
+    func tapSaveButtonOnMyiPhonePage() throws -> BackupOrRestorePage {
+        saveButton.tap()
+        return try BackupOrRestorePage()
     }
 }

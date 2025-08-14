@@ -18,30 +18,36 @@
 
 import XCTest
 
-class SelectParticipantsPage: PageModel {
+class BackupOrRestorePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        searchByName
+        backupNowButton
     }
 
-    var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+    var backupNowButton: XCUIElement {
+        app.descendants(matching: .any)["Back Up Now"]
     }
 
-    var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+    var restoreFromBackupButton: XCUIElement {
+        app.descendants(matching: .any)["Restore from Backup"]
     }
 
-    func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
-        for prefix in prefixes {
-            let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
-            matchingCell.tap()
-        }
-        return self
+    var backToAccountButton: XCUIElement {
+        app.buttons["Account"]
     }
 
-    func doneSelectingMembers() throws -> ActiveConversationPage {
-        doneButton.tap()
-        return try ActiveConversationPage()
+    func tapBackupNow() throws -> SetPasswordPage {
+        backupNowButton.tap()
+        return try SetPasswordPage()
+    }
+
+    func tapRestoreFromBackupButton() throws -> DeviceRecentBackupsPage {
+        restoreFromBackupButton.tap()
+        return try DeviceRecentBackupsPage()
+    }
+
+    func goBackToAccountPage() throws -> AccountSettingsPage {
+        backToAccountButton.tap()
+        return try AccountSettingsPage()
     }
 }

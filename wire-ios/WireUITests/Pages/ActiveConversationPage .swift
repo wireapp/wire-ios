@@ -21,7 +21,11 @@ import XCTest
 class ActiveConversationPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        inputMessageField
+        videoCallButton
+    }
+
+    var videoCallButton: XCUIElement {
+        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
     }
 
     var inputMessageField: XCUIElement {
@@ -36,8 +40,16 @@ class ActiveConversationPage: PageModel {
         app.buttons["ConversationBackButton"]
     }
 
+    var senderNameLabel: XCUIElement {
+        app.descendants(matching: .any)["author.name"].firstMatch
+    }
+
     var messageLabels: XCUIElementQuery {
         app.textViews.matching(identifier: "Message")
+    }
+
+    func getSenderName() -> String? {
+        senderNameLabel.label as? String
     }
 
     func fetchMessages() -> [String] {

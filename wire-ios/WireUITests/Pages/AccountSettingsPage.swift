@@ -37,7 +37,7 @@ class AccountSettingsPage: PageModel {
     }
 
     var logoutButton: XCUIElement {
-        app.descendants(matching: .any)["Log OutField"].firstMatch
+        app.staticTexts["Log Out"]
     }
 
     var deleteAccountButtonOnAccount: XCUIElement {
@@ -46,6 +46,10 @@ class AccountSettingsPage: PageModel {
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
         app.buttons["OK"]
+    }
+
+    var backupOrRestoreButton: XCUIElement {
+        app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
     }
 
     func getAccountName() -> String? {
@@ -60,6 +64,10 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
+    var backToSettingsButton: XCUIElement {
+        app.buttons["Settings"]
+    }
+
     @discardableResult
     func logout() throws -> LogOutPage {
         logoutButton.tap()
@@ -70,5 +78,16 @@ class AccountSettingsPage: PageModel {
         deleteAccountButtonOnAccount.tap()
         oKButtonOnDeleteAccountAlert.tap()
         return try ConversationsPage()
+    }
+
+    @discardableResult
+    func tapBackupOrRestore() throws -> BackupOrRestorePage {
+        backupOrRestoreButton.tap()
+        return try BackupOrRestorePage()
+    }
+
+    func goBackToSettingsPage() throws -> SettingsPage {
+        backToSettingsButton.tap()
+        return try SettingsPage()
     }
 }

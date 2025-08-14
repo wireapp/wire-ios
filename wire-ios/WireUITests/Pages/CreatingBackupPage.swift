@@ -18,30 +18,35 @@
 
 import XCTest
 
-class SelectParticipantsPage: PageModel {
+class CreatingBackupPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        searchByName
+        creatingBackupPageLabel
     }
 
-    var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+    var creatingBackupPageLabel: XCUIElement {
+        app.descendants(matching: .any)["Creating Backup"]
     }
 
-    var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+    var backupSuccessfullyCreatedLabel: XCUIElement {
+        app.descendants(matching: .any)["Backup successfully created."]
     }
 
-    func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
-        for prefix in prefixes {
-            let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
-            matchingCell.tap()
-        }
-        return self
+    var backupProgressLabel: XCUIElement {
+        app.descendants(matching: .any)["progressView"]
     }
 
-    func doneSelectingMembers() throws -> ActiveConversationPage {
-        doneButton.tap()
-        return try ActiveConversationPage()
+    var saveFileButton: XCUIElement {
+        app.buttons["exportButton"]
     }
+
+    func getBackupProgressValue() -> String? {
+        backupProgressLabel.value as? String
+    }
+
+    func tapSaveFile() throws -> SaveBackupFileBottomSheetPage {
+        saveFileButton.tap()
+        return try SaveBackupFileBottomSheetPage()
+    }
+
 }
