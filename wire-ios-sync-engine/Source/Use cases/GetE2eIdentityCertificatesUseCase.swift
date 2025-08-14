@@ -48,10 +48,10 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     ) async throws -> [E2eIdentityCertificate] {
 
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let clientIds = clientIds.compactMap { $0.rawValue.data(using: .utf8) }
+        let clientIds = clientIds.compactMap { WireCoreCryptoUniffi.ClientId(bytes: $0.data) }
         let identities = try await getWireIdentity(
             coreCrypto: coreCrypto,
-            conversationId: mlsGroupId.data,
+            conversationId: mlsGroupId.conversationId,
             clientIDs: clientIds
         )
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
@@ -124,8 +124,8 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     @MainActor
     private func getWireIdentity(
         coreCrypto: SafeCoreCryptoProtocol,
-        conversationId: Data,
-        clientIDs: [Data]
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        clientIDs: [WireCoreCryptoUniffi.ClientId]
     ) async throws -> [WireIdentity] {
         try await coreCrypto.perform {
             try await $0.getDeviceIdentities(

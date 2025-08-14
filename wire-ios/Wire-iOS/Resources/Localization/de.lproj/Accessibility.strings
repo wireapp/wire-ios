@@ -247,10 +247,10 @@
 "conversationsList.filter_menu_options.channels.selected.description" = "Channels, ausgewählt";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Ein-zu-eins-Unterhaltungen, ausgewählt";
 "conversationsList.filter_menu_options.folders.selected.description" = "Ordner, ausgewählt";
-"conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
-"conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
-"conversationsList.filter_menu_options.drafts.selected.description" = "Drafts, selected";
-"conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
+"conversationsList.filter_menu_options.unread.selected.description" = "Ungelesen, ausgewählt";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Erwähnungen, ausgewählt";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Entwürfe, ausgewählt";
+"conversationsList.filter_menu_options.replies.selected.description" = "Antworten, ausgewählt";
 
 
 "conversationsList.filter_view.removeButton.descritpion" = "Unterhaltungsfilter entfernen";

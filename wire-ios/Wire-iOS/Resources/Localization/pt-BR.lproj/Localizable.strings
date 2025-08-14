@@ -482,6 +482,9 @@
 "content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "Você não usa este dispositivo há algum tempo. Algumas mensagens podem não aparecer aqui.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Você não usa este dispositivo há algum tempo. Algumas mensagens podem não aparecer aqui.\n\nEnquanto isso, %@ foi adicionado.";
 
