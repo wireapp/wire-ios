@@ -16,8 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+package import Foundation
 
-public extension NSNotification.Name {
-    static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
+package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Sendable {
+
+    package let id = UUID()
+
+    @Published var content: AttributedString
+
+    @Published var senderViewModel: SenderViewModel
+
+    init(
+        content: AttributedString,
+        senderViewModel: SenderViewModel
+    ) {
+        self.content = content
+        self.senderViewModel = senderViewModel
+    }
+
+    package static func == (lhs: TextMessageViewModel, rhs: TextMessageViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    package func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
 }
