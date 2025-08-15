@@ -188,7 +188,6 @@ package class MockLoadConversationMessagesUseCaseProtocol: LoadConversationMessa
 
     package init() { }
 
-
     // MARK: - loadMessages
 
     package var loadMessagesOffset_Invocations: [Int] = []
