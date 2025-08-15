@@ -56,13 +56,15 @@ extension MockUserType {
     class func createConnectedUser(
         name: String,
         domain: String? = nil,
-        inTeam teamID: UUID? = nil
+        inTeam teamID: UUID? = nil,
+        isSelfUser: Bool = false,
+        color: ZMAccentColor = .amber
     ) -> MockUserType {
         let user = createUser(name: name, domain: domain, inTeam: teamID)
-        user.isSelfUser = false
+        user.isSelfUser = isSelfUser
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
-        user.zmAccentColor = .amber
+        user.zmAccentColor = color
         return user
     }
 

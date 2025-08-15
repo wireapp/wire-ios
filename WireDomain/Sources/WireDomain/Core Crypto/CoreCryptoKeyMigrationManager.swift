@@ -49,4 +49,8 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         journal[.isCoreCryptoKeyMigrationRequired] = false
     }
 
+    public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
+        try await updateDatabaseKey(name: path, oldKey: oldKey, newKey: newKey)
+    }
+
 }

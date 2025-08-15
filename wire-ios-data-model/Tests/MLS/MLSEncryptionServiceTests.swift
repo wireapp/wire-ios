@@ -62,7 +62,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
         var mockEncryptMessageCount = 0
         mockCoreCryptoContext.encryptMessageConversationIdMessage_MockMethod = {
             mockEncryptMessageCount += 1
-            XCTAssertEqual($0, groupID.data)
+            XCTAssertEqual($0, groupID.conversationId)
             XCTAssertEqual($1, unencryptedMessage)
             return encryptedMessage
         }

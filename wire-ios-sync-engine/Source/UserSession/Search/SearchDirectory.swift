@@ -110,9 +110,9 @@ public class SearchDirectory: NSObject {
         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
     }
 
-    public func updateIncompleteMetadataIfNeeded() {
-        refreshUsersMissingMetadataAction()
-        refreshConversationsMissingMetadataAction()
+    public func updateIncompleteMetadataIfNeeded() async {
+        await refreshUsersMissingMetadataAction()
+        await refreshConversationsMissingMetadataAction()
     }
 }
 

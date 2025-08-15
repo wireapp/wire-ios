@@ -24,6 +24,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
@@ -233,7 +234,7 @@ final class ConversationInputBarViewController: UIViewController,
     private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
-    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
+    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -1108,6 +1109,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
         addChild(carouselViewController)
         carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false
