@@ -24,7 +24,6 @@ public protocol LoadConversationMessagesRepositoryProtocol: Sendable {
 
 public let kLoadMessagesDefaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
-// sourcery: AutoMockable
 package protocol LoadConversationMessagesUseCaseProtocol: Sendable {
     func loadMessages(offset: Int) async -> [MessageModel]
 }

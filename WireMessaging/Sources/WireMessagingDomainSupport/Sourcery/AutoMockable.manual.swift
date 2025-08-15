@@ -181,3 +181,30 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
     }
 
 }
+
+package class MockLoadConversationMessagesUseCaseProtocol: LoadConversationMessagesUseCaseProtocol, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    package init() { }
+
+
+    // MARK: - loadMessages
+
+    package var loadMessagesOffset_Invocations: [Int] = []
+    package var loadMessagesOffset_MockMethod: ((Int) async -> [MessageModel])?
+    package var loadMessagesOffset_MockValue: [MessageModel]?
+
+    package func loadMessages(offset: Int) async -> [MessageModel] {
+        loadMessagesOffset_Invocations.append(offset)
+
+        if let mock = loadMessagesOffset_MockMethod {
+            return await mock(offset)
+        } else if let mock = loadMessagesOffset_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `loadMessagesOffset`")
+        }
+    }
+
+}
