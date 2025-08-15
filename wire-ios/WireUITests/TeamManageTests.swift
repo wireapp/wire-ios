@@ -203,7 +203,7 @@ final class TeamManageTests: WireUITestCase {
         
         // member3 send audio
         try await testServiceClient.sendFile(
-            type: imageExtension,
+            type: audioExtension,
             user: teamMembers[2],
             fileName: audioName,
             filepath: audioPath,
