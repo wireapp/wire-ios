@@ -19,8 +19,8 @@
 import Foundation
 public import Combine
 
-public protocol SenderNameObserverProtocol {
-    var authorChangedPublisher: AnyPublisher<String, Never>? { get }
+public protocol ReactionsObserverProtocol {
+    var reactionsPublisher: AnyPublisher<ReactionsModel, Never>? { get }
 }
 
-public typealias SenderNameObserverProvider = (UserModel?) -> (any SenderNameObserverProtocol)?
+public typealias ReactionsObserverProvider = (MessageModel) -> (any ReactionsObserverProtocol)?
