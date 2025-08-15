@@ -45,6 +45,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -111,7 +112,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         return view
     }()
-    
+
     private var container: ConversationMessageContainerView?
 
     private lazy var typeIcon: UIImageView = {
@@ -205,7 +206,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             object.collapseExpandAction()
         }
         wholeViewTapButton.addAction(action, for: .touchUpInside)
-        
+
         container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
         configureTextColor(forOwnMessage: message.isSentBySelfUser)
     }
@@ -237,7 +238,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             .horizontalStack(spacing: 8, alignment: .center)
 
         let avatarContainer = avatar.wrapInViewWithFlexibleTopAndBottom()
-        
+
         let container = ConversationMessageContainerView(content: messageTextView)
         self.container = container
         container.translatesAutoresizingMaskIntoConstraints = false
@@ -282,7 +283,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         typeIcon.constraintToSquare(sideLength: 16)
     }
-    
+
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         guard DeveloperFlag.chatBubblesSimple.isOn else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
