@@ -482,9 +482,6 @@
 "content.system.apps.warning" = "Apps haben Zugriff auf den Inhalt dieser Unterhaltung";
 
 "content.system.missing_messages" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.";
-"content.system.message_more_history_available" = "Gesprächsverlauf wird geladen…";
-"content.system.message_no_more_history_available" = "🥳 Sie können jetzt alle verfügbaren Nachrichten lesen.";
-
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %@ hinzugefügt.";
 

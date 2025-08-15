@@ -571,16 +571,16 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
     // MARK: - performActionsIfNeeded
 
     var performActionsIfNeeded_Invocations: [Void] = []
-    var performActionsIfNeeded_MockMethod: (() async -> Void)?
+    var performActionsIfNeeded_MockMethod: (() -> Void)?
 
-    func performActionsIfNeeded() async {
+    func performActionsIfNeeded() {
         performActionsIfNeeded_Invocations.append(())
 
         guard let mock = performActionsIfNeeded_MockMethod else {
             fatalError("no mock for `performActionsIfNeeded`")
         }
 
-        await mock()
+        mock()
     }
 
     // MARK: - registerAction
@@ -601,16 +601,16 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
     // MARK: - forcePerformAction
 
     var forcePerformActionId_Invocations: [String] = []
-    var forcePerformActionId_MockMethod: ((String) async -> Void)?
+    var forcePerformActionId_MockMethod: ((String) -> Void)?
 
-    func forcePerformAction(id: String) async {
+    func forcePerformAction(id: String) {
         forcePerformActionId_Invocations.append(id)
 
         guard let mock = forcePerformActionId_MockMethod else {
             fatalError("no mock for `forcePerformActionId`")
         }
 
-        await mock(id)
+        mock(id)
     }
 
     // MARK: - removeAction

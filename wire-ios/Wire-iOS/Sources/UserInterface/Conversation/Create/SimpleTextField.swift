@@ -27,7 +27,7 @@ protocol SimpleTextFieldDelegate: AnyObject {
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
 
-final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapable {
+final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - Properties
 
@@ -61,13 +61,17 @@ final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapa
 
     // MARK: Initialization
 
+    /// Init with kind for keyboard style and validator type. Default is .unknown
+    ///
+    /// - Parameter kind: the type of text field
     init() {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
-        super.init(frame: .zero, isContextMenuAllowed: SecurityFlags.clipboard.isEnabled)
+        super.init(frame: .zero)
+
         setupTextFieldProperties()
 
         tintColor = .accent()

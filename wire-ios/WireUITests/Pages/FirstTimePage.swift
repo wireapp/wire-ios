@@ -20,8 +20,9 @@ import XCTest
 
 /// Page for popup on first time user login
 class FirstTimePage: PageModel {
-    override var pageMainElement: XCUIElement {
-        okButton
+    override func assertHasLoaded() {
+        let expectation = okButton.waitForExistence(timeout: 10)
+        XCTAssert(expectation, "First time page not loaded - can't find Ok button")
     }
 
     var okButton: XCUIElement {

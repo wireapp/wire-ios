@@ -16,23 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
-import WireMessagingUI
-public import WireMessagingDomain
+public final class WireMessagingAssembly {
 
-public enum WireMessagingAssembly {
-
-    @MainActor
-    public static func makeConversationScreen(
-        loadMessagesRepo: any LoadConversationMessagesRepositoryProtocol
-    ) -> UIViewController {
-        ConversationMessagesViewController(
-            viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo)
-                )
-            )
-        )
+    public init() {
+//        registerProviderFactories()
     }
-
 }

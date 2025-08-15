@@ -29,15 +29,18 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let lockRepository: ResetMLSConversationLockRepositoryProtocol
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
         lockRepository: ResetMLSConversationLockRepositoryProtocol
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
+        self.featureConfigRepository = featureConfigRepository
         self.lockRepository = lockRepository
     }
 
@@ -45,6 +48,14 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
         do {
             let attributes: LogAttributes = [.conversationId: event.conversationID.id.safeForLoggingDescription]
 
+            let feature = try await featureConfigRepository.fetchAllowedGlobalOperations()
+            guard feature.status == .enabled, feature.config?.mlsConversationReset == true else {
+                WireLogger.mls.debug(
+                    "No need to process reset broken MLS conversation, FF is OFF",
+                    attributes: attributes
+                )
+                return
+            }
             guard !lockRepository
                 .wasResetInitiated(conversationID: event.conversationID.toDomainModel()) else {
                 WireLogger.mls.info(

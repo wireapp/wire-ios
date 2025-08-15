@@ -77,16 +77,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
+        assertionFailure("not implemented! use getLegacyConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
 
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        guard 1 ... 1000 ~= identifiers.count else {
-            throw ConversationsAPIError.illegalArgument(
-                message: "identifiers must contain between 1 and 1000 elements, got  \(identifiers.count)"
-            )
-        }
-
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/list/v2"

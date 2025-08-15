@@ -179,18 +179,6 @@ class TextView: UITextView {
         return super.canPerformAction(action, withSender: sender)
     }
 
-    var isContextMenuAllowed: Bool {
-        SecurityFlags.clipboard.isEnabled
-    }
-
-    override func buildMenu(with builder: any UIMenuBuilder) {
-        if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
-        }
-    }
-
     @discardableResult
     override func resignFirstResponder() -> Bool {
         let resigned = super.resignFirstResponder()

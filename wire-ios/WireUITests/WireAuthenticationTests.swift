@@ -39,7 +39,6 @@ final class WireAuthenticationTests: WireUITestCase {
         let loginPage = try WelcomePage()
             .enterEmailOrSSO(LoginCredentials.email)
 
-        XCTAssertEqual(loginPage.emailField.value as? String, LoginCredentials.email)
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 }

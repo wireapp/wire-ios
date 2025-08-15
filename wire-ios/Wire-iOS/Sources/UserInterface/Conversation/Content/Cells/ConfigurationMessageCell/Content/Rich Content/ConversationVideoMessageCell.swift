@@ -59,15 +59,9 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = if DeveloperFlag.chatBubblesSimple.isOn {
-            ConversationMessageContainerView.bubbleCornerRadius
-        } else {
-            12
-        }
-
-        containerView.shape = .rounded(radius: cornerRadius)
+        containerView.shape = .rounded(radius: 12)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = cornerRadius
+        containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true

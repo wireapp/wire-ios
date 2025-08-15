@@ -39,10 +39,6 @@ class LoginPage: PageModel {
         return elementsQuery.buttons["Next"].firstMatch
     }
 
-    var emailField: XCUIElement {
-        app.textFields["Enter email"]
-    }
-
     var passwordField: XCUIElement {
         app.secureTextFields["Enter password"]
     }

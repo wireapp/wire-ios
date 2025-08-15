@@ -482,9 +482,6 @@
 "content.system.apps.warning" = "应用有权访问此对话的内容";
 
 "content.system.missing_messages" = "您已经有一段时间没有使用此设备了。某些消息可能不会显示在此处。";
-"content.system.message_more_history_available" = "正在加载对话历史记录…";
-"content.system.message_no_more_history_available" = "已经到顶了🥳\n您看完了所有可用的消息。";
-
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "您已经有一段时间没有使用此设备了。某些消息可能不会显示在这里。\n\n与此同时，已添加 %@。";
 

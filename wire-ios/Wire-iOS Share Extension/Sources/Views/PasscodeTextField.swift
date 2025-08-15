@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 
@@ -65,15 +64,13 @@ final class PasscodeTextField: AccessoryTextField {
     override init(
         leftInset: CGFloat,
         accessoryTrailingInset: CGFloat,
-        textFieldAttributes: Attributes,
-        isContextMenuAllowed: Bool
+        textFieldAttributes: Attributes
     ) {
 
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: isContextMenuAllowed
+            textFieldAttributes: textFieldAttributes
         )
 
         setupView()
@@ -136,8 +133,7 @@ extension PasscodeTextField {
         let textField = PasscodeTextField(
             leftInset: 0,
             accessoryTrailingInset: 0,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            textFieldAttributes: textFieldAttributes
         )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal

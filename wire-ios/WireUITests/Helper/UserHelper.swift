@@ -29,30 +29,40 @@ struct Member {
 class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
+    var apiService: APIService
 
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let conversationsAPI: ConversationsAPI
+    let authenticationManager: AuthenticationManager
 
-    private let cookieStorage = MockCookieStorage()
-    private let authenticationManager = MockAuthManager()
+    private let cookieStorage: any CookieStorageProtocol
 
     init(apiVersion: APIVersion = .v8) {
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: .staging,
             minTLSVersion: .v1_2,
-            cookieEncryptionKey: Data(),
+            cookieEncryptionKey: Data()
+        )
+        self.cookieStorage = MockCookieStorage()
+        self.authenticationManager = AuthenticationManager(
+            clientID: nil,
+            cookieStorage: cookieStorage,
+            networkService: networkStack.apiNetworkService,
+            onAuthenticationFailure: { @Sendable () in }
+        )
+        self.apiService = APIService(
+            networkService: networkStack.apiNetworkService,
             authenticationManager: authenticationManager
         )
-
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
             .makeAPI(for: apiVersion)
-        self.selfUserAPI = SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
-        self.teamsAPI = TeamsAPIBuilder(apiService: networkStack.apiService)
+        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        self.teamsAPI = TeamsAPIBuilder(apiService: apiService)
             .makeAPI(for: apiVersion)
-        self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }
 
     func createPersonalUser() async throws -> UserInfo {
@@ -64,22 +74,13 @@ class UserHelper {
             email: user.email,
             password: user.password
         )
-        cookieStorage.cookies = cookies
+        try await cookieStorage.storeCookies(cookies)
 
         // Get activation code
         let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
 
         // Activate user
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
-
-        // get accessToken for current user
-        let (_, accessToken) = try await authenticationAPI.login(
-            email: user.email,
-            password: user.password,
-            verificationCode: nil,
-            label: nil
-        )
-        authenticationManager.accessToken = accessToken
 
         // Set username
         try await selfUserAPI.updateHandle(handle: user.username)
@@ -218,25 +219,5 @@ private final class MockCookieStorage: CookieStorageProtocol {
 
     func removeCookies() async throws {
         cookies = []
-    }
-}
-
-class MockAuthManager: AuthenticationManagerProtocol {
-
-    enum AccessTokenError: Error {
-        case notImplemented
-    }
-
-    var accessToken: WireNetwork.AccessToken?
-
-    func getValidAccessToken() async throws -> WireNetwork.AccessToken {
-        guard let accessToken else {
-            throw AccessTokenError.notImplemented
-        }
-        return accessToken
-    }
-
-    func refreshAccessToken() async throws -> WireNetwork.AccessToken {
-        throw AccessTokenError.notImplemented
     }
 }

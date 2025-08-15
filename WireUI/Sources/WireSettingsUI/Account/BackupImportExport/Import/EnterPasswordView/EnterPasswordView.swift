@@ -27,7 +27,6 @@ struct EnterPasswordView: View {
 
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
-    let isContextMenuAllowed: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
@@ -87,8 +86,7 @@ struct EnterPasswordView: View {
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                focusOnAppear: focusPasswordFieldOnAppear,
-                isContextMenuAllowed: isContextMenuAllowed
+                focusOnAppear: focusPasswordFieldOnAppear
             )
             .tint(passwordFieldBorderColor)
             .padding(.bottom, 8)

@@ -47,11 +47,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
             setPasswordAction: { _ in }
         )
         viewModel.password = "invalid"
-        let sut = SetBackupPasswordView(
-            viewModel: viewModel,
-            focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true
-        ).frame(width: screenBounds.width, height: screenBounds.height)
+        let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -69,12 +66,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
             setPasswordAction: { _ in }
         )
         viewModel.password = "G00dPassword"
-        let sut = SetBackupPasswordView(
-            viewModel: viewModel,
-            focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -91,12 +84,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
             cancelAction: {},
             setPasswordAction: { _ in }
         )
-        let sut = SetBackupPasswordView(
-            viewModel: viewModel,
-            focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -110,12 +99,8 @@ final class SetBackupPasswordViewSnapshotTests: XCTestCase {
             cancelAction: {},
             setPasswordAction: { _ in }
         )
-        let sut = SetBackupPasswordView(
-            viewModel: viewModel,
-            focusPasswordFieldOnAppear: false,
-            isContextMenuAllowed: true
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
+        let sut = SetBackupPasswordView(viewModel: viewModel, focusPasswordFieldOnAppear: false)
+            .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

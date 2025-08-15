@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 
@@ -163,8 +162,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes,
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+            textFieldAttributes: textFieldAttributes
         )
         setupTextFieldProperties()
 

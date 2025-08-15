@@ -26,10 +26,12 @@ class AccountSettingsPage: PageModel {
 
     var nameField: XCUIElement {
         app.descendants(matching: .any)["NameField"].firstMatch
+
     }
 
     var usernameField: XCUIElement {
         app.descendants(matching: .any)["UsernameField"].firstMatch
+
     }
 
     var emailField: XCUIElement {
@@ -38,14 +40,6 @@ class AccountSettingsPage: PageModel {
 
     var logoutButton: XCUIElement {
         app.descendants(matching: .any)["Log OutField"].firstMatch
-    }
-
-    var deleteAccountButtonOnAccount: XCUIElement {
-        app.descendants(matching: .any)["Delete AccountField"].firstMatch
-    }
-
-    var oKButtonOnDeleteAccountAlert: XCUIElement {
-        app.buttons["OK"]
     }
 
     func getAccountName() -> String? {
@@ -64,11 +58,5 @@ class AccountSettingsPage: PageModel {
     func logout() throws -> LogOutPage {
         logoutButton.tap()
         return try LogOutPage()
-    }
-
-    func deleteAccount() throws -> ConversationsPage {
-        deleteAccountButtonOnAccount.tap()
-        oKButtonOnDeleteAccountAlert.tap()
-        return try ConversationsPage()
     }
 }

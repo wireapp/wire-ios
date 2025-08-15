@@ -24,18 +24,15 @@ public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
     private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
-    private let isContextMenuAllowed: Bool
     let conversationName: String
 
     public init(
         viewModel: FolderPickerViewModel,
         createFolderUseCase: any CreateConversationFolderUseCaseProtocol,
-        isContextMenuAllowed: Bool,
         conversationName: String
     ) {
         self.viewModel = viewModel
         self.createFolderUseCase = createFolderUseCase
-        self.isContextMenuAllowed = isContextMenuAllowed
         self.conversationName = conversationName
     }
 
@@ -80,8 +77,7 @@ public struct FolderPicker: View {
                                         )
                                     }
                                 }
-                            },
-                            isContextMenuAllowed: isContextMenuAllowed
+                            }
                         )
                     } label: {
                         Image(systemName: "plus")
@@ -130,10 +126,7 @@ public struct FolderPicker: View {
                 ]
             ),
             updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
-        ),
-        createFolderUseCase: PreviewCreateConversationFolderUseCase(),
-        isContextMenuAllowed: true,
-        conversationName: "Test"
+        ), createFolderUseCase: PreviewCreateConversationFolderUseCase(), conversationName: "Test"
     )
 }
 

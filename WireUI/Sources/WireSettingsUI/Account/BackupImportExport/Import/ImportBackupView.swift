@@ -23,16 +23,10 @@ struct ImportBackupView: View {
     @StateObject var viewModel: ImportBackupViewModel
 
     @State private var isFileImporterPresented = false
-    private let isContextMenuAllowed: Bool
 
     private typealias BackupStrings = L10n.Localizable.Backup
     private typealias ImportBackupAlertStrings = L10n.Localizable.ImportBackup.Alert
     private typealias OverwriteConfirmationStrings = L10n.Localizable.ImportBackup.OverwriteConfirmation
-
-    init(viewModel: ImportBackupViewModel, isContextMenuAllowed: Bool) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-        self.isContextMenuAllowed = isContextMenuAllowed
-    }
 
     var body: some View {
         Section(footer: Text(BackupStrings.Import.description)) {
@@ -61,8 +55,7 @@ struct ImportBackupView: View {
                         password: $viewModel.backupPassword,
                         passwordIsWrong: $viewModel.isBackupPasswordWrong,
                         continueAction: { viewModel.enterPassword($0) },
-                        cancelAction: viewModel.reset,
-                        isContextMenuAllowed: isContextMenuAllowed
+                        cancelAction: viewModel.reset
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])

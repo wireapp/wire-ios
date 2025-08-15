@@ -104,43 +104,6 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(journal[.isConversationSyncRequired], false)
     }
 
-    func testPullConversationsInBatchesOf1000() async throws {
-        // Given
-        journal[.isConversationSyncRequired] = true
-
-        // Mock
-        api.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: Scaffolding.tooManyConverationIDs,
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        // We don't care about the response in this test.
-        api.getConversationsFor_MockValue = .init(
-            found: [],
-            notFound: [],
-            failed: []
-        )
-
-        // When
-        try await sut.pull()
-
-        // Then
-        XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
-
-        let invocations = api.getConversationsFor_Invocations
-        try XCTAssertCount(invocations, count: 3)
-
-        // The invocations are not always in the same order, so assert with contains.
-        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[0 ..< 1000])))
-        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[1000 ..< 2000])))
-        XCTAssertTrue(invocations.contains(Array(Scaffolding.tooManyConverationIDs[2000 ..< 2500])))
-
-        XCTAssertEqual(journal[.isConversationSyncRequired], false)
-    }
-
     // TODO: [WPB-15185] Re-enable
     func testPull_LegacyIdentifiers() async throws {
         // Mock
@@ -216,10 +179,6 @@ private enum Scaffolding {
             conversationID2,
             conversationID3
         ]
-    }
-
-    static var tooManyConverationIDs = (1 ... 2500).map { _ in
-        QualifiedID(id: UUID(), domain: "example.com")
     }
 
     static let remoteConversation1 = WireNetwork.Conversation(

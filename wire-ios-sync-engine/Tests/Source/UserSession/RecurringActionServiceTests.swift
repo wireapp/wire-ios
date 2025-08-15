@@ -49,7 +49,7 @@ final class RecurringActionServiceTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItPerformsActionInitially() async {
+    func testThatItPerformsActionInitially() {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 1) {
@@ -57,13 +57,13 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        await sut.performActionsIfNeeded()
+        sut.performActionsIfNeeded()
 
         // Then
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItDoesNotPerformActionTooEarly() async {
+    func testThatItDoesNotPerformActionTooEarly() {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
@@ -71,16 +71,16 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        await sut.performActionsIfNeeded()
+        sut.performActionsIfNeeded()
         actionPerformed = false
         dateProvider.now += .oneSecond
-        await sut.performActionsIfNeeded()
+        sut.performActionsIfNeeded()
 
         // Then
         XCTAssertFalse(actionPerformed)
     }
 
-    func testThatItForcePerformsAction() async {
+    func testThatItForcePerformsAction() {
         // given
         var actionPerformed = false
         let actionID = String.randomAlphanumerical(length: 5)
@@ -93,13 +93,13 @@ final class RecurringActionServiceTests: XCTestCase {
         XCTAssertFalse(actionPerformed)
 
         // when
-        await sut.forcePerformAction(id: actionID)
+        sut.forcePerformAction(id: actionID)
 
         // then
         XCTAssertTrue(actionPerformed)
     }
 
-    func testThatItPerformsActionAgain() async {
+    func testThatItPerformsActionAgain() {
         // Given
         var actionPerformed = false
         sut.registerAction(.init(id: .randomAlphanumerical(length: 5), interval: 3) {
@@ -107,10 +107,10 @@ final class RecurringActionServiceTests: XCTestCase {
         })
 
         // When
-        await sut.performActionsIfNeeded()
+        sut.performActionsIfNeeded()
         actionPerformed = false
         dateProvider.now += .tenSeconds
-        await sut.performActionsIfNeeded()
+        sut.performActionsIfNeeded()
 
         // Then
         XCTAssertTrue(actionPerformed)

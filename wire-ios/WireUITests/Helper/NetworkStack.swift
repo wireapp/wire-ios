@@ -20,23 +20,20 @@ import Foundation
 import WireFoundation
 import WireNetwork
 
-final class NetworkStack {
+public final class NetworkStack {
 
     let backendEnvironment: BackendEnvironment
     let minTLSVersion: TLSVersion
     let cookieEncryptionKey: Data
-    let authenticationManager: MockAuthManager
 
-    init(
+    public init(
         backendEnvironment: BackendEnvironment,
         minTLSVersion: TLSVersion,
-        cookieEncryptionKey: Data,
-        authenticationManager: MockAuthManager
+        cookieEncryptionKey: Data
     ) {
         self.backendEnvironment = backendEnvironment
         self.minTLSVersion = minTLSVersion
         self.cookieEncryptionKey = cookieEncryptionKey
-        self.authenticationManager = authenticationManager
     }
 
     private lazy var keychain: some KeychainProtocol = Keychain()
@@ -45,12 +42,12 @@ final class NetworkStack {
         proxySettings: backendEnvironment.proxySettings
     )
 
-    lazy var apiService: some APIServiceProtocol = APIService(
+    private lazy var apiService: some APIServiceProtocol = APIService(
         networkService: apiNetworkService,
-        authenticationManager: authenticationManager
+        authenticationManager: MockAuthManager()
     )
 
-    lazy var apiNetworkService: NetworkService = {
+    public lazy var apiNetworkService: NetworkService = {
         let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
@@ -62,4 +59,21 @@ final class NetworkStack {
         pinnedKeys: backendEnvironment.pinnedKeys,
         currentDateProvider: .system
     )
+
+}
+
+private struct MockAuthManager: AuthenticationManagerProtocol {
+
+    enum AccessTokenError: Error {
+        case notImplemented
+    }
+
+    func getValidAccessToken() async throws -> WireNetwork.AccessToken {
+        throw AccessTokenError.notImplemented
+    }
+
+    func refreshAccessToken() async throws -> WireNetwork.AccessToken {
+        throw AccessTokenError.notImplemented
+    }
+
 }

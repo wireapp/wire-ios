@@ -32,7 +32,6 @@ public struct BackupImportExportBuilder {
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
     let wireAccentColorMapping: WireAccentColorMapping
-    let isContextMenuAllowed: Bool
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -42,8 +41,7 @@ public struct BackupImportExportBuilder {
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
         wireAccentColorMapping: WireAccentColorMapping,
-        wireAccentColor: WireAccentColor,
-        isContextMenuAllowed: Bool
+        wireAccentColor: WireAccentColor
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
@@ -53,7 +51,6 @@ public struct BackupImportExportBuilder {
         self.importBackupLogger = importBackupLogger
         self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     @MainActor
@@ -110,7 +107,7 @@ public struct BackupImportExportBuilder {
             setPasswordAction: setPasswordAction
         )
 
-        SetBackupPasswordView(viewModel: setBackupPasswordViewModel, isContextMenuAllowed: isContextMenuAllowed)
+        SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
 
     }
 
@@ -121,7 +118,7 @@ public struct BackupImportExportBuilder {
             importBackupUseCaseFactory: importBackupUseCaseFactory,
             logger: importBackupLogger
         )
-        ImportBackupView(viewModel: viewModel, isContextMenuAllowed: isContextMenuAllowed)
+        ImportBackupView(viewModel: viewModel)
 
     }
 }
@@ -139,8 +136,7 @@ extension BackupImportExportBuilder {
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: .purple,
-            isContextMenuAllowed: true
+            wireAccentColor: .purple
         )
     }
 }

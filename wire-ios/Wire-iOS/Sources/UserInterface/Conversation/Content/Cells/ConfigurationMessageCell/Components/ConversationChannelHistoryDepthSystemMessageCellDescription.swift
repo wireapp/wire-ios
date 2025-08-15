@@ -66,7 +66,6 @@ struct HistoryDepthViewModel {
             attributes: baseAttributes
         )
         .adding(font: .mediumSemiboldFont, to: historyDepthValue)
-        .adding(font: .mediumSemiboldFont, to: historyDepthUnit)
 
         return updateText
     }
@@ -89,7 +88,6 @@ struct HistoryDepthViewModel {
                 )
                 .adding(font: .mediumSemiboldFont, to: youLocalized)
                 .adding(font: .mediumSemiboldFont, to: historyDepthValue)
-                .adding(font: .mediumSemiboldFont, to: historyDepthUnit)
             } else {
                 let template = "content.system.message_history_depth_modified_disabled"
                 updateText = NSAttributedString(
@@ -112,7 +110,6 @@ struct HistoryDepthViewModel {
                 )
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
                 .adding(font: .mediumSemiboldFont, to: historyDepthValue)
-                .adding(font: .mediumSemiboldFont, to: historyDepthUnit)
             } else {
                 let template = "content.system.message_history_depth_modified_disabled"
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone

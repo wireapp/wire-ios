@@ -26,7 +26,7 @@ final class TeamManageTests: WireUITestCase {
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
         var userAccountPage = try  firstTimePage.acceptPopup()
-            .openUserAccountPageForUser(with: user.name)
+            .openUserAccount()
 
         var conversationPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
@@ -35,7 +35,7 @@ final class TeamManageTests: WireUITestCase {
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
+        userAccountPage = try conversationPage.openUserAccount()
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -72,7 +72,7 @@ final class TeamManageTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
-            .openUserAccountPageForUser(with: memberUser.username)
+            .openUserAccount()
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
@@ -125,7 +125,7 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = try XCTUnwrap(groupConversationPage.getSentMessages())
+        let sentMessages = groupConversationPage.getSentMessages()
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"

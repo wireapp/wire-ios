@@ -28,18 +28,15 @@ public struct CreateFolder: View {
     @ObservedObject private var viewModel: CreateFolderViewModel
     private let conversationName: String
     private let onFolderCreated: (Folder) -> Void
-    private let isContextMenuAllowed: Bool
 
     public init(
         viewModel: CreateFolderViewModel,
         conversationName: String,
-        onFolderCreated: @escaping (Folder) -> Void,
-        isContextMenuAllowed: Bool
+        onFolderCreated: @escaping (Folder) -> Void
     ) {
         self.viewModel = viewModel
         self.conversationName = conversationName
         self.onFolderCreated = onFolderCreated
-        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     public var body: some View {
@@ -88,14 +85,11 @@ public struct CreateFolder: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray, lineWidth: 1)
                 .frame(height: 48)
-            ContextMenuControllableTextField(
-                text: $viewModel.name,
-                placeholder: localizedString("folder.creation.name.placeholder"),
-                isSecureTextEntry: false,
-                isContextMenuAllowed: isContextMenuAllowed
+            TextField(
+                localized("folder.creation.name.placeholder"),
+                text: $viewModel.name
             )
             .padding(.horizontal, 8)
-            .frame(height: 48)
             .textFieldStyle(.plain)
             .autocorrectionDisabled()
             .accessibilityIdentifier("input.newfolder.name")
@@ -122,10 +116,6 @@ public struct CreateFolder: View {
         LocalizedStringKey(key)
     }
 
-    private func localizedString(_ key: String) -> String {
-        NSLocalizedString(key, comment: "")
-    }
-
     private func createFolder() {
         Task {
             do {
@@ -149,8 +139,7 @@ public struct CreateFolder: View {
             useCase: PreviewCreateFolderUseCase()
         ),
         conversationName: "iOS Team",
-        onFolderCreated: { _ in },
-        isContextMenuAllowed: true
+        onFolderCreated: { _ in }
     )
 }
 

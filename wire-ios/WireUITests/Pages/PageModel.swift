@@ -43,7 +43,7 @@ class PageModel {
     }
 
     func assertHasLoaded() throws {
-        guard pageMainElement.waitForExistence(timeout: 15) else {
+        guard pageMainElement.waitForExistence(timeout: 10) else {
             throw Failure.notLoaded(self)
         }
     }
