@@ -18,7 +18,7 @@
 
 import XCTest
 
-class GroupDetailsPage: PageModel {
+class ConversationDetailsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
         addParticipantsButton
@@ -28,4 +28,29 @@ class GroupDetailsPage: PageModel {
         let elementsQuery = app.descendants(matching: .any).matching(identifier: "OtherUserMetaControllerLeftButton")
         return elementsQuery.firstMatch
     }
+
+//    var closeConversationDetailsButton: XCUIElement {
+//        app.buttons["close"]
+//    }
+
+    var userCells: XCUIElementQuery {
+        app.staticTexts.matching(identifier: "user_cell.name")
+    }
+
+    func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
+        let predicate = NSPredicate(format: "label == %@", name)
+        _ = userCells.matching(predicate).firstMatch.tap()
+        return try UserDetailsPage()
+    }
+
+//    func closeConversationDetails() throws -> ActiveConversationPage {
+//        closeConversationDetailsButton.tap()
+//        return try ActiveConversationPage()
+//    }
+
+    func appParticipantToConversation() throws -> SelectParticipantsPage {
+        addParticipantsButton.tap()
+        return try SelectParticipantsPage()
+    }
+
 }

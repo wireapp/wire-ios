@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 final class TeamManageTests: WireUITestCase {
@@ -90,25 +91,22 @@ final class TeamManageTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let teamOwner = try await userHelper.registerUserAsTeamOwner()
-        let teamMember1 = UserGenerator.generateUniqueUserInfo()
-        let teamMember2 = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let accessToken = try await userHelper.fetchAccessToken(
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember1
+        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamID,
         )
 
-        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember2
+        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamID,
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
@@ -129,6 +127,65 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
+        )
+    }
+
+    @MainActor
+    func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 2
+
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        var conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
+            .openConversation()
+            .openConversationDetails()
+            .openUserDetailsPage(byName: teamMembers[0].name)
+            .removeParticipantFromConversation()
+
+        XCTAssertFalse(
+            conversationDetailsPage.userCells
+                .matching(NSPredicate(format: "label == %@", teamMembers[0].name))
+                .firstMatch
+                .exists,
+            "User \(teamMembers[0].name) is still present in group"
+        )
+
+        _ = try conversationDetailsPage.appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [teamMembers[0].name])
+            .addSelectedParticipant()
+
+        XCTAssertTrue(
+            conversationDetailsPage.userCells
+                .matching(NSPredicate(format: "label == %@", teamMembers[0].name))
+                .firstMatch
+                .exists,
+            "User \(teamMembers[0].name) is not present in group"
         )
     }
 }
