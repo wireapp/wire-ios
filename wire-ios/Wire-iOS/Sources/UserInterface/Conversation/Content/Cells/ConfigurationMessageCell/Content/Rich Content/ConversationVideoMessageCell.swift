@@ -84,7 +84,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
         existingConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
+                equalTo: trailingAnchor,
                 constant: -margins.right
             )
         ]
