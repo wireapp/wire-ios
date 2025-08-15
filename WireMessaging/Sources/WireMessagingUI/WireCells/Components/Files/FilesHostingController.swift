@@ -16,5 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.5.0
-MAJOR_VERSION = 4
+package import SwiftUI
+import WireDesign
+
+package final class FilesHostingController: UIHostingController<FilesView> {
+
+    private typealias Strings = L10n.Localizable.Conversation.WireCells
+    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
+    private let viewModel: FilesViewModel
+
+    public init(viewModel: FilesViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: FilesView(viewModel: viewModel))
+    }
+
+    @available(*, unavailable)
+    @MainActor @objc
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+}

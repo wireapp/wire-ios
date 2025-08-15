@@ -2491,6 +2491,8 @@ internal enum L10n {
       internal enum Action {
         /// Conversation Details
         internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
+        /// Files
+        internal static let files = L10n.tr("Localizable", "conversation.action.files", fallback: "Files")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }

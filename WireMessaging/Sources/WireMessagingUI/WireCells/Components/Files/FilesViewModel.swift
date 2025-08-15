@@ -16,5 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.5.0
-MAJOR_VERSION = 4
+import SwiftUI
+
+@MainActor
+package class FilesViewModel: ObservableObject {
+
+    package init() {}
+
+}
