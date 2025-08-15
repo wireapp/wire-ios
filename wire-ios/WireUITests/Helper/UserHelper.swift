@@ -206,7 +206,7 @@ class UserHelper {
     }
 
     func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (convoId: UUID?, domain: String?) {
+        -> (conversationID: UUID?, domain: String?) {
         let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)

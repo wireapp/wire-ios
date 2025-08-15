@@ -22,39 +22,39 @@ public import Foundation
 
 public struct RegisterUserResponse: Equatable, Sendable {
 
-    /// The unique id of the  user
+    /// The unique id of the user
 
     public let id: String
 
-    /// The qualified id of the  user
+    /// The qualified id of the user
 
     public let qualifiedID: UserID
 
-    /// The  user's full name
+    /// The user's full name
 
     public let name: String
 
-    /// Team ID if the  user belongs to a team
+    /// Team ID if the user belongs to a team
 
     public let teamID: UUID?
 
-    /// Color accent of the  user
+    /// Color accent of the user
 
     public let accentID: Int
 
-    /// The  user identity managing system
+    /// The user identity managing system
     ///
     public let managedBy: ManagingSystem?
 
-    /// The  user's profile image assets
+    /// The user's profile image assets
 
     public let assets: [UserAsset]?
 
-    /// The  user's profile image assets
+    /// The user's profile image assets
 
     public let picture: [String]?
 
-    /// The email associated with this  user
+    /// The email associated with this user
 
     public let email: String?
 
