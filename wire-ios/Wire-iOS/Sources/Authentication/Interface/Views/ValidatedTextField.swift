@@ -49,6 +49,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     weak var textFieldValidationDelegate: TextFieldValidationDelegate?
     weak var validatedTextFieldDelegate: ValidatedTextFieldDelegate?
 
+    // Hack: disable auto fill password
     var isContextMenuAllowed: Bool {
         SecurityFlags.clipboard.isEnabled
     }
@@ -239,7 +240,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         case let .passcode(rules, isNew):
             if isContextMenuAllowed {
                 isSecureTextEntry = true
-                // Hack: disable auto fill passcode
                 textContentType = .oneTimeCode
             } else {
                 isSecureTextEntry = false
