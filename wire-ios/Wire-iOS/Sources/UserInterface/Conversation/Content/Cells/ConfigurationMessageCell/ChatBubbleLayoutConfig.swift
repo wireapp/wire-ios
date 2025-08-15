@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
-"conversation.wireCells.files.close" = "Close files";
+import Foundation
+
+public enum ChatBubbleLayoutConfig {
+    static let ownMessageMinimumLeadingDistance = 104.0
+    static let otherMessageMinimumTrailingDistance = 72.0
+}
