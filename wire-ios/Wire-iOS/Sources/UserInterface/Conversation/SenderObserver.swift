@@ -59,17 +59,7 @@ final class ReactionsObserver: ReactionsObserverProtocol {
 
             self?.reactionsPublisher = NSManagedObject.publisher(for: message, in: viewContext)
                 .map {
-                    $0.usersReaction
-                        .mapValues { users in
-                            users.map { user in
-                                UserModel(
-                                    objectID: user.objectId,
-                                    remoteIdentifier: user.remoteIdentifier,
-                                    name: user.name,
-                                    handle: user.handle
-                                )
-                            }
-                        }
+                    $0.usersReaction.mapValues { $0.map { $0.toDomain() } }
                 }
                 .eraseToAnyPublisher()
         }

@@ -44,9 +44,7 @@ public struct MessageModel: Sendable {
     }
     
     public func hasReactions() -> Bool {
-        reactions.contains { _, users in
-            !users.isEmpty
-        }
+        reactions.hasReactions()
     }
 }
 

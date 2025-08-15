@@ -20,19 +20,28 @@ import Foundation
 import WireMessagingDomain
 
 struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
-
+    
+    var messagesUpdatesStream: AsyncStream<MessagesUpdate> = AsyncStream { _ in
+        
+    }
+    
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         let base = "This is a line. "
         return (0 ..< 7).map { _ in
             let repeatCount = Int.random(in: 1 ... 5)
             return MessageModel(
+                objectID: UUID(),
                 sender: .init(
+                    objectID: UUID(),
                     remoteIdentifier: .init(),
                     name: "Sender",
                     handle: nil
                 ),
-                kind: .text(.init(text: String(repeating: base, count: repeatCount)))
+                kind: .text(.init(text: String(repeating: base, count: repeatCount))),
+                reactions: [:]
             )
         }
     }
 }
+
+extension GenerateMessagesRepo: MonitorMessagesRepositoryProtocol { }

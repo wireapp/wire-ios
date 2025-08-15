@@ -38,7 +38,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = UINavigationController(
             rootViewController: WireMessagingAssembly.makeConversationScreen(
-                loadMessagesRepo: GenerateMessagesRepo()
+                loadMessagesRepo: GenerateMessagesRepo(),
+                senderNameObserverProvider: { _ in nil },
+                reactionsObserverProvider: { _ in nil}
             )
         )
         window?.makeKeyAndVisible()
