@@ -160,7 +160,7 @@ final class TeamManageTests: WireUITestCase {
             groupName: groupName
         )
 
-        var conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
             .openConversation()

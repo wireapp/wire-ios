@@ -29,9 +29,9 @@ class ConversationDetailsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
-//    var closeConversationDetailsButton: XCUIElement {
-//        app.buttons["close"]
-//    }
+    var closeConversationDetailsButton: XCUIElement {
+        app.buttons["close"]
+    }
 
     var userCells: XCUIElementQuery {
         app.staticTexts.matching(identifier: "user_cell.name")
@@ -39,14 +39,14 @@ class ConversationDetailsPage: PageModel {
 
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
         let predicate = NSPredicate(format: "label == %@", name)
-        _ = userCells.matching(predicate).firstMatch.tap()
+        userCells.matching(predicate).firstMatch.tap()
         return try UserDetailsPage()
     }
 
-//    func closeConversationDetails() throws -> ActiveConversationPage {
-//        closeConversationDetailsButton.tap()
-//        return try ActiveConversationPage()
-//    }
+    func closeConversationDetails() throws -> ActiveConversationPage {
+        closeConversationDetailsButton.tap()
+        return try ActiveConversationPage()
+    }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {
         addParticipantsButton.tap()
