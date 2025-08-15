@@ -44,9 +44,6 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    private var existingConstraints: [NSLayoutConstraint] = []
-    private var chatBubbleConstraints: [NSLayoutConstraint] = []
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubview()
@@ -81,14 +78,14 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        existingConstraints = [
+        let existingConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
                 constant: -margins.right
             )
         ]
-        chatBubbleConstraints = [
+        let chatBubbleConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(
                 equalTo: trailingAnchor

@@ -51,9 +51,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    private var existingConstraints: [NSLayoutConstraint] = []
-    private var chatBubbleConstraints: [NSLayoutConstraint] = []
-
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
@@ -157,12 +154,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             constant: 3
         )
 
-        existingConstraints = [
+        let existingConstraints = [
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)
         ]
 
-        chatBubbleConstraints = [
+        let chatBubbleConstraints = [
             avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24 + 12)),
             authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
             authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
