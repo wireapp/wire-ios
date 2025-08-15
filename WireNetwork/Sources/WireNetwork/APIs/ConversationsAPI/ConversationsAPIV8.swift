@@ -22,6 +22,12 @@ class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        guard 1 ... 1000 ~= identifiers.count else {
+            throw ConversationsAPIError.illegalArgument(
+                message: "identifiers must contain between 1 and 1000 elements, got  \(identifiers.count)"
+            )
+        }
+
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/list"
@@ -300,7 +306,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var id: UUID?
     var lastEvent: String?
     var lastEventTime: UTCTime?
-    var members: QualifiedConversationMembers?
+    var members: QualifiedConversationMembersV0?
     var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?

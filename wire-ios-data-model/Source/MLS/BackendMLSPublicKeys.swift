@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public struct BackendMLSPublicKeys: Equatable {
 
@@ -26,8 +27,8 @@ public struct BackendMLSPublicKeys: Equatable {
         self.removal = removal
     }
 
-    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [Data] {
-        let externalSender = switch ciphersuite.signature {
+    func externalSenderKey(for ciphersuite: MLSCipherSuite) -> [ExternalSenderKey] {
+        let externalSenderData = switch ciphersuite.signature {
         case .ed25519:
             removal.ed25519
         case .ed448:
@@ -40,8 +41,7 @@ public struct BackendMLSPublicKeys: Equatable {
             removal.p521
         }
 
-        return [externalSender]
-            .compactMap(\.self)
+        return [externalSenderData].compactMap(\.self).map(ExternalSenderKey.init)
     }
 
     public struct MLSPublicKeys: Equatable {

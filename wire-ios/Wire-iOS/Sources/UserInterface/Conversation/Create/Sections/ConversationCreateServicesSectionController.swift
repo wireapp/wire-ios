@@ -27,7 +27,7 @@ final class ConversationCreateServicesSectionController: ConversationCreateSecti
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
-        footerText = L10n.Localizable.Conversation.Create.Services.subtitle
+        footerText = L10n.Localizable.Conversation.Create.Apps.subtitle
     }
 }
 

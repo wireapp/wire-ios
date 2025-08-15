@@ -44,6 +44,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
+    private let pushChannelState: PushChannelStateProtocol
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -59,6 +60,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
+
+        pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
@@ -73,6 +76,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.syncMarkerGenerator = syncMarkerGenerator
+        self.pushChannelState = pushChannelState
     }
 
     public func perform() async throws -> IncrementalSync.Token {
@@ -85,7 +89,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-        let liveEventStream = try await pushChannel.open()
+
+        let liveEventStream: PushChannelV2.Stream
+        do {
+            liveEventStream = try await pushChannel.open()
+            pushChannelState.markAsOpen()
+        } catch {
+            pushChannelState.markAsClosed()
+            throw error
+        }
 
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
@@ -93,6 +105,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             try await processStoredEvents()
         } catch {
             await pushChannel.close()
+            pushChannelState.markAsClosed()
             throw error
         }
 
@@ -106,6 +119,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
+            pushChannelState.markAsClosed()
         })
     }
 
@@ -185,6 +199,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     if id == syncMarker {
                         logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
                         syncStateSubject.send(.liveSyncing(.ongoing))
+                        if DeveloperFlag.disablePushChannelBatching.isOn {
+                            await pushChannel.disableBatching(true)
+                        } else {
+                            WireLogger.sync.warn("keep batching enabled", attributes: .syncAttributes)
+                        }
                         delegate?.isUpToDate(sync: self)
                     }
                 case .missedEvents:
@@ -200,6 +219,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         )
 
                     } catch {
+                        WireLogger.sync.error("event processing failed: \(error)", attributes: .syncAttributes)
+                        assertionFailure("event processing failed: \(error)")
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
@@ -276,8 +297,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         in context: CoreCryptoContextProtocol
     ) async -> [UpdateEvent] {
         logger.debug(
-            "decrypting live event envelope  v3",
-            attributes: [.eventEnvelopeID: envelope.id]
+            "decrypting live event envelope",
+            attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes
         )
         let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
 

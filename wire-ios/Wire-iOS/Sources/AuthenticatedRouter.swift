@@ -43,7 +43,7 @@ final class AuthenticatedRouter {
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
-    private let featureRepositoryProvider: any FeatureRepositoryProvider
+    private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private var featureChangeObserverToken: Any?
@@ -68,7 +68,7 @@ final class AuthenticatedRouter {
         environment: BackendEnvironment,
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
-        featureRepositoryProvider: any FeatureRepositoryProvider,
+        featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
@@ -126,7 +126,7 @@ final class AuthenticatedRouter {
 
     private func notifyFeatureChange(_ note: Notification) {
         guard
-            let change = note.object as? FeatureRepository.FeatureChange,
+            let change = note.object as? LegacyFeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
             ? UIAlertController.fromFeatureChangeWithActions(
                 change,
@@ -186,8 +186,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     }
 }
 
-protocol FeatureRepositoryProvider {
-    var featureRepository: FeatureRepository { get }
+protocol LegacyFeatureRepositoryProvider {
+    var featureRepository: LegacyFeatureRepository { get }
 }
 
-extension ZMUserSession: FeatureRepositoryProvider {}
+extension ZMUserSession: LegacyFeatureRepositoryProvider {}

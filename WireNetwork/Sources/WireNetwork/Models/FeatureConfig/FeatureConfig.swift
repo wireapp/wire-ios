@@ -105,6 +105,10 @@ public enum FeatureConfig: Equatable, Sendable {
     /// with history sharing capabilities
     case channels(ChannelsFeatureConfig)
 
+    /// Global config, that contains other config inside, e.g. 'reset broken mls'
+
+    case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
+
     /// An unknown feature.
 
     case unknown(featureName: String)

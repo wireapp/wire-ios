@@ -166,7 +166,6 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(
             idToken: oAuthResponse.idToken,
-            refreshToken: oAuthResponse.refreshToken ?? " ",
             prevNonce: dpopChallengeResponse.nonce,
             acmeChallenge: oidcAuthorization.challenge
         )
@@ -186,7 +185,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             prevNonce: finalizeResponse.acmeResponse.nonce
         )
 
-        guard let certificateChain = String(bytes: certificateRequest.response.bytes, encoding: .utf8) else {
+        guard let certificateChain = String(bytes: [UInt8](certificateRequest.response), encoding: .utf8) else {
             throw Failure.failedToDecodeCertificate
         }
 

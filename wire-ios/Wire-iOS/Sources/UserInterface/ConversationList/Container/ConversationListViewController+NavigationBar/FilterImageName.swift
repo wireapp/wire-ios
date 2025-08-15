@@ -54,6 +54,24 @@ enum FilterImageName: String {
     /// Represents a selected or unselected channel icon for channel conversations.
     case number
 
+    /// Represents the unread icon - filled square with number 1
+    case oneSquare = "1.square"
+
+    /// Represents the selected unread icon - filled square with number 1
+    case oneSquareFill = "1.square.fill"
+
+    /// Represents the at symbol icon for mentions
+    case at
+
+    /// Represents the reply icon for replies
+    case arrowshapeTurnUpLeft = "arrowshape.turn.up.left"
+
+    /// Represents the draft icon - pencil and ellipsis in rectangle
+    case pencilAndEllipsisRectangle = "pencil.and.ellipsis.rectangle"
+
+    /// Represents the selected draft icon - pencil and ellipsis in rectangle (filled)
+    case pencilAndEllipsisRectangleFill = "pencil.and.ellipsis.rectangle.fill"
+
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
@@ -84,6 +102,14 @@ enum FilterImageName: String {
             return isSelected ? .folderFill : .folder
         case .channels:
             return .number // Same icon is used for selected and unselected. Just the color changes.
+        case .unread:
+            return isSelected ? .oneSquareFill : .oneSquare
+        case .mentions:
+            return .at // Same icon for both states
+        case .replies:
+            return .arrowshapeTurnUpLeft // Same icon for both states
+        case .drafts:
+            return isSelected ? .pencilAndEllipsisRectangleFill : .pencilAndEllipsisRectangle
         }
     }
 }

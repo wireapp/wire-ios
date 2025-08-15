@@ -110,6 +110,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: StorableChannelsFeatureConfig.Permission(config.allowedToOpenChannels)
                 )
             )
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                StorableAllowedGlobalOperationsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -201,6 +208,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: config.allowedToOpenChannels.toAPIModel()
                 )
             )
+        case let .allowedGlobalOperations(config):
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -228,6 +242,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case mlsMigration(StorableMLSMigrationFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
+    case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -323,6 +338,12 @@ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
     let status: StorableFeatureConfigStatus
     let enforcedTimeoutSeconds: UInt
 
+}
+
+struct StorableAllowedGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
+
+    let status: StorableFeatureConfigStatus
+    let resetMLSConversations: Bool
 }
 
 struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {

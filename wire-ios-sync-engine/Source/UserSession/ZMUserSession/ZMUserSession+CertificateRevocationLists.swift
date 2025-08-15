@@ -36,7 +36,7 @@ extension ZMUserSession {
             fetchE2EIFeatureConfig: { [weak self] in
                 guard let self else { return nil }
 
-                let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
+                let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
                 return featureRepository.fetchE2EI().config
             },
             coreCryptoProvider: coreCryptoProvider,

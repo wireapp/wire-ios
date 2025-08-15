@@ -53,7 +53,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Properties
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -63,7 +63,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: FeatureRepositoryInterface) {
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: LegacyFeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
     }
@@ -118,7 +118,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         isUpgradingClient: Bool,
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
-        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
         return try await coreCrypto.perform {

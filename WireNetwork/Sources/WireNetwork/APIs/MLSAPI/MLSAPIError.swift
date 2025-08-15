@@ -58,6 +58,14 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsCommitMissingReferences
 
+    /// A referenced leaf node index points to a blank or non-existing node
+
+    case mlsInvalidLeafNodeIndex
+
+    /// A referenced leaf node signature is invalid
+
+    case mlsInvalidLeafNodeSignature
+
     /// Generic error for all non recoverable MLS error
 
     case mlsError(_ label: String, _ message: String)
@@ -89,7 +97,6 @@ public enum MLSAPIError: Error, Equatable {
     /// Conversation not found
 
     case noConversation(message: String)
-
 }
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
@@ -108,7 +115,8 @@ enum MLSAPIV0Error: Error, Codable, Equatable {
     case invalidOperation(message: String)
     case invalidRequestBody
     case noConversation(message: String)
-
+    case mlsInvalidLeafNodeIndex
+    case mlsInvalidLeafNodeSignature
 }
 
 extension MLSAPIV0Error: ToAPIModelConvertible {
@@ -144,6 +152,10 @@ extension MLSAPIV0Error: ToAPIModelConvertible {
             .invalidRequestBody
         case let .noConversation(message: message):
             .noConversation(message: message)
+        case .mlsInvalidLeafNodeIndex:
+            .mlsInvalidLeafNodeIndex
+        case .mlsInvalidLeafNodeSignature:
+            .mlsInvalidLeafNodeSignature
         }
     }
 }
@@ -181,6 +193,10 @@ extension MLSAPIError: ToNetworkConvertible {
             .invalidRequestBody
         case let .accessDenied(message: message):
             .accessDenied(message: message)
+        case .mlsInvalidLeafNodeIndex:
+            .mlsInvalidLeafNodeIndex
+        case .mlsInvalidLeafNodeSignature:
+            .mlsInvalidLeafNodeSignature
         }
     }
 }

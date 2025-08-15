@@ -23,16 +23,16 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     /// The `featureRepository` operates on a context, so every operation must be dispatched
-    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// on that context's queue. Since `LegacyFeatureRepositoryInterface` doesn't contain any
     /// `context` property, we inject the context here.
     private let featureRepositoryContext: NSManagedObjectContext
 
     public init(
         schedule: NSManagedObjectContext.ScheduledTaskType,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRepository: FeatureRepositoryInterface,
+        featureRepository: LegacyFeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext
     ) {
         self.schedule = schedule
@@ -59,7 +59,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // get the values required for the call to Core Crypto
         let (conversationID, mlsGroupID) = await conversationContext.perform(schedule: schedule) {
-            (conversation.remoteIdentifier!, conversation.mlsGroupID?.data)
+            (conversation.remoteIdentifier!, conversation.mlsGroupID)
         }
         guard let mlsGroupID else {
             throw Error.failedToGetMLSGroupID(conversationID)
@@ -73,7 +73,7 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
         let userIdentities = try await coreCrypto.perform { coreCrypto in
             // get MLS group members
             let allUserIdentities = try await coreCrypto.getUserIdentities(
-                conversationId: mlsGroupID,
+                conversationId: mlsGroupID.conversationId,
                 userIds: [userID]
             )
 

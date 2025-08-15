@@ -21,6 +21,10 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
+public extension Bundle {
+    static var mainAppInternalName: String?
+}
+
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
     /// The client is not registered - we send out a request to register the client
@@ -415,10 +419,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     private func insertNewClient(for selfUser: ZMUser) {
+        var model = UIDevice.current.zm_model()
+        if let appInternalName = Bundle.mainAppInternalName {
+            model += " (\(appInternalName))"
+        }
+
         UserClient.insertNewSelfClient(
             in: managedObjectContext,
             selfUser: selfUser,
-            model: UIDevice.current.zm_model(),
+            model: model,
             label: UIDevice.current.name
         )
 
@@ -667,11 +676,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc public var needsToEnrollE2EI: Bool {
-        FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
     private var isMLSEnabled: Bool {
-        FeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
     }
 
     @objc(needsToRegisterMLSClientInContext:)
@@ -680,7 +689,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
         let canRegisterMLSCLient = BackendInfo.isMLSEnabled

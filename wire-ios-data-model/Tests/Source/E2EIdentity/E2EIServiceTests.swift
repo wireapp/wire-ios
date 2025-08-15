@@ -268,7 +268,7 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         var mockGetsNewOidcChallengeRequest = 0
 
         // Mock
-        mockE2eIdentity.mockNewOidcChallengeRequest = { _, _, _ in
+        mockE2eIdentity.mockNewOidcChallengeRequest = { _, _ in
             mockGetsNewOidcChallengeRequest += 1
             return expectedOidcChallenge
         }
@@ -276,7 +276,6 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         // When
         let oidcChallenge = try await sut.getNewOidcChallengeRequest(
             idToken: "idToken",
-            refreshToken: "refreshToken",
             nonce: "nonce"
         )
 

@@ -51,6 +51,8 @@ import WireCoreCrypto
 
 
 
+
+
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle
@@ -358,6 +360,19 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
+    // MARK: - channelHistoryDepth
+
+    public var channelHistoryDepth: String?
+
+    // MARK: - hasMoreHistory
+
+    public var hasMoreHistory: Bool {
+        get { return underlyingHasMoreHistory }
+        set(value) { underlyingHasMoreHistory = value }
+    }
+
+    public var underlyingHasMoreHistory: Bool!
+
     // MARK: - wireCellName
 
     public var wireCellName: String {
@@ -403,7 +418,7 @@ public class MockConversationLike: ConversationLike {
 
 }
 
-public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
+public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 
@@ -412,12 +427,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - addClientsToConversation
 
-    public var addClientsToConversationConversationIdKeyPackages_Invocations: [(conversationId: Data, keyPackages: [Data])] = []
+    public var addClientsToConversationConversationIdKeyPackages_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, keyPackages: [WireCoreCryptoUniffi.KeyPackage])] = []
     public var addClientsToConversationConversationIdKeyPackages_MockError: Error?
-    public var addClientsToConversationConversationIdKeyPackages_MockMethod: ((Data, [Data]) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints)?
-    public var addClientsToConversationConversationIdKeyPackages_MockValue: WireCoreCryptoUniffi.NewCrlDistributionPoints?
+    public var addClientsToConversationConversationIdKeyPackages_MockMethod: ((WireCoreCryptoUniffi.ConversationId, [WireCoreCryptoUniffi.KeyPackage]) async throws -> [String]?)?
+    public var addClientsToConversationConversationIdKeyPackages_MockValue: [String]??
 
-    public func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints {
+    public func addClientsToConversation(conversationId: WireCoreCryptoUniffi.ConversationId, keyPackages: [WireCoreCryptoUniffi.KeyPackage]) async throws -> [String]? {
         addClientsToConversationConversationIdKeyPackages_Invocations.append((conversationId: conversationId, keyPackages: keyPackages))
 
         if let error = addClientsToConversationConversationIdKeyPackages_MockError {
@@ -437,10 +452,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType, amountRequested: UInt32)] = []
     public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockError: Error?
-    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.CredentialType, UInt32) async throws -> [Data])?
-    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockValue: [Data]?
+    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.CredentialType, UInt32) async throws -> [WireCoreCryptoUniffi.KeyPackage])?
+    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockValue: [WireCoreCryptoUniffi.KeyPackage]?
 
-    public func clientKeypackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType, amountRequested: UInt32) async throws -> [Data] {
+    public func clientKeypackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType, amountRequested: UInt32) async throws -> [WireCoreCryptoUniffi.KeyPackage] {
         clientKeypackagesCiphersuiteCredentialTypeAmountRequested_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType, amountRequested: amountRequested))
 
         if let error = clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockError {
@@ -504,11 +519,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - commitPendingProposals
 
-    public var commitPendingProposalsConversationId_Invocations: [Data] = []
+    public var commitPendingProposalsConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var commitPendingProposalsConversationId_MockError: Error?
-    public var commitPendingProposalsConversationId_MockMethod: ((Data) async throws -> Void)?
+    public var commitPendingProposalsConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
 
-    public func commitPendingProposals(conversationId: Data) async throws {
+    public func commitPendingProposals(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
         commitPendingProposalsConversationId_Invocations.append(conversationId)
 
         if let error = commitPendingProposalsConversationId_MockError {
@@ -524,12 +539,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - conversationCiphersuite
 
-    public var conversationCiphersuiteConversationId_Invocations: [Data] = []
+    public var conversationCiphersuiteConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var conversationCiphersuiteConversationId_MockError: Error?
-    public var conversationCiphersuiteConversationId_MockMethod: ((Data) async throws -> WireCoreCryptoUniffi.Ciphersuite)?
+    public var conversationCiphersuiteConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.Ciphersuite)?
     public var conversationCiphersuiteConversationId_MockValue: WireCoreCryptoUniffi.Ciphersuite?
 
-    public func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCryptoUniffi.Ciphersuite {
+    public func conversationCiphersuite(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.Ciphersuite {
         conversationCiphersuiteConversationId_Invocations.append(conversationId)
 
         if let error = conversationCiphersuiteConversationId_MockError {
@@ -547,12 +562,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - conversationEpoch
 
-    public var conversationEpochConversationId_Invocations: [Data] = []
+    public var conversationEpochConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var conversationEpochConversationId_MockError: Error?
-    public var conversationEpochConversationId_MockMethod: ((Data) async throws -> UInt64)?
+    public var conversationEpochConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> UInt64)?
     public var conversationEpochConversationId_MockValue: UInt64?
 
-    public func conversationEpoch(conversationId: Data) async throws -> UInt64 {
+    public func conversationEpoch(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> UInt64 {
         conversationEpochConversationId_Invocations.append(conversationId)
 
         if let error = conversationEpochConversationId_MockError {
@@ -570,12 +585,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - conversationExists
 
-    public var conversationExistsConversationId_Invocations: [Data] = []
+    public var conversationExistsConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var conversationExistsConversationId_MockError: Error?
-    public var conversationExistsConversationId_MockMethod: ((Data) async throws -> Bool)?
+    public var conversationExistsConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Bool)?
     public var conversationExistsConversationId_MockValue: Bool?
 
-    public func conversationExists(conversationId: Data) async throws -> Bool {
+    public func conversationExists(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> Bool {
         conversationExistsConversationId_Invocations.append(conversationId)
 
         if let error = conversationExistsConversationId_MockError {
@@ -593,11 +608,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - createConversation
 
-    public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration)] = []
+    public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration)] = []
     public var createConversationConversationIdCreatorCredentialTypeConfig_MockError: Error?
-    public var createConversationConversationIdCreatorCredentialTypeConfig_MockMethod: ((Data, WireCoreCryptoUniffi.CredentialType, WireCoreCryptoUniffi.ConversationConfiguration) async throws -> Void)?
+    public var createConversationConversationIdCreatorCredentialTypeConfig_MockMethod: ((WireCoreCryptoUniffi.ConversationId, WireCoreCryptoUniffi.CredentialType, WireCoreCryptoUniffi.ConversationConfiguration) async throws -> Void)?
 
-    public func createConversation(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration) async throws {
+    public func createConversation(conversationId: WireCoreCryptoUniffi.ConversationId, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration) async throws {
         createConversationConversationIdCreatorCredentialTypeConfig_Invocations.append((conversationId: conversationId, creatorCredentialType: creatorCredentialType, config: config))
 
         if let error = createConversationConversationIdCreatorCredentialTypeConfig_MockError {
@@ -613,12 +628,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - decryptMessage
 
-    public var decryptMessageConversationIdPayload_Invocations: [(conversationId: Data, payload: Data)] = []
+    public var decryptMessageConversationIdPayload_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, payload: Data)] = []
     public var decryptMessageConversationIdPayload_MockError: Error?
-    public var decryptMessageConversationIdPayload_MockMethod: ((Data, Data) async throws -> WireCoreCryptoUniffi.DecryptedMessage)?
+    public var decryptMessageConversationIdPayload_MockMethod: ((WireCoreCryptoUniffi.ConversationId, Data) async throws -> WireCoreCryptoUniffi.DecryptedMessage)?
     public var decryptMessageConversationIdPayload_MockValue: WireCoreCryptoUniffi.DecryptedMessage?
 
-    public func decryptMessage(conversationId: Data, payload: Data) async throws -> WireCoreCryptoUniffi.DecryptedMessage {
+    public func decryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, payload: Data) async throws -> WireCoreCryptoUniffi.DecryptedMessage {
         decryptMessageConversationIdPayload_Invocations.append((conversationId: conversationId, payload: payload))
 
         if let error = decryptMessageConversationIdPayload_MockError {
@@ -632,26 +647,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         } else {
             fatalError("no mock for `decryptMessageConversationIdPayload`")
         }
-    }
-
-    // MARK: - deleteKeypackages
-
-    public var deleteKeypackagesRefs_Invocations: [[Data]] = []
-    public var deleteKeypackagesRefs_MockError: Error?
-    public var deleteKeypackagesRefs_MockMethod: (([Data]) async throws -> Void)?
-
-    public func deleteKeypackages(refs: [Data]) async throws {
-        deleteKeypackagesRefs_Invocations.append(refs)
-
-        if let error = deleteKeypackagesRefs_MockError {
-            throw error
-        }
-
-        guard let mock = deleteKeypackagesRefs_MockMethod else {
-            fatalError("no mock for `deleteKeypackagesRefs`")
-        }
-
-        try await mock(refs)
     }
 
     // MARK: - deleteStaleKeyPackages
@@ -674,14 +669,34 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         try await mock(ciphersuite)
     }
 
+    // MARK: - disableHistorySharing
+
+    public var disableHistorySharingConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
+    public var disableHistorySharingConversationId_MockError: Error?
+    public var disableHistorySharingConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
+
+    public func disableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
+        disableHistorySharingConversationId_Invocations.append(conversationId)
+
+        if let error = disableHistorySharingConversationId_MockError {
+            throw error
+        }
+
+        guard let mock = disableHistorySharingConversationId_MockMethod else {
+            fatalError("no mock for `disableHistorySharingConversationId`")
+        }
+
+        try await mock(conversationId)
+    }
+
     // MARK: - e2eiConversationState
 
-    public var e2eiConversationStateConversationId_Invocations: [Data] = []
+    public var e2eiConversationStateConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var e2eiConversationStateConversationId_MockError: Error?
-    public var e2eiConversationStateConversationId_MockMethod: ((Data) async throws -> WireCoreCryptoUniffi.E2eiConversationState)?
+    public var e2eiConversationStateConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.E2eiConversationState)?
     public var e2eiConversationStateConversationId_MockValue: WireCoreCryptoUniffi.E2eiConversationState?
 
-    public func e2eiConversationState(conversationId: Data) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
+    public func e2eiConversationState(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
         e2eiConversationStateConversationId_Invocations.append(conversationId)
 
         if let error = e2eiConversationStateConversationId_MockError {
@@ -694,29 +709,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
             return mock
         } else {
             fatalError("no mock for `e2eiConversationStateConversationId`")
-        }
-    }
-
-    // MARK: - e2eiDumpPkiEnv
-
-    public var e2eiDumpPkiEnv_Invocations: [Void] = []
-    public var e2eiDumpPkiEnv_MockError: Error?
-    public var e2eiDumpPkiEnv_MockMethod: (() async throws -> WireCoreCryptoUniffi.E2eiDumpedPkiEnv?)?
-    public var e2eiDumpPkiEnv_MockValue: WireCoreCryptoUniffi.E2eiDumpedPkiEnv??
-
-    public func e2eiDumpPkiEnv() async throws -> WireCoreCryptoUniffi.E2eiDumpedPkiEnv? {
-        e2eiDumpPkiEnv_Invocations.append(())
-
-        if let error = e2eiDumpPkiEnv_MockError {
-            throw error
-        }
-
-        if let mock = e2eiDumpPkiEnv_MockMethod {
-            return try await mock()
-        } else if let mock = e2eiDumpPkiEnv_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `e2eiDumpPkiEnv`")
         }
     }
 
@@ -816,10 +808,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations: [(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?)] = []
     public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError: Error?
-    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCryptoUniffi.E2eiEnrollment, String, UInt32?) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints)?
-    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue: WireCoreCryptoUniffi.NewCrlDistributionPoints?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockMethod: ((WireCoreCryptoUniffi.E2eiEnrollment, String, UInt32?) async throws -> [String]?)?
+    public var e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockValue: [String]??
 
-    public func e2eiMlsInitOnly(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints {
+    public func e2eiMlsInitOnly(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]? {
         e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_Invocations.append((enrollment: enrollment, certificateChain: certificateChain, nbKeyPackage: nbKeyPackage))
 
         if let error = e2eiMlsInitOnlyEnrollmentCertificateChainNbKeyPackage_MockError {
@@ -951,10 +943,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var e2eiRegisterIntermediateCaCertPem_Invocations: [String] = []
     public var e2eiRegisterIntermediateCaCertPem_MockError: Error?
-    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints)?
-    public var e2eiRegisterIntermediateCaCertPem_MockValue: WireCoreCryptoUniffi.NewCrlDistributionPoints?
+    public var e2eiRegisterIntermediateCaCertPem_MockMethod: ((String) async throws -> [String]?)?
+    public var e2eiRegisterIntermediateCaCertPem_MockValue: [String]??
 
-    public func e2eiRegisterIntermediateCa(certPem: String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints {
+    public func e2eiRegisterIntermediateCa(certPem: String) async throws -> [String]? {
         e2eiRegisterIntermediateCaCertPem_Invocations.append(certPem)
 
         if let error = e2eiRegisterIntermediateCaCertPem_MockError {
@@ -972,11 +964,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - e2eiRotate
 
-    public var e2eiRotateConversationId_Invocations: [Data] = []
+    public var e2eiRotateConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var e2eiRotateConversationId_MockError: Error?
-    public var e2eiRotateConversationId_MockMethod: ((Data) async throws -> Void)?
+    public var e2eiRotateConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
 
-    public func e2eiRotate(conversationId: Data) async throws {
+    public func e2eiRotate(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
         e2eiRotateConversationId_Invocations.append(conversationId)
 
         if let error = e2eiRotateConversationId_MockError {
@@ -990,14 +982,34 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         try await mock(conversationId)
     }
 
+    // MARK: - enableHistorySharing
+
+    public var enableHistorySharingConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
+    public var enableHistorySharingConversationId_MockError: Error?
+    public var enableHistorySharingConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
+
+    public func enableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
+        enableHistorySharingConversationId_Invocations.append(conversationId)
+
+        if let error = enableHistorySharingConversationId_MockError {
+            throw error
+        }
+
+        guard let mock = enableHistorySharingConversationId_MockMethod else {
+            fatalError("no mock for `enableHistorySharingConversationId`")
+        }
+
+        try await mock(conversationId)
+    }
+
     // MARK: - encryptMessage
 
-    public var encryptMessageConversationIdMessage_Invocations: [(conversationId: Data, message: Data)] = []
+    public var encryptMessageConversationIdMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data)] = []
     public var encryptMessageConversationIdMessage_MockError: Error?
-    public var encryptMessageConversationIdMessage_MockMethod: ((Data, Data) async throws -> Data)?
+    public var encryptMessageConversationIdMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, Data) async throws -> Data)?
     public var encryptMessageConversationIdMessage_MockValue: Data?
 
-    public func encryptMessage(conversationId: Data, message: Data) async throws -> Data {
+    public func encryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data {
         encryptMessageConversationIdMessage_Invocations.append((conversationId: conversationId, message: message))
 
         if let error = encryptMessageConversationIdMessage_MockError {
@@ -1015,12 +1027,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - exportSecretKey
 
-    public var exportSecretKeyConversationIdKeyLength_Invocations: [(conversationId: Data, keyLength: UInt32)] = []
+    public var exportSecretKeyConversationIdKeyLength_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, keyLength: UInt32)] = []
     public var exportSecretKeyConversationIdKeyLength_MockError: Error?
-    public var exportSecretKeyConversationIdKeyLength_MockMethod: ((Data, UInt32) async throws -> Data)?
-    public var exportSecretKeyConversationIdKeyLength_MockValue: Data?
+    public var exportSecretKeyConversationIdKeyLength_MockMethod: ((WireCoreCryptoUniffi.ConversationId, UInt32) async throws -> WireCoreCryptoUniffi.SecretKey)?
+    public var exportSecretKeyConversationIdKeyLength_MockValue: WireCoreCryptoUniffi.SecretKey?
 
-    public func exportSecretKey(conversationId: Data, keyLength: UInt32) async throws -> Data {
+    public func exportSecretKey(conversationId: WireCoreCryptoUniffi.ConversationId, keyLength: UInt32) async throws -> WireCoreCryptoUniffi.SecretKey {
         exportSecretKeyConversationIdKeyLength_Invocations.append((conversationId: conversationId, keyLength: keyLength))
 
         if let error = exportSecretKeyConversationIdKeyLength_MockError {
@@ -1038,12 +1050,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - getClientIds
 
-    public var getClientIdsConversationId_Invocations: [Data] = []
+    public var getClientIdsConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var getClientIdsConversationId_MockError: Error?
-    public var getClientIdsConversationId_MockMethod: ((Data) async throws -> [WireCoreCryptoUniffi.ClientId])?
+    public var getClientIdsConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> [WireCoreCryptoUniffi.ClientId])?
     public var getClientIdsConversationId_MockValue: [WireCoreCryptoUniffi.ClientId]?
 
-    public func getClientIds(conversationId: Data) async throws -> [WireCoreCryptoUniffi.ClientId] {
+    public func getClientIds(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> [WireCoreCryptoUniffi.ClientId] {
         getClientIdsConversationId_Invocations.append(conversationId)
 
         if let error = getClientIdsConversationId_MockError {
@@ -1056,29 +1068,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
             return mock
         } else {
             fatalError("no mock for `getClientIdsConversationId`")
-        }
-    }
-
-    // MARK: - getCredentialInUse
-
-    public var getCredentialInUseGroupInfoCredentialType_Invocations: [(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
-    public var getCredentialInUseGroupInfoCredentialType_MockError: Error?
-    public var getCredentialInUseGroupInfoCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState)?
-    public var getCredentialInUseGroupInfoCredentialType_MockValue: WireCoreCryptoUniffi.E2eiConversationState?
-
-    public func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
-        getCredentialInUseGroupInfoCredentialType_Invocations.append((groupInfo: groupInfo, credentialType: credentialType))
-
-        if let error = getCredentialInUseGroupInfoCredentialType_MockError {
-            throw error
-        }
-
-        if let mock = getCredentialInUseGroupInfoCredentialType_MockMethod {
-            return try await mock(groupInfo, credentialType)
-        } else if let mock = getCredentialInUseGroupInfoCredentialType_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getCredentialInUseGroupInfoCredentialType`")
         }
     }
 
@@ -1107,12 +1096,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - getDeviceIdentities
 
-    public var getDeviceIdentitiesConversationIdDeviceIds_Invocations: [(conversationId: Data, deviceIds: [WireCoreCryptoUniffi.ClientId])] = []
+    public var getDeviceIdentitiesConversationIdDeviceIds_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, deviceIds: [WireCoreCryptoUniffi.ClientId])] = []
     public var getDeviceIdentitiesConversationIdDeviceIds_MockError: Error?
-    public var getDeviceIdentitiesConversationIdDeviceIds_MockMethod: ((Data, [WireCoreCryptoUniffi.ClientId]) async throws -> [WireCoreCryptoUniffi.WireIdentity])?
+    public var getDeviceIdentitiesConversationIdDeviceIds_MockMethod: ((WireCoreCryptoUniffi.ConversationId, [WireCoreCryptoUniffi.ClientId]) async throws -> [WireCoreCryptoUniffi.WireIdentity])?
     public var getDeviceIdentitiesConversationIdDeviceIds_MockValue: [WireCoreCryptoUniffi.WireIdentity]?
 
-    public func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCryptoUniffi.ClientId]) async throws -> [WireCoreCryptoUniffi.WireIdentity] {
+    public func getDeviceIdentities(conversationId: WireCoreCryptoUniffi.ConversationId, deviceIds: [WireCoreCryptoUniffi.ClientId]) async throws -> [WireCoreCryptoUniffi.WireIdentity] {
         getDeviceIdentitiesConversationIdDeviceIds_Invocations.append((conversationId: conversationId, deviceIds: deviceIds))
 
         if let error = getDeviceIdentitiesConversationIdDeviceIds_MockError {
@@ -1130,12 +1119,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - getExternalSender
 
-    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var getExternalSenderConversationId_MockError: Error?
-    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
-    public var getExternalSenderConversationId_MockValue: Data?
+    public var getExternalSenderConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.ExternalSenderKey)?
+    public var getExternalSenderConversationId_MockValue: WireCoreCryptoUniffi.ExternalSenderKey?
 
-    public func getExternalSender(conversationId: Data) async throws -> Data {
+    public func getExternalSender(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi.ExternalSenderKey {
         getExternalSenderConversationId_Invocations.append(conversationId)
 
         if let error = getExternalSenderConversationId_MockError {
@@ -1153,12 +1142,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - getUserIdentities
 
-    public var getUserIdentitiesConversationIdUserIds_Invocations: [(conversationId: Data, userIds: [String])] = []
+    public var getUserIdentitiesConversationIdUserIds_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, userIds: [String])] = []
     public var getUserIdentitiesConversationIdUserIds_MockError: Error?
-    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]])?
+    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((WireCoreCryptoUniffi.ConversationId, [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]])?
     public var getUserIdentitiesConversationIdUserIds_MockValue: [String: [WireCoreCryptoUniffi.WireIdentity]]?
 
-    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]] {
+    public func getUserIdentities(conversationId: WireCoreCryptoUniffi.ConversationId, userIds: [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]] {
         getUserIdentitiesConversationIdUserIds_Invocations.append((conversationId: conversationId, userIds: userIds))
 
         if let error = getUserIdentitiesConversationIdUserIds_MockError {
@@ -1176,12 +1165,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - joinByExternalCommit
 
-    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations: [(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
+    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations: [(groupInfo: WireCoreCryptoUniffi.GroupInfo, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
     public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockError: Error?
-    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.CustomConfiguration, WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
+    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod: ((WireCoreCryptoUniffi.GroupInfo, WireCoreCryptoUniffi.CustomConfiguration, WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
     public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockValue: WireCoreCryptoUniffi.WelcomeBundle?
 
-    public func joinByExternalCommit(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
+    public func joinByExternalCommit(groupInfo: WireCoreCryptoUniffi.GroupInfo, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
         joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations.append((groupInfo: groupInfo, customConfiguration: customConfiguration, credentialType: credentialType))
 
         if let error = joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockError {
@@ -1199,11 +1188,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - markConversationAsChildOf
 
-    public var markConversationAsChildOfChildIdParentId_Invocations: [(childId: Data, parentId: Data)] = []
+    public var markConversationAsChildOfChildIdParentId_Invocations: [(childId: WireCoreCryptoUniffi.ConversationId, parentId: WireCoreCryptoUniffi.ConversationId)] = []
     public var markConversationAsChildOfChildIdParentId_MockError: Error?
-    public var markConversationAsChildOfChildIdParentId_MockMethod: ((Data, Data) async throws -> Void)?
+    public var markConversationAsChildOfChildIdParentId_MockMethod: ((WireCoreCryptoUniffi.ConversationId, WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
 
-    public func markConversationAsChildOf(childId: Data, parentId: Data) async throws {
+    public func markConversationAsChildOf(childId: WireCoreCryptoUniffi.ConversationId, parentId: WireCoreCryptoUniffi.ConversationId) async throws {
         markConversationAsChildOfChildIdParentId_Invocations.append((childId: childId, parentId: parentId))
 
         if let error = markConversationAsChildOfChildIdParentId_MockError {
@@ -1217,36 +1206,13 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         try await mock(childId, parentId)
     }
 
-    // MARK: - mlsGenerateKeypairs
-
-    public var mlsGenerateKeypairsCiphersuites_Invocations: [WireCoreCryptoUniffi.Ciphersuites] = []
-    public var mlsGenerateKeypairsCiphersuites_MockError: Error?
-    public var mlsGenerateKeypairsCiphersuites_MockMethod: ((WireCoreCryptoUniffi.Ciphersuites) async throws -> [WireCoreCryptoUniffi.ClientId])?
-    public var mlsGenerateKeypairsCiphersuites_MockValue: [WireCoreCryptoUniffi.ClientId]?
-
-    public func mlsGenerateKeypairs(ciphersuites: WireCoreCryptoUniffi.Ciphersuites) async throws -> [WireCoreCryptoUniffi.ClientId] {
-        mlsGenerateKeypairsCiphersuites_Invocations.append(ciphersuites)
-
-        if let error = mlsGenerateKeypairsCiphersuites_MockError {
-            throw error
-        }
-
-        if let mock = mlsGenerateKeypairsCiphersuites_MockMethod {
-            return try await mock(ciphersuites)
-        } else if let mock = mlsGenerateKeypairsCiphersuites_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `mlsGenerateKeypairsCiphersuites`")
-        }
-    }
-
     // MARK: - mlsInit
 
-    public var mlsInitClientIdCiphersuitesNbKeyPackage_Invocations: [(clientId: WireCoreCryptoUniffi.ClientId, ciphersuites: WireCoreCryptoUniffi.Ciphersuites, nbKeyPackage: UInt32?)] = []
+    public var mlsInitClientIdCiphersuitesNbKeyPackage_Invocations: [(clientId: WireCoreCryptoUniffi.ClientId, ciphersuites: [WireCoreCryptoUniffi.Ciphersuite], nbKeyPackage: UInt32?)] = []
     public var mlsInitClientIdCiphersuitesNbKeyPackage_MockError: Error?
-    public var mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod: ((WireCoreCryptoUniffi.ClientId, WireCoreCryptoUniffi.Ciphersuites, UInt32?) async throws -> Void)?
+    public var mlsInitClientIdCiphersuitesNbKeyPackage_MockMethod: ((WireCoreCryptoUniffi.ClientId, [WireCoreCryptoUniffi.Ciphersuite], UInt32?) async throws -> Void)?
 
-    public func mlsInit(clientId: WireCoreCryptoUniffi.ClientId, ciphersuites: WireCoreCryptoUniffi.Ciphersuites, nbKeyPackage: UInt32?) async throws {
+    public func mlsInit(clientId: WireCoreCryptoUniffi.ClientId, ciphersuites: [WireCoreCryptoUniffi.Ciphersuite], nbKeyPackage: UInt32?) async throws {
         mlsInitClientIdCiphersuitesNbKeyPackage_Invocations.append((clientId: clientId, ciphersuites: ciphersuites, nbKeyPackage: nbKeyPackage))
 
         if let error = mlsInitClientIdCiphersuitesNbKeyPackage_MockError {
@@ -1260,34 +1226,14 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         try await mock(clientId, ciphersuites, nbKeyPackage)
     }
 
-    // MARK: - mlsInitWithClientId
-
-    public var mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_Invocations: [(clientId: WireCoreCryptoUniffi.ClientId, tmpClientIds: [WireCoreCryptoUniffi.ClientId], ciphersuites: WireCoreCryptoUniffi.Ciphersuites)] = []
-    public var mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_MockError: Error?
-    public var mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_MockMethod: ((WireCoreCryptoUniffi.ClientId, [WireCoreCryptoUniffi.ClientId], WireCoreCryptoUniffi.Ciphersuites) async throws -> Void)?
-
-    public func mlsInitWithClientId(clientId: WireCoreCryptoUniffi.ClientId, tmpClientIds: [WireCoreCryptoUniffi.ClientId], ciphersuites: WireCoreCryptoUniffi.Ciphersuites) async throws {
-        mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_Invocations.append((clientId: clientId, tmpClientIds: tmpClientIds, ciphersuites: ciphersuites))
-
-        if let error = mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_MockError {
-            throw error
-        }
-
-        guard let mock = mlsInitWithClientIdClientIdTmpClientIdsCiphersuites_MockMethod else {
-            fatalError("no mock for `mlsInitWithClientIdClientIdTmpClientIdsCiphersuites`")
-        }
-
-        try await mock(clientId, tmpClientIds, ciphersuites)
-    }
-
     // MARK: - processWelcomeMessage
 
-    public var processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations: [(welcomeMessage: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration)] = []
+    public var processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations: [(welcomeMessage: WireCoreCryptoUniffi.Welcome, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration)] = []
     public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockError: Error?
-    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod: ((Data, WireCoreCryptoUniffi.CustomConfiguration) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
+    public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod: ((WireCoreCryptoUniffi.Welcome, WireCoreCryptoUniffi.CustomConfiguration) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
     public var processWelcomeMessageWelcomeMessageCustomConfiguration_MockValue: WireCoreCryptoUniffi.WelcomeBundle?
 
-    public func processWelcomeMessage(welcomeMessage: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
+    public func processWelcomeMessage(welcomeMessage: WireCoreCryptoUniffi.Welcome, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
         processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.append((welcomeMessage: welcomeMessage, customConfiguration: customConfiguration))
 
         if let error = processWelcomeMessageWelcomeMessageCustomConfiguration_MockError {
@@ -1747,11 +1693,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - removeClientsFromConversation
 
-    public var removeClientsFromConversationConversationIdClients_Invocations: [(conversationId: Data, clients: [WireCoreCryptoUniffi.ClientId])] = []
+    public var removeClientsFromConversationConversationIdClients_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, clients: [WireCoreCryptoUniffi.ClientId])] = []
     public var removeClientsFromConversationConversationIdClients_MockError: Error?
-    public var removeClientsFromConversationConversationIdClients_MockMethod: ((Data, [WireCoreCryptoUniffi.ClientId]) async throws -> Void)?
+    public var removeClientsFromConversationConversationIdClients_MockMethod: ((WireCoreCryptoUniffi.ConversationId, [WireCoreCryptoUniffi.ClientId]) async throws -> Void)?
 
-    public func removeClientsFromConversation(conversationId: Data, clients: [WireCoreCryptoUniffi.ClientId]) async throws {
+    public func removeClientsFromConversation(conversationId: WireCoreCryptoUniffi.ConversationId, clients: [WireCoreCryptoUniffi.ClientId]) async throws {
         removeClientsFromConversationConversationIdClients_Invocations.append((conversationId: conversationId, clients: clients))
 
         if let error = removeClientsFromConversationConversationIdClients_MockError {
@@ -1769,10 +1715,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var saveX509CredentialEnrollmentCertificateChain_Invocations: [(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String)] = []
     public var saveX509CredentialEnrollmentCertificateChain_MockError: Error?
-    public var saveX509CredentialEnrollmentCertificateChain_MockMethod: ((WireCoreCryptoUniffi.E2eiEnrollment, String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints)?
-    public var saveX509CredentialEnrollmentCertificateChain_MockValue: WireCoreCryptoUniffi.NewCrlDistributionPoints?
+    public var saveX509CredentialEnrollmentCertificateChain_MockMethod: ((WireCoreCryptoUniffi.E2eiEnrollment, String) async throws -> [String]?)?
+    public var saveX509CredentialEnrollmentCertificateChain_MockValue: [String]??
 
-    public func saveX509Credential(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints {
+    public func saveX509Credential(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String) async throws -> [String]? {
         saveX509CredentialEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
 
         if let error = saveX509CredentialEnrollmentCertificateChain_MockError {
@@ -1810,11 +1756,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - updateKeyingMaterial
 
-    public var updateKeyingMaterialConversationId_Invocations: [Data] = []
+    public var updateKeyingMaterialConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var updateKeyingMaterialConversationId_MockError: Error?
-    public var updateKeyingMaterialConversationId_MockMethod: ((Data) async throws -> Void)?
+    public var updateKeyingMaterialConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
 
-    public func updateKeyingMaterial(conversationId: Data) async throws {
+    public func updateKeyingMaterial(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
         updateKeyingMaterialConversationId_Invocations.append(conversationId)
 
         if let error = updateKeyingMaterialConversationId_MockError {
@@ -1830,11 +1776,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - wipeConversation
 
-    public var wipeConversationConversationId_Invocations: [Data] = []
+    public var wipeConversationConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
     public var wipeConversationConversationId_MockError: Error?
-    public var wipeConversationConversationId_MockMethod: ((Data) async throws -> Void)?
+    public var wipeConversationConversationId_MockMethod: ((WireCoreCryptoUniffi.ConversationId) async throws -> Void)?
 
-    public func wipeConversation(conversationId: Data) async throws {
+    public func wipeConversation(conversationId: WireCoreCryptoUniffi.ConversationId) async throws {
         wipeConversationConversationId_Invocations.append(conversationId)
 
         if let error = wipeConversationConversationId_MockError {
@@ -1899,6 +1845,26 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
         }
 
         mock()
+    }
+
+    // MARK: - updateKey
+
+    public var updateKeyPathOldKeyNewKey_Invocations: [(path: String, oldKey: Data, newKey: Data)] = []
+    public var updateKeyPathOldKeyNewKey_MockError: Error?
+    public var updateKeyPathOldKeyNewKey_MockMethod: ((String, Data, Data) async throws -> Void)?
+
+    public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
+        updateKeyPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+
+        if let error = updateKeyPathOldKeyNewKey_MockError {
+            throw error
+        }
+
+        guard let mock = updateKeyPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `updateKeyPathOldKeyNewKey`")
+        }
+
+        try await mock(path, oldKey, newKey)
     }
 
 }
@@ -2004,6 +1970,26 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         }
 
         await mock(epochObserver)
+    }
+
+    // MARK: - updateDatabaseKey
+
+    public var updateDatabaseKey_Invocations: [Void] = []
+    public var updateDatabaseKey_MockError: Error?
+    public var updateDatabaseKey_MockMethod: (() async throws -> Void)?
+
+    public func updateDatabaseKey() async throws {
+        updateDatabaseKey_Invocations.append(())
+
+        if let error = updateDatabaseKey_MockError {
+            throw error
+        }
+
+        guard let mock = updateDatabaseKey_MockMethod else {
+            fatalError("no mock for `updateDatabaseKey`")
+        }
+
+        try await mock()
     }
 
 }
@@ -2380,29 +2366,6 @@ public class MockE2EIServiceInterface: E2EIServiceInterface {
         }
     }
 
-    // MARK: - getOAuthRefreshToken
-
-    public var getOAuthRefreshToken_Invocations: [Void] = []
-    public var getOAuthRefreshToken_MockError: Error?
-    public var getOAuthRefreshToken_MockMethod: (() async throws -> String)?
-    public var getOAuthRefreshToken_MockValue: String?
-
-    public func getOAuthRefreshToken() async throws -> String {
-        getOAuthRefreshToken_Invocations.append(())
-
-        if let error = getOAuthRefreshToken_MockError {
-            throw error
-        }
-
-        if let mock = getOAuthRefreshToken_MockMethod {
-            return try await mock()
-        } else if let mock = getOAuthRefreshToken_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getOAuthRefreshToken`")
-        }
-    }
-
     // MARK: - createDpopToken
 
     public var createDpopTokenNonce_Invocations: [String] = []
@@ -2451,24 +2414,24 @@ public class MockE2EIServiceInterface: E2EIServiceInterface {
 
     // MARK: - getNewOidcChallengeRequest
 
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations: [(idToken: String, refreshToken: String, nonce: String)] = []
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError: Error?
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod: ((String, String, String) async throws -> Data)?
-    public var getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue: Data?
+    public var getNewOidcChallengeRequestIdTokenNonce_Invocations: [(idToken: String, nonce: String)] = []
+    public var getNewOidcChallengeRequestIdTokenNonce_MockError: Error?
+    public var getNewOidcChallengeRequestIdTokenNonce_MockMethod: ((String, String) async throws -> Data)?
+    public var getNewOidcChallengeRequestIdTokenNonce_MockValue: Data?
 
-    public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
-        getNewOidcChallengeRequestIdTokenRefreshTokenNonce_Invocations.append((idToken: idToken, refreshToken: refreshToken, nonce: nonce))
+    public func getNewOidcChallengeRequest(idToken: String, nonce: String) async throws -> Data {
+        getNewOidcChallengeRequestIdTokenNonce_Invocations.append((idToken: idToken, nonce: nonce))
 
-        if let error = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockError {
+        if let error = getNewOidcChallengeRequestIdTokenNonce_MockError {
             throw error
         }
 
-        if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod {
-            return try await mock(idToken, refreshToken, nonce)
-        } else if let mock = getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockValue {
+        if let mock = getNewOidcChallengeRequestIdTokenNonce_MockMethod {
+            return try await mock(idToken, nonce)
+        } else if let mock = getNewOidcChallengeRequestIdTokenNonce_MockValue {
             return mock
         } else {
-            fatalError("no mock for `getNewOidcChallengeRequestIdTokenRefreshTokenNonce`")
+            fatalError("no mock for `getNewOidcChallengeRequestIdTokenNonce`")
         }
     }
 
@@ -3076,378 +3039,6 @@ public class MockEARServiceInterface: EARServiceInterface {
 
 }
 
-public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchAppLock
-
-    public var fetchAppLock_Invocations: [Void] = []
-    public var fetchAppLock_MockMethod: (() -> Feature.AppLock)?
-    public var fetchAppLock_MockValue: Feature.AppLock?
-
-    public func fetchAppLock() -> Feature.AppLock {
-        fetchAppLock_Invocations.append(())
-
-        if let mock = fetchAppLock_MockMethod {
-            return mock()
-        } else if let mock = fetchAppLock_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAppLock`")
-        }
-    }
-
-    // MARK: - storeAppLock
-
-    public var storeAppLock_Invocations: [Feature.AppLock] = []
-    public var storeAppLock_MockMethod: ((Feature.AppLock) -> Void)?
-
-    public func storeAppLock(_ appLock: Feature.AppLock) {
-        storeAppLock_Invocations.append(appLock)
-
-        guard let mock = storeAppLock_MockMethod else {
-            fatalError("no mock for `storeAppLock`")
-        }
-
-        mock(appLock)
-    }
-
-    // MARK: - fetchConferenceCalling
-
-    public var fetchConferenceCalling_Invocations: [Void] = []
-    public var fetchConferenceCalling_MockMethod: (() -> Feature.ConferenceCalling)?
-    public var fetchConferenceCalling_MockValue: Feature.ConferenceCalling?
-
-    public func fetchConferenceCalling() -> Feature.ConferenceCalling {
-        fetchConferenceCalling_Invocations.append(())
-
-        if let mock = fetchConferenceCalling_MockMethod {
-            return mock()
-        } else if let mock = fetchConferenceCalling_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchConferenceCalling`")
-        }
-    }
-
-    // MARK: - storeConferenceCalling
-
-    public var storeConferenceCalling_Invocations: [Feature.ConferenceCalling] = []
-    public var storeConferenceCalling_MockMethod: ((Feature.ConferenceCalling) -> Void)?
-
-    public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
-        storeConferenceCalling_Invocations.append(conferenceCalling)
-
-        guard let mock = storeConferenceCalling_MockMethod else {
-            fatalError("no mock for `storeConferenceCalling`")
-        }
-
-        mock(conferenceCalling)
-    }
-
-    // MARK: - fetchFileSharing
-
-    public var fetchFileSharing_Invocations: [Void] = []
-    public var fetchFileSharing_MockMethod: (() -> Feature.FileSharing)?
-    public var fetchFileSharing_MockValue: Feature.FileSharing?
-
-    public func fetchFileSharing() -> Feature.FileSharing {
-        fetchFileSharing_Invocations.append(())
-
-        if let mock = fetchFileSharing_MockMethod {
-            return mock()
-        } else if let mock = fetchFileSharing_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchFileSharing`")
-        }
-    }
-
-    // MARK: - storeFileSharing
-
-    public var storeFileSharing_Invocations: [Feature.FileSharing] = []
-    public var storeFileSharing_MockMethod: ((Feature.FileSharing) -> Void)?
-
-    public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
-        storeFileSharing_Invocations.append(fileSharing)
-
-        guard let mock = storeFileSharing_MockMethod else {
-            fatalError("no mock for `storeFileSharing`")
-        }
-
-        mock(fileSharing)
-    }
-
-    // MARK: - fetchSelfDeletingMesssages
-
-    public var fetchSelfDeletingMesssages_Invocations: [Void] = []
-    public var fetchSelfDeletingMesssages_MockMethod: (() -> Feature.SelfDeletingMessages)?
-    public var fetchSelfDeletingMesssages_MockValue: Feature.SelfDeletingMessages?
-
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
-        fetchSelfDeletingMesssages_Invocations.append(())
-
-        if let mock = fetchSelfDeletingMesssages_MockMethod {
-            return mock()
-        } else if let mock = fetchSelfDeletingMesssages_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchSelfDeletingMesssages`")
-        }
-    }
-
-    // MARK: - storeSelfDeletingMessages
-
-    public var storeSelfDeletingMessages_Invocations: [Feature.SelfDeletingMessages] = []
-    public var storeSelfDeletingMessages_MockMethod: ((Feature.SelfDeletingMessages) -> Void)?
-
-    public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
-        storeSelfDeletingMessages_Invocations.append(selfDeletingMessages)
-
-        guard let mock = storeSelfDeletingMessages_MockMethod else {
-            fatalError("no mock for `storeSelfDeletingMessages`")
-        }
-
-        mock(selfDeletingMessages)
-    }
-
-    // MARK: - fetchConversationGuestLinks
-
-    public var fetchConversationGuestLinks_Invocations: [Void] = []
-    public var fetchConversationGuestLinks_MockMethod: (() -> Feature.ConversationGuestLinks)?
-    public var fetchConversationGuestLinks_MockValue: Feature.ConversationGuestLinks?
-
-    public func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks {
-        fetchConversationGuestLinks_Invocations.append(())
-
-        if let mock = fetchConversationGuestLinks_MockMethod {
-            return mock()
-        } else if let mock = fetchConversationGuestLinks_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchConversationGuestLinks`")
-        }
-    }
-
-    // MARK: - storeConversationGuestLinks
-
-    public var storeConversationGuestLinks_Invocations: [Feature.ConversationGuestLinks] = []
-    public var storeConversationGuestLinks_MockMethod: ((Feature.ConversationGuestLinks) -> Void)?
-
-    public func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks) {
-        storeConversationGuestLinks_Invocations.append(conversationGuestLinks)
-
-        guard let mock = storeConversationGuestLinks_MockMethod else {
-            fatalError("no mock for `storeConversationGuestLinks`")
-        }
-
-        mock(conversationGuestLinks)
-    }
-
-    // MARK: - fetchClassifiedDomains
-
-    public var fetchClassifiedDomains_Invocations: [Void] = []
-    public var fetchClassifiedDomains_MockMethod: (() -> Feature.ClassifiedDomains)?
-    public var fetchClassifiedDomains_MockValue: Feature.ClassifiedDomains?
-
-    public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
-        fetchClassifiedDomains_Invocations.append(())
-
-        if let mock = fetchClassifiedDomains_MockMethod {
-            return mock()
-        } else if let mock = fetchClassifiedDomains_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchClassifiedDomains`")
-        }
-    }
-
-    // MARK: - storeClassifiedDomains
-
-    public var storeClassifiedDomains_Invocations: [Feature.ClassifiedDomains] = []
-    public var storeClassifiedDomains_MockMethod: ((Feature.ClassifiedDomains) -> Void)?
-
-    public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
-        storeClassifiedDomains_Invocations.append(classifiedDomains)
-
-        guard let mock = storeClassifiedDomains_MockMethod else {
-            fatalError("no mock for `storeClassifiedDomains`")
-        }
-
-        mock(classifiedDomains)
-    }
-
-    // MARK: - fetchDigitalSignature
-
-    public var fetchDigitalSignature_Invocations: [Void] = []
-    public var fetchDigitalSignature_MockMethod: (() -> Feature.DigitalSignature)?
-    public var fetchDigitalSignature_MockValue: Feature.DigitalSignature?
-
-    public func fetchDigitalSignature() -> Feature.DigitalSignature {
-        fetchDigitalSignature_Invocations.append(())
-
-        if let mock = fetchDigitalSignature_MockMethod {
-            return mock()
-        } else if let mock = fetchDigitalSignature_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchDigitalSignature`")
-        }
-    }
-
-    // MARK: - storeDigitalSignature
-
-    public var storeDigitalSignature_Invocations: [Feature.DigitalSignature] = []
-    public var storeDigitalSignature_MockMethod: ((Feature.DigitalSignature) -> Void)?
-
-    public func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature) {
-        storeDigitalSignature_Invocations.append(digitalSignature)
-
-        guard let mock = storeDigitalSignature_MockMethod else {
-            fatalError("no mock for `storeDigitalSignature`")
-        }
-
-        mock(digitalSignature)
-    }
-
-    // MARK: - fetchMLS
-
-    public var fetchMLS_Invocations: [Void] = []
-    public var fetchMLS_MockMethod: (() -> Feature.MLS)?
-    public var fetchMLS_MockValue: Feature.MLS?
-
-    public func fetchMLS() -> Feature.MLS {
-        fetchMLS_Invocations.append(())
-
-        if let mock = fetchMLS_MockMethod {
-            return mock()
-        } else if let mock = fetchMLS_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLS`")
-        }
-    }
-
-    // MARK: - storeMLS
-
-    public var storeMLS_Invocations: [Feature.MLS] = []
-    public var storeMLS_MockMethod: ((Feature.MLS) -> Void)?
-
-    public func storeMLS(_ mls: Feature.MLS) {
-        storeMLS_Invocations.append(mls)
-
-        guard let mock = storeMLS_MockMethod else {
-            fatalError("no mock for `storeMLS`")
-        }
-
-        mock(mls)
-    }
-
-    // MARK: - fetchE2EI
-
-    public var fetchE2EI_Invocations: [Void] = []
-    public var fetchE2EI_MockMethod: (() -> Feature.E2EI)?
-    public var fetchE2EI_MockValue: Feature.E2EI?
-
-    public func fetchE2EI() -> Feature.E2EI {
-        fetchE2EI_Invocations.append(())
-
-        if let mock = fetchE2EI_MockMethod {
-            return mock()
-        } else if let mock = fetchE2EI_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchE2EI`")
-        }
-    }
-
-    // MARK: - storeE2EI
-
-    public var storeE2EI_Invocations: [Feature.E2EI] = []
-    public var storeE2EI_MockMethod: ((Feature.E2EI) -> Void)?
-
-    public func storeE2EI(_ e2ei: Feature.E2EI) {
-        storeE2EI_Invocations.append(e2ei)
-
-        guard let mock = storeE2EI_MockMethod else {
-            fatalError("no mock for `storeE2EI`")
-        }
-
-        mock(e2ei)
-    }
-
-    // MARK: - fetchMLSMigration
-
-    public var fetchMLSMigration_Invocations: [Void] = []
-    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
-    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
-
-    public func fetchMLSMigration() -> Feature.MLSMigration {
-        fetchMLSMigration_Invocations.append(())
-
-        if let mock = fetchMLSMigration_MockMethod {
-            return mock()
-        } else if let mock = fetchMLSMigration_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLSMigration`")
-        }
-    }
-
-    // MARK: - storeMLSMigration
-
-    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
-    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
-
-    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
-        storeMLSMigration_Invocations.append(mlsMigration)
-
-        guard let mock = storeMLSMigration_MockMethod else {
-            fatalError("no mock for `storeMLSMigration`")
-        }
-
-        mock(mlsMigration)
-    }
-
-    // MARK: - fetchChannels
-
-    public var fetchChannels_Invocations: [Void] = []
-    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
-    public var fetchChannels_MockValue: Feature.Channels?
-
-    public func fetchChannels() -> Feature.Channels {
-        fetchChannels_Invocations.append(())
-
-        if let mock = fetchChannels_MockMethod {
-            return mock()
-        } else if let mock = fetchChannels_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchChannels`")
-        }
-    }
-
-    // MARK: - storeChannels
-
-    public var storeChannels_Invocations: [Feature.Channels] = []
-    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
-
-    public func storeChannels(_ channels: Feature.Channels) {
-        storeChannels_Invocations.append(channels)
-
-        guard let mock = storeChannels_MockMethod else {
-            fatalError("no mock for `storeChannels`")
-        }
-
-        mock(channels)
-    }
-
-}
-
 class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle
@@ -3685,6 +3276,411 @@ public class MockLegacyConversationEventProcessorProtocol: LegacyConversationEve
 
 }
 
+public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchAppLock
+
+    public var fetchAppLock_Invocations: [Void] = []
+    public var fetchAppLock_MockMethod: (() -> Feature.AppLock)?
+    public var fetchAppLock_MockValue: Feature.AppLock?
+
+    public func fetchAppLock() -> Feature.AppLock {
+        fetchAppLock_Invocations.append(())
+
+        if let mock = fetchAppLock_MockMethod {
+            return mock()
+        } else if let mock = fetchAppLock_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAppLock`")
+        }
+    }
+
+    // MARK: - storeAppLock
+
+    public var storeAppLock_Invocations: [Feature.AppLock] = []
+    public var storeAppLock_MockMethod: ((Feature.AppLock) -> Void)?
+
+    public func storeAppLock(_ appLock: Feature.AppLock) {
+        storeAppLock_Invocations.append(appLock)
+
+        guard let mock = storeAppLock_MockMethod else {
+            fatalError("no mock for `storeAppLock`")
+        }
+
+        mock(appLock)
+    }
+
+    // MARK: - fetchConferenceCalling
+
+    public var fetchConferenceCalling_Invocations: [Void] = []
+    public var fetchConferenceCalling_MockMethod: (() -> Feature.ConferenceCalling)?
+    public var fetchConferenceCalling_MockValue: Feature.ConferenceCalling?
+
+    public func fetchConferenceCalling() -> Feature.ConferenceCalling {
+        fetchConferenceCalling_Invocations.append(())
+
+        if let mock = fetchConferenceCalling_MockMethod {
+            return mock()
+        } else if let mock = fetchConferenceCalling_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConferenceCalling`")
+        }
+    }
+
+    // MARK: - storeConferenceCalling
+
+    public var storeConferenceCalling_Invocations: [Feature.ConferenceCalling] = []
+    public var storeConferenceCalling_MockMethod: ((Feature.ConferenceCalling) -> Void)?
+
+    public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
+        storeConferenceCalling_Invocations.append(conferenceCalling)
+
+        guard let mock = storeConferenceCalling_MockMethod else {
+            fatalError("no mock for `storeConferenceCalling`")
+        }
+
+        mock(conferenceCalling)
+    }
+
+    // MARK: - fetchFileSharing
+
+    public var fetchFileSharing_Invocations: [Void] = []
+    public var fetchFileSharing_MockMethod: (() -> Feature.FileSharing)?
+    public var fetchFileSharing_MockValue: Feature.FileSharing?
+
+    public func fetchFileSharing() -> Feature.FileSharing {
+        fetchFileSharing_Invocations.append(())
+
+        if let mock = fetchFileSharing_MockMethod {
+            return mock()
+        } else if let mock = fetchFileSharing_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchFileSharing`")
+        }
+    }
+
+    // MARK: - storeFileSharing
+
+    public var storeFileSharing_Invocations: [Feature.FileSharing] = []
+    public var storeFileSharing_MockMethod: ((Feature.FileSharing) -> Void)?
+
+    public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
+        storeFileSharing_Invocations.append(fileSharing)
+
+        guard let mock = storeFileSharing_MockMethod else {
+            fatalError("no mock for `storeFileSharing`")
+        }
+
+        mock(fileSharing)
+    }
+
+    // MARK: - fetchSelfDeletingMessages
+
+    public var fetchSelfDeletingMessages_Invocations: [Void] = []
+    public var fetchSelfDeletingMessages_MockMethod: (() -> Feature.SelfDeletingMessages)?
+    public var fetchSelfDeletingMessages_MockValue: Feature.SelfDeletingMessages?
+
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
+        fetchSelfDeletingMessages_Invocations.append(())
+
+        if let mock = fetchSelfDeletingMessages_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfDeletingMessages_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfDeletingMessages`")
+        }
+    }
+
+    // MARK: - storeSelfDeletingMessages
+
+    public var storeSelfDeletingMessages_Invocations: [Feature.SelfDeletingMessages] = []
+    public var storeSelfDeletingMessages_MockMethod: ((Feature.SelfDeletingMessages) -> Void)?
+
+    public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
+        storeSelfDeletingMessages_Invocations.append(selfDeletingMessages)
+
+        guard let mock = storeSelfDeletingMessages_MockMethod else {
+            fatalError("no mock for `storeSelfDeletingMessages`")
+        }
+
+        mock(selfDeletingMessages)
+    }
+
+    // MARK: - fetchAllowedGlobalOperations
+
+    public var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowedGlobalOperations_MockMethod: (() async -> Feature.AllowedGlobalOperations)?
+    public var fetchAllowedGlobalOperations_MockValue: Feature.AllowedGlobalOperations?
+
+    public func fetchAllowedGlobalOperations() async -> Feature.AllowedGlobalOperations {
+        fetchAllowedGlobalOperations_Invocations.append(())
+
+        if let mock = fetchAllowedGlobalOperations_MockMethod {
+            return await mock()
+        } else if let mock = fetchAllowedGlobalOperations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllowedGlobalOperations`")
+        }
+    }
+
+    // MARK: - storeAllowedGlobalOperations
+
+    public var storeAllowedGlobalOperations_Invocations: [Feature.AllowedGlobalOperations] = []
+    public var storeAllowedGlobalOperations_MockMethod: ((Feature.AllowedGlobalOperations) -> Void)?
+
+    public func storeAllowedGlobalOperations(_ resetMLSConversations: Feature.AllowedGlobalOperations) {
+        storeAllowedGlobalOperations_Invocations.append(resetMLSConversations)
+
+        guard let mock = storeAllowedGlobalOperations_MockMethod else {
+            fatalError("no mock for `storeAllowedGlobalOperations`")
+        }
+
+        mock(resetMLSConversations)
+    }
+
+    // MARK: - fetchConversationGuestLinks
+
+    public var fetchConversationGuestLinks_Invocations: [Void] = []
+    public var fetchConversationGuestLinks_MockMethod: (() -> Feature.ConversationGuestLinks)?
+    public var fetchConversationGuestLinks_MockValue: Feature.ConversationGuestLinks?
+
+    public func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks {
+        fetchConversationGuestLinks_Invocations.append(())
+
+        if let mock = fetchConversationGuestLinks_MockMethod {
+            return mock()
+        } else if let mock = fetchConversationGuestLinks_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationGuestLinks`")
+        }
+    }
+
+    // MARK: - storeConversationGuestLinks
+
+    public var storeConversationGuestLinks_Invocations: [Feature.ConversationGuestLinks] = []
+    public var storeConversationGuestLinks_MockMethod: ((Feature.ConversationGuestLinks) -> Void)?
+
+    public func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks) {
+        storeConversationGuestLinks_Invocations.append(conversationGuestLinks)
+
+        guard let mock = storeConversationGuestLinks_MockMethod else {
+            fatalError("no mock for `storeConversationGuestLinks`")
+        }
+
+        mock(conversationGuestLinks)
+    }
+
+    // MARK: - fetchClassifiedDomains
+
+    public var fetchClassifiedDomains_Invocations: [Void] = []
+    public var fetchClassifiedDomains_MockMethod: (() -> Feature.ClassifiedDomains)?
+    public var fetchClassifiedDomains_MockValue: Feature.ClassifiedDomains?
+
+    public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
+        fetchClassifiedDomains_Invocations.append(())
+
+        if let mock = fetchClassifiedDomains_MockMethod {
+            return mock()
+        } else if let mock = fetchClassifiedDomains_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchClassifiedDomains`")
+        }
+    }
+
+    // MARK: - storeClassifiedDomains
+
+    public var storeClassifiedDomains_Invocations: [Feature.ClassifiedDomains] = []
+    public var storeClassifiedDomains_MockMethod: ((Feature.ClassifiedDomains) -> Void)?
+
+    public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
+        storeClassifiedDomains_Invocations.append(classifiedDomains)
+
+        guard let mock = storeClassifiedDomains_MockMethod else {
+            fatalError("no mock for `storeClassifiedDomains`")
+        }
+
+        mock(classifiedDomains)
+    }
+
+    // MARK: - fetchDigitalSignature
+
+    public var fetchDigitalSignature_Invocations: [Void] = []
+    public var fetchDigitalSignature_MockMethod: (() -> Feature.DigitalSignature)?
+    public var fetchDigitalSignature_MockValue: Feature.DigitalSignature?
+
+    public func fetchDigitalSignature() -> Feature.DigitalSignature {
+        fetchDigitalSignature_Invocations.append(())
+
+        if let mock = fetchDigitalSignature_MockMethod {
+            return mock()
+        } else if let mock = fetchDigitalSignature_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchDigitalSignature`")
+        }
+    }
+
+    // MARK: - storeDigitalSignature
+
+    public var storeDigitalSignature_Invocations: [Feature.DigitalSignature] = []
+    public var storeDigitalSignature_MockMethod: ((Feature.DigitalSignature) -> Void)?
+
+    public func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature) {
+        storeDigitalSignature_Invocations.append(digitalSignature)
+
+        guard let mock = storeDigitalSignature_MockMethod else {
+            fatalError("no mock for `storeDigitalSignature`")
+        }
+
+        mock(digitalSignature)
+    }
+
+    // MARK: - fetchMLS
+
+    public var fetchMLS_Invocations: [Void] = []
+    public var fetchMLS_MockMethod: (() -> Feature.MLS)?
+    public var fetchMLS_MockValue: Feature.MLS?
+
+    public func fetchMLS() -> Feature.MLS {
+        fetchMLS_Invocations.append(())
+
+        if let mock = fetchMLS_MockMethod {
+            return mock()
+        } else if let mock = fetchMLS_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLS`")
+        }
+    }
+
+    // MARK: - storeMLS
+
+    public var storeMLS_Invocations: [Feature.MLS] = []
+    public var storeMLS_MockMethod: ((Feature.MLS) -> Void)?
+
+    public func storeMLS(_ mls: Feature.MLS) {
+        storeMLS_Invocations.append(mls)
+
+        guard let mock = storeMLS_MockMethod else {
+            fatalError("no mock for `storeMLS`")
+        }
+
+        mock(mls)
+    }
+
+    // MARK: - fetchE2EI
+
+    public var fetchE2EI_Invocations: [Void] = []
+    public var fetchE2EI_MockMethod: (() -> Feature.E2EI)?
+    public var fetchE2EI_MockValue: Feature.E2EI?
+
+    public func fetchE2EI() -> Feature.E2EI {
+        fetchE2EI_Invocations.append(())
+
+        if let mock = fetchE2EI_MockMethod {
+            return mock()
+        } else if let mock = fetchE2EI_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EI`")
+        }
+    }
+
+    // MARK: - storeE2EI
+
+    public var storeE2EI_Invocations: [Feature.E2EI] = []
+    public var storeE2EI_MockMethod: ((Feature.E2EI) -> Void)?
+
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        storeE2EI_Invocations.append(e2ei)
+
+        guard let mock = storeE2EI_MockMethod else {
+            fatalError("no mock for `storeE2EI`")
+        }
+
+        mock(e2ei)
+    }
+
+    // MARK: - fetchMLSMigration
+
+    public var fetchMLSMigration_Invocations: [Void] = []
+    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
+    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        fetchMLSMigration_Invocations.append(())
+
+        if let mock = fetchMLSMigration_MockMethod {
+            return mock()
+        } else if let mock = fetchMLSMigration_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigration`")
+        }
+    }
+
+    // MARK: - storeMLSMigration
+
+    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
+    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        storeMLSMigration_Invocations.append(mlsMigration)
+
+        guard let mock = storeMLSMigration_MockMethod else {
+            fatalError("no mock for `storeMLSMigration`")
+        }
+
+        mock(mlsMigration)
+    }
+
+    // MARK: - fetchChannels
+
+    public var fetchChannels_Invocations: [Void] = []
+    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
+    public var fetchChannels_MockValue: Feature.Channels?
+
+    public func fetchChannels() -> Feature.Channels {
+        fetchChannels_Invocations.append(())
+
+        if let mock = fetchChannels_MockMethod {
+            return mock()
+        } else if let mock = fetchChannels_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChannels`")
+        }
+    }
+
+    // MARK: - storeChannels
+
+    public var storeChannels_Invocations: [Feature.Channels] = []
+    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
+
+    public func storeChannels(_ channels: Feature.Channels) {
+        storeChannels_Invocations.append(channels)
+
+        guard let mock = storeChannels_MockMethod else {
+            fatalError("no mock for `storeChannels`")
+        }
+
+        mock(channels)
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
@@ -3761,10 +3757,10 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, context: NotificationContext)] = []
     var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError: Error?
-    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [KeyPackage])?
-    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [KeyPackage]?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [WireDataModel.KeyPackage])?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [WireDataModel.KeyPackage]?
 
-    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
+    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [WireDataModel.KeyPackage] {
         claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, ciphersuite: ciphersuite, excludedSelfClientID: excludedSelfClientID, context: context))
 
         if let error = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError {
@@ -4711,6 +4707,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         mock(delegate)
     }
 
+    // MARK: - setResetBrokenMLSConversationDelegate
+
+    public var setResetBrokenMLSConversationDelegate_Invocations: [any ResetBrokenMLSConversationDelegate] = []
+    public var setResetBrokenMLSConversationDelegate_MockMethod: ((any ResetBrokenMLSConversationDelegate) -> Void)?
+
+    public func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate) {
+        setResetBrokenMLSConversationDelegate_Invocations.append(delegate)
+
+        guard let mock = setResetBrokenMLSConversationDelegate_MockMethod else {
+            fatalError("no mock for `setResetBrokenMLSConversationDelegate`")
+        }
+
+        mock(delegate)
+    }
+
     // MARK: - onNewCRLsDistributionPoints
 
     public var onNewCRLsDistributionPoints_Invocations: [Void] = []
@@ -5284,6 +5295,30 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
     var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
 
+
+}
+
+public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - didCatchBrokenMLSConversation
+
+    public var didCatchBrokenMLSConversationGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
+    public var didCatchBrokenMLSConversationGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        didCatchBrokenMLSConversationGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = didCatchBrokenMLSConversationGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `didCatchBrokenMLSConversationGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
 
 }
 

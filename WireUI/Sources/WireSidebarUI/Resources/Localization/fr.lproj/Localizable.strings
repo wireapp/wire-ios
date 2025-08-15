@@ -24,6 +24,10 @@
 "sidebar.conversation_filter.groups.title" = "Groupes";
 "sidebar.conversation_filter.channels.title" = "Channels";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.unread.title" = "Unread";
+"sidebar.conversation_filter.mentions.title" = "Mentions";
+"sidebar.conversation_filter.replies.title" = "Replies";
+"sidebar.conversation_filter.drafts.title" = "Drafts";
 "sidebar.conversation_filter.folders.title" = "Dossiers";
 "sidebar.conversation_filter.archived.title" = "Archiver";
 

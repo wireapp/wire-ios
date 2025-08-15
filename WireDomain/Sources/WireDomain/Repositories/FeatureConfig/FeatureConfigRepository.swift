@@ -62,52 +62,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func fetchFeatureConfig<T: Decodable>(
-        name: Feature.Name,
-        type: T.Type
-    ) async throws -> LocalFeature<T> {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
-
-        if let config = featureConfig.config {
-            let decoder = JSONDecoder()
-            let config = try decoder.decode(type, from: config)
-
-            return LocalFeature(status: featureConfig.status, config: config)
-        }
-
-        return LocalFeature(status: featureConfig.status, config: nil)
-    }
-
-    func needsToNotifyUser(
-        name: Feature.Name
-    ) async throws -> Bool {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        return await featureConfigLocalStore.featureNeedsNotifyUser(
-            feature: feature
-        )
-    }
-
-    func storeFeatureNeedsToNotifyUser(
-        _ notifyUser: Bool,
-        name: Feature.Name
-    ) async throws {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        await featureConfigLocalStore.storeFeature(
-            needsNotifyUser: notifyUser,
-            feature: feature
-        )
-    }
-
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
@@ -126,6 +80,34 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         await sendFeatureState(for: featureConfig)
     }
 
+    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+        try await fetchFeatureConfig(
+            name: .allowedGlobalOperations,
+            type: Feature.AllowedGlobalOperations.Config.self
+        )
+    }
+
+    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+        try await fetchFeatureConfig(
+            name: .mls,
+            type: Feature.MLS.Config.self
+        )
+    }
+
+    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+        try await fetchFeatureConfig(
+            name: .mlsMigration,
+            type: Feature.MLSMigration.Config.self
+        )
+    }
+
+    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+        try await fetchFeatureConfig(
+            name: .appLock,
+            type: Feature.AppLock.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {
@@ -142,93 +124,83 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             return FeatureState(
                 name: .appLock,
-                isEnabled: appLockFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: appLockFeatureConfig.status == .enabled
             )
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
             return FeatureState(
                 name: .classifiedDomains,
-                isEnabled: classifiedDomainsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: classifiedDomainsFeatureConfig.status == .enabled
             )
 
         case let .conferenceCalling(conferenceCallingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conferenceCalling)
             return FeatureState(
                 name: .conferenceCalling,
-                isEnabled: conferenceCallingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conferenceCallingFeatureConfig.status == .enabled
             )
 
         case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conversationGuestLinks)
             return FeatureState(
                 name: .conversationGuestLinks,
-                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
             )
 
         case let .digitalSignature(digitalSignatureFeatureConfig):
 
             return FeatureState(
                 name: .digitalSignature,
-                isEnabled: digitalSignatureFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: digitalSignatureFeatureConfig.status == .enabled
             )
 
         case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
             return FeatureState(
                 name: .e2ei,
-                isEnabled: endToEndIdentityFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: endToEndIdentityFeatureConfig.status == .enabled
             )
 
         case let .fileSharing(fileSharingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .fileSharing)
             return FeatureState(
                 name: .fileSharing,
-                isEnabled: fileSharingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: fileSharingFeatureConfig.status == .enabled
             )
 
         case let .mls(mlsFeatureConfig):
 
             return FeatureState(
                 name: .mls,
-                isEnabled: mlsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mlsFeatureConfig.status == .enabled
             )
 
         case let .mlsMigration(mLSMigrationFeatureConfig):
 
             return FeatureState(
                 name: .mlsMigration,
-                isEnabled: mLSMigrationFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
 
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .selfDeletingMessages)
             return FeatureState(
                 name: .selfDeletingMessages,
-                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled
             )
 
         case let .channels(channelsFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .channels)
             return FeatureState(
                 name: .channels,
-                isEnabled: channelsFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: channelsFeatureConfig.status == .enabled
+            )
+
+        case let .allowedGlobalOperations(config):
+            return FeatureState(
+                name: .allowedGlobalOperations,
+                isEnabled: config.status == .enabled
             )
 
         case let .unknown(featureName):
@@ -332,6 +304,13 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 channelsFeatureConfig.toDomainModel()
             )
 
+        case let .allowedGlobalOperations(config):
+            return (
+                .allowedGlobalOperations,
+                config.status == .enabled,
+                config.toDomainModel()
+            )
+
         case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"
@@ -341,4 +320,23 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
+    private func fetchFeatureConfig<T: Decodable>(
+        name: Feature.Name,
+        type: T.Type
+    ) async throws -> LocalFeature<T> {
+        let feature = try await featureConfigLocalStore.fetchFeature(
+            name: name
+        )
+
+        let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
+
+        if let config = featureConfig.config {
+            let decoder = JSONDecoder()
+            let config = try decoder.decode(type, from: config)
+
+            return LocalFeature(status: featureConfig.status, config: config)
+        }
+
+        return LocalFeature(status: featureConfig.status, config: nil)
+    }
 }

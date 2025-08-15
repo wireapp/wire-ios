@@ -85,7 +85,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -112,7 +112,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
@@ -169,7 +169,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
@@ -195,7 +195,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .disabled)
             XCTAssertEqual(mls.config, .init())
 
-            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
 
@@ -375,7 +375,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureRepository = FeatureRepository(context: self.syncMOC)
+            let featureRepository = LegacyFeatureRepository(context: self.syncMOC)
 
             let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)

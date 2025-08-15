@@ -28,7 +28,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
     var sut: FeatureConfigRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockMLSClientManager: MockMLSClientManagerProtocol!
-    var featureRepository: FeatureRepository!
+    var featureRepository: LegacyFeatureRepository!
 
     // MARK: - Life cycle
 
@@ -172,7 +172,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         // Then
         syncMOC.performGroupedAndWait {
-            let existingfeature = self.featureRepository.fetchSelfDeletingMesssages()
+            let existingfeature = self.featureRepository.fetchSelfDeletingMessages()
             XCTAssertEqual(existingfeature.status, .enabled)
             XCTAssertEqual(existingfeature.config.enforcedTimeoutSeconds, 60)
         }

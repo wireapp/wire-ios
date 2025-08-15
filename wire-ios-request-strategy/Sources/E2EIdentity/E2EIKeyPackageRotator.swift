@@ -48,7 +48,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let context: NSManagedObjectContext
     private let newKeyPackageCount: UInt32 = 100
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -63,7 +63,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
@@ -120,7 +120,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         try await coreCrypto.perform { context in
             for groupID in mlsConversationsToMigrate {
                 do {
-                    try await context.e2eiRotate(conversationId: groupID.data)
+                    try await context.e2eiRotate(conversationId: groupID.conversationId)
                 } catch {
                     WireLogger.e2ei
                         .warn(
@@ -145,21 +145,20 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
 
         try await coreCrypto.perform { coreCryptoContext in
-            let rawCiphersuite = UInt16(ciphersuite.rawValue)
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
-                ciphersuite: rawCiphersuite,
+                ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
                 amountRequested: self.newKeyPackageCount
-            ).map { $0.base64String() }
+            )
 
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
-                keyPackages: newKeyPackages,
+                keyPackages: newKeyPackages.map { $0.copyBytes().base64EncodedString() },
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)
             try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: rawCiphersuite
+                ciphersuite: ciphersuite.coreCryptoCipherSuite
             )
         }
     }

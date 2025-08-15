@@ -23,7 +23,7 @@ import WireDesign
 
 final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
 
-    typealias ServicesOptionCell = L10n.Localizable.GroupDetails.ServicesOptionsCell
+    typealias ServicesOptionCell = L10n.Localizable.GroupDetails.AppsOptionsCell
 
     var isOn = false {
         didSet {
@@ -33,8 +33,8 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "cell.groupdetails.servicesoptions"
-        title = L10n.Localizable.GroupDetails.ServicesOptionsCell.title
+        accessibilityIdentifier = "cell.groupdetails.appsoptions"
+        title = L10n.Localizable.GroupDetails.AppsOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
         icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)

@@ -601,6 +601,76 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_thenInitiatesReset() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+        }
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(networkError))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        try await messageSender.sendMessage(message: message)
+
+        XCTAssertEqual(arrangement.initiateResetMLSConversationUseCase.invokeGroupIDEpoch_Invocations.count, 1)
+        let invocation = arrangement.initiateResetMLSConversationUseCase.invokeGroupIDEpoch_Invocations.first
+        XCTAssertEqual(invocation?.epoch, 0)
+        XCTAssertEqual(invocation?.groupID, Arrangement.Scaffolding.groupID)
+    }
+
+    func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_AndFeatureFlagIsOff_JustThrows() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+        }
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(networkError))
+            .withResetMLSConversationsFeatureOff()
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
+
+        XCTAssertEqual(arrangement.initiateResetMLSConversationUseCase.invokeGroupIDEpoch_Invocations.count, 0)
+    }
+
     func testThatWhenSendingMlsMessageWithoutMlsService_thenThrowError() async throws {
         // given
         await syncMOC.performGrouped {
@@ -712,11 +782,22 @@ final class MessageSenderTests: MessagingTestBase {
         let mlsService = MockMLSServiceInterface()
         let proteusService = MockProteusServiceInterface()
         let coreDataStack: CoreDataStack
+        let initiateResetMLSConversationUseCase = WireRequestStrategySupport
+            .MockInitiateResetMLSConversationUseCaseProtocol()
+        let featureRepository = MockLegacyFeatureRepositoryInterface()
 
         init(coreDataStack: CoreDataStack) {
             self.coreDataStack = coreDataStack
 
             apiProvider.messageAPIApiVersion_MockValue = messageApi
+
+            initiateResetMLSConversationUseCase.invokeGroupIDEpoch_MockMethod = { _, _ in }
+
+            featureRepository.fetchAllowedGlobalOperations_MockValue = .init(
+                status: .enabled,
+                config: .init(mlsConversationReset: true)
+            )
+
         }
 
         func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
@@ -771,6 +852,14 @@ final class MessageSenderTests: MessagingTestBase {
             coreDataStack.syncContext.performAndWait {
                 coreDataStack.syncContext.mlsService = mlsService
             }
+            return self
+        }
+
+        func withResetMLSConversationsFeatureOff() -> Arrangement {
+            featureRepository.fetchAllowedGlobalOperations_MockValue = .init(
+                status: .disabled,
+                config: .init(mlsConversationReset: false)
+            )
             return self
         }
 
@@ -844,7 +933,9 @@ final class MessageSenderTests: MessagingTestBase {
                     sessionEstablisher: sessionEstablisher,
                     messageDependencyResolver: messageDependencyResolver,
                     context: coreDataStack.syncContext,
-                    incrementalSyncObserver: incrementalSyncObserver
+                    incrementalSyncObserver: incrementalSyncObserver,
+                    initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
+                    featureRepository: featureRepository
                 )
             )
         }
@@ -875,4 +966,8 @@ extension MessageSendError: @retroactive Equatable {
             false
         }
     }
+}
+
+struct MockInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {}
 }

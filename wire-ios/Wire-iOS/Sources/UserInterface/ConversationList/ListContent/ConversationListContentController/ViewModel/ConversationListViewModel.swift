@@ -142,9 +142,14 @@ final class ConversationListViewModel: NSObject {
 
         init(
             kind: Kind,
-            conversationDirectory: ConversationDirectoryType
+            conversationDirectory: ConversationDirectoryType,
+            selectedFilter: ConversationFilter? = nil
         ) {
-            self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.items = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
             self.kind = kind
         }
     }
@@ -266,7 +271,8 @@ final class ConversationListViewModel: NSObject {
 
     private static func newList(
         for kind: Section.Kind,
-        conversationDirectory: ConversationDirectoryType
+        conversationDirectory: ConversationDirectoryType,
+        selectedFilter: ConversationFilter? = nil
     ) -> [SectionItem] {
         let conversationListType: ConversationListType
         switch kind {
@@ -277,7 +283,19 @@ final class ConversationListViewModel: NSObject {
                 kind: kind
             )]
         case .conversations:
-            conversationListType = .unarchived
+            // Check if we have a special filter active
+            switch selectedFilter {
+            case .unread:
+                conversationListType = .unread
+            case .mentions:
+                conversationListType = .mentions
+            case .replies:
+                conversationListType = .replies
+            case .drafts:
+                conversationListType = .drafts
+            case .none, .favorites, .groups, .channels, .oneOnOne, .folder:
+                conversationListType = .unarchived
+            }
         case .contacts:
             conversationListType = .contacts
         case .groups:
@@ -308,7 +326,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     /// Create the section structure
-    private func createSections() -> [Section] {
+    func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
         // Filter sections based on the selected filter
@@ -327,6 +345,9 @@ final class ConversationListViewModel: NSObject {
             } else {
                 []
             }
+        case .unread, .mentions, .replies, .drafts:
+            // These filters have their own conversation lists in the data layer
+            [.conversations]
         case .none:
             [.contactRequests, .conversations]
         }
@@ -334,9 +355,11 @@ final class ConversationListViewModel: NSObject {
         let sections = kinds.map { kind in
             Section(
                 kind: kind,
-                conversationDirectory: conversationDirectory
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
             )
         }
+
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
         return filterUseCase.invoke(query: appliedSearchText)
     }
@@ -356,7 +379,11 @@ final class ConversationListViewModel: NSObject {
         if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             newValue = sections
-            let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            let newList = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
 
             newValue[sectionNumber].items = newList
 
@@ -462,6 +489,14 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .channels
         case .favorites:
             .favorites
+        case .unread:
+            .conversations
+        case .mentions:
+            .conversations
+        case .replies:
+            .conversations
+        case .drafts:
+            .conversations
         case let .folder(label):
             .folder(label: label)
         case .archived:

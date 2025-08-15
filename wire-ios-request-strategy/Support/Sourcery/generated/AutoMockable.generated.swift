@@ -51,6 +51,8 @@ import GenericMessageProtocol
 
 
 
+
+
 public class MockAPIProviderInterface: APIProviderInterface {
 
     // MARK: - Life cycle
@@ -650,6 +652,30 @@ public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtoco
         }
 
         await mock()
+    }
+
+}
+
+public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+
+    public func invoke(groupID: MLSGroupID, epoch: Int64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
     }
 
 }

@@ -32,6 +32,8 @@ import WireDataModel
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    func qualifiedID(for conversation: ZMConversation) async -> QualifiedID?
+
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -254,6 +256,13 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async -> Set<ZMUser>
 
+    /// Fetches local participants from a conversation and maps to [MLSUser].
+    /// - parameter conversation: The related conversation.
+    /// - returns: A list of MLSUser participants.
+    func localParticipantsExcludingSelfAsMLSUsers(
+        in conversation: ZMConversation
+    ) async -> [MLSUser]
+
     /// Whether the conversation is a group conversation.
     /// - parameter conversation: The given conversation.
     /// - returns: A flag indicating whether the conversation is a group one.
@@ -450,6 +459,16 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+
+    /// Stores the conversation history depth (for channels only) locally.
+    /// - Parameters
+    ///     - historyDepth: The history depth (one day, one week, four weeks..)
+
+    func storeConversation(
+        historyDepth: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws
 
     func fetchServerTimeDelta() async -> TimeInterval
 

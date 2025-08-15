@@ -49,13 +49,13 @@ extension ZMUser: UserType {
 
     public var hasDigitalSignatureEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let featureRepository = FeatureRepository(context: context)
+        let featureRepository = LegacyFeatureRepository(context: context)
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
     private func isMLSEnabled() -> Bool {
         guard let context = managedObjectContext else { return false }
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
         return mlsFeature.isEnabled
     }
 
@@ -160,7 +160,7 @@ extension ZMUser: UserType {
             return false
         }
 
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
         return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
@@ -455,15 +455,16 @@ public extension ZMUser {
     }
 
     /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she
-    /// is still a participant of.
+    /// is still a participant of and add a system message to 1:1 conversations.
     @objc
     func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
-        removeFromAllConversations(at: timestamp)
+        removeFromAllGroupConversations(at: timestamp)
+        addSystemMessageInOneOnOneConversation(at: timestamp)
     }
 
     /// Remove user from all group conversations he is a participant of
-    private func removeFromAllConversations(at timestamp: Date) {
+    private func removeFromAllGroupConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
             guard $0.conversation?.conversationType == .group else {
                 return nil
@@ -480,6 +481,20 @@ public extension ZMUser {
             conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
     }
+
+    private func addSystemMessageInOneOnOneConversation(at timestamp: Date) {
+        let conversations: [ZMConversation] = participantRoles.compactMap {
+            guard $0.conversation?.conversationType == .oneOnOne else {
+                return nil
+            }
+            return $0.conversation
+        }
+
+        conversations.forEach { conversation in
+            conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+        }
+    }
+
 }
 
 public extension ZMUser {

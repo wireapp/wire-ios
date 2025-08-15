@@ -26,18 +26,18 @@ public protocol GetIsE2EIdentityEnabledUseCaseProtocol {
 
 public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRespository: FeatureRepositoryInterface
+        featureRespository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRespository
     }
 
     public func invoke() async throws -> Bool {
-        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.perform {
             try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)

@@ -25,7 +25,10 @@ final class MLSTransportImpl: MlsTransport {
     let mlsAPI: MLSAPI
     let conversationEventProcessor: ConversationEventProcessorProtocol
 
-    init(mlsAPI: MLSAPI, conversationEventProcessor: ConversationEventProcessorProtocol) {
+    init(
+        mlsAPI: MLSAPI,
+        conversationEventProcessor: ConversationEventProcessorProtocol
+    ) {
         self.mlsAPI = mlsAPI
         self.conversationEventProcessor = conversationEventProcessor
     }
@@ -64,6 +67,12 @@ final class MLSTransportImpl: MlsTransport {
 
     func sendMessage(mlsMessage: Data) async -> WireCoreCryptoUniffi.MlsTransportResponse {
         .abort(reason: "not implemented")
+    }
+
+    func prepareForTransport(historySecret: WireCoreCryptoUniffi.HistorySecret) async -> WireCoreCryptoUniffi
+        .MlsTransportData {
+        // TODO: [WPB-19197] implement `prepareForTransport(historySecret:)`
+        fatalError("not implemented")
     }
 
 }

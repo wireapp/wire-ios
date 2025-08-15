@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import XCTest
 @testable import Wire
 
@@ -47,18 +48,18 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
     // MARK: - Snapshot Tests
 
     func testChannelHistoryDepthModifiedForSelfUser() {
+        mockConversation.channelHistoryDepth = "13 days"
         let message = makeMessage(
-            messageType: .channelHistoryDepthModified,
-            text: "13 days"
+            messageType: .channelHistoryDepthModified
         )
 
         verify(message: message)
     }
 
     func testChannelHistoryDepthModifiedForOtherUser() {
+        mockConversation.channelHistoryDepth = "13 days"
         let message = makeMessage(
-            messageType: .channelHistoryDepthModified,
-            text: "13 days"
+            messageType: .channelHistoryDepthModified
         )
 
         message.senderUser = otherUser
@@ -66,6 +67,7 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
     }
 
     func testChannelHistoryDepthDisabledForSelfUser() {
+        mockConversation.channelHistoryDepth = nil
         let message = makeMessage(
             messageType: .channelHistoryDepthModified
         )
@@ -74,12 +76,33 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
     }
 
     func testChannelHistoryDepthDisabledForOtherUser() {
+        mockConversation.channelHistoryDepth = nil
         let message = makeMessage(
             messageType: .channelHistoryDepthModified
         )
 
         message.senderUser = otherUser
         verify(message: message)
+    }
+
+    func testChannelHistoryDepthForNewConversation() {
+        mockConversation.isChannel = true
+        mockConversation.conversationType = .group
+        mockConversation.allowGuests = true
+        mockConversation.channelHistoryDepth = "13 days"
+        let selfUser = MockUserType.createDefaultSelfUser()
+        selfUser.teamIdentifier = .mockID1
+        selfUser.canAddUserToConversation = true
+        userSession.selfUser = selfUser
+
+        let message = makeMessage(
+            messageType: .newConversation
+        )
+
+        verify(
+            message: message,
+            snapshotBackgroundColor: SemanticColors.View.backgroundConversationList
+        )
     }
 
     // MARK: - Helpers

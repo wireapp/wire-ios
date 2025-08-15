@@ -18,8 +18,8 @@
 
 // sourcery: AutoMockable
 protocol RecurringActionServiceInterface {
-    func performActionsIfNeeded()
+    func performActionsIfNeeded() async
     func registerAction(_ action: RecurringAction)
-    func forcePerformAction(id: String)
+    func forcePerformAction(id: String) async
     func removeAction(id: String)
 }
