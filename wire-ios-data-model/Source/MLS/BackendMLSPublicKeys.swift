@@ -41,7 +41,7 @@ public struct BackendMLSPublicKeys: Equatable {
             removal.p521
         }
 
-        return [externalSenderData].compactMap(\.self).map(ExternalSenderKey.init)
+        return [externalSenderData].compactMap { $0 }.map(ExternalSenderKey.init)
     }
 
     public struct MLSPublicKeys: Equatable {
