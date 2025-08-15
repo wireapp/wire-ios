@@ -48,7 +48,7 @@ final actor MessagesIndividualUpdatesFactory {
 
         return observer
     }
-    
+
     func makeReactionsObserver(message: MessageModel) -> ReactionsObserverProtocol? {
         guard let objectID = message.objectID as? NSManagedObjectID else {
             return nil

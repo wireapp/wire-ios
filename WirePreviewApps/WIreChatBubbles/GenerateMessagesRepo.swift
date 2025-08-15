@@ -20,11 +20,11 @@ import Foundation
 import WireMessagingDomain
 
 struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
-    
+
     var messagesUpdatesStream: AsyncStream<MessagesUpdate> = AsyncStream { _ in
-        
+
     }
-    
+
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         let base = "This is a line. "
         return (0 ..< 7).map { _ in
@@ -44,4 +44,4 @@ struct GenerateMessagesRepo: LoadConversationMessagesRepositoryProtocol {
     }
 }
 
-extension GenerateMessagesRepo: MonitorMessagesRepositoryProtocol { }
+extension GenerateMessagesRepo: MonitorMessagesRepositoryProtocol {}

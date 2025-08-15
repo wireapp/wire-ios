@@ -45,9 +45,9 @@ final class SenderObserver: SenderNameObserverProtocol {
 }
 
 final class ReactionsObserver: ReactionsObserverProtocol {
-    
+
     var reactionsPublisher: AnyPublisher<ReactionsModel, Never>?
-    
+
     init(
         messageID: NSManagedObjectID,
         viewContext: NSManagedObjectContext

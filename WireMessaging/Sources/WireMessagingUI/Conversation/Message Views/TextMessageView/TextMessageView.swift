@@ -28,7 +28,7 @@ struct TextMessageView: View {
             SenderMessageView(viewModel: viewModel.senderViewModel)
 
             text
-            
+
             ReactionsView(viewModel: viewModel.reactionsViewModel)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

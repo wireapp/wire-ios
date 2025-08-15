@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 import WireMessagingDomain
 
 class ReactionsViewModel: ObservableObject {
@@ -40,8 +40,8 @@ class ReactionsViewModel: ObservableObject {
             self?.state = Self.state(from: reactions)
         }.store(in: &cancellables)
     }
-    
+
     static func state(from reactions: ReactionsModel) -> State {
-        reactions.hasReactions() ? .exists(reactions): .empty
+        reactions.hasReactions() ? .exists(reactions) : .empty
     }
 }

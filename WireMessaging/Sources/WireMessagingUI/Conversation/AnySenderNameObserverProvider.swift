@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireMessagingDomain
 import Combine
+package import WireMessagingDomain
 
 // Need to be wrapped to type eraser as @unchecked Sendable to be able to pass to datasource actor
 // also performs mapping of domain model which is just raw string
@@ -34,7 +34,7 @@ package struct AnyObserverProvider: @unchecked Sendable {
         self.senderNameObserverProvider = senderNameObserverProvider
         self.reactionsObserverProvider = reactionsObserverProvider
     }
-    
+
     func get(for message: MessageModel) -> AnyPublisher<ReactionsModel, Never>? {
         reactionsObserverProvider?(message)?.reactionsPublisher
     }

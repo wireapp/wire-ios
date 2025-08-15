@@ -37,8 +37,7 @@ extension ZMMessage {
     }
 }
 
-
-extension Collection where Element == Reaction {
+extension Collection<Reaction> {
     func toDomain() -> ReactionsModel {
         Array(self)
             .partition(by: \.unicodeValue)

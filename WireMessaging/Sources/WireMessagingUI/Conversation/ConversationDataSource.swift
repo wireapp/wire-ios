@@ -108,7 +108,7 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
             } else {
                 .empty
             }
-            
+
             return ConversationElement.text(
                 TextMessageViewModel(
                     content: AttributedString(stringLiteral: textModel.text ?? ""),

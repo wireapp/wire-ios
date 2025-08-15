@@ -19,9 +19,9 @@
 import SwiftUI
 
 struct ReactionsView: View {
-    
+
     @ObservedObject var viewModel: ReactionsViewModel
-    
+
     var body: some View {
         HStack(spacing: 0) {
             switch viewModel.state {
@@ -29,7 +29,7 @@ struct ReactionsView: View {
                 EmptyView()
             case let .exists(reactions):
                 Text(reactions.map { "\($0.0): \($0.1.count)"
-                    }.joined(separator: " "))
+                }.joined(separator: " "))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -39,6 +39,7 @@ struct ReactionsView: View {
 }
 
 import WireMessagingDomain
+
 #Preview {
     ReactionsView(
         viewModel: .init(
@@ -51,7 +52,7 @@ import WireMessagingDomain
                         handle: "@handle"
                     )
                 ]]
-),
+            ),
             publisher: nil
         )
     )

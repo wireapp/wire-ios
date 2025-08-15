@@ -40,7 +40,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             rootViewController: WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: GenerateMessagesRepo(),
                 senderNameObserverProvider: { _ in nil },
-                reactionsObserverProvider: { _ in nil}
+                reactionsObserverProvider: { _ in nil }
             )
         )
         window?.makeKeyAndVisible()

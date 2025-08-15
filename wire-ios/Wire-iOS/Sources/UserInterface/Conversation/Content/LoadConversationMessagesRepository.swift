@@ -154,4 +154,3 @@ extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate
         // no-op
     }
 }
-

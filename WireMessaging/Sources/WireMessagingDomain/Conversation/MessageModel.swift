@@ -30,7 +30,7 @@ public struct MessageModel: Sendable {
     public let sender: UserModel?
     public let kind: Kind
     public let reactions: ReactionsModel
-    
+
     public init(
         objectID: any Sendable,
         sender: UserModel?,
@@ -42,7 +42,7 @@ public struct MessageModel: Sendable {
         self.kind = kind
         self.reactions = reactions
     }
-    
+
     public func hasReactions() -> Bool {
         reactions.hasReactions()
     }
@@ -61,8 +61,8 @@ public struct TextMessageModel: Sendable {
     }
 }
 
-extension ReactionsModel {
-    public func hasReactions() -> Bool {
+public extension ReactionsModel {
+    func hasReactions() -> Bool {
         contains { _, users in
             !users.isEmpty
         }
