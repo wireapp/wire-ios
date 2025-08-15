@@ -52,6 +52,10 @@ final class ConversationMessageCellTableViewAdapter<
     private var trailing: NSLayoutConstraint!
     private var bottom: NSLayoutConstraint!
 
+    private var existingHorizontalConstraints: [NSLayoutConstraint] = []
+    private var ownMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+    private var othersMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+
     private var longPressGesture: UILongPressGestureRecognizer!
     private var doubleTapGesture: UITapGestureRecognizer!
     private var singleTapGesture: UITapGestureRecognizer!
@@ -75,9 +79,30 @@ final class ConversationMessageCellTableViewAdapter<
         self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
 
+        self.existingHorizontalConstraints = [leading, trailing]
+        self.ownMessagesHorizontalConstraints = [
+            cellView.leadingAnchor
+                .constraint(
+                    greaterThanOrEqualTo: contentView.leadingAnchor,
+                    constant: ChatBubbleLayoutConfig.ownMessageMinimumLeadingDistance
+                ),
+            cellView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            )
+        ]
+        self.othersMessagesHorizontalConstraints = [
+            cellView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: conversationHorizontalMargins.left
+            ),
+            cellView.trailingAnchor.constraint(
+                lessThanOrEqualTo: contentView.trailingAnchor,
+                constant: -ChatBubbleLayoutConfig.otherMessageMinimumTrailingDistance
+            )
+        ]
+
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom
         ])
@@ -106,6 +131,29 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = cellDescription?.topMargin ?? 0
         bottom.constant = cellDescription?.bottomMargin ?? 0
+
+        // Deactivate all horizontal constraints before applying new ones.
+        NSLayoutConstraint.deactivate(
+            ownMessagesHorizontalConstraints +
+                othersMessagesHorizontalConstraints
+        )
+
+        if cellDescription?.shouldAlignMessageContentForBubbles == true {
+            if cellDescription?.message?.isSentBySelfUser == true {
+                // Right-align the bubble content
+                NSLayoutConstraint.activate(ownMessagesHorizontalConstraints)
+            } else {
+                // Left-align the bubble content
+                NSLayoutConstraint.activate(othersMessagesHorizontalConstraints)
+            }
+        } else {
+            setupExistingLayout()
+        }
+        setNeedsLayout()
+    }
+
+    private func setupExistingLayout() {
+        NSLayoutConstraint.activate(existingHorizontalConstraints)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
