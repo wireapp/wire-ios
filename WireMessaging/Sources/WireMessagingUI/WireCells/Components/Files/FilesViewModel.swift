@@ -16,6 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
-"conversation.wireCells.files.close" = "Close files";
+import SwiftUI
+
+@MainActor
+package class FilesViewModel: ObservableObject {
+
+    package init() {}
+
+}
