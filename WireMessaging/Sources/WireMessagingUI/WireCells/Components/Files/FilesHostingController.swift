@@ -16,6 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
-"conversation.wireCells.files.close" = "Close files";
+package import SwiftUI
+import WireDesign
+
+package final class FilesHostingController: UIHostingController<FilesView> {
+
+    private typealias Strings = L10n.Localizable.Conversation.WireCells
+    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
+    private let viewModel: FilesViewModel
+
+    public init(viewModel: FilesViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: FilesView(viewModel: viewModel))
+    }
+
+    @available(*, unavailable)
+    @MainActor @objc
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+}
