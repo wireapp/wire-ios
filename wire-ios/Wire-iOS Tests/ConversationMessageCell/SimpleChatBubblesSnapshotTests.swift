@@ -50,6 +50,15 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
         let message = createMessage(isFromSelfUser: true, color: .purple)
         verify(message: message, record: record)
     }
+    
+    func testSelfMessageCollapsed() {
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        
+        let message = createMessage(isFromSelfUser: true)
+        verify(message: message, record: record)
+        
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
+    }
 
     func testOtherMessage() {
         let message = createMessage(isFromSelfUser: false)
