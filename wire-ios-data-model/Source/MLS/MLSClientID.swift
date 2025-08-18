@@ -32,8 +32,8 @@ public struct MLSClientID: Equatable, Hashable {
         "\(userID):\(clientID)@\(domain)"
     }
 
-    public var data: Data? {
-        rawValue.data(using: .utf8)
+    public var data: Data {
+        Data(rawValue.utf8)
     }
 
     // MARK: - Life cycle

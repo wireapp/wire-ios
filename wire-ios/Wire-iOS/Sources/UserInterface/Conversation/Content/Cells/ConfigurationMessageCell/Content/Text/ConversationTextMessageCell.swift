@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
@@ -49,9 +50,20 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return view
     }()
 
+    private var container: ConversationMessageContainerView?
+
     var isSelected = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            let isOwnMessage = message.isSentBySelfUser
+            let userColor = message.senderUser?.accentColor ?? .clear
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            configureTextColor(forOwnMessage: isOwnMessage)
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -76,14 +88,32 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setup() {
         messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(messageTextView)
+
+        container = .init(content: messageTextView)
+        if let container {
+            container.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(container)
+        }
+
         configureConstraints()
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let insets: UIEdgeInsets
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            insets = ConversationMessageContainerView.bubbleEdgeInsets
+        } else {
+            let margins = conversationHorizontalMargins
+            insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        }
         messageTextView.fitIn(view: self, insets: insets)
+    }
+
+    private func configureTextColor(forOwnMessage ownMessage: Bool) {
+        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
+        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        messageTextView.textColor = ownMessage ? ownColor : otherColor
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -95,6 +125,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             messageTextView.accessibilityIdentifier = "Message"
         }
         accessibilityLabel = messageTextView.attributedText.string
+
+        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
@@ -134,8 +167,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
-        isAccessibilityElement = true
-        accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
 }
@@ -153,6 +188,8 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+
+    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

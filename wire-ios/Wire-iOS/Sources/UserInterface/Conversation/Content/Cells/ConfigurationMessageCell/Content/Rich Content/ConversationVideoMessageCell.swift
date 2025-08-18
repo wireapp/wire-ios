@@ -56,9 +56,15 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        containerView.shape = .rounded(radius: 12)
+        let cornerRadius: CGFloat = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            12
+        }
+
+        containerView.shape = .rounded(radius: cornerRadius)
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.clipsToBounds = true
@@ -72,14 +78,31 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
+        let existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
+        let chatBubbleConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        ]
 
         NSLayoutConstraint.activate([
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -147,6 +170,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     weak var message: ZMConversationMessage? {
         didSet {

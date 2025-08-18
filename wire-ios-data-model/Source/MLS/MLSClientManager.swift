@@ -67,7 +67,13 @@ public final class MLSClientManager: MLSClientManagerProtocol {
 
     // MARK: - Private Implentation
 
+    private var didPerformMLSClientUpdate = false
+
     private func performsMLSClientUpdates() async {
+        guard !didPerformMLSClientUpdate else {
+            return
+        }
+
         do {
             try await mlsService.performPendingJoins()
         } catch {
@@ -75,6 +81,7 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         }
         await mlsService.uploadKeyPackagesIfNeeded()
         await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+        didPerformMLSClientUpdate = true
     }
 
     private func createMLSClient(mlsClientID: MLSClientID) async {

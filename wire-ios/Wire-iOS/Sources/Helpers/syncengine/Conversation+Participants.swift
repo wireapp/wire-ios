@@ -75,6 +75,9 @@ extension ZMConversation {
                 }
 
                 try await service.addParticipants(users, to: conversation)
+                try await syncContext.perform {
+                    try syncContext.save()
+                }
             } catch {
                 Flow.addParticipants.fail(error)
                 await MainActor.run {

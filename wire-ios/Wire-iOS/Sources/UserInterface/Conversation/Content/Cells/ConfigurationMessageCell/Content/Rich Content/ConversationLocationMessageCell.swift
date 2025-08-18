@@ -74,7 +74,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.layer.cornerRadius = 12
+        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            12
+        }
         containerView.clipsToBounds = true
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
@@ -110,7 +114,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margins = conversationHorizontalMargins
-        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let containerInsets: UIEdgeInsets = DeveloperFlag.chatBubblesSimple.isOn
+            ? .zero
+            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
@@ -210,6 +216,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
