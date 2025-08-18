@@ -630,7 +630,7 @@ public final class ZMUserSession: NSObject {
         guard let clientSessionComponent else {
             throw ZMUserSessionError.selfClientNotReady
         }
-        
+
         let featureConfigRepository = clientSessionComponent.featureConfigRepository
         guard await featureConfigRepository.isFeatureEnabled(
             .consumableNotifications

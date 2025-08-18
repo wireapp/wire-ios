@@ -227,7 +227,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-    
+
     // MARK: - V11
 
     func testGetFeatureConfigs_SuccessResponse_200_V11_And_Next_Versions_Then_Verify_Requests() async throws {
@@ -633,7 +633,7 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
-        
+
         static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
             .consumableNotifications(.init(status: .enabled))
         ]

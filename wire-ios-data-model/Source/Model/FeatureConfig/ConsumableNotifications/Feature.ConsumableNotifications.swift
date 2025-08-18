@@ -21,15 +21,15 @@ import Foundation
 public extension Feature {
 
     struct ConsumableNotifications: Codable {
-        
+
         // MARK: - Properties
-        
+
         /// Whether the consumable notifications feature is available to the user.
-        
+
         public let status: Status
-        
+
         // MARK: - Life cycle
-        
+
         public init(status: Feature.Status = .disabled) {
             self.status = status
         }

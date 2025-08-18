@@ -120,13 +120,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         case let .consumableNotifications(config):
-                .consumableNotifications(
-                    StorableBasicFeatureConfig(
-                        status: StorableFeatureConfigStatus(
-                            config.status
-                        )
+            .consumableNotifications(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
                     )
                 )
+            )
         }
     }
 
@@ -224,11 +224,11 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 )
             )
         case let .consumableNotifications(config):
-                .consumableNotifications(
-                    ConsumableNotificationsFeatureConfig(
-                        status: config.status.toAPIModel()
-                    )
+            .consumableNotifications(
+                ConsumableNotificationsFeatureConfig(
+                    status: config.status.toAPIModel()
                 )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }

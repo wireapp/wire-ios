@@ -221,7 +221,7 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
-        
+
         if let consumableNotifications = payload.consumableNotifications {
             repository.storeConsumableNotifications(
                 Feature.ConsumableNotifications(
@@ -315,7 +315,7 @@ struct FeatureConfigsPayloadProcessor {
         case .channels:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
             repository.storeChannels(.init(status: response.status, config: response.config))
-            
+
         case .consumableNotifications:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConsumableNotifications(.init(status: response.status))

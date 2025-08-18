@@ -57,7 +57,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             }
         }
     }
-    
+
     public func isFeatureEnabled(
         _ feature: Feature.Name
     ) async -> Bool {
@@ -217,7 +217,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .allowedGlobalOperations,
                 isEnabled: config.status == .enabled
             )
-            
+
         case let .consumableNotifications(config):
             return FeatureState(
                 name: .consumableNotifications,
@@ -331,7 +331,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 config.status == .enabled,
                 config.toDomainModel()
             )
-            
+
         case let .consumableNotifications(config):
             return (
                 .consumableNotifications,

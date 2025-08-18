@@ -181,7 +181,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         if let emailVerificationCode = credentials?.emailVerificationCode {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
-        
+
         let isConsumableNotificationsEnabled = syncMOC.performAndWait {
             Feature.fetch(name: .consumableNotifications, context: syncMOC)?.status == .enabled
         }

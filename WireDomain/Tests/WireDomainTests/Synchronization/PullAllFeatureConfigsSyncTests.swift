@@ -115,7 +115,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             storeInvocations[9].config as? Feature.E2EI.Config,
             Scaffolding.endToEndIdentityFeatureConfig.toDomainModel()
         )
-        
+
         XCTAssertEqual(storeInvocations[10].name, .consumableNotifications)
         XCTAssertTrue(storeInvocations[10].isEnabled)
         XCTAssertNil(storeInvocations[10].config)
@@ -198,7 +198,7 @@ private enum Scaffolding {
         crlProxy: "https://example.com",
         useProxyOnMobile: true
     )
-    
+
     static let consumableNotificationsFeatureConfig = ConsumableNotificationsFeatureConfig(
         status: .enabled
     )

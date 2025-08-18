@@ -53,7 +53,7 @@ public protocol FeatureConfigRepositoryProtocol {
     func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config>
     func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
     func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
-    
+
     func isFeatureEnabled(
         _ feature: Feature.Name
     ) async -> Bool

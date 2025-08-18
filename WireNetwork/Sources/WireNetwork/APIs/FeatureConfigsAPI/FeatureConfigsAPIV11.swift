@@ -128,8 +128,11 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
             resetMLSConversations: allowedGlobalOperations.config.mlsConversationReset
         )
         featureConfigs.append(.allowedGlobalOperations(allowedGlobalOperations))
-        
-        let consumableNotifications = ConsumableNotificationsFeatureConfig(status: consumableNotifications.status.toAPIModel())
+
+        let consumableNotifications = ConsumableNotificationsFeatureConfig(
+            status: consumableNotifications.status
+                .toAPIModel()
+        )
         featureConfigs.append(.consumableNotifications(consumableNotifications))
 
         return featureConfigs

@@ -503,7 +503,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             logger.error("failed to encode Feature.Channels.Config: \(error)")
         }
     }
-    
+
     public func fetchConsumableNotifications() -> Feature.ConsumableNotifications {
         guard let feature = Feature.fetch(name: .consumableNotifications, context: context) else {
             return .init()
@@ -511,7 +511,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
         return .init(status: feature.status)
     }
-    
+
     public func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications) {
         Feature.updateOrCreate(havingName: .consumableNotifications, in: context) {
             $0.status = consumableNotifications.status
@@ -558,7 +558,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .channels:
                 storeChannels(.init())
-                
+
             case .consumableNotifications:
                 storeConsumableNotifications(.init())
             }
