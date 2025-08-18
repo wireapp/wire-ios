@@ -42,7 +42,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Public
 
-    func pullFeatureConfigs() async throws {
+    public func pullFeatureConfigs() async throws {
         let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
         for featureConfig in featureConfigs {
@@ -73,11 +73,11 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
-    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+    public func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func updateFeatureConfig(
+    public func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
         guard let featureConfigInfo = getFeatureConfigInfo(
@@ -95,28 +95,28 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         await sendFeatureState(for: featureConfig)
     }
 
-    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+    public func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
         try await fetchFeatureConfig(
             name: .allowedGlobalOperations,
             type: Feature.AllowedGlobalOperations.Config.self
         )
     }
 
-    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+    public func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
         try await fetchFeatureConfig(
             name: .mls,
             type: Feature.MLS.Config.self
         )
     }
 
-    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+    public func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
         try await fetchFeatureConfig(
             name: .mlsMigration,
             type: Feature.MLSMigration.Config.self
         )
     }
 
-    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+    public func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
         try await fetchFeatureConfig(
             name: .appLock,
             type: Feature.AppLock.Config.self

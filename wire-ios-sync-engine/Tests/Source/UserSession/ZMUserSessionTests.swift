@@ -148,9 +148,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
-        defer {
-            DeveloperFlag.storage = .standard
+        syncMOC.performAndWait {
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
         }
         let userClient = await syncMOC.perform {
             self.createSelfClient(capabilities: [.consumableNotifications, .legalholdConsent])

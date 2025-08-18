@@ -22,7 +22,7 @@ import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitates access to feature configs related domain objects.
-protocol FeatureConfigRepositoryProtocol {
+public protocol FeatureConfigRepositoryProtocol {
 
     /// Pulls feature configs from the server and stores them locally.
     ///
@@ -55,6 +55,6 @@ protocol FeatureConfigRepositoryProtocol {
     func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
     
     func isFeatureEnabled(
-        _ feature: Feature
+        _ feature: Feature.Name
     ) async -> Bool
 }

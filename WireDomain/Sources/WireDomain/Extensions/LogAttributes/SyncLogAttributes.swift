@@ -28,7 +28,6 @@ public extension LogAttributes {
         static let incremental = "incremental"
         static let v1 = "v1"
         static let v2 = "v2"
-        static let v3 = "v3"
     }
 
     // MARK: Notification Service Extension
@@ -110,14 +109,14 @@ public extension LogAttributes {
     ) -> Self {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncVersion: Constants.v2,
             .public: true
         ]
     }
 
     static var syncAttributes: Self {
         [
-            .syncVersion: syncVersion,
+            .syncVersion: Constants.v2,
             .public: true
         ]
     }
@@ -128,14 +127,10 @@ public extension LogAttributes {
     ) -> Self {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncVersion: Constants.v2,
             .syncPhase: phase,
             .public: true
         ]
-    }
-
-    static var syncVersion: String {
-        DeveloperFlag.consumableNotifications.isOn ? Constants.v3 : Constants.v2
     }
 }
 

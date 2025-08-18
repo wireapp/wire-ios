@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireDomain
 
 enum UserClientRequestError: Error {
     case noPreKeys
@@ -48,7 +49,16 @@ extension UserClientRequestFactory {
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.consumableNotifications.isOn, apiVersion >= .v9 {
+        
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+        
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled
+        
+        if isConsumableNotificationsEnabled, apiVersion >= .v9 {
             capabilities.append("consumable-notifications")
         }
 
@@ -176,9 +186,17 @@ extension UserClientRequestFactory {
             throw UserClientRequestError.clientNotRegistered
         }
         // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
+        
+        let featureConfigRepository = LegacyFeatureRepository(
+            context: client.managedObjectContext!
+        )
+        
+        let isConsumableNotificationsEnabled = featureConfigRepository
+            .fetchConsumableNotifications()
+            .status == .enabled
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.consumableNotifications.isOn, apiVersion >= .v9 {
+        if isConsumableNotificationsEnabled {
             capabilities.append("consumable-notifications")
         }
 

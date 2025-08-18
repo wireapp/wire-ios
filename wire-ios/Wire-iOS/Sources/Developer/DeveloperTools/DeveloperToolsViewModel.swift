@@ -309,7 +309,13 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
-
+        
+        if let context = selfClient?.managedObjectContext {
+            let isConsumableNotificationsEnabled = userSession?.featureRepository.fetchConsumableNotifications().status == .enabled
+            
+            items.append(.text(TextItem(title: "Is consumable notifications enabled ?", value: isConsumableNotificationsEnabled ? "Yes" : "No")))
+        }
+        
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
             self?.stopFederatingFoma()

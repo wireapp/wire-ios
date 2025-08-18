@@ -597,6 +597,7 @@ public final class ZMUserSession: NSObject {
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
+            featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -629,8 +630,12 @@ public final class ZMUserSession: NSObject {
         guard let clientSessionComponent else {
             throw ZMUserSessionError.selfClientNotReady
         }
+        
+        let featureConfigRepository = clientSessionComponent.featureConfigRepository
+        guard await featureConfigRepository.isFeatureEnabled(
+            .consumableNotifications
+        ) else { return }
 
-        guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
