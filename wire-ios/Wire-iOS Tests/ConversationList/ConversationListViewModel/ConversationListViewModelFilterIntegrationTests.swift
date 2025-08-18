@@ -28,8 +28,8 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
     private var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
     private var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
@@ -37,7 +37,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
     }
 
     override func tearDown() {

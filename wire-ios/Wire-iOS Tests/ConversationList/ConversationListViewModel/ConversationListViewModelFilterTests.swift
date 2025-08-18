@@ -27,10 +27,10 @@ final class ConversationListViewModelFilterTests: XCTestCase {
     var mockUserSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
     }

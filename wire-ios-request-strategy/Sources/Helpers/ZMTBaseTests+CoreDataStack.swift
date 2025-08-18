@@ -30,7 +30,7 @@ extension ZMTBaseTest {
     func createCoreDataStack(
         userIdentifier: UUID = UUID(),
         inMemoryStore: Bool = true
-    ) -> CoreDataStack {
+    ) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let stack = CoreDataStack(
             account: account,
@@ -39,22 +39,23 @@ extension ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await stack.load()
 
         return stack
     }
 
     @objc
-    func setupCaches(in coreDataStack: CoreDataStack) {
+    func setupCaches(in coreDataStack: CoreDataStack) async {
         let userImageCache = UserImageLocalCache(location: nil)
         let fileAssetCache = FileAssetCache(location: sharedContainerURL)
 
-        coreDataStack.viewContext.zm_userImageCache = userImageCache
-        coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
+        await coreDataStack.viewContext.perform {
+            coreDataStack.viewContext.zm_userImageCache = userImageCache
+            coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
 
-        coreDataStack.syncContext.performGroupedAndWait {
+        }
+
+        await coreDataStack.syncContext.perform {
             coreDataStack.syncContext.zm_userImageCache = userImageCache
             coreDataStack.syncContext.zm_fileAssetCache = fileAssetCache
         }

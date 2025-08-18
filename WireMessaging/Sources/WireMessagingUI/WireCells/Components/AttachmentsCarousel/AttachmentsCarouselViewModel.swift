@@ -19,26 +19,84 @@
 import Foundation
 import UIKit
 public import WireMessagingDomain
+import QuickLookThumbnailing
 import UniformTypeIdentifiers
+import WireLogging
 
 @MainActor
 public final class AttachmentsCarouselViewModel: ObservableObject {
 
+    private enum Constants {
+        static let thumbnailSize = CGSize(width: 74, height: 74)
+    }
+
+    private let thumbnailGenerator: any ThumbnailGenerator
+
+    private var drafts: [WireCellsDraft] = []
+    private var thumbnails: [UUID: UIImage] = [:]
+    private var generatingThumbnailIDs: Set<UUID> = []
+
     @Published private(set) var items: [AttachmentsCarouselItem]
 
-    public init(items: [AttachmentsCarouselItem]) {
+    public convenience init() {
+        self.init(items: [])
+    }
+
+    init(items: [AttachmentsCarouselItem], thumbnailGenerator: any ThumbnailGenerator = QLThumbnailGenerator.shared) {
         self.items = items
+        self.thumbnailGenerator = thumbnailGenerator
     }
 
     public func update(with drafts: [WireCellsDraft]) {
-        items = drafts.compactMap { AttachmentsCarouselItem(draft: $0) }
+        self.drafts = drafts
+        refreshItems()
+
+        for draft in drafts {
+            Task { await generateThumbnail(for: draft) }
+        }
+
+        // In general there is no reason to keep thumbnails cached too long as the same thumbnail is unlikely to be
+        // needed again once a message has been sent and re-generating thumbnails is cheap. When `drafts` is empty, its
+        // a good time to remove them.
+        if drafts.isEmpty {
+            thumbnails.removeAll()
+        }
+    }
+
+    private func refreshItems() {
+        items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.versionID]) }
+    }
+
+    private func generateThumbnail(for draft: WireCellsDraft) async {
+        guard
+            !generatingThumbnailIDs.contains(draft.versionID),
+            thumbnails[draft.versionID] == nil,
+            let fileType = draft.fileType,
+            fileType.conforms(to: .image) || fileType.conforms(to: .audiovisualContent), !fileType.conforms(to: .audio)
+        else { return }
+
+        generatingThumbnailIDs.insert(draft.versionID)
+
+        do {
+            let thumbnail = try await thumbnailGenerator.generateThumbnail(
+                fileAt: draft.assetURL,
+                size: Constants.thumbnailSize,
+                scale: UIScreen.main.scale
+            )
+            thumbnails[draft.versionID] = thumbnail
+            refreshItems()
+        } catch {
+            WireLogger.wireCells.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
+        }
+
+        generatingThumbnailIDs.remove(draft.versionID)
     }
 
 }
 
 private extension AttachmentsCarouselItem {
 
-    init?(draft: WireCellsDraft) {
+    init?(draft: WireCellsDraft, thumbnail: UIImage?) {
         let state: AttachmentsCarouselItem.State
         switch draft.status {
         case let .uploading(progress):
@@ -56,7 +114,7 @@ private extension AttachmentsCarouselItem {
         self.init(
             id: draft.nodeID,
             state: state,
-            kind: AttachmentsCarouselItem.Kind(draft.fileType),
+            kind: AttachmentsCarouselItem.Kind(draft.fileType, thumbnail: thumbnail),
             name: name,
             fileExtension: fileExtension,
             size: draft.bytes.formatted(.byteCount(style: .decimal)),
@@ -76,18 +134,18 @@ private extension AttachmentsCarouselItem {
 
 private extension AttachmentsCarouselItem.Kind {
 
-    init(_ value: UTType?) {
+    init(_ value: UTType?, thumbnail: UIImage?) {
         guard let value else {
             self = .document
             return
         }
 
         if value.conforms(to: .image) {
-            self = .image(thumbnail: nil) // FIXME: [WPB-19266] Set image thumbnail data
-        } else if value.conforms(to: .audiovisualContent) {
-            self = .video(thumbnail: nil) // FIXME: [WPB-19267] Set video thumbnail data
-        } else if value.conforms(to: .audio) {
+            self = .image(thumbnail: thumbnail)
+        } else if value.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
             self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
+        } else if value.conforms(to: .audiovisualContent) {
+            self = .video(thumbnail: thumbnail)
         } else {
             self = .document
         }

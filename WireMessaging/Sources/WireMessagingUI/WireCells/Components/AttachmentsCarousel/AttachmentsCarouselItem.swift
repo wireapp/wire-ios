@@ -18,27 +18,27 @@
 
 public import UIKit
 
-public struct AttachmentsCarouselItem: Identifiable {
+public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
 
-    public enum State {
+    public enum State: Sendable, Equatable {
         case uploading(progress: Double)
         case uploaded
         case failed
     }
 
-    public enum Kind {
+    public enum Kind: Sendable, Equatable {
         case image(thumbnail: UIImage?)
         case video(thumbnail: UIImage?)
         case audio(samples: [Double]?)
         case document
     }
 
-    public let id: UUID
-    public let state: State
-    public let kind: Kind
-    public let name: String
-    public let fileExtension: String?
-    public let size: String
-    let fileIcon: FileIcon
+    public var id: UUID
+    public var state: State
+    public var kind: Kind
+    public var name: String
+    public var fileExtension: String?
+    public var size: String
+    var fileIcon: FileIcon
 
 }

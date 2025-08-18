@@ -49,8 +49,9 @@ extension SessionManager: UNUserNotificationCenterDelegate {
             -> Void
     ) {
         // route to user session
-        handleNotification(with: notification.userInfo) { userSession in
-            userSession.userNotificationCenter(
+        Task {
+            let userSession = await loadSession(userInfo: notification.userInfo)
+            userSession?.userNotificationCenter(
                 center,
                 willPresent: notification,
                 withCompletionHandler: completionHandler
@@ -67,8 +68,13 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // Resume background task creation.
         BackgroundActivityFactory.shared.resume()
         // route to user session
-        handleNotification(with: response.notification.userInfo) { userSession in
-            userSession.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+        Task { @MainActor in
+            let userSession = await loadSession(userInfo: response.notification.userInfo)
+            userSession?.userNotificationCenter(
+                center,
+                didReceive: response,
+                withCompletionHandler: completionHandler
+            )
         }
     }
 
@@ -86,13 +92,15 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
     }
 
-    func handleNotification(with userInfo: NotificationUserInfo, block: @escaping (ZMUserSession) -> Void) {
+    func loadSession(userInfo: NotificationUserInfo) async -> ZMUserSession? {
         guard
             let selfID = userInfo.selfUserID,
             let account = accountManager.account(with: selfID)
-        else { return }
+        else {
+            return nil
+        }
 
-        withSession(for: account, perform: block)
+        return await withSession(for: account)
     }
 
     fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {

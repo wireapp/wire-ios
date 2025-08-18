@@ -32,11 +32,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
     @MainActor
     override func setUp() async throws {
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
-    }
 
-    override func setUp() {
-
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         mockConversation = createTeamGroupConversation()
 
