@@ -19,6 +19,7 @@
 @preconcurrency import CoreData
 @preconcurrency import WireDataModel
 import WireMessagingDomain
+import WireLogging
 
 final class LoadConversationMessagesRepository: NSObject, LoadConversationMessagesRepositoryProtocol,
     MonitorMessagesRepositoryProtocol {
@@ -76,6 +77,7 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
 
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         guard let conversation = await getConversation() else {
+            WireLogger.conversation.error("Failed to fetch conversation to load more messages")
             return []
         }
 

@@ -163,8 +163,6 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
 
     // MARK: - Handle notifications about something changed
 
-    // here will be subscribed to any messages updates notifications
-    // and start processing them
     private func subscribeToNotifications() {
         observeTask = Task { [weak self] in
             guard let self else { return }
