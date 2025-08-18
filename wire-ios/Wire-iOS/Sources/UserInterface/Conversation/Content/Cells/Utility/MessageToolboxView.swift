@@ -69,9 +69,6 @@ final class MessageToolboxView: UIView {
         return stack
     }()
 
-    private var existingConstraints: [NSLayoutConstraint] = []
-    private var chatBubbleConstraints: [NSLayoutConstraint] = []
-
     lazy var font = FontSpec.smallRegularFont.font!
     lazy var color = SemanticColors.Label.textMessageDetails
 
@@ -231,7 +228,7 @@ final class MessageToolboxView: UIView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
-        existingConstraints = [
+        let existingConstraints = [
             separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.topAnchor.constraint(equalTo: topAnchor),
@@ -249,7 +246,7 @@ final class MessageToolboxView: UIView {
             )
         ]
 
-        chatBubbleConstraints = [
+        let chatBubbleConstraints = [
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),

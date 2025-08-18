@@ -52,9 +52,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    private var existingConstraints: [NSLayoutConstraint] = []
-    private var chatBubbleConstraints: [NSLayoutConstraint] = []
-
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
@@ -97,7 +94,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
-        existingConstraints = [
+        let existingConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
@@ -105,7 +102,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             )
         ]
 
-        chatBubbleConstraints = [
+        let chatBubbleConstraints = [
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(
                 equalTo: trailingAnchor

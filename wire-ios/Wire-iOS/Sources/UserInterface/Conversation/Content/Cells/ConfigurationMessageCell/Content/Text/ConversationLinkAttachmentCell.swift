@@ -50,9 +50,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     var currentAttachment: LinkAttachment?
     var attachmentViewHeightRatioConstraint: NSLayoutConstraint?
 
-    private var existingConstraints: [NSLayoutConstraint] = []
-    private var chatBubbleConstraints: [NSLayoutConstraint] = []
-
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -84,11 +81,11 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         widthConstraint.priority = .defaultHigh
 
         let margins = conversationHorizontalMargins
-        existingConstraints = [
+        let existingConstraints = [
             attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right)
         ]
-        chatBubbleConstraints = [
+        let chatBubbleConstraints = [
             attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
         ]
