@@ -29,6 +29,9 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
+    private var restNetworkService: NetworkService?
+    private var webSocketNetworkService: NetworkService?
+    private var backendMetadata: ResolvedBackendMetadata?
     private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
     private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
@@ -68,6 +71,9 @@ struct ZMUserSessionBuilder {
 
     func build() -> ZMUserSession {
         guard
+            let restNetworkService,
+            let webSocketNetworkService,
+            let backendMetadata,
             let apiServiceFactory,
             let currentAppVersion,
             let currentBuildNumber,
@@ -102,6 +108,9 @@ struct ZMUserSessionBuilder {
 
         return ZMUserSession(
             userId: userId,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: webSocketNetworkService,
+            backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -136,6 +145,9 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
+        restNetworkService: NetworkService,
+        webSocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
         wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
@@ -231,6 +243,9 @@ struct ZMUserSessionBuilder {
 
         // setup builder
 
+        self.restNetworkService = restNetworkService
+        self.webSocketNetworkService = webSocketNetworkService
+        self.backendMetadata = backendMetadata
         self.apiServiceFactory = apiServiceFactory
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber

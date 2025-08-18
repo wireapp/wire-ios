@@ -328,7 +328,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
-            authenticatedSessionFactory.reachability = reachability
         }
     }
 
@@ -437,7 +436,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
-            reachability: reachability,
             minTLSVersion: minTLSVersion
         )
 
@@ -1169,10 +1167,22 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
+        let restNetworkService: NetworkService
+        let webSocketNetworkService: NetworkService
+        do {
+            (restNetworkService, webSocketNetworkService) = try networkStack.networkServices
+        } catch {
+            // TODO: throw error
+            fatalError()
+        }
+
         let userSession = startBackgroundSession(
             for: account,
             coreDataStack: coreDataStack,
             journal: journal,
+            restNetworkService: restNetworkService,
+            webSocketNetworkService: webSocketNetworkService,
+            backendMetadata: newMetadata,
             backendEnvironment: backendEnvironment,
             proxyCredentials: proxyCredentials,
             logFilesProvider: logFilesProvider
@@ -1384,6 +1394,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         for account: Account,
         coreDataStack: CoreDataStack,
         journal: Journal,
+        restNetworkService: NetworkService,
+        webSocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         backendEnvironment: BackendEnvironment2,
         proxyCredentials: WireNetwork.ProxyCredentials?,
         logFilesProvider: LogFilesProviding
@@ -1395,6 +1408,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let newSession = authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
+            restNetworkService: restNetworkService,
+            webSocketNetworkService: webSocketNetworkService,
+            backendMetadata: backendMetadata,
             backendEnvironment: backendEnvironment,
             proxyCredentials: proxyCredentials,
             configuration: sessionConfig,

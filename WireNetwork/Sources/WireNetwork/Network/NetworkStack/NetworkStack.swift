@@ -34,7 +34,7 @@ public final class NetworkStack {
     private var state: NetworkState
     private var backendMetadata: ResolvedBackendMetadata?
 
-    var networkServices: (rest: NetworkService, webSocket: NetworkService) {
+    public var networkServices: (rest: NetworkService, webSocket: NetworkService) {
         get throws {
             switch state {
             case .awaitingProxyCredentials:

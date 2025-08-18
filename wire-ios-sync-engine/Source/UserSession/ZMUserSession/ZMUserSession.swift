@@ -400,6 +400,9 @@ public final class ZMUserSession: NSObject {
 
     init(
         userId: UUID,
+        restNetworkService: NetworkService,
+        websocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
@@ -463,11 +466,9 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
-            backendEnvironment: backendEnvironment,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
-            localDomain: WireTransport.BackendInfo.domain!,
-            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: websocketNetworkService,
+            backendMetaData: backendMetadata,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,

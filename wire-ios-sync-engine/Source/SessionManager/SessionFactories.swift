@@ -32,7 +32,6 @@ open class AuthenticatedSessionFactory {
 
     // TODO: delete
     var environment: WireTransport.BackendEnvironment
-    var reachability: Reachability
 
     let minTLSVersion: String?
 
@@ -45,7 +44,6 @@ open class AuthenticatedSessionFactory {
         environment: WireTransport.BackendEnvironment,
         proxyUsername: String?,
         proxyPassword: String?,
-        reachability: Reachability,
         minTLSVersion: String?
     ) {
         self.currentAppVersion = currentAppVersion
@@ -56,13 +54,15 @@ open class AuthenticatedSessionFactory {
         self.environment = environment
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
-        self.reachability = reachability
         self.minTLSVersion = minTLSVersion
     }
 
     func session(
         for account: Account,
         coreDataStack: CoreDataStack,
+        restNetworkService: NetworkService,
+        webSocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         backendEnvironment: BackendEnvironment2,
         proxyCredentials: WireNetwork.ProxyCredentials?,
         configuration: ZMUserSession.Configuration,
@@ -142,6 +142,9 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
+            restNetworkService: restNetworkService,
+            webSocketNetworkService: webSocketNetworkService,
+            backendMetadata: backendMetadata,
             apiServiceFactory: apiServiceFactory,
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
