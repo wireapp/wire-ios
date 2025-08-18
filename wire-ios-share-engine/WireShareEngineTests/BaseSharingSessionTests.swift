@@ -66,8 +66,8 @@ class BaseTest: ZMTBaseTest {
     var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
@@ -90,9 +90,7 @@ class BaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await coreDataStack.load()
 
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         transportSession = mockTransport.mockedTransportSession()
@@ -132,13 +130,18 @@ class BaseTest: ZMTBaseTest {
 
         let context = coreDataStack.syncContext
 
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = accountIdentifier
-        selfUser.domain = "example.com"
+        await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.remoteIdentifier = self.accountIdentifier
+            selfUser.domain = "example.com"
 
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = "selfClient"
-        selfClient.user = selfUser
+            let selfClient = UserClient.insertNewObject(in: context)
+            selfClient.remoteIdentifier = "selfClient"
+            selfClient.user = selfUser
+
+            context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
@@ -152,11 +155,6 @@ class BaseTest: ZMTBaseTest {
         mockProteusService = MockProteusServiceInterface()
         mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
-
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
-        context.saveOrRollback()
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     override func tearDown() {

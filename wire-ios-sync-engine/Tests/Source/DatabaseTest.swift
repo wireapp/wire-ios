@@ -28,6 +28,10 @@ class DatabaseTest: ZMTBaseTest {
         true
     }
 
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMOC.dispatchGroupContext?.groups ?? []) + (syncMOC.dispatchGroupContext?.groups ?? [])
+    }
+
     var uiMOC: NSManagedObjectContext {
         coreDataStack!.viewContext
     }
@@ -61,7 +65,7 @@ class DatabaseTest: ZMTBaseTest {
         }
     }
 
-    private func createCoreDataStack() -> CoreDataStack {
+    private func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
         let stack = CoreDataStack(
             account: account,
@@ -70,32 +74,31 @@ class DatabaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
-
+        try await stack.load()
         return stack
     }
 
-    private func configureCaches() {
+    private func configureCaches() async {
         let fileAssetCache = FileAssetCache(location: cacheURL)
         let userImageCache = UserImageLocalCache(location: nil)
 
-        uiMOC.zm_fileAssetCache = fileAssetCache
-        uiMOC.zm_userImageCache = userImageCache
-
-        syncMOC.performGroupedAndWait {
-            self.syncMOC.zm_fileAssetCache = fileAssetCache
+        await uiMOC.perform {
+            self.uiMOC.zm_fileAssetCache = fileAssetCache
             self.uiMOC.zm_userImageCache = userImageCache
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.zm_fileAssetCache = fileAssetCache
+            self.syncMOC.zm_userImageCache = userImageCache
         }
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataStack = createCoreDataStack()
+        coreDataStack = try await createCoreDataStack()
 
-        configureCaches()
+        await configureCaches()
     }
 
     override func tearDown() {

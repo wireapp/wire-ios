@@ -74,9 +74,14 @@
 {
     [super setUp];
 
-    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                       inMemoryStore:YES];
-    
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
     self.user1 = [ZMUser insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.user1.name = @"Hans";
     self.user2 = [ZMUser insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];

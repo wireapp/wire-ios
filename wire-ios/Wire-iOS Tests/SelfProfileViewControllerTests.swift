@@ -36,11 +36,11 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         DeveloperFlag.multibackend.enable(false)
         snapshotHelper = .init()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         SelfUser.provider = coreDataFixture.selfUserProvider
         selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())

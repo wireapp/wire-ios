@@ -258,7 +258,7 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
-    ) throws {
+    ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -275,12 +275,7 @@ public final class SharingSession {
             throw InitializationError.needsMigration
         }
 
-        var storeError: Error?
-        coreDataStack.loadStores { _ in
-            storeError = storeError
-        }
-
-        guard storeError == nil else { throw InitializationError.missingSharedContainer }
+        try await coreDataStack.load()
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.

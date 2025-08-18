@@ -59,9 +59,8 @@ class ActiveConversationPage: PageModel {
         return messages
     }
 
-    func sendMessage(_ message: String) -> ActiveConversationPage {
-        inputMessageField.tap()
-        inputMessageField.typeText(message)
+    func sendMessage(_ message: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
         return self
     }

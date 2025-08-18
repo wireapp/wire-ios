@@ -28,10 +28,10 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
     private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
     }
 
     override func tearDown() {
