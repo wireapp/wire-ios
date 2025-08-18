@@ -38,10 +38,10 @@ final class DatabaseMigrationTests_ForceSyncResources: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testThatItPerformsMigrationFrom119Version_ToCurrentModelVersion() throws {
+    func testThatItPerformsMigrationFrom119Version_ToCurrentModelVersion() async throws {
         let initialVersion = "2.119.0"
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { _ in
                 // nothing

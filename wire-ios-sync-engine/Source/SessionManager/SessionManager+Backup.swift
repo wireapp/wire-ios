@@ -27,40 +27,41 @@ extension SessionManager {
 
     // MARK: - Export
 
-    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
+    @MainActor
+    public func backupActiveAccount(password: String) async throws -> URL {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
             let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
             let activeUserSession
         else {
-            return completion(.failure(CreateLegacyBackupError.noActiveAccountForExport))
+            throw CreateLegacyBackupError.noActiveAccountForExport
         }
 
-        CoreDataStack.backupLocalStorage(
-            accountIdentifier: userId,
-            clientIdentifier: clientId,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup,
-            databaseKey: activeUserSession.managedObjectContext.databaseKey,
-            completion: { [dispatchGroup] result in
-                switch result {
-                case .success:
-                    break
-                case .failure:
-                    activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
-                }
+        let backupInfo: CoreDataStack.BackupInfo
+        do {
+            backupInfo = try await CoreDataStack.backupLocalStorage(
+                accountIdentifier: userId,
+                clientIdentifier: clientId,
+                applicationContainer: sharedContainerURL,
+                databaseKey: activeUserSession.managedObjectContext.databaseKey
+            )
+        } catch {
+            activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)
+            throw error
+        }
 
-                SessionManager.handle(
-                    result: result,
-                    password: password,
-                    accountId: userId,
-                    dispatchGroup: dispatchGroup,
-                    completion: completion,
-                    handle: handle
-                )
-            }
-        )
+        let task = Task.detached {
+            // 1. Compress the backup
+            let compressed = try SessionManager.compress(backup: backupInfo)
+
+            // 2. Encrypt the backup
+            let url = SessionManager.targetBackupURL(for: backupInfo, handle: handle)
+            try SessionManager.encrypt(from: compressed, to: url, password: password, accountId: userId)
+            return url
+        }
+
+        return try await task.value
     }
 
     private static func handle(

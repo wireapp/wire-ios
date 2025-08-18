@@ -42,8 +42,13 @@
 {
     [super setUp];
 
-    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                       inMemoryStore:YES];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
     self.conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.conversation1.conversationType = ZMConversationTypeGroup;

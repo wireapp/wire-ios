@@ -38,11 +38,11 @@ final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testMigratingToMessagingStore_from2_115_resetsIsPendingInitialFetch() throws {
+    func testMigratingToMessagingStore_from2_115_resetsIsPendingInitialFetch() async throws {
         let conversationID1 = UUID()
         let conversationID2 = UUID()
 
-        try migrationHelper.migrateStoreToCurrentVersion(
+        try await migrationHelper.migrateStoreToCurrentVersion(
             sourceVersion: "2.115.0",
             preMigrationAction: { context in
                 modelHelper.createGroupConversation(id: conversationID1, in: context)
