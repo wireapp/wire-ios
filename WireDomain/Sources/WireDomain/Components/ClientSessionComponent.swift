@@ -119,6 +119,11 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
+    public lazy var accountsAPI = AccountsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+
+
     private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
         networkService: restNetworkService
     ).makeAPI()
@@ -131,7 +136,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var mlsAPI = MLSAPIBuilder(
+    public lazy var mlsAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -155,7 +160,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var userClientsAPI = UserClientsAPIBuilder(
+    public lazy var userClientsAPI = UserClientsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -183,13 +188,13 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    private lazy var conversationLocalStore = ConversationLocalStore(
+    public lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
         messageLocalStore: messageLocalStore
     )
 
-    private lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
+    public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
         context: syncContext
     )
 
@@ -209,7 +214,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    private lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
+    public lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
@@ -731,6 +736,28 @@ public final class ClientSessionComponent {
         pushSupportedProtocolsSync: pushSupportedProtocolsSync,
         calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase
     )
+
+    public func createGroupConversationUseCase() -> some CreateGroupConversationUseCaseProtocol {
+        CreateGroupConversationUseCase(
+            api: conversationsAPI,
+            store: conversationLocalStore,
+            mlsService: mlsService,
+            context: syncContext,
+            isFederationEnabled: backendMetadata.isFederationEnabled,
+            isMLSEnabled: isMLSEnabled
+        )
+
+    }
+
+    public func createChannelUseCase() -> some CreateChannelUseCaseProtocol {
+        CreateChannelUseCase(
+            api: conversationsAPI,
+            store: conversationLocalStore,
+            mlsService: mlsService,
+            context: syncContext,
+            isFederationEnabled: backendMetadata.isFederationEnabled
+        )
+    }
 
     // MARK: - Other
 

@@ -213,17 +213,9 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
-
-        let context = session.syncContext
-
-        let channelUseCase = makeCreateChannelUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
-        )
+        guard let channelUseCase = userSession.createChannelUseCase else {
+            return
+        }
 
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
@@ -283,42 +275,6 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
 }
 
 private extension WireConversationChannelCreationFormViewController {
-    func makeCreateChannelUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
-        context: NSManagedObjectContext
-    ) -> any CreateChannelUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(
-            context: context
-        )
-
-        let userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
-
-        let store = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let mlsService = context.performAndWait {
-            context.mlsService
-        }
-
-        return CreateChannelUseCase(
-            api: conversationsAPI,
-            store: store,
-            mlsService: mlsService,
-            context: context,
-            isFederationEnabled: BackendInfo.isFederationEnabled
-        )
-    }
 
     private func showGenericErrorAlert() {
         typealias ConnectionError = L10n.Localizable.Error.Connection

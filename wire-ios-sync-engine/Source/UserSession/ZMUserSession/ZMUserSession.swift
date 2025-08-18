@@ -33,8 +33,6 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
 
-public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
-
 enum ZMUserSessionError: Error {
     case selfClientNotReady
 }
@@ -52,13 +50,6 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     public private(set) var coreDataStack: CoreDataStack!
-    private let apiServiceFactory: APIServiceFactory
-    public var apiService: APIServiceProtocol? {
-        guard let clientId = selfUserClient?.remoteIdentifier else {
-            return nil
-        }
-        return apiServiceFactory(clientId, userId)
-    }
 
     let application: ZMApplication
     let flowManager: FlowManagerType
@@ -372,6 +363,14 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    public var createGroupConversationUseCase: (some CreateGroupConversationUseCaseProtocol)? {
+        clientSessionComponent?.createGroupConversationUseCase()
+    }
+
+    public var createChannelUseCase: (some CreateChannelUseCaseProtocol)? {
+        clientSessionComponent?.createChannelUseCase()
+    }
+
     private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
@@ -406,7 +405,6 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping APIServiceFactory,
         application: ZMApplication,
         currentAppVersion: String,
         currentBuildNumber: String,
@@ -432,7 +430,6 @@ public final class ZMUserSession: NSObject {
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) {
-        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
@@ -1293,41 +1290,29 @@ extension ZMUserSession: SyncAgentDelegate {
         context: NSManagedObjectContext,
         conversationRepository: ConversationRepositoryProtocol
     ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+        guard let clientSessionComponent else {
+            fatalError()
+        }
 
-        return InitiateResetMLSConversationUseCase
-            .make(
-                apiService: apiService,
-                apiVersion: apiVersion,
-                mlsService: mlsService,
-                conversationRepository: conversationRepository,
-                context: context,
+        return InitiateResetMLSConversationUseCase(
+            api: clientSessionComponent.mlsAPI,
+            mlsService: mlsService,
+            conversationLocalStore: clientSessionComponent.conversationLocalStore,
+            conversationRepository: clientSessionComponent.conversationRepository,
+            lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
             )
-    }
-
-    private func makeApiServiceAndAPIVersion() -> (APIServiceProtocol, WireNetwork.APIVersion) {
-        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
-            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-        }
-        guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
-            WireLogger.backend.warn("apiVersion not resolved")
-
-            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-
-        }
-
-        return (apiService, wireAPIVersion)
+        )
     }
 
     private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
-        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+        guard let clientSessionComponent else {
+            fatalError()
+        }
 
-        return PullSelfUserClientsSync.make(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
+        return PullSelfUserClientsSync(
+            api: clientSessionComponent.userClientsAPI,
+            store: clientSessionComponent.userClientsLocalStore
         )
     }
 

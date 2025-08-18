@@ -32,7 +32,6 @@ struct ZMUserSessionBuilder {
     private var restNetworkService: NetworkService?
     private var webSocketNetworkService: NetworkService?
     private var backendMetadata: ResolvedBackendMetadata?
-    private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
     private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
     private var currentAppVersion: String?
@@ -74,7 +73,6 @@ struct ZMUserSessionBuilder {
             let restNetworkService,
             let webSocketNetworkService,
             let backendMetadata,
-            let apiServiceFactory,
             let currentAppVersion,
             let currentBuildNumber,
             let appLock,
@@ -114,7 +112,6 @@ struct ZMUserSessionBuilder {
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
-            apiServiceFactory: apiServiceFactory,
             application: application,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
@@ -148,9 +145,7 @@ struct ZMUserSessionBuilder {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
-        apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
-        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
         currentAppVersion: String,
         currentBuildNumber: String,
         application: any ZMApplication,
@@ -246,7 +241,6 @@ struct ZMUserSessionBuilder {
         self.restNetworkService = restNetworkService
         self.webSocketNetworkService = webSocketNetworkService
         self.backendMetadata = backendMetadata
-        self.apiServiceFactory = apiServiceFactory
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
@@ -271,7 +265,6 @@ struct ZMUserSessionBuilder {
         self.transportSession = transportSession
         self.userId = userId
         self.minTLSVersion = minTLSVersion
-        self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
         self.logFilesProvider = logFilesProvider
     }

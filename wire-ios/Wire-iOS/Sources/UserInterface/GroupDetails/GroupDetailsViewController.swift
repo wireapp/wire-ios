@@ -551,8 +551,13 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentAccessOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation,
-              let session = ZMUserSession.shared() else { return }
+        guard
+            let conversation = conversation as? ZMConversation,
+            let session = ZMUserSession.shared(),
+            let clientSessionComponent = session.clientSessionComponent
+        else {
+            return
+        }
 
         let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
         case .unset: .none
@@ -560,32 +565,10 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         case .everyone: .everyone
         }
 
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            return WireLogger.conversation.warn("Failed to create API service")
-        }
-
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(context: session.syncContext)
-
-        let conversationsLocalStore = ConversationLocalStore(
-            context: session.syncContext,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let featureConfigLocalStore = FeatureConfigLocalStore(
-            context: session.syncContext
-        )
-
         let repository = ChannelRepository(
-            api: conversationsAPI,
-            conversationLocalStore: conversationsLocalStore,
-            featureConfigLocalStore: featureConfigLocalStore,
+            api: clientSessionComponent.conversationsAPI,
+            conversationLocalStore: clientSessionComponent.conversationsLocalStore,
+            featureConfigLocalStore: clientSessionComponent.featureConfigLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )
@@ -600,38 +583,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentChannelHistoryOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation,
-              let session = ZMUserSession.shared() else { return }
-
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            return WireLogger.conversation.warn("Failed to create API service")
+        guard
+            let conversation = conversation as? ZMConversation,
+            let session = ZMUserSession.shared(),
+            let clientSessionComponent = session.clientSessionComponent
+        else {
+            return
         }
-
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(context: session.syncContext)
-
-        let conversationsLocalStore = ConversationLocalStore(
-            context: session.syncContext,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let featureConfigLocalStore = FeatureConfigLocalStore(
-            context: session.syncContext
-        )
 
         // TODO: [WPB-18396] - get correct stored value in DB
         let channelHistoryDepth = conversation.channelHistoryDepth
 
         let repository = ChannelRepository(
-            api: conversationsAPI,
-            conversationLocalStore: conversationsLocalStore,
-            featureConfigLocalStore: featureConfigLocalStore,
+            api: clientSessionComponent.conversationsAPI,
+            conversationLocalStore: clientSessionComponent.conversationsLocalStore,
+            featureConfigLocalStore: clientSessionComponent.featureConfigLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )
