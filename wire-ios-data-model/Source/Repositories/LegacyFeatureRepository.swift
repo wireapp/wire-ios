@@ -47,6 +47,8 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
     func fetchChannels() -> Feature.Channels
     func storeChannels(_ channels: Feature.Channels)
+    func fetchConsumableNotifications() -> Feature.ConsumableNotifications
+    func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
 }
 
 /// **Do not use it for new code, use FeatureConfigRepository instead**
@@ -501,6 +503,20 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             logger.error("failed to encode Feature.Channels.Config: \(error)")
         }
     }
+    
+    public func fetchConsumableNotifications() -> Feature.ConsumableNotifications {
+        guard let feature = Feature.fetch(name: .consumableNotifications, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
+    }
+    
+    public func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications) {
+        Feature.updateOrCreate(havingName: .consumableNotifications, in: context) {
+            $0.status = consumableNotifications.status
+        }
+    }
 
     // MARK: - Methods
 
@@ -542,6 +558,9 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .channels:
                 storeChannels(.init())
+                
+            case .consumableNotifications:
+                storeConsumableNotifications(.init())
             }
         }
     }

@@ -202,6 +202,12 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .allowedGlobalOperations,
                 isEnabled: config.status == .enabled
             )
+            
+        case let .consumableNotifications(config):
+            return FeatureState(
+                name: .consumableNotifications,
+                isEnabled: config.status == .enabled
+            )
 
         case let .unknown(featureName):
             logger.warn(
@@ -310,6 +316,13 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 config.status == .enabled,
                 config.toDomainModel()
             )
+            
+        case let .consumableNotifications(config):
+            return (
+                .consumableNotifications,
+                config.status == .enabled,
+                nil
+            )
 
         case let .unknown(featureName):
             logger.warn(
@@ -322,7 +335,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private func fetchFeatureConfig<T: Decodable>(
         name: Feature.Name,
-        type: T.Type
+        type: T.Type?
     ) async throws -> LocalFeature<T> {
         let feature = try await featureConfigLocalStore.fetchFeature(
             name: name
@@ -330,7 +343,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
 
-        if let config = featureConfig.config {
+        if let type, let config = featureConfig.config {
             let decoder = JSONDecoder()
             let config = try decoder.decode(type, from: config)
 
