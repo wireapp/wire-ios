@@ -32,9 +32,19 @@
 - (void)setUp {
     [super setUp];
 
-    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                       inMemoryStore:YES];
-    [self setupCachesIn:self.coreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
+    [self.dispatchGroup enter];
+    [self setupCachesIn:self.coreDataStack completionHandler:^{
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
     [self setUpLinkPreviewMessage];
     self.linkPreviewMessageExcludedByPredicate.nonce = nil;

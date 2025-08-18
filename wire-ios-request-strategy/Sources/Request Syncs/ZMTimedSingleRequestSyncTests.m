@@ -53,8 +53,14 @@
 - (void)setUp {
     [super setUp];
 
-    self.coreDataStack = self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
-                                                                            inMemoryStore:YES];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithUserIdentifier:[NSUUID UUID] inMemoryStore:YES completionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
     self.dummyRequest = [ZMTransportRequest requestGetFromPath:self.name apiVersion:0];
     self.dummyResponse = [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:0];
     self.transcoderCallsToRequest = 0;
