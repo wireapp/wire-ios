@@ -18,8 +18,8 @@
 
 @preconcurrency import CoreData
 @preconcurrency import WireDataModel
-import WireMessagingDomain
 import WireLogging
+import WireMessagingDomain
 
 final class LoadConversationMessagesRepository: NSObject, LoadConversationMessagesRepositoryProtocol,
     MonitorMessagesRepositoryProtocol {
