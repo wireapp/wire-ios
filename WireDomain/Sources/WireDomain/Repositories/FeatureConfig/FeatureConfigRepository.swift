@@ -21,7 +21,7 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
+public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Properties
 
@@ -55,6 +55,21 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
                 await sendFeatureState(for: featureConfig)
             }
+        }
+    }
+    
+    public func isFeatureEnabled(
+        _ feature: Feature.Name
+    ) async -> Bool {
+        do {
+            let feature = try await featureConfigLocalStore.fetchFeature(
+                name: feature
+            )
+            return await featureConfigLocalStore.isFeatureEnabled(
+                feature: feature
+            )
+        } catch {
+            return false
         }
     }
 
