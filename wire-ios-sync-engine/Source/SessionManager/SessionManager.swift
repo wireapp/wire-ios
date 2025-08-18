@@ -1132,8 +1132,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             fatalError()
         }
 
-        // TODO: configure legacy transport session with environment and metadata.
-
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
@@ -1171,15 +1169,16 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        // TODO: perform metadata migrations if needed
-
-        // TODO: inject environment
         let userSession = startBackgroundSession(
             for: account,
-            with: coreDataStack,
+            coreDataStack: coreDataStack,
             journal: journal,
+            backendEnvironment: backendEnvironment,
+            proxyCredentials: proxyCredentials,
             logFilesProvider: logFilesProvider
         )
+
+        // TODO: perform metadata migrations if needed
 
         let migrationService = userSession.makeAppVersionMigrationService()
         if migrationService.isMigrationNeeded {
@@ -1380,12 +1379,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // Creates the user session for @c account given, calls @c completion when done.
     @MainActor
     private func startBackgroundSession(
         for account: Account,
-        with coreDataStack: CoreDataStack,
+        coreDataStack: CoreDataStack,
         journal: Journal,
+        backendEnvironment: BackendEnvironment2,
+        proxyCredentials: WireNetwork.ProxyCredentials?,
         logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
@@ -1395,6 +1395,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let newSession = authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
+            backendEnvironment: backendEnvironment,
+            proxyCredentials: proxyCredentials,
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
@@ -2145,6 +2147,88 @@ private extension WireNetwork.APIVersion {
         case .v10:
             self = .v10
         }
+    }
+
+}
+
+extension WireTransport.BackendEnvironment {
+
+    convenience init(_ backendEnvironment: BackendEnvironment2) {
+        let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in
+                TrustData(
+                    certificateKey: pinnedKey.key,
+                    rawCertificateKey: pinnedKey.rawKey,
+                    hosts: pinnedKey.hosts.map { host in
+                        switch host {
+                        case let .endsWith(value):
+                            TrustData.Host(
+                                rule: .endsWith,
+                                value: value
+                            )
+                        case let .equals(value):
+                            TrustData.Host(
+                                rule: .equals,
+                                value: value
+                            )
+                        }
+                    }
+                )
+        }
+
+        let environmentType: EnvironmentType
+        switch backendEnvironment.environmentType {
+        case .default:
+            environmentType = .default
+        case .staging:
+            environmentType = .staging
+        case .anta:
+            environmentType = .anta
+        case .bella:
+            environmentType = .bella
+        case .chala:
+            environmentType = .chala
+        case .diya:
+            environmentType = .diya
+        case .elna:
+            environmentType = .elna
+        case .foma:
+            environmentType = .foma
+        case let .custom(url):
+            environmentType = .custom(url: url)
+        }
+
+        let endpoints = BackendEndpoints(
+            backendURL: backendEnvironment.config.endpoints.restAPIURL,
+            backendWSURL: backendEnvironment.config.endpoints.websocketURL,
+            blackListURL: backendEnvironment.config.endpoints.blacklistURL,
+            teamsURL: backendEnvironment.config.endpoints.teamsURL,
+            accountsURL: backendEnvironment.config.endpoints.accountsURL,
+            websiteURL: backendEnvironment.config.endpoints.websiteURL,
+            countlyURL: backendEnvironment.config.endpoints.countlyURL
+        )
+
+        var proxySettings: WireTransport.ProxySettings?
+        if let proxyConfig = backendEnvironment.config.proxyConfig {
+            proxySettings = WireTransport.ProxySettings(
+                host: proxyConfig.host,
+                port: proxyConfig.port,
+                needsAuthentication: proxyConfig.needsAuthentication
+            )
+        }
+
+        let certificateTrust = ServerCertificateTrust(
+            trustData: trustData,
+            currentDateProvider: .system
+        )
+
+        self.init(
+            title: backendEnvironment.title,
+            trustData: trustData,
+            environmentType: environmentType,
+            endpoints: endpoints,
+            proxySettings: proxySettings,
+            certificateTrust: certificateTrust
+        )
     }
 
 }

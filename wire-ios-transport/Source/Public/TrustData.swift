@@ -72,6 +72,16 @@ public struct TrustData: Decodable {
     }
 
     public init(
+        certificateKey: SecKey,
+        rawCertificateKey: Data,
+        hosts: [Host]
+    ) {
+        self.certificateKey = certificateKey
+        self.rawCertificateKey = rawCertificateKey
+        self.hosts = hosts
+    }
+
+    public init(
         rawCertificateKey: Data,
         hosts: [Host]
     ) throws {

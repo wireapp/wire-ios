@@ -30,6 +30,7 @@ open class AuthenticatedSessionFactory {
     let flowManager: FlowManagerType
     let application: ZMApplication
 
+    // TODO: delete
     var environment: WireTransport.BackendEnvironment
     var reachability: Reachability
 
@@ -62,6 +63,8 @@ open class AuthenticatedSessionFactory {
     func session(
         for account: Account,
         coreDataStack: CoreDataStack,
+        backendEnvironment: BackendEnvironment2,
+        proxyCredentials: WireNetwork.ProxyCredentials?,
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
@@ -108,12 +111,15 @@ open class AuthenticatedSessionFactory {
 
         let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
 
+
+        let environment = BackendEnvironment(backendEnvironment)
+
         let transportSession = ZMTransportSession(
             environment: environment,
-            proxyUsername: proxyUsername,
-            proxyPassword: proxyPassword,
+            proxyUsername: proxyCredentials?.username,
+            proxyPassword: proxyCredentials?.password,
             cookieStorage: environment.cookieStorage(for: account),
-            reachability: reachability,
+            reachability: environment.reachabilityWrapper(),
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: currentBuildNumber,
