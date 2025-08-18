@@ -28,4 +28,14 @@ public struct ProxyCredentials: Sendable, Equatable, Hashable {
 
     public let password: String
 
+    /// Create new `ProxyCredentials`.
+
+    public init(
+        username: String,
+        password: String
+    ) {
+        self.username = username
+        self.password = password
+    }
+
 }

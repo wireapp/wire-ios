@@ -1049,6 +1049,39 @@ public final class SessionManager: NSObject, SessionManagerType {
             backendEnvironment = BackendEnvironment2(environment)
         }
 
+        // Fetch proxy credentials.
+        var proxyCredentials: WireNetwork.ProxyCredentials?
+        do {
+            if let proxyConfig = backendEnvironment.config.proxyConfig,
+               proxyConfig.needsAuthentication
+            {
+                let proxyCredentialStore = ProxyCredentialStore()
+
+                guard let (username, password) = try await proxyCredentialStore.fetchCredentials(
+                    host: proxyConfig.host,
+                    port: proxyConfig.port
+                ) else {
+                    // TODO: throw error
+                    fatalError()
+                }
+
+                proxyCredentials = .init(
+                    username: username,
+                    password: password
+                )
+            }
+        } catch {
+            // TODO: throw error
+            fatalError()
+        }
+
+        let networkStack = NetworkStack(
+            backendEnvironment: backendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            preferredAPIVersion: nil, // TODO: pass preferred version
+            proxyCredentials: proxyCredentials
+        )
+
         let prevMetadata: ResolvedBackendMetadata
         if let storedMetadata = try! backendEnvironmentStore.fetchBackendMetadata(
             accountID: account.userIdentifier
@@ -1058,13 +1091,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             // TODO: get legacy metadata
             fatalError()
         }
-
-        let networkStack = NetworkStack(
-            backendEnvironment: backendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            preferredAPIVersion: nil, // TODO: pass preferred version
-            proxyCredentials: nil // TODO: get proxy credentials
-        )
 
         // Get new metadata
         let newMetadata: ResolvedBackendMetadata
@@ -2034,6 +2060,41 @@ private extension BackendEnvironment2 {
             title: legacyEnvironment.title,
             environmentType: environmentType,
             config: config
+        )
+    }
+
+}
+
+private struct ProxyCredentialStore {
+
+    let keychain = Keychain()
+
+    func fetchCredentials(
+        host: String,
+        port: Int
+    ) async throws -> (username: String, password: String)? {
+        let usernameData: Data? = try await keychain.fetchItem(query: [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-username"),
+            .returningData(true)
+        ])
+
+        let passwordData: Data? = try await keychain.fetchItem(query: [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-password"),
+            .returningData(true)
+        ])
+
+        guard
+            let usernameData,
+            let passwordData
+        else {
+            return nil
+        }
+
+        return (
+            username: String(decoding: usernameData, as: UTF8.self),
+            password: String(decoding: passwordData, as: UTF8.self)
         )
     }
 
