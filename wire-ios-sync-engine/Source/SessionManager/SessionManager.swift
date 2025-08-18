@@ -1075,9 +1075,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             fatalError()
         }
 
-        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
-            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
-        }
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.map(WireNetwork.APIVersion.init)
 
         let networkStack = NetworkStack(
             backendEnvironment: backendEnvironment,
@@ -1086,14 +1084,22 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyCredentials: proxyCredentials
         )
 
-        let prevMetadata: ResolvedBackendMetadata
+        var prevMetadata: ResolvedBackendMetadata?
         if let storedMetadata = try! backendEnvironmentStore.fetchBackendMetadata(
             accountID: account.userIdentifier
         ) {
             prevMetadata = storedMetadata
-        } else {
-            // TODO: get legacy metadata
-            fatalError()
+        } else if
+            let legacyAPIVersion = BackendInfo.apiVersion,
+            let legacyDomain = BackendInfo.domain
+        {
+            // Try get the legacy metadata.
+            // TODO: check... need isMLSEnabled too?
+            prevMetadata = ResolvedBackendMetadata(
+                apiVersion: .init(legacyAPIVersion),
+                domain: legacyDomain,
+                isFederationEnabled: BackendInfo.isFederationEnabled
+            )
         }
 
         // Get new metadata
@@ -2100,6 +2106,37 @@ private struct ProxyCredentialStore {
             username: String(decoding: usernameData, as: UTF8.self),
             password: String(decoding: passwordData, as: UTF8.self)
         )
+    }
+
+}
+
+private extension WireNetwork.APIVersion {
+
+    init(_ legacyVersion: WireTransport.APIVersion) {
+        switch legacyVersion {
+        case .v0:
+            self = .v0
+        case .v1:
+            self = .v1
+        case .v2:
+            self = .v2
+        case .v3:
+            self = .v3
+        case .v4:
+            self = .v4
+        case .v5:
+            self = .v5
+        case .v6:
+            self = .v6
+        case .v7:
+            self = .v7
+        case .v8:
+            self = .v8
+        case .v9:
+            self = .v9
+        case .v10:
+            self = .v10
+        }
     }
 
 }
