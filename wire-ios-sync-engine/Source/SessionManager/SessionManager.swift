@@ -1107,11 +1107,19 @@ public final class SessionManager: NSObject, SessionManagerType {
         do {
             newMetadata = try await networkStack.resolvedBackendMetadata()
         } catch {
-            // TODO: handle
+            // TODO: handle (if no internet, continue anyway)
             fatalError()
         }
 
-        // TODO: Mark any migrations if needed
+        if let prevMetadata {
+            if !prevMetadata.isFederationEnabled && newMetadata.isFederationEnabled {
+                // TODO: mark federation migration needed
+            }
+
+            if prevMetadata.apiVersion < .v3 && newMetadata.apiVersion >= .v3 {
+                // TODO: mark access token migration needed
+            }
+        }
 
         // Store new metadata
         do {
