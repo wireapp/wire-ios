@@ -1075,10 +1075,14 @@ public final class SessionManager: NSObject, SessionManagerType {
             fatalError()
         }
 
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+        }
+
         let networkStack = NetworkStack(
             backendEnvironment: backendEnvironment,
             minTLSVersion: .minVersionFrom(minTLSVersion),
-            preferredAPIVersion: nil, // TODO: pass preferred version
+            preferredAPIVersion: preferredAPIVersion,
             proxyCredentials: proxyCredentials
         )
 
