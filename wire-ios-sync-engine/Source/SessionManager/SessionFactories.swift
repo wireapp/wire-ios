@@ -29,10 +29,6 @@ open class AuthenticatedSessionFactory {
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
     let application: ZMApplication
-
-    // TODO: delete
-    var environment: WireTransport.BackendEnvironment
-
     let minTLSVersion: String?
 
     public init(
@@ -41,9 +37,6 @@ open class AuthenticatedSessionFactory {
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
-        environment: WireTransport.BackendEnvironment,
-        proxyUsername: String?,
-        proxyPassword: String?,
         minTLSVersion: String?
     ) {
         self.currentAppVersion = currentAppVersion
@@ -51,9 +44,6 @@ open class AuthenticatedSessionFactory {
         self.mediaManager = mediaManager
         self.flowManager = flowManager
         self.application = application
-        self.environment = environment
-        self.proxyUsername = proxyUsername
-        self.proxyPassword = proxyPassword
         self.minTLSVersion = minTLSVersion
     }
 
@@ -105,7 +95,6 @@ open class AuthenticatedSessionFactory {
             restNetworkService: restNetworkService,
             webSocketNetworkService: webSocketNetworkService,
             backendMetadata: backendMetadata,
-            backendEnvironment: environment,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
             application: application,
@@ -124,7 +113,6 @@ open class AuthenticatedSessionFactory {
             sharedContainerURL: coreDataStack.applicationContainer,
             transportSession: transportSession,
             userId: account.userIdentifier,
-            minTLSVersion: minTLSVersion,
             journal: journal,
             logFilesProvider: logFilesProvider
         )
@@ -143,30 +131,6 @@ open class AuthenticatedSessionFactory {
         return userSession
     }
 
-    public func updateProxy(username: String?, password: String?) {
-        proxyUsername = username
-        proxyPassword = password
-    }
-
-    // MARK: - Private
-
-    private(set) var proxyUsername: String?
-    private(set) var proxyPassword: String?
-
-    private var proxySettings: WireNetwork.ProxySettings? {
-        guard let proxy = environment.proxy else { return nil }
-
-        if proxy.needsAuthentication {
-            guard let proxyUsername, let proxyPassword else {
-                fatalInternal("Proxy needs authentication but credentials are missing")
-                return nil
-            }
-
-            return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
-        } else {
-            return .unauthenticated(host: proxy.host, port: proxy.port)
-        }
-    }
 }
 
 // MARK: -

@@ -325,7 +325,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
-            authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
         }
@@ -433,9 +432,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
-            environment: environment,
-            proxyUsername: proxyCredentials?.username,
-            proxyPassword: proxyCredentials?.password,
             minTLSVersion: minTLSVersion
         )
 
@@ -679,12 +675,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         _ = ProxyCredentials.destroy(for: proxy)
     }
 
+    // TODO: use proxy credential store
     public func saveProxyCredentials(username: String, password: String) {
         guard let proxy = environment.proxy else { return }
         proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials?.persist()
-            authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
