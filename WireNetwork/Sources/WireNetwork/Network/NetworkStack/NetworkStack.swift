@@ -23,7 +23,7 @@ import WireLogging
 /// High level access to a specific backend with automatic api
 /// version resolution.
 
-final class NetworkStack {
+public final class NetworkStack {
 
     let backendEnvironment: BackendEnvironment2
     private(set) var proxyCredentials: ProxyCredentials?
@@ -45,7 +45,7 @@ final class NetworkStack {
         }
     }
 
-    init(
+    public init(
         backendEnvironment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
@@ -96,12 +96,12 @@ final class NetworkStack {
         )
     }
 
-    func resolvedAPIVersion() async throws -> APIVersion {
+    public func resolvedAPIVersion() async throws -> APIVersion {
         let backendMetadata = try await resolvedBackendMetadata()
         return backendMetadata.apiVersion
     }
 
-    func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
+    public func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
         if let backendMetadata {
             return backendMetadata
         }
