@@ -316,8 +316,10 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
+    // TODO: move this to user session
     private(set) var reachability: ReachabilityWrapper
 
+    // TODO: this should happen in the set up of the session.
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             apiVersionResolver = nil
@@ -1031,8 +1033,63 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    // FIXME: try!
     @MainActor
     private func setupUserSession(account: Account) async -> ZMUserSession? {
+        let urls = AccountURLs(root: sharedContainerURL)
+        let backendEnvironmentStore = try! BackendEnvironmentStore(directory: urls.accountData)
+
+        let backendEnvironment: BackendEnvironment2
+        if let storedBackendEnvironment = try! backendEnvironmentStore.fetchBackendEnvironment(
+            accountID: account.userIdentifier
+        ) {
+            backendEnvironment = storedBackendEnvironment
+        } else {
+            // Fallback on legacy environment.
+            backendEnvironment = BackendEnvironment2(environment)
+        }
+
+        let prevMetadata: ResolvedBackendMetadata
+        if let storedMetadata = try! backendEnvironmentStore.fetchBackendMetadata(
+            accountID: account.userIdentifier
+        ) {
+            prevMetadata = storedMetadata
+        } else {
+            // TODO: get legacy metadata
+            fatalError()
+        }
+
+        let networkStack = NetworkStack(
+            backendEnvironment: backendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            preferredAPIVersion: nil, // TODO: pass preferred version
+            proxyCredentials: nil // TODO: get proxy credentials
+        )
+
+        // Get new metadata
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch {
+            // TODO: handle
+            fatalError()
+        }
+
+        // TODO: Mark any migrations if needed
+
+        // Store new metadata
+        do {
+            try backendEnvironmentStore.storeBackendMetadata(
+                newMetadata,
+                for: account.userIdentifier
+            )
+        } catch {
+            // TODO: handle
+            fatalError()
+        }
+
+        // TODO: configure legacy transport session with environment and metadata.
+
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
@@ -1070,6 +1127,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
+        // TODO: perform metadata migrations if needed
+
+        // TODO: inject environment
         let userSession = startBackgroundSession(
             for: account,
             with: coreDataStack,
@@ -1904,4 +1964,77 @@ public extension SessionManager {
     static func stopAVSLogging() {
         avsLogObserver = nil
     }
+}
+
+private extension BackendEnvironment2 {
+
+    init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
+        let environmentType: EnvironmentType
+        switch legacyEnvironment.environmentType.value {
+        case .default:
+            environmentType = .default
+        case .staging:
+            environmentType = .staging
+        case .anta:
+            environmentType = .anta
+        case .bella:
+            environmentType = .bella
+        case .chala:
+            environmentType = .chala
+        case .diya:
+            environmentType = .diya
+        case .elna:
+            environmentType = .elna
+        case .foma:
+            environmentType = .foma
+        case let .custom(url):
+            environmentType = .custom(url: url)
+        }
+
+        let endpoints = Endpoints(
+            restAPIURL: legacyEnvironment.backendURL,
+            websocketURL: legacyEnvironment.backendWSURL,
+            blacklistURL: legacyEnvironment.blackListURL,
+            teamsURL: legacyEnvironment.teamsURL,
+            accountsURL: legacyEnvironment.accountsURL,
+            websiteURL: legacyEnvironment.websiteURL,
+            countlyURL: legacyEnvironment.countlyURL
+        )
+
+        let pinnedKeys: [PinnedKey] = legacyEnvironment.trustData.map {
+            PinnedKey(
+                key: $0.certificateKey,
+                rawKey: $0.rawCertificateKey,
+                hosts: $0.hosts.map { host in
+                    switch host.rule {
+                    case .endsWith:
+                        return .endsWith(host.value)
+                    case .equals:
+                        return .equals(host.value)
+                    }
+                }
+            )
+        }
+
+        let proxyConfig = legacyEnvironment.proxy.map {
+            ProxyConfig(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        let config = Config(
+            endpoints: endpoints,
+            pinnedKeys: pinnedKeys,
+            proxyConfig: proxyConfig
+        )
+
+        self.init(
+            title: legacyEnvironment.title,
+            environmentType: environmentType,
+            config: config
+        )
+    }
+
 }
