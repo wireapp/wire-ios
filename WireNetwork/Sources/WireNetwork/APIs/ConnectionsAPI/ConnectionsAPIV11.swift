@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class TeamsAPIV10: TeamsAPIV9 {
-    override var apiVersion: APIVersion { .v10 }
+final class ConnectionsAPIV11: ConnectionsAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
 }

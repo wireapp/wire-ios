@@ -46,6 +46,13 @@ public enum FeatureConfig: Equatable, Sendable {
     /// *Conference Calling* is group audio and video calling.
 
     case conferenceCalling(ConferenceCallingFeatureConfig)
+    
+    /// Config for the *Consumable Notifications* feature.`
+    ///
+    /// *Consumable Notifications* is the `new` synchronization mechanism (often referred to as `quick sync`) to ensure
+    /// the app is up to date.
+    
+    case consumableNotifications(ConsumableNotificationsFeatureConfig)
 
     /// Config for the *Conversation Guest Links* feature.`
     ///

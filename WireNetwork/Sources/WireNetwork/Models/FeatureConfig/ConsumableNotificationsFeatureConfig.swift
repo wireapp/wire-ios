@@ -16,6 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class TeamsAPIV10: TeamsAPIV9 {
-    override var apiVersion: APIVersion { .v10 }
+import Foundation
+
+/// A configuration for the *Consumable Notifications* feature.
+
+public struct ConsumableNotificationsFeatureConfig: Equatable, Sendable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
+    }
+
 }

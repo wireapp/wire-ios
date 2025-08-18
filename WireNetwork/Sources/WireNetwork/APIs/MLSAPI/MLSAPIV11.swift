@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class TeamsAPIV10: TeamsAPIV9 {
-    override var apiVersion: APIVersion { .v10 }
+import Foundation
+
+final class MLSAPIV11: MLSAPIV10 {
+
+    override var apiVersion: APIVersion { .v11 }
+
 }

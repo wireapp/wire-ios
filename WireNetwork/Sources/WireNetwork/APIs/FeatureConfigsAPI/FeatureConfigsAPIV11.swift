@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class FeatureConfigsAPIV10: FeatureConfigsAPIV9 {
-    override var apiVersion: APIVersion { .v10 }
+final class FeatureConfigsAPIV11: FeatureConfigsAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
         let request = try URLRequestBuilder(path: resourcePath)
@@ -30,7 +30,7 @@ class FeatureConfigsAPIV10: FeatureConfigsAPIV9 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: FeatureConfigsResponseAPIV10.self)
+            .success(code: .ok, type: FeatureConfigsResponseAPIV11.self)
             .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
             .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
@@ -39,7 +39,7 @@ class FeatureConfigsAPIV10: FeatureConfigsAPIV9 {
 
 }
 
-struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
+struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
 
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
@@ -52,8 +52,9 @@ struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
     let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
-    // this is added in v10
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
+    // this is added in v11
+    let consumableNotifications: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -127,26 +128,11 @@ struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
             resetMLSConversations: allowedGlobalOperations.config.mlsConversationReset
         )
         featureConfigs.append(.allowedGlobalOperations(allowedGlobalOperations))
+        
+        let consumableNotifications = ConsumableNotificationsFeatureConfig(status: consumableNotifications.status.toAPIModel())
+        featureConfigs.append(.consumableNotifications(consumableNotifications))
 
         return featureConfigs
     }
 
-}
-
-extension FeatureConfigResponse {
-
-    struct AllowedGlobalOperationsV10: Decodable {
-        enum CodingKeys: String, CodingKey {
-            case mlsConversationReset
-        }
-
-        let mlsConversationReset: Bool
-
-        init(from decoder: any Decoder) throws {
-            let container: KeyedDecodingContainer<CodingKeys> = try decoder
-                .container(keyedBy: CodingKeys.self)
-
-            self.mlsConversationReset = try container.decode(Bool.self, forKey: .mlsConversationReset)
-        }
-    }
 }
