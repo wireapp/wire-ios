@@ -513,6 +513,8 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
     }
 
     public func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications) {
+        // Necessary to log correct sync version
+        LogAttributes.consumableNotificationsEnabled = consumableNotifications.status == .enabled
         Feature.updateOrCreate(havingName: .consumableNotifications, in: context) {
             $0.status = consumableNotifications.status
         }
