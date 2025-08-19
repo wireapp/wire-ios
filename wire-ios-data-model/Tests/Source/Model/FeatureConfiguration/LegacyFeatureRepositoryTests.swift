@@ -32,6 +32,7 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         deleteFeatureIfNeeded(name: .mls)
         deleteFeatureIfNeeded(name: .selfDeletingMessages)
         deleteFeatureIfNeeded(name: .e2ei)
+        deleteFeatureIfNeeded(name: .consumableNotifications)
     }
 
     // MARK: - Helpers
