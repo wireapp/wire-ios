@@ -567,8 +567,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
         let repository = ChannelRepository(
             api: clientSessionComponent.conversationsAPI,
-            conversationLocalStore: clientSessionComponent.conversationsLocalStore,
-            featureConfigLocalStore: clientSessionComponent.featureConfigLocalStore,
+            conversationLocalStore: clientSessionComponent.conversationLocalStore,
+            featureConfigLocalStore: clientSessionComponent.featureConfigsLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )
@@ -596,8 +596,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
         let repository = ChannelRepository(
             api: clientSessionComponent.conversationsAPI,
-            conversationLocalStore: clientSessionComponent.conversationsLocalStore,
-            featureConfigLocalStore: clientSessionComponent.featureConfigLocalStore,
+            conversationLocalStore: clientSessionComponent.conversationLocalStore,
+            featureConfigLocalStore: clientSessionComponent.featureConfigsLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )

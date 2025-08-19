@@ -213,7 +213,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let channelUseCase = userSession.createChannelUseCase else {
+        guard let channelUseCase = session.createChannelUseCase else {
             return
         }
 
