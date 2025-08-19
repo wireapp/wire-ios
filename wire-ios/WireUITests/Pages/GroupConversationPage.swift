@@ -51,7 +51,7 @@ class GroupConversationPage: PageModel {
     }
 
     func getSenderName() -> String? {
-        senderNameLabel.label as? String
+        senderNameLabel.label
     }
 
     func getSentMessages() -> [String] {
