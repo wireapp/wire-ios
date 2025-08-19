@@ -103,14 +103,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func getNode(nodeID: UUID) async throws -> WireCellsNode {
         let dto = try await restAPI.getNode(uuid: nodeID)
-        return dto.toModel()
+        return dto.toDomainModel()
     }
 
     package func getNodes(
         _ request: WireCellsGetNodesRequest
     ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
         let (nodes, nextOffset) = try await restAPI.getNodes(request)
-        return (nodes: nodes.map { $0.toModel() }, nextOffset: nextOffset)
+        return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {
