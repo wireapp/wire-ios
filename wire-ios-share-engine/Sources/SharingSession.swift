@@ -534,23 +534,25 @@ public final class SharingSession {
             userID: coreDataStack.account.userIdentifier
         )
 
-        let userSessionComponent = UserSessionComponent(
-            selfUserID: accountIdentifier,
-            backendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
-            localDomain: WireTransport.BackendInfo.domain!,
-            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
-            sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: nil, // the container is not used in this case
-            syncContext: coreDataStack.syncContext,
-            eventContext: coreDataStack.eventContext,
-            mlsService: mlsService,
-            mlsDecryptionService: mlsService,
-            proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
-        )
+        // TODO: [WPB-17731]
+        var userSessionComponent: UserSessionComponent!
+//        let userSessionComponent = UserSessionComponent(
+//            selfUserID: accountIdentifier,
+//            backendEnvironment: wireAPIBackendEnvironment,
+//            minTLSVersion: minTLSVersion,
+//            apiVersion: apiVersion,
+//            localDomain: WireTransport.BackendInfo.domain!,
+//            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+//            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+//            sharedUserDefaults: sharedUserDefaults,
+//            sharedContainerURL: nil, // the container is not used in this case
+//            syncContext: coreDataStack.syncContext,
+//            eventContext: coreDataStack.eventContext,
+//            mlsService: mlsService,
+//            mlsDecryptionService: mlsService,
+//            proteusService: proteusService,
+//            coreCryptoProvider: coreCryptoProvider
+//        )
 
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
