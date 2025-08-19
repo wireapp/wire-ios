@@ -931,7 +931,6 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-
     func testThatItStoresConsumableNotifications() {
         syncMOC.performGroupedBlock {
             // Given
@@ -955,7 +954,6 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 
     // MARK: - Other
 
