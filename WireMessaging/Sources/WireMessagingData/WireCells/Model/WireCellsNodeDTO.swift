@@ -180,7 +180,7 @@ private extension WireFoundation.QualifiedID {
     }
 
     var transportString: String {
-        return "\(domain)@\(id.uuidString.lowercased())"
+        "\(domain)@\(id.uuidString.lowercased())"
     }
 }
 
