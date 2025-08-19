@@ -46,7 +46,6 @@ public extension SessionManager {
     ) {
         self.environment = environment
         unauthenticatedSession = nil
-        resolveAPIVersion(completion: completion)
     }
 
     func fetchBackendEnvironment(
