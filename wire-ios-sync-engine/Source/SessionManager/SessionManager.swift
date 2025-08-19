@@ -996,6 +996,36 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let session = backgroundUserSessions[account.userIdentifier] {
             WireLogger.sessionManager.debug("Session for \(account) is already loaded")
             return session
+        } else if DeveloperFlag.multibackend.isOn {
+            do {
+                let loader = try UserSessionLoader(
+                    account: account,
+                    sharedContainerURL: sharedContainerURL,
+                    legacyEnvironment: environment,
+                    minTLSVersion: minTLSVersion,
+                    dispatchGroup: dispatchGroup,
+                    sharedUserDefaults: sharedUserDefaults,
+                    application: application,
+                    appVersion: currentAppVersion,
+                    buildNumber: currentBuildNumber,
+                    mediaManager: authenticatedSessionFactory.mediaManager,
+                    flowManager: authenticatedSessionFactory.flowManager,
+                    logFilesProvider: logFilesProvider,
+                    isDeveloperModeEnabled: isDeveloperModeEnabled
+                )
+
+                let userSession = try await loader.load()
+                finishSettingUpUserSession(
+                    account: account,
+                    newSession: userSession,
+                    coreDataStack: userSession.coreDataStack
+                )
+                return userSession
+
+            } catch  {
+                // TODO: handle
+                return nil
+            }
         } else {
             return await setupUserSession(account: account)
         }
@@ -1283,11 +1313,36 @@ public final class SessionManager: NSObject, SessionManagerType {
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
+        guard let newSession = createUserSession(
+            for: account,
+            with: coreDataStack,
+            journal: journal,
+            logFilesProvider: logFilesProvider
+        ) else {
+            preconditionFailure("Unable to create session for \(account)")
+        }
+
+        finishSettingUpUserSession(
+            account: account,
+            newSession: newSession,
+            coreDataStack: coreDataStack
+        )
+
+        return newSession
+    }
+
+    @MainActor
+    private func createUserSession(
+        for account: Account,
+        with coreDataStack: CoreDataStack,
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
+    ) -> ZMUserSession? {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
         )
 
-        guard let newSession = authenticatedSessionFactory.session(
+        return authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
@@ -1295,10 +1350,15 @@ public final class SessionManager: NSObject, SessionManagerType {
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             journal: journal,
             logFilesProvider: logFilesProvider
-        ) else {
-            preconditionFailure("Unable to create session for \(account)")
-        }
+        )
+    }
 
+    @MainActor
+    private func finishSettingUpUserSession(
+        account: Account,
+        newSession: ZMUserSession,
+        coreDataStack: CoreDataStack
+    ) {
         configure(session: newSession, for: account)
         deleteMessagesOlderThanRetentionLimit(contextProvider: coreDataStack)
         updateSystemBootTimeIfNeeded()
@@ -1308,7 +1368,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 "Created ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)"
             )
         notifyNewUserSessionCreated(newSession)
-        return newSession
     }
 
     func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {

@@ -33,7 +33,7 @@ final class UserSessionLoader {
     private let account: Account
     private let sharedContainerURL: URL
     private let legacyEnvironment: WireTransport.BackendEnvironment
-    private let minTLSVersion: String
+    private let minTLSVersion: String?
     private let dispatchGroup: ZMSDispatchGroup
     private let sharedUserDefaults: UserDefaults
     private let application: ZMApplication
@@ -54,7 +54,7 @@ final class UserSessionLoader {
         account: Account,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
-        minTLSVersion: String,
+        minTLSVersion: String?,
         dispatchGroup: ZMSDispatchGroup,
         sharedUserDefaults: UserDefaults,
         application: ZMApplication,
@@ -89,7 +89,7 @@ final class UserSessionLoader {
     }
 
     @MainActor
-    func load() async throws -> UserSession {
+    func load() async throws -> ZMUserSession {
         // Get the stored environment for this account.
         let backendEnvironment = try fetchBackendEnvironment()
 
