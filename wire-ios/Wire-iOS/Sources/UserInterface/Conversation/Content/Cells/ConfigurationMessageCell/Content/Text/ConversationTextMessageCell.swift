@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireSyncEngine
+import WireMessagingDomain
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -56,7 +57,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            guard let message, isChatBubbleSimpleEnabled else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -100,7 +101,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureConstraints() {
         let insets: UIEdgeInsets
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             insets = ConversationMessageContainerView.bubbleEdgeInsets
         } else {
             let margins = conversationHorizontalMargins
@@ -110,8 +111,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
-
+        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
 
@@ -144,7 +144,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
         accessibilityLabel = messageTextView.attributedText.string
 
-        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        container?.isBubble = isChatBubbleSimpleEnabled
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
 
@@ -190,6 +190,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         container?.isAccessibilityElement = true
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
+    
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 
 }
 
@@ -207,7 +211,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
