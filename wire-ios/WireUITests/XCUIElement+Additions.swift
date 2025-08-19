@@ -16,32 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
 
-class WelcomePage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        emailTextField
+extension XCUIElement {
+    enum KeyboardFocusError: Error {
+        case failedToFocusWithinTimeout(message: String)
     }
 
-    var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
-    }
-
-    var emailTextField: XCUIElement {
-        let elementsQuery = app.textFields
-        return elementsQuery["Email or SSO code"]
-    }
-
-    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
-        try typeEmailOrSSO(input)
-        nextButton.tap()
-        return try LoginPage()
-    }
-
-    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
-        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
+    @discardableResult
+    func tapIfKeyboardNotFocused(timeout: TimeInterval = 3.0) throws -> XCUIElement {
+        while !(value(forKey: "hasKeyboardFocus") as? Bool ?? false) {
+            tap()
+            if Date() > Date().addingTimeInterval(timeout) {
+                throw KeyboardFocusError
+                    .failedToFocusWithinTimeout(message: "Failed to focus keyboard within \(timeout) seconds")
+            }
+        }
         return self
     }
 }

@@ -54,8 +54,8 @@ class NewConversationPage: PageModel {
         app.descendants(matching: .any)["user_cell.username"].firstMatch
     }
 
-    func searchUserByUserHandle(_ handle: String) -> NewConversationPage {
-        searchByNameOrUsernameSearchBox.typeText(handle)
+    func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {
+        try searchByNameOrUsernameSearchBox.tapIfKeyboardNotFocused().typeText(handle)
         return self
     }
 
