@@ -17,6 +17,7 @@
 //
 
 import CellsSDK
+import WireFoundation
 package import WireMessagingDomain
 package import Foundation
 
@@ -34,6 +35,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let mimeType: String?
     package let previews: [PreviewDTO]
     package let ownerUserId: String?
+    package let ownerUserName: String?
     package let conversationId: String?
     package let publicLinkId: String?
 
@@ -51,6 +53,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         mimeType: String? = nil,
         previews: [PreviewDTO] = [],
         ownerUserId: String? = nil,
+        ownerUserName: String?,
         conversationId: String? = nil,
         publicLinkId: String? = nil
     ) {
@@ -67,6 +70,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         self.mimeType = mimeType
         self.previews = previews
         self.ownerUserId = ownerUserId
+        self.ownerUserName = ownerUserName
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
     }
@@ -87,7 +91,7 @@ package extension WireCellsNodeDTO {
             contentHash: contentHash,
             mimeType: mimeType,
             previews: previews.map { $0.toModel() },
-            ownerUserID: ownerUserId,
+            ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:))
         )
@@ -109,7 +113,8 @@ package extension WireCellsNode {
             contentHash: contentHash,
             mimeType: mimeType,
             previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
-            ownerUserId: ownerUserID,
+            ownerUserId: ownerUserID?.transportString,
+            ownerUserName: ownerUserName,
             conversationId: conversationID?.pydioQualifiedID,
             publicLinkId: publicLinkID?.string
         )
@@ -139,7 +144,10 @@ package extension RestNode {
             } ?? [],
             ownerUserId: userMetadata?
                 .first(where: { $0.namespace == "usermeta-owner-uuid" })?
-                .jsonValue.trimmingCharacters(in: CharacterSet(charactersIn: "\"")),
+                .valueAsString,
+            ownerUserName: userMetadata?
+                .first(where: { $0.namespace == "usermeta-owner" })?
+                .valueAsString,
             conversationId: contextWorkspace?.uuid,
             publicLinkId: shares?.first?.uuid
         )
@@ -157,5 +165,27 @@ package extension PreviewDTO {
             url: url,
             dimension: dimension ?? 0
         )
+    }
+}
+
+private extension WireFoundation.QualifiedID {
+
+    /// Creates a QualifiedID from a string in the format `domain@uuid`.
+    init?(string: String) {
+        let components = string.split(separator: "@")
+        guard components.count == 2, let uuid = UUID(uuidString: String(components[1])) else {
+            return nil
+        }
+        self.init(id: uuid, domain: String(components[0]))
+    }
+
+    var transportString: String {
+        return "\(domain)@\(id.uuidString.lowercased())"
+    }
+}
+
+private extension RestUserMeta {
+    var valueAsString: String? {
+        try? JSONDecoder().decode(String.self, from: Data(jsonValue.utf8))
     }
 }
