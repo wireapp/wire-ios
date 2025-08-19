@@ -30,7 +30,7 @@ public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
 public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let id: UUID
     public let path: String
-    public let modified: UInt64?
+    public let modified: Date?
     public let size: UInt64?
     public let eTag: String?
     public let type: String?
@@ -48,7 +48,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     package init(
         uuid: UUID,
         path: String,
-        modified: UInt64? = nil,
+        modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
         type: String? = nil,

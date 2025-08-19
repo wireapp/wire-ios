@@ -120,7 +120,6 @@ package class FilesViewModel: ObservableObject {
             let (newItems, nextPage) = try await task.value
             items.append(contentsOf: newItems)
             nextPageToken = nextPage
-            print(">>>> \(nextPage)")
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
         } catch {
@@ -139,7 +138,7 @@ package class FilesViewModel: ObservableObject {
                 id: node.id,
                 filename: URL(string: node.path)?.lastPathComponent ?? node.path,
                 ownedBy: node.ownerUserName,
-                modifiedAt: node.modified.map { Date(timeIntervalSince1970: Double($0)) }
+                modifiedAt: node.modified
             )
         }
 

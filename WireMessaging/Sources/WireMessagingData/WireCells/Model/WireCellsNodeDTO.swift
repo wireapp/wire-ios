@@ -81,7 +81,7 @@ package extension WireCellsNodeDTO {
         WireCellsNode(
             uuid: uuid,
             path: path,
-            modified: modified,
+            modified: modified.map { Date(timeIntervalSince1970: Double($0)) },
             size: size,
             eTag: eTag,
             type: type,
@@ -103,7 +103,7 @@ package extension WireCellsNode {
         WireCellsNodeDTO(
             uuid: id,
             path: path,
-            modified: modified,
+            modified: modified.map { UInt64($0.timeIntervalSince1970) },
             size: size,
             eTag: eTag,
             type: type,

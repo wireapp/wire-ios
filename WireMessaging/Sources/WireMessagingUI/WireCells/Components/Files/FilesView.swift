@@ -97,7 +97,7 @@ private func makeNodesRepository() -> MockWireCellsNodesRepositoryProtocol {
             WireCellsNode(
                 uuid: UUID(),
                 path: "root/foo-\(index).jpg",
-                modified: UInt64(Date().timeIntervalSince1970),
+                modified: Date(),
                 ownerUserName: "Person \(index)"
             )
         }
