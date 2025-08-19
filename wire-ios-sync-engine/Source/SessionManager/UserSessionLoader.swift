@@ -320,34 +320,122 @@ final class UserSessionLoader {
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
         )
 
-        var userSessionBuilder = ZMUserSessionBuilder()
-        userSessionBuilder.withAllDependencies(
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: accountID,
+            sharedUserDefaults: sharedUserDefaults
+        )
+
+        let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
+
+        let contextStorage = LAContextStorage()
+
+        let appLock = AppLockController(
+            userId: accountID,
+            selfUser: selfUser,
+            legacyConfig: nil,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
+
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            withManagedObjectContext: coreDataStack.syncContext,
+            cookieStorage: transportSession.cookieStorage,
+            requestCancellation: transportSession,
+            application: application,
+            lastEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
+        )
+
+        let e2eiActivationDateRepository = E2EIActivationDateRepository(
+            userID: accountID,
+            sharedUserDefaults: sharedUserDefaults
+        )
+
+        let earService = EARService(
+            accountID: accountID,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
+
+        let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
+            userID: accountID,
+            sharedUserDefaults: UserDefaults.standard
+        )
+
+        let mlsService = MLSService(
+            context: coreDataStack.syncContext,
+            notificationContext: coreDataStack.syncContext.notificationContext,
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
+            userDefaults: .standard,
+            userID: accountID
+        )
+
+        let proteusToMLSMigrationCoordinator =  ProteusToMLSMigrationCoordinator(
+            context: coreDataStack.syncContext,
+            userID: accountID
+        )
+        let recurringActionService = RecurringActionService(
+            storage: sharedUserDefaults,
+            dateProvider: .system
+        )
+
+        let cacheLocation = FileManager.default.cachesURLForAccount(
+            with: accountID,
+            in: sharedContainerURL
+        )
+
+        let relocator = CacheFileRelocator()
+        relocator.moveCachesIfNeededForAccount(
+            with: accountID,
+            in: sharedContainerURL
+        )
+
+        let dependencies = UserSessionDependencies(
+            caches: .init(
+                fileAssets: FileAssetCache(location: cacheLocation),
+                userImages: UserImageLocalCache(location: cacheLocation),
+                searchUsers: NSCache()
+            )
+        )
+
+        let userSession = ZMUserSession(
+            userId: accountID,
             restNetworkService: restNetworkService,
-            webSocketNetworkService: webSocketNetworkService,
+            websocketNetworkService: webSocketNetworkService,
             backendMetadata: backendMetadata,
+            transportSession: transportSession,
+            mediaManager: mediaManager,
+            flowManager: flowManager,
+            application: application,
             currentAppVersion: appVersion,
             currentBuildNumber: buildNumber,
-            application: application,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
-            coreCryptoProvider: coreCryptoProvider,
-            configuration: .init(),
-            contextStorage: LAContextStorage(),
-            earService: nil,
-            flowManager: flowManager,
-            mediaManager: mediaManager,
-            mlsService: nil,
-            proteusToMLSMigrationCoordinator: nil,
-            recurringActionService: nil,
+            earService: earService,
+            mlsService: mlsService,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            transportSession: transportSession,
-            userId: account.userIdentifier,
+            sharedContainerURL: sharedContainerURL,
+            appLock: appLock,
+            coreCryptoProvider: coreCryptoProvider,
+            lastEventIDRepository: lastEventIDRepository,
+            lastE2EIUpdateDateRepository: lastE2EIdentityUpdateDateRepository,
+            e2eiActivationDateRepository: e2eiActivationDateRepository,
+            applicationStatusDirectory: applicationStatusDirectory,
+            contextStorage: contextStorage,
+            recurringActionService: recurringActionService,
+            dependencies: dependencies,
             journal: journal,
             logFilesProvider: logFilesProvider
         )
 
-        let userSession = userSessionBuilder.build()
         userSession.setup(
             eventProcessor: nil,
             strategyDirectory: nil,
@@ -356,6 +444,7 @@ final class UserSessionLoader {
             configuration: .init(),
             isDeveloperModeEnabled: isDeveloperModeEnabled
         )
+
         userSession.startRequestLoopTracker()
 
         return userSession
