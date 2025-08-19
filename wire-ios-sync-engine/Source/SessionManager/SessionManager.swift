@@ -2028,6 +2028,7 @@ public extension SessionManager {
     }
 }
 
+// Delete
 private extension BackendEnvironment2 {
 
     init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
