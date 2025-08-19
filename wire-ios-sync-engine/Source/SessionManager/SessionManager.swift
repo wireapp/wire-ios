@@ -26,6 +26,7 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -317,7 +318,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
-    public internal(set) var environment: BackendEnvironment {
+    public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             apiVersionResolver = nil
             reachability.tearDown()
@@ -339,7 +340,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
-    var proxyCredentials: ProxyCredentials?
+    var proxyCredentials: WireTransport.ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
     private let logFilesProvider: LogFilesProviding
@@ -392,7 +393,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironment,
+        environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
@@ -409,7 +410,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
-        var proxyCredentials: ProxyCredentials?
+        var proxyCredentials: WireTransport.ProxyCredentials?
 
         if let proxy = environment.proxy {
             proxyCredentials = ProxyCredentials.retrieve(for: proxy)
@@ -513,13 +514,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
-        environment: BackendEnvironment,
+        environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
-        proxyCredentials: ProxyCredentials?,
+        proxyCredentials: WireTransport.ProxyCredentials?,
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
@@ -1022,7 +1023,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return userSession
 
-            } catch  {
+            } catch NetworkStackError.backendAPIVersionObsolete {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+                return nil
+            } catch NetworkStackError.clientAPIVersionObsolete {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+                return nil
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                // TODO: handle
+                fatalError()
+            } catch {
                 // TODO: handle
                 return nil
             }
@@ -1566,7 +1576,7 @@ extension SessionManager {
 extension SessionManager: TeamObserver {
     public func teamDidChange(_ changeInfo: TeamChangeInfo) {
         let team = changeInfo.team
-        guard let managedObjectContext = (team as? Team)?.managedObjectContext else {
+        guard let managedObjectContext = (team as? WireDataModel.Team)?.managedObjectContext else {
             return
         }
         updateCurrentAccount(in: managedObjectContext)
