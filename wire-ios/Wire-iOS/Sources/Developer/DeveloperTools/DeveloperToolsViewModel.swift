@@ -310,14 +310,17 @@ final class DeveloperToolsViewModel: ObservableObject {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
 
-        if let context = selfClient?.managedObjectContext {
-            let isConsumableNotificationsEnabled = userSession?.featureRepository.fetchConsumableNotifications()
-                .status == .enabled
-
-            items.append(.text(TextItem(
-                title: "Is consumable notifications enabled ?",
-                value: isConsumableNotificationsEnabled ? "Yes" : "No"
-            )))
+        if let userSession {
+            items.append(.destination(DestinationItem(title: "Feature configs", makeView: {
+                AnyView(
+                    FeatureConfigsView(
+                        viewModel: FeatureConfigsViewModel(
+                            featureConfigRepository: userSession.featureRepository,
+                            context: userSession.syncContext
+                        )
+                    )
+                )
+            })))
         }
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
