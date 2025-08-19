@@ -136,8 +136,9 @@ final class UserSessionLoader {
         )
 
         // Perform pending migrations.
+        try await performPendingMigrations(userSession: userSession)
 
-        fatalError()
+        return userSession
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2 {
