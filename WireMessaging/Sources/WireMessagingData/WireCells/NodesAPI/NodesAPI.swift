@@ -23,7 +23,7 @@ package enum NodesAPIError: Error {
     case failedToCreateWriteStream
 }
 
-package final actor NodesAPI: NodesAPIProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -61,20 +61,6 @@ package final actor NodesAPI: NodesAPIProtocol {
         versionID: UUID
     ) async -> AsyncThrowingStream<Int, any Error> {
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
-    }
-
-    package func getFiles(
-        path: String?,
-        query: String,
-        limit: Int,
-        offset: Int
-    ) async throws -> [WireCellsNode] {
-        let response = try await (
-            path == nil
-                ? restAPI.getFiles(query: query, limit: limit, offset: offset)
-                : restAPI.getFilesForPath(path: path!, limit: limit, offset: offset)
-        )
-        return response.nodes.map { $0.toModel() }
     }
 
     package func deleteFile(nodeID: UUID) async throws {
@@ -117,7 +103,14 @@ package final actor NodesAPI: NodesAPIProtocol {
 
     package func getNode(nodeID: UUID) async throws -> WireCellsNode {
         let dto = try await restAPI.getNode(uuid: nodeID)
-        return dto.toModel()
+        return dto.toDomainModel()
+    }
+
+    package func getNodes(
+        _ request: WireCellsGetNodesRequest
+    ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
+        let (nodes, nextOffset) = try await restAPI.getNodes(request)
+        return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {
