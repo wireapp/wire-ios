@@ -16,26 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+/// The deletion status of the node.
+package enum WireCellsNodeDeletionStatus {
 
-class LogOutPage: PageModel {
+    /// The node is deleted.
+    case deleted
 
-    override var pageMainElement: XCUIElement {
-        passwordField
-    }
+    /// The node is not deleted.
+    case notDeleted
 
-    var passwordField: XCUIElement {
-        app.secureTextFields.firstMatch
-    }
-
-    var okButton: XCUIElement {
-        app.buttons["OK"]
-    }
-
-    @discardableResult
-    func enterPassword(_ password: String) throws -> WelcomePage {
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        okButton.tap()
-        return try WelcomePage()
-    }
+    /// The node can be either deleted or not deleted.
+    case any
 }

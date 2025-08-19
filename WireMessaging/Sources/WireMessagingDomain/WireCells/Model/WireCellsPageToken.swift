@@ -16,26 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+/// An opaque token used for fetching the next page in Wire Cells APIs.
+package struct WireCellsPageToken: Sendable, Equatable {
 
-class LogOutPage: PageModel {
+    /// The offset of the next page.
+    let offset: Int
 
-    override var pageMainElement: XCUIElement {
-        passwordField
-    }
-
-    var passwordField: XCUIElement {
-        app.secureTextFields.firstMatch
-    }
-
-    var okButton: XCUIElement {
-        app.buttons["OK"]
-    }
-
-    @discardableResult
-    func enterPassword(_ password: String) throws -> WelcomePage {
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        okButton.tap()
-        return try WelcomePage()
-    }
 }

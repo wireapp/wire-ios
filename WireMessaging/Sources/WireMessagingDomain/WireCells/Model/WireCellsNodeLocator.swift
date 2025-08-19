@@ -16,26 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+package import Foundation
 
-class LogOutPage: PageModel {
+/// A means of locating a node.
+package enum WireCellsNodeLocator: Equatable {
 
-    override var pageMainElement: XCUIElement {
-        passwordField
-    }
+    /// The path to the node.
+    case path(String)
 
-    var passwordField: XCUIElement {
-        app.secureTextFields.firstMatch
-    }
-
-    var okButton: XCUIElement {
-        app.buttons["OK"]
-    }
-
-    @discardableResult
-    func enterPassword(_ password: String) throws -> WelcomePage {
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        okButton.tap()
-        return try WelcomePage()
-    }
+    /// The ID of the node.
+    case id(UUID)
 }
