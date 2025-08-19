@@ -16,26 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+/// The type of the node.
+package enum WireCellsNodeType {
 
-class LogOutPage: PageModel {
+    /// A file that is not a folder.
+    case leaf
 
-    override var pageMainElement: XCUIElement {
-        passwordField
-    }
+    /// A folder.
+    case collection
 
-    var passwordField: XCUIElement {
-        app.secureTextFields.firstMatch
-    }
-
-    var okButton: XCUIElement {
-        app.buttons["OK"]
-    }
-
-    @discardableResult
-    func enterPassword(_ password: String) throws -> WelcomePage {
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        okButton.tap()
-        return try WelcomePage()
-    }
+    /// Any type of file, including folders.
+    case any
 }
