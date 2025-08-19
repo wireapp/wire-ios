@@ -121,7 +121,7 @@ public final class NetworkStack {
         } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
             throw NetworkStackError.backendAPIVersionObsolete
         } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            throw NetworkStackError.clientVersionObsolete
+            throw NetworkStackError.clientAPIVersionObsolete
         }
     }
 

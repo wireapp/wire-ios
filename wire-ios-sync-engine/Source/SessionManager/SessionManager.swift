@@ -1100,6 +1100,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         let newMetadata: ResolvedBackendMetadata
         do {
             newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch NetworkStackError.backendAPIVersionObsolete {
+            delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+            return nil
+        } catch NetworkStackError.clientAPIVersionObsolete {
+            delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+            return nil
         } catch {
             // TODO: handle (if no internet, continue anyway)
             fatalError()
@@ -1121,6 +1127,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 newMetadata,
                 for: account.userIdentifier
             )
+
+            // TODO: store it also in BackendInfo for legacy.
         } catch {
             // TODO: handle
             fatalError()
