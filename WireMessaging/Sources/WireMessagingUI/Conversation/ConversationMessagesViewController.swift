@@ -41,7 +41,8 @@ package final class ConversationMessagesViewController: UIViewController {
     }
 
     private var observeTask: Task<Void, Never>?
-
+    private var waitingToLoadToFinish: Bool = false
+    
     package override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -73,6 +74,24 @@ package final class ConversationMessagesViewController: UIViewController {
             case let .messageAdded(snapshot):
                 await dataSource.apply(snapshot)
                 scrollToLastItem()
+            case let .loadedOlderMessages(snapshot):
+                let previousContentHeight = collectionView.contentSize.height
+                let previousOffset = collectionView.contentOffset.y
+
+                await dataSource.apply(snapshot, animatingDifferences: false)
+                
+                let newContentHeight = collectionView.contentSize.height
+                let heightDifference = newContentHeight - previousContentHeight
+                let offset = CGPoint(
+                    x: collectionView.contentOffset.x,
+                    y: previousOffset + heightDifference
+                )
+                
+                print("DS: new offset: \(offset)")
+                collectionView.contentOffset = offset
+                waitingToLoadToFinish = false
+            case .noMoreMessagesToLoad:
+                waitingToLoadToFinish = false
             }
         }
     }
@@ -100,6 +119,8 @@ package final class ConversationMessagesViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        collectionView.delegate = self
     }
 
     private func createLayout() -> UICollectionViewLayout {
@@ -156,6 +177,45 @@ package final class ConversationMessagesViewController: UIViewController {
         let indexPath = IndexPath(item: lastItem, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .bottom, animated: animated)
     }
+}
+
+extension ConversationMessagesViewController: UICollectionViewDelegate {
+    
+    package func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let scrolledToBottom = (
+            collectionView.contentOffset.y + collectionView.bounds.height
+        ) - collectionView.contentSize.height > 0
+
+        guard scrolledToBottom else {
+            print("DS: guard scroll, not yet to bottom")
+            return
+        }
+        print("DS: VC: scrolled to bottom")
+        viewModel.onScrollToBottom()
+    }
+    
+    package func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView.contentOffset.y < 0 else {
+            print("DS: guard scroll, not yet to top, contentOffset: \(scrollView.contentOffset)")
+            return
+        }
+        guard !waitingToLoadToFinish else {
+            print("DS: guard on waitingToLoadToFinish, contentOffset: \(scrollView.contentOffset)")
+            return
+        }
+        
+        print("DS: VC: scrolled to top, contentOffset: \(scrollView.contentOffset)")
+        waitingToLoadToFinish = true
+        viewModel.onScrollToTop()
+    }
+
+    package func scrollViewWillEndDragging(_ scrollView: UIScrollView,
+                                   withVelocity velocity: CGPoint,
+                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        // Same as in UITableView
+        print("Will end dragging")
+    }
+
 }
 
 @testable import WireMessagingDomainSupport

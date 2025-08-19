@@ -463,6 +463,10 @@ final class ConversationTableViewDataSource: NSObject {
         fetchController?.delegate = self
         try! fetchController?.performFetch()
 
+        print(
+            "DS: OLD: loadMessages: offset: \(fetchRequest.fetchOffset), limit: \(fetchRequest.fetchLimit), messages count: \(fetchController?.fetchedObjects?.count ?? 0)"
+        )
+
         lastFetchedObjectCount = fetchController?.fetchedObjects?.count ?? 0
         hasOlderMessagesToLoad = allMessages.count == fetchRequest.fetchLimit
         hasNewerMessagesToLoad = offset > 0

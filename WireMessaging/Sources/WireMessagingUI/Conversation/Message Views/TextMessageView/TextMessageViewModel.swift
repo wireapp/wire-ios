@@ -22,6 +22,7 @@ package import Foundation
 package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Sendable {
 
     package let id = UUID()
+    package let serverTimestamp: Date?
 
     @Published var content: AttributedString
 
@@ -30,10 +31,12 @@ package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Senda
 
     init(
         content: AttributedString,
+        serverTimestamp: Date?,
         senderViewModel: SenderViewModel,
         reactionsViewModel: ReactionsViewModel
     ) {
         self.content = content
+        self.serverTimestamp = serverTimestamp
         self.senderViewModel = senderViewModel
         self.reactionsViewModel = reactionsViewModel
     }
@@ -45,5 +48,10 @@ package class TextMessageViewModel: ObservableObject, Hashable, @unchecked Senda
     package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+}
 
+extension TextMessageViewModel: CustomDebugStringConvertible {
+    package var debugDescription: String {
+        "TextMessageViewModel: \(content), serverTimestamp: \(serverTimestamp?.timeIntervalSince1970 ?? 0)"
+    }
 }

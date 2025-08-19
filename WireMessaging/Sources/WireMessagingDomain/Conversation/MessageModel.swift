@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 public typealias ReactionsModel = [String: [UserModel]]
 
 public struct MessageModel: Sendable {
@@ -27,17 +29,20 @@ public struct MessageModel: Sendable {
     }
 
     public let objectID: any Sendable
+    public let serverTimestamp: Date?
     public let sender: UserModel?
     public let kind: Kind
     public let reactions: ReactionsModel
 
     public init(
         objectID: any Sendable,
+        serverTimestamp: Date?,
         sender: UserModel?,
         kind: Kind,
         reactions: ReactionsModel
     ) {
         self.objectID = objectID
+        self.serverTimestamp = serverTimestamp
         self.sender = sender
         self.kind = kind
         self.reactions = reactions

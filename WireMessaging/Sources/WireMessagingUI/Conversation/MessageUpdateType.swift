@@ -22,6 +22,9 @@ package enum MessagesUpdate: Sendable {
 
     case initiallyLoaded(ConversationSnapshot)
     case messageAdded(ConversationSnapshot)
+    case loadedOlderMessages(ConversationSnapshot)
+    case noMoreMessagesToLoad
+    
     // later to be added more updates like:
     // loaded new messages, new or older
     // re-sent failed message

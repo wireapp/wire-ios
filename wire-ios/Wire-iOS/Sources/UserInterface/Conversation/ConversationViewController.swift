@@ -22,6 +22,7 @@ import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireMessagingUI
 import WireSyncEngine
 
@@ -157,6 +158,7 @@ final class ConversationViewController: UIViewController {
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
+                    batchSize: kLoadMessagesDefaultBatchSize,
                     conversationObjectID: conversation.objectID,
                     syncContext: userSession.contextProvider.syncContext,
                     backgroundContext: userSession.contextProvider.newBackgroundContext()

@@ -20,6 +20,7 @@ import Combine
 import Foundation
 package import UIKit
 package import WireMessagingDomain
+package import WireLogging
 
 package enum ConversationSection: Sendable {
     // one section for now, later we'd have probably one section for a day
@@ -32,6 +33,8 @@ package protocol ConversationDataSourceProtocol: Sendable {
     func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
     func reset() async
+    func loadOlderMessages() async
+    func loadNewerMessages() async
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
@@ -112,6 +115,7 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
             return ConversationElement.text(
                 TextMessageViewModel(
                     content: AttributedString(stringLiteral: textModel.text ?? ""),
+                    serverTimestamp: model.serverTimestamp,
                     senderViewModel: SenderViewModel(
                         state: senderState,
                         namePublisher: observersProvider
@@ -143,10 +147,51 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
     }
 
     // load older messages
-    func loadOlderMessages() {}
+    
+    var loadingMessages = false
+    var currentOffset = 0
+    package func loadOlderMessages() async {
+        guard !loadingMessages, loadMessagesUseCase.hasOlderMessagesToLoad else {
+            print("DS: loadOlderMessages: guard already loading")
+            updatesStreamContinuation?.yield(.noMoreMessagesToLoad)
+            return
+        }
+        
+        // NOTE: we dispatch async because `didScroll(tableView:)` can be called inside a `performBatchUpdate()`,
+        // which would cause data source inconsistency if change the fetchLimit.
+        
+        guard let oldestMessageTimestamp = snapshot.itemIdentifiers.first(where: { $0.serverTimestamp != nil })?.serverTimestamp else {
+            print("DS: loadOlderMessages: can't find oldest message")
+            updatesStreamContinuation?.yield(.noMoreMessagesToLoad)
+            return
+        }
+        
+        loadingMessages = true
+        let messages = await loadMessagesUseCase.loadOlderMessages(
+            lastMessageTimestamp: oldestMessageTimestamp
+        )
+        guard messages.count > 0, let beforeItem = snapshot.itemIdentifiers.first else {
+            WireLogger.conversation.error(
+                "Failed to get beforeItem for snapshot.itemIdentifiers.first to insert new loaded messages")
+            updatesStreamContinuation?.yield(.noMoreMessagesToLoad)
+            return
+        }
+        
+        snapshot.insertItems(
+            messages
+                .reversed()
+                .map { mapToUIModel($0) },
+            beforeItem: beforeItem
+        )
+        updatesStreamContinuation?.yield(.loadedOlderMessages(snapshot))
+
+        loadingMessages = false
+    }
 
     // load newer messages
-    func loadNewerMessages() {}
+    package func loadNewerMessages() {
+        
+    }
 
     // MARK: - private
 

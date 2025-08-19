@@ -16,11 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
 package enum ConversationElement: Hashable, Sendable {
 
     case text(TextMessageViewModel)
     // case image, video, system, etc
 
+    package var serverTimestamp: Date? {
+        switch self {
+        case .text(let textMessageViewModel):
+            return textMessageViewModel.serverTimestamp
+        }
+    }
 }

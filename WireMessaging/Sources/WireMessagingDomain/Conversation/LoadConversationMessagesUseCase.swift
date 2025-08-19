@@ -16,28 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public protocol LoadConversationMessagesRepositoryProtocol: Sendable {
-    func loadMessages(offset: Int, limit: Int) async -> [MessageModel]
+    var hasOlderMessagesToLoad: Bool { get }
+    func loadMessages(offset: Int) async -> [MessageModel]
+    func loadOlderMessages(lastMessageTimestamp: Date) async -> [MessageModel]
 }
 
-private let kLoadMessagesDefaultBatchSize = 30
+public let kLoadMessagesDefaultBatchSize = 30
 
 // sourcery: AutoMockable
 package protocol LoadConversationMessagesUseCaseProtocol: Sendable {
+    var hasOlderMessagesToLoad: Bool { get }
     func loadMessages(offset: Int) async -> [MessageModel]
+    func loadOlderMessages(lastMessageTimestamp: Date) async -> [MessageModel]
 }
 
 package final class LoadConversationMessagesUseCase: LoadConversationMessagesUseCaseProtocol {
 
     private let repo: any LoadConversationMessagesRepositoryProtocol
+    
+    package var hasOlderMessagesToLoad: Bool { repo.hasOlderMessagesToLoad }
 
     package init(repo: any LoadConversationMessagesRepositoryProtocol) {
         self.repo = repo
     }
 
     package func loadMessages(offset: Int) async -> [MessageModel] {
-        await repo.loadMessages(offset: offset, limit: kLoadMessagesDefaultBatchSize)
+        await repo.loadMessages(offset: offset)
     }
+    
+    package func loadOlderMessages(lastMessageTimestamp: Date) async -> [MessageModel] {
+        await repo.loadOlderMessages(lastMessageTimestamp: lastMessageTimestamp)
+    }
+    
 }

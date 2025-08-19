@@ -23,6 +23,7 @@ extension ZMMessage {
     func toDomain() -> MessageModel {
         MessageModel(
             objectID: objectID,
+            serverTimestamp: serverTimestamp,
             sender: sender?.toDomain(),
             kind: getMessageKind(),
             reactions: reactions.toDomain()

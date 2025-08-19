@@ -23,6 +23,8 @@ package protocol ConversationMessagesViewModelProtocol {
     func makeUpdatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
     func onWillDisappear()
+    func onScrollToTop()
+    func onScrollToBottom()
 }
 
 @MainActor
@@ -50,6 +52,18 @@ package struct ConversationMessagesViewModel: ConversationMessagesViewModelProto
     package func onWillDisappear() {
         Task { [dataSource] in
             await dataSource.reset()
+        }
+    }
+    
+    package func onScrollToTop() {
+        Task { [dataSource] in    
+            await dataSource.loadOlderMessages()
+        }
+    }
+    
+    package func onScrollToBottom() {
+        Task { [dataSource] in
+            await dataSource.loadNewerMessages()
         }
     }
 }

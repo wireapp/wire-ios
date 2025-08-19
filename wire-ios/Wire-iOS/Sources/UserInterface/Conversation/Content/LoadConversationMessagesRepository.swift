@@ -34,14 +34,18 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
         updatesStreamContinuation = continuation
         return stream
     }()
+    
+    private let batchSize: Int
 
     private var conversation: ZMConversation?
 
     init(
+        batchSize: Int,
         conversationObjectID: NSManagedObjectID,
         syncContext: NSManagedObjectContext,
         backgroundContext: NSManagedObjectContext
     ) {
+        self.batchSize = batchSize
         self.conversationObjectID = conversationObjectID
         self.backgroundContext = backgroundContext
         self.viewContext = syncContext
@@ -72,43 +76,132 @@ final class LoadConversationMessagesRepository: NSObject, LoadConversationMessag
         }
         return conversation
     }
+    
+    private func makeFRC(
+        conversation: ZMConversation,
+        offset: Int,
+        limit: Int
+    ) -> NSFetchedResultsController<ZMMessage> {
+        let fetchRequest = fetchRequest(conversation: conversation)
+
+        fetchRequest.fetchLimit = limit
+
+        fetchRequest.fetchOffset = offset
+
+        let fetchController = NSFetchedResultsController<ZMMessage>(
+            fetchRequest: fetchRequest,
+            managedObjectContext: backgroundContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+
+        fetchController.delegate = self
+
+        try! fetchController.performFetch()
+        return fetchController
+    }
 
     var fetchController: NSFetchedResultsController<ZMMessage>?
-
-    func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
+    var hasOlderMessagesToLoad: Bool = true // fix-me: maybe optional
+    func loadMessages(offset: Int) async -> [MessageModel] {
+        // We need to fetch a bit more than requested so that there is overlap between messages in different
+        let limit = batchSize + 5
         guard let conversation = await getConversation() else {
             WireLogger.conversation.error("Failed to fetch conversation to load more messages")
             return []
         }
-
+        
+        messagesToMonitorCurrentLimit = limit
+        messagesToMonitorCurrentOffset = offset
+        
         return await backgroundContext.perform { [unowned self] in
-            let fetchRequest = fetchRequest(conversation: conversation)
-
-            // We need to fetch a bit more than requested so that there is overlap between messages in different
-            fetchRequest.fetchLimit = limit + 5
-
-            fetchRequest.fetchOffset = offset
-
-            let fetchController = NSFetchedResultsController<ZMMessage>(
-                fetchRequest: fetchRequest,
-                managedObjectContext: backgroundContext,
-                sectionNameKeyPath: nil,
-                cacheName: nil
+            self.fetchController = makeFRC(
+                conversation: conversation,
+                offset: offset,
+                limit: limit
             )
-
-            fetchController.delegate = self
-            self.fetchController = fetchController
-
-            try! fetchController.performFetch()
-            return (fetchController.fetchedObjects ?? [])
-                .map { $0.toDomain() }
+            let objects = fetchController?.fetchedObjects ?? []
+            print("DS: fetchedObjects count \(objects.count), limit: \(limit), hasOlderMessages: \(hasOlderMessagesToLoad)")
+            return objects.map { $0.toDomain() }
         }
+    }
+    
+    func loadOlderMessages(lastMessageTimestamp: Date) async -> [MessageModel] {
+        print(
+            "DS:  repo: load older messages: lastMessageTimestamp: \(lastMessageTimestamp.timeIntervalSince1970)"
+        )
+        guard let conversation = await getConversation() else {
+            WireLogger.conversation.error("Failed to fetch conversation to load more messages")
+            return []
+        }
+        
+        do {
+            let messages = try await backgroundContext.perform { [backgroundContext, batchSize, unowned self] in
+                let fetchRequest = self.olderThenRequest(
+                    conversation: conversation,
+                    batchSize: batchSize,
+                    lastMessageTimestamp: lastMessageTimestamp
+                )
+                
+                let result = try backgroundContext.fetch(fetchRequest)
+                return result.map { $0.toDomain() }
+            }
+            let loadedCount = messages.count
+            hasOlderMessagesToLoad = loadedCount == batchSize
+            Task { // no need to wait
+                await recreatedFRCForUpdates(
+                    olderMessagesLoadedCount: loadedCount,
+                    conversation: conversation
+                )
+            }
+            return messages
+        } catch {
+            return []
+        }
+    }
+    
+    private var messagesToMonitorCurrentOffset = 0
+    private var messagesToMonitorCurrentLimit = 0
+    private func recreatedFRCForUpdates(
+        olderMessagesLoadedCount: Int,
+        conversation: ZMConversation
+    ) async {
+        return await backgroundContext.perform { [unowned self] in
+            
+            messagesToMonitorCurrentLimit += olderMessagesLoadedCount
+            
+            self.fetchController = makeFRC(
+                conversation: conversation,
+                offset: messagesToMonitorCurrentOffset,
+                limit: messagesToMonitorCurrentLimit
+            )
+        }
+    }
+    
+    private func sortDescriptors() -> [NSSortDescriptor] {
+        [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+    }
+    
+    private func olderThenRequest(
+        conversation: ZMConversation,
+        batchSize: Int,
+        lastMessageTimestamp: Date
+    ) -> NSFetchRequest<ZMMessage> {
+        let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
+        let validMessage = conversation.visibleMessagesPredicate!
+
+        let beforeGivenMessage = NSPredicate(format: "%K < %@", ZMMessageServerTimestampKey, lastMessageTimestamp as NSDate)
+
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [validMessage, beforeGivenMessage])
+        fetchRequest.sortDescriptors = sortDescriptors()
+        fetchRequest.fetchLimit = batchSize
+        return fetchRequest
     }
 
     private func fetchRequest(conversation: ZMConversation) -> NSFetchRequest<ZMMessage> {
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
         fetchRequest.predicate = conversation.visibleMessagesPredicate
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+        fetchRequest.sortDescriptors = sortDescriptors()
         return fetchRequest
     }
 
