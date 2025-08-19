@@ -322,6 +322,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     // TODO: this should happen in the set up of the session.
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
+            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             unauthenticatedSessionFactory.environment = environment
@@ -357,6 +358,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private static var avsLogObserver: AVSLogObserver?
+
+    var apiVersionResolver: APIVersionResolver?
 
     private(set) var isUnauthenticatedTransportSessionReady: Bool
 
@@ -694,6 +697,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         // force creation of transport sessions using isUnauthenticatedTransportSessionReady
         isUnauthenticatedTransportSessionReady = ready
+        apiVersionResolver = createAPIVersionResolver()
 
         if blacklistVerificator != nil {
             configureBlacklistDownload()

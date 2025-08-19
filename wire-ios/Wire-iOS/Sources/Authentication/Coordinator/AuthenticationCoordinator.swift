@@ -907,7 +907,14 @@ extension AuthenticationCoordinator {
     /// Call this method when ready to use network sessions : first login
     private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
         sessionManager.markNetworkSessionsAsReady(true)
-        action(nil)
+        startActivityIndicator()
+        sessionManager.resolveAPIVersion { [weak self] error in
+            self?.stopActivityIndicator()
+            if error != nil {
+                self?.sessionManager.markNetworkSessionsAsReady(false)
+            }
+            action(error)
+        }
     }
 
     private func updateUsername(_ username: String) {
