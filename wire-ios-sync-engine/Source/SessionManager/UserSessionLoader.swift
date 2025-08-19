@@ -250,7 +250,11 @@ final class UserSessionLoader {
     ) async throws {
         let isAvailable = metadata.apiVersion >= .v8
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        let shouldEnabled = isAvailable && !isAlreadyEnabled
+        let shouldEnable = isAvailable && !isAlreadyEnabled
+
+        guard shouldEnable else {
+            return
+        }
 
         let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
             ActorBasedUpdateEventMigratorDAO(context: eventContext)
