@@ -88,8 +88,13 @@ public struct WireCellsFactory {
 public extension WireCellsFactory {
 
     @MainActor
-    func makeFilesView() -> UIViewController {
-        let viewModel = FilesViewModel()
+    func makeFilesView(cellName: String) -> UIViewController {
+        let viewModel = FilesViewModel(
+            fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                configuration: .conversationFileView(root: .path(cellName)),
+                repository: nodesAPI
+            )
+        )
 
         return FilesHostingController(
             viewModel: viewModel
