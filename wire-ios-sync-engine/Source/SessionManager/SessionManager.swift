@@ -26,7 +26,6 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 import WireLogging
-import WireNetwork
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -316,17 +315,17 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
-    // TODO: move this to user session
     private(set) var reachability: ReachabilityWrapper
 
-    // TODO: this should happen in the set up of the session.
-    public internal(set) var environment: WireTransport.BackendEnvironment {
+    public internal(set) var environment: BackendEnvironment {
         didSet {
             apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
+            authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
+            authenticatedSessionFactory.reachability = reachability
         }
     }
 
@@ -340,7 +339,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
-    var proxyCredentials: WireTransport.ProxyCredentials?
+    var proxyCredentials: ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
     private let logFilesProvider: LogFilesProviding
@@ -393,7 +392,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: WireTransport.BackendEnvironment,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
@@ -410,10 +409,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
-        var proxyCredentials: WireTransport.ProxyCredentials?
+        var proxyCredentials: ProxyCredentials?
 
         if let proxy = environment.proxy {
-            proxyCredentials = WireTransport.ProxyCredentials.retrieve(for: proxy)
+            proxyCredentials = ProxyCredentials.retrieve(for: proxy)
         }
 
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
@@ -432,6 +431,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
+            environment: environment,
+            proxyUsername: proxyCredentials?.username,
+            proxyPassword: proxyCredentials?.password,
+            reachability: reachability,
             minTLSVersion: minTLSVersion
         )
 
@@ -510,13 +513,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
-        environment: WireTransport.BackendEnvironment,
+        environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
-        proxyCredentials: WireTransport.ProxyCredentials?,
+        proxyCredentials: ProxyCredentials?,
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
@@ -675,12 +678,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         _ = ProxyCredentials.destroy(for: proxy)
     }
 
-    // TODO: use proxy credential store
     public func saveProxyCredentials(username: String, password: String) {
         guard let proxy = environment.proxy else { return }
         proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials?.persist()
+            authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
@@ -1027,113 +1030,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // FIXME: try!
     @MainActor
     private func setupUserSession(account: Account) async -> ZMUserSession? {
-        let urls = AccountURLs(root: sharedContainerURL)
-        let backendEnvironmentStore = try! BackendEnvironmentStore(directory: urls.accountData)
-
-        let backendEnvironment: BackendEnvironment2
-        if let storedBackendEnvironment = try! backendEnvironmentStore.fetchBackendEnvironment(
-            accountID: account.userIdentifier
-        ) {
-            backendEnvironment = storedBackendEnvironment
-        } else {
-            // Fallback on legacy environment.
-            backendEnvironment = BackendEnvironment2(environment)
-        }
-
-        // Fetch proxy credentials.
-        var proxyCredentials: WireNetwork.ProxyCredentials?
-        do {
-            if let proxyConfig = backendEnvironment.config.proxyConfig,
-               proxyConfig.needsAuthentication
-            {
-                let proxyCredentialStore = ProxyCredentialStore()
-
-                guard let (username, password) = try await proxyCredentialStore.fetchCredentials(
-                    host: proxyConfig.host,
-                    port: proxyConfig.port
-                ) else {
-                    // TODO: throw error
-                    fatalError()
-                }
-
-                proxyCredentials = .init(
-                    username: username,
-                    password: password
-                )
-            }
-        } catch {
-            // TODO: throw error
-            fatalError()
-        }
-
-        let preferredAPIVersion = BackendInfo.preferredAPIVersion.map(WireNetwork.APIVersion.init)
-
-        let networkStack = NetworkStack(
-            backendEnvironment: backendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            preferredAPIVersion: preferredAPIVersion,
-            proxyCredentials: proxyCredentials
-        )
-
-        var prevMetadata: ResolvedBackendMetadata?
-        if let storedMetadata = try! backendEnvironmentStore.fetchBackendMetadata(
-            accountID: account.userIdentifier
-        ) {
-            prevMetadata = storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain
-        {
-            // Try get the legacy metadata.
-            // TODO: check... need isMLSEnabled too?
-            prevMetadata = ResolvedBackendMetadata(
-                apiVersion: .init(legacyAPIVersion),
-                domain: legacyDomain,
-                isFederationEnabled: BackendInfo.isFederationEnabled
-            )
-        }
-
-        // Get new metadata
-        let newMetadata: ResolvedBackendMetadata
-        do {
-            newMetadata = try await networkStack.resolvedBackendMetadata()
-        } catch NetworkStackError.backendAPIVersionObsolete {
-            delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
-            return nil
-        } catch NetworkStackError.clientAPIVersionObsolete {
-            delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
-            return nil
-        } catch {
-            // TODO: handle (if no internet, continue anyway)
-            fatalError()
-        }
-
-        if let prevMetadata {
-            if !prevMetadata.isFederationEnabled && newMetadata.isFederationEnabled {
-                // TODO: mark federation migration needed
-            }
-
-            if prevMetadata.apiVersion < .v3 && newMetadata.apiVersion >= .v3 {
-                // TODO: mark access token migration needed
-            }
-        }
-
-        // Store new metadata
-        do {
-            try backendEnvironmentStore.storeBackendMetadata(
-                newMetadata,
-                for: account.userIdentifier
-            )
-
-            // TODO: store it also in BackendInfo for legacy.
-        } catch {
-            // TODO: handle
-            fatalError()
-        }
-
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
@@ -1171,28 +1069,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        let restNetworkService: NetworkService
-        let webSocketNetworkService: NetworkService
-        do {
-            (restNetworkService, webSocketNetworkService) = try networkStack.networkServices
-        } catch {
-            // TODO: throw error
-            fatalError()
-        }
-
         let userSession = startBackgroundSession(
             for: account,
-            coreDataStack: coreDataStack,
+            with: coreDataStack,
             journal: journal,
-            restNetworkService: restNetworkService,
-            webSocketNetworkService: webSocketNetworkService,
-            backendMetadata: newMetadata,
-            backendEnvironment: backendEnvironment,
-            proxyCredentials: proxyCredentials,
             logFilesProvider: logFilesProvider
         )
-
-        // TODO: perform metadata migrations if needed
 
         let migrationService = userSession.makeAppVersionMigrationService()
         if migrationService.isMigrationNeeded {
@@ -1393,16 +1275,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    // Creates the user session for @c account given, calls @c completion when done.
     @MainActor
     private func startBackgroundSession(
         for account: Account,
-        coreDataStack: CoreDataStack,
+        with coreDataStack: CoreDataStack,
         journal: Journal,
-        restNetworkService: NetworkService,
-        webSocketNetworkService: NetworkService,
-        backendMetadata: ResolvedBackendMetadata,
-        backendEnvironment: BackendEnvironment2,
-        proxyCredentials: WireNetwork.ProxyCredentials?,
         logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
@@ -1412,11 +1290,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let newSession = authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
-            restNetworkService: restNetworkService,
-            webSocketNetworkService: webSocketNetworkService,
-            backendMetadata: backendMetadata,
-            backendEnvironment: backendEnvironment,
-            proxyCredentials: proxyCredentials,
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
@@ -1634,7 +1507,7 @@ extension SessionManager {
 extension SessionManager: TeamObserver {
     public func teamDidChange(_ changeInfo: TeamChangeInfo) {
         let team = changeInfo.team
-        guard let managedObjectContext = (team as? WireDataModel.Team)?.managedObjectContext else {
+        guard let managedObjectContext = (team as? Team)?.managedObjectContext else {
             return
         }
         updateCurrentAccount(in: managedObjectContext)
@@ -2030,226 +1903,4 @@ public extension SessionManager {
     static func stopAVSLogging() {
         avsLogObserver = nil
     }
-}
-
-// Delete
-private extension BackendEnvironment2 {
-
-    init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
-        let environmentType: EnvironmentType
-        switch legacyEnvironment.environmentType.value {
-        case .default:
-            environmentType = .default
-        case .staging:
-            environmentType = .staging
-        case .anta:
-            environmentType = .anta
-        case .bella:
-            environmentType = .bella
-        case .chala:
-            environmentType = .chala
-        case .diya:
-            environmentType = .diya
-        case .elna:
-            environmentType = .elna
-        case .foma:
-            environmentType = .foma
-        case let .custom(url):
-            environmentType = .custom(url: url)
-        }
-
-        let endpoints = Endpoints(
-            restAPIURL: legacyEnvironment.backendURL,
-            websocketURL: legacyEnvironment.backendWSURL,
-            blacklistURL: legacyEnvironment.blackListURL,
-            teamsURL: legacyEnvironment.teamsURL,
-            accountsURL: legacyEnvironment.accountsURL,
-            websiteURL: legacyEnvironment.websiteURL,
-            countlyURL: legacyEnvironment.countlyURL
-        )
-
-        let pinnedKeys: [PinnedKey] = legacyEnvironment.trustData.map {
-            PinnedKey(
-                key: $0.certificateKey,
-                rawKey: $0.rawCertificateKey,
-                hosts: $0.hosts.map { host in
-                    switch host.rule {
-                    case .endsWith:
-                        return .endsWith(host.value)
-                    case .equals:
-                        return .equals(host.value)
-                    }
-                }
-            )
-        }
-
-        let proxyConfig = legacyEnvironment.proxy.map {
-            ProxyConfig(
-                host: $0.host,
-                port: $0.port,
-                needsAuthentication: $0.needsAuthentication
-            )
-        }
-
-        let config = Config(
-            endpoints: endpoints,
-            pinnedKeys: pinnedKeys,
-            proxyConfig: proxyConfig
-        )
-
-        self.init(
-            title: legacyEnvironment.title,
-            environmentType: environmentType,
-            config: config
-        )
-    }
-
-}
-
-private struct ProxyCredentialStore {
-
-    let keychain = Keychain()
-
-    func fetchCredentials(
-        host: String,
-        port: Int
-    ) async throws -> (username: String, password: String)? {
-        let usernameData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-username"),
-            .returningData(true)
-        ])
-
-        let passwordData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-password"),
-            .returningData(true)
-        ])
-
-        guard
-            let usernameData,
-            let passwordData
-        else {
-            return nil
-        }
-
-        return (
-            username: String(decoding: usernameData, as: UTF8.self),
-            password: String(decoding: passwordData, as: UTF8.self)
-        )
-    }
-
-}
-
-private extension WireNetwork.APIVersion {
-
-    init(_ legacyVersion: WireTransport.APIVersion) {
-        switch legacyVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        case .v9:
-            self = .v9
-        case .v10:
-            self = .v10
-        }
-    }
-
-}
-
-extension WireTransport.BackendEnvironment {
-
-    convenience init(_ backendEnvironment: BackendEnvironment2) {
-        let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in
-                TrustData(
-                    certificateKey: pinnedKey.key,
-                    rawCertificateKey: pinnedKey.rawKey,
-                    hosts: pinnedKey.hosts.map { host in
-                        switch host {
-                        case let .endsWith(value):
-                            TrustData.Host(
-                                rule: .endsWith,
-                                value: value
-                            )
-                        case let .equals(value):
-                            TrustData.Host(
-                                rule: .equals,
-                                value: value
-                            )
-                        }
-                    }
-                )
-        }
-
-        let environmentType: EnvironmentType
-        switch backendEnvironment.environmentType {
-        case .default:
-            environmentType = .default
-        case .staging:
-            environmentType = .staging
-        case .anta:
-            environmentType = .anta
-        case .bella:
-            environmentType = .bella
-        case .chala:
-            environmentType = .chala
-        case .diya:
-            environmentType = .diya
-        case .elna:
-            environmentType = .elna
-        case .foma:
-            environmentType = .foma
-        case let .custom(url):
-            environmentType = .custom(url: url)
-        }
-
-        let endpoints = BackendEndpoints(
-            backendURL: backendEnvironment.config.endpoints.restAPIURL,
-            backendWSURL: backendEnvironment.config.endpoints.websocketURL,
-            blackListURL: backendEnvironment.config.endpoints.blacklistURL,
-            teamsURL: backendEnvironment.config.endpoints.teamsURL,
-            accountsURL: backendEnvironment.config.endpoints.accountsURL,
-            websiteURL: backendEnvironment.config.endpoints.websiteURL,
-            countlyURL: backendEnvironment.config.endpoints.countlyURL
-        )
-
-        var proxySettings: WireTransport.ProxySettings?
-        if let proxyConfig = backendEnvironment.config.proxyConfig {
-            proxySettings = WireTransport.ProxySettings(
-                host: proxyConfig.host,
-                port: proxyConfig.port,
-                needsAuthentication: proxyConfig.needsAuthentication
-            )
-        }
-
-        let certificateTrust = ServerCertificateTrust(
-            trustData: trustData,
-            currentDateProvider: .system
-        )
-
-        self.init(
-            title: backendEnvironment.title,
-            trustData: trustData,
-            environmentType: environmentType,
-            endpoints: endpoints,
-            proxySettings: proxySettings,
-            certificateTrust: certificateTrust
-        )
-    }
-
 }

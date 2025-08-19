@@ -29,6 +29,10 @@ open class AuthenticatedSessionFactory {
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
     let application: ZMApplication
+
+    var environment: WireTransport.BackendEnvironment
+    var reachability: Reachability
+
     let minTLSVersion: String?
 
     public init(
@@ -37,6 +41,10 @@ open class AuthenticatedSessionFactory {
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
+        environment: WireTransport.BackendEnvironment,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        reachability: Reachability,
         minTLSVersion: String?
     ) {
         self.currentAppVersion = currentAppVersion
@@ -44,32 +52,50 @@ open class AuthenticatedSessionFactory {
         self.mediaManager = mediaManager
         self.flowManager = flowManager
         self.application = application
+        self.environment = environment
+        self.proxyUsername = proxyUsername
+        self.proxyPassword = proxyPassword
+        self.reachability = reachability
         self.minTLSVersion = minTLSVersion
     }
 
     func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        restNetworkService: NetworkService,
-        webSocketNetworkService: NetworkService,
-        backendMetadata: ResolvedBackendMetadata,
-        backendEnvironment: BackendEnvironment2,
-        proxyCredentials: WireNetwork.ProxyCredentials?,
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) -> ZMUserSession? {
+        let wireAPIBackendEnvironment = BackendEnvironment(
+            url: environment.backendURL,
+            webSocketURL: environment.backendWSURL,
+            pinnedKeys: environment.trustData.map { trustData in
+                PinnedKey(
+                    key: trustData.certificateKey,
+                    rawKey: trustData.rawCertificateKey,
+                    hosts: trustData.hosts.map { host in
+                        switch host.rule {
+                        case .equals:
+                            .equals(host.value)
+                        case .endsWith:
+                            .endsWith(host.value)
+                        }
+                    }
+                )
+            },
+            proxySettings: proxySettings
+        )
+
         let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
-        let environment = BackendEnvironment(backendEnvironment)
 
         let transportSession = ZMTransportSession(
             environment: environment,
-            proxyUsername: proxyCredentials?.username,
-            proxyPassword: proxyCredentials?.password,
+            proxyUsername: proxyUsername,
+            proxyPassword: proxyPassword,
             cookieStorage: environment.cookieStorage(for: account),
-            reachability: environment.reachabilityWrapper(),
+            reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: currentBuildNumber,
@@ -92,9 +118,8 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
-            restNetworkService: restNetworkService,
-            webSocketNetworkService: webSocketNetworkService,
-            backendMetadata: backendMetadata,
+            backendEnvironment: environment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
             application: application,
@@ -113,6 +138,7 @@ open class AuthenticatedSessionFactory {
             sharedContainerURL: coreDataStack.applicationContainer,
             transportSession: transportSession,
             userId: account.userIdentifier,
+            minTLSVersion: minTLSVersion,
             journal: journal,
             logFilesProvider: logFilesProvider
         )
@@ -131,6 +157,30 @@ open class AuthenticatedSessionFactory {
         return userSession
     }
 
+    public func updateProxy(username: String?, password: String?) {
+        proxyUsername = username
+        proxyPassword = password
+    }
+
+    // MARK: - Private
+
+    private(set) var proxyUsername: String?
+    private(set) var proxyPassword: String?
+
+    private var proxySettings: WireNetwork.ProxySettings? {
+        guard let proxy = environment.proxy else { return nil }
+
+        if proxy.needsAuthentication {
+            guard let proxyUsername, let proxyPassword else {
+                fatalInternal("Proxy needs authentication but credentials are missing")
+                return nil
+            }
+
+            return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+        } else {
+            return .unauthenticated(host: proxy.host, port: proxy.port)
+        }
+    }
 }
 
 // MARK: -

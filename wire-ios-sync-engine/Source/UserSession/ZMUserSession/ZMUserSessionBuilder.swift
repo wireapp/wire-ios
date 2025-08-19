@@ -29,9 +29,8 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var restNetworkService: NetworkService?
-    private var webSocketNetworkService: NetworkService?
-    private var backendMetadata: ResolvedBackendMetadata?
+    private var backendEnvironment: WireTransport.BackendEnvironment?
+    private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
     private var currentAppVersion: String?
     private var currentBuildNumber: String?
     private var appLock: (any AppLockType)?
@@ -55,6 +54,8 @@ struct ZMUserSessionBuilder {
     private var sharedContainerURL: URL?
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
+    private var minTLSVersion: String?
+    private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
 
@@ -66,9 +67,6 @@ struct ZMUserSessionBuilder {
 
     func build() -> ZMUserSession {
         guard
-            let restNetworkService,
-            let webSocketNetworkService,
-            let backendMetadata,
             let currentAppVersion,
             let currentBuildNumber,
             let appLock,
@@ -92,11 +90,60 @@ struct ZMUserSessionBuilder {
             let sharedContainerURL,
             let transportSession,
             let userId,
+            let wireAPIBackendEnvironment,
+            let apiVersion,
             let journal,
             let logFilesProvider
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
+
+        let keychain = WireFoundation.Keychain()
+        let cookieStorage = CookieStorage(
+            userID: userId,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: keychain
+        )
+
+        let serverTrustValidator = ServerTrustValidator(
+            pinnedKeys: wireAPIBackendEnvironment.pinnedKeys,
+            currentDateProvider: .system
+        )
+
+        let urlSessionConfigurationFactory = URLSessionConfigurationFactory(
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            proxySettings: wireAPIBackendEnvironment.proxySettings
+        )
+
+        let restNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.url,
+            serverTrustValidator: serverTrustValidator
+        )
+        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        let restSession = URLSession(
+            configuration: restConfig,
+            delegate: restNetworkService,
+            delegateQueue: nil
+        )
+        restNetworkService.configure(with: restSession)
+
+        let webSocketNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.webSocketURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
+        let webSocketSession = URLSession(
+            configuration: webSocketConfig,
+            delegate: webSocketNetworkService,
+            delegateQueue: nil
+        )
+        webSocketNetworkService.configure(with: webSocketSession)
+
+        let backendMetadata = ResolvedBackendMetadata(
+            apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
+            domain: BackendInfo.domain!,
+            isFederationEnabled: BackendInfo.isFederationEnabled
+        )
 
         return ZMUserSession(
             userId: userId,
@@ -133,9 +180,8 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        restNetworkService: NetworkService,
-        webSocketNetworkService: NetworkService,
-        backendMetadata: ResolvedBackendMetadata,
+        backendEnvironment: WireTransport.BackendEnvironment,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
         currentAppVersion: String,
         currentBuildNumber: String,
         application: any ZMApplication,
@@ -154,6 +200,7 @@ struct ZMUserSessionBuilder {
         sharedContainerURL: URL,
         transportSession: any TransportSessionType,
         userId: UUID,
+        minTLSVersion: String?,
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) {
@@ -219,11 +266,14 @@ struct ZMUserSessionBuilder {
             dateProvider: .system
         )
 
+        if
+            let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
+            self.apiVersion = apiVersion
+        }
+
         // setup builder
 
-        self.restNetworkService = restNetworkService
-        self.webSocketNetworkService = webSocketNetworkService
-        self.backendMetadata = backendMetadata
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
@@ -247,6 +297,8 @@ struct ZMUserSessionBuilder {
         self.sharedContainerURL = sharedContainerURL
         self.transportSession = transportSession
         self.userId = userId
+        self.minTLSVersion = minTLSVersion
+        self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
         self.logFilesProvider = logFilesProvider
     }
