@@ -122,7 +122,7 @@ extension FeatureConfigLocalStoreProtocol {
         case let .consumableNotifications(config):
             // Necessary to log correct sync version
             LogAttributes.consumableNotificationsEnabled = config.status == .enabled
-            
+
             await storeFeature(
                 name: .consumableNotifications,
                 isEnabled: config.status == .enabled,

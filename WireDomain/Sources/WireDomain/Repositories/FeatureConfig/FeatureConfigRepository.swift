@@ -118,99 +118,99 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
         switch config {
         case let .appLock(appLockFeatureConfig):
-            
+
             return FeatureState(
                 name: .appLock,
                 isEnabled: appLockFeatureConfig.status == .enabled
             )
-            
+
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
-            
+
             return FeatureState(
                 name: .classifiedDomains,
                 isEnabled: classifiedDomainsFeatureConfig.status == .enabled
             )
-            
+
         case let .conferenceCalling(conferenceCallingFeatureConfig):
-            
+
             return FeatureState(
                 name: .conferenceCalling,
                 isEnabled: conferenceCallingFeatureConfig.status == .enabled
             )
-            
+
         case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
-            
+
             return FeatureState(
                 name: .conversationGuestLinks,
                 isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
             )
-            
+
         case let .digitalSignature(digitalSignatureFeatureConfig):
-            
+
             return FeatureState(
                 name: .digitalSignature,
                 isEnabled: digitalSignatureFeatureConfig.status == .enabled
             )
-            
+
         case let .endToEndIdentity(endToEndIdentityFeatureConfig):
-            
+
             return FeatureState(
                 name: .e2ei,
                 isEnabled: endToEndIdentityFeatureConfig.status == .enabled
             )
-            
+
         case let .fileSharing(fileSharingFeatureConfig):
-            
+
             return FeatureState(
                 name: .fileSharing,
                 isEnabled: fileSharingFeatureConfig.status == .enabled
             )
-            
+
         case let .mls(mlsFeatureConfig):
-            
+
             return FeatureState(
                 name: .mls,
                 isEnabled: mlsFeatureConfig.status == .enabled
             )
-            
+
         case let .mlsMigration(mLSMigrationFeatureConfig):
-            
+
             return FeatureState(
                 name: .mlsMigration,
                 isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
-            
+
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
-            
+
             return FeatureState(
                 name: .selfDeletingMessages,
                 isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled
             )
-            
+
         case let .channels(channelsFeatureConfig):
-            
+
             return FeatureState(
                 name: .channels,
                 isEnabled: channelsFeatureConfig.status == .enabled
             )
-            
+
         case let .allowedGlobalOperations(config):
             return FeatureState(
                 name: .allowedGlobalOperations,
                 isEnabled: config.status == .enabled
             )
-            
+
         case let .consumableNotifications(config):
             return FeatureState(
                 name: .consumableNotifications,
                 isEnabled: config.status == .enabled
             )
-            
+
         case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"
             )
-            
+
             return nil
         }
     }
