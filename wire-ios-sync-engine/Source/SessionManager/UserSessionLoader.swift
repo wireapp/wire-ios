@@ -286,6 +286,7 @@ final class UserSessionLoader {
         }
     }
 
+    @MainActor
     private func createUserSession(
         environment: BackendEnvironment2,
         proxyCredentials: WireNetwork.ProxyCredentials?,
