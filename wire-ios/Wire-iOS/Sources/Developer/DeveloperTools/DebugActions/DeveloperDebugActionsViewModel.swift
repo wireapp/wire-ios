@@ -156,7 +156,12 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         else { return }
 
         Task { @MainActor in
-            guard let conversation = await firstGroupConversation(of: selfClient, in: context, isMLS: true),
+            guard let conversation = await firstConversation(
+                of: selfClient,
+                in: context,
+                isMLS: true,
+                onlyGroups: false
+            ),
                   let mlsGroupID = conversation.mlsGroupID else {
                 WireLogger.mls.info("No MLS conversation to trigger initiate reset")
 
@@ -325,7 +330,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         else { return }
 
         Task { @MainActor in
-            guard let qualifiedID = await firstGroupConversation(of: selfClient, in: context)?.qualifiedID else {
+            guard let qualifiedID = await firstConversation(of: selfClient, in: context, onlyGroups: true)?.qualifiedID else {
                 assertionFailure("no conversation found to update protocol change")
                 return
             }
@@ -345,14 +350,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func firstGroupConversation(
+    private func firstConversation(
         of userClient: UserClient,
         in context: NSManagedObjectContext,
-        isMLS: Bool? = nil
+        isMLS: Bool? = nil,
+        onlyGroups: Bool
     ) async -> ZMConversation? {
         await context.perform {
             userClient.user?.conversations
-                .filter { $0.conversationType == .group }
+                .filter {
+                    onlyGroups ? $0.conversationType == .group : true
+                }
+                .filter { !$0.isSelfConversation }
                 .filter {
                     !$0.isDeleted && !$0.isArchived && !$0.isDeletedRemotely
                 }
