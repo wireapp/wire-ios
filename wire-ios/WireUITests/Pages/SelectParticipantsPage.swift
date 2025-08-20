@@ -32,6 +32,10 @@ class SelectParticipantsPage: PageModel {
         app.descendants(matching: .any)["button.addpeople.create"].firstMatch
     }
 
+    var addParticipantButton: XCUIElement {
+        app.buttons["Add Participants"]
+    }
+
     func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
         for prefix in prefixes {
             let matchingCell = app.cells.element(matching: NSPredicate(format: "label BEGINSWITH %@", prefix))
@@ -42,6 +46,11 @@ class SelectParticipantsPage: PageModel {
 
     func doneSelectingMembers() throws -> GroupConversationPage {
         doneButton.tap()
+        return try GroupConversationPage()
+    }
+
+    func addSelectedParticipant() throws -> GroupConversationPage {
+        addParticipantButton.tap()
         return try GroupConversationPage()
     }
 }
