@@ -60,7 +60,7 @@ package class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
-    enum Alert {
+    enum Alert: Equatable {
         case noInternet
         case unknownError
     }
