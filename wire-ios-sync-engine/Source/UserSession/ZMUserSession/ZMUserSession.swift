@@ -571,7 +571,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func setUpSyncAgent(clientID: String) {
+    func setUpSyncAgent(clientID: String) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
