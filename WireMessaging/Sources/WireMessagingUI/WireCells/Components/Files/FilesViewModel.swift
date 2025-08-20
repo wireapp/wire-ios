@@ -20,7 +20,7 @@ import SwiftUI
 import WireFoundation
 package import WireMessagingDomain
 
-struct FilesViewItem: Identifiable {
+struct FilesViewItem: Identifiable, Equatable {
     let id: UUID
     let filename: String
     let ownedBy: String?
