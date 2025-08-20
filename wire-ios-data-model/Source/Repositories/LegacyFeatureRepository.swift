@@ -581,7 +581,6 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .consumableNotifications:
                 storeConsumableNotifications(.init())
-            }
 
             case .chatBubblesSimple:
                 storeChatBubblesSimple(.init())
