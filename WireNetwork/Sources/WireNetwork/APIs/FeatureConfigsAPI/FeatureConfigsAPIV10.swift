@@ -54,7 +54,6 @@ struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
     // this is added in v10
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
-    let chatBubblesSimple: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -128,9 +127,6 @@ struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
             resetMLSConversations: allowedGlobalOperations.config.mlsConversationReset
         )
         featureConfigs.append(.allowedGlobalOperations(allowedGlobalOperations))
-
-        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubblesSimple.status.toAPIModel())
-        featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
 
         return featureConfigs
     }
