@@ -18,7 +18,7 @@
 
 /// Errors originating from `NetworkStack`.
 
-enum NetworkStackError: Error {
+public enum NetworkStackError: Error {
 
     /// Proxy credentials are required but none are
     /// available
@@ -37,6 +37,6 @@ enum NetworkStackError: Error {
     /// that this client supports is lower than the min
     /// available API version on the backend.
 
-    case clientVersionObsolete
+    case clientAPIVersionObsolete
 
 }
