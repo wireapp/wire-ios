@@ -956,6 +956,66 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    // MARK: - Chat Bubbles Simple
+
+    func testThatItFetchesChatBubblesSimple() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            Feature.updateOrCreate(havingName: .chatBubblesSimple, in: self.syncMOC) { feature in
+                feature.status = .enabled
+            }
+
+            // When
+            let result = sut.fetchChatBubblesSimple()
+
+            // Then
+            XCTAssertEqual(result.status, .enabled)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItFetchesChatBubblesSimple_ItReturnsADefaultValueWhenObjectDoesNotExist() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            // When
+            let result = sut.fetchChatBubblesSimple()
+
+            // Then
+            XCTAssertEqual(result.status, .disabled)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItStoresChatBubblesSimple() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            let chatBubblesSimple = Feature.ChatBubblesSimple(status: .enabled)
+
+            self.assertFeatureDoesNotExist(name: .chatBubblesSimple)
+
+            // When
+            sut.storeChatBubblesSimple(chatBubblesSimple)
+
+            // Then
+            guard let feature = Feature.fetch(name: .chatBubblesSimple, context: self.syncMOC) else {
+                XCTFail("feature not found")
+                return
+            }
+
+            XCTAssertEqual(feature.status, .enabled)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     // MARK: - Other
 
     func testItCreatesDefaultInstances() throws {
