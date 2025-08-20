@@ -698,26 +698,25 @@ struct NullInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateRese
 private extension BackendEnvironment2 {
 
     init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
-        let environmentType: EnvironmentType
-        switch legacyEnvironment.environmentType.value {
+        let environmentType: EnvironmentType = switch legacyEnvironment.environmentType.value {
         case .default:
-            environmentType = .default
+            .default
         case .staging:
-            environmentType = .staging
+            .staging
         case .anta:
-            environmentType = .anta
+            .anta
         case .bella:
-            environmentType = .bella
+            .bella
         case .chala:
-            environmentType = .chala
+            .chala
         case .diya:
-            environmentType = .diya
+            .diya
         case .elna:
-            environmentType = .elna
+            .elna
         case .foma:
-            environmentType = .foma
+            .foma
         case let .custom(url):
-            environmentType = .custom(url: url)
+            .custom(url: url)
         }
 
         let endpoints = Endpoints(
@@ -737,9 +736,9 @@ private extension BackendEnvironment2 {
                 hosts: $0.hosts.map { host in
                     switch host.rule {
                     case .endsWith:
-                        return .endsWith(host.value)
+                        .endsWith(host.value)
                     case .equals:
-                        return .equals(host.value)
+                        .equals(host.value)
                     }
                 }
             )

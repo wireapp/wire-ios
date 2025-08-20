@@ -85,7 +85,7 @@ public final class UserSessionComponent {
         clientID: String,
         completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
-        return ClientSessionComponent(
+        ClientSessionComponent(
             selfUserID: selfUserID,
             selfClientID: clientID,
             restNetworkService: restNetworkService,

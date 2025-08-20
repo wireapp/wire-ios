@@ -79,10 +79,10 @@ final class UserSessionLoader {
         self.logFilesProvider = logFilesProvider
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
 
-        accountID = account.userIdentifier
+        self.accountID = account.userIdentifier
         let accountDataURL = AccountURLs(root: sharedContainerURL).accountData
-        backendStore = try BackendEnvironmentStore(directory: accountDataURL)
-        journal = Journal(
+        self.backendStore = try BackendEnvironmentStore(directory: accountDataURL)
+        self.journal = Journal(
             userID: accountID,
             storage: sharedUserDefaults
         )
@@ -157,7 +157,8 @@ final class UserSessionLoader {
         }
     }
 
-    private func fetchProxyCredentials(for config: BackendEnvironment2.ProxyConfig) async throws -> WireNetwork.ProxyCredentials? {
+    private func fetchProxyCredentials(for config: BackendEnvironment2.ProxyConfig) async throws -> WireNetwork
+        .ProxyCredentials? {
         guard config.needsAuthentication else {
             return nil
         }
@@ -188,10 +189,9 @@ final class UserSessionLoader {
             prevMetadata = storedMetadata
         } else if
             let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain
-        {
+            let legacyDomain = BackendInfo.domain {
             // We're on the update path, use the legacy metadata.
-            // TODO: check... need isMLSEnabled too?
+            // TODO: [WPB-19626] check... need isMLSEnabled too?
             prevMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
@@ -203,11 +203,11 @@ final class UserSessionLoader {
         let newMetadata = try await networkStack.resolvedBackendMetadata()
 
         if let prevMetadata {
-            if !prevMetadata.isFederationEnabled && newMetadata.isFederationEnabled {
+            if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
                 // TODO: [WPB-14630] mark federation migration needed
             }
 
-            if prevMetadata.apiVersion < .v3 && newMetadata.apiVersion >= .v3 {
+            if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
                 // TODO: [WPB-14630] mark access token migration needed
             }
         }
@@ -383,7 +383,7 @@ final class UserSessionLoader {
             userID: accountID
         )
 
-        let proteusToMLSMigrationCoordinator =  ProteusToMLSMigrationCoordinator(
+        let proteusToMLSMigrationCoordinator = ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: accountID
         )
@@ -509,26 +509,25 @@ final class UserSessionLoader {
 private extension BackendEnvironment2 {
 
     init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
-        let environmentType: EnvironmentType
-        switch legacyEnvironment.environmentType.value {
+        let environmentType: EnvironmentType = switch legacyEnvironment.environmentType.value {
         case .default:
-            environmentType = .default
+            .default
         case .staging:
-            environmentType = .staging
+            .staging
         case .anta:
-            environmentType = .anta
+            .anta
         case .bella:
-            environmentType = .bella
+            .bella
         case .chala:
-            environmentType = .chala
+            .chala
         case .diya:
-            environmentType = .diya
+            .diya
         case .elna:
-            environmentType = .elna
+            .elna
         case .foma:
-            environmentType = .foma
+            .foma
         case let .custom(url):
-            environmentType = .custom(url: url)
+            .custom(url: url)
         }
 
         let endpoints = Endpoints(
@@ -548,9 +547,9 @@ private extension BackendEnvironment2 {
                 hosts: $0.hosts.map { host in
                     switch host.rule {
                     case .endsWith:
-                        return .endsWith(host.value)
+                        .endsWith(host.value)
                     case .equals:
-                        return .equals(host.value)
+                        .equals(host.value)
                     }
                 }
             )
@@ -649,46 +648,45 @@ extension WireTransport.BackendEnvironment {
 
     convenience init(_ backendEnvironment: BackendEnvironment2) {
         let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in
-                TrustData(
-                    certificateKey: pinnedKey.key,
-                    rawCertificateKey: pinnedKey.rawKey,
-                    hosts: pinnedKey.hosts.map { host in
-                        switch host {
-                        case let .endsWith(value):
-                            TrustData.Host(
-                                rule: .endsWith,
-                                value: value
-                            )
-                        case let .equals(value):
-                            TrustData.Host(
-                                rule: .equals,
-                                value: value
-                            )
-                        }
+            TrustData(
+                certificateKey: pinnedKey.key,
+                rawCertificateKey: pinnedKey.rawKey,
+                hosts: pinnedKey.hosts.map { host in
+                    switch host {
+                    case let .endsWith(value):
+                        TrustData.Host(
+                            rule: .endsWith,
+                            value: value
+                        )
+                    case let .equals(value):
+                        TrustData.Host(
+                            rule: .equals,
+                            value: value
+                        )
                     }
-                )
+                }
+            )
         }
 
-        let environmentType: EnvironmentType
-        switch backendEnvironment.environmentType {
+        let environmentType: EnvironmentType = switch backendEnvironment.environmentType {
         case .default:
-            environmentType = .default
+            .default
         case .staging:
-            environmentType = .staging
+            .staging
         case .anta:
-            environmentType = .anta
+            .anta
         case .bella:
-            environmentType = .bella
+            .bella
         case .chala:
-            environmentType = .chala
+            .chala
         case .diya:
-            environmentType = .diya
+            .diya
         case .elna:
-            environmentType = .elna
+            .elna
         case .foma:
-            environmentType = .foma
+            .foma
         case let .custom(url):
-            environmentType = .custom(url: url)
+            .custom(url: url)
         }
 
         let endpoints = BackendEndpoints(

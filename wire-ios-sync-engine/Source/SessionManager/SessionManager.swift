@@ -1030,10 +1030,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
                 return nil
             } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                // TODO: handle
+                // TODO: [WPB-19625] handle
                 fatalError()
             } catch {
-                // TODO: handle
+                // TODO: [WPB-19625] handle
                 return nil
             }
         } else {

@@ -123,7 +123,6 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-
     private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
         networkService: restNetworkService
     ).makeAPI()
