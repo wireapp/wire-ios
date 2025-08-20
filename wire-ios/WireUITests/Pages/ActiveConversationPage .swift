@@ -40,6 +40,14 @@ class ActiveConversationPage: PageModel {
         app.textViews.matching(identifier: "Message")
     }
 
+    var conversationTitleButton: XCUIElement {
+        app.buttons["conversation_title_button"]
+    }
+
+    var conversationDetailsButton: XCUIElement {
+        app.buttons["Conversation Details"]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -60,5 +68,11 @@ class ActiveConversationPage: PageModel {
     func goBackToConversationPage() throws -> ConversationsPage {
         conversationBackButton.tap()
         return try ConversationsPage()
+    }
+
+    func openConversationDetails() throws -> ConversationDetailsPage {
+        conversationTitleButton.tap()
+        conversationDetailsButton.tap()
+        return try ConversationDetailsPage()
     }
 }

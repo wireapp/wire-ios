@@ -122,6 +122,7 @@ public class ConversationTitleView: UIView {
         addSubview(tapButton)
         tapButton.pin(to: self)
         tapButton.showsMenuAsPrimaryAction = true
+        tapButton.accessibilityIdentifier = "conversation_title_button"
     }
 
     public func updateSource(_ source: ConversationTitleSource) {

@@ -21,7 +21,11 @@ import XCTest
 class UserDetailsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        userNameInfo
+        nameInfo
+    }
+
+    var nameInfo: XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "name").firstMatch
     }
 
     var userNameInfo: XCUIElement {
@@ -36,6 +40,18 @@ class UserDetailsPage: PageModel {
         app.staticTexts["Connect"].firstMatch
     }
 
+    var moreActionsButton: XCUIElement {
+        app.buttons["right_button"]
+    }
+
+    var removeFromConversationButton: XCUIElement {
+        app.buttons["Remove From Conversation…"]
+    }
+
+    var confirmRemoveUserFromConversation: XCUIElement {
+        app.buttons["Remove From Conversation"]
+    }
+
     func getUserName() -> String? {
         userNameInfo.value as? String
     }
@@ -48,6 +64,18 @@ class UserDetailsPage: PageModel {
     func closeProfilePage() throws -> NewConversationPage {
         closeProfileButton.tap()
         return try NewConversationPage()
+    }
+
+    func removeParticipantFromConversation() throws -> ConversationDetailsPage {
+        moreActionsButton.tap()
+        removeFromConversationButton.tap()
+        let confirmButton = confirmRemoveUserFromConversation
+        XCTAssertTrue(
+            confirmButton.waitForExistence(timeout: 2),
+            "Confirm Remove From Conversation button did not appear in time"
+        )
+        confirmButton.tap()
+        return try ConversationDetailsPage()
     }
 
 }

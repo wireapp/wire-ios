@@ -119,7 +119,7 @@ enum BackendClient {
         ]
         let response = try await httpPostRequest(url: "\(backendURL)/register", body: body)
         let userData: UserResponse = try JSONDecoder().decode(UserResponse.self, from: response)
-        var updatedUser = UserInfo()
+        let updatedUser = UserInfo()
         updatedUser.name = userData.name
         updatedUser.email = userData.email
         updatedUser.id = userData.id
