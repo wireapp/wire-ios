@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireNetwork
 
 public struct SwitchBackendConfirmation: View {
 
@@ -41,43 +42,43 @@ public struct SwitchBackendConfirmation: View {
     private let onConfirm: (Bool) -> Void
 
     public init(
-        backendConfig: BackendConfig,
+        environment: BackendEnvironment2,
         onConfirm: @escaping (Bool) -> Void
     ) {
         var items = [
             Item(
                 title: Strings.backendName,
-                value: backendConfig.title,
+                value: environment.title,
                 isURL: false
             ),
             Item(
                 title: Strings.backendUrl,
-                value: backendConfig.endpoints.backendURL.absoluteString,
+                value: environment.config.endpoints.restAPIURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.backendWsurl,
-                value: backendConfig.endpoints.backendWSURL.absoluteString,
+                value: environment.config.endpoints.websocketURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.blacklistUrl,
-                value: backendConfig.endpoints.blackListURL.absoluteString,
+                value: environment.config.endpoints.blacklistURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.teamsUrl,
-                value: backendConfig.endpoints.teamsURL.absoluteString,
+                value: environment.config.endpoints.teamsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.accountsUrl,
-                value: backendConfig.endpoints.accountsURL.absoluteString,
+                value: environment.config.endpoints.accountsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.websiteUrl,
-                value: backendConfig.endpoints.websiteURL.absoluteString,
+                value: environment.config.endpoints.websiteURL.absoluteString,
                 isURL: true
             )
         ]

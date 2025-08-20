@@ -18,31 +18,32 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 public enum Fixture {
 
-    public static let backendEnvironment = WireAuthenticationBackendEnvironment(
+    public static let backendEnvironment = BackendEnvironment2(
+        title: "Mock backend",
         environmentType: .default,
-        config: BackendConfig(
-            title: "Mock backend",
-            endpoints: Endpoints(
-                backendURL: URL(string: "www.mock.com")!,
-                backendWSURL: URL(string: "www.mock.com")!,
-                blackListURL: URL(string: "www.mock.com")!,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "www.mock.com")!,
+                websocketURL: URL(string: "www.mock.com")!,
+                blacklistURL: URL(string: "www.mock.com")!,
                 teamsURL: URL(string: "www.mock.com")!,
                 accountsURL: URL(string: "www.mock.com")!,
                 websiteURL: URL(string: "www.mock.com")!,
                 countlyURL: URL(string: "www.mock.com")!
             ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        ),
-        metadata: BackendMetadata(
-            apiVersion: .v8,
-            domain: "mock.com",
-            isFederationEnabled: true
-        ),
-        proxySettings: nil
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
+    )
+
+    public static let backendMetadata = ResolvedBackendMetadata(
+        apiVersion: .v8,
+        domain: "mock.com",
+        isFederationEnabled: true
     )
 
     public static let someCookie = HTTPCookie(properties: [

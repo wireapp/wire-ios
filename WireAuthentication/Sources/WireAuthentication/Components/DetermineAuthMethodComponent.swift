@@ -36,12 +36,12 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    public let networkStack: WireAuthenticationLogic.NetworkStack
+    public let networkStack: NetworkStack
     private let existsAnotherAccount: Bool
 
     init(
         parent: any Scope,
-        networkStack: WireAuthenticationLogic.NetworkStack,
+        networkStack: NetworkStack,
         existsAnotherAccount: Bool
     ) {
         self.networkStack = networkStack
@@ -57,13 +57,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     func loginView(
         email: String?,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     ) -> LoginViaEmailView {
         let factory = loginViaEmailFactory(
             email: email,
             canCreateAccount: false,
             didDetectDomainConflict: didDetectDomainConflict,
-            backendInfo: backendInfo
+            environment: environment
         )
         return LoginViaEmailView(factory: factory)
     }
@@ -72,13 +72,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     func loginOrRegisterView(
         email: String?,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     ) -> LoginViaEmailView {
         let factory = loginViaEmailFactory(
             email: email,
             canCreateAccount: true,
             didDetectDomainConflict: didDetectDomainConflict,
-            backendInfo: backendInfo
+            environment: environment
         )
         return LoginViaEmailView(factory: factory)
     }
@@ -94,7 +94,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             factory: self,
             router: dependency.router,
             bridge: dependency.bridge,
-            backendInfo: networkStack.backendInfo,
+            environment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )
     }
@@ -103,12 +103,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     ) -> any WireAuthenticationUI.LoginViaEmailFactory {
         let networkStack = NetworkStack(
-            backendInfo: backendInfo,
+            backendEnvironment: environment,
             minTLSVersion: dependency.minTLSVersion,
-            preferredAPIVersion: dependency.preferredAPIVersion
+            preferredAPIVersion: dependency.preferredAPIVersion,
+            proxyCredentials: nil
         )
         return LoginViaEmailComponent(
             parent: self,
@@ -147,12 +148,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     }
 
     @MainActor
-    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
-        let networkStack: WireAuthenticationLogic.NetworkStack = if let backendInfo {
+    func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let environment {
             NetworkStack(
-                backendInfo: backendInfo,
+                backendEnvironment: environment,
                 minTLSVersion: dependency.minTLSVersion,
-                preferredAPIVersion: dependency.preferredAPIVersion
+                preferredAPIVersion: dependency.preferredAPIVersion,
+                proxyCredentials: nil
             )
         } else {
             self.networkStack
@@ -162,7 +164,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
         return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,
-            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            baseURL: networkStack.backendEnvironment.config.endpoints.restAPIURL,
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),

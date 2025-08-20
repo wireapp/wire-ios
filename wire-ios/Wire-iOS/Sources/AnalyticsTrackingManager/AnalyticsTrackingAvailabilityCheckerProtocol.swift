@@ -17,13 +17,14 @@
 //
 
 import WireAuthenticationAPI
+import WireNetwork
 
 /// Determines if analytics tracking is available or not, based on backend config properties.
 
 protocol AnalyticsTrackingAvailabilityCheckerProtocol {
 
     func isAnalyticsTrackingAvailable(for domain: String) -> Bool
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool
 
 }
 

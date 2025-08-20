@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -173,7 +174,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendConfig: Scaffolding.backendConfig(backendURL: backendURL),
+            environment: Scaffolding.environment(backendURL: backendURL),
             privacyPolicyURL: URL(string: "https://wire.com")!,
             termsOfUseURL: URL(string: "https://wire.com")!,
             teamAccountCreationLink: URL(string: "https://wire.com")!,
@@ -186,20 +187,23 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
 
 private enum Scaffolding {
 
-    static func backendConfig(backendURL: URL) -> BackendConfig {
-        BackendConfig(
+    static func environment(backendURL: URL) -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: "mock",
-            endpoints: Endpoints(
-                backendURL: backendURL,
-                backendWSURL: URL(string: "https://wire.com")!,
-                blackListURL: URL(string: "https://wire.com")!,
-                teamsURL: URL(string: "https://wire.com")!,
-                accountsURL: URL(string: "https://wire.com")!,
-                websiteURL: URL(string: "https://wire.com")!,
-                countlyURL: URL(string: "https://wire.com")!
-            ),
-            proxySettings: .none,
-            pinnedKeys: .none
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: backendURL,
+                    websocketURL: URL(string: "https://wire.com")!,
+                    blacklistURL: URL(string: "https://wire.com")!,
+                    teamsURL: URL(string: "https://wire.com")!,
+                    accountsURL: URL(string: "https://wire.com")!,
+                    websiteURL: URL(string: "https://wire.com")!,
+                    countlyURL: URL(string: "https://wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     }
 

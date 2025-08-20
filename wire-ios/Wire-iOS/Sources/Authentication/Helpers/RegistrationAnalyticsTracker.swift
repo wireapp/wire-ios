@@ -21,6 +21,7 @@ import WireAnalytics
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
@@ -59,9 +60,9 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         analyticsService?.currentDeviceID
     }
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
         guard analyticsService != nil else { return false }
-        return availabilityChecker.isAnalyticsTrackingAvailable(for: backendConfig)
+        return availabilityChecker.isAnalyticsTrackingAvailable(for: environment)
     }
 
     @MainActor

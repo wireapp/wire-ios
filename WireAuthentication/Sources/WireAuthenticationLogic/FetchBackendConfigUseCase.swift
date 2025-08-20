@@ -25,16 +25,19 @@ public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
     public init() {}
 
-    public func invoke(at configURL: URL) async throws -> BackendConfig {
+    public func invoke(at configURL: URL) async throws -> BackendEnvironment2 {
         do {
             let (data, _) = try await URLSession.shared.data(from: configURL)
 
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let environmentResponse = try decoder.decode(BackendConfig.self, from: data)
+            // TODO: use json helper
+            fatalError()
 
-            WireLogger.backend.info("Fetched custom configuration from \(configURL)")
-            return environmentResponse
+//            let decoder = JSONDecoder()
+//            decoder.keyDecodingStrategy = .convertFromSnakeCase
+//            let environmentResponse = try decoder.decode(BackendConfig.self, from: data)
+//
+//            WireLogger.backend.info("Fetched custom configuration from \(configURL)")
+//            return environmentResponse
         } catch let decodingError as DecodingError {
             WireLogger.backend.error("Error decoding response from \(configURL): \(decodingError)")
             throw FetchBackendConfigFailure.invalidResponse
