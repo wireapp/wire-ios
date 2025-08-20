@@ -38,7 +38,7 @@ class ConnectionRequestsPage: PageModel {
     }
 
     func getUserName() -> String? {
-        userNameInfo.label as? String
+        userNameInfo.label
     }
 
 }

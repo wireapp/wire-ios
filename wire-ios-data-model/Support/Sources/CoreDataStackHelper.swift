@@ -49,15 +49,8 @@ public struct CoreDataStackHelper {
             inMemoryStore: inMemoryStore
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            stack.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: stack)
-                }
-            }
-        }
+        try await stack.load()
+        return stack
     }
 
     public func cleanupDirectory() throws {

@@ -17,6 +17,8 @@
 //
 
 public import SwiftUI
+import WireDesign
+import WireFoundation
 
 public struct AttachmentsCarousel: View {
 
@@ -49,18 +51,20 @@ public struct AttachmentsCarousel: View {
                     )
                 }
             }
-            .padding(.horizontal, 12) // TODO: [WPB-17604] Don't hardcode but rely on system spacing
+            .padding(.horizontal, 12)
         }
+        .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .bottom)
     }
 
 }
 
-// TODO: [WPB-17604] This implementation is a functional placeholder. It needs to be updated to match designs.
 private struct AttachmentsCarouselItemView: View {
 
     enum Constants {
-        static let cornerButtonRadius: CGFloat = 12
+        static let topPadding: CGFloat = 8
+        static let trailingPadding: CGFloat = 6
+        static let buttonCornerRadius: CGFloat = 24
     }
 
     let item: AttachmentsCarouselItem
@@ -72,27 +76,40 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
-
-                if let progress = item.state.progress {
-                    VStack(alignment: .leading) {
-                        Spacer()
-                        ProgressView(value: progress, total: 1)
-                            .tint(Color.blue)
-                    }
-                }
+                    .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
-            .padding([.top, .trailing], Constants.cornerButtonRadius)
+            .padding(.top, Constants.topPadding)
+            .padding(.trailing, Constants.trailingPadding)
 
             cornerButton
         }
     }
 
-    var content: some View {
-        Text(contentLabel)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.gray)
-            .onTapGesture(perform: onTap)
+    @ViewBuilder var content: some View {
+        switch item.kind {
+        case let .image(thumbnail):
+            WireCellsImageAttachmentPreview(
+                thumbnail: thumbnail.map { Image(uiImage: $0) },
+                progress: item.state.progress,
+                isError: item.state.isFailed
+            )
+        case let .video(thumbnail):
+            WireCellsVideoAttachmentPreview(
+                thumbnail: thumbnail.map { Image(uiImage: $0) },
+                progress: item.state.progress,
+                isError: item.state.isFailed,
+                canPlay: false
+            )
+        case .audio, .document:
+            WireCellsDocumentAttachmentPreview(
+                headerIcon: Image(item.fileIcon.resource),
+                headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
+                labelText: item.name,
+                progress: item.state.progress,
+                isError: item.state.isFailed
+            )
+        }
     }
 
     // TODO: [WPB-17604] Add missing accessibility labels
@@ -107,33 +124,26 @@ private struct AttachmentsCarouselItemView: View {
                         Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
                     } label: {
                         Image(systemName: "ellipsis.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Constants.buttonCornerRadius, height: Constants.buttonCornerRadius)
                     }
                 } else {
                     Button(
                         action: onRemove,
                         label: {
                             Image(systemName: "xmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.buttonCornerRadius, height: Constants.buttonCornerRadius)
                         }
                     )
+
                 }
             }
-            .font(.system(size: Constants.cornerButtonRadius * 2))
-            .foregroundStyle(.black)
+            .buttonStyle(CornerButtonStyle())
 
             Spacer()
-        }
-    }
-
-    var contentLabel: String {
-        switch item.kind {
-        case .image:
-            "Image"
-        case .video:
-            "Video"
-        case .audio:
-            "Audio"
-        case .document:
-            "Document"
         }
     }
 
@@ -167,36 +177,76 @@ private extension AttachmentsCarouselItem.State {
         switch self {
         case let .uploading(progress):
             progress
-        case .uploaded, .failed:
+        case .uploaded:
             nil
+        case .failed:
+            1 // When failed we show a full red progress bar
         }
     }
 }
 
+private struct CornerButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration
+            .label
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color, ColorTheme.Buttons.Secondary.enabled.color)
+            .overlay(
+                Circle().strokeBorder(ColorTheme.Buttons.Secondary.enabledOutline.color, lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
+    }
+
+}
+
 #Preview {
-    AttachmentsCarousel(
-        viewModel: AttachmentsCarouselViewModel(
-            items: [
-                AttachmentsCarouselItem(
-                    id: UUID(),
-                    state: .failed,
-                    kind: .image(thumbnail: UIImage()),
-                    name: "Image",
-                    size: "1.2 MB"
+    VStack {
+        ZStack {
+            Color(.green).ignoresSafeArea()
+
+            AttachmentsCarousel(
+                viewModel: AttachmentsCarouselViewModel(
+                    items: [
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .failed,
+                            kind: .image(
+                                thumbnail: UIImage(named: "rectangular-placeholder", in: Bundle.module, with: nil)
+                            ),
+                            name: "Image",
+                            fileExtension: "jpg",
+                            size: "1.2 MB",
+                            fileIcon: .image
+                        ),
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .uploading(progress: 1),
+                            kind: .video(thumbnail: nil),
+                            name: "Video",
+                            fileExtension: "mp4",
+                            size: "1.2 MB",
+                            fileIcon: .video
+                        ),
+                        AttachmentsCarouselItem(
+                            id: UUID(),
+                            state: .uploading(progress: 0.5),
+                            kind: .document,
+                            name: "Doc",
+                            fileExtension: "pdf",
+                            size: "1.2 MB",
+                            fileIcon: .pdf
+                        )
+                    ]
                 ),
-                AttachmentsCarouselItem(
-                    id: UUID(),
-                    state: .uploading(progress: 0.5),
-                    kind: .video(thumbnail: UIImage()),
-                    name: "Video",
-                    size: "1.2 MB"
-                )
-            ]
-        ),
-        onTap: { _ in },
-        onRemove: { _ in },
-        onRetry: { _ in }
-    )
-    .frame(height: 74)
-    .background(Color.red)
+                onTap: { _ in },
+                onRemove: { _ in },
+                onRetry: { _ in }
+            )
+            .frame(height: 82)
+            .background(Color.white)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        }
+        Spacer(minLength: 500)
+    }
 }

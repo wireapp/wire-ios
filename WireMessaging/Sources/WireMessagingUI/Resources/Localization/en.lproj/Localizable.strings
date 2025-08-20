@@ -94,3 +94,4 @@
 "conversation.file.preview.open" = "Open preview";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
+"conversation.wireCells.files.navigationTitle" = "Files";

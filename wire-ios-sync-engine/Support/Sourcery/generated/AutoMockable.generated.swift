@@ -441,25 +441,25 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
     // MARK: - replacePersistentStore
 
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup)] = []
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError: Error?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL)] = []
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError: Error?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod: ((UUID, URL, URL) async throws -> URL)?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue: URL?
 
     @discardableResult
-    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
-        replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL) async throws -> URL {
+        replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer))
 
-        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError {
+        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError {
             throw error
         }
 
-        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod {
-            return try await mock(accountIdentifier, backupDirectory, applicationContainer, dispatchGroup)
-        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue {
+        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod {
+            return try await mock(accountIdentifier, backupDirectory, applicationContainer)
+        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue {
             return mock
         } else {
-            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup`")
+            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainer`")
         }
     }
 
@@ -670,20 +670,24 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
     public var invoke_Invocations: [Void] = []
     public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Void)?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
 
-    public func invoke() async throws {
+    @discardableResult
+    public func invoke() async throws -> Bool {
         invoke_Invocations.append(())
 
         if let error = invoke_MockError {
             throw error
         }
 
-        guard let mock = invoke_MockMethod else {
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invoke`")
         }
-
-        try await mock()
     }
 
 }

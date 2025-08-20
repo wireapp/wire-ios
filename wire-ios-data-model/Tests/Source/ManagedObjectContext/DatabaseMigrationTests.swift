@@ -63,7 +63,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         )
 
         // WHEN / THEN
-        let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+        let directory: CoreDataStack! = try await createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         await directory.eventContext.perform {
             let events = directory.eventContext
                 .fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
@@ -90,7 +90,8 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         )
     }
 
-    func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
+    @MainActor
+    func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() async throws {
         // NOTICE: When a new version of data model is created, please add CoreDataMessagingMigrationVersion new case. And make sure your new data model has a new identifierVersion
         let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
 
@@ -110,7 +111,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 accountIdentifier: accountIdentifier,
                 versionName: versionsWithoutCurrent.first!
             )
-            let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+            let directory = try await createStorageStackAndWaitForCompletion(userID: accountIdentifier)
             let currentDatabaseURL = try XCTUnwrap(
                 directory.syncContext.persistentStoreCoordinator?.persistentStores
                     .last?.url
@@ -137,7 +138,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             )
         }
 
-        try allVersions.forEach { version in
+        for version in allVersions {
             // GIVEN
             try helper.createFixtureDatabase(
                 applicationContainer: DatabaseBaseTest.applicationContainer,
@@ -146,7 +147,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             )
 
             // WHEN
-            var directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+            var directory: CoreDataStack! = try await createStorageStackAndWaitForCompletion(userID: accountIdentifier)
 
             // THEN
             let conversationCount = try directory.viewContext.count(for: ZMConversation.sortedFetchRequest())

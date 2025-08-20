@@ -39,14 +39,14 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testThatItDoesNotRemoveConversationsWithDifferentIds() throws {
+    func testThatItDoesNotRemoveConversationsWithDifferentIds() async throws {
         let initialVersion = "2.110.0"
 
         let uniqueConversation1: (UUID?, String?) = (UUID(), nil)
         let uniqueConversation2: (UUID?, String?) = (UUID(), "test.example.com")
         let otherDuplicateConversations = (UUID(), "otherdomain")
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { context in
                 insertDuplicateConversations(with: conversationId, domain: domain, in: context)
@@ -123,10 +123,10 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
+    func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() async throws {
         let initialVersion = "2.110.0"
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { context in
                 insertDuplicateConversations(with: conversationId, domain: domain, in: context)

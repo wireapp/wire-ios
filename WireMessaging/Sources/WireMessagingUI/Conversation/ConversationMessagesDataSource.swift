@@ -17,36 +17,40 @@
 //
 
 import Foundation
-public import UIKit
-import WireMessagingDomain
+package import UIKit
+package import WireMessagingDomain
 
-public enum MessagesSection: Sendable {
+package enum MessagesSection: Sendable {
     // one section for now, later we'd have probably one section for a day
     case main
 }
 
-public typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
+package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSection, MessageType>
 
-public protocol ConversationMessagesDataSourceProtocol: Sendable {
+package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
 /// Does all calculations in background
-public actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
+package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
-    public func updatesStream() async -> AsyncStream<MessagesUpdate> {
-        AsyncStream { continuation in
-            self.updatesStreamContinuation = continuation
-        }
+    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
+        let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
+        updatesStreamContinuation = continuation
+        return stream
     }
+
+    private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
-    public init() {}
+    package init(loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol) {
+        self.loadMessagesUseCase = loadMessagesUseCase
+    }
 
     // store cached message view models
     private var messages: [MessageType] = []
@@ -59,16 +63,17 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
     // in result whole content is recalculated since environment changes
     func invalidateContent() {}
 
-    public func loadInitialMessages() async {
+    package func loadInitialMessages() async {
         #if DEBUG
-            generateMessages()
             simulateAddingMessage()
             Task {
                 await updatesTimerLoop()
             }
         #endif
+        let messages = await loadMessagesUseCase.loadMessages(offset: 0)
+
         snapshot.appendSections([.main])
-        snapshot.appendItems(messages)
+        snapshot.appendItems(messages.toUIModel())
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
     }
 
@@ -107,40 +112,6 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
 
     #if DEBUG
         // Temp Dev code
-        func generateMessages() {
-            let base = "This is a line. "
-            let modelMessages: [MessageModel] = (0 ..< 7).map { _ in
-                let repeatCount = Int.random(in: 1 ... 5)
-                return MessageModel(
-                    sender: .init(
-                        remoteIdentifier: .init(),
-                        name: "Sender",
-                        handle: nil
-                    ),
-                    kind: .text(.init(text: String(repeating: base, count: repeatCount)))
-                )
-            }
-
-            messages = modelMessages.map { model in
-                switch model.kind {
-                case let .text(textModel):
-                    MessageType.text(
-                        TextMessageViewModel(
-                            content: AttributedString(stringLiteral: textModel.text),
-                            senderViewModel: Bool.random() ?
-                                SenderViewModel(state: .exists(AttributedString(
-                                    stringLiteral: model.sender
-                                        .name ?? ""
-                                ))) : SenderViewModel(
-                                    state: .empty
-                                )
-                        )
-                    )
-                default: fatalError()
-                }
-
-            }
-        }
 
         private func simulateAddingMessage() {
             Task {
@@ -191,4 +162,30 @@ public actor ConversationMessagesDataSource: @preconcurrency ConversationMessage
 
     #endif
 
+}
+
+extension [MessageModel] {
+    func toUIModel() -> [MessageType] {
+        map { $0.toUIModel() }
+    }
+}
+
+extension MessageModel {
+    func toUIModel() -> MessageType {
+        switch kind {
+        case let .text(textModel):
+            let senderState: SenderViewModel.State = if Bool.random() {
+                .exists(AttributedString(stringLiteral: sender?.name ?? ""))
+            } else {
+                .empty
+            }
+            return MessageType.text(
+                TextMessageViewModel(
+                    content: AttributedString(stringLiteral: textModel.text ?? ""),
+                    senderViewModel: SenderViewModel(state: senderState)
+                )
+            )
+        default: fatalError()
+        }
+    }
 }

@@ -25,12 +25,7 @@ public struct CoreCryptoConfiguration {
 
     public let path: String
     public let key: Data
-    public let clientID: String
-
-    public var clientIDBytes: ClientId? {
-        .init(from: clientID)
-    }
-
+    public let clientID: WireCoreCryptoUniffi.ClientId
 }
 
 public class CoreCryptoConfigProvider {
@@ -80,16 +75,4 @@ public class CoreCryptoConfigProvider {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
-}
-
-public extension ClientId {
-
-    init?(from string: String) {
-        guard let data = string.data(using: .utf8) else {
-            return nil
-        }
-
-        self = data
-    }
-
 }

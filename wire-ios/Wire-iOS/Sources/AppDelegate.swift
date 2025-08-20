@@ -302,17 +302,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func application(
-        _ application: UIApplication,
-        performActionFor shortcutItem: UIApplicationShortcutItem,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        appRootRouter?.performQuickAction(
-            for: shortcutItem,
-            completionHandler: completionHandler
-        )
-    }
-
     @objc
     func userSessionDidBecomeAvailable(_ notification: Notification?) {
         launchType = .direct

@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor
-public protocol ConversationMessagesViewModelProtocol {
+package protocol ConversationMessagesViewModelProtocol {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
 }
@@ -28,19 +28,19 @@ public protocol ConversationMessagesViewModelProtocol {
 // Not much doing at the moment, will be more later
 // One of the main responsibilities is being MainActor to serve view
 // since DataSource is actor and works on background thread
-public struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
+package struct ConversationMessagesViewModel: ConversationMessagesViewModelProtocol {
 
     private let dataSource: any ConversationMessagesDataSourceProtocol
 
-    public init(dataSource: any ConversationMessagesDataSourceProtocol) {
+    package init(dataSource: any ConversationMessagesDataSourceProtocol) {
         self.dataSource = dataSource
     }
 
-    public func updatesStream() async -> AsyncStream<MessagesUpdate> {
+    package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         await dataSource.updatesStream()
     }
 
-    public func onViewReady() {
+    package func onViewReady() {
         Task {
             await dataSource.loadInitialMessages()
         }

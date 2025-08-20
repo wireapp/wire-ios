@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireMessagingUI
+import WireMessagingAssembly
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -37,10 +37,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = UINavigationController(
-            rootViewController: ConversationMessagesViewController(
-                viewModel: ConversationMessagesViewModel(
-                    dataSource: ConversationMessagesDataSource()
-                )
+            rootViewController: WireMessagingAssembly.makeConversationScreen(
+                loadMessagesRepo: GenerateMessagesRepo()
             )
         )
         window?.makeKeyAndVisible()
