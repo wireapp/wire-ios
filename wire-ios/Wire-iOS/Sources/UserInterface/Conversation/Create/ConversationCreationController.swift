@@ -352,17 +352,9 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
-
-        let context = session.syncContext
-
-        let groupConversationUseCase = makeCreateGroupConversationUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
-        )
+        guard let groupConversationUseCase = session.createGroupConversationUseCase else {
+            return
+        }
 
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
@@ -426,39 +418,6 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             )
             showGenericErrorAlert()
         }
-    }
-
-    private func makeCreateGroupConversationUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
-        context: NSManagedObjectContext
-    ) -> any CreateGroupConversationUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(
-            context: context
-        )
-
-        let store = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let mlsService = context.performAndWait {
-            context.mlsService
-        }
-
-        return CreateGroupConversationUseCase(
-            api: conversationsAPI,
-            store: store,
-            mlsService: mlsService,
-            context: context,
-            isFederationEnabled: BackendInfo.isFederationEnabled,
-            isMLSEnabled: BackendInfo.isMLSEnabled
-        )
     }
 
     private func showGenericErrorAlert() {
