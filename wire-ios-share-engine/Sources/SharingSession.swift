@@ -250,6 +250,7 @@ public final class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
 
+    @MainActor
     public convenience init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
@@ -358,7 +359,7 @@ public final class SharingSession {
 
         }
 
-        try self.init(
+        try await self.init(
             accountIdentifier: accountIdentifier,
             selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
@@ -373,10 +374,13 @@ public final class SharingSession {
             minTLSVersion: .minVersionFrom(minTLSVersion),
             apiVersion: wireAPIVersion,
             sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: URL("unused")!
+            sharedContainerURL: URL("unused")!,
+            legacyEnvironment: environment,
+            proxyCredentials: credentials
         )
     }
 
+    @MainActor
     init(
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,
@@ -395,7 +399,7 @@ public final class SharingSession {
         mlsService: MLSServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
-    ) throws {
+    ) async throws {
 
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -445,6 +449,7 @@ public final class SharingSession {
         setupObservers()
     }
 
+    @MainActor
     public convenience init(
         accountIdentifier: UUID,
         selfClientID: String,
@@ -457,8 +462,10 @@ public final class SharingSession {
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
         sharedUserDefaults: UserDefaults,
-        sharedContainerURL: URL
-    ) throws {
+        sharedContainerURL: URL,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        proxyCredentials: WireTransport.ProxyCredentials?
+    ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
@@ -534,25 +541,42 @@ public final class SharingSession {
             userID: coreDataStack.account.userIdentifier
         )
 
-        // TODO: [WPB-17731]
-        var userSessionComponent: UserSessionComponent!
-//        let userSessionComponent = UserSessionComponent(
-//            selfUserID: accountIdentifier,
-//            backendEnvironment: wireAPIBackendEnvironment,
-//            minTLSVersion: minTLSVersion,
-//            apiVersion: apiVersion,
-//            localDomain: WireTransport.BackendInfo.domain!,
-//            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
-//            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
-//            sharedUserDefaults: sharedUserDefaults,
-//            sharedContainerURL: nil, // the container is not used in this case
-//            syncContext: coreDataStack.syncContext,
-//            eventContext: coreDataStack.eventContext,
-//            mlsService: mlsService,
-//            mlsDecryptionService: mlsService,
-//            proteusService: proteusService,
-//            coreCryptoProvider: coreCryptoProvider
-//        )
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+        }
+
+        let proxyCredentials = proxyCredentials.map {
+            WireNetwork.ProxyCredentials(
+                username: $0.username,
+                password: $0.password
+            )
+        }
+
+        let networkStack = NetworkStack(
+            backendEnvironment: BackendEnvironment2(legacyEnvironment),
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: proxyCredentials
+        )
+
+        let networkServices = try networkStack.networkServices
+        let metadata = try await networkStack.resolvedBackendMetadata()
+
+        let userSessionComponent = UserSessionComponent(
+            selfUserID: accountIdentifier,
+            restNetworkService: networkServices.rest,
+            websocketNetworkService: networkServices.webSocket,
+            backendMetaData: metadata,
+            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: nil, // the container is not used in this case
+            syncContext: coreDataStack.syncContext,
+            eventContext: coreDataStack.eventContext,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsService,
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
+        )
 
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
@@ -569,7 +593,7 @@ public final class SharingSession {
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
-        try self.init(
+        try await self.init(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
@@ -668,4 +692,78 @@ struct NullInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateRese
     func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
         // do nothing
     }
+}
+
+// TODO: [WPB-17731] remove this duplication
+private extension BackendEnvironment2 {
+
+    init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
+        let environmentType: EnvironmentType
+        switch legacyEnvironment.environmentType.value {
+        case .default:
+            environmentType = .default
+        case .staging:
+            environmentType = .staging
+        case .anta:
+            environmentType = .anta
+        case .bella:
+            environmentType = .bella
+        case .chala:
+            environmentType = .chala
+        case .diya:
+            environmentType = .diya
+        case .elna:
+            environmentType = .elna
+        case .foma:
+            environmentType = .foma
+        case let .custom(url):
+            environmentType = .custom(url: url)
+        }
+
+        let endpoints = Endpoints(
+            restAPIURL: legacyEnvironment.backendURL,
+            websocketURL: legacyEnvironment.backendWSURL,
+            blacklistURL: legacyEnvironment.blackListURL,
+            teamsURL: legacyEnvironment.teamsURL,
+            accountsURL: legacyEnvironment.accountsURL,
+            websiteURL: legacyEnvironment.websiteURL,
+            countlyURL: legacyEnvironment.countlyURL
+        )
+
+        let pinnedKeys: [PinnedKey] = legacyEnvironment.trustData.map {
+            PinnedKey(
+                key: $0.certificateKey,
+                rawKey: $0.rawCertificateKey,
+                hosts: $0.hosts.map { host in
+                    switch host.rule {
+                    case .endsWith:
+                        return .endsWith(host.value)
+                    case .equals:
+                        return .equals(host.value)
+                    }
+                }
+            )
+        }
+
+        let proxyConfig = legacyEnvironment.proxy.map {
+            ProxyConfig(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        let config = Config(
+            endpoints: endpoints,
+            pinnedKeys: pinnedKeys,
+            proxyConfig: proxyConfig
+        )
+
+        self.init(
+            title: legacyEnvironment.title,
+            environmentType: environmentType,
+            config: config
+        )
+    }
+
 }
