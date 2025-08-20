@@ -205,6 +205,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .consumableNotifications,
                 isEnabled: config.status == .enabled
             )
+
         case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
             return FeatureState(
                 name: .chatBubblesSimple,

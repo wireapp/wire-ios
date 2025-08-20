@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -190,7 +190,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         container?.isAccessibilityElement = true
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
