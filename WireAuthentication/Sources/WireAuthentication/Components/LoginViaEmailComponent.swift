@@ -39,14 +39,14 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
     public let email: String?
     private let canCreateAccount: Bool
     public let didDetectDomainConflict: Bool
-    public let networkStack: NetworkStack
+    public let networkStack: WireAuthenticationLogic.NetworkStack
 
     init(
         parent: any Scope,
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        networkStack: NetworkStack
+        networkStack: WireAuthenticationLogic.NetworkStack
     ) {
         self.email = email
         self.canCreateAccount = canCreateAccount
@@ -76,7 +76,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     func verifyLoginView(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) -> VerificationCodeView {
         let factory = verificationCodeFactory(
             email: email,
@@ -143,7 +143,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     private func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) -> any VerificationCodeFactory {
         VerificationCodeComponent(
             parent: self,

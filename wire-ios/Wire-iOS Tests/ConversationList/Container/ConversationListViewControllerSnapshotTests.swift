@@ -48,8 +48,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-
-        coreDataFixture = .init()
+        coreDataFixture = try await CoreDataFixture()
         modelHelper = .init()
 
         let selfUser = try XCTUnwrap(coreDataFixture.selfUser)

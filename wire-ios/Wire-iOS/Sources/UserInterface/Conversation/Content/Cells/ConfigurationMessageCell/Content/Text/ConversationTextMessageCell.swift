@@ -189,6 +189,8 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
+    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
+
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 

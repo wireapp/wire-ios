@@ -16,15 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import SwiftUI
+import WireDesign
 
-struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
+package final class FilesHostingController: UIHostingController<FilesView> {
 
-    let team: UUID
-    let id: String
+    private typealias Strings = L10n.Localizable.Conversation.WireCells
+    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-    func toAPIModel() -> TeamID {
-        TeamID(team: team, id: id)
+    private let viewModel: FilesViewModel
+
+    public init(viewModel: FilesViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: FilesView(viewModel: viewModel))
+    }
+
+    @available(*, unavailable)
+    @MainActor @objc
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }

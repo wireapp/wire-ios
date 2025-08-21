@@ -155,10 +155,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        updateAccount(currentAccount)
 
-        if let sortedAttachments = extensionContext?.attachments.sorted {
-            attachments = sortedAttachments
+        Task { @MainActor in
+            await updateAccount(currentAccount)
+
+            if let sortedAttachments = extensionContext?.attachments.sorted {
+                attachments = sortedAttachments
+            }
         }
     }
 
@@ -190,15 +193,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
-    private func recreateSharingSession(account: Account?) throws {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-              let accountIdentifier = account?.userIdentifier
-        else { return }
+    private func recreateSharingSession(account: Account?) async throws {
+        guard
+            let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+            let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
+            let accountIdentifier = account?.userIdentifier
+        else {
+            return
+        }
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
 
-        sharingSession = try SharingSession(
+        sharingSession = try await SharingSession(
             applicationGroupIdentifier: applicationGroupIdentifier,
             accountIdentifier: accountIdentifier,
             hostBundleIdentifier: hostBundleIdentifier,
@@ -488,7 +494,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         postContent?.target = conversation
     }
 
-    func updateAccount(_ account: Account?) {
+    @MainActor
+    func updateAccount(_ account: Account?) async {
 
         var account = account
         let authenticated = authenticatedAccounts
@@ -503,7 +510,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         }
 
         do {
-            try recreateSharingSession(account: account)
+            try await recreateSharingSession(account: account)
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
@@ -570,9 +577,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         )
 
         accountSelectionViewController.selectionHandler = { [weak self] account in
-            self?.updateAccount(account)
-            self?.popConfigurationViewController()
-            self?.validateContent()
+            Task { @MainActor in
+                await self?.updateAccount(account)
+                self?.popConfigurationViewController()
+                self?.validateContent()
+            }
         }
 
         pushConfigurationViewController(accountSelectionViewController)

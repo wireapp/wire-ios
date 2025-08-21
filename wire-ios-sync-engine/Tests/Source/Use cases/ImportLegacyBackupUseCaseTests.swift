@@ -70,7 +70,7 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
             return stack
         }
         mockEntityStorage
-            .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod = { _, _, _, _ in
+            .replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod = { _, _, _ in
                 URL(filePath: "/accountDataFolder/")
             }
 
@@ -158,7 +158,7 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
         XCTAssertFalse(
             mockEntityStorage
-                .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty
+                .replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.isEmpty
         )
         XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
         // ensure the user client was preserved

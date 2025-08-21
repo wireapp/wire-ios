@@ -107,18 +107,20 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             return finishWithoutShowingNotification()
         }
 
-        do {
-            session = try createSession(accountID: accountID)
-        } catch {
-            WireLogger.notifications
-                .error(
-                    "failed to process process request: could not create session: \(error.localizedDescription)",
-                    attributes: .legacyNSE
-                )
-            return finishWithoutShowingNotification()
-        }
+        Task {
+            do {
+                session = try await createSession(accountID: accountID)
+            } catch {
+                WireLogger.notifications
+                    .error(
+                        "failed to process process request: could not create session: \(error.localizedDescription)",
+                        attributes: .legacyNSE
+                    )
+                return finishWithoutShowingNotification()
+            }
 
-        session?.processPushNotification(with: request.content.userInfo)
+            session?.processPushNotification(with: request.content.userInfo)
+        }
     }
 
     override func serviceExtensionTimeWillExpire() {
@@ -226,8 +228,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         session = nil
     }
 
-    private func createSession(accountID: UUID) throws -> NotificationSession {
-        let session = try NotificationSession(
+    @MainActor
+    private func createSession(accountID: UUID) async throws -> NotificationSession {
+        let session = try await NotificationSession(
             currentAppVersion: currentAppVersion,
             applicationGroupIdentifier: appGroupID,
             accountIdentifier: accountID,

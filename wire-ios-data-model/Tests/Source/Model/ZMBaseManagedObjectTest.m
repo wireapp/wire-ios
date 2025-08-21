@@ -87,8 +87,15 @@
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
 
     self.userIdentifier = NSUUID.UUID;
-    self.coreDataStack = [self createCoreDataStack];
-    
+
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithCompletionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
     NSString *testName = NSStringFromSelector(self.invocation.selector);
     NSString *methodName = [NSString stringWithFormat:@"setup%@%@", [testName substringToIndex:1].capitalizedString, [testName substringFromIndex:1]];
     SEL selector = NSSelectorFromString(methodName);
@@ -150,7 +157,13 @@
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
     self.coreDataStack = nil;
-    self.coreDataStack = [self createCoreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithCompletionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
     [self setupTimers];
     [self setupCaches];
 }

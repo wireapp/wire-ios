@@ -24,7 +24,7 @@ public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
     private let api: any UserClientsAPI
     private let store: any UserClientsLocalStoreProtocol
 
-    init(
+    public init(
         api: any UserClientsAPI,
         store: any UserClientsLocalStoreProtocol
     ) {
@@ -68,19 +68,4 @@ public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
         )
     }
 
-}
-
-public extension PullSelfUserClientsSync {
-
-    static func make(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
-        context: NSManagedObjectContext
-    ) -> PullSelfUserClientsSyncProtocol {
-
-        let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        let userClientsLocalStore = UserClientsLocalStore(context: context)
-
-        return PullSelfUserClientsSync(api: userClientsAPI, store: userClientsLocalStore)
-    }
 }
