@@ -36,12 +36,12 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    public let networkStack: NetworkStack
+    public let networkStack: WireAuthenticationLogic.NetworkStack
     private let existsAnotherAccount: Bool
 
     init(
         parent: any Scope,
-        networkStack: NetworkStack,
+        networkStack: WireAuthenticationLogic.NetworkStack,
         existsAnotherAccount: Bool
     ) {
         self.networkStack = networkStack

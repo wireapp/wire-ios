@@ -27,7 +27,7 @@ import WireReusableUIComponents
 protocol PersonalAccountCreationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var networkStack: NetworkStack { get }
+    var networkStack: WireAuthenticationLogic.NetworkStack { get }
     var passwordValidator: any PasswordValidator { get }
     var privacyPolicyURL: URL { get }
     var termsOfUseURL: URL { get }

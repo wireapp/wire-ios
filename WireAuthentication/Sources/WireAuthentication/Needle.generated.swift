@@ -39,7 +39,7 @@ private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 #if !NEEDLE_DYNAMIC
 
 private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provider: VerificationEmailCodeComponentDependency {
-    var networkStack: NetworkStack {
+    var networkStack: WireAuthenticationLogic.NetworkStack {
         return loginViaEmailComponent.networkStack
     }
     var bridge: WireAuthenticationBridge {
@@ -66,7 +66,7 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var router: any Router {
         return rootComponent.router
     }
-    var networkStack: NetworkStack {
+    var networkStack: WireAuthenticationLogic.NetworkStack {
         return loginViaEmailComponent.networkStack
     }
     var didDetectDomainConflict: Bool {
@@ -112,7 +112,7 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     var router: any Router {
         return rootComponent.router
     }
-    var networkStack: NetworkStack {
+    var networkStack: WireAuthenticationLogic.NetworkStack {
         return loginViaEmailComponent.networkStack
     }
     var passwordValidator: any PasswordValidator {
@@ -210,7 +210,7 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 #else
 extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-WireAuthenticationLogic.NetworkStack"
         keyPathToName[\VerificationEmailCodeComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\VerificationEmailCodeComponentDependency.router] = "router-any Router"
         keyPathToName[\VerificationEmailCodeComponentDependency.registrationAnalyticsTracker] = "registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"
@@ -219,7 +219,7 @@ extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
-        keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-WireAuthenticationLogic.NetworkStack"
         keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
 
     }
@@ -231,13 +231,13 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
-        localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
+        localTable["networkStack-WireAuthenticationLogic.NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
 extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\PersonalAccountCreationComponentDependency.router] = "router-any Router"
-        keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-WireAuthenticationLogic.NetworkStack"
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
@@ -288,7 +288,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }
-        localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
+        localTable["networkStack-WireAuthenticationLogic.NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
 
