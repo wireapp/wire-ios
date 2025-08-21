@@ -140,6 +140,17 @@ final class UserSessionLoader {
         // Load network stack.
         let networkServices = try await networkStack.networkServices
 
+        // Store any new cookies.
+        let cookieStorage = CookieStorage(
+            userID: accountID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
+
+        if let cookies = newEnvironment?.cookies {
+            try await cookieStorage.storeCookies(cookies)
+        }
+
         // Create user session.
         let userSession = await createUserSession(
             environment: backendEnvironment,
@@ -147,7 +158,8 @@ final class UserSessionLoader {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             backendMetadata: metadata,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            cookieStorage: cookieStorage
         )
 
         // Perform pending migrations.
@@ -333,7 +345,7 @@ final class UserSessionLoader {
         webSocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
-
+        cookieStorage: CookieStorage
     ) async -> ZMUserSession {
         let selfClientID = await coreDataStack.viewContext.perform {
             ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
@@ -478,7 +490,8 @@ final class UserSessionLoader {
             recurringActionService: recurringActionService,
             dependencies: dependencies,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
 
         userSession.setup(

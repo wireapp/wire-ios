@@ -31,6 +31,10 @@ public struct NewEnvironment {
 
     public let metadata: ResolvedBackendMetadata
 
+    /// Cookies obtained from the authentication flow.
+
+    public let cookies: [HTTPCookie]
+
     /// User submitted credentials for the backend proxy.
 
     public let proxyCredentials: WireNetwork.ProxyCredentials?
@@ -40,10 +44,12 @@ public struct NewEnvironment {
     public init(
         backendEnvironment: BackendEnvironment2,
         metadata: ResolvedBackendMetadata,
+        cookies: [HTTPCookie],
         proxyCredentials: WireNetwork.ProxyCredentials?
     ) {
         self.backendEnvironment = backendEnvironment
         self.metadata = metadata
+        self.cookies = cookies
         self.proxyCredentials = proxyCredentials
     }
 

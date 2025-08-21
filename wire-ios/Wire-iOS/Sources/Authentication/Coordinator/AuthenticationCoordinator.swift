@@ -372,6 +372,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     let newEnvironment = NewEnvironment(
                         backendEnvironment: result.backendEnvironment,
                         metadata: result.backendMetadata,
+                        cookies: result.cookies,
                         proxyCredentials: result.proxyCredentials
                     )
                     unauthenticatedSession.upgradeToAuthenticatedSession(

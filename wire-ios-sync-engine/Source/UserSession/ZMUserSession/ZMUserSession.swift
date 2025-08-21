@@ -425,7 +425,8 @@ public final class ZMUserSession: NSObject {
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        cookieStorage: any CookieStorageProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -460,6 +461,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
+            cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
             backendMetaData: backendMetadata,
