@@ -60,6 +60,7 @@ package final class ConversationMessagesViewController: UIViewController {
 
         observeTask?.cancel()
         observeTask = nil
+        viewModel.onWillDisappear()
     }
 
     private func observeUpdates() async {
@@ -68,8 +69,10 @@ package final class ConversationMessagesViewController: UIViewController {
             switch update {
             case let .initiallyLoaded(snapshot):
                 await dataSource.apply(snapshot)
+                scrollToLastItem(animated: false)
             case let .messageAdded(snapshot):
                 await dataSource.apply(snapshot)
+                scrollToLastItem()
             }
         }
     }
@@ -145,6 +148,14 @@ package final class ConversationMessagesViewController: UIViewController {
         }
     }
 
+    func scrollToLastItem(animated: Bool = true) {
+        let lastItem = max(collectionView.numberOfItems(inSection: 0) - 1, 0)
+
+        guard lastItem > 0 else { return }
+
+        let indexPath = IndexPath(item: lastItem, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .bottom, animated: animated)
+    }
 }
 
 import WireMessagingDomainSupport
@@ -154,7 +165,8 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol()
+                    loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol(),
+                    monitorMessagesUseCase: MockMonitorMessagesUseCaseProtocol()
                 )
             )
         )
