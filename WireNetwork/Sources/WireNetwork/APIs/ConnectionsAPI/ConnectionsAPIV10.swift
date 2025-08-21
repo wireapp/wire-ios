@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class ConnectionsAPIV10: ConnectionsAPIV9 {
+class ConnectionsAPIV10: ConnectionsAPIV9 {
     override var apiVersion: APIVersion { .v10 }
 }

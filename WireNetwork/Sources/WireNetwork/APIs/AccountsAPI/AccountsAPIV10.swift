@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class AccountsAPIV10: AccountsAPIV9 {
+class AccountsAPIV10: AccountsAPIV9 {
     override var apiVersion: APIVersion { .v10 }
 }

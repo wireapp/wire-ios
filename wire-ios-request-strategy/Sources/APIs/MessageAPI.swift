@@ -408,6 +408,10 @@ class MessageAPIV9: MessageAPIV8 {
     override var apiVersion: APIVersion { .v9 }
 }
 
-final class MessageAPIV10: MessageAPIV9 {
+class MessageAPIV10: MessageAPIV9 {
     override var apiVersion: APIVersion { .v10 }
+}
+
+final class MessageAPIV11: MessageAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
 }

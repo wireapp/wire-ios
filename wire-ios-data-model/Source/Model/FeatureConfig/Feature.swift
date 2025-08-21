@@ -44,6 +44,7 @@ public class Feature: ZMManagedObject {
         case mlsMigration
         case channels
         case allowedGlobalOperations
+        case consumableNotifications
 
     }
 
@@ -233,7 +234,8 @@ public class Feature: ZMManagedObject {
              .mlsMigration,
              .allowedGlobalOperations,
              .e2ei,
-             .channels:
+             .channels,
+             .consumableNotifications:
             break
         }
     }
