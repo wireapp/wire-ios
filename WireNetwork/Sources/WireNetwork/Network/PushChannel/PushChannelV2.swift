@@ -95,12 +95,15 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     switch result {
                     case let .event(event):
+                        WireLogger.pushChannel.debug(
+                            "push channel received events: \(event.events.map(\.name))",
+                            attributes: .pushChannelV2
+                        )
                         await batchBuffer.append(event)
                         if await batchBuffer.count() >= batchSize {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
-                            tearDownBatchTask()
                         }
 
                     case .missedEvents:
@@ -112,7 +115,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         if !drained.isEmpty {
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
-                            tearDownBatchTask()
                         }
 
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
