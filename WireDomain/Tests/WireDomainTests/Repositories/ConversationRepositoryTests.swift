@@ -68,7 +68,7 @@ final class ConversationRepositoryTests: XCTestCase {
             userLocalStore: userLocalStore,
             teamRepository: teamRepository,
             messageRepository: messageRepository,
-            environment: environment,
+            backendInfo: backendInfo,
             mlsProvider: mlsProvider
         )
     }
