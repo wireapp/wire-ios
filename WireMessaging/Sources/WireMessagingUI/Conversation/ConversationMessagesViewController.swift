@@ -147,7 +147,7 @@ package final class ConversationMessagesViewController: UIViewController {
 
 }
 
-@testable import WireMessagingDomainSupport
+import WireMessagingDomainSupport
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
