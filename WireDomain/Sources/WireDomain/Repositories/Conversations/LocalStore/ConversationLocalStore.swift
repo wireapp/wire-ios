@@ -867,15 +867,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func localParticipantsExcludingSelfAsMLSUsers(
-        in conversation: ZMConversation
-    ) async -> [MLSUser] {
-        await context.perform {
-            conversation.localParticipantsExcludingSelf
-                .map { MLSUser(from: $0) }
-        }
-    }
-
     public func conversationName(
         conversation: ZMConversation
     ) async -> String? {

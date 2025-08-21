@@ -95,10 +95,8 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             )?.0 else {
                 throw Failure.noRefreshedConversationFound
             }
-
-            // re-create group and re-add all participants
-            let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: refreshedConversation)
-            _ = try await mlsService.establishGroup(for: newGroupID, with: users, removalKeys: nil)
+                        
+            try await mlsService.establishPendingGroup(groupID: newGroupID)
 
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case finished",

@@ -939,24 +939,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - localParticipantsExcludingSelfAsMLSUsers
-
-    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
-
-    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
-        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
-
-        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
-            return await mock(conversation)
-        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
-        }
-    }
-
     // MARK: - isGroupConversation
 
     public var isGroupConversation_Invocations: [ZMConversation] = []
