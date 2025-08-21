@@ -4244,6 +4244,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
     }
 
+    // MARK: - establishPendingGroup
+
+    public var establishPendingGroupGroupID_Invocations: [MLSGroupID] = []
+    public var establishPendingGroupGroupID_MockError: Error?
+    public var establishPendingGroupGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func establishPendingGroup(groupID: MLSGroupID) async throws {
+        establishPendingGroupGroupID_Invocations.append(groupID)
+
+        if let error = establishPendingGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = establishPendingGroupGroupID_MockMethod else {
+            fatalError("no mock for `establishPendingGroupGroupID`")
+        }
+
+        try await mock(groupID)
+    }
+
     // MARK: - joinGroup
 
     public var joinGroupWith_Invocations: [MLSGroupID] = []
