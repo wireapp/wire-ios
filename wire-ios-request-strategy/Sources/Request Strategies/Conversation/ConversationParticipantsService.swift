@@ -288,6 +288,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             }
             try await mlsParticipantsService.removeParticipant(user, from: conversation)
         }
+
+        try await context.perform { [weak context] in
+            try context?.save()
+        }
     }
 
 }

@@ -83,7 +83,7 @@ extension ZMBaseManagedObjectTest {
     }
 
     @objc
-    func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let stack = CoreDataStack(
             account: account,
@@ -92,12 +92,7 @@ extension ZMBaseManagedObjectTest {
             dispatchGroup: dispatchGroup
         )
 
-        let expectation = XCTestExpectation()
-        stack.loadStores { error in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 5)
+        try await stack.load()
 
         return stack
     }

@@ -18,14 +18,24 @@
 
 /// Proxy credentials for a user.
 
-struct ProxyCredentials: Sendable, Equatable, Hashable {
+public struct ProxyCredentials: Sendable, Equatable, Hashable {
 
     /// The proxy username.
 
-    let username: String
+    public let username: String
 
     /// The proxy password.
 
-    let password: String
+    public let password: String
+
+    /// Create new `ProxyCredentials`.
+
+    public init(
+        username: String,
+        password: String
+    ) {
+        self.username = username
+        self.password = password
+    }
 
 }

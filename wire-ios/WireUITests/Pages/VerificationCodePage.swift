@@ -37,7 +37,7 @@ class VerificationCodePage: PageModel {
     func enterVerificationCodeAndConfirm(_ verificationCode: String) throws -> SetUsernamePage {
         let element = app.textFields
         for (index, digit) in verificationCode.enumerated() {
-            element.element(boundBy: index).typeText(String(digit))
+            try element.element(boundBy: index).tapIfKeyboardNotFocused().typeText(String(digit))
         }
         verificationCodeConfirmButton.tap()
         return try SetUsernamePage()

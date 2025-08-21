@@ -24,7 +24,6 @@ public protocol LoadConversationMessagesRepositoryProtocol: Sendable {
 
 private let kLoadMessagesDefaultBatchSize = 30
 
-// sourcery: AutoMockable
 package protocol LoadConversationMessagesUseCaseProtocol: Sendable {
     func loadMessages(offset: Int) async -> [MessageModel]
 }

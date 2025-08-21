@@ -132,6 +132,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil

@@ -97,15 +97,10 @@ struct VerifyUserSessionUseCase {
             throw Failure.coreDataMigrationRequired
         }
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            coreData.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: Failure.unableToLoadStores(error))
-                } else {
-                    continuation.resume()
-                }
-            }
-
+        do {
+            try await coreData.load()
+        } catch {
+            throw Failure.unableToLoadStores(error)
         }
     }
 }

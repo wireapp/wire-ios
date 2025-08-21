@@ -27,9 +27,10 @@ final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
     private var cell: GroupDetailsNotificationOptionsCell!
     private var conversation: ZMConversation!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         selfUserInTeam = true
-        super.setUp()
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light

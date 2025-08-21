@@ -32,6 +32,7 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         deleteFeatureIfNeeded(name: .mls)
         deleteFeatureIfNeeded(name: .selfDeletingMessages)
         deleteFeatureIfNeeded(name: .e2ei)
+        deleteFeatureIfNeeded(name: .consumableNotifications)
     }
 
     // MARK: - Helpers
@@ -890,6 +891,66 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
 
             XCTAssertEqual(feature.status, .enabled)
             XCTAssertEqual(featureConfig, config)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    // MARK: - Consumable notifications
+
+    func testThatItFetchesConsumableNotifications() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: self.syncMOC) { feature in
+                feature.status = .enabled
+            }
+
+            // When
+            let result = sut.fetchConsumableNotifications()
+
+            // Then
+            XCTAssertEqual(result.status, .enabled)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItFetchesConsumableNotifications_ItReturnsADefaultValueWhenObjectDoesNotExist() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            // When
+            let result = sut.fetchConsumableNotifications()
+
+            // Then
+            XCTAssertEqual(result.status, .disabled)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func testThatItStoresConsumableNotifications() {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = LegacyFeatureRepository(context: self.syncMOC)
+
+            let consumableNotifications = Feature.ConsumableNotifications(status: .enabled)
+
+            self.assertFeatureDoesNotExist(name: .consumableNotifications)
+
+            // When
+            sut.storeConsumableNotifications(consumableNotifications)
+
+            // Then
+            guard let feature = Feature.fetch(name: .consumableNotifications, context: self.syncMOC) else {
+                XCTFail("feature not found")
+                return
+            }
+
+            XCTAssertEqual(feature.status, .enabled)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

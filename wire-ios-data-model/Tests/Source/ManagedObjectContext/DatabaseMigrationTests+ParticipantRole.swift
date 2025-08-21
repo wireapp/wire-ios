@@ -23,8 +23,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
     private let helper = DatabaseMigrationHelper()
 
-    func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() throws {
-        try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() async throws {
+        try await  migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -46,8 +46,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom106_deleteRemotelyConversationKeepsParticipantRole() throws {
-        try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom106_deleteRemotelyConversationKeepsParticipantRole() async throws {
+        try await migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -69,8 +69,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom106_validConversationRelationKeepsParticipantRole() throws {
-        try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom106_validConversationRelationKeepsParticipantRole() async throws {
+        try await migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -109,8 +109,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     //     role = nil;
     //     user = "0x91c16ef3dd4134be <x-coredata://AC33D7EC-1515-4FDB-9FBC-FE0BE37B1D4F/User/p3>";
     // })
-    func testThatItPerformsMigrationFrom106_invalidConversationRelationDropsParticipantRole() throws {
-        try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom106_invalidConversationRelationDropsParticipantRole() async throws {
+        try await migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -141,9 +141,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
     private func migrateStoreToCurrentVersion(
         sourceVersion: String,
-        preMigrationAction: (NSManagedObjectContext) throws -> Void,
-        postMigrationAction: (NSManagedObjectContext) throws -> Void
-    ) throws {
+        preMigrationAction: @escaping (NSManagedObjectContext) throws -> Void,
+        postMigrationAction: @escaping (NSManagedObjectContext) throws -> Void
+    ) async throws {
         // GIVEN
         let accountIdentifier = UUID()
         let applicationContainer = DatabaseBaseTest.applicationContainer
@@ -161,7 +161,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
         // perform pre-migration action
         if let sourceContainer {
-            try preMigrationAction(sourceContainer.viewContext)
+            try await sourceContainer.viewContext.perform {
+                try preMigrationAction(sourceContainer.viewContext)
+            }
         }
 
         // release store before actual test
@@ -173,14 +175,16 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         sourceContainer = nil
 
         // WHEN
-        let stack = try createStorageStackAndWaitForCompletion(
+        let stack = try await createStorageStackAndWaitForCompletion(
             userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
 
         // THEN
         // perform post migration action
-        try postMigrationAction(stack.viewContext)
+        try await stack.viewContext.perform {
+            try postMigrationAction(stack.viewContext)
+        }
 
         try? FileManager.default.removeItem(at: applicationContainer)
     }

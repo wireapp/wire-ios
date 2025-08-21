@@ -49,9 +49,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var insets = UIEdgeInsets(
         top: 2,
-        left: conversationHorizontalMargins.left,
+        left: DeveloperFlag.chatBubblesSimple.isOn ? 0 : conversationHorizontalMargins.left,
         bottom: 0,
-        right: conversationHorizontalMargins.right
+        right: DeveloperFlag.chatBubblesSimple.isOn ? 0 : conversationHorizontalMargins.right
     )
 
     // MARK: - Life cycle

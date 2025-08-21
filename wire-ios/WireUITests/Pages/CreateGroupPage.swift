@@ -33,8 +33,7 @@ class CreateGroupPage: PageModel {
     }
 
     func enterGroupName(_ groupName: String) throws -> SelectParticipantsPage {
-        groupNameTextfield.tap()
-        groupNameTextfield.typeText(groupName)
+        try groupNameTextfield.tapIfKeyboardNotFocused().typeText(groupName)
         nextButton.tap()
         return try SelectParticipantsPage()
     }

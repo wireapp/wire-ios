@@ -28,10 +28,10 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
     var sut: ConversationInputBarViewController!
     var userSession: UserSessionMock!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         userSession = UserSessionMock()
     }
 
