@@ -106,7 +106,7 @@ public extension LogAttributes {
     // MARK: - New sync (V2, V3)
 
     static func syncAttributes(
-        initialSync: Bool,
+        initialSync: Bool
     ) -> Self {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
