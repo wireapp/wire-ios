@@ -39,16 +39,16 @@ public class DiskDatabaseTest: ZMTBaseTest {
         ).appendingPersistentStoreLocation()
     }
 
-    public override func setUp() {
-        super.setUp()
+    @MainActor
+    public override func setUp() async throws {
+        try await super.setUp()
 
         accountId = .create()
         cacheURL = FileManager.default.randomCacheURL
         sharedContainerURL = cacheURL.appendingPathComponent(UUID().uuidString)
         cleanUp()
-        createDatabase()
+        try await createDatabase()
         setupCaches()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
 
@@ -74,7 +74,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         }
     }
 
-    private func createDatabase() {
+    private func createDatabase() async throws {
         let account = Account(userName: "", userIdentifier: accountId)
         coreDataStack = CoreDataStack(
             account: account,
@@ -83,11 +83,9 @@ public class DiskDatabaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await coreDataStack.load()
 
-        moc.performGroupedAndWait {
+        await moc.perform {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
         }

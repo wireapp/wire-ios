@@ -73,7 +73,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
 }
 
 package extension WireCellsNodeDTO {
-    func toModel() -> WireCellsNode {
+    func toDomainModel() -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
             path: path,

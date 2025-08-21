@@ -88,24 +88,6 @@ open class AuthenticatedSessionFactory {
             proxySettings: proxySettings
         )
 
-        let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
-            let wireAssembly = WireNetwork.Assembly(
-                userID: userID,
-                clientID: clientID,
-                backendEnvironment: wireAPIBackendEnvironment,
-                minTLSVersion: WireNetwork.TLSVersion.minVersionFrom(minTLSVersion),
-                cookieEncryptionKey: UserDefaults.cookiesKey()
-            )
-
-            let authenticationManager = wireAssembly.authenticationManager
-            let networkService = wireAssembly.apiNetworkService
-
-            return APIService(
-                networkService: networkService,
-                authenticationManager: authenticationManager
-            )
-        }
-
         let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
 
         let transportSession = ZMTransportSession(
@@ -136,7 +118,6 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
-            apiServiceFactory: apiServiceFactory,
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,

@@ -16,16 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+package import SwiftUI
+import WireDesign
 
-class GroupDetailsPage: PageModel {
+package final class FilesHostingController: UIHostingController<FilesView> {
 
-    override var pageMainElement: XCUIElement {
-        addParticipantsButton
+    private typealias Strings = L10n.Localizable.Conversation.WireCells
+    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
+    private let viewModel: FilesViewModel
+
+    public init(viewModel: FilesViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: FilesView(viewModel: viewModel))
     }
 
-    var addParticipantsButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "OtherUserMetaControllerLeftButton")
-        return elementsQuery.firstMatch
+    @available(*, unavailable)
+    @MainActor @objc
+    dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
+
 }

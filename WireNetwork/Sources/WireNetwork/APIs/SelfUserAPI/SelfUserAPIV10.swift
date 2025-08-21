@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class SelfUserAPIV10: SelfUserAPIV9 {
+class SelfUserAPIV10: SelfUserAPIV9 {
     override var apiVersion: APIVersion { .v10 }
 }

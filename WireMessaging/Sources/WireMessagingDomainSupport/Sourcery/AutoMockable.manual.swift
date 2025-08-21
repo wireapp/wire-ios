@@ -18,7 +18,7 @@
 
 public import WireMessagingDomain
 
-import UIKit
+package import UIKit
 
 public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
 
@@ -179,5 +179,76 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
             fatalError("no mock for `isConferenceCallingFeatureEnabled`")
         }
     }
+
+}
+
+package class MockLoadConversationMessagesUseCaseProtocol: LoadConversationMessagesUseCaseProtocol, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    package init() { }
+
+    // MARK: - hasOlderMessagesToLoad
+
+    package var hasOlderMessagesToLoad: Bool {
+        get { return underlyingHasOlderMessagesToLoad }
+        set(value) { underlyingHasOlderMessagesToLoad = value }
+    }
+
+    package var underlyingHasOlderMessagesToLoad: Bool!
+
+
+    // MARK: - loadMessages
+
+    package var loadMessagesOffset_Invocations: [Int] = []
+    package var loadMessagesOffset_MockMethod: ((Int) async -> [MessageModel])?
+    package var loadMessagesOffset_MockValue: [MessageModel]?
+
+    package func loadMessages(offset: Int) async -> [MessageModel] {
+        loadMessagesOffset_Invocations.append(offset)
+
+        if let mock = loadMessagesOffset_MockMethod {
+            return await mock(offset)
+        } else if let mock = loadMessagesOffset_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `loadMessagesOffset`")
+        }
+    }
+
+    // MARK: - loadOlderMessages
+
+    package var loadOlderMessagesLastMessageTimestamp_Invocations: [Date] = []
+    package var loadOlderMessagesLastMessageTimestamp_MockMethod: ((Date) async -> [MessageModel])?
+    package var loadOlderMessagesLastMessageTimestamp_MockValue: [MessageModel]?
+
+    package func loadOlderMessages(lastMessageTimestamp: Date) async -> [MessageModel] {
+        loadOlderMessagesLastMessageTimestamp_Invocations.append(lastMessageTimestamp)
+
+        if let mock = loadOlderMessagesLastMessageTimestamp_MockMethod {
+            return await mock(lastMessageTimestamp)
+        } else if let mock = loadOlderMessagesLastMessageTimestamp_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `loadOlderMessagesLastMessageTimestamp`")
+        }
+    }
+
+}
+
+package class MockMonitorMessagesUseCaseProtocol: MonitorMessagesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    package init() { }
+
+    // MARK: - messagesUpdatesStream
+
+    package var messagesUpdatesStream: AsyncStream<MessagesUpdate> {
+        get { return underlyingMessagesUpdatesStream }
+        set(value) { underlyingMessagesUpdatesStream = value }
+    }
+
+    package var underlyingMessagesUpdatesStream: AsyncStream<MessagesUpdate>!
 
 }

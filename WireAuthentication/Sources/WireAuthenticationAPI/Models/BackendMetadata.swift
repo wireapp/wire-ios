@@ -58,6 +58,7 @@ public struct BackendMetadata: Sendable, Equatable, Hashable {
         case v8
         case v9
         case v10
+        case v11
 
     }
 

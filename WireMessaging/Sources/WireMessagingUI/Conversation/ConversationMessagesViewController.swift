@@ -218,7 +218,7 @@ extension ConversationMessagesViewController: UICollectionViewDelegate {
 
 }
 
-@testable import WireMessagingDomainSupport
+import WireMessagingDomainSupport
 import WireMessagingDomain
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
