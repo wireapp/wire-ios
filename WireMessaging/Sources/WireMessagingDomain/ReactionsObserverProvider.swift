@@ -23,4 +23,4 @@ public protocol ReactionsObserverProtocol {
     var reactionsPublisher: AnyPublisher<ReactionsModel, Never>? { get }
 }
 
-public typealias ReactionsObserverProvider = (MessageModel) -> (any ReactionsObserverProtocol)?
+public typealias ReactionsObserverProvider = (MessageModel) -> any ReactionsObserverProtocol

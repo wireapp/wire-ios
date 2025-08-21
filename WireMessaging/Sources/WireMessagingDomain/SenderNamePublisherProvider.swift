@@ -23,4 +23,4 @@ public protocol SenderNameObserverProtocol {
     var authorChangedPublisher: AnyPublisher<String, Never>? { get }
 }
 
-public typealias SenderNameObserverProvider = (UserModel?) -> (any SenderNameObserverProtocol)?
+public typealias SenderNameObserverProvider = (UserModel) -> any SenderNameObserverProtocol

@@ -167,8 +167,7 @@ final class ConversationViewController: UIViewController {
                     individualChangesFactory.makeSenderNameObserver(user: model)
                 },
                 reactionsObserverProvider: {  [individualChangesFactory] model in
-                    individualChangesFactory
-                        .makeReactionsObserver(message: model)
+                    individualChangesFactory.makeReactionsObserver(message: model)
                 }
             )
         } else {

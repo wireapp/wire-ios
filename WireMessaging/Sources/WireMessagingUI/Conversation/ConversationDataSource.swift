@@ -111,6 +111,11 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
             } else {
                 .empty
             }
+            
+            var senderNamePublisher: AnyPublisher<String, Never>?
+            if let sender = model.sender {
+                senderNamePublisher = observersProvider.senderNameObserverProvider(sender).authorChangedPublisher
+            }
 
             return ConversationElement.text(
                 TextMessageViewModel(
@@ -118,12 +123,11 @@ package actor ConversationDataSource: @preconcurrency ConversationDataSourceProt
                     serverTimestamp: model.serverTimestamp,
                     senderViewModel: SenderViewModel(
                         state: senderState,
-                        namePublisher: observersProvider
-                            .senderNameObserverProvider?(model.sender)?.authorChangedPublisher
+                        namePublisher: senderNamePublisher
                     ),
                     reactionsViewModel: ReactionsViewModel(
                         state: ReactionsViewModel.state(from: model.reactions),
-                        publisher: observersProvider.get(for: model)
+                        publisher: observersProvider.reactionsObserverProvider(model).reactionsPublisher
                     )
                 )
             )

@@ -219,6 +219,7 @@ extension ConversationMessagesViewController: UICollectionViewDelegate {
 }
 
 @testable import WireMessagingDomainSupport
+import WireMessagingDomain
 
 private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
@@ -228,8 +229,8 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
                     loadMessagesUseCase: MockLoadConversationMessagesUseCaseProtocol(),
                     monitorMessagesUseCase: MockMonitorMessagesUseCaseProtocol(),
                     observersProvider: AnyObserverProvider(
-                        senderNameObserverProvider: { _ in nil },
-                        reactionsObserverProvider: { _ in nil }
+                        senderNameObserverProvider: { _ in MockObserversProvider() },
+                        reactionsObserverProvider: { _ in MockObserversProvider() }
                     )
                 )
             )
@@ -237,6 +238,17 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
     }
 
     func updateUIViewController(_ uiViewController: ConversationMessagesViewController, context: Context) {}
+}
+
+struct MockObserversProvider: SenderNameObserverProtocol, ReactionsObserverProtocol {
+    
+    var authorChangedPublisher: AnyPublisher<String, Never>? {
+        Empty().eraseToAnyPublisher()
+    }
+
+    var reactionsPublisher: AnyPublisher<ReactionsModel, Never>? {
+        Empty().eraseToAnyPublisher()
+    }
 }
 
 #Preview {

@@ -30,17 +30,14 @@ final class SenderObserver: SenderNameObserverProtocol {
         userID: NSManagedObjectID,
         viewContext: NSManagedObjectContext
     ) {
-        viewContext.performAndWait { [weak self, viewContext] in
-            guard let user = try? viewContext.existingObject(with: userID) as? ZMUser else {
-                return
-            }
-
-            self?.authorChangedPublisher = NSManagedObject.publisher(for: user, in: viewContext)
-                .map { $0.name ?? "" }
-                .removeDuplicates()
-                .eraseToAnyPublisher()
+        let user = viewContext.performAndWait { [viewContext] in
+            try? viewContext.existingObject(with: userID) as? ZMUser
         }
-
+        guard let user else { return }
+        self.authorChangedPublisher = NSManagedObject.publisher(for: user, in: viewContext)
+            .map { $0.name ?? "" }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 }
 
@@ -52,17 +49,17 @@ final class ReactionsObserver: ReactionsObserverProtocol {
         messageID: NSManagedObjectID,
         viewContext: NSManagedObjectContext
     ) {
-        viewContext.performAndWait { [weak self, viewContext] in
-            guard let message = try? viewContext.existingObject(with: messageID) as? ZMMessage else {
-                return
-            }
-
-            self?.reactionsPublisher = NSManagedObject.publisher(for: message, in: viewContext)
-                .map {
-                    $0.usersReaction.mapValues { $0.map { $0.toDomain() } }
-                }
-                .eraseToAnyPublisher()
+        
+        let message = viewContext.performAndWait { [viewContext] in
+            try? viewContext.existingObject(with: messageID) as? ZMMessage
         }
+        guard let message else { return }
+
+        self.reactionsPublisher = NSManagedObject.publisher(for: message, in: viewContext)
+            .map {
+                $0.usersReaction.mapValues { $0.map { $0.toDomain() } }
+            }
+            .eraseToAnyPublisher()
     }
 
 }

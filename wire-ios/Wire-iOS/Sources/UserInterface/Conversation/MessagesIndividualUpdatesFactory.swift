@@ -30,10 +30,8 @@ final actor MessagesIndividualUpdatesFactory {
         self.context = context
     }
 
-    func makeSenderNameObserver(user: UserModel?) -> SenderNameObserverProtocol? {
-        guard let objectID = user?.objectID as? NSManagedObjectID else {
-            return nil
-        }
+    func makeSenderNameObserver(user: UserModel) -> SenderNameObserverProtocol {
+        let objectID = user.objectID as! NSManagedObjectID
 
         if let observer = senderObservers[objectID] {
             return observer
@@ -49,10 +47,8 @@ final actor MessagesIndividualUpdatesFactory {
         return observer
     }
 
-    func makeReactionsObserver(message: MessageModel) -> ReactionsObserverProtocol? {
-        guard let objectID = message.objectID as? NSManagedObjectID else {
-            return nil
-        }
+    func makeReactionsObserver(message: MessageModel) -> ReactionsObserverProtocol {
+        let objectID = message.objectID as! NSManagedObjectID
 
         if let observer = messageObservers[objectID] {
             return observer
@@ -66,6 +62,5 @@ final actor MessagesIndividualUpdatesFactory {
         messageObservers[objectID] = observer
 
         return observer
-
     }
 }

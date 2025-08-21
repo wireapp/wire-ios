@@ -26,8 +26,8 @@ public enum WireMessagingAssembly {
     @MainActor
     public static func makeConversationScreen(
         loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol),
-        senderNameObserverProvider: SenderNameObserverProvider?,
-        reactionsObserverProvider: ReactionsObserverProvider?
+        senderNameObserverProvider: @escaping SenderNameObserverProvider,
+        reactionsObserverProvider: @escaping ReactionsObserverProvider
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(

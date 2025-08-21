@@ -24,18 +24,14 @@ package import WireMessagingDomain
 // to UI model which is Attributed string
 package struct AnyObserverProvider: @unchecked Sendable {
 
-    package let senderNameObserverProvider: SenderNameObserverProvider?
-    package let reactionsObserverProvider: ReactionsObserverProvider?
+    package let senderNameObserverProvider: SenderNameObserverProvider
+    package let reactionsObserverProvider: ReactionsObserverProvider
 
     package init(
-        senderNameObserverProvider: SenderNameObserverProvider?,
-        reactionsObserverProvider: ReactionsObserverProvider?
+        senderNameObserverProvider: @escaping SenderNameObserverProvider,
+        reactionsObserverProvider: @escaping ReactionsObserverProvider
     ) {
         self.senderNameObserverProvider = senderNameObserverProvider
         self.reactionsObserverProvider = reactionsObserverProvider
-    }
-
-    func get(for message: MessageModel) -> AnyPublisher<ReactionsModel, Never>? {
-        reactionsObserverProvider?(message)?.reactionsPublisher
     }
 }

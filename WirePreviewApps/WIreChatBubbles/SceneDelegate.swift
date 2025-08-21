@@ -18,6 +18,8 @@
 
 import UIKit
 import WireMessagingAssembly
+import WireMessagingDomain
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -39,8 +41,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = UINavigationController(
             rootViewController: WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: GenerateMessagesRepo(),
-                senderNameObserverProvider: { _ in nil },
-                reactionsObserverProvider: { _ in nil }
+                senderNameObserverProvider: { _ in MockObserversProvider() },
+                reactionsObserverProvider: { _ in MockObserversProvider() }
             )
         )
         window?.makeKeyAndVisible()
@@ -76,4 +78,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
+}
+
+struct MockObserversProvider: SenderNameObserverProtocol, ReactionsObserverProtocol {
+    var authorChangedPublisher: AnyPublisher<String, Never>? {
+        Empty().eraseToAnyPublisher()
+    }
+
+    var reactionsPublisher: AnyPublisher<ReactionsModel, Never>? {
+        Empty().eraseToAnyPublisher()
+    }
 }
