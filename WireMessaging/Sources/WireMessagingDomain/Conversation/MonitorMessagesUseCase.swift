@@ -16,24 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
-import WireMessagingUI
-public import WireMessagingDomain
+import Foundation
 
-public enum WireMessagingAssembly {
+public enum MessagesUpdate: Sendable {
+    case inserted(MessageModel)
+}
 
-    @MainActor
-    public static func makeConversationScreen(
-        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol)
-    ) -> UIViewController {
-        ConversationMessagesViewController(
-            viewModel: ConversationMessagesViewModel(
-                dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
-                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo)
-                )
-            )
-        )
+package protocol MonitorMessagesUseCaseProtocol {
+    var messagesUpdatesStream: AsyncStream<MessagesUpdate> { get }
+}
+
+public protocol MonitorMessagesRepositoryProtocol {
+    var messagesUpdatesStream: AsyncStream<MessagesUpdate> { get }
+}
+
+package struct MonitorMessagesUseCase: MonitorMessagesUseCaseProtocol {
+
+    package var messagesUpdatesStream: AsyncStream<MessagesUpdate> {
+        repo.messagesUpdatesStream
     }
 
+    private let repo: any MonitorMessagesRepositoryProtocol
+
+    package init(repo: any MonitorMessagesRepositoryProtocol) {
+        self.repo = repo
+    }
 }

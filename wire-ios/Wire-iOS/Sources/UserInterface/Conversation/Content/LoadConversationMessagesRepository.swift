@@ -20,19 +20,45 @@
 @preconcurrency import WireDataModel
 import WireMessagingDomain
 
-final class LoadConversationMessagesRepository: LoadConversationMessagesRepositoryProtocol {
+final class LoadConversationMessagesRepository: NSObject, LoadConversationMessagesRepositoryProtocol,
+    MonitorMessagesRepositoryProtocol {
 
     private let conversationObjectID: NSManagedObjectID
-    private let context: NSManagedObjectContext
+    private let backgroundContext: NSManagedObjectContext
+    private let viewContext: NSManagedObjectContext
+
+    private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
+    lazy var messagesUpdatesStream: AsyncStream<MessagesUpdate> = {
+        let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
+        updatesStreamContinuation = continuation
+        return stream
+    }()
 
     private var conversation: ZMConversation?
 
     init(
         conversationObjectID: NSManagedObjectID,
-        context: NSManagedObjectContext
+        syncContext: NSManagedObjectContext,
+        backgroundContext: NSManagedObjectContext
     ) {
         self.conversationObjectID = conversationObjectID
-        self.context = context
+        self.backgroundContext = backgroundContext
+        self.viewContext = syncContext
+        super.init()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contextDidSave),
+            name: .NSManagedObjectContextDidSave,
+            object: syncContext
+        )
+    }
+
+    @objc
+    private func contextDidSave(notification: Notification) {
+        backgroundContext.perform { [weak self] in
+            self?.backgroundContext.mergeChanges(fromContextDidSave: notification)
+        }
     }
 
     private func getConversation() async -> ZMConversation? {
@@ -40,18 +66,20 @@ final class LoadConversationMessagesRepository: LoadConversationMessagesReposito
             return conversation
         }
 
-        conversation = await context.perform { [conversationObjectID, context] in
-            try? context.existingObject(with: conversationObjectID) as? ZMConversation
+        conversation = await backgroundContext.perform { [conversationObjectID, backgroundContext] in
+            try? backgroundContext.existingObject(with: conversationObjectID) as? ZMConversation
         }
         return conversation
     }
+
+    var fetchController: NSFetchedResultsController<ZMMessage>?
 
     func loadMessages(offset: Int, limit: Int) async -> [MessageModel] {
         guard let conversation = await getConversation() else {
             return []
         }
 
-        return await context.perform { [unowned self] in
+        return await backgroundContext.perform { [unowned self] in
             let fetchRequest = fetchRequest(conversation: conversation)
 
             // We need to fetch a bit more than requested so that there is overlap between messages in different
@@ -61,14 +89,15 @@ final class LoadConversationMessagesRepository: LoadConversationMessagesReposito
 
             let fetchController = NSFetchedResultsController<ZMMessage>(
                 fetchRequest: fetchRequest,
-                managedObjectContext: context,
+                managedObjectContext: backgroundContext,
                 sectionNameKeyPath: nil,
                 cacheName: nil
             )
 
-            //        fetchController?.delegate = self
-            try! fetchController.performFetch()
+            fetchController.delegate = self
+            self.fetchController = fetchController
 
+            try! fetchController.performFetch()
             return (fetchController.fetchedObjects ?? [])
                 .map { $0.toDomain() }
         }
@@ -81,6 +110,48 @@ final class LoadConversationMessagesRepository: LoadConversationMessagesReposito
         return fetchRequest
     }
 
+}
+
+extension LoadConversationMessagesRepository: NSFetchedResultsControllerDelegate {
+
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        // no-op
+    }
+
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for changeType: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
+        if let message = anObject as? ZMConversationMessage, changeType == .insert {
+            /// VoiceOver will output the announcement string from the message
+            message.postAnnouncementIfNeeded()
+        }
+
+        switch changeType {
+        case .insert:
+            if let message = anObject as? ZMMessage {
+                updatesStreamContinuation?.yield(.inserted(message.toDomain()))
+            }
+        default:
+            break
+        }
+    }
+
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange sectionInfo: NSFetchedResultsSectionInfo,
+        atSectionIndex sectionIndex: Int,
+        for changeType: NSFetchedResultsChangeType
+    ) {
+        // no-op
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        // no-op
+    }
 }
 
 extension ZMMessage {

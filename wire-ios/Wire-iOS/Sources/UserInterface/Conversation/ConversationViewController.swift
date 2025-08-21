@@ -152,7 +152,8 @@ final class ConversationViewController: UIViewController {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
                     conversationObjectID: conversation.objectID,
-                    context: userSession.contextProvider.newBackgroundContext()
+                    syncContext: userSession.contextProvider.syncContext,
+                    backgroundContext: userSession.contextProvider.newBackgroundContext()
                 )
             )
         } else {
