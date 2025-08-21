@@ -19,6 +19,7 @@
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
@@ -37,21 +38,21 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
             factory: self,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo,
+            environment: mockDependencies.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )
         viewModel.emailOrSSOCode = emailOrSSOCode
         return viewModel
     }
 
-    func loginView(email: String?, didDetectDomainConflict: Bool, backendInfo: BackendInfo) -> LoginViaEmailView {
+    func loginView(email: String?, didDetectDomainConflict: Bool, environment: BackendEnvironment2) -> LoginViaEmailView {
         fatalError()
     }
 
     func loginOrRegisterView(
         email: String?,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     ) -> LoginViaEmailView {
         fatalError()
     }
@@ -66,13 +67,14 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         try await mockDependencies.determineAuthMethodUseCase()
     }
 
+    @MainActor
     func fetchBackendConfigUseCase() -> any WireAuthenticationAPI.FetchBackendConfigUseCaseProtocol {
         mockDependencies.fetchBackendConfigUseCase()
     }
 
-    func loginViaSSOUseCase(backendInfo: WireAuthenticationAPI.BackendInfo?) async throws -> any WireAuthenticationAPI
+    func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any WireAuthenticationAPI
         .LoginViaSSOUseCaseProtocol {
-        try await mockDependencies.loginViaSSOUseCase(backendInfo: backendInfo)
+        try await mockDependencies.loginViaSSOUseCase(environment: environment)
     }
 
     func validateEmailOrSSOCodeUseCase() -> any WireAuthenticationAPI.ValidateEmailOrSSOCodeUseCaseProtocol {

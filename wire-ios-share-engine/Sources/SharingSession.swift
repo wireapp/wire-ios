@@ -559,7 +559,7 @@ public final class SharingSession {
             proxyCredentials: proxyCredentials
         )
 
-        let networkServices = try networkStack.networkServices
+        let networkServices = try await networkStack.networkServices
         let metadata = try await networkStack.resolvedBackendMetadata()
 
         let userSessionComponent = UserSessionComponent(

@@ -102,8 +102,7 @@ final class AuthenticationInterfaceBuilder {
                 )
             }
             let (rootView, bridge) = assembly.assemble(
-                environmentType: BackendEnvironmentType(environment.environmentType.value),
-                backendConfig: BackendConfig(environment),
+                environment: BackendEnvironment2(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
                 accountsURL: environment.accountsURL,

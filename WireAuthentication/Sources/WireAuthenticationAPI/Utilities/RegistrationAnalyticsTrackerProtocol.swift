@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
@@ -34,7 +35,7 @@ public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// Analytics tracking should only be enabled for certain backend environments.
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool
 
     /// Start analytics after the user agreed.
 

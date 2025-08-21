@@ -18,11 +18,12 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 package enum RootViewSheet: Identifiable, Hashable {
 
     public var id: Self { self }
 
-    case authFlow(backendInfo: BackendInfo)
+    case authFlow(environment: BackendEnvironment2)
 
 }

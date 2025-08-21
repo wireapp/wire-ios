@@ -130,12 +130,12 @@ private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsT
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount > 0
     }
 
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig: BackendConfig?
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedenvironment: BackendEnvironment2?
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations: [BackendConfig] = []
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue: Bool!
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure: ((BackendConfig) -> Bool)?
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount += 1
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig = backendConfig
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations.append(backendConfig)

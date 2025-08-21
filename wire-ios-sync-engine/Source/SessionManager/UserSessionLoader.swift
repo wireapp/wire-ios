@@ -123,7 +123,7 @@ final class UserSessionLoader {
         )
 
         // Load network stack.
-        let networkServices = try networkStack.networkServices
+        let networkServices = try await networkStack.networkServices
 
         // Create user session.
         let userSession = await createUserSession(
@@ -506,7 +506,7 @@ final class UserSessionLoader {
 
 }
 
-private extension BackendEnvironment2 {
+public extension BackendEnvironment2 {
 
     init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
         let environmentType: EnvironmentType = switch legacyEnvironment.environmentType.value {
@@ -644,7 +644,7 @@ private extension WireNetwork.APIVersion {
 
 }
 
-extension WireTransport.BackendEnvironment {
+public extension WireTransport.BackendEnvironment {
 
     convenience init(_ backendEnvironment: BackendEnvironment2) {
         let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in

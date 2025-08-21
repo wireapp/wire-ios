@@ -21,21 +21,22 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
+import WireNetwork
 
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
-    private let backendConfig: BackendConfig
+    private let environment: BackendEnvironment2
     private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
         email: String,
-        backendConfig: BackendConfig,
+        environment: BackendEnvironment2,
         teamAccountCreationLink: URL?
     ) {
         self.email = email
-        self.backendConfig = backendConfig
+        self.environment = environment
         self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
@@ -68,7 +69,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
-            backendConfig: backendConfig,
+            environment: environment,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
