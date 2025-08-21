@@ -99,7 +99,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         for message: GenericMessage,
         eventConversationID: ConversationID
     ) -> ConversationID {
-        if message.hasCalling  {
+        if message.hasCalling {
             let callingConversationID = message.calling.qualifiedConversationID
             guard !callingConversationID.id.isEmpty,
                   let conversationUUID = UUID(uuidString: callingConversationID.id)

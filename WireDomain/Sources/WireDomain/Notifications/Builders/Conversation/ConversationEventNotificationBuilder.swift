@@ -156,9 +156,9 @@ private extension ConversationEvent {
     var isMessageAddEvent: Bool {
         switch self {
         case .mlsMessageAdd, .proteusMessageAdd:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
