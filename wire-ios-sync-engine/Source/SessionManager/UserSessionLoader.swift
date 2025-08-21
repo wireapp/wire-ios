@@ -89,9 +89,19 @@ final class UserSessionLoader {
     }
 
     @MainActor
-    func load() async throws -> ZMUserSession {
-        // Get the stored environment for this account.
-        let backendEnvironment = try fetchBackendEnvironment()
+    func load(newEnvironment: NewEnvironment?) async throws -> ZMUserSession {
+        // Persist the new environment.
+        if let newEnvironment {
+            try await storeNewEnvironment(newEnvironment)
+        }
+
+        // Get the environment for this account.
+        let backendEnvironment: BackendEnvironment2
+        if let environment = newEnvironment?.backendEnvironment {
+            backendEnvironment = environment
+        } else {
+            backendEnvironment = try fetchBackendEnvironment()
+        }
 
         // Retrieve proxy credentials if needed.
         var proxyCredentials: WireNetwork.ProxyCredentials?
@@ -111,7 +121,12 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata = try await resolveBackendMetadata(with: networkStack)
+        let metadata: ResolvedBackendMetadata
+        if let newMetadata = newEnvironment?.metadata {
+            metadata = newMetadata
+        } else {
+            metadata = try await resolveBackendMetadata(with: networkStack)
+        }
 
         // Load persistence stack.
         let coreDataStack = try await loadPersistenceStack()
@@ -139,6 +154,17 @@ final class UserSessionLoader {
         try await performPendingMigrations(userSession: userSession)
 
         return userSession
+    }
+
+    private func storeNewEnvironment(_ environment: NewEnvironment) async throws {
+        do {
+            try backendStore.storeBackendEnvironment(
+                environment.backendEnvironment,
+                for: accountID
+            )
+        } catch {
+            throw Failure.failedToStoreNewEnvironment(error)
+        }
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2 {
@@ -494,6 +520,7 @@ final class UserSessionLoader {
 
     enum Failure: Error {
 
+        case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case failedToStoreMetadata(any Error)
