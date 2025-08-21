@@ -315,7 +315,7 @@ final class SelfProfileViewController: UIViewController {
             let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
             guard let userName = user.normalizedName,
                   let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                  .createIndividualToTeamMigrationUseCase() else {
                 return
             }
             userDidTapCreateTeam(useCase: useCase, userName: userName)
