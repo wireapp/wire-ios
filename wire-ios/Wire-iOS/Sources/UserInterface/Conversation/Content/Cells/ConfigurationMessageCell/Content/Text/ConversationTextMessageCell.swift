@@ -111,9 +111,27 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
-        messageTextView.textColor = ownMessage ? ownColor : otherColor
+
+        let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
+        let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
+
+        let linkTextAttributes: [NSAttributedString.Key: Any] = if ownMessage {
+            [
+                .foregroundColor: linkForegroundColor,
+                .underlineColor: linkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
+        } else {
+            [
+                .foregroundColor: linkForegroundColor
+            ]
+        }
+
+        messageTextView.textColor = textForegroundColor
+        messageTextView.linkTextAttributes = linkTextAttributes
     }
 
     func configure(with object: Configuration, animated: Bool) {
