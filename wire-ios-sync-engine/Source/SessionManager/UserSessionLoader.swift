@@ -96,11 +96,10 @@ final class UserSessionLoader {
         }
 
         // Get the environment for this account.
-        let backendEnvironment: BackendEnvironment2
-        if let environment = newEnvironment?.backendEnvironment {
-            backendEnvironment = environment
+        let backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
+            environment
         } else {
-            backendEnvironment = try fetchBackendEnvironment()
+            try fetchBackendEnvironment()
         }
 
         // Retrieve proxy credentials if needed.
@@ -121,11 +120,10 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata: ResolvedBackendMetadata
-        if let newMetadata = newEnvironment?.metadata {
-            metadata = newMetadata
+        let metadata: ResolvedBackendMetadata = if let newMetadata = newEnvironment?.metadata {
+            newMetadata
         } else {
-            metadata = try await resolveBackendMetadata(with: networkStack)
+            try await resolveBackendMetadata(with: networkStack)
         }
 
         // Load persistence stack.
@@ -177,8 +175,7 @@ final class UserSessionLoader {
 
             if
                 let proxyConfig = environment.backendEnvironment.config.proxyConfig,
-                let credentials = environment.proxyCredentials
-            {
+                let credentials = environment.proxyCredentials {
                 let store = ProxyCredentialStore()
                 try await store.storeCredentials(
                     host: proxyConfig.host,

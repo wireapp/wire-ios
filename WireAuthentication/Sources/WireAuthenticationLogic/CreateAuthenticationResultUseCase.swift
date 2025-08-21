@@ -34,7 +34,7 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
-        return AuthenticationResult(
+        AuthenticationResult(
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,

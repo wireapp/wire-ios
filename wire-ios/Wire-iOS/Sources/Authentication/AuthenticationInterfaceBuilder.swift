@@ -102,11 +102,10 @@ final class AuthenticationInterfaceBuilder {
                 )
             }
 
-            let environment: BackendEnvironment2
-            if DeveloperFlag.multibackend.isOn {
-                environment = defaultEnvironment
+            let environment: BackendEnvironment2 = if DeveloperFlag.multibackend.isOn {
+                defaultEnvironment
             } else {
-                environment = BackendEnvironment2(BackendEnvironment.shared)
+                BackendEnvironment2(BackendEnvironment.shared)
             }
 
             let (rootView, bridge) = assembly.assemble(

@@ -46,7 +46,11 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         return viewModel
     }
 
-    func loginView(email: String?, didDetectDomainConflict: Bool, environment: BackendEnvironment2) -> LoginViaEmailView {
+    func loginView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        environment: BackendEnvironment2
+    ) -> LoginViaEmailView {
         fatalError()
     }
 
