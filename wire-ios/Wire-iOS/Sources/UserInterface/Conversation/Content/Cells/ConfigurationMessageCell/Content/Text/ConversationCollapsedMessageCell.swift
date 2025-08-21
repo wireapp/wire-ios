@@ -36,7 +36,16 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            let isOwnMessage = message.isSentBySelfUser
+            let userColor = message.senderUser?.accentColor ?? .clear
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            configureTextColor(forOwnMessage: isOwnMessage)
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -103,6 +112,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         return view
     }()
+
+    private var container: ConversationMessageContainerView?
 
     private lazy var typeIcon: UIImageView = {
         let view = UIImageView(image: .init(resource: .file))
@@ -195,6 +206,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             object.collapseExpandAction()
         }
         wholeViewTapButton.addAction(action, for: .touchUpInside)
+
+        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        configureTextColor(forOwnMessage: message.isSentBySelfUser)
     }
 
     private func configureSubviews() {
@@ -225,11 +239,15 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let avatarContainer = avatar.wrapInViewWithFlexibleTopAndBottom()
 
+        let container = ConversationMessageContainerView(content: messageTextView)
+        self.container = container
+        container.translatesAutoresizingMaskIntoConstraints = false
+
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
                 avatarContainer,
-                messageTextView,
+                container,
                 rightStack.wrapInViewWithFlexibleTopAndBottom()
             ],
             spacing: 7,
@@ -237,7 +255,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         )
         stack.setCustomSpacing(0, after: spacingView)
         stack.setCustomSpacing(Constants.spacingBetweenAvatarAndText, after: avatarContainer)
-        stack.setCustomSpacing(10, after: messageTextView)
+        stack.setCustomSpacing(10, after: container)
 
         rightStack.centerYAnchor
             .constraint(
@@ -264,6 +282,13 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             .setIsUserInteractionEnabled(false)
 
         typeIcon.constraintToSquare(sideLength: 16)
+    }
+
+    private func configureTextColor(forOwnMessage ownMessage: Bool) {
+        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
+        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+        messageTextView.textColor = ownMessage ? ownColor : otherColor
     }
 
     // MARK: - Tap gesture of avatar

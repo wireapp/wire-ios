@@ -115,7 +115,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         let activeConversationPage = try conversationsPage.openConversation()
 
-        let fetchMessages = activeConversationPage.fetchMessages()
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(
             fetchMessages.contains(messageFromUserB),
             "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"

@@ -28,23 +28,13 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
     func replacePersistentStore(
         accountIdentifier: UUID,
         from backupDirectory: URL,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup
+        applicationContainer: URL
     ) async throws -> URL {
-
-        try await withCheckedThrowingContinuation { continuation in
-
-            CoreDataStack.importLocalStorage(
-                accountIdentifier: accountIdentifier,
-                from: backupDirectory,
-                applicationContainer: applicationContainer,
-                dispatchGroup: dispatchGroup
-            ) { result in
-                continuation.resume(with: result)
-            }
-
-        }
-
+        try await CoreDataStack.importLocalStorage(
+            accountIdentifier: accountIdentifier,
+            from: backupDirectory,
+            applicationContainer: applicationContainer
+        )
     }
 
     @MainActor
@@ -60,18 +50,7 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
             dispatchGroup: dispatchGroup
         )
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-
-            stack.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-
-        }
-
+        try await stack.load()
         return stack
 
     }

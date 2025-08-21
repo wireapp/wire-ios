@@ -35,9 +35,9 @@ class BaseSharingSessionTests: BaseTest {
     var sharingSession: SharingSession!
     var moc: NSManagedObjectContext!
 
-    override func setUp() {
-        super.setUp()
-        sharingSession = try! createSharingSession()
+    override func setUp() async throws {
+        try await super.setUp()
+        sharingSession = try await createSharingSession()
         moc = sharingSession.userInterfaceContext
     }
 
@@ -66,8 +66,8 @@ class BaseTest: ZMTBaseTest {
     var mockMLSService: MockMLSServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
@@ -90,9 +90,7 @@ class BaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await coreDataStack.load()
 
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         transportSession = mockTransport.mockedTransportSession()
@@ -132,13 +130,18 @@ class BaseTest: ZMTBaseTest {
 
         let context = coreDataStack.syncContext
 
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = accountIdentifier
-        selfUser.domain = "example.com"
+        await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.remoteIdentifier = self.accountIdentifier
+            selfUser.domain = "example.com"
 
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = "selfClient"
-        selfClient.user = selfUser
+            let selfClient = UserClient.insertNewObject(in: context)
+            selfClient.remoteIdentifier = "selfClient"
+            selfClient.user = selfUser
+
+            context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
@@ -153,10 +156,7 @@ class BaseTest: ZMTBaseTest {
         mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
-        context.saveOrRollback()
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sharedUserDefaults = .temporary()
     }
 
     override func tearDown() {
@@ -176,14 +176,14 @@ class BaseTest: ZMTBaseTest {
         super.tearDown()
     }
 
-    func createSharingSession() throws -> SharingSession {
+    func createSharingSession() async throws -> SharingSession {
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        return try SharingSession(
+        return try await SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
             transportSession: transportSession,

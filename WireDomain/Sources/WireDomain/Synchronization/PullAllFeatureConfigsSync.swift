@@ -43,7 +43,7 @@ struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
 }
 
-private extension FeatureConfigLocalStoreProtocol {
+extension FeatureConfigLocalStoreProtocol {
 
     func storeFeatureConfig(_ featureConfig: WireNetwork.FeatureConfig) async {
         switch featureConfig {
@@ -118,6 +118,15 @@ private extension FeatureConfigLocalStoreProtocol {
                 name: .allowedGlobalOperations,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
+            )
+        case let .consumableNotifications(config):
+            // Necessary to log correct sync version
+            LogAttributes.consumableNotificationsEnabled = config.status == .enabled
+
+            await storeFeature(
+                name: .consumableNotifications,
+                isEnabled: config.status == .enabled,
+                config: nil
             )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")

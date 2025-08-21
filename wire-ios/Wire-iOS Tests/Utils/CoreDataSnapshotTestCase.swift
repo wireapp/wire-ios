@@ -37,8 +37,9 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     //
     var selfUserProvider: SelfUserProvider!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotBackgroundColor = .white
         setupTestObjects()
 

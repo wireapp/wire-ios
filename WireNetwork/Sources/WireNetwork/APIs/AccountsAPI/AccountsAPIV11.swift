@@ -16,15 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
-
-    let team: UUID
-    let id: String
-
-    func toAPIModel() -> TeamID {
-        TeamID(team: team, id: id)
-    }
-
+final class AccountsAPIV11: AccountsAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
 }

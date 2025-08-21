@@ -65,14 +65,14 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-        if conversationCell.waitForExistence(timeout: 5) {
+        if conversationCell.waitForExistence(timeout: 7) {
             conversationCell.tap()
         }
         return try ConnectionRequestsPage()
     }
 
     func openConversation() throws -> ActiveConversationPage {
-        if conversationCell.waitForExistence(timeout: 5) {
+        if conversationCell.waitForExistence(timeout: 7) {
             conversationCell.tap()
         }
         return try ActiveConversationPage()
@@ -90,7 +90,7 @@ class ConversationsPage: PageModel {
     }
 
     func getNameLabel() -> String? {
-        conversationCell.label as? String
+        conversationCell.label
     }
 
 }

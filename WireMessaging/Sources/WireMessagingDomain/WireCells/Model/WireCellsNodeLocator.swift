@@ -16,16 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-public struct TeamID {
+/// A means of locating a node.
+package enum WireCellsNodeLocator: Equatable {
 
-    public let team: UUID
-    public let id: String
+    /// The path to the node.
+    case path(String)
 
-    public init(team: UUID, id: String) {
-        self.team = team
-        self.id = id
-    }
-
+    /// The ID of the node.
+    case id(UUID)
 }

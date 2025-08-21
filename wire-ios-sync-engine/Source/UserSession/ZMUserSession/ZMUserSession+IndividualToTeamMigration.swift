@@ -22,19 +22,13 @@ import WireDomainPackage
 import WireNetwork
 
 public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireNetwork.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
+    func createIndividualToTeamMigrationUseCase() -> IndividualToTeamMigrationUseCaseProtocol? {
+        guard let clientSessionComponent else {
             return nil
         }
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
-
         return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
+            accountsAPI: clientSessionComponent.accountsAPI,
             context: syncContext
         )
     }

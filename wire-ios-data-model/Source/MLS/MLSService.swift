@@ -1525,6 +1525,13 @@ public final class MLSService: MLSServiceInterface {
                 )
 
                 guard retryCount <= maxRetryAttempts else {
+                    // If MLS conversation reset is DISABLED we quarantine the group to avoid repeated commit attempts
+                    // otherwise assume that things will sort themselves out through conversation reset.
+                    let feature = await featureRepository.fetchAllowedGlobalOperations()
+                    if feature.status == .disabled || feature.config.mlsConversationReset == false {
+                        brokenGroupIDs.insert(groupID)
+                    }
+
                     throw MLSRetryError.retryLimitReached
                 }
 

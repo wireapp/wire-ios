@@ -267,6 +267,11 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled,
                     resetMLSConversations: true
                 )
+            ),
+            .consumableNotifications(
+                ConsumableNotificationsFeatureConfig(
+                    status: .enabled
+                )
             )
         ]
 

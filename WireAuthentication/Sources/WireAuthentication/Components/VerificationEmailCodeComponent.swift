@@ -26,7 +26,7 @@ import WireReusableUIComponents
 
 protocol VerificationEmailCodeComponentDependency: Dependency {
 
-    var networkStack: NetworkStack { get }
+    var networkStack: WireAuthenticationLogic.NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
     var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }

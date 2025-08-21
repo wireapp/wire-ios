@@ -210,12 +210,13 @@ struct DatabaseMigrationHelper {
 
     // MARK: - Migration Helpers
 
+    @MainActor
     func migrateStoreToCurrentVersion(
         sourceVersion: String,
         preMigrationAction: MigrationAction,
         postMigrationAction: MigrationAction,
         for testCase: XCTestCase
-    ) throws {
+    ) async throws {
         // GIVEN
         let accountIdentifier = UUID()
         let applicationContainer = DatabaseBaseTest.applicationContainer
@@ -248,7 +249,7 @@ struct DatabaseMigrationHelper {
         sourceContainer = nil
 
         // WHEN
-        var stack: CoreDataStack? = try testCase.createStorageStackAndWaitForCompletion(
+        var stack: CoreDataStack? = try await testCase.createStorageStackAndWaitForCompletion(
             userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
@@ -275,7 +276,7 @@ extension XCTestCase {
         applicationContainer: URL,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> CoreDataStack {
+    ) async throws -> CoreDataStack {
 
         let account = Account(
             userName: "",
@@ -287,22 +288,7 @@ extension XCTestCase {
             inMemoryStore: false
         )
 
-        let exp = expectation(description: "should wait for loadStores to finish")
-        var setupError: Error?
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            setupError = error
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-        wait(for: [exp], timeout: 5)
-
-        if let setupError {
-            throw setupError
-        }
-
+        try await stack.load()
         return stack
     }
 }
