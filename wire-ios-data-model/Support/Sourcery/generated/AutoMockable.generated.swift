@@ -3684,6 +3684,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(channels)
     }
 
+    // MARK: - fetchConsumableNotifications
+
+    public var fetchConsumableNotifications_Invocations: [Void] = []
+    public var fetchConsumableNotifications_MockMethod: (() -> Feature.ConsumableNotifications)?
+    public var fetchConsumableNotifications_MockValue: Feature.ConsumableNotifications?
+
+    public func fetchConsumableNotifications() -> Feature.ConsumableNotifications {
+        fetchConsumableNotifications_Invocations.append(())
+
+        if let mock = fetchConsumableNotifications_MockMethod {
+            return mock()
+        } else if let mock = fetchConsumableNotifications_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConsumableNotifications`")
+        }
+    }
+
+    // MARK: - storeConsumableNotifications
+
+    public var storeConsumableNotifications_Invocations: [Feature.ConsumableNotifications] = []
+    public var storeConsumableNotifications_MockMethod: ((Feature.ConsumableNotifications) -> Void)?
+
+    public func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications) {
+        storeConsumableNotifications_Invocations.append(consumableNotifications)
+
+        guard let mock = storeConsumableNotifications_MockMethod else {
+            fatalError("no mock for `storeConsumableNotifications`")
+        }
+
+        mock(consumableNotifications)
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
