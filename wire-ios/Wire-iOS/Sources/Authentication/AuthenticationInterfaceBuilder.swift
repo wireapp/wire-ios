@@ -43,9 +43,7 @@ final class AuthenticationInterfaceBuilder {
         backendEnvironmentProvider()
     }
 
-    private var environment: WireTransport.BackendEnvironment {
-        BackendEnvironment.shared
-    }
+    let defaultEnvironment: BackendEnvironment2
 
     private var accountSelector: AccountSelector?
 
@@ -57,11 +55,13 @@ final class AuthenticationInterfaceBuilder {
     init(
         featureProvider: AuthenticationFeatureProvider,
         accountSelector: AccountSelector?,
-        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared },
+        defaultEnvironment: BackendEnvironment2
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
         self.accountSelector = accountSelector
+        self.defaultEnvironment = defaultEnvironment
     }
 
     // MARK: - Interface Building
@@ -101,11 +101,18 @@ final class AuthenticationInterfaceBuilder {
                     userDefaults: .standard
                 )
             }
+
+            let environment: BackendEnvironment2
+            if DeveloperFlag.multibackend.isOn {
+                environment = defaultEnvironment
+            } else {
+                environment = BackendEnvironment2(BackendEnvironment.shared)
+            }
+
             let (rootView, bridge) = assembly.assemble(
-                environment: BackendEnvironment2(environment),
+                environment: environment,
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
-                accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 privacyPolicyURL: WireURLs.shared.privacyPolicy,

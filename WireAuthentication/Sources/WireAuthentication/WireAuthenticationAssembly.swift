@@ -41,7 +41,6 @@ public struct WireAuthenticationAssembly {
         environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,

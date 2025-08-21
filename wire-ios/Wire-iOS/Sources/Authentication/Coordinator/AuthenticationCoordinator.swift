@@ -17,8 +17,10 @@
 //
 
 import UIKit
+import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -94,6 +96,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     // MARK: - Internal State
 
+    private let defaultEnvironment: BackendEnvironment2
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
@@ -115,11 +118,13 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     /// Creates a new authentication coordinator with the required supporting objects.
     init(
+        defaultEnvironment: BackendEnvironment2,
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
         statusProvider: AuthenticationStatusProvider
     ) {
+        self.defaultEnvironment = defaultEnvironment
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
         self.sessionManager = sessionManager
@@ -128,7 +133,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
-            accountSelector: SessionManager.shared
+            accountSelector: SessionManager.shared,
+            defaultEnvironment: defaultEnvironment
         )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
         super.init()
