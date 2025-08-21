@@ -17,8 +17,10 @@
 //
 
 public import Foundation
+public import UIKit
 public import WireMessagingDomain
 import WireMessagingData
+import WireMessagingUI
 
 public struct WireCellsFactory {
 
@@ -81,4 +83,16 @@ public struct WireCellsFactory {
         )
     }
 
+}
+
+public extension WireCellsFactory {
+
+    @MainActor
+    func makeFilesView() -> UIViewController {
+        let viewModel = FilesViewModel()
+
+        return FilesHostingController(
+            viewModel: viewModel
+        )
+    }
 }

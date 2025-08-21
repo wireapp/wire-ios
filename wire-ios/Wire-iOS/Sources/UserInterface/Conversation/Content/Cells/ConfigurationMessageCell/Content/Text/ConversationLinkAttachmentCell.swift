@@ -81,14 +81,26 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         widthConstraint.priority = .defaultHigh
 
         let margins = conversationHorizontalMargins
+        let existingConstraints = [
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right)
+        ]
+        let chatBubbleConstraints = [
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+        ]
 
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     private func updateAspectRatio(_ heightRatio: CGFloat) {
@@ -168,6 +180,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

@@ -67,7 +67,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                         repository: repository
                     )
 
-                case .v6, .v7, .v8, .v9, .v10:
+                case .v6, .v7, .v8, .v9, .v10, .v11:
                     try processor.processActionPayloadAPIV6(
                         data: data,
                         repository: repository

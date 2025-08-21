@@ -31,31 +31,31 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
         helper = nil
     }
 
-    func testMigratingDatabase_WithConversationWithNoRemoteIdentifier_ShouldSucceed() throws {
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+    func testMigratingDatabase_WithConversationWithNoRemoteIdentifier_ShouldSucceed() async throws {
+        try await internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
             sourceVersion: "2.110.0",
             entity: ZMConversation.self
         )
     }
 
-    func testMigratingDatabase_WithTeamWithNoRemoteIdentifier_ShouldSucceed() throws {
+    func testMigratingDatabase_WithTeamWithNoRemoteIdentifier_ShouldSucceed() async throws {
         // it is not problem here, because remoteIdentifier is a String
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+        try await internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
             sourceVersion: "2.110.0",
             entity: Team.self
         )
     }
 
-    func testMigratingDatabase_WithUserWithNoRemoteIdentifier_ShouldSucceed() throws {
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+    func testMigratingDatabase_WithUserWithNoRemoteIdentifier_ShouldSucceed() async throws {
+        try await internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
             sourceVersion: "2.110.0",
             entity: ZMUser.self
         )
     }
 
-    func testMigratingDatabase_WithUserClientWithNoRemoteIdentifier_ShouldSucceed() throws {
+    func testMigratingDatabase_WithUserClientWithNoRemoteIdentifier_ShouldSucceed() async throws {
         // it is not problem here, because remoteIdentifier is a String
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+        try await internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
             sourceVersion: "2.106.0",
             entity: UserClient.self
         )
@@ -64,9 +64,9 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
     private func internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier<T: ZMManagedObject>(
         sourceVersion: String,
         entity: T.Type
-    ) throws {
+    ) async throws {
         let count = 100
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: sourceVersion,
             preMigrationAction: { context in
 

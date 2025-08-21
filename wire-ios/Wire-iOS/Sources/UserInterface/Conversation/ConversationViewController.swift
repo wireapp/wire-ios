@@ -32,7 +32,7 @@ final class ConversationViewController: UIViewController {
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
-
+    private let wireCellsFactory: WireCellsFactoryProtocol
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -192,6 +192,8 @@ final class ConversationViewController: UIViewController {
             ),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
+
+        self.wireCellsFactory = wireCellsFactory
 
         super.init(nibName: nil, bundle: nil)
 
@@ -435,6 +437,19 @@ final class ConversationViewController: UIViewController {
     @objc
     private func setupTitleViewTap() {
         var actions = [UIAction]()
+
+        if DeveloperFlag.wireCells.isOn {
+            actions.append(
+                UIAction(
+                    title: L10n.Localizable.Conversation.Action.files,
+                    image: UIImage(resource: .files),
+                    handler: { [weak self] _ in
+                        self?.onFilesButtonPressed(nil)
+                    }
+                )
+            )
+        }
+
         if shouldShowCollectionsButton {
             actions.append(
                 UIAction(
@@ -844,6 +859,14 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             .wrapInNavigationController()
 
         navigationController.presentOverAll(animated: true)
+    }
+
+    @objc
+    private func onFilesButtonPressed(_ sender: AnyObject?) {
+        let filesView = wireCellsFactory
+            .makeFilesView()
+
+        filesView.presentOverAll(animated: true)
     }
 
 }

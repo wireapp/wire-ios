@@ -36,7 +36,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testMigratingToMessagingStore_from2_113_updatesRelationships() throws {
+    func testMigratingToMessagingStore_from2_113_updatesRelationships() async throws {
         let selfUserID = UUID.create()
         let teamID = UUID.create()
 
@@ -49,7 +49,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         let teamUser2ID = UUID.create()
         let teamConversation2ID = UUID.create()
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: "2.113.0",
             preMigrationAction: { context in
                 let selfUser = ZMUser.selfUser(in: context)

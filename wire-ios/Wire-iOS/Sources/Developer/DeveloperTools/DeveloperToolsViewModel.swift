@@ -310,6 +310,19 @@ final class DeveloperToolsViewModel: ObservableObject {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
 
+        if let userSession {
+            items.append(.destination(DestinationItem(title: "Feature configs", makeView: {
+                AnyView(
+                    FeatureConfigsView(
+                        viewModel: FeatureConfigsViewModel(
+                            featureConfigRepository: userSession.featureRepository,
+                            context: userSession.syncContext
+                        )
+                    )
+                )
+            })))
+        }
+
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
             self?.stopFederatingFoma()

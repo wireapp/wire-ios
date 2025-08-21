@@ -1782,6 +1782,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeFilesView
+
+    var makeFilesView_Invocations: [Void] = []
+    var makeFilesView_MockMethod: (() -> UIViewController)?
+    var makeFilesView_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView() -> UIViewController {
+        makeFilesView_Invocations.append(())
+
+        if let mock = makeFilesView_MockMethod {
+            return mock()
+        } else if let mock = makeFilesView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesView`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name
