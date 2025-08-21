@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 package protocol RootFactory {
 
