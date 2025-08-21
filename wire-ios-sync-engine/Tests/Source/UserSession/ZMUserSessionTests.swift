@@ -490,6 +490,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
 
         let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
@@ -511,6 +512,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
             ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
+            sut.didRegisterSelfUserClient(selfUserClient)
             syncMOC.saveOrRollback()
 
             // WHEN
@@ -545,8 +547,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
 
         syncMOC.performAndWait {
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
             XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
 
             XCTAssertFalse(BackendInfo.isMLSEnabled)

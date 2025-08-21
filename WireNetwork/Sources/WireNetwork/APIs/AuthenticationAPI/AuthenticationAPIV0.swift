@@ -409,7 +409,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         password: String,
         name: String,
         teamName: String
-    ) async throws -> (teamId: UUID, id: String) {
+    ) async throws -> (teamId: UUID?, qualifiedId: QualifiedID) {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
@@ -432,11 +432,11 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
         let (data, response) = try await networkService.executeRequest(request)
 
-        let payload = try ResponseParser()
+        let apiResponse = try ResponseParser()
             .success(code: .created, type: RegisterUserResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
-        return (payload.team, payload.id)
+        return (apiResponse.teamID, apiResponse.qualifiedID)
     }
 
     func registerTeamMember(
@@ -444,7 +444,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         password: String,
         name: String,
         invitationCode: String
-    ) async throws -> String {
+    ) async throws -> QualifiedID {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
@@ -463,11 +463,11 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
         let (data, response) = try await networkService.executeRequest(request)
 
-        let payload = try ResponseParser()
+        let apiResponse = try ResponseParser()
             .success(code: .created, type: RegisterUserResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
-        return payload.id
+        return apiResponse.qualifiedID
     }
 
     func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String {
@@ -486,37 +486,80 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
         return payload.code
     }
+}
 
-    private struct RegisterAccountRequestBodyV0: Encodable {
-        var email: String
+private struct RegisterAccountRequestBodyV0: Encodable {
+    var email: String
+    var name: String
+    var password: String
+}
+
+private struct ActivateRequestBodyV0: Encodable {
+    var key: String
+    var code: String
+    var email: String
+    var dryrun: Bool
+}
+
+private struct RegisterTeamOwnerBodyV0: Encodable {
+    var email: String
+    var password: String
+    var name: String
+    var team: TeamInfo
+
+    struct TeamInfo: Encodable {
         var name: String
-        var password: String
+        var icon: String
+        var binding: Bool
+    }
+}
+
+private struct RegisterTeamMemberBodyV0: Encodable {
+    var email: String
+    var password: String
+    var name: String
+    var team_code: String
+}
+
+struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
+
+    let accentID: Int
+    let assets: [UserAssetV0]?
+    let email: String?
+    let id: String
+    let locale: String
+    let managedBy: ManagedByV0?
+    let name: String
+    let picture: [String]?
+    let qualifiedID: QualifiedIDV0
+    let status: String?
+    let teamID: UUID?
+
+    enum CodingKeys: String, CodingKey {
+        case accentID = "accent_id"
+        case assets, email
+        case id
+        case locale
+        case managedBy = "managed_by"
+        case name, picture
+        case qualifiedID = "qualified_id"
+        case status
+        case teamID = "team"
     }
 
-    private struct ActivateRequestBodyV0: Encodable {
-        var key: String
-        var code: String
-        var email: String
-        var dryrun: Bool
-    }
-
-    private struct RegisterTeamOwnerBodyV0: Encodable {
-        var email: String
-        var password: String
-        var name: String
-        var team: TeamInfo
-
-        struct TeamInfo: Encodable {
-            var name: String
-            var icon: String
-            var binding: Bool
-        }
-    }
-
-    private struct RegisterTeamMemberBodyV0: Encodable {
-        var email: String
-        var password: String
-        var name: String
-        var team_code: String
+    func toAPIModel() -> RegisterUserResponse {
+        RegisterUserResponse(
+            id: id,
+            qualifiedID: qualifiedID.toAPIModel(),
+            name: name,
+            teamID: teamID,
+            accentID: accentID,
+            managedBy: managedBy?.toAPIModel(),
+            assets: assets?.map { $0.toAPIModel() },
+            picture: picture,
+            email: email,
+            status: status,
+            supportedProtocols: [.proteus]
+        )
     }
 }
