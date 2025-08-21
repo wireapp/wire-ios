@@ -22,7 +22,6 @@ public enum MessagesUpdate: Sendable {
     case inserted(MessageModel)
 }
 
-// sourcery: AutoMockable
 package protocol MonitorMessagesUseCaseProtocol {
     var messagesUpdatesStream: AsyncStream<MessagesUpdate> { get }
 }
