@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV10: FeatureConfigsAPIV9 {
+class FeatureConfigsAPIV10: FeatureConfigsAPIV9 {
     override var apiVersion: APIVersion { .v10 }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
