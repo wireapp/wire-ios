@@ -494,8 +494,7 @@
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
 		C912D5742E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = C912D5732E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift */; };
-        C95C70682E535781004E4C79 /* Feature.ConsumableNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C70672E535781004E4C79 /* Feature.ConsumableNotifications.swift */; };
-		C9954F8A2E38CA8600A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F892E38CA8600A5EB01 /* WireMessagingDomain */; };
+		C95C70682E535781004E4C79 /* Feature.ConsumableNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C70672E535781004E4C79 /* Feature.ConsumableNotifications.swift */; };
 		C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D22CEF630500012A0E /* TypingUsers.swift */; };
 		C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */; };
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
@@ -1856,7 +1855,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9954F8A2E38CA8600A5EB01 /* WireMessagingDomain in Frameworks */,
 				34DC44B52E01C210004D5DD5 /* WireNetwork in Frameworks */,
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */,
@@ -2087,7 +2085,7 @@
 		54CB3FE824A3993400BA86DD /* FeatureConfig */ = {
 			isa = PBXGroup;
 			children = (
-                C95C70662E535755004E4C79 /* ConsumableNotifications */,
+				C95C70662E535755004E4C79 /* ConsumableNotifications */,
 				5F1D54092E4B603600A6D57A /* ChatBubblesSimple */,
 				0686649D256FB087001C8747 /* AppLock */,
 				EEC47ED427A81ED70020B599 /* ClassifiedDomains */,
@@ -3807,7 +3805,6 @@
 				59506A872E2E61BD0051B07A /* SwiftProtobuf */,
 				5950B0342E2EA1070051B07A /* GenericMessageProtocol */,
 				CBB648A42E33D18900FA52AA /* WireData */,
-				C9954F892E38CA8600A5EB01 /* WireMessagingDomain */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5211,10 +5208,6 @@
 		59D398CF2D552573001C9C5F /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
-		};
-		C9954F892E38CA8600A5EB01 /* WireMessagingDomain */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireMessagingDomain;
 		};
 		CBB648A42E33D18900FA52AA /* WireData */ = {
 			isa = XCSwiftPackageProductDependency;

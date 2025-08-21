@@ -29,12 +29,14 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
 
     override func setUp() {
         super.setUp()
+        userSession.isChatBubbleSimpleEnabled = true
         DeveloperFlag.chatBubblesSimple.enable(true, storage: .temporary())
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        userSession.isChatBubbleSimpleEnabled = false
         DeveloperFlag.chatBubblesSimple.enable(false, storage: .temporary())
         super.tearDown()
     }

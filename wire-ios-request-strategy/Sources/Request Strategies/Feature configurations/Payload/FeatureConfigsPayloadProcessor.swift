@@ -229,6 +229,14 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+
+        if let chatBubblesSimple = payload.chatBubbles {
+            repository.storeChatBubblesSimple(
+                Feature.ChatBubblesSimple(
+                    status: chatBubblesSimple.status
+                )
+            )
+        }
     }
 
     func processEventPayload(

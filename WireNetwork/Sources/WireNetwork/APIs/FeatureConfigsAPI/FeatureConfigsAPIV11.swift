@@ -55,7 +55,7 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     // this is added in v11
     let consumableNotifications: FeatureWithoutConfig
-    let chatBubblesSimple: FeatureWithoutConfig
+    let chatBubbles: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -136,7 +136,7 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
         )
         featureConfigs.append(.consumableNotifications(consumableNotifications))
 
-        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubblesSimple.status.toAPIModel())
+        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
         featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
 
         return featureConfigs
