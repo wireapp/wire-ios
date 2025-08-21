@@ -99,6 +99,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
+    var isMultibackendEnabled: Bool {
+        return rootComponent.isMultibackendEnabled
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -231,6 +234,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\DetermineAuthMethodComponentDependency.isMultibackendEnabled] = "isMultibackendEnabled-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }

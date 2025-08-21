@@ -31,6 +31,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
+    var isMultibackendEnabled: Bool { get }
 
 }
 
@@ -95,7 +96,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             router: dependency.router,
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount,
+            isMultibackendEnabled: dependency.isMultibackendEnabled
         )
     }
 
