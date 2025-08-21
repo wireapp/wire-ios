@@ -797,7 +797,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
-    
+
     public func establishPendingGroup(groupID: MLSGroupID) async throws {
         guard let context else {
             return
@@ -805,20 +805,20 @@ public final class MLSService: MLSServiceInterface {
         let conversation = await context.perform {
             ZMConversation.fetch(with: groupID, in: context)
         }
-        
+
         guard let conversation else {
             throw MLSServiceError.conversationNotFound
         }
-        
+
         try await internalEstablishPendingGroup(
             groupID: groupID,
             pendingGroup: conversation,
             context: context
         )
-        
-        await saveContext(context)
+
+        await save(context)
     }
-    
+
     private func internalEstablishPendingGroup(
         groupID: MLSGroupID,
         pendingGroup: ZMConversation,
@@ -828,7 +828,7 @@ public final class MLSService: MLSServiceInterface {
             pendingGroup.localParticipants.map(MLSUser.init)
         }
 
-        let ciphersuite = try await self.establishGroup(
+        let ciphersuite = try await establishGroup(
             for: groupID,
             with: mlsUsers
         )
@@ -889,7 +889,7 @@ public final class MLSService: MLSServiceInterface {
                     }
                 }
             }
-            
+
             var needToSave = false
             for await groupResult in group {
                 needToSave = needToSave || groupResult
@@ -897,15 +897,14 @@ public final class MLSService: MLSServiceInterface {
             return needToSave
         }
         if needToSave {
-            await saveContext(context)
+            await save(context)
         }
     }
-    
-    private func saveContext(_ context: NSManagedObjectContext) async {
+
+    private func save(_ context: NSManagedObjectContext) async {
         _ = await context.perform { [context] in
             context.saveOrRollback()
         }
-
     }
 
     // MARK: - Out-of-sync conversations

@@ -95,7 +95,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             )?.0 else {
                 throw Failure.noRefreshedConversationFound
             }
-                        
+
             try await mlsService.establishPendingGroup(groupID: newGroupID)
 
             WireLogger.mls.info(
