@@ -162,6 +162,19 @@ final class UserSessionLoader {
                 environment.backendEnvironment,
                 for: accountID
             )
+
+            if
+                let proxyConfig = environment.backendEnvironment.config.proxyConfig,
+                let credentials = environment.proxyCredentials
+            {
+                let store = ProxyCredentialStore()
+                try await store.storeCredentials(
+                    host: proxyConfig.host,
+                    port: proxyConfig.port,
+                    username: credentials.username,
+                    password: credentials.password
+                )
+            }
         } catch {
             throw Failure.failedToStoreNewEnvironment(error)
         }
@@ -613,17 +626,13 @@ private struct ProxyCredentialStore {
         host: String,
         port: Int
     ) async throws -> (username: String, password: String)? {
-        let usernameData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-username"),
-            .returningData(true)
-        ])
+        var usernameQuery = usernameQuery(host: host, port: port)
+        usernameQuery.insert(.returningData(true))
+        let usernameData: Data? = try await keychain.fetchItem(query: usernameQuery)
 
-        let passwordData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-password"),
-            .returningData(true)
-        ])
+        var passwordQuery = passwordQuery(host: host, port: port)
+        passwordQuery.insert(.returningData(true))
+        let passwordData: Data? = try await keychain.fetchItem(query: passwordQuery)
 
         guard
             let usernameData,
@@ -636,6 +645,110 @@ private struct ProxyCredentialStore {
             username: String(decoding: usernameData, as: UTF8.self),
             password: String(decoding: passwordData, as: UTF8.self)
         )
+    }
+
+    func storeCredentials(
+        host: String,
+        port: Int,
+        username: String,
+        password: String
+    ) async throws {
+        try? await keychain.deleteItem(
+            query: getUsernameQuery(
+                host: host,
+                port: port
+            )
+        )
+        try? await keychain.deleteItem(
+            query: getPasswordQuery(
+                host: host,
+                port: port
+            )
+        )
+        try await keychain.addItem(
+            query: setUsernameQuery(
+                host: host,
+                port: port,
+                username: username
+            )
+        )
+        try await keychain.addItem(
+            query: setPasswordQuery(
+                host: host,
+                port: port,
+                password: password
+            )
+        )
+    }
+
+    private func getUsernameQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        var query = usernameQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.returningData(true))
+        return query
+    }
+
+    private func setUsernameQuery(
+        host: String,
+        port: Int,
+        username: String
+    ) -> Set<KeychainQueryItem> {
+        var query = usernameQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.data(Data(username.utf8)))
+        return query
+    }
+
+    private func usernameQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-username")
+        ]
+    }
+
+    private func getPasswordQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        var query = passwordQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.returningData(true))
+        return query
+    }
+
+    private func setPasswordQuery(
+        host: String,
+        port: Int,
+        password: String
+    ) -> Set<KeychainQueryItem> {
+        var query = passwordQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.data(Data(password.utf8)))
+        return query
+    }
+
+    private func passwordQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-password")
+        ]
     }
 
 }
