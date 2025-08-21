@@ -77,7 +77,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/791412993/Use+case+join+self+conversation+MLS)
 
     func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite
-    
+
     /// Creates a new group with the given ID and adds users to it
     ///
     /// - Parameters:
@@ -99,8 +99,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         with users: [MLSUser],
         removalKeys: BackendMLSPublicKeys?
     ) async throws -> MLSCipherSuite
-    
-    
+
     /// Establishes group and sets its status to 'ready'
     /// - Parameters:
     ///   - groupID: The ID of the group to create
