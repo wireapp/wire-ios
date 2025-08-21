@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UniformTypeIdentifiers
 import SwiftUI
 import WireFoundation
 package import WireMessagingDomain
@@ -34,6 +35,9 @@ struct FilesViewItem: Identifiable, Equatable {
 
     /// The date when the file was last modified.
     let modifiedAt: Date?
+
+    /// The icon representing the file type.
+    let icon: FileIcon
 }
 
 @MainActor
@@ -48,11 +52,6 @@ package final class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
-    enum Alert: Equatable {
-        case noInternet
-        case unknownError
-    }
-
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
 
     package init(fetchNodesUseCase: WireCellsFetchNodesUseCase) {
@@ -62,7 +61,7 @@ package final class FilesViewModel: ObservableObject {
     @Published private(set) var items: [FilesViewItem] = []
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
-    @Published var alert: Alert?
+    @Published var alert: AlertModel?
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -135,11 +134,16 @@ package final class FilesViewModel: ObservableObject {
         let (nodes, nextPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, token: token)
 
         let items = nodes.map { node in
-            FilesViewItem(
+            let url = URL(string: node.path)
+            return FilesViewItem(
                 id: node.id,
-                filename: URL(string: node.path)?.lastPathComponent ?? node.path,
+                filename: url?.lastPathComponent ?? node.path,
                 ownedBy: node.ownerUserName,
-                modifiedAt: node.modified
+                modifiedAt: node.modified,
+                icon: .make(
+                    type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
+                    fileExtension: url?.pathExtension
+                )
             )
         }
 
@@ -159,10 +163,12 @@ final class FilesItemViewModel: ObservableObject {
 
     let fileName: String
     let subtitle: String?
+    let icon: FileIcon
 
     init(item: FilesViewItem) {
         self.fileName = item.filename
         self.subtitle = Self.subtitle(from: item)
+        self.icon = item.icon
     }
 
     private static func subtitle(from item: FilesViewItem) -> String? {

@@ -24,12 +24,14 @@ extension WireCellsNode {
         uuid: UUID = UUID(),
         path: String = "some/path",
         modified: Date? = nil,
+        mimeType: String? = nil,
         ownerUserName: String? = nil,
     ) -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
             path: path,
             modified: modified,
+            mimeType: mimeType,
             ownerUserName: ownerUserName
         )
     }
