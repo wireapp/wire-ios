@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
@@ -37,6 +38,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return nil
         }
 
+        WireLogger.notifications.info("Calling notification content: \(callContent)")
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: conversationID,
             senderID: senderID,

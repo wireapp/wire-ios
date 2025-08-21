@@ -43,7 +43,8 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
         let canDisplayNotification = await validator.validate(
             conversationID: event.conversationID,
             senderID: event.senderID,
-            time: event.timestamp
+            time: event.timestamp,
+            isMessageAddEvent: event.isMessageAddEvent
         )
 
         guard canDisplayNotification else {
@@ -108,7 +109,8 @@ extension ConversationEventNotificationBuilder {
         func validate(
             conversationID: ConversationID,
             senderID: UserID,
-            time: Date?
+            time: Date?,
+            isMessageAddEvent: Bool
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
@@ -129,8 +131,12 @@ extension ConversationEventNotificationBuilder {
 
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
+            // `selfUser` can be the sender for `mlsMessageAdd` and `proteusMessageAdd` events:
+            // calls can be answered on another device,
+            // so sending notifications is still relevant.
+            let isSenderSelfUserAllowed = isMessageAddEvent ? true : !isSenderSelfUser
 
-            guard !isSenderSelfUser,
+            guard isSenderSelfUserAllowed,
                   !isConversationMuted else {
                 return false
             }
@@ -142,6 +148,17 @@ extension ConversationEventNotificationBuilder {
             }
 
             return true
+        }
+    }
+}
+
+private extension ConversationEvent {
+    var isMessageAddEvent: Bool {
+        switch self {
+        case .mlsMessageAdd, .proteusMessageAdd:
+            return true
+        default:
+            return false
         }
     }
 }
