@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
 
-    func invoke(proxyCredentials: ProxyCredentials) throws
+    func invoke(proxyCredentials: ProxyCredentials) async throws
 
 }
 

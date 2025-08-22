@@ -29,13 +29,6 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
-public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
-public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
-public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
-public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
-public typealias TrustData = WireAuthenticationAPI.TrustData
-public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 
 public struct WireAuthenticationAssembly {
 
@@ -45,11 +38,9 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
@@ -61,12 +52,8 @@ public struct WireAuthenticationAssembly {
         isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
-        let backendInfo = BackendInfo(
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
         let rootComponent = RootComponent(
-            backendInfo: backendInfo,
+            environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,

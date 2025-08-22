@@ -21,6 +21,7 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -30,6 +31,7 @@ final class AppRootRouter {
 
     // MARK: - Private Properties
 
+    private let defaultEnvironment: BackendEnvironment2
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
     private let trackingManager: TrackingManager
@@ -64,11 +66,13 @@ final class AppRootRouter {
     // MARK: - Initialization
 
     init(
+        defaultEnvironment: BackendEnvironment2,
         mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator,
         trackingManager: TrackingManager
     ) {
+        self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
@@ -375,6 +379,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         authenticationCoordinator?.tearDown()
 
         authenticationCoordinator = AuthenticationCoordinator(
+            defaultEnvironment: defaultEnvironment,
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),

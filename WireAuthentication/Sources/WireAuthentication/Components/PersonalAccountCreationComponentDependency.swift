@@ -21,12 +21,13 @@ import NeedleFoundation
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireNetwork
 import WireReusableUIComponents
 
 protocol PersonalAccountCreationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var networkStack: WireAuthenticationLogic.NetworkStack { get }
+    var networkStack: NetworkStack { get }
     var passwordValidator: any PasswordValidator { get }
     var privacyPolicyURL: URL { get }
     var termsOfUseURL: URL { get }

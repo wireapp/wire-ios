@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -25,6 +26,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
+    var defaultEnvironment: BackendEnvironment2!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() async throws {
@@ -32,6 +34,23 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         snapshotHelper = SnapshotHelper()
         coreDataFixture = try await CoreDataFixture()
         accentColor = .blue
+        defaultEnvironment = BackendEnvironment2(
+            title: "mock",
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "www.wire.com")!,
+                    websocketURL: URL(string: "www.wire.com")!,
+                    blacklistURL: URL(string: "www.wire.com")!,
+                    teamsURL: URL(string: "www.wire.com")!,
+                    accountsURL: URL(string: "www.wire.com")!,
+                    websiteURL: URL(string: "www.wire.com")!,
+                    countlyURL: URL(string: "www.wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
+        )
 
         featureProvider = MockAuthenticationFeatureProvider()
         builder = AuthenticationInterfaceBuilder(
@@ -43,7 +62,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
                 backendEnvironmentProvider.proxy = proxy
                 backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
                 return backendEnvironmentProvider
-            }
+            },
+            defaultEnvironment: defaultEnvironment
         )
     }
 
@@ -51,6 +71,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         snapshotHelper = nil
         builder = nil
         featureProvider = nil
+        defaultEnvironment = nil
 
         coreDataFixture = nil
 
@@ -114,7 +135,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(
             for: .provideCredentials(nil),
@@ -133,7 +155,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(for: .provideCredentials(nil))
     }
@@ -154,7 +177,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(for: .provideCredentials(nil))
     }

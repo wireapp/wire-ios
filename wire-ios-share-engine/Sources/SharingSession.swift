@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy
@@ -559,11 +560,17 @@ public final class SharingSession {
             proxyCredentials: proxyCredentials
         )
 
-        let networkServices = try networkStack.networkServices
+        let networkServices = try await networkStack.networkServices
         let metadata = try await networkStack.resolvedBackendMetadata()
+        let cookieStorage = CookieStorage(
+            userID: accountIdentifier,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
 
         let userSessionComponent = UserSessionComponent(
             selfUserID: accountIdentifier,
+            cookieStorage: cookieStorage,
             restNetworkService: networkServices.rest,
             websocketNetworkService: networkServices.webSocket,
             backendMetaData: metadata,

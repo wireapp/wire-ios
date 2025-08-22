@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
 
@@ -49,7 +50,7 @@ private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerPro
 
     var trackingID: String?
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool { false }
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool { false }
     func setUp() {}
     func tearDown() {}
     func trackPersonalAccountCreationStart() {}
