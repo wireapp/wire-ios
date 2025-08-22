@@ -17,17 +17,14 @@
 //
 
 import Foundation
+import WireNetwork
 
-public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
+extension NetworkStack {
 
-    case `default`
-    case staging
-    case anta
-    case bella
-    case chala
-    case diya
-    case elna
-    case foma
-    case custom(url: URL)
+    func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
+        let networkServices = try networkServices
+        let apiVersion = try await resolvedAPIVersion()
+        return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
+    }
 
 }

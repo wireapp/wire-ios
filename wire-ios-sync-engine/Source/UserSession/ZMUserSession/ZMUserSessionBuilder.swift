@@ -173,7 +173,8 @@ struct ZMUserSessionBuilder {
             recurringActionService: recurringActionService,
             dependencies: dependencies,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
     }
 

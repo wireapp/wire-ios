@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: SubmitProxyCredentialsUseCaseFactory {
 

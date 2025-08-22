@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 package protocol RootFactory {
@@ -25,7 +26,7 @@ package protocol RootFactory {
     @MainActor var viewModel: RootViewModel { get }
 
     @MainActor
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory
 
     @MainActor
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
@@ -55,11 +56,11 @@ package struct RootView: View {
     @ViewBuilder
     private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
-        case let .authFlow(backendInfo):
+        case let .authFlow(environment):
             NavigationStack(path: $viewModel.path) {
                 DetermineAuthMethodView(
                     factory: viewModel.factory.determineAuthMethodFactory(
-                        backendInfo: backendInfo
+                        environment: environment
                     )
                 )
                 .navigationDestination(for: RootDestination.self) { destination in
@@ -71,7 +72,7 @@ package struct RootView: View {
             }
             // We must provide an explicit id so it knows to create a new
             // view when the backend info changes.
-            .id(backendInfo)
+            .id(environment)
             .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise
             // it will dismiss the sheet.
