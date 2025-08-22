@@ -62,10 +62,10 @@ public struct SharingSessionLoader {
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
 
-        accountID = account.userIdentifier
-        accountDataURL = AccountURLs(root: appContainerURL).accountData
-        backendStore = try BackendEnvironmentStore(directory: accountDataURL)
-        journal = Journal(
+        self.accountID = account.userIdentifier
+        self.accountDataURL = AccountURLs(root: appContainerURL).accountData
+        self.backendStore = try BackendEnvironmentStore(directory: accountDataURL)
+        self.journal = Journal(
             userID: accountID,
             storage: sharedUserDefaults
         )
@@ -102,7 +102,7 @@ public struct SharingSessionLoader {
 
         // Return early if needed.
         guard !shouldEnableSyncV2(metadata: metadata) else {
-            throw Failure.mainAppRequired(message:"sync v2 should be enabled")
+            throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
         guard let selfClientID = await coreDataStack.syncContext.perform({
@@ -191,7 +191,6 @@ public struct SharingSessionLoader {
 
         return newMetadata
     }
-
 
     private func setupPersistenceStack() async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(

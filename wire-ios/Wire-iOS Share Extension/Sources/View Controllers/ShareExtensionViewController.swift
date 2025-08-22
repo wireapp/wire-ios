@@ -530,15 +530,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         do {
             try await recreateSharingSession(account: account)
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            // TODO: WPB-19678 determine copy
+            // TODO: [WPB-19678] determine copy
             presentError(message: "No internet connection")
         } catch
-            NetworkStackError.backendAPIVersionObsolete,
+        NetworkStackError.backendAPIVersionObsolete,
             NetworkStackError.clientAPIVersionObsolete,
             NetworkStackError.proxyCredentialsRequired,
-            SharingSessionLoader.Failure.mainAppRequired
-        {
-            // TODO: WPB-19678 determine copy
+            SharingSessionLoader.Failure.mainAppRequired {
+            // TODO: [WPB-19678] determine copy
             presentError(message: "Open this account in the Wire app or switch accounts.")
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
@@ -692,7 +691,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             style: .cancel
         ))
 
-        self.present(alert, animated: true)
+        present(alert, animated: true)
     }
 
 }
