@@ -34,7 +34,7 @@ extension WireCellsNode {
         mimeType: String? = nil,
         previews: [WireCellsNodePreview] = [],
         ownerUserID: String? = nil,
-		ownerUserName: String? = nil,
+        ownerUserName: String? = nil,
         conversationID: WireCellsConversationID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
         downloadURL: URL? = nil
@@ -53,7 +53,7 @@ extension WireCellsNode {
             mimeType: mimeType,
             previews: previews,
             ownerUserID: ownerUserID,
-			ownerUserName: String? = nil,
+            ownerUserName: String? = nil,
             conversationID: conversationID,
             publicLinkID: publicLinkID,
             downloadURL: downloadURL

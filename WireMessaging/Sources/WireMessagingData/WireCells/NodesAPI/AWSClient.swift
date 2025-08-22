@@ -127,7 +127,11 @@ final class AWSClient: Sendable {
         }
     }
 
-    func upload(path: URL, node: WireCellsNodeNetworkModel, versionID: UUID) async -> AsyncThrowingStream<Int, any Error> {
+    func upload(
+        path: URL,
+        node: WireCellsNodeNetworkModel,
+        versionID: UUID
+    ) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
