@@ -57,6 +57,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -80,6 +81,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol,
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.journal = journal
@@ -88,6 +90,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
+        self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
         super.init()
 
@@ -207,8 +210,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled] && DeveloperFlag
-            .consumableNotifications.isOn
+
+        let isConsumableNotificationsEnabled = await featureConfigRepository.isFeatureEnabled(
+            .consumableNotifications
+        ) && journal[.isConsumableNotificationsEnabled]
 
         if isSyncV2Enabled {
 

@@ -17,10 +17,11 @@
 //
 
 import CellsSDK
+import WireFoundation
 package import WireMessagingDomain
 package import Foundation
 
-package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
+package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let uuid: UUID
     package let path: String
     package let modified: UInt64?
@@ -34,8 +35,10 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let mimeType: String?
     package let previews: [PreviewDTO]
     package let ownerUserId: String?
+    package let ownerUserName: String?
     package let conversationId: String?
     package let publicLinkId: String?
+    package let downloadURL: URL?
 
     package init(
         uuid: UUID,
@@ -51,8 +54,10 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         mimeType: String? = nil,
         previews: [PreviewDTO] = [],
         ownerUserId: String? = nil,
+        ownerUserName: String?,
         conversationId: String? = nil,
-        publicLinkId: String? = nil
+        publicLinkId: String? = nil,
+        downloadURL: URL? = nil
     ) {
         self.uuid = uuid
         self.path = path
@@ -67,17 +72,19 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         self.mimeType = mimeType
         self.previews = previews
         self.ownerUserId = ownerUserId
+        self.ownerUserName = ownerUserName
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
+        self.downloadURL = downloadURL
     }
 }
 
-package extension WireCellsNodeDTO {
-    func toModel() -> WireCellsNode {
+package extension WireCellsNodeNetworkModel {
+    func toDomainModel() -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
             path: path,
-            modified: modified,
+            modified: modified.map { Date(timeIntervalSince1970: Double($0)) },
             size: size,
             eTag: eTag,
             type: type,
@@ -87,19 +94,20 @@ package extension WireCellsNodeDTO {
             contentHash: contentHash,
             mimeType: mimeType,
             previews: previews.map { $0.toModel() },
-            ownerUserID: ownerUserId,
+            ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
-            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:))
+            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
+            downloadURL: downloadURL
         )
     }
 }
 
 package extension WireCellsNode {
-    func toDTO() -> WireCellsNodeDTO {
-        WireCellsNodeDTO(
+    func toDTO() -> WireCellsNodeNetworkModel {
+        WireCellsNodeNetworkModel(
             uuid: id,
             path: path,
-            modified: modified,
+            modified: modified.map { UInt64($0.timeIntervalSince1970) },
             size: size,
             eTag: eTag,
             type: type,
@@ -109,7 +117,8 @@ package extension WireCellsNode {
             contentHash: contentHash,
             mimeType: mimeType,
             previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
-            ownerUserId: ownerUserID,
+            ownerUserId: ownerUserID?.transportString,
+            ownerUserName: ownerUserName,
             conversationId: conversationID?.pydioQualifiedID,
             publicLinkId: publicLinkID?.string
         )
@@ -117,10 +126,10 @@ package extension WireCellsNode {
 }
 
 package extension RestNode {
-    func toDTO() -> WireCellsNodeDTO? {
+    func toDTO() -> WireCellsNodeNetworkModel? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
 
-        return WireCellsNodeDTO(
+        return WireCellsNodeNetworkModel(
             uuid: uuid,
             path: path,
             modified: modified.flatMap(UInt64.init),
@@ -139,9 +148,13 @@ package extension RestNode {
             } ?? [],
             ownerUserId: userMetadata?
                 .first(where: { $0.namespace == "usermeta-owner-uuid" })?
-                .jsonValue.trimmingCharacters(in: CharacterSet(charactersIn: "\"")),
+                .valueAsString,
+            ownerUserName: userMetadata?
+                .first(where: { $0.namespace == "usermeta-owner" })?
+                .valueAsString,
             conversationId: contextWorkspace?.uuid,
-            publicLinkId: shares?.first?.uuid
+            publicLinkId: shares?.first?.uuid,
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
         )
     }
 }
@@ -157,5 +170,27 @@ package extension PreviewDTO {
             url: url,
             dimension: dimension ?? 0
         )
+    }
+}
+
+private extension WireFoundation.QualifiedID {
+
+    /// Creates a QualifiedID from a string in the format `domain@uuid`.
+    init?(string: String) {
+        let components = string.split(separator: "@")
+        guard components.count == 2, let uuid = UUID(uuidString: String(components[1])) else {
+            return nil
+        }
+        self.init(id: uuid, domain: String(components[0]))
+    }
+
+    var transportString: String {
+        "\(domain)@\(id.uuidString.lowercased())"
+    }
+}
+
+private extension RestUserMeta {
+    var valueAsString: String? {
+        try? JSONDecoder().decode(String.self, from: Data(jsonValue.utf8))
     }
 }

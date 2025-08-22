@@ -48,8 +48,8 @@ class BaseTest: ZMTBaseTest {
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
     var lastEventIDRepository: LastEventIDRepository!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
@@ -67,7 +67,7 @@ class BaseTest: ZMTBaseTest {
 
         lastEventIDRepository = LastEventIDRepository(
             userID: accountIdentifier,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: .temporary()
         )
 
         coreDataStack = CoreDataStack(
@@ -77,9 +77,7 @@ class BaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+        try await coreDataStack.load()
 
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         transportSession = mockTransport.mockedTransportSession()
@@ -119,7 +117,7 @@ class BaseTest: ZMTBaseTest {
             lastEventIDRepository: lastEventIDRepository
         )
 
-        createSelfUserAndClient()
+        await createSelfUserAndClient()
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
@@ -129,21 +127,21 @@ class BaseTest: ZMTBaseTest {
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
     }
 
-    func createSelfUserAndClient() {
+    func createSelfUserAndClient() async {
         let context = coreDataStack.syncContext
 
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = accountIdentifier
-        selfUser.domain = "example.com"
+        await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.remoteIdentifier = self.accountIdentifier
+            selfUser.domain = "example.com"
 
-        let selfClient = UserClient.insertNewObject(in: context)
-        selfClient.remoteIdentifier = "selfClient"
-        selfClient.user = selfUser
+            let selfClient = UserClient.insertNewObject(in: context)
+            selfClient.remoteIdentifier = "selfClient"
+            selfClient.user = selfUser
 
-        context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
-        context.saveOrRollback()
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
     }
 
     override func tearDown() {

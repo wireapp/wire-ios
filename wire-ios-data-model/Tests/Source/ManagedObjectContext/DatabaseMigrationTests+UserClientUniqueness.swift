@@ -39,15 +39,15 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
+    func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() async throws {
         // With version 107 and later we can not insert duplicated keys anymore!
 
         let versions = [84 ... 96, 98 ... 106].joined().map {
             "2.\($0).0"
         }
 
-        try versions.forEach { initialVersion in
-            try helper.migrateStoreToCurrentVersion(
+        for initialVersion in versions {
+            try await helper.migrateStoreToCurrentVersion(
                 sourceVersion: initialVersion,
                 preMigrationAction: { context in
                     insertDuplicateClients(with: clientID, in: context)

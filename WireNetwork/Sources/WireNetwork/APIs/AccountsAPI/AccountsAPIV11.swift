@@ -16,16 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-class GroupDetailsPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        addParticipantsButton
-    }
-
-    var addParticipantsButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "OtherUserMetaControllerLeftButton")
-        return elementsQuery.firstMatch
-    }
+final class AccountsAPIV11: AccountsAPIV10 {
+    override var apiVersion: APIVersion { .v11 }
 }

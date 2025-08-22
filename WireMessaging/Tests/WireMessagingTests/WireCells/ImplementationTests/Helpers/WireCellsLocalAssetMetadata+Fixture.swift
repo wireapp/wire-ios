@@ -17,15 +17,24 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
-public struct TeamID {
-
-    public let team: UUID
-    public let id: String
-
-    public init(team: UUID, id: String) {
-        self.team = team
-        self.id = id
+extension WireCellsLocalAssetMetadata {
+    static func fixture(
+        nodeID: UUID = UUID(),
+        eTag: String = "eTag",
+        path: String = "path",
+        contentType: String? = "contentType",
+        size: UInt64? = 100,
+        isDownloaded: Bool = false
+    ) -> WireCellsLocalAssetMetadata {
+        WireCellsLocalAssetMetadata(
+            nodeID: nodeID,
+            eTag: eTag,
+            path: path,
+            contentType: contentType,
+            size: size,
+            isDownloaded: isDownloaded
+        )
     }
-
 }

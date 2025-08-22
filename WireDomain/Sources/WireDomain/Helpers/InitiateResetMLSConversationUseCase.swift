@@ -113,30 +113,3 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
         }
     }
 }
-
-public extension InitiateResetMLSConversationUseCase {
-    static func make(
-        apiService: APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
-        mlsService: MLSServiceInterface,
-        conversationRepository: ConversationRepositoryProtocol,
-        context: NSManagedObjectContext,
-        userID: UUID
-    ) -> InitiateResetMLSConversationUseCase {
-        let conversationLocalStore = ConversationLocalStore(
-            context: context,
-            mlsService: mlsService,
-            messageLocalStore: MessageLocalStore(context: context)
-        )
-        return InitiateResetMLSConversationUseCase(
-            api: MLSAPIBuilder(apiService: apiService)
-                .makeAPI(for: apiVersion),
-            mlsService: mlsService,
-            conversationLocalStore: conversationLocalStore,
-            conversationRepository: conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: userID
-            )
-        )
-    }
-}

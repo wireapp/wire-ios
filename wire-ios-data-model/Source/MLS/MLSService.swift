@@ -1525,6 +1525,13 @@ public final class MLSService: MLSServiceInterface {
                 )
 
                 guard retryCount <= maxRetryAttempts else {
+                    // If MLS conversation reset is DISABLED we quarantine the group to avoid repeated commit attempts
+                    // otherwise assume that things will sort themselves out through conversation reset.
+                    let feature = await featureRepository.fetchAllowedGlobalOperations()
+                    if feature.status == .disabled || feature.config.mlsConversationReset == false {
+                        brokenGroupIDs.insert(groupID)
+                    }
+
                     throw MLSRetryError.retryLimitReached
                 }
 
@@ -1558,7 +1565,10 @@ public final class MLSService: MLSServiceInterface {
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                guard DeveloperFlag.resetMLSConversations.isOn,
+                      feature.status == .enabled,
+                      feature.config.mlsConversationReset == true
+                else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]

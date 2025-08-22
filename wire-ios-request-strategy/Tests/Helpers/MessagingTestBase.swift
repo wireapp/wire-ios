@@ -61,8 +61,8 @@ class MessagingTestBase: ZMTBaseTest {
         flag.isOn = false
     }
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
@@ -70,14 +70,14 @@ class MessagingTestBase: ZMTBaseTest {
         deleteAllOtherEncryptionContexts()
         deleteAllFilesInCache()
         accountIdentifier = UUID()
-        coreDataStack = createCoreDataStack(
+        try await coreDataStack = createCoreDataStack(
             userIdentifier: accountIdentifier,
             inMemoryStore: useInMemoryStore
         )
-        setupCaches(in: coreDataStack)
-        setupTimers()
+        await setupCaches(in: coreDataStack)
+        await setupTimers()
 
-        syncMOC.performGroupedAndWait {
+        await syncMOC.perform {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
 
             self.setupUsersAndClients()
@@ -479,11 +479,13 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
 
-    func setupTimers() {
-        syncMOC.performGroupedAndWait {
-            syncMOC.zm_createMessageObfuscationTimer()
+    func setupTimers() async {
+        await syncMOC.perform {
+            self.syncMOC.zm_createMessageObfuscationTimer()
         }
-        uiMOC.zm_createMessageDeletionTimer()
+        await uiMOC.perform {
+            self.uiMOC.zm_createMessageDeletionTimer()
+        }
     }
 
     func stopEphemeralMessageTimers() {

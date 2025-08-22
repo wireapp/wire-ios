@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
+/// A means of locating a node.
+package enum WireCellsNodeLocator: Equatable {
 
-    let team: UUID
-    let id: String
+    /// The path to the node.
+    case path(String)
 
-    func toAPIModel() -> TeamID {
-        TeamID(team: team, id: id)
-    }
-
+    /// The ID of the node.
+    case id(UUID)
 }

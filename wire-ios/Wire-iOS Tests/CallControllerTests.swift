@@ -29,10 +29,11 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var callConversationProvider: MockCallConversationProvider!
     var userSession: UserSessionMock!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         userSession = UserSessionMock()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         router = ActiveCallRouterProtocolMock()
         conversation = ZMConversation.createOtherUserConversation(
             moc: coreDataFixture.uiMOC,
