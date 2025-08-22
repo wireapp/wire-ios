@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import WireFoundation
 package import WireMessagingDomain
 
@@ -34,6 +35,9 @@ struct FilesViewItem: Identifiable, Equatable {
 
     /// The date when the file was last modified.
     let modifiedAt: Date?
+
+    /// The icon representing the file type.
+    let icon: FileIcon
 }
 
 @MainActor
@@ -48,11 +52,6 @@ package final class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
-    enum Alert: Equatable {
-        case noInternet
-        case unknownError
-    }
-
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
 
     package init(fetchNodesUseCase: WireCellsFetchNodesUseCase) {
@@ -62,7 +61,7 @@ package final class FilesViewModel: ObservableObject {
     @Published private(set) var items: [FilesViewItem] = []
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
-    @Published var alert: Alert?
+    @Published var alert: AlertModel?
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -135,11 +134,16 @@ package final class FilesViewModel: ObservableObject {
         let (nodes, nextPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, token: token)
 
         let items = nodes.map { node in
-            FilesViewItem(
+            let url = URL(string: node.path)
+            return FilesViewItem(
                 id: node.id,
-                filename: URL(string: node.path)?.lastPathComponent ?? node.path,
+                filename: url?.lastPathComponent ?? node.path,
                 ownedBy: node.ownerUserName,
-                modifiedAt: node.modified
+                modifiedAt: node.modified,
+                icon: .make(
+                    type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
+                    fileExtension: url?.pathExtension
+                )
             )
         }
 
@@ -159,14 +163,36 @@ final class FilesItemViewModel: ObservableObject {
 
     let fileName: String
     let subtitle: String?
+    let icon: FileIcon
 
-    init(item: FilesViewItem) {
+    init(
+        item: FilesViewItem,
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent,
+        timeZone: TimeZone = .autoupdatingCurrent
+    ) {
         self.fileName = item.filename
-        self.subtitle = Self.subtitle(from: item)
+        self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
+        self.icon = item.icon
     }
 
-    private static func subtitle(from item: FilesViewItem) -> String? {
-        let modifiedAt = item.modifiedAt.map { $0.formatted(date: .abbreviated, time: .shortened) }
+    private static func subtitle(
+        from item: FilesViewItem,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        let modifiedAt = item.modifiedAt.map { date in
+            let style = Date.FormatStyle(
+                date: .abbreviated,
+                time: .shortened,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone,
+                capitalizationContext: .beginningOfSentence
+            )
+            return date.formatted(style)
+        }
         return if let modifiedAt, let ownedBy = item.ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {

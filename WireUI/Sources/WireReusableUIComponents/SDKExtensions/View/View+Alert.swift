@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
 
     /// Presents an alert with a message and title based on the provided `item`.
     ///
