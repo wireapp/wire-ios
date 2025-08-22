@@ -20,7 +20,7 @@ import CellsSDK
 package import WireMessagingDomain
 package import Foundation
 
-package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
+package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let uuid: UUID
     package let path: String
     package let modified: UInt64?
@@ -75,7 +75,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     }
 }
 
-package extension WireCellsNodeDTO {
+package extension WireCellsNodeNetworkModel {
     func toModel() -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
@@ -99,8 +99,8 @@ package extension WireCellsNodeDTO {
 }
 
 package extension WireCellsNode {
-    func toDTO() -> WireCellsNodeDTO {
-        WireCellsNodeDTO(
+    func toDTO() -> WireCellsNodeNetworkModel {
+        WireCellsNodeNetworkModel(
             uuid: id,
             path: path,
             modified: modified,
@@ -121,10 +121,10 @@ package extension WireCellsNode {
 }
 
 package extension RestNode {
-    func toDTO() -> WireCellsNodeDTO? {
+    func toDTO() -> WireCellsNodeNetworkModel? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
 
-        return WireCellsNodeDTO(
+        return WireCellsNodeNetworkModel(
             uuid: uuid,
             path: path,
             modified: modified.flatMap(UInt64.init),

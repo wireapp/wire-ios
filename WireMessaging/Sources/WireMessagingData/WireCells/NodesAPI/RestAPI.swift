@@ -40,7 +40,7 @@ final class RestAPI: Sendable {
         self.accessTokenProvider = accessToken
     }
 
-    func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
+    func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
         let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
