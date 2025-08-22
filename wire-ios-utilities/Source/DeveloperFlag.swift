@@ -37,6 +37,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case consumableNotifications
     case multibackend
     case channelsHistory
+    case resetMLSConversations
 
     public var description: String {
         switch self {
@@ -84,6 +85,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .channelsHistory:
             "Turn on to enable channels history"
+            
+        case .resetMLSConversations:
+            "Reset MLS conversations"
         }
     }
 

@@ -1565,7 +1565,10 @@ public final class MLSService: MLSServiceInterface {
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                guard DeveloperFlag.resetMLSConversations.isOn,
+                        feature.status == .enabled,
+                        feature.config.mlsConversationReset == true
+                else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]

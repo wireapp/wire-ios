@@ -426,7 +426,10 @@ public final class MessageSender: MessageSenderInterface {
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                guard DeveloperFlag.resetMLSConversations.isOn,
+                        feature.status == .enabled,
+                        feature.config.mlsConversationReset == true
+                else {
                     WireLogger.messaging.debug(
                         "No need to initiate reset broken MLS conversation, FF is OFF"
                     )
