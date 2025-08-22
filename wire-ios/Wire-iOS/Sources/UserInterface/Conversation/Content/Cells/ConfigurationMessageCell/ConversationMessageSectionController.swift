@@ -460,14 +460,26 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        if isToolboxVisible(in: context) {
-            let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
-            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        func addToolbox() {
+            if isToolboxVisible(in: context) {
+                let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
         }
 
-        if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-            let description = MessageReactionsCellDescription(message: message)
-            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        func addReactions() {
+            if !message.isSystem, !message.isEphemeral, message.hasReactions() {
+                let description = MessageReactionsCellDescription(message: message)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
+        }
+
+        if DeveloperFlag.chatBubblesSimple.isOn {
+            addReactions()
+            addToolbox()
+        } else {
+            addToolbox()
+            addReactions()
         }
 
         if isFailedRecipientsVisible(in: context) {

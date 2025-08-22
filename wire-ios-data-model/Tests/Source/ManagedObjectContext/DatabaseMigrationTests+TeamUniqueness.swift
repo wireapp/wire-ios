@@ -37,10 +37,10 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() throws {
+    func testThatItPerformsMigrationFrom110Version_ToCurrentModelVersion() async throws {
         let initialVersion = "2.110.0"
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
             preMigrationAction: { context in
                 insertDuplicateTeams(with: teamId, in: context)

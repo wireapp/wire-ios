@@ -23,7 +23,7 @@ extension WireCellsNode {
     static func fixture(
         uuid: UUID = UUID(),
         path: String = "some/path",
-        modified: UInt64? = nil,
+        modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
         type: String? = nil,
@@ -34,6 +34,7 @@ extension WireCellsNode {
         mimeType: String? = nil,
         previews: [WireCellsNodePreview] = [],
         ownerUserID: String? = nil,
+		ownerUserName: String? = nil,
         conversationID: WireCellsConversationID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
         downloadURL: URL? = nil
@@ -52,6 +53,7 @@ extension WireCellsNode {
             mimeType: mimeType,
             previews: previews,
             ownerUserID: ownerUserID,
+			ownerUserName: String? = nil,
             conversationID: conversationID,
             publicLinkID: publicLinkID,
             downloadURL: downloadURL

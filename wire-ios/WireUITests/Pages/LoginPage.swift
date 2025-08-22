@@ -54,8 +54,7 @@ class LoginPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
-        passwordField.tap()
-        passwordField.typeText(password)
+        try passwordField.tapIfKeyboardNotFocused().typeText(password)
         nextButton.tap()
         return try FirstTimePage()
     }

@@ -22,6 +22,7 @@ import Foundation
 package protocol ConversationMessagesViewModelProtocol {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func onViewReady()
+    func onWillDisappear()
 }
 
 @MainActor
@@ -41,8 +42,14 @@ package struct ConversationMessagesViewModel: ConversationMessagesViewModelProto
     }
 
     package func onViewReady() {
-        Task {
+        Task { [dataSource] in
             await dataSource.loadInitialMessages()
+        }
+    }
+
+    package func onWillDisappear() {
+        Task { [dataSource] in
+            await dataSource.reset()
         }
     }
 }
