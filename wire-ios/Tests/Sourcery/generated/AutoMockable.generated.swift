@@ -1784,20 +1784,20 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesView_Invocations: [Void] = []
-    var makeFilesView_MockMethod: (() -> UIViewController)?
-    var makeFilesView_MockValue: UIViewController?
+    var makeFilesViewCellName_Invocations: [String] = []
+    var makeFilesViewCellName_MockMethod: ((String) -> UIViewController)?
+    var makeFilesViewCellName_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView() -> UIViewController {
-        makeFilesView_Invocations.append(())
+    func makeFilesView(cellName: String) -> UIViewController {
+        makeFilesViewCellName_Invocations.append(cellName)
 
-        if let mock = makeFilesView_MockMethod {
-            return mock()
-        } else if let mock = makeFilesView_MockValue {
+        if let mock = makeFilesViewCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeFilesViewCellName_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesView`")
+            fatalError("no mock for `makeFilesViewCellName`")
         }
     }
 

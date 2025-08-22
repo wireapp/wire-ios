@@ -23,10 +23,14 @@ extension WireCellsNode {
     static func fixture(
         uuid: UUID = UUID(),
         path: String = "some/path",
+        modified: Date? = nil,
+        ownerUserName: String? = nil,
     ) -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
-            path: "some/path"
+            path: path,
+            modified: modified,
+            ownerUserName: ownerUserName
         )
     }
 }

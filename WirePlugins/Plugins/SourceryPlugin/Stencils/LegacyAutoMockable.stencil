@@ -260,6 +260,7 @@ package import {{ import }}
     // MARK: - Life cycle
 
     {% if type.accessLevel == "public" %}public init() {}{% endif %}
+    {% if type.accessLevel == "package" %}package init() {}{% endif %}
 
 {% for variable in type.allVariables|!definedInExtension %}
     // MARK: - {{ variable.name }}

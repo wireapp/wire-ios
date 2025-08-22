@@ -94,4 +94,7 @@
 "conversation.file.preview.open" = "Open preview";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
+
+// MARK: Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Files";
+"conversation.wireCells.files.item.subtitle" = "%@ by %@";

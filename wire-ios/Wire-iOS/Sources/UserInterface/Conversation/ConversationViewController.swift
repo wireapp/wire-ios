@@ -864,7 +864,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
         let filesView = wireCellsFactory
-            .makeFilesView()
+            .makeFilesView(cellName: conversation.wireCellName)
 
         filesView.presentOverAll(animated: true)
     }
