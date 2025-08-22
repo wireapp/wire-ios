@@ -26,6 +26,7 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -317,7 +318,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
-    public internal(set) var environment: BackendEnvironment {
+    public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             apiVersionResolver = nil
             reachability.tearDown()
@@ -339,7 +340,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
-    var proxyCredentials: ProxyCredentials?
+    var proxyCredentials: WireTransport.ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
     private let logFilesProvider: LogFilesProviding
@@ -392,7 +393,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironment,
+        environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
@@ -409,7 +410,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
-        var proxyCredentials: ProxyCredentials?
+        var proxyCredentials: WireTransport.ProxyCredentials?
 
         if let proxy = environment.proxy {
             proxyCredentials = ProxyCredentials.retrieve(for: proxy)
@@ -513,13 +514,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
-        environment: BackendEnvironment,
+        environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
-        proxyCredentials: ProxyCredentials?,
+        proxyCredentials: WireTransport.ProxyCredentials?,
         isUnauthenticatedTransportSessionReady: Bool = false,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
@@ -996,6 +997,45 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let session = backgroundUserSessions[account.userIdentifier] {
             WireLogger.sessionManager.debug("Session for \(account) is already loaded")
             return session
+        } else if DeveloperFlag.multibackend.isOn {
+            do {
+                let loader = try UserSessionLoader(
+                    account: account,
+                    sharedContainerURL: sharedContainerURL,
+                    legacyEnvironment: environment,
+                    minTLSVersion: minTLSVersion,
+                    dispatchGroup: dispatchGroup,
+                    sharedUserDefaults: sharedUserDefaults,
+                    application: application,
+                    appVersion: currentAppVersion,
+                    buildNumber: currentBuildNumber,
+                    mediaManager: authenticatedSessionFactory.mediaManager,
+                    flowManager: authenticatedSessionFactory.flowManager,
+                    logFilesProvider: logFilesProvider,
+                    isDeveloperModeEnabled: isDeveloperModeEnabled
+                )
+
+                let userSession = try await loader.load()
+                finishSettingUpUserSession(
+                    account: account,
+                    newSession: userSession,
+                    coreDataStack: userSession.coreDataStack
+                )
+                return userSession
+
+            } catch NetworkStackError.backendAPIVersionObsolete {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+                return nil
+            } catch NetworkStackError.clientAPIVersionObsolete {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+                return nil
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                // TODO: [WPB-19625] handle
+                fatalError()
+            } catch {
+                // TODO: [WPB-19625] handle
+                return nil
+            }
         } else {
             return await setupUserSession(account: account)
         }
@@ -1283,11 +1323,36 @@ public final class SessionManager: NSObject, SessionManagerType {
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
+        guard let newSession = createUserSession(
+            for: account,
+            with: coreDataStack,
+            journal: journal,
+            logFilesProvider: logFilesProvider
+        ) else {
+            preconditionFailure("Unable to create session for \(account)")
+        }
+
+        finishSettingUpUserSession(
+            account: account,
+            newSession: newSession,
+            coreDataStack: coreDataStack
+        )
+
+        return newSession
+    }
+
+    @MainActor
+    private func createUserSession(
+        for account: Account,
+        with coreDataStack: CoreDataStack,
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
+    ) -> ZMUserSession? {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
         )
 
-        guard let newSession = authenticatedSessionFactory.session(
+        return authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
@@ -1295,10 +1360,15 @@ public final class SessionManager: NSObject, SessionManagerType {
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             journal: journal,
             logFilesProvider: logFilesProvider
-        ) else {
-            preconditionFailure("Unable to create session for \(account)")
-        }
+        )
+    }
 
+    @MainActor
+    private func finishSettingUpUserSession(
+        account: Account,
+        newSession: ZMUserSession,
+        coreDataStack: CoreDataStack
+    ) {
         configure(session: newSession, for: account)
         deleteMessagesOlderThanRetentionLimit(contextProvider: coreDataStack)
         updateSystemBootTimeIfNeeded()
@@ -1308,7 +1378,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 "Created ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)"
             )
         notifyNewUserSessionCreated(newSession)
-        return newSession
     }
 
     func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
@@ -1507,7 +1576,7 @@ extension SessionManager {
 extension SessionManager: TeamObserver {
     public func teamDidChange(_ changeInfo: TeamChangeInfo) {
         let team = changeInfo.team
-        guard let managedObjectContext = (team as? Team)?.managedObjectContext else {
+        guard let managedObjectContext = (team as? WireDataModel.Team)?.managedObjectContext else {
             return
         }
         updateCurrentAccount(in: managedObjectContext)

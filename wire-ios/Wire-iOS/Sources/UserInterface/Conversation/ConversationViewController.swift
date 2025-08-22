@@ -152,7 +152,8 @@ final class ConversationViewController: UIViewController {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
                     conversationObjectID: conversation.objectID,
-                    context: userSession.contextProvider.newBackgroundContext()
+                    syncContext: userSession.contextProvider.syncContext,
+                    backgroundContext: userSession.contextProvider.newBackgroundContext()
                 )
             )
         } else {
@@ -863,7 +864,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
         let filesView = wireCellsFactory
-            .makeFilesView()
+            .makeFilesView(cellName: conversation.wireCellName)
 
         filesView.presentOverAll(animated: true)
     }

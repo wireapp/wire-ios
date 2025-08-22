@@ -27,7 +27,7 @@ import WireReusableUIComponents
 protocol VerificationCodeComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var networkStack: NetworkStack { get }
+    var networkStack: WireAuthenticationLogic.NetworkStack { get }
     var didDetectDomainConflict: Bool { get }
 
 }
@@ -36,13 +36,13 @@ final class VerificationCodeComponent: Component<VerificationCodeComponentDepend
 
     private let email: String
     private let password: String
-    private let proxyCredentials: ProxyCredentials?
+    private let proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
 
     init(
         parent: any Scope,
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) {
         self.email = email
         self.password = password

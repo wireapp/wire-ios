@@ -35,9 +35,9 @@ class BaseSharingSessionTests: BaseTest {
     var sharingSession: SharingSession!
     var moc: NSManagedObjectContext!
 
-    override func setUp() {
-        super.setUp()
-        sharingSession = try! createSharingSession()
+    override func setUp() async throws {
+        try await super.setUp()
+        sharingSession = try await createSharingSession()
         moc = sharingSession.userInterfaceContext
     }
 
@@ -155,6 +155,8 @@ class BaseTest: ZMTBaseTest {
         mockProteusService = MockProteusServiceInterface()
         mockMLSService = MockMLSServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
+
+        sharedUserDefaults = .temporary()
     }
 
     override func tearDown() {
@@ -174,14 +176,14 @@ class BaseTest: ZMTBaseTest {
         super.tearDown()
     }
 
-    func createSharingSession() throws -> SharingSession {
+    func createSharingSession() async throws -> SharingSession {
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        return try SharingSession(
+        return try await SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
