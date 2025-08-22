@@ -192,7 +192,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+        // the additional DeveloperFlag check is needed for the snapshot test
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
     }
 
 }
