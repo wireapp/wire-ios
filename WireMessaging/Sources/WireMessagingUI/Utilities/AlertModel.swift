@@ -16,9 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+import Foundation
 
-// MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Close files";
-"conversation.wireCells.files.loadMore.title" = "Load more";
+/// Identifies an alert and provides it's title and message.
+///
+/// An `AlertModel` can be produced by a view model and act as data for a SwiftUI alert.
+struct AlertModel: Hashable, Identifiable, Sendable {
+
+    var id: Self { self }
+
+    let title: String
+    let message: String
+
+}
+
+// MARK: - Common alerts
+
+extension AlertModel {
+
+    private typealias Error = L10n.Localizable.General.Error
+
+    static let noInternet = AlertModel(
+        title: Error.NoInternet.title,
+        message: Error.NoInternet.message
+    )
+
+    static let unknownError = AlertModel(
+        title: Error.Unknown.title,
+        message: Error.Unknown.message
+    )
+
+}
