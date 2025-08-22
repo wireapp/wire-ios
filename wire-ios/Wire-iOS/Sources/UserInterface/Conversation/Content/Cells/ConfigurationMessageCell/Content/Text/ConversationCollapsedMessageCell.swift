@@ -312,7 +312,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         // Otherwise, let normal hit testing occur
         return super.hitTest(point, with: event)
     }
-
+    
     private var isChatBubbleSimpleEnabled: Bool {
         // the additional DeveloperFlag check is needed for the snapshot test
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
