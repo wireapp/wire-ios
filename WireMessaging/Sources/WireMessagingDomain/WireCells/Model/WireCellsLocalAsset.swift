@@ -88,7 +88,7 @@ public struct WireCellsLocalAsset: Equatable {
 
     public let downloadState: DownloadState
 
-    public init(
+    package init(
         nodeID: UUID,
         eTag: String,
         path: String,
