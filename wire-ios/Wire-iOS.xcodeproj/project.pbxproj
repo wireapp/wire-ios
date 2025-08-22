@@ -52,6 +52,7 @@
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
+		34C5F14A2E58AE0800C0FF34 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34C5F1492E58AE0800C0FF34 /* WireNetwork */; };
 		34DC44AD2E01C1E6004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44AC2E01C1E6004D5DD5 /* WireNetwork */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
@@ -924,6 +925,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34C5F14A2E58AE0800C0FF34 /* WireNetwork in Frameworks */,
 				E489D8312DF709CE008966AE /* WireMultiBackendUI in Frameworks */,
 				591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */,
 				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
@@ -1319,6 +1321,7 @@
 				59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */,
 				59537D922CFFA0DA00920B59 /* WireLogging */,
 				E489D8302DF709CE008966AE /* WireMultiBackendUI */,
+				34C5F1492E58AE0800C0FF34 /* WireNetwork */,
 			);
 			productName = "Wire-iOS Share Extension";
 			productReference = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */;
@@ -2829,6 +2832,10 @@
 		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCoreCryptoUniffi;
+		};
+		34C5F1492E58AE0800C0FF34 /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
 		};
 		34DC44AC2E01C1E6004D5DD5 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
