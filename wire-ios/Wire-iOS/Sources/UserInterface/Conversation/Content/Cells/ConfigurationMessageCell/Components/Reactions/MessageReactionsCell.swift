@@ -54,7 +54,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         bottom: 0,
         right: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.right
     )
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
-import WireUtilities
 import WireSyncEngine
+import WireUtilities
 
 final class ReplyRoundCornersView: UIControl {
     // MARK: - Properties
