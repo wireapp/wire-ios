@@ -53,7 +53,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 11)
+        try XCTAssertCount(storeInvocations, count: 12)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
