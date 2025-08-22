@@ -196,7 +196,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     private func openInMaps() {
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
     }
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }

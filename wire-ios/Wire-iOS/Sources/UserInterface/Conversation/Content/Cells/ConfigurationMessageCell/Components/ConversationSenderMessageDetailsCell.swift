@@ -274,7 +274,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         return NSAttributedString(attachment: attachment)
     }
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }

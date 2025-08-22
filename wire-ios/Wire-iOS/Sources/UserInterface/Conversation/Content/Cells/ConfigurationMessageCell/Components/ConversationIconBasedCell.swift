@@ -204,7 +204,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             textLabelTrailingConstraint.constant = trailingTextMargin
         }
     }
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }

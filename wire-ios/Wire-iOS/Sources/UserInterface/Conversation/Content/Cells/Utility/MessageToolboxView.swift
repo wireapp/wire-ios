@@ -418,7 +418,7 @@ final class MessageToolboxView: UIView {
             statusContainerView.isHidden = true
         }
     }
-    
+
     private var isChatBubbleSimpleEnabled: Bool {
         ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
