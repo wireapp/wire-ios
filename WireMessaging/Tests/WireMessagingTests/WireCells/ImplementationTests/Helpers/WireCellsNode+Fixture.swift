@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireMessagingDomain
 
 extension WireCellsNode {
@@ -33,7 +34,7 @@ extension WireCellsNode {
         contentHash: String? = nil,
         mimeType: String? = nil,
         previews: [WireCellsNodePreview] = [],
-        ownerUserID: String? = nil,
+        ownerUserID: QualifiedID? = nil,
         ownerUserName: String? = nil,
         conversationID: WireCellsConversationID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
@@ -53,7 +54,7 @@ extension WireCellsNode {
             mimeType: mimeType,
             previews: previews,
             ownerUserID: ownerUserID,
-            ownerUserName: String? = nil,
+            ownerUserName: ownerUserName,
             conversationID: conversationID,
             publicLinkID: publicLinkID,
             downloadURL: downloadURL

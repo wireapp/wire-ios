@@ -50,7 +50,7 @@ final class RestAPI: Sendable {
 
     func getNodes(
         _ request: WireCellsGetNodesRequest
-    ) async throws -> (nodes: [WireCellsNodeDTO], nextOffset: Int?) {
+    ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
         let request = RestLookupRequest(
             filters: RestLookupFilter(
                 status: LookupFilterStatusFilter(
