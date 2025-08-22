@@ -30,6 +30,7 @@
 "cloud_user_login.forgot_password" = "忘记密码？";
 "create_account_or_team.title" = "还没有 Wire 账户？";
 "create_account_or_team.button" = "创建账户或团队";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "您将如何使用 Wire？";
 "account_type_selector.option_team.title" = "用于协作";
