@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireMessagingDomain
 
 extension WireCellsNode {
@@ -24,13 +25,39 @@ extension WireCellsNode {
         uuid: UUID = UUID(),
         path: String = "some/path",
         modified: Date? = nil,
+        size: UInt64? = nil,
+        eTag: String? = nil,
+        type: String? = nil,
+        isRecycled: Bool = false,
+        isDraft: Bool = false,
+        contentUrl: URL? = nil,
+        contentHash: String? = nil,
+        mimeType: String? = nil,
+        previews: [WireCellsNodePreview] = [],
+        ownerUserID: QualifiedID? = nil,
         ownerUserName: String? = nil,
+        conversationID: WireCellsConversationID? = nil,
+        publicLinkID: WireCellsPublicLinkID? = nil,
+        downloadURL: URL? = nil
     ) -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
             path: path,
             modified: modified,
-            ownerUserName: ownerUserName
+            size: size,
+            eTag: eTag,
+            type: type,
+            isRecycled: isRecycled,
+            isDraft: isDraft,
+            contentUrl: contentUrl,
+            contentHash: contentHash,
+            mimeType: mimeType,
+            previews: previews,
+            ownerUserID: ownerUserID,
+            ownerUserName: ownerUserName,
+            conversationID: conversationID,
+            publicLinkID: publicLinkID,
+            downloadURL: downloadURL
         )
     }
 }

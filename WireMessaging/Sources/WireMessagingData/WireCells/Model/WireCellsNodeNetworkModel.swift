@@ -21,7 +21,7 @@ import WireFoundation
 package import WireMessagingDomain
 package import Foundation
 
-package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
+package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let uuid: UUID
     package let path: String
     package let modified: UInt64?
@@ -38,6 +38,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let ownerUserName: String?
     package let conversationId: String?
     package let publicLinkId: String?
+    package let downloadURL: URL?
 
     package init(
         uuid: UUID,
@@ -55,7 +56,8 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         ownerUserId: String? = nil,
         ownerUserName: String?,
         conversationId: String? = nil,
-        publicLinkId: String? = nil
+        publicLinkId: String? = nil,
+        downloadURL: URL? = nil
     ) {
         self.uuid = uuid
         self.path = path
@@ -73,10 +75,11 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         self.ownerUserName = ownerUserName
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
+        self.downloadURL = downloadURL
     }
 }
 
-package extension WireCellsNodeDTO {
+package extension WireCellsNodeNetworkModel {
     func toDomainModel() -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
@@ -93,14 +96,15 @@ package extension WireCellsNodeDTO {
             previews: previews.map { $0.toModel() },
             ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
-            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:))
+            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
+            downloadURL: downloadURL
         )
     }
 }
 
 package extension WireCellsNode {
-    func toDTO() -> WireCellsNodeDTO {
-        WireCellsNodeDTO(
+    func toDTO() -> WireCellsNodeNetworkModel {
+        WireCellsNodeNetworkModel(
             uuid: id,
             path: path,
             modified: modified.map { UInt64($0.timeIntervalSince1970) },
@@ -122,10 +126,10 @@ package extension WireCellsNode {
 }
 
 package extension RestNode {
-    func toDTO() -> WireCellsNodeDTO? {
+    func toDTO() -> WireCellsNodeNetworkModel? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
 
-        return WireCellsNodeDTO(
+        return WireCellsNodeNetworkModel(
             uuid: uuid,
             path: path,
             modified: modified.flatMap(UInt64.init),
@@ -149,7 +153,8 @@ package extension RestNode {
                 .first(where: { $0.namespace == "usermeta-owner" })?
                 .valueAsString,
             conversationId: contextWorkspace?.uuid,
-            publicLinkId: shares?.first?.uuid
+            publicLinkId: shares?.first?.uuid,
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
         )
     }
 }

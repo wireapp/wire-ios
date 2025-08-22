@@ -16,22 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
+import Combine
 import Foundation
 
-package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
-    package let nodes: [WireCellsNodeNetworkModel]
+final class URLSessionTaskProgressDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
 
-    package init(nodes: [WireCellsNodeNetworkModel]) {
-        self.nodes = nodes
-    }
-}
+    private let progress: @Sendable (Double) -> Void
+    private var cancellables: Set<AnyCancellable> = []
 
-package extension RestNodeCollection {
-    func toDTO() -> WireCellsGetFilesResponseDTO {
-        WireCellsGetFilesResponseDTO(
-            // /!\ Will silently filter out nil values that could not be mapped to DTOs
-            nodes: nodes?.compactMap { $0.toDTO() } ?? []
-        )
+    init(progress: @Sendable @escaping (Double) -> Void) {
+        self.progress = progress
     }
+
+    func urlSession(_ session: URLSession, didCreateTask task: URLSessionTask) {
+        precondition(cancellables.isEmpty, "Delegate must not be reused across multiple tasks.")
+
+        task.progress.publisher(for: \.fractionCompleted)
+            .sink { [progress] in progress($0) }
+            .store(in: &cancellables)
+    }
+
 }

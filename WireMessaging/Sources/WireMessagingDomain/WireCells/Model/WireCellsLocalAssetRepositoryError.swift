@@ -16,22 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
-import Foundation
+/// An error specific to the `WireCellsLocalAssetRepository`
 
-package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
-    package let nodes: [WireCellsNodeNetworkModel]
+public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
 
-    package init(nodes: [WireCellsNodeNetworkModel]) {
-        self.nodes = nodes
-    }
-}
+    /// The wire cells node contains no download URL for the asset.
 
-package extension RestNodeCollection {
-    func toDTO() -> WireCellsGetFilesResponseDTO {
-        WireCellsGetFilesResponseDTO(
-            // /!\ Will silently filter out nil values that could not be mapped to DTOs
-            nodes: nodes?.compactMap { $0.toDTO() } ?? []
-        )
-    }
+    case missingDownloadURL
+
+    /// The wire cells node contains no eTag for the asset.
+
+    case missingETag
+
+    /// A download for the requested asset is already in progress.
+
+    case downloadAlreadyInProgress
+
 }
