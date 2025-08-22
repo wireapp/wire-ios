@@ -102,7 +102,7 @@ struct FilesViewItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                
+
                 Image(viewModel.icon.resource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -114,16 +114,16 @@ struct FilesViewItemView: View {
                         .wireTextStyle(.body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    
+
                     Text(viewModel.subtitle ?? "")
                         .wireTextStyle(.subline1)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
                 .padding(.vertical, 8)
-                
+
                 Spacer()
-                
+
                 Button {
                     // TODO: [WPB-19390] Show context menu
                 } label: {

@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireFoundation
 import WireDesign
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
 @testable import WireMessagingUI
-
 
 final class FilesViewTests: XCTestCase {
 
