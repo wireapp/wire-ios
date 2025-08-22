@@ -85,7 +85,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .channelsHistory:
             "Turn on to enable channels history"
-            
+
         case .resetMLSConversations:
             "Reset MLS conversations"
         }

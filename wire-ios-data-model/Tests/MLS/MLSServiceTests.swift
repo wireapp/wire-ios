@@ -89,7 +89,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
-        
+
         DeveloperFlag.resetMLSConversations.enable(true, storage: .temporary())
 
         resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_MockMethod = { _, _ in }
