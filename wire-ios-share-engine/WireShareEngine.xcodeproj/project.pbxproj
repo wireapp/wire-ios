@@ -17,6 +17,7 @@
 		34C5BFA92E57662200C0FF34 /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BFA82E57662200C0FF34 /* ApplicationStatusDirectory.swift */; };
 		34C5BFAB2E57663C00C0FF34 /* SyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BFAA2E57663C00C0FF34 /* SyncStatus.swift */; };
 		34C5BFAF2E57665D00C0FF34 /* BackendEnvironmentProvider+CookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BFAE2E57665D00C0FF34 /* BackendEnvironmentProvider+CookieStorage.swift */; };
+		34C5BFB42E5767F800C0FF34 /* SharingSessionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BFB32E5767F800C0FF34 /* SharingSessionLoader.swift */; };
 		34DC44AF2E01C1F1004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44AE2E01C1F1004D5DD5 /* WireNetwork */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		591B6E322C8B098C009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */; };
@@ -71,6 +72,7 @@
 		34C5BFA82E57662200C0FF34 /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		34C5BFAA2E57663C00C0FF34 /* SyncStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatus.swift; sourceTree = "<group>"; };
 		34C5BFAE2E57665D00C0FF34 /* BackendEnvironmentProvider+CookieStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendEnvironmentProvider+CookieStorage.swift"; sourceTree = "<group>"; };
+		34C5BFB32E5767F800C0FF34 /* SharingSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingSessionLoader.swift; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F21D76E1B000FDE440 /* WireShareEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireShareEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F91D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				F1DABF9A1E9B8B6100AD2324 /* Sendable.swift */,
 				F1DABF9B1E9B8B6100AD2324 /* SendableBatchObserver.swift */,
 				F1DABF9C1E9B8B6100AD2324 /* SharingSession.swift */,
+				34C5BFB32E5767F800C0FF34 /* SharingSessionLoader.swift */,
 				165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */,
 				F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */,
 				F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */,
@@ -444,6 +447,7 @@
 				F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */,
 				F1DABFA61E9B8B6100AD2324 /* SendableBatchObserver.swift in Sources */,
 				F1DABFA51E9B8B6100AD2324 /* Sendable.swift in Sources */,
+				34C5BFB42E5767F800C0FF34 /* SharingSessionLoader.swift in Sources */,
 				F1DABFA71E9B8B6100AD2324 /* SharingSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
