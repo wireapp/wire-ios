@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, RegisterPersonalAccountUseCaseFactory,
@@ -26,7 +27,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
     var mockDependencies = MockDependencies()
 
     var email: String
-    var backendConfig: BackendConfig
+    var environment: BackendEnvironment2
     var privacyPolicyURL: URL
     var termsOfUseURL: URL
     var teamAccountCreationLink: URL?
@@ -37,7 +38,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
-            backendConfig: backendConfig,
+            environment: environment,
             privacyPolicyURL: privacyPolicyURL,
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,

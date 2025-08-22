@@ -933,9 +933,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    fileprivate func activateSession(for account: Account) async -> ZMUserSession? {
+    fileprivate func activateSession(
+        for account: Account,
+        newEnvironment: NewEnvironment? = nil
+    ) async -> ZMUserSession? {
         guard let session = await withSession(
             for: account,
+            newEnvironment: newEnvironment,
             notifyAboutMigration: true
         ) else {
             return nil
@@ -950,8 +954,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
         configureUserNotifications()
-
-        // Completion was here.
 
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
@@ -991,6 +993,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
+        newEnvironment: NewEnvironment? = nil,
         notifyAboutMigration: Bool = false
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
@@ -1015,7 +1018,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     isDeveloperModeEnabled: isDeveloperModeEnabled
                 )
 
-                let userSession = try await loader.load()
+                let userSession = try await loader.load(newEnvironment: newEnvironment)
                 finishSettingUpUserSession(
                     account: account,
                     newSession: userSession,
@@ -1662,7 +1665,8 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(
         session: UnauthenticatedSession,
-        createdAccount account: Account
+        createdAccount account: Account,
+        newEnvironment: NewEnvironment? = nil
     ) {
         let numberOfExistingAccounts = accountManager.numberOfAccounts
         let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
@@ -1678,7 +1682,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            guard let userSession = await activateSession(for: account) else {
+            guard let userSession = await activateSession(
+                for: account,
+                newEnvironment: newEnvironment
+            ) else {
                 return
             }
 

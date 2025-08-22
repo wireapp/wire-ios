@@ -18,6 +18,7 @@
 
 import WireAnalyticsSupport
 import WireAuthenticationAPI
+import WireNetwork
 import XCTest
 
 @testable import Wire
@@ -28,8 +29,8 @@ final class AnalyticsTrackingAvailabilityCheckerTests: XCTestCase {
         // Given
         let sut = AnalyticsTrackingAvailabilityChecker()
         let backendConfigs = [
-            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com"),
-            makeBackendConfig(backendURL: "https://staging-nginz-https.zinfra.io")
+            makeBackendEnvironment(backendURL: "https://prod-nginz-https.wire.com"),
+            makeBackendEnvironment(backendURL: "https://staging-nginz-https.zinfra.io")
         ]
 
         // Then
@@ -41,35 +42,38 @@ final class AnalyticsTrackingAvailabilityCheckerTests: XCTestCase {
     func testIsAnalyticsTrackingUnavailableDueToNonWhitelistedURL() {
         // Given
         let sut = AnalyticsTrackingAvailabilityChecker()
-        let backendConfigs = [
-            makeBackendConfig(backendURL: "https://account.bella.wire.link"),
-            makeBackendConfig(backendURL: "https://some-other.link"),
-            makeBackendConfig(backendURL: "invalid")
+        let environments = [
+            makeBackendEnvironment(backendURL: "https://account.bella.wire.link"),
+            makeBackendEnvironment(backendURL: "https://some-other.link"),
+            makeBackendEnvironment(backendURL: "invalid")
         ]
 
         // Then
-        for backendConfig in backendConfigs {
+        for environment in environments {
             XCTAssertFalse(
-                sut.isAnalyticsTrackingAvailable(for: backendConfig),
-                "\(backendConfig.endpoints.backendURL.absoluteString)"
+                sut.isAnalyticsTrackingAvailable(for: environment),
+                "\(environment.config.endpoints.restAPIURL.absoluteString)"
             )
         }
     }
 
-    private func makeBackendConfig(backendURL: String) -> BackendConfig {
-        BackendConfig(
+    private func makeBackendEnvironment(backendURL: String) -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: "mock",
-            endpoints: Endpoints(
-                backendURL: URL(string: backendURL)!,
-                backendWSURL: URL(string: "https://wire.com")!,
-                blackListURL: URL(string: "https://wire.com")!,
-                teamsURL: URL(string: "https://wire.com")!,
-                accountsURL: URL(string: "https://wire.com")!,
-                websiteURL: URL(string: "https://wire.com")!,
-                countlyURL: URL(string: "https://wire.com")!
-            ),
-            proxySettings: .none,
-            pinnedKeys: .none
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: backendURL)!,
+                    websocketURL: URL(string: "https://wire.com")!,
+                    blacklistURL: URL(string: "https://wire.com")!,
+                    teamsURL: URL(string: "https://wire.com")!,
+                    accountsURL: URL(string: "https://wire.com")!,
+                    websiteURL: URL(string: "https://wire.com")!,
+                    countlyURL: URL(string: "https://wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     }
 

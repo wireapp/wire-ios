@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireNetwork
 
 public protocol FetchBackendConfigUseCaseProtocol: Sendable {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig
+    func invoke(at configURL: URL) async throws -> BackendEnvironment2
 
 }
 

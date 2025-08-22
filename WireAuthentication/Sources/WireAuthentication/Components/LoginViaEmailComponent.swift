@@ -29,7 +29,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
-    var backendInfo: BackendInfo { get }
+    var environment: BackendEnvironment2 { get }
     var minTLSVersion: TLSVersion { get }
 
 }
@@ -39,14 +39,14 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
     public let email: String?
     private let canCreateAccount: Bool
     public let didDetectDomainConflict: Bool
-    public let networkStack: WireAuthenticationLogic.NetworkStack
+    public let networkStack: NetworkStack
 
     init(
         parent: any Scope,
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        networkStack: WireAuthenticationLogic.NetworkStack
+        networkStack: NetworkStack
     ) {
         self.email = email
         self.canCreateAccount = canCreateAccount
@@ -61,7 +61,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         PersonalAccountCreationComponent(
             parent: self,
             email: email ?? "",
-            backendConfig: networkStack.backendInfo.backendConfig,
+            environment: networkStack.backendEnvironment,
             teamAccountCreationLink: teamAccountCreationLink
         )
     }
@@ -76,7 +76,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     func verifyLoginView(
         email: String,
         password: String,
-        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
         let factory = verificationCodeFactory(
             email: email,
@@ -105,7 +105,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             factory: self,
             router: dependency.router,
             email: email,
-            backendInfo: networkStack.backendInfo,
+            environment: networkStack.backendEnvironment,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
         )
@@ -143,7 +143,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     private func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
+        proxyCredentials: ProxyCredentials?
     ) -> any VerificationCodeFactory {
         VerificationCodeComponent(
             parent: self,

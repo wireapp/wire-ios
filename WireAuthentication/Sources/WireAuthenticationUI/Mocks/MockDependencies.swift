@@ -18,55 +18,34 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 @MainActor
 final class MockDependencies {
 
-    var backendInfo: BackendInfo {
-        BackendInfo(
-            environmentType: environmentType,
-            backendConfig: backendConfig
+    var backendEnvironment = BackendEnvironment2(
+        title: "Mock backend",
+        environmentType: .default,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "https://example.com")!,
+                websocketURL: URL(string: "https://example.com")!,
+                blacklistURL: URL(string: "https://example.com")!,
+                teamsURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!,
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
+            ),
+            pinnedKeys: [],
+            proxyConfig: nil
         )
-    }
-
-    var environmentType: BackendEnvironmentType {
-        .default
-    }
-
-    private var backendConfig: BackendConfig {
-        _backendConfig
-    }
-
-    var backendMetadata: BackendMetadata {
-        BackendMetadata(
-            apiVersion: .v8,
-            domain: "example.com",
-            isFederationEnabled: true
-        )
-    }
-
-    var backendEnvironment: WireAuthenticationBackendEnvironment {
-        WireAuthenticationBackendEnvironment(
-            environmentType: environmentType,
-            config: backendConfig,
-            metadata: backendMetadata,
-            proxySettings: nil
-        )
-    }
-
-    var _backendConfig = BackendConfig(
-        title: "backend name",
-        endpoints: Endpoints(
-            backendURL: URL(string: "https://example.com")!,
-            backendWSURL: URL(string: "https://example.com")!,
-            blackListURL: URL(string: "https://example.com")!,
-            teamsURL: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!,
-            websiteURL: URL(string: "https://example.com")!,
-            countlyURL: URL(string: "https://example.com")!
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
     )
+
+    var backendMetadata = ResolvedBackendMetadata(
+        apiVersion: .v8,
+        domain: "example.com",
+        isFederationEnabled: true
+    )
+
 }

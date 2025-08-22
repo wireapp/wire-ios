@@ -25,6 +25,7 @@ import WireCoreCrypto
 import WireCountly
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -412,6 +413,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
+            defaultEnvironment: fetchDefaultEnvironment(),
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
@@ -498,6 +500,22 @@ private extension AppDelegate {
 
     private func startAppRouter(launchOptions: LaunchOptions) {
         appRootRouter?.start(launchOptions: launchOptions)
+    }
+
+    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        guard let path = Bundle.backendBundle.path(
+            forResource: "default",
+            ofType: "json"
+        ) else {
+            fatalError("default.json missing in Backend.bundle")
+        }
+
+        do {
+            let data = try Data(contentsOf: URL(filePath: path))
+            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
+        } catch {
+            fatalError("unabled to fetch default environment: \(error)")
+        }
     }
 
 }
