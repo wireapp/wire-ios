@@ -474,6 +474,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             }
         }
 
+        //if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false { //this is crashing
         if DeveloperFlag.chatBubblesSimple.isOn {
             addReactions()
             addToolbox()
