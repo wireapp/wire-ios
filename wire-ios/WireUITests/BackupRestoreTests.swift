@@ -16,61 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 final class BackupRestoreTests: WireUITestCase {
 
     @MainActor
     func test_CreateBackupAndRestore() async throws {
-        //        let user = try await userHelper.createPersonalUser()
-        //
-        //        var firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        //        let creatingBackupPage = try  firstTimePage.acceptPopup()
-
-        // TEMP - START
-
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
-
-        let teamOwner = try await userHelper.registerUserAsTeamOwner()
-        let teamMember1 = UserGenerator.generateUniqueUserInfo()
-        let teamMember2 = UserGenerator.generateUniqueUserInfo()
-
-        let accessToken = try await userHelper.fetchAccessToken(
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 2
 
-        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember1
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
         )
 
-        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember2
-        )
-
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
-
-        var activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
-            .doneSelectingMembers()
+            .openConversation()
             .sendMessage(messageFromOwner)
 
         var sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
-        XCTAssertFalse(
+        XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
         )
-
-        //  TEMP - END
 
         let creatingBackupPage = try activeConversationPage.goBackToConversationPage()
             .openSettings()
