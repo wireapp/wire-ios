@@ -33,6 +33,7 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         deleteFeatureIfNeeded(name: .selfDeletingMessages)
         deleteFeatureIfNeeded(name: .e2ei)
         deleteFeatureIfNeeded(name: .consumableNotifications)
+        deleteFeatureIfNeeded(name: .chatBubblesSimple)
     }
 
     // MARK: - Helpers
