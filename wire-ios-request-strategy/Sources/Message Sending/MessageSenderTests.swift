@@ -574,7 +574,6 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -603,11 +602,14 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_thenInitiatesReset() async throws {
         // given
+        DeveloperFlag.resetMLSConversations.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.resetMLSConversations.enable(false, storage: .standard)
+        }
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -642,7 +644,6 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
