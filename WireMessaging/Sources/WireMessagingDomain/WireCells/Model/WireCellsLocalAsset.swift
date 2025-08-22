@@ -80,7 +80,7 @@ public struct WireCellsLocalAsset: Equatable {
 
     public let contentType: String?
 
-    /// The size of the asset in bytes as defined by the backend or `-1` if unknown.
+    /// The size of the asset in bytes.
 
     public let size: UInt64?
 
