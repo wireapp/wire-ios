@@ -165,14 +165,34 @@ final class FilesItemViewModel: ObservableObject {
     let subtitle: String?
     let icon: FileIcon
 
-    init(item: FilesViewItem) {
+    init(
+        item: FilesViewItem,
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent,
+        timeZone: TimeZone = .autoupdatingCurrent
+    ) {
         self.fileName = item.filename
-        self.subtitle = Self.subtitle(from: item)
+        self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
     }
 
-    private static func subtitle(from item: FilesViewItem) -> String? {
-        let modifiedAt = item.modifiedAt.map { $0.formatted(date: .abbreviated, time: .shortened) }
+    private static func subtitle(
+        from item: FilesViewItem,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        let modifiedAt = item.modifiedAt.map { date in
+            let style = Date.FormatStyle(
+                date: .abbreviated,
+                time: .shortened,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone,
+                capitalizationContext: .beginningOfSentence
+            )
+            return date.formatted(style)
+        }
         return if let modifiedAt, let ownedBy = item.ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {

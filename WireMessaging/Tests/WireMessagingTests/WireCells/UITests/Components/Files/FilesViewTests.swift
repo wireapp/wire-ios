@@ -49,7 +49,7 @@ final class FilesViewTests: XCTestCase {
             icon: .image
         )
 
-        let view = FilesViewItemView(viewModel: FilesItemViewModel(item: item))
+        let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
@@ -71,7 +71,7 @@ final class FilesViewTests: XCTestCase {
             icon: .spreadsheet
         )
 
-        let view = FilesViewItemView(viewModel: FilesItemViewModel(item: item))
+        let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
@@ -93,7 +93,7 @@ final class FilesViewTests: XCTestCase {
             icon: .spreadsheet
         )
 
-        let view = FilesViewItemView(viewModel: FilesItemViewModel(item: item))
+        let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
@@ -105,4 +105,19 @@ final class FilesViewTests: XCTestCase {
                 )
         }
     }
+}
+
+// MARK: - Private Helpers
+
+private extension FilesItemViewModel {
+
+    static func make(item: FilesViewItem) -> FilesItemViewModel {
+        FilesItemViewModel(
+            item: item,
+            locale: Locale(identifier: "en_US_POSIX"),
+            calendar: Calendar(identifier: .gregorian),
+            timeZone: .gmt
+        )
+    }
+
 }
