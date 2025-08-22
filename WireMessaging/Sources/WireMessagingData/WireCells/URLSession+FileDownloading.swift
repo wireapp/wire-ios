@@ -16,22 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
 import Foundation
+public import WireMessagingDomain
 
-package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
-    package let nodes: [WireCellsNodeNetworkModel]
+extension URLSession: FileDownloading {
 
-    package init(nodes: [WireCellsNodeNetworkModel]) {
-        self.nodes = nodes
+    func download(from url: URL) -> (progress: AsyncStream<Double>, download: Task<(URL, URLResponse), any Error>) {
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+
+        let delegate = URLSessionTaskProgressDelegate { fractionCompleted in
+            progressContinuation.yield(fractionCompleted)
+        }
+
+        let downloadTask = Task {
+            let result = try await download(from: url, delegate: delegate)
+            progressContinuation.finish()
+            return result
+        }
+
+        return (progress: progressStream, download: downloadTask)
     }
-}
 
-package extension RestNodeCollection {
-    func toDTO() -> WireCellsGetFilesResponseDTO {
-        WireCellsGetFilesResponseDTO(
-            // /!\ Will silently filter out nil values that could not be mapped to DTOs
-            nodes: nodes?.compactMap { $0.toDTO() } ?? []
-        )
-    }
 }

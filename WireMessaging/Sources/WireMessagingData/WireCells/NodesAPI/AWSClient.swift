@@ -127,7 +127,11 @@ final class AWSClient: Sendable {
         }
     }
 
-    func upload(path: URL, node: WireCellsNodeDTO, versionID: UUID) async -> AsyncThrowingStream<Int, any Error> {
+    func upload(
+        path: URL,
+        node: WireCellsNodeNetworkModel,
+        versionID: UUID
+    ) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -148,7 +152,7 @@ final class AWSClient: Sendable {
 
     private func upload(
         path: URL,
-        node: WireCellsNodeDTO,
+        node: WireCellsNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -163,7 +167,7 @@ final class AWSClient: Sendable {
 
     private func uploadRegular(
         path: URL,
-        node: WireCellsNodeDTO,
+        node: WireCellsNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -194,7 +198,7 @@ final class AWSClient: Sendable {
 
     private func uploadMultipart(
         path: URL,
-        node: WireCellsNodeDTO,
+        node: WireCellsNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -260,7 +264,7 @@ final class AWSClient: Sendable {
     }
 }
 
-private extension WireCellsNodeDTO {
+private extension WireCellsNodeNetworkModel {
     func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",

@@ -16,22 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
-import Foundation
+public import Foundation
 
-package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
-    package let nodes: [WireCellsNodeNetworkModel]
+public struct WireCellsLocalAssetMetadata: Equatable, Sendable {
 
-    package init(nodes: [WireCellsNodeNetworkModel]) {
-        self.nodes = nodes
+    public let nodeID: UUID
+    public var eTag: String
+    public var path: String
+    public var contentType: String?
+    public var size: UInt64?
+    public var isDownloaded: Bool
+
+    public init(
+        nodeID: UUID,
+        eTag: String,
+        path: String,
+        contentType: String?,
+        size: UInt64?,
+        isDownloaded: Bool
+    ) {
+        self.nodeID = nodeID
+        self.eTag = eTag
+        self.path = path
+        self.contentType = contentType
+        self.size = size
+        self.isDownloaded = isDownloaded
     }
-}
 
-package extension RestNodeCollection {
-    func toDTO() -> WireCellsGetFilesResponseDTO {
-        WireCellsGetFilesResponseDTO(
-            // /!\ Will silently filter out nil values that could not be mapped to DTOs
-            nodes: nodes?.compactMap { $0.toDTO() } ?? []
-        )
-    }
 }
