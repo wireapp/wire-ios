@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
 
@@ -128,7 +129,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             equalTo: trailingAnchor
         )
 
-        if DeveloperFlag.chatBubblesSimple.isOn, shouldRemoveInnerPaddingForBubbles {
+        if isChatBubbleSimpleEnabled, shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint = imageContainer.widthAnchor
                 .constraint(equalToConstant: 32.0)
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
@@ -195,13 +196,17 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         topContentViewTrailingConstraint.constant = trailingTextMargin
-        if DeveloperFlag.chatBubblesSimple.isOn, shouldRemoveInnerPaddingForBubbles {
+        if isChatBubbleSimpleEnabled, shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {
             containerWidthConstraint.constant = conversationHorizontalMargins.left
             textLabelTrailingConstraint.constant = trailingTextMargin
         }
+    }
+    
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
 
     // MARK: - UITextViewDelegate

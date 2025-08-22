@@ -208,7 +208,7 @@ final class MessageToolboxView: UIView {
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             [
                 contentStack,
                 messageFailureView
@@ -280,7 +280,7 @@ final class MessageToolboxView: UIView {
             countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             separatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -417,6 +417,10 @@ final class MessageToolboxView: UIView {
         case nil:
             statusContainerView.isHidden = true
         }
+    }
+    
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
 
     // MARK: - Timer
