@@ -39,12 +39,9 @@ public enum DeveloperFlag: String, CaseIterable {
     case newRegistration
     case showUnreadConversationsFilter
     case channelsHistory
-<<<<<<< HEAD
     case chatBubbles
     case chatBubblesSimple
-=======
     case resetMLSConversations
->>>>>>> 946b501288 (chore: Add dev Reset MLS feature flag  - WPB-18801 (#3495))
 
     public var description: String {
         switch self {
@@ -99,16 +96,14 @@ public enum DeveloperFlag: String, CaseIterable {
         case .channelsHistory:
             "Turn on to enable channels history"
 
-<<<<<<< HEAD
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
 
         case .chatBubblesSimple:
             "Turn on the simplified version of chat bubbles"
-=======
+
         case .resetMLSConversations:
             "Reset MLS conversations"
->>>>>>> 946b501288 (chore: Add dev Reset MLS feature flag  - WPB-18801 (#3495))
         }
     }
 
