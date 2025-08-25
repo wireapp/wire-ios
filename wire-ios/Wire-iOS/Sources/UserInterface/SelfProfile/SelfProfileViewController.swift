@@ -128,11 +128,12 @@ final class SelfProfileViewController: UIViewController {
             let backendInfoApiVersion = BackendInfo.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
-            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-                actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
-                }
-            )
+            // MARK: [WPB-19696] Re-enable team migration banner
+//            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+//                actionCallback: { [weak self] action in
+//                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+//                }
+//            )
         }
 
         if DeveloperFlag.multibackend.isOn {
