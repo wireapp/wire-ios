@@ -99,12 +99,12 @@ public struct Conversation: Equatable, Sendable {
     public var groupType: ConversationGroupType?
 
     public var addPermission: ChannelPermission?
-    
+
     public enum CellsState: Equatable, Sendable {
         case enabled
         case disabled
     }
-    
+
     public var cellsState: CellsState?
 
     enum CodingKeys: String, CodingKey {

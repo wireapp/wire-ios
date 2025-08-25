@@ -54,7 +54,7 @@ public struct Conversation: Equatable {
         case admins
         case everyone
     }
-    
+
     public enum CellsState: Equatable, Sendable {
         case enabled
         case disabled

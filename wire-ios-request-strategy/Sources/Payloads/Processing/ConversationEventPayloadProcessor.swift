@@ -550,7 +550,7 @@ struct ConversationEventPayloadProcessor {
             } ?? .none
 
             conversation.privateChannelPermission = payload.addPermission.map { PrivateChannelPermission($0) } ?? .unset
-            
+
             conversation.cellsState = payload.cellsState == .enabled ? .enabled : .disabled
 
             updateAttributes(from: payload, for: conversation, context: context)

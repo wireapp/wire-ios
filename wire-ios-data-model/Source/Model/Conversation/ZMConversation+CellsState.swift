@@ -22,7 +22,7 @@ import Foundation
 public enum CellsState: Int16 {
 
     case enabled = 0
-    
+
     case disabled = 1
 
 }
