@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSyncEngine
 import WireUtilities
 
 extension UIColor {
@@ -129,7 +130,7 @@ final class SpinnerButton: LegacyButton {
     // MARK: - factory method
 
     static func alarmButton() -> SpinnerButton {
-        let cornerRadius: CGFloat = DeveloperFlag.chatBubblesSimple.isOn ?
+        let cornerRadius: CGFloat = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false ?
             ConversationMessageContainerView.bubbleCornerRadius : 6
 
         return SpinnerButton(legacyStyle: .empty, cornerRadius: cornerRadius, fontSpec: .smallSemiboldFont)
