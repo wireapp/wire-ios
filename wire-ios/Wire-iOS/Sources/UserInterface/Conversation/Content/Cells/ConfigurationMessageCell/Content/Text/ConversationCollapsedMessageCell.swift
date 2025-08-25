@@ -38,7 +38,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            guard let message, isChatBubbleSimpleEnabled else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -207,7 +207,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
         wholeViewTapButton.addAction(action, for: .touchUpInside)
 
-        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        container?.isBubble = isChatBubbleSimpleEnabled
         configureTextColor(forOwnMessage: message.isSentBySelfUser)
     }
 
@@ -285,7 +285,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
         messageTextView.textColor = ownMessage ? ownColor : otherColor
@@ -311,6 +311,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         // Otherwise, let normal hit testing occur
         return super.hitTest(point, with: event)
+    }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        // the additional DeveloperFlag check is needed for the snapshot test
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
     }
 }
 

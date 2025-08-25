@@ -26,12 +26,7 @@ class LoginPage: PageModel {
 
     var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
-
-    var createPersonalAccountButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
+        return elementsQuery.buttons["Create account"]
     }
 
     var nextButton: XCUIElement {
@@ -49,7 +44,6 @@ class LoginPage: PageModel {
 
     func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
         createPersonalAccountLink.tap()
-        createPersonalAccountButton.tap()
         return try CreatePersonalAccountFormPage()
     }
 
