@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
@@ -105,7 +106,7 @@ package final class FilesViewModel: ObservableObject {
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(item: items[index])
+        FilesItemViewModel(item: items[index], localAssetRepository: localAssetRepository)
     }
 
     // MARK: - Private
@@ -166,24 +167,41 @@ package final class FilesViewModel: ObservableObject {
 /// have granular subscriptions to events that are cancelled when the view is no longer in view.
 final class FilesItemViewModel: ObservableObject {
 
+    private let nodeID: UUID
+    private var cancellables = Set<AnyCancellable>()
+
+    @Published private var asset: WireCellsLocalAsset?
+
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
+    let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
 
     init(
         item: FilesViewItem,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
     ) {
+        self.nodeID = item.id
         self.fileName = item.filename
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
+        self.localAssetRepository = localAssetRepository
+
+        localAssetRepository.observeAsset(nodeID: nodeID).sink { [self] asset in
+            self.asset = asset
+        }.store(in: &cancellables)
     }
 
     var isDownloaded: Bool {
-        // FIXME: [WPB-19436] Implement
-        false
+        switch asset?.downloadState {
+        case .downloaded:
+            return true
+        default:
+            return false
+        }
     }
 
     private static func subtitle(

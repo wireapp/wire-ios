@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -113,6 +114,7 @@ private extension FilesItemViewModel {
     static func make(item: FilesViewItem) -> FilesItemViewModel {
         FilesItemViewModel(
             item: item,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt
