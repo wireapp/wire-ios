@@ -176,6 +176,11 @@ final class FilesItemViewModel: ObservableObject {
         self.icon = item.icon
     }
 
+    var isDownloaded: Bool {
+        // FIXME: [WPB-19436] Implement
+        false
+    }
+
     private static func subtitle(
         from item: FilesViewItem,
         locale: Locale,
