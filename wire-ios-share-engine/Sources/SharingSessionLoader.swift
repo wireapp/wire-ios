@@ -171,7 +171,7 @@ public struct SharingSessionLoader {
         // Get new metadata.
         let newMetadata = try await networkStack.resolvedBackendMetadata()
 
-        // TODO: de-duplicate
+        // TODO: [WPB-17732] de-duplicate when implementing NSE
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
             // TODO: [WPB-14630] mark federation migration needed
         }
@@ -216,7 +216,7 @@ public struct SharingSessionLoader {
         return coreDataStack
     }
 
-    // TODO: de-duplicate
+    // TODO: [WPB-17732] de-duplicate when implementing NSE
     private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
         let isAvailable = metadata.apiVersion >= .v8
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
