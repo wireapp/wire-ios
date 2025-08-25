@@ -25,7 +25,7 @@ import WireMessagingDomain
 /// This repository acts on the `@MainActor` to allow for non async main thread access of assets from the UI.
 
 @MainActor
-final class WireCellsLocalAssetRepository {
+final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
 
     enum DownloadState {
         case downloading(progress: Double, task: DownloadTask)
