@@ -116,6 +116,9 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
 
+    /// Enable or Disable chat bubbles
+    case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
+
     /// An unknown feature.
 
     case unknown(featureName: String)

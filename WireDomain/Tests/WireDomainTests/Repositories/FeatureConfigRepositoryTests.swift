@@ -272,6 +272,11 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 ConsumableNotificationsFeatureConfig(
                     status: .enabled
                 )
+            ),
+            .chatBubblesSimple(
+                .init(
+                    status: .enabled
+                )
             )
         ]
 
