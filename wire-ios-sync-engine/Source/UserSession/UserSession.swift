@@ -222,6 +222,8 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
+    var isChatBubbleSimpleEnabled: Bool { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(
