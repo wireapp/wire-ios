@@ -16,9 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+import Foundation
 
-// MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Close files";
-"conversation.wireCells.files.loadMore.title" = "Load more";
+public extension Feature {
+
+    struct ChatBubblesSimple: Codable {
+
+        // MARK: - Properties
+
+        public let status: Status
+
+        // MARK: - Life cycle
+
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
+
+    }
+
+}
