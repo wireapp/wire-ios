@@ -91,7 +91,8 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             previews: [],
             ownerUserID: nil,
             conversationID: nil,
-            publicLinkID: nil
+            publicLinkID: nil,
+            downloadURL: nil
         )
 
         let stream = await startUpload(assetPath: assetPath, assetSize: assetSize, node: node, versionID: versionID)

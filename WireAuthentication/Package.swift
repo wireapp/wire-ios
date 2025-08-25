@@ -37,11 +37,12 @@ let package = Package(
         ),
 
         .target(
-            name: "WireAuthenticationAPI"
+            name: "WireAuthenticationAPI",
+            dependencies: ["WireNetwork"]
         ),
         .target(
             name: "WireAuthenticationAPISupport",
-            dependencies: ["WireAuthenticationAPI"],
+            dependencies: ["WireAuthenticationAPI", "WireNetwork"],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
@@ -79,6 +80,7 @@ let package = Package(
                 "WireAuthenticationUI",
                 "WireAuthenticationAPISupport",
                 "WireFoundation",
+                "WireNetwork",
                 .product(name: "WireReusableUIComponentsSupport", package: "WireUI"),
             ]
         )

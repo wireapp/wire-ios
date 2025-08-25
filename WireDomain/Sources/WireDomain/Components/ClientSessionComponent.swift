@@ -447,7 +447,7 @@ public final class ClientSessionComponent {
         mlsProvider: mlsProvider
     )
 
-    private lazy var featureConfigRepository = FeatureConfigRepository(
+    public lazy var featureConfigRepository = FeatureConfigRepository(
         featureConfigsAPI: featureConfigsAPI,
         featureConfigLocalStore: featureConfigsLocalStore
     )

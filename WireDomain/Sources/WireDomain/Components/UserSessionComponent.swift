@@ -43,6 +43,7 @@ public final class UserSessionComponent {
 
     public init(
         selfUserID: UUID,
+        cookieStorage: any CookieStorageProtocol,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
         backendMetaData: ResolvedBackendMetadata,
@@ -57,6 +58,7 @@ public final class UserSessionComponent {
         coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfUserID = selfUserID
+        self.cookieStorage = cookieStorage
         self.restNetworkService = restNetworkService
         self.websocketNetworkService = websocketNetworkService
         self.backendMetadata = backendMetaData
@@ -71,13 +73,7 @@ public final class UserSessionComponent {
         self.sharedContainerURL = sharedContainerURL
     }
 
-    private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
-
-    private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(
-        userID: selfUserID,
-        cookieEncryptionKey: UserDefaults.cookiesKey(),
-        keychain: keychain
-    )
+    private let cookieStorage: any CookieStorageProtocol
 
     // MARK: - Children
 

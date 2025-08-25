@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class UpdateEventsAPIV10: UpdateEventsAPIV9 {
+class UpdateEventsAPIV10: UpdateEventsAPIV9 {
 
     override var apiVersion: APIVersion { .v10 }
 

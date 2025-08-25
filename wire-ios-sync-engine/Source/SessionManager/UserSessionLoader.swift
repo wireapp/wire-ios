@@ -89,9 +89,18 @@ final class UserSessionLoader {
     }
 
     @MainActor
-    func load() async throws -> ZMUserSession {
-        // Get the stored environment for this account.
-        let backendEnvironment = try fetchBackendEnvironment()
+    func load(newEnvironment: NewEnvironment?) async throws -> ZMUserSession {
+        // Persist the new environment.
+        if let newEnvironment {
+            try await storeNewEnvironment(newEnvironment)
+        }
+
+        // Get the environment for this account.
+        let backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
+            environment
+        } else {
+            try fetchBackendEnvironment()
+        }
 
         // Retrieve proxy credentials if needed.
         var proxyCredentials: WireNetwork.ProxyCredentials?
@@ -111,7 +120,11 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata = try await resolveBackendMetadata(with: networkStack)
+        let metadata: ResolvedBackendMetadata = if let newMetadata = newEnvironment?.metadata {
+            newMetadata
+        } else {
+            try await resolveBackendMetadata(with: networkStack)
+        }
 
         // Load persistence stack.
         let coreDataStack = try await loadPersistenceStack()
@@ -123,7 +136,18 @@ final class UserSessionLoader {
         )
 
         // Load network stack.
-        let networkServices = try networkStack.networkServices
+        let networkServices = try await networkStack.networkServices
+
+        // Store any new cookies.
+        let cookieStorage = CookieStorage(
+            userID: accountID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
+
+        if let cookies = newEnvironment?.cookies {
+            try await cookieStorage.storeCookies(cookies)
+        }
 
         // Create user session.
         let userSession = await createUserSession(
@@ -132,13 +156,37 @@ final class UserSessionLoader {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             backendMetadata: metadata,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            cookieStorage: cookieStorage
         )
 
         // Perform pending migrations.
         try await performPendingMigrations(userSession: userSession)
 
         return userSession
+    }
+
+    private func storeNewEnvironment(_ environment: NewEnvironment) async throws {
+        do {
+            try backendStore.storeBackendEnvironment(
+                environment.backendEnvironment,
+                for: accountID
+            )
+
+            if
+                let proxyConfig = environment.backendEnvironment.config.proxyConfig,
+                let credentials = environment.proxyCredentials {
+                let store = ProxyCredentialStore()
+                try await store.storeCredentials(
+                    host: proxyConfig.host,
+                    port: proxyConfig.port,
+                    username: credentials.username,
+                    password: credentials.password
+                )
+            }
+        } catch {
+            throw Failure.failedToStoreNewEnvironment(error)
+        }
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2 {
@@ -294,7 +342,7 @@ final class UserSessionLoader {
         webSocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
-
+        cookieStorage: CookieStorage
     ) async -> ZMUserSession {
         let selfClientID = await coreDataStack.viewContext.perform {
             ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
@@ -439,7 +487,8 @@ final class UserSessionLoader {
             recurringActionService: recurringActionService,
             dependencies: dependencies,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
 
         userSession.setup(
@@ -494,6 +543,7 @@ final class UserSessionLoader {
 
     enum Failure: Error {
 
+        case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case failedToStoreMetadata(any Error)
@@ -506,7 +556,7 @@ final class UserSessionLoader {
 
 }
 
-private extension BackendEnvironment2 {
+public extension BackendEnvironment2 {
 
     init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
         let environmentType: EnvironmentType = switch legacyEnvironment.environmentType.value {
@@ -586,17 +636,13 @@ private struct ProxyCredentialStore {
         host: String,
         port: Int
     ) async throws -> (username: String, password: String)? {
-        let usernameData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-username"),
-            .returningData(true)
-        ])
+        var usernameQuery = usernameQuery(host: host, port: port)
+        usernameQuery.insert(.returningData(true))
+        let usernameData: Data? = try await keychain.fetchItem(query: usernameQuery)
 
-        let passwordData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-password"),
-            .returningData(true)
-        ])
+        var passwordQuery = passwordQuery(host: host, port: port)
+        passwordQuery.insert(.returningData(true))
+        let passwordData: Data? = try await keychain.fetchItem(query: passwordQuery)
 
         guard
             let usernameData,
@@ -609,6 +655,110 @@ private struct ProxyCredentialStore {
             username: String(decoding: usernameData, as: UTF8.self),
             password: String(decoding: passwordData, as: UTF8.self)
         )
+    }
+
+    func storeCredentials(
+        host: String,
+        port: Int,
+        username: String,
+        password: String
+    ) async throws {
+        try? await keychain.deleteItem(
+            query: getUsernameQuery(
+                host: host,
+                port: port
+            )
+        )
+        try? await keychain.deleteItem(
+            query: getPasswordQuery(
+                host: host,
+                port: port
+            )
+        )
+        try await keychain.addItem(
+            query: setUsernameQuery(
+                host: host,
+                port: port,
+                username: username
+            )
+        )
+        try await keychain.addItem(
+            query: setPasswordQuery(
+                host: host,
+                port: port,
+                password: password
+            )
+        )
+    }
+
+    private func getUsernameQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        var query = usernameQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.returningData(true))
+        return query
+    }
+
+    private func setUsernameQuery(
+        host: String,
+        port: Int,
+        username: String
+    ) -> Set<KeychainQueryItem> {
+        var query = usernameQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.data(Data(username.utf8)))
+        return query
+    }
+
+    private func usernameQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-username")
+        ]
+    }
+
+    private func getPasswordQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        var query = passwordQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.returningData(true))
+        return query
+    }
+
+    private func setPasswordQuery(
+        host: String,
+        port: Int,
+        password: String
+    ) -> Set<KeychainQueryItem> {
+        var query = passwordQuery(
+            host: host,
+            port: port
+        )
+        query.insert(.data(Data(password.utf8)))
+        return query
+    }
+
+    private func passwordQuery(
+        host: String,
+        port: Int
+    ) -> Set<KeychainQueryItem> {
+        [
+            .itemClass(.genericPassword),
+            .account("proxy-\(host):\(port)-password")
+        ]
     }
 
 }
@@ -639,12 +789,14 @@ private extension WireNetwork.APIVersion {
             self = .v9
         case .v10:
             self = .v10
+        case .v11:
+            self = .v11
         }
     }
 
 }
 
-extension WireTransport.BackendEnvironment {
+public extension WireTransport.BackendEnvironment {
 
     convenience init(_ backendEnvironment: BackendEnvironment2) {
         let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in
