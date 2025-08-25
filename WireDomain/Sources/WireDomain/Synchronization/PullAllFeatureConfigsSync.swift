@@ -128,6 +128,12 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: nil
             )
+        case let .chatBubblesSimple(config):
+            await storeFeature(
+                name: .chatBubblesSimple,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")
             return

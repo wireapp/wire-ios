@@ -206,6 +206,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
+        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
+            return FeatureState(
+                name: .chatBubblesSimple,
+                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
+            )
+
         case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"

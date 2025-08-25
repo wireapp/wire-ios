@@ -49,6 +49,7 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
     let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
     let consumableNotifications: FeatureStatus?
+    let chatBubbles: FeatureStatus?
 }
 
 struct FeatureStatus: Decodable {
