@@ -104,6 +104,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
+                            setUpBatchTask()
                         }
 
                     case .missedEvents:
@@ -115,6 +116,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         if !drained.isEmpty {
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
+                            setUpBatchTask()
                         }
 
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
@@ -171,17 +173,16 @@ public final class PushChannelV2: PushChannelV2Protocol {
     // MARK: - Batch task
 
     private func setUpBatchTask() {
+        guard batchSize > 1 else { return }
         WireLogger.pushChannel.debug("batchTask setup", attributes: .pushChannelV2)
         tearDownBatchTask()
         batchTask = Task { [batchInterval] in
             do {
-                while batchSize > 1 {
-                    try await Task.sleep(for: .seconds(batchInterval))
-                    if !(await batchBuffer.isEmpty()) {
-                        let drained = await batchBuffer.drain()
-                        WireLogger.pushChannel.debug("yielding batch '\(drained.count)'", attributes: .pushChannelV2)
-                        continuation.yield(.events(drained))
-                    }
+                try await Task.sleep(for: .seconds(batchInterval))
+                if !(await batchBuffer.isEmpty()) {
+                    let drained = await batchBuffer.drain()
+                    WireLogger.pushChannel.debug("yielding batch '\(drained.count)'", attributes: .pushChannelV2)
+                    continuation.yield(.events(drained))
                 }
             } catch {
                 WireLogger.pushChannel.warn("batch task was cancelled", attributes: .pushChannelV2)
