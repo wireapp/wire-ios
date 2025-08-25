@@ -155,9 +155,7 @@ struct FilesViewItemView: View {
 
                 if let progress = viewModel.progress {
                     ProgressView(value: progress, total: 100)
-                        .progressViewStyle(
-                            AttachmentPreviewProgressStyle(fillColor: progressColor)
-                        )
+                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
                 }
             }
         }
@@ -293,27 +291,4 @@ private class FakeLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
     
     func cancelDownload(nodeID: UUID) {}
 
-}
-
-private struct AttachmentPreviewProgressStyle: ProgressViewStyle {
-
-    enum Constants {
-        static let height: Double = 3
-    }
-
-    let fillColor: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { geometry in
-            let totalWidth = geometry.size.width
-            let progress = Double(configuration.fractionCompleted ?? 0)
-            let barWidth = totalWidth * progress
-
-            let cornerRadius = progress < 1 ? Constants.height / 2 : 0
-            UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
-                .fill(fillColor)
-                .frame(width: barWidth, height: Constants.height)
-        }
-        .frame(height: Constants.height)
-    }
 }

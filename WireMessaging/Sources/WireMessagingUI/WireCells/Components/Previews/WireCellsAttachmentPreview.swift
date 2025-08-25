@@ -44,7 +44,7 @@ struct WireCellsAttachmentPreview<Content: View>: View {
                     Spacer()
                     ProgressView(value: progress, total: 1)
                         .tint(Color.blue)
-                        .progressViewStyle(AttachmentPreviewProgressStyle(fillColor: progressColor))
+                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
                         .padding(.bottom, Constants.borderWidth / 2)
                         .opacity(progress == nil ? 0 : 1)
 
@@ -68,31 +68,6 @@ private enum Constants {
     static let borderWidth: CGFloat = 1
     static let cornerRadius: CGFloat = 12
     static let borderColor = ColorTheme.Strokes.outline.color
-}
-
-/// A custom progress view style for the attachment preview progress bar.
-
-private struct AttachmentPreviewProgressStyle: ProgressViewStyle {
-
-    enum Constants {
-        static let height: Double = 3
-    }
-
-    let fillColor: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { geometry in
-            let totalWidth = geometry.size.width
-            let progress = Double(configuration.fractionCompleted ?? 0)
-            let barWidth = totalWidth * progress
-
-            let cornerRadius = Constants.height / 2
-            UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
-                .fill(fillColor)
-                .frame(width: barWidth, height: Constants.height)
-        }
-        .frame(height: Constants.height)
-    }
 }
 
 #Preview {
