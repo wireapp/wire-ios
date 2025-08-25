@@ -158,6 +158,15 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchChannels()
     }
 
+    public var chatBubbleSimpleFeature: Feature.ChatBubblesSimple {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchChatBubblesSimple()
+    }
+
+    public var isChatBubbleSimpleEnabled: Bool {
+        chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
@@ -425,7 +434,8 @@ public final class ZMUserSession: NSObject {
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        cookieStorage: any CookieStorageProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -460,6 +470,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
+            cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
             backendMetaData: backendMetadata,

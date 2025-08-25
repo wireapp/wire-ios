@@ -107,9 +107,9 @@ final class FilesViewModelTests {
         // then
         #expect(itemsUpdates == [
             [], // Clears items
-            [FilesViewItem(id: node.id, filename: "a.jpg", ownedBy: nil, modifiedAt: nil)],
+            [FilesViewItem(id: node.id, filename: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)],
             [], // Clears items
-            [FilesViewItem(id: node.id, filename: "a.jpg", ownedBy: nil, modifiedAt: nil)]
+            [FilesViewItem(id: node.id, filename: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)]
         ])
     }
 
@@ -134,7 +134,12 @@ final class FilesViewModelTests {
     func reload_updatesItems() async throws {
         // given
         let now = Date()
-        let node1 = WireCellsNode.fixture(path: "some-cell/a.jpg", modified: now, ownerUserName: "Emel")
+        let node1 = WireCellsNode.fixture(
+            path: "some-cell/a.jpg",
+            modified: now,
+            mimeType: "image/jpeg",
+            ownerUserName: "Emel"
+        )
         let node2 = WireCellsNode.fixture(path: "some-cell/b.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { _ in (nodes: [node1, node2], nextOffset: nil) }
 
@@ -143,8 +148,8 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.items == [
-            FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now),
-            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil)
+            FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .image),
+            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
     }
 
@@ -173,9 +178,9 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.items == [
-            FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now),
-            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil),
-            FilesViewItem(id: node3.id, filename: "c.jpg", ownedBy: nil, modifiedAt: nil)
+            FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
+            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other),
+            FilesViewItem(id: node3.id, filename: "c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
     }
 
@@ -246,11 +251,11 @@ final class FilesViewModelTests {
     }
 
     @Test(arguments: [
-        (error: URLError(.notConnectedToInternet), expectedAlert: FilesViewModel.Alert.noInternet),
-        (error: URLError(.networkConnectionLost), expectedAlert: FilesViewModel.Alert.noInternet),
-        (error: URLError(.badURL), expectedAlert: FilesViewModel.Alert.unknownError)
+        (error: URLError(.notConnectedToInternet), expectedAlert: AlertModel.noInternet),
+        (error: URLError(.networkConnectionLost), expectedAlert: AlertModel.noInternet),
+        (error: URLError(.badURL), expectedAlert: AlertModel.unknownError)
     ])
-    func loadFailure(error: any Error, expectedAlert: FilesViewModel.Alert) async throws {
+    func loadFailure(error: any Error, expectedAlert: AlertModel) async throws {
         // given
         nodesRepository.getNodes_MockError = error
 

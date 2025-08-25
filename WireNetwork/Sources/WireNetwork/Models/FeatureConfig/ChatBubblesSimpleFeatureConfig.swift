@@ -18,17 +18,18 @@
 
 import Foundation
 
-public struct BackendInfo: Equatable, Hashable, Sendable {
+/// A configuration for the *Chat Bubbles Simple* feature.
 
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
+public struct ChatBubblesSimpleFeatureConfig: Equatable, Sendable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
 
     public init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        status: FeatureConfigStatus
     ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+        self.status = status
     }
 
 }

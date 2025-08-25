@@ -332,6 +332,10 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 for: groupID
             )
 
+            try await context.perform {
+                try context.save()
+            }
+
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
                 users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }

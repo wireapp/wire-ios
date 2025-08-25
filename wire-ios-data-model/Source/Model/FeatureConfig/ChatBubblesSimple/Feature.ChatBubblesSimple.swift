@@ -18,27 +18,20 @@
 
 import Foundation
 
-// TODO: [WPB-12140] Delete after multibackend support
-public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
+public extension Feature {
 
-    func invoke() async throws -> BackendMetadata
+    struct ChatBubblesSimple: Codable {
 
-}
+        // MARK: - Properties
 
-public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
+        public let status: Status
 
-    /// The API version of the connected backend is
-    /// too old for this client, i.e the max available
-    /// API version is lower than the min API version
-    /// that this client supports.
+        // MARK: - Life cycle
 
-    case backendAPIVersionObsolete
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
 
-    /// The API version of this client is too old
-    /// for the connected backend, i.e the max API version
-    /// that this client supports is lower than the min
-    /// available API version on the backend.
-
-    case clientVersionObsolete
+    }
 
 }

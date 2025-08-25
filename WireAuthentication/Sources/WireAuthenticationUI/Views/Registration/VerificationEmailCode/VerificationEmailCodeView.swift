@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireReusableUIComponents
 
 package struct VerificationEmailCodeView: View {
 

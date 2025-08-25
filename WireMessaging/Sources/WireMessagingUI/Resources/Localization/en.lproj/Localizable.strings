@@ -16,11 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - Navigation
 "general.loading" = "Loading…";
 "general.confirm" = "OK";
 "general.failure" = "Something went wrong";
+"general.error.unknown.title." = "Something went wrong";
+"general.error.unknown.message." = "Please retry later.";
+"general.error.noInternet.title." = "No internet connection";
+"general.error.noInternet.message." = "There seems to be a problem with your network. Please try again later.";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
 "channel_access_level.admins" = "Admins";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "Conversation history and more";
 "conversation.create.group.title" = "New group";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "Back";
 "conversation.create.channel.next" = "Next";
 
@@ -98,3 +103,7 @@
 // MARK: Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Files";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.download" = "Download";
+"conversation.wireCells.files.item.menu.rename" = "Rename";
+"conversation.wireCells.files.item.menu.delete" = "Delete permanently";

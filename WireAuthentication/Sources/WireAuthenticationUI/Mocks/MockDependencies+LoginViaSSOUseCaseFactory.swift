@@ -18,19 +18,24 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: LoginViaSSOUseCaseFactory {
 
     @MainActor
-    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
-        MockLoginViaSSOUseCase(backendEnvironment: backendEnvironment)
+    func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol {
+        MockLoginViaSSOUseCase(
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata
+        )
     }
 
 }
 
 struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
-    let backendEnvironment: WireAuthenticationBackendEnvironment
+    let backendEnvironment: BackendEnvironment2
+    let backendMetadata: ResolvedBackendMetadata
 
     func invoke(code: UUID?) async throws -> AuthenticationResult {
         AuthenticationResult(
@@ -38,7 +43,9 @@ struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             cookies: [],
             accessToken: nil,
             emailCredentials: nil,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata,
+            proxyCredentials: nil
         )
     }
 

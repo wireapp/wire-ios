@@ -18,16 +18,32 @@
 
 import Foundation
 
-public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
+/// Identifies an alert and provides it's title and message.
+///
+/// An `AlertModel` can be produced by a view model and act as data for a SwiftUI alert.
+struct AlertModel: Hashable, Identifiable, Sendable {
 
-    case `default`
-    case staging
-    case anta
-    case bella
-    case chala
-    case diya
-    case elna
-    case foma
-    case custom(url: URL)
+    var id: Self { self }
+
+    let title: String
+    let message: String
+
+}
+
+// MARK: - Common alerts
+
+extension AlertModel {
+
+    private typealias Error = L10n.Localizable.General.Error
+
+    static let noInternet = AlertModel(
+        title: Error.NoInternet.title,
+        message: Error.NoInternet.message
+    )
+
+    static let unknownError = AlertModel(
+        title: Error.Unknown.title,
+        message: Error.Unknown.message
+    )
 
 }
