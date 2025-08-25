@@ -124,17 +124,40 @@ struct FilesViewItemView: View {
 
                 Spacer()
 
-                Button {
-                    // TODO: [WPB-19390] Show context menu
+                Menu {
+                    if !viewModel.isDownloaded {
+                        Button(action: download) {
+                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
+                        }
+                    }
+
+                    Button(action: rename) {
+                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive, action: delete) {
+                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
-                .buttonStyle(.borderless)
                 .padding(.all, 8)
             }
             Divider()
         }
+    }
+
+    private func download() {
+        // FIXME: [WPB-19436] Implement
+    }
+
+    private func rename() {
+        // FIXME: [WPB-19393] Implement
+    }
+
+    private func delete() {
+        // FIXME: [WPB-19392] Implement
     }
 
 }
