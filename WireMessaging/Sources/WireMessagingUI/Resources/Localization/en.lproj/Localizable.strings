@@ -104,3 +104,6 @@
 "conversation.wireCells.files.navigationTitle" = "Files";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.download" = "Download";
+"conversation.wireCells.files.item.menu.rename" = "Rename";
+"conversation.wireCells.files.item.menu.delete" = "Delete permanently";
