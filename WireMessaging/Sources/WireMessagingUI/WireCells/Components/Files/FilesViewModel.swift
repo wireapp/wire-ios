@@ -204,6 +204,49 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
+    var isDownloadOptionAvailable: Bool {
+        switch asset?.downloadState {
+        case .downloaded:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isDownloadOptionDisabled: Bool {
+        switch asset?.downloadState {
+        case .downloading:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var progress: Double? {
+        switch asset?.downloadState {
+        case .downloading(let progress):
+            return progress
+        case .failed:
+            return 100 // We show a full red progress bar on failure
+        default:
+            return nil
+        }
+    }
+
+    var showErrorState: Bool {
+        switch asset?.downloadState {
+        case .failed:
+            return true
+        default:
+            return false
+        }
+    }
+
+    func download() async {
+        // Ignore errors as these will be reported via the `asset` publisher.
+        try? await localAssetRepository.downloadAsset(nodeID: nodeID)
+    }
+
     private static func subtitle(
         from item: FilesViewItem,
         locale: Locale,

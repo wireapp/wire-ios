@@ -22,6 +22,7 @@ import WireFoundation
 import WireMessagingDomain
 import WireMessagingDomainSupport
 import WireReusableUIComponents
+import Combine
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -100,56 +101,70 @@ struct FilesViewItemView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-
-                Image(viewModel.icon.resource)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: imageHeight)
-                    .padding(.horizontal, 4)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                    Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        ZStack {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    
+                    Image(viewModel.icon.resource)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 56, height: imageHeight)
+                        .padding(.horizontal, 4)
+                    
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(viewModel.fileName)
+                            .wireTextStyle(.body2)
+                            .lineLimit(1)
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        
+                        Text(viewModel.subtitle ?? "")
+                            .wireTextStyle(.subline1)
+                            .lineLimit(1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                    .padding(.vertical, 8)
+                    
+                    Spacer()
+                    
+                    Menu {
+                        if !viewModel.isDownloadOptionAvailable {
+                            Button(action: download) {
+                                Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
+                            }.disabled(viewModel.isDownloadOptionDisabled)
+                        }
+                        
+                        Button(action: rename) {
+                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                        
+                        Button(role: .destructive, action: delete) {
+                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                    .padding(.all, 8)
                 }
-                .padding(.vertical, 8)
 
+                Divider()
+            }
+
+            VStack {
                 Spacer()
 
-                Menu {
-                    if !viewModel.isDownloaded {
-                        Button(action: download) {
-                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
-                        }
-                    }
-
-                    Button(action: rename) {
-                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                    }
-
-                    Button(role: .destructive, action: delete) {
-                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                if let progress = viewModel.progress {
+                    ProgressView(value: progress, total: 100)
+                        .progressViewStyle(
+                            AttachmentPreviewProgressStyle(fillColor: progressColor)
+                        )
                 }
-                .padding(.all, 8)
             }
-            Divider()
         }
     }
 
     private func download() {
-        // FIXME: [WPB-19436] Implement
+        Task { await viewModel.download() }
     }
 
     private func rename() {
@@ -158,6 +173,10 @@ struct FilesViewItemView: View {
 
     private func delete() {
         // FIXME: [WPB-19392] Implement
+    }
+
+    private var progressColor: Color {
+        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
     }
 
 }
@@ -194,7 +213,7 @@ private struct LoadMoreView: View {
                 configuration: .conversationFileView(root: .path("root")),
                 repository: makeNodesRepository()
             ),
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
+            localAssetRepository: FakeLocalAssetRepository()
         )
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
@@ -222,4 +241,79 @@ private func makeNodesRepository() -> MockWireCellsNodesRepositoryProtocol {
         return (nodes, nextOffset)
     }
     return repository
+}
+
+private class FakeLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
+
+    private var failIndex = 0
+    private var assets: [UUID: CurrentValueSubject<WireCellsLocalAsset?, Never>] = [:]
+
+    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
+        assets[nodeID]?.value
+    }
+    
+    func refreshMetadata(nodeID: UUID) async throws {}
+    
+    func downloadAsset(nodeID: UUID) async throws {
+        failIndex += 1
+        // Fail every 3rd download
+        let shouldFail = failIndex % 3 == 0
+
+        for progress in 0...100 {
+            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail && progress > 10 {
+                .failed(error: URLError(.notConnectedToInternet))
+            } else if progress < 100 {
+                .downloading(progress: Double(progress))
+            } else {
+                .downloaded(cacheKey: "cacheKey")
+            }
+
+            try await Task.sleep(nanoseconds: 50_000_000)
+            assets[nodeID]?.send(
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "something",
+                    path: "some/path.jpg",
+                    contentType: nil,
+                    size: nil,
+                    downloadState: downloadState
+                )
+            )
+            if shouldFail && progress > 10 {
+                break
+            }
+        }
+    }
+    
+    func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
+        let publisher = assets[nodeID] ?? CurrentValueSubject<WireCellsLocalAsset?, Never>(nil)
+        assets[nodeID] = publisher
+        return publisher.eraseToAnyPublisher()
+    }
+    
+    func cancelDownload(nodeID: UUID) {}
+
+}
+
+private struct AttachmentPreviewProgressStyle: ProgressViewStyle {
+
+    enum Constants {
+        static let height: Double = 3
+    }
+
+    let fillColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        GeometryReader { geometry in
+            let totalWidth = geometry.size.width
+            let progress = Double(configuration.fractionCompleted ?? 0)
+            let barWidth = totalWidth * progress
+
+            let cornerRadius = progress < 1 ? Constants.height / 2 : 0
+            UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
+                .fill(fillColor)
+                .frame(width: barWidth, height: Constants.height)
+        }
+        .frame(height: Constants.height)
+    }
 }
