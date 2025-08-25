@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import Foundation
-import WireMessagingDomain
+package import Combine
+package import Foundation
+package import WireMessagingDomain
 
 /// Repository for accessing & updating `WireCellsLocalAsset`s.
 ///
 /// This repository acts on the `@MainActor` to allow for non async main thread access of assets from the UI.
 
 @MainActor
-final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
+package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
 
     enum DownloadState {
         case downloading(progress: Double, task: DownloadTask)
@@ -45,6 +45,14 @@ final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol
     private var getNodeTasks: [NodeID: GetNodeTask] = [:]
     private let updates = PassthroughSubject<(UUID, WireCellsLocalAsset?), Never>()
 
+    package convenience init(
+        nodesAPI: any NodesAPIProtocol,
+        fileCache: any FileCache,
+        store: any WireCellsLocalAssetMetadataStore,
+    ) {
+        self.init(nodesAPI: nodesAPI, fileCache: fileCache, store: store, downloadStates: [:])
+    }
+
     init(
         nodesAPI: any NodesAPIProtocol,
         fileDownloader: any FileDownloading = URLSession.shared,
@@ -62,7 +70,7 @@ final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol
     /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been
     /// fetched.
 
-    func asset(nodeID: UUID) throws -> WireCellsLocalAsset? {
+    package func asset(nodeID: UUID) throws -> WireCellsLocalAsset? {
         guard let metadata = try metadataStore.assetMetadata(nodeID: nodeID) else { return nil }
 
         return Self.asset(metadata: metadata, downloadState: downloadStates[nodeID])
@@ -74,7 +82,7 @@ final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
 
-    func refreshMetadata(nodeID: UUID) async throws {
+    package func refreshMetadata(nodeID: UUID) async throws {
         _ = try await _refreshMetadata(nodeID: nodeID)
     }
 
@@ -83,7 +91,7 @@ final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
 
-    func downloadAsset(nodeID: UUID) async throws {
+    package func downloadAsset(nodeID: UUID) async throws {
         switch downloadStates[nodeID] {
         case .downloading:
             throw WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
@@ -124,14 +132,14 @@ final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol
     }
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
-
-    func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
+    
+    package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
         updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
     }
 
     /// Cancels the asset download for a given `nodeID`.
 
-    func cancelDownload(nodeID: UUID) {
+    package func cancelDownload(nodeID: UUID) {
         switch downloadStates[nodeID] {
         case let .downloading(_, task):
             task.cancel()

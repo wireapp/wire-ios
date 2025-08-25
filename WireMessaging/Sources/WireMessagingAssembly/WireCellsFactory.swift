@@ -27,7 +27,9 @@ public struct WireCellsFactory {
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
+    private let localAssetRepository: WireCellsLocalAssetRepository
 
+    @MainActor
     public init(serverURL: URL, accessToken: any AccessTokenProvider) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
@@ -42,6 +44,11 @@ public struct WireCellsFactory {
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
+        self.localAssetRepository = WireCellsLocalAssetRepository(
+            nodesAPI: nodesAPI,
+            fileCache: FakeFileCache(),
+            store: FakeWireCellsLocalAssetMetadataStore()
+        )
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -93,11 +100,40 @@ public extension WireCellsFactory {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path(cellName)),
                 repository: nodesAPI
-            )
+            ),
+            localAssetRepository: localAssetRepository
         )
 
         return FilesHostingController(
             viewModel: viewModel
         )
     }
+}
+
+// MARK: - Temporary
+
+// FIXME: Implement real
+final class FakeFileCache: FileCache {
+
+    func saveFile(at url: URL, key: String) async throws {
+
+    }
+    
+    func deleteFile(forKey key: String) async throws {
+
+    }
+
+}
+
+// FIXME: Implement real
+final class FakeWireCellsLocalAssetMetadataStore: WireCellsLocalAssetMetadataStore {
+
+    func assetMetadata(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAssetMetadata? {
+        return nil
+    }
+    
+    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {
+
+    }
+
 }

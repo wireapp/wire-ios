@@ -193,7 +193,8 @@ private struct LoadMoreView: View {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("root")),
                 repository: makeNodesRepository()
-            )
+            ),
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
         )
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())

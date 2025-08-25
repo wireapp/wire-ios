@@ -53,9 +53,14 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
 
-    package init(fetchNodesUseCase: WireCellsFetchNodesUseCase) {
+    package init(
+        fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    ) {
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.localAssetRepository = localAssetRepository
     }
 
     @Published private(set) var items: [FilesViewItem] = []

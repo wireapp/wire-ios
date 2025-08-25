@@ -37,7 +37,8 @@ final class FilesViewModelTests {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
-            )
+            ),
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
         )
 
         sut.$items.dropFirst().sink { [weak self] items in

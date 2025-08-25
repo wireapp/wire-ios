@@ -19,6 +19,7 @@
 package import Foundation
 package import Combine
 
+// sourcery: AutoMockable
 /// Repository for accessing & updating `WireCellsLocalAsset`s.
 package protocol WireCellsLocalAssetRepositoryProtocol {
 
