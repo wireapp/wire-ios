@@ -17,28 +17,24 @@
 //
 
 import Foundation
+public import WireMessagingDomain
 
-// TODO: [WPB-12140] Delete after multibackend support
-public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
+extension URLSession: FileDownloading {
 
-    func invoke() async throws -> BackendMetadata
+    func download(from url: URL) -> (progress: AsyncStream<Double>, download: Task<(URL, URLResponse), any Error>) {
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
 
-}
+        let delegate = URLSessionTaskProgressDelegate { fractionCompleted in
+            progressContinuation.yield(fractionCompleted)
+        }
 
-public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
+        let downloadTask = Task {
+            let result = try await download(from: url, delegate: delegate)
+            progressContinuation.finish()
+            return result
+        }
 
-    /// The API version of the connected backend is
-    /// too old for this client, i.e the max available
-    /// API version is lower than the min API version
-    /// that this client supports.
-
-    case backendAPIVersionObsolete
-
-    /// The API version of this client is too old
-    /// for the connected backend, i.e the max API version
-    /// that this client supports is lower than the min
-    /// available API version on the backend.
-
-    case clientVersionObsolete
+        return (progress: progressStream, download: downloadTask)
+    }
 
 }

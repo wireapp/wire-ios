@@ -18,18 +18,19 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 package enum DetermineAuthMethodDestination: Hashable {
 
     case login(
         email: String?,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     )
     case loginOrRegister(
         email: String,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     )
     case noHistory(AuthenticationResult)
 }

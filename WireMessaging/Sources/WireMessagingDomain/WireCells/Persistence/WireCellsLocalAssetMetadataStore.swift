@@ -16,23 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public struct UnresolvedProxySettings: Decodable, Sendable, Hashable {
+// sourcery: AutoMockable
+@MainActor
+public protocol WireCellsLocalAssetMetadataStore {
 
-    public let host: String
-    public let port: Int
-    public let needsAuthentication: Bool
-
-    public init(
-        host: String,
-        port: Int,
-        needsAuthentication: Bool = false
-    ) {
-        self.host = host
-        self.port = port
-        self.needsAuthentication = needsAuthentication
-
-    }
+    func assetMetadata(nodeID: UUID) throws -> WireCellsLocalAssetMetadata?
+    func upsertAssetMetadata(_ metadata: WireCellsLocalAssetMetadata) throws
 
 }

@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireNetwork
 import WireRequestStrategy
 
@@ -93,7 +94,7 @@ public struct SharingSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let networkServices = try networkStack.networkServices
+        let networkServices = try await networkStack.networkServices
 
         let metadata = try await resolveBackendMetadata(with: networkStack)
 
@@ -234,12 +235,12 @@ public struct SharingSessionLoader {
         let legacyEnvironment = BackendEnvironment(environment)
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(
+        let legacyCookieStorage = ZMPersistentCookieStorage(
             forServerName: legacyEnvironment.backendURL.host!,
             userIdentifier: accountID,
             useCache: false
         )
-        guard cookieStorage.hasAuthenticationCookie else {
+        guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
         }
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
@@ -249,7 +250,7 @@ public struct SharingSessionLoader {
             environment: legacyEnvironment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
-            cookieStorage: cookieStorage,
+            cookieStorage: legacyCookieStorage,
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: appGroupID,
@@ -328,8 +329,14 @@ public struct SharingSessionLoader {
             userDefaults: .standard,
             userID: accountID
         )
+        let cookieStorage = CookieStorage(
+            userID: accountID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
         let userSessionComponent = UserSessionComponent(
             selfUserID: accountID,
+            cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
             backendMetaData: backendMetadata,

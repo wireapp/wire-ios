@@ -16,18 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-/// Proxy settings for communicating with a backend server.
+public struct WireCellsLocalAssetMetadata: Equatable, Sendable {
 
-public enum ResolvedProxySettings: Sendable, Equatable, Hashable {
+    public let nodeID: UUID
+    public var eTag: String
+    public var path: String
+    public var contentType: String?
+    public var size: UInt64?
+    public var isDownloaded: Bool
 
-    /// Settings for an unauthenticated proxy.
-
-    case unauthenticated(host: String, port: Int)
-
-    /// Settings for an authenticated proxy.
-
-    case authenticated(host: String, port: Int, username: String, password: String)
+    public init(
+        nodeID: UUID,
+        eTag: String,
+        path: String,
+        contentType: String?,
+        size: UInt64?,
+        isDownloaded: Bool
+    ) {
+        self.nodeID = nodeID
+        self.eTag = eTag
+        self.path = path
+        self.contentType = contentType
+        self.size = size
+        self.isDownloaded = isDownloaded
+    }
 
 }

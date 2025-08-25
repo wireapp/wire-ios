@@ -16,26 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// An error specific to the `WireCellsLocalAssetRepository`
 
-/// Proxy credentials for a user.
+public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
 
-public struct ProxyCredentials: Equatable, Hashable {
+    /// The wire cells node contains no download URL for the asset.
 
-    /// The proxy username.
+    case missingDownloadURL
 
-    public let username: String
+    /// The wire cells node contains no eTag for the asset.
 
-    /// The proxy password.
+    case missingETag
 
-    public let password: String
+    /// A download for the requested asset is already in progress.
 
-    public init(
-        username: String,
-        password: String
-    ) {
-        self.username = username
-        self.password = password
-    }
+    case downloadAlreadyInProgress
 
 }

@@ -18,34 +18,27 @@
 
 import Foundation
 
-// FIXME: [WPB-16272] Remove this duplicate when https://wearezeta.atlassian.net/browse/WPB-16272 is done.
+public enum MessagesUpdate: Sendable {
+    case inserted(MessageModel)
+}
 
-/// A token used to make authenticated requests to
-/// the backend.
+package protocol MonitorMessagesUseCaseProtocol {
+    var messagesUpdatesStream: AsyncStream<MessagesUpdate> { get }
+}
 
-public struct AccessToken: Hashable, Sendable {
+public protocol MonitorMessagesRepositoryProtocol {
+    var messagesUpdatesStream: AsyncStream<MessagesUpdate> { get }
+}
 
-    /// The user id of whom the token belongs.
+package struct MonitorMessagesUseCase: MonitorMessagesUseCaseProtocol {
 
-    public let userID: UUID
-
-    /// The authentication token.
-
-    public let token: String
-
-    /// The type of token.
-
-    public let type: String
-
-    /// The point in time the token expires.
-
-    public let expirationDate: Date
-
-    public init(userID: UUID, token: String, type: String, expirationDate: Date) {
-        self.userID = userID
-        self.token = token
-        self.type = type
-        self.expirationDate = expirationDate
+    package var messagesUpdatesStream: AsyncStream<MessagesUpdate> {
+        repo.messagesUpdatesStream
     }
 
+    private let repo: any MonitorMessagesRepositoryProtocol
+
+    package init(repo: any MonitorMessagesRepositoryProtocol) {
+        self.repo = repo
+    }
 }

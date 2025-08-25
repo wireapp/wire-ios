@@ -30,6 +30,7 @@ package typealias MessagesSnapshot = NSDiffableDataSourceSnapshot<MessagesSectio
 package protocol ConversationMessagesDataSourceProtocol: Sendable {
     func updatesStream() async -> AsyncStream<MessagesUpdate>
     func loadInitialMessages() async
+    func reset() async
 }
 
 /// Actor to synchronise access to all that needed to conversation screen
@@ -37,6 +38,7 @@ package protocol ConversationMessagesDataSourceProtocol: Sendable {
 package actor ConversationMessagesDataSource: @preconcurrency ConversationMessagesDataSourceProtocol {
 
     // AsyncStream because Combine's AnyPublisher is not Sendable
+    // As it's a stream, has to be one subscriber only
     private var updatesStreamContinuation: AsyncStream<MessagesUpdate>.Continuation?
     package func updatesStream() async -> AsyncStream<MessagesUpdate> {
         let (stream, continuation) = AsyncStream.makeStream(of: MessagesUpdate.self)
@@ -45,16 +47,23 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     }
 
     private let loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol
+    private let monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
 
     // here on later stages will be injected uses cases and
     // provider to ask for publishers needed for View Models
-    package init(loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol) {
+    package init(
+        loadMessagesUseCase: any LoadConversationMessagesUseCaseProtocol,
+        monitorMessagesUseCase: any MonitorMessagesUseCaseProtocol
+    ) {
         self.loadMessagesUseCase = loadMessagesUseCase
+        self.monitorMessagesUseCase = monitorMessagesUseCase
     }
 
     // store cached message view models
     private var messages: [MessageType] = []
     private var snapshot = MessagesSnapshot()
+
+    private var observeTask: Task<Void, Never>?
 
     // performs search
     func search(queries: [String]) {}
@@ -64,17 +73,30 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
     func invalidateContent() {}
 
     package func loadInitialMessages() async {
-        #if DEBUG
-            simulateAddingMessage()
-            Task {
-                await updatesTimerLoop()
-            }
-        #endif
         let messages = await loadMessagesUseCase.loadMessages(offset: 0)
 
         snapshot.appendSections([.main])
-        snapshot.appendItems(messages.toUIModel())
+        snapshot.appendItems(messages.reversed().toUIModel())
         updatesStreamContinuation?.yield(.initiallyLoaded(snapshot))
+
+        subscribeToNotifications()
+    }
+
+    private func observeChanges() async {
+        for await event in monitorMessagesUseCase.messagesUpdatesStream {
+            switch event {
+            case let .inserted(model):
+                let uiModel = model.toUIModel()
+                snapshot.appendItems([uiModel])
+                updatesStreamContinuation?.yield(.messageAdded(snapshot))
+            }
+        }
+    }
+
+    package func reset() async {
+        // Need to be called to clean up subscription and avoid memory leak
+        observeTask?.cancel()
+        observeTask = nil
     }
 
     // load message near some other provided message
@@ -108,59 +130,12 @@ package actor ConversationMessagesDataSource: @preconcurrency ConversationMessag
 
     // here will be subscribed to any messages updates notifications
     // and start processing them
-    private func subscribeToNotifications() {}
-
-    #if DEBUG
-        // Temp Dev code
-
-        private func simulateAddingMessage() {
-            Task {
-                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                let message: MessageType =
-                    .text(TextMessageViewModel(
-                        content: AttributedString(stringLiteral: "New message added"),
-                        senderViewModel: Bool.random() ?
-                            SenderViewModel(state: .exists("Sender")) : SenderViewModel(state: .empty)
-                    ))
-                messages.append(message)
-                snapshot.appendItems([message])
-                updatesStreamContinuation?.yield(.messageAdded(snapshot))
-            }
+    private func subscribeToNotifications() {
+        observeTask = Task { [weak self] in
+            guard let self else { return }
+            await observeChanges()
         }
-
-        private var isRunning = true
-        private func updatesTimerLoop() async {
-            Task {
-                try? await Task.sleep(nanoseconds: 10_000_000_000)
-                isRunning = false
-            }
-
-            while isRunning {
-                // Do your actor-safe update
-                performRandomUpdate()
-
-                // Sleep for 2 seconds (2_000_000_000 nanoseconds)
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-            }
-        }
-
-        private func performRandomUpdate() {
-            guard let message = messages.randomElement(), case let .text(randomVM) = message else {
-                return
-            }
-            DispatchQueue.main.async {
-                let base = "Updated line. "
-                let repeatCount = Int.random(in: 1 ... 6)
-                randomVM.content = AttributedString(stringLiteral: String(repeating: base, count: repeatCount))
-                let updateSenderAttributed = AttributedString(
-                    stringLiteral: String(repeating: "Updated Sender", count: repeatCount)
-                )
-                randomVM.senderViewModel.state = Bool.random() ? SenderViewModel.State
-                    .exists(updateSenderAttributed) : SenderViewModel.State.empty
-            }
-        }
-
-    #endif
+    }
 
 }
 
@@ -174,8 +149,8 @@ extension MessageModel {
     func toUIModel() -> MessageType {
         switch kind {
         case let .text(textModel):
-            let senderState: SenderViewModel.State = if Bool.random() {
-                .exists(AttributedString(stringLiteral: sender?.name ?? ""))
+            let senderState: SenderViewModel.State = if let name = sender?.name {
+                .exists(AttributedString(stringLiteral: name))
             } else {
                 .empty
             }

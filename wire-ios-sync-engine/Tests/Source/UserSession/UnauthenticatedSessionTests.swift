@@ -90,7 +90,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     var willAcceptUpdatedCredentials = false
     var isAllowedToCreatingNewAccounts = true
 
-    func session(session: UnauthenticatedSession, createdAccount account: Account) {
+    func session(session: UnauthenticatedSession, createdAccount account: Account, newEnvironment: NewEnvironment?) {
         createdAccounts.append(account)
     }
 

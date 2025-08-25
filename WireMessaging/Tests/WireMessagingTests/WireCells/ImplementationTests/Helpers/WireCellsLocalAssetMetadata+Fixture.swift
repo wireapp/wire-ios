@@ -17,18 +17,24 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
-public struct BackendInfo: Equatable, Hashable, Sendable {
-
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
-
-    public init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+extension WireCellsLocalAssetMetadata {
+    static func fixture(
+        nodeID: UUID = UUID(),
+        eTag: String = "eTag",
+        path: String = "path",
+        contentType: String? = "contentType",
+        size: UInt64? = 100,
+        isDownloaded: Bool = false
+    ) -> WireCellsLocalAssetMetadata {
+        WireCellsLocalAssetMetadata(
+            nodeID: nodeID,
+            eTag: eTag,
+            path: path,
+            contentType: contentType,
+            size: size,
+            isDownloaded: isDownloaded
+        )
     }
-
 }

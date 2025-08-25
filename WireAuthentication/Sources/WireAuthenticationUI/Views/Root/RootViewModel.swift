@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
@@ -53,12 +54,12 @@ package final class RootViewModel: ObservableObject, Router {
     package init(
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo,
+        environment: BackendEnvironment2,
         isMultibackendEnabled: Bool,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
-        self.modalDestination = .authFlow(backendInfo: backendInfo)
+        self.modalDestination = .authFlow(environment: environment)
         self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
