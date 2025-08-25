@@ -187,7 +187,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        modalDestination = .accountTypeSelection
+        router.navigate(
+            to: LoginViaEmailDestination.createPersonalAccount
+        )
     }
 
     func handleTeamAccountCreation() {
