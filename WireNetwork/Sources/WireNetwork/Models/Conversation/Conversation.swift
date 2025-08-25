@@ -105,7 +105,7 @@ public struct Conversation: Equatable, Sendable {
         case disabled
     }
     
-    public var cellsState: CellsState
+    public var cellsState: CellsState?
 
     enum CodingKeys: String, CodingKey {
 
@@ -130,6 +130,7 @@ public struct Conversation: Equatable, Sendable {
         case lastEventTime = "last_event_time"
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
+        case cellsState = "cells_state"
 
     }
 
@@ -155,7 +156,7 @@ public struct Conversation: Equatable, Sendable {
         lastEventTime: Date? = nil,
         groupType: ConversationGroupType? = nil,
         addPermission: ChannelPermission? = nil,
-        cellsState: CellsState = .disabled
+        cellsState: CellsState? = nil
     ) {
         self.id = id
         self.qualifiedID = qualifiedID

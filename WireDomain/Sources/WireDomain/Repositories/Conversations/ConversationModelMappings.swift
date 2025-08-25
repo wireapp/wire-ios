@@ -178,7 +178,7 @@ extension WireNetwork.Conversation {
             lastEventTime: lastEventTime,
             groupType: groupType?.toDomainModel(),
             addPermission: addPermission?.toDomainModel(),
-            cellsState: cellsState.toDomainModel()
+            cellsState: cellsState?.toDomainModel()
         )
     }
 }

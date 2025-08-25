@@ -214,6 +214,7 @@ extension Payload {
             case .v8, .v9, .v10, .v11:
                 try container.encodeIfPresent(groupType, forKey: .groupType)
                 try container.encodeIfPresent(addPermission, forKey: .addPermission)
+                try container.encodeIfPresent(cellsState, forKey: .cellsState)
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 break
             }

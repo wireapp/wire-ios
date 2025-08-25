@@ -295,6 +295,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case type
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
+        case cellsState = "cells_state"
     }
 
     var access: Set<ConversationAccessModeV0>?
@@ -344,7 +345,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             lastEventTime: lastEventTime?.date,
             groupType: groupType?.toAPIModel(),
             addPermission: addPermission?.toAPIModel(),
-            cellsState: cellsState?.toAPIModel() ?? .disabled
+            cellsState: cellsState?.toAPIModel()
         )
     }
 }

@@ -51,7 +51,8 @@ struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
             lastEvent: value.conversation.lastEvent,
             lastEventTime: value.conversation.lastEventTime,
             groupType: value.conversation.groupType.map { StorableConversationGroupType($0) },
-            addPermission: value.conversation.addPermission.map { StorableChannelPermission($0) }
+            addPermission: value.conversation.addPermission.map { StorableChannelPermission($0) },
+            cellsState: value.conversation.cellsState.map { StorableCellsState($0) }
         )
     }
 
@@ -81,7 +82,8 @@ struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
                 lastEvent: conversation.lastEvent,
                 lastEventTime: conversation.lastEventTime,
                 groupType: conversation.groupType?.toAPIModel(),
-                addPermission: conversation.addPermission?.toAPIModel()
+                addPermission: conversation.addPermission?.toAPIModel(),
+                cellsState: conversation.cellsState?.toAPIModel()
             )
         )
     }
@@ -111,6 +113,7 @@ private struct StorableConversation: Equatable, Codable, Sendable {
     let lastEventTime: Date?
     let groupType: StorableConversationGroupType?
     let addPermission: StorableChannelPermission?
+    let cellsState: StorableCellsState?
 
 }
 
@@ -172,6 +175,30 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
         }
     }
 
+}
+
+private enum StorableCellsState: String, Codable, Sendable {
+    
+    case enabled
+    case disabled
+    
+    init(_ value: WireNetwork.Conversation.CellsState) {
+        switch value {
+        case .enabled:
+            self = .enabled
+        case .disabled:
+            self = .disabled
+        }
+    }
+    
+    func toAPIModel() -> WireNetwork.Conversation.CellsState {
+        switch self {
+        case .enabled:
+                .enabled
+        case .disabled:
+                .disabled
+        }
+    }
 }
 
 private struct StorableConversationMembers: Equatable, Codable, Sendable {

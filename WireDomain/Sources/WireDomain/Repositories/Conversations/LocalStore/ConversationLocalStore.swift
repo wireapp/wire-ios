@@ -1075,6 +1075,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             localConversation.privateChannelPermission = conversation
                 .addPermission.map { PrivateChannelPermission($0) } ?? .unset
+            
+            localConversation.cellsState = conversation.cellsState == .enabled ? .enabled : .disabled
 
             commonUpdate(
                 from: conversation,

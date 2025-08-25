@@ -81,6 +81,6 @@ public struct Conversation: Equatable {
     let lastEventTime: Date?
     let groupType: GroupType?
     let addPermission: ChannelPermission?
-    let cellsState: CellsState
+    let cellsState: CellsState?
 
 }
