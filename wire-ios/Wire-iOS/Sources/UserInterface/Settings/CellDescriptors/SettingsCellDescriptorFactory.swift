@@ -101,7 +101,7 @@ struct SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.AddAccount.title, // MARK: [WPB-19696] Re-enable AddAccountOrTeam
+            title: L10n.Localizable.Self.Settings.AddAccount.title, // FIXME: [WPB-19696] Re-enable AddAccountOrTeam
             isDestructive: false,
             presentationStyle: .modal,
             identifier: nil,
