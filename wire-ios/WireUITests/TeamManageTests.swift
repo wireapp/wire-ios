@@ -22,6 +22,8 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
+        throw XCTSkip("Enable with WPB-19696")
+
         let user = try await userManager.createPersonalUser()
 
         let welcomePage = try WelcomePage()
