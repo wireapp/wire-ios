@@ -99,6 +99,13 @@ public struct Conversation: Equatable, Sendable {
     public var groupType: ConversationGroupType?
 
     public var addPermission: ChannelPermission?
+    
+    public enum CellsState: Equatable, Sendable {
+        case enabled
+        case disabled
+    }
+    
+    public var cellsState: CellsState
 
     enum CodingKeys: String, CodingKey {
 
@@ -147,7 +154,8 @@ public struct Conversation: Equatable, Sendable {
         lastEvent: String? = nil,
         lastEventTime: Date? = nil,
         groupType: ConversationGroupType? = nil,
-        addPermission: ChannelPermission? = nil
+        addPermission: ChannelPermission? = nil,
+        cellsState: CellsState = .disabled
     ) {
         self.id = id
         self.qualifiedID = qualifiedID
@@ -170,6 +178,7 @@ public struct Conversation: Equatable, Sendable {
         self.lastEventTime = lastEventTime
         self.groupType = groupType
         self.addPermission = addPermission
+        self.cellsState = cellsState
     }
 
 }

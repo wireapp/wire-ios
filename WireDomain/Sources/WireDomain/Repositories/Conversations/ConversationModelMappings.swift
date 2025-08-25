@@ -177,7 +177,8 @@ extension WireNetwork.Conversation {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
             groupType: groupType?.toDomainModel(),
-            addPermission: addPermission?.toDomainModel()
+            addPermission: addPermission?.toDomainModel(),
+            cellsState: cellsState.toDomainModel()
         )
     }
 }
@@ -238,4 +239,15 @@ extension WireNetwork.ChannelPermission {
         }
     }
 
+}
+
+extension WireNetwork.Conversation.CellsState {
+    func toDomainModel() -> WireDomain.Conversation.CellsState {
+        switch self {
+        case .enabled:
+            .enabled
+        case .disabled:
+            .disabled
+        }
+    }
 }
