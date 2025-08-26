@@ -180,6 +180,10 @@ final class DeveloperToolsViewModel: ObservableObject {
                             title: "Client ID",
                             value: selfClient?.remoteIdentifier?.uppercased() ?? "None"
                         )),
+                        .text(TextItem(
+                            title: "Team ID",
+                            value: selfUser.teamIdentifier?.uuidString ?? "None"
+                        )),
                         .text(
                             TextItem(
                                 title: "Supported protocols",
