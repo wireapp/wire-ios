@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
@@ -112,9 +114,13 @@ final class FilesViewTests: XCTestCase {
 private extension FilesItemViewModel {
 
     static func make(item: FilesViewItem) -> FilesItemViewModel {
-        FilesItemViewModel(
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        localAssetRepository.observeAssetNodeID_MockValue = CurrentValueSubject<WireCellsLocalAsset?, Never>(nil)
+            .eraseToAnyPublisher()
+
+        return FilesItemViewModel(
             item: item,
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetRepository: localAssetRepository,
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

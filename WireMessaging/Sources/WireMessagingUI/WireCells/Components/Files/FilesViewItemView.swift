@@ -55,8 +55,6 @@ struct FilesViewItemView: View {
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 5) // Less padding to accommodate progress bar
 
                 Spacer()
 
@@ -78,8 +76,10 @@ struct FilesViewItemView: View {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
-                .padding(.all, 8)
+                .padding(.horizontal, 8)
             }
+            .padding(.top, 8)
+            .padding(.bottom, 5) // Less padding to accommodate progress bar
 
             ProgressView(value: viewModel.progress, total: 100)
                 .opacity(viewModel.progress == nil ? 0 : 1)
