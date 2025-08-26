@@ -56,15 +56,6 @@ final class FilesItemViewModel: ObservableObject {
         }.store(in: &cancellables)
     }
 
-    var isDownloaded: Bool {
-        switch asset?.downloadState {
-        case .downloaded:
-            return true
-        default:
-            return false
-        }
-    }
-
     var isDownloadOptionAvailable: Bool {
         switch asset?.downloadState {
         case .downloaded:
