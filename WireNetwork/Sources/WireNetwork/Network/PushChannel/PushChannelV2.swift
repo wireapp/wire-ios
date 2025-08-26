@@ -95,12 +95,16 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     switch result {
                     case let .event(event):
+                        WireLogger.pushChannel.debug(
+                            "push channel received events: \(event.events.map(\.name))",
+                            attributes: .pushChannelV2
+                        )
                         await batchBuffer.append(event)
                         if await batchBuffer.count() >= batchSize {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
-                            WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
-                            tearDownBatchTask()
+                            WireLogger.pushChannel
+                                .debug("reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
                         }
 
                     case .missedEvents:
@@ -111,8 +115,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         let drained = await batchBuffer.drain()
                         if !drained.isEmpty {
                             continuation.yield(.events(drained))
-                            WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
-                            tearDownBatchTask()
+                            WireLogger.pushChannel.debug("syncMarker reached batch of size '\(drained.count)' yield")
                         }
 
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
@@ -139,6 +142,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
         // if the client doesn’t send a ping message every so often.
         setUpKeepAliveTask()
 
+        // Every `batchInterval`, this task returns the batchBuffer content
+        // even if it did not collect the batchSize
         setUpBatchTask()
 
         return stream
@@ -177,7 +182,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     try await Task.sleep(for: .seconds(batchInterval))
                     if !(await batchBuffer.isEmpty()) {
                         let drained = await batchBuffer.drain()
-                        WireLogger.pushChannel.debug("yielding batch '\(drained.count)'", attributes: .pushChannelV2)
+                        WireLogger.pushChannel.debug(
+                            "timeout yielding batch '\(drained.count)'",
+                            attributes: .pushChannelV2
+                        )
                         continuation.yield(.events(drained))
                     }
                 }
