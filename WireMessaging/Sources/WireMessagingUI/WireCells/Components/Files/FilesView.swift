@@ -23,7 +23,7 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 import WireReusableUIComponents
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells
+typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: View {
@@ -36,130 +36,139 @@ package struct FilesView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Group {
-                    ForEach(Array(viewModel.items.enumerated()), id: \.offset) { index, _ in
-                        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
-                            .onAppear { Task { await viewModel.loadMoreIfNeeded(index: index) } }
-                    }
-
-                    if viewModel.hasMore {
-                        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
-                    }
-
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .received:
+                    filesList
+                        .listStyle(.plain)
+                        .refreshable { reloadTask() }
+                case .noData:
+                    InfoView(
+                        title: Strings.Files.NoData.title,
+                        message: Strings.Files.NoData.message
+                    )
+                case .pending:
+                    InfoView(
+                        title: Strings.Files.PendingCells.title,
+                        message: Strings.Files.PendingCells.message
+                    )
                 }
-                .listRowInsets(EdgeInsets())
-                .listRowSeparator(.hidden)
             }
-            .listStyle(.plain)
-            .refreshable { Task { await viewModel.reload() } }
-            .onAppear { Task { await viewModel.reload() } }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent }
+            .onAppear { reloadTask() }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },
                 message: { Text($0.message) },
-                actions: { _ in
-                    Button(L10n.Localizable.General.confirm, action: {})
-                }
+                actions: { _ in confirmButton }
             )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(Strings.Files.navigationTitle)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(SemanticColors.Label.textDefault.color)
-                }
+        }
+    }
+}
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(.close)
-                            .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    }
-                    .accessibilityLabel(Accessibility.Files.close)
-                    .accessibilityIdentifier("close")
-                }
+// MARK: - List
+
+private extension FilesView {
+
+    @ViewBuilder var filesList: some View {
+        List {
+            Group {
+                itemsSection
+                if viewModel.hasMore { loadMoreRow }
             }
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
         }
     }
 
-    private func loadMore() {
-        let lastRowIndex = viewModel.items.count - 1
+    @ViewBuilder var itemsSection: some View {
+        ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, _ in
+            itemRow(index: index)
+                .onAppear { loadMoreIfNeededTask(index: index) }
+        }
+    }
+}
+
+// MARK: - Rows
+
+private extension FilesView {
+
+    @ViewBuilder
+    func itemRow(index: Int) -> some View {
+        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
+    }
+
+    var loadMoreRow: some View {
+        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) { titleView }
+        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+    }
+
+    var titleView: some View {
+        Text(Strings.Files.navigationTitle)
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(SemanticColors.Label.textDefault.color)
+    }
+
+    var closeButton: some View {
+        Button(action: { dismiss() }) {
+            Image(.close)
+                .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+        }
+        .accessibilityLabel(Accessibility.Files.close)
+        .accessibilityIdentifier("close")
+    }
+}
+
+// MARK: - Buttons
+
+private extension FilesView {
+
+    var confirmButton: some View {
+        Button(L10n.Localizable.General.confirm, action: {})
+    }
+}
+
+// MARK: - Tasks
+
+private extension FilesView {
+
+    func reloadTask() {
+        Task { await viewModel.reload() }
+    }
+
+    func loadMoreIfNeededTask(index: Int) {
+        Task { await viewModel.loadMoreIfNeeded(index: index) }
+    }
+
+    func loadMore() {
+        let lastRowIndex = viewModel.state.items.count - 1
         Task { await viewModel.loadMoreIfNeeded(index: lastRowIndex) }
     }
 }
 
-struct FilesViewItemView: View {
-
-    @StateObject private var viewModel: FilesItemViewModel
-    @ScaledMetric private var imageHeight: CGFloat = 28
-
-    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
-    }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-
-                Image(viewModel.icon.resource)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: imageHeight)
-                    .padding(.horizontal, 4)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                    Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.vertical, 8)
-
-                Spacer()
-
-                Menu {
-                    if !viewModel.isDownloaded {
-                        Button(action: download) {
-                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
-                        }
-                    }
-
-                    Button(action: rename) {
-                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                    }
-
-                    Button(role: .destructive, action: delete) {
-                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.all, 8)
-            }
-            Divider()
-        }
-    }
-
-    private func download() {
-        // FIXME: [WPB-19436] Implement
-    }
-
-    private func rename() {
-        // FIXME: [WPB-19393] Implement
-    }
-
-    private func delete() {
-        // FIXME: [WPB-19392] Implement
-    }
-
+#Preview {
+    FilesView(
+        viewModel: FilesViewModel(
+            fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                configuration: .conversationFileView(root: .path("root")),
+                repository: makeNodesRepository()
+            )
+        )
+    )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
 
 private struct LoadMoreView: View {
@@ -187,16 +196,27 @@ private struct LoadMoreView: View {
 
 }
 
-#Preview {
-    FilesView(
-        viewModel: FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root")),
-                repository: makeNodesRepository()
-            )
-        )
-    )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+private struct InfoView: View {
+    var title: String
+    var message: String
+
+    var body: some View {
+        VStack(spacing: 25) {
+            Text(title)
+                .font(.title3.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.primary)
+
+            Text(message)
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(20)
+        .frame(maxWidth: 420)
+        .padding()
+    }
 }
 
 private func makeNodesRepository() -> MockWireCellsNodesRepositoryProtocol {

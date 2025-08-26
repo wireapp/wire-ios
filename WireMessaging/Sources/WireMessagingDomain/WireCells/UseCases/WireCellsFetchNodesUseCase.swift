@@ -16,8 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CellsSDK
+
 /// Fetches `WireCellNodes`s for the given parameters.
 package struct WireCellsFetchNodesUseCase: Sendable {
+
+    package enum Failure: Error {
+        case wireCellsError
+    }
 
     package struct Configuration: Sendable {
 
@@ -87,9 +93,15 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             limit: configuration.pageSize,
             offset: offset
         )
-        let (nodes, nextOffset) = try await repository.getNodes(request)
 
-        return (nodes, nextOffset.map { WireCellsPageToken(offset: $0) })
+        do {
+            let (nodes, nextOffset) = try await repository.getNodes(request)
+            return (nodes, nextOffset.map { WireCellsPageToken(offset: $0) })
+        } catch let error as CellsSDK.ErrorResponse {
+            throw Failure.wireCellsError
+        } catch {
+            throw error
+        }
     }
 
 }
