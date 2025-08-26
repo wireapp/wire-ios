@@ -103,7 +103,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         if await batchBuffer.count() >= batchSize {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
-                            WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
+                            WireLogger.pushChannel
+                                .debug("reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
                         }
 
                     case .missedEvents:
@@ -179,7 +180,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     try await Task.sleep(for: .seconds(batchInterval))
                     if !(await batchBuffer.isEmpty()) {
                         let drained = await batchBuffer.drain()
-                        WireLogger.pushChannel.debug("timeout yielding batch '\(drained.count)'", attributes: .pushChannelV2)
+                        WireLogger.pushChannel.debug(
+                            "timeout yielding batch '\(drained.count)'",
+                            attributes: .pushChannelV2
+                        )
                         continuation.yield(.events(drained))
                     }
                 }
