@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Otsing";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Failid";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";

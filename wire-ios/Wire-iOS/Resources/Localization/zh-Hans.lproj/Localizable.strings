@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "搜索";
 "conversation.action.conversationDetails" = "对话详情";
+"conversation.action.files" = "文件";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "图像";
