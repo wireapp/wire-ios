@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireSyncEngine
 import WireUtilities
 
 final class ReplyRoundCornersView: UIControl {
@@ -46,7 +47,7 @@ final class ReplyRoundCornersView: UIControl {
     // MARK: Setup Subviews and Constraints
 
     private func setupSubviews() {
-        layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+        layer.cornerRadius = if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             8

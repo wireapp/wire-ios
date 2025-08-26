@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -74,7 +75,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -120,7 +121,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             widthConstraint!,
             heightConstraint!
         ])
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -186,6 +187,10 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
@@ -210,7 +215,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
