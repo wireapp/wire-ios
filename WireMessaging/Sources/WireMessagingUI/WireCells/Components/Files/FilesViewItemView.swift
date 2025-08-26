@@ -35,63 +35,57 @@ struct FilesViewItemView: View {
     }
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
 
-                    Image(viewModel.icon.resource)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 56, height: imageHeight)
-                        .padding(.horizontal, 4)
+                Image(viewModel.icon.resource)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 56, height: imageHeight)
+                    .padding(.horizontal, 4)
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(viewModel.fileName)
-                            .wireTextStyle(.body2)
-                            .lineLimit(1)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(viewModel.fileName)
+                        .wireTextStyle(.body2)
+                        .lineLimit(1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                        Text(viewModel.subtitle ?? "")
-                            .wireTextStyle(.subline1)
-                            .lineLimit(1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    }
-                    .padding(.vertical, 8)
-
-                    Spacer()
-
-                    Menu {
-                        if !viewModel.isDownloadOptionAvailable {
-                            Button(action: download) {
-                                Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
-                            }.disabled(viewModel.isDownloadOptionDisabled)
-                        }
-
-                        Button(action: rename) {
-                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                        }
-
-                        Button(role: .destructive, action: delete) {
-                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    }
-                    .padding(.all, 8)
+                    Text(viewModel.subtitle ?? "")
+                        .wireTextStyle(.subline1)
+                        .lineLimit(1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
+                .padding(.top, 8)
+                .padding(.bottom, 5) // Less padding to accommodate progress bar
 
-                Divider()
-            }
-
-            VStack {
                 Spacer()
 
-                if let progress = viewModel.progress {
-                    ProgressView(value: progress, total: 100)
-                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                Menu {
+                    if !viewModel.isDownloadOptionAvailable {
+                        Button(action: download) {
+                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
+                        }.disabled(viewModel.isDownloadOptionDisabled)
+                    }
+
+                    Button(action: rename) {
+                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive, action: delete) {
+                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
+                .padding(.all, 8)
             }
+
+            ProgressView(value: viewModel.progress, total: 100)
+                .opacity(viewModel.progress == nil ? 0 : 1)
+                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+
+            Divider()
         }
     }
 
