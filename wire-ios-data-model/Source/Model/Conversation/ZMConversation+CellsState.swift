@@ -24,11 +24,11 @@ import Foundation
 @objc
 public enum CellsState: Int16 {
 
-    case ready = 0
+    case disabled = 0
 
     case pending = 1
 
-    case disabled = 2
+    case ready = 2
 
 }
 
