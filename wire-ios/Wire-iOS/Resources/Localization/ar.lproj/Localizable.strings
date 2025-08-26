@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "ابحث";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "ملفّات";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
