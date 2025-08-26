@@ -59,38 +59,38 @@ final class FilesItemViewModel: ObservableObject {
     var isDownloadOptionAvailable: Bool {
         switch asset?.downloadState {
         case .downloaded:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var isDownloadOptionDisabled: Bool {
         switch asset?.downloadState {
         case .downloading:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var progress: Double? {
         switch asset?.downloadState {
-        case .downloading(let progress):
-            return progress
+        case let .downloading(progress):
+            progress
         case .failed:
-            return 100 // We show a full red progress bar on failure
+            100 // We show a full red progress bar on failure
         default:
-            return nil
+            nil
         }
     }
 
     var showErrorState: Bool {
         switch asset?.downloadState {
         case .failed:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

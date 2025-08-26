@@ -100,8 +100,8 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
 
-        for progress in 0...100 {
-            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail && progress > 10 {
+        for progress in 0 ... 100 {
+            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail, progress > 10 {
                 .failed(error: URLError(.notConnectedToInternet))
             } else if progress < 100 {
                 .downloading(progress: Double(progress))
@@ -121,7 +121,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
             publishers[nodeID]?.send(update)
 
-            if shouldFail && progress > 10 {
+            if shouldFail, progress > 10 {
                 break
             }
         }

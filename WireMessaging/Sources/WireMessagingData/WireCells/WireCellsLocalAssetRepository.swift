@@ -132,7 +132,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     }
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
-    
+
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
         updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
     }

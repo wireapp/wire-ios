@@ -115,13 +115,9 @@ public extension WireCellsFactory {
 // FIXME: Implement real
 final class FakeFileCache: FileCache {
 
-    func saveFile(at url: URL, key: String) async throws {
+    func saveFile(at url: URL, key: String) async throws {}
 
-    }
-    
-    func deleteFile(forKey key: String) async throws {
-
-    }
+    func deleteFile(forKey key: String) async throws {}
 
 }
 
@@ -129,11 +125,9 @@ final class FakeFileCache: FileCache {
 final class FakeWireCellsLocalAssetMetadataStore: WireCellsLocalAssetMetadataStore {
 
     func assetMetadata(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAssetMetadata? {
-        return nil
+        nil
     }
-    
-    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {
 
-    }
+    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {}
 
 }
