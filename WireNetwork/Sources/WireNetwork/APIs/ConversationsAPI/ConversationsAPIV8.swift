@@ -351,13 +351,16 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
 }
 
 enum CellsStateV8: String, Decodable, ToAPIModelConvertible {
-    case enabled
+    case ready
+    case pending
     case disabled
 
     func toAPIModel() -> Conversation.CellsState {
         switch self {
-        case .enabled:
-            .enabled
+        case .ready:
+            .ready
+        case .pending:
+            .pending
         case .disabled:
             .disabled
         }

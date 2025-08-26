@@ -244,8 +244,10 @@ extension WireNetwork.ChannelPermission {
 extension WireNetwork.Conversation.CellsState {
     func toDomainModel() -> WireDomain.Conversation.CellsState {
         switch self {
-        case .enabled:
-            .enabled
+        case .ready:
+            .ready
+        case .pending:
+            .pending
         case .disabled:
             .disabled
         }

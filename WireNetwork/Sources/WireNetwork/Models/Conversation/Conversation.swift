@@ -101,7 +101,8 @@ public struct Conversation: Equatable, Sendable {
     public var addPermission: ChannelPermission?
 
     public enum CellsState: Equatable, Sendable {
-        case enabled
+        case ready
+        case pending
         case disabled
     }
 

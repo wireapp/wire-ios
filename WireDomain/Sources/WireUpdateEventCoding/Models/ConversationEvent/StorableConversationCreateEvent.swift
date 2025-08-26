@@ -179,13 +179,16 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
 
 private enum StorableCellsState: String, Codable, Sendable {
 
-    case enabled
+    case ready
+    case pending
     case disabled
 
     init(_ value: WireNetwork.Conversation.CellsState) {
         switch value {
-        case .enabled:
-            self = .enabled
+        case .ready:
+            self = .ready
+        case .pending:
+            self = .pending
         case .disabled:
             self = .disabled
         }
@@ -193,8 +196,10 @@ private enum StorableCellsState: String, Codable, Sendable {
 
     func toAPIModel() -> WireNetwork.Conversation.CellsState {
         switch self {
-        case .enabled:
-            .enabled
+        case .ready:
+            .ready
+        case .pending:
+            .pending
         case .disabled:
             .disabled
         }

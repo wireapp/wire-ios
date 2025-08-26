@@ -56,7 +56,8 @@ public struct Conversation: Equatable {
     }
 
     public enum CellsState: Equatable, Sendable {
-        case enabled
+        case ready
+        case pending
         case disabled
     }
 

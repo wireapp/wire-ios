@@ -18,12 +18,17 @@
 
 import Foundation
 
+/// An enum representing the three possible states of Wire cells, whether `ready`, `pending` or `disabled`.
+/// Server side, this is value returned by Pydio backend forwarded to Wire backend.
+
 @objc
 public enum CellsState: Int16 {
 
-    case enabled = 0
+    case ready = 0
 
-    case disabled = 1
+    case pending = 1
+
+    case disabled = 2
 
 }
 
@@ -32,4 +37,15 @@ public extension ZMConversation {
     /// The wire cells state (whether enabled or disabled)
 
     @NSManaged var cellsState: CellsState
+
+    /// Mapping `pending` state to enabled because the feature is considered ready to use on client side.
+
+    var isEnabled: Bool {
+        switch cellsState {
+        case .ready, .pending:
+            true
+        case .disabled:
+            false
+        }
+    }
 }

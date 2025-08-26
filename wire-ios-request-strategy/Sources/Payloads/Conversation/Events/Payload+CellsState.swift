@@ -21,7 +21,8 @@ import Foundation
 extension Payload {
 
     enum CellsState: String, Codable {
-        case enabled
+        case ready
+        case pending
         case disabled
     }
 }
