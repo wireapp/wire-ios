@@ -105,7 +105,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     private(set) var currentSections: [Section] = []
 
-    private var isChatBubbleSimpleEnabled: Bool = false
+    private let isChatBubbleSimpleEnabled: Bool
 
     /// calculate cell sections
     ///

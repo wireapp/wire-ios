@@ -112,7 +112,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
-    private var isChatBubbleSimpleEnabled: Bool = false
+    private let isChatBubbleSimpleEnabled: Bool
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -144,6 +144,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             storage: userDefaults
         )
 
+        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
+        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
+        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
+
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()
@@ -155,10 +159,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if let quotedMessage = message.textMessageData?.quoteMessage {
             startObservingChanges(for: quotedMessage)
         }
-
-        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
-        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
-        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
     }
 
     private var collapseOwnMessagesEnabled: Bool {
