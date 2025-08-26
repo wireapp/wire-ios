@@ -142,6 +142,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
         // if the client doesn’t send a ping message every so often.
         setUpKeepAliveTask()
 
+        // Every `batchInterval`, this task returns the batchBuffer content
+        // even if it did not collect the batchSize
         setUpBatchTask()
 
         return stream
