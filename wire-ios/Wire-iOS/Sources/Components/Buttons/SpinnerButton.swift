@@ -36,7 +36,7 @@ final class SpinnerButton: LegacyButton {
         // the spinner covers the text with alpha BG
         spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
             .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
-        spinner.color = UIColor.AlarmButton.alarmRed
+        spinner.color = .accent()
         spinner.iconSize = CGFloat.SpinnerButton.iconSize
 
         addSubview(spinner)
@@ -94,8 +94,8 @@ final class SpinnerButton: LegacyButton {
 
     /// custom full style with accent color for disabled state.
     override func updateFullStyle() {
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .disabled)
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .normal)
+        setBackgroundImageColor(.accent(), for: .disabled)
+        setBackgroundImageColor(.accent(), for: .normal)
 
         setTitleColor(.white, for: .normal)
         setTitleColor(.white, for: .highlighted)
@@ -118,11 +118,11 @@ final class SpinnerButton: LegacyButton {
             case .dark:
                 .white
             case .light:
-                UIColor.AlarmButton.alarmRed
+                .accent()
             }
 
             setTitleColor(color, for: $0)
-            setBorderColor(UIColor.AlarmButton.alarmRed, for: $0)
+            setBorderColor(.accent(), for: $0)
         }
     }
 
