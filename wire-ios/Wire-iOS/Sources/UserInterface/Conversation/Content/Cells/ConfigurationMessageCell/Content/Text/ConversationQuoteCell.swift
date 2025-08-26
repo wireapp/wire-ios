@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireSyncEngine
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
@@ -324,7 +325,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        let insets: UIEdgeInsets = DeveloperFlag.chatBubblesSimple.isOn
+        let insets: UIEdgeInsets = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
             ? .zero
             : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         container.fitIn(view: self, insets: insets)
@@ -352,7 +353,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     let supportsActions = false
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     weak var message: ZMConversationMessage? {
         didSet {
