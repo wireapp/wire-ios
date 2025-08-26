@@ -18,7 +18,9 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 import WireMessagingDomain
+import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -109,4 +111,9 @@ struct FilesViewItemView: View {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
     }
 
+}
+
+#Preview {
+    FilesViewItemView(viewModel: .preview())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

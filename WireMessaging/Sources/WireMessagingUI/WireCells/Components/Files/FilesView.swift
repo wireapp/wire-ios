@@ -116,6 +116,6 @@ private struct LoadMoreView: View {
 }
 
 #Preview {
-    FilesView(viewModel: FilesViewModel.stub())
+    FilesView(viewModel: .preview())
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
