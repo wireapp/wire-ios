@@ -34,7 +34,7 @@ public enum CellsState: Int16 {
 
 public extension ZMConversation {
 
-    /// The wire cells state (whether enabled or disabled)
+    /// The wire cells state (whether ready, pending or disabled)
 
     @NSManaged var cellsState: CellsState
 
