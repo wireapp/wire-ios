@@ -20,7 +20,6 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 import WireMessagingDomain
-import WireMessagingDomainSupport
 import WireReusableUIComponents
 import Combine
 
@@ -117,90 +116,6 @@ private struct LoadMoreView: View {
 }
 
 #Preview {
-    FilesView(
-        viewModel: FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root")),
-                repository: makeNodesRepository()
-            ),
-            localAssetRepository: FakeLocalAssetRepository()
-        )
-    )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-}
-
-private func makeNodesRepository() -> MockWireCellsNodesRepositoryProtocol {
-    let repository = MockWireCellsNodesRepositoryProtocol()
-    repository.getNodes_MockMethod = { request in
-        try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
-
-        if request.offset >= 120 {
-            throw URLError(.notConnectedToInternet)
-        }
-
-        let nodes = (request.offset ..< request.offset + 30).map { index in
-            WireCellsNode(
-                uuid: UUID(),
-                path: "root/foo-\(index).jpg",
-                modified: Date(),
-                mimeType: "image/jpeg",
-                ownerUserName: "Person \(index)",
-            )
-        }
-        let nextOffset = request.offset + 30
-        return (nodes, nextOffset)
-    }
-    return repository
-}
-
-private class FakeLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
-
-    private var failIndex = 0
-    private var assets: [UUID: CurrentValueSubject<WireCellsLocalAsset?, Never>] = [:]
-
-    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
-        assets[nodeID]?.value
-    }
-    
-    func refreshMetadata(nodeID: UUID) async throws {}
-    
-    func downloadAsset(nodeID: UUID) async throws {
-        failIndex += 1
-        // Fail every 3rd download
-        let shouldFail = failIndex % 3 == 0
-
-        for progress in 0...100 {
-            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail && progress > 10 {
-                .failed(error: URLError(.notConnectedToInternet))
-            } else if progress < 100 {
-                .downloading(progress: Double(progress))
-            } else {
-                .downloaded(cacheKey: "cacheKey")
-            }
-
-            try await Task.sleep(nanoseconds: 50_000_000)
-            assets[nodeID]?.send(
-                WireCellsLocalAsset(
-                    nodeID: nodeID,
-                    eTag: "something",
-                    path: "some/path.jpg",
-                    contentType: nil,
-                    size: nil,
-                    downloadState: downloadState
-                )
-            )
-            if shouldFail && progress > 10 {
-                break
-            }
-        }
-    }
-    
-    func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
-        let publisher = assets[nodeID] ?? CurrentValueSubject<WireCellsLocalAsset?, Never>(nil)
-        assets[nodeID] = publisher
-        return publisher.eraseToAnyPublisher()
-    }
-    
-    func cancelDownload(nodeID: UUID) {}
-
+    FilesView(viewModel: FilesViewModel.stub())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
