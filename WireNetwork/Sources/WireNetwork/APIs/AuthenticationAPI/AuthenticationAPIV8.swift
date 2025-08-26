@@ -25,8 +25,7 @@ class AuthenticationAPIV8: AuthenticationAPIV7 {
     }
 
     override func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
-        // no need to have api version prefix
-        let path = "/get-domain-registration"
+        let path = "\(pathPrefix)/get-domain-registration"
         let body = GetDomainRegistrationParametersV8(email: email)
 
         let encodedJSON: Data
