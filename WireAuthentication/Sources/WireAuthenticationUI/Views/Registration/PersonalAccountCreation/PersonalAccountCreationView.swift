@@ -93,7 +93,6 @@ package struct PersonalAccountCreationView: View {
                 dataUsageAgreementView
             }
             continueButton
-            teamAccountCreationView
 
         }
         .padding(.horizontal, 24)
