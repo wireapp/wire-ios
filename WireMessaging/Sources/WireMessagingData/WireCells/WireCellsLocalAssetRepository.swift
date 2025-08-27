@@ -24,7 +24,6 @@ package import WireMessagingDomain
 ///
 /// This repository acts on the `@MainActor` to allow for non async main thread access of assets from the UI.
 
-@MainActor
 package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
 
     enum DownloadState {
@@ -70,6 +69,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been
     /// fetched.
 
+    @MainActor
     package func asset(nodeID: UUID) throws -> WireCellsLocalAsset? {
         guard let metadata = try metadataStore.assetMetadata(nodeID: nodeID) else { return nil }
 
@@ -82,6 +82,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
 
+    @MainActor
     package func refreshMetadata(nodeID: UUID) async throws {
         _ = try await _refreshMetadata(nodeID: nodeID)
     }
@@ -91,6 +92,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
 
+    @MainActor
     package func downloadAsset(nodeID: UUID) async throws {
         switch downloadStates[nodeID] {
         case .downloading:
@@ -133,12 +135,14 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
 
+    @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
         updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
     }
 
     /// Cancels the asset download for a given `nodeID`.
 
+    @MainActor
     package func cancelDownload(nodeID: UUID) {
         switch downloadStates[nodeID] {
         case let .downloading(_, task):
@@ -152,6 +156,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
 
     // MARK: - Private
 
+    @MainActor
     private func _refreshMetadata(
         nodeID: UUID
     ) async throws -> (node: WireCellsNode, metadata: WireCellsLocalAssetMetadata) {
@@ -194,10 +199,12 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
         return (node, metadata)
     }
 
+    @MainActor
     private func notifyObservers(nodeID: UUID) {
         updates.send((nodeID, try? asset(nodeID: nodeID)))
     }
 
+    @MainActor
     private func setDownloadState(nodeID: UUID, state: DownloadState?) {
         downloadStates[nodeID] = state
 

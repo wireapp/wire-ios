@@ -29,7 +29,6 @@ public struct WireCellsFactory {
     private let draftsRepository: DraftsRepository
     private let localAssetRepository: WireCellsLocalAssetRepository
 
-    @MainActor
     public init(serverURL: URL, accessToken: any AccessTokenProvider) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
