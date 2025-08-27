@@ -801,7 +801,7 @@ public final class ZMUserSession: NSObject {
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
-            apiVersion: apiVersion.map { NSNumber(integerLiteral: Int($0.rawValue)) }
+            apiVersion: apiVersion.map { NSNumber(value: $0.rawValue) }
         )
     }
 

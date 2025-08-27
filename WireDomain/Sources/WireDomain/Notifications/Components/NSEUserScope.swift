@@ -245,7 +245,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         return coreDataStack
     }
 
-    // TODO: make extension on cookie storage
     private func isAuthenticated() async throws -> Bool {
         let cookies: [HTTPCookie]
         do {
