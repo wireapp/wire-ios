@@ -19,10 +19,10 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
-import WireTestingPackage
-import XCTest
 import WireMessagingDomain
 import WireMessagingDomainSupport
+import WireTestingPackage
+import XCTest
 
 @testable import WireMessagingUI
 
@@ -116,7 +116,7 @@ final class FilesViewTests: XCTestCase {
                 )
         }
     }
-    
+
     @MainActor
     func testFilesView_LoadingState() async {
         let view = makeFilesView(state: .loading)
@@ -128,7 +128,7 @@ final class FilesViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesView_ReceivedDataState() async {
         let mockItems = (0 ..< 30).map { index in
@@ -140,7 +140,7 @@ final class FilesViewTests: XCTestCase {
                 icon: .image
             )
         }
-        
+
         let view = makeFilesView(state: .received(items: mockItems))
 
         snapshotHelper
@@ -150,7 +150,7 @@ final class FilesViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesView_NoDataState() async {
         let view = makeFilesView(state: .noData)
@@ -162,7 +162,7 @@ final class FilesViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesView_PendingState() async {
         let view = makeFilesView(state: .pending)
@@ -174,7 +174,7 @@ final class FilesViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     private func makeFilesView(
         state: FilesViewModel.State
@@ -183,14 +183,12 @@ final class FilesViewTests: XCTestCase {
             fetchNodesUseCase: fetchNodesUseCase,
             isCellsStatePending: false
         )
-        
+
         filesViewModel.state = state
-        
-        let view = FilesView(viewModel: filesViewModel)
+
+        return FilesView(viewModel: filesViewModel)
             .frame(width: 375, height: 667)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        
-        return view
     }
 }
 

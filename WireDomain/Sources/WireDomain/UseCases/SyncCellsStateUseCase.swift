@@ -30,7 +30,7 @@ public protocol SyncCellsStateUseCaseProtocol {
 public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
     private let repository: any ConversationRepositoryProtocol
     private let context: NSManagedObjectContext
-    
+
     public init(
         repository: any ConversationRepositoryProtocol,
         context: NSManagedObjectContext
@@ -42,25 +42,25 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
     public func invoke(
         conversationObjectID: NSManagedObjectID
     ) async throws -> CellsState {
-        
+
         typealias ConversationInfo = (
             conversation: ZMConversation?,
             id: UUID?,
             domain: String?
         )
-        
+
         let conversationInfo: ConversationInfo = try await context.perform { [context] in
             let conversation = try context.existingObject(
                 with: conversationObjectID
             ) as? ZMConversation
-            
+
             return (
                 conversation,
                 conversation?.remoteIdentifier,
                 conversation?.domain ?? BackendInfo.domain
             )
         }
-        
+
         guard let conversation = conversationInfo.conversation,
               let conversationID = conversationInfo.id,
               let conversationDomain = conversationInfo.domain else {
@@ -73,11 +73,11 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
             id: conversationID,
             domain: conversationDomain
         )
-        
+
         return await context.perform {
             conversation.cellsState
         }
-        
+
     }
 
 }

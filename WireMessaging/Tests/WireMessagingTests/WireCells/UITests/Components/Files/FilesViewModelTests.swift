@@ -267,7 +267,7 @@ final class FilesViewModelTests {
         #expect(sut.alert == expectedAlert)
         #expect(sut.isLoading == false)
     }
-    
+
     @Test(arguments: [
         FilesViewModel.State.received(items: (0 ..< 10).map { i in
             FilesViewItem(
@@ -283,18 +283,18 @@ final class FilesViewModelTests {
     ])
     func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
         // given
-        self.sut = FilesViewModel(
+        sut = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
             ),
             isCellsStatePending: state == .pending
         )
-        
+
         nodesRepository.getNodes_MockValue = switch state {
         case .noData, .pending:
             ([], nil)
-        case .received(let items):
+        case let .received(items):
             (items.map { element in
                 WireCellsNode.fixture(
                     uuid: element.id,
@@ -307,10 +307,10 @@ final class FilesViewModelTests {
         case .loading:
             fatalError("Not tested")
         }
-        
+
         // when
         await sut.reload()
-        
+
         // then
         #expect(state == sut.state)
     }
@@ -321,15 +321,15 @@ extension FilesViewModel.State {
     static func == (lhs: FilesViewModel.State, rhs: FilesViewModel.State) -> Bool {
         switch (lhs, rhs) {
         case (.noData, .noData):
-            return true
+            true
         case (.pending, .pending):
-            return true
+            true
         case (.loading, .loading):
-            return true
-        case (.received(let lhsItems), .received(let rhsItems)):
-            return lhsItems == rhsItems
+            true
+        case let (.received(lhsItems), .received(rhsItems)):
+            lhsItems == rhsItems
         default:
-            return false
+            false
         }
     }
 }

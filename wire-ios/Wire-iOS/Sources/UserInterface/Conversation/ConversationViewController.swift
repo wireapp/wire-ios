@@ -19,12 +19,12 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireDomain
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingUI
 import WireSyncEngine
-import WireDomain
 
 final class ConversationViewController: UIViewController {
 
@@ -445,7 +445,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if DeveloperFlag.wireCells.isOn/*, wireCellsState != .disabled */ {
+        if DeveloperFlag.wireCells.isOn /* , wireCellsState != .disabled */ {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -875,32 +875,32 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 cellName: conversation.wireCellName,
                 isCellsStatePending: wireCellsState == .pending
             )
-        
+
         filesView.presentOverAll(animated: true)
     }
-    
+
     /// If cells state is pending we need to sync it to ensure the value is up to date
     /// as it might have been updated to a `ready` state.
     private func syncCellsStateIfPending() {
         guard wireCellsState == .pending else {
             return
         }
-        
+
         guard let conversationRepository = userSession.clientSessionComponent?.conversationRepository else {
             return
         }
-        
+
         let syncCellsStateUseCase = SyncCellsStateUseCase(
             repository: conversationRepository,
             context: userSession.contextProvider.newBackgroundContext()
         )
-        
+
         Task {
             self.wireCellsState = try await syncCellsStateUseCase.invoke(
                 conversationObjectID: conversation.objectID
             )
         }
-        
+
     }
 
 }

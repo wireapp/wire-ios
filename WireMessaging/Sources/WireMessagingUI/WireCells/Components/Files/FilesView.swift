@@ -68,8 +68,7 @@ package struct FilesView: View {
 
 private extension FilesView {
 
-    @ViewBuilder
-    var filesList: some View {
+    @ViewBuilder var filesList: some View {
         List {
             Group {
                 itemsSection
@@ -80,8 +79,7 @@ private extension FilesView {
         }
     }
 
-    @ViewBuilder
-    var itemsSection: some View {
+    @ViewBuilder var itemsSection: some View {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, _ in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
@@ -107,8 +105,7 @@ private extension FilesView {
 
 private extension FilesView {
 
-    @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .principal) { titleView }
         ToolbarItem(placement: .navigationBarTrailing) { closeButton }
     }
@@ -195,12 +192,12 @@ private struct LoadMoreView: View {
 }
 
 private struct InfoView: View {
-    
+
     enum Info {
         case preparingFiles
         case noFilesFound
     }
-    
+
     let info: Info
 
     var body: some View {
@@ -210,16 +207,22 @@ private struct InfoView: View {
                 .font(.title3.weight(.semibold))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(SemanticColors.Label.textDefault.color)
-                .accessibilityLabel(info == .preparingFiles ? Accessibility.Files.PendingCells.title : Accessibility.Files.NoData.title)
+                .accessibilityLabel(
+                    info == .preparingFiles ? Accessibility.Files.PendingCells.title : Accessibility
+                        .Files.NoData.title
+                )
                 .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-title" : "no-files-title")
 
-            Text(info == .preparingFiles ? Strings.Files.PendingCells.message: Strings.Files.NoData.message)
+            Text(info == .preparingFiles ? Strings.Files.PendingCells.message : Strings.Files.NoData.message)
                 .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel(info == .preparingFiles ? Accessibility.Files.PendingCells.message : Accessibility.Files.NoData.message)
+                .accessibilityLabel(
+                    info == .preparingFiles ? Accessibility.Files.PendingCells.message : Accessibility
+                        .Files.NoData.message
+                )
                 .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-message" : "no-files-message")
         }
         .padding(20)

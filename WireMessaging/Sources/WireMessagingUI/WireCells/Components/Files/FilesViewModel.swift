@@ -51,19 +51,19 @@ package final class FilesViewModel: ObservableObject {
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
     }
-    
+
     enum State {
         case loading
         case received(items: [FilesViewItem])
         case noData
         case pending // cells are not ready yet
-        
+
         var items: [FilesViewItem] {
             switch self {
-            case .received(let items):
-                return items
+            case let .received(items):
+                items
             default:
-                return []
+                []
             }
         }
     }
