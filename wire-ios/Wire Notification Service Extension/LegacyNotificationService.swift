@@ -48,12 +48,6 @@ final class CallEventHandler: CallEventHandlerProtocol {
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate,
     NotificationServiceProtocol {
 
-    enum Failure: Error {
-
-        case failedToCreateSession(message: String)
-
-    }
-
     // MARK: - Properties
 
     var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
@@ -236,41 +230,17 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     @MainActor
     private func createSession(accountID: UUID) async throws -> NotificationSession {
-        if DeveloperFlag.multibackend.isOn {
-            guard
-                let appGroupID = Bundle.main.applicationGroupIdentifier,
-                let bundleInfo = Bundle.main.infoDictionary,
-                let buildNumber = bundleInfo[kCFBundleVersionKey as String] as? String
-            else {
-                throw Failure.failedToCreateSession(message: "missing required environment variables")
-            }
+        let session = try await NotificationSession(
+            currentAppVersion: currentAppVersion,
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: accountID,
+            environment: BackendEnvironment.shared,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
 
-            let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-
-            let loader = try NotificationSessionLoader(
-                account: Account(userName: "", userIdentifier: accountID),
-                appContainerURL: appContainerURL,
-                appGroupID: appGroupID,
-                buildNumber: buildNumber,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            let session = try await loader.load()
-            session.delegate = self
-            return session
-        } else {
-            let session = try await NotificationSession(
-                currentAppVersion: currentAppVersion,
-                applicationGroupIdentifier: appGroupID,
-                accountIdentifier: accountID,
-                environment: BackendEnvironment.shared,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-
-            session.delegate = self
-            return session
-        }
+        session.delegate = self
+        return session
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
