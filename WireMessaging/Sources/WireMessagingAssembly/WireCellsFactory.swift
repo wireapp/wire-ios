@@ -115,9 +115,21 @@ public extension WireCellsFactory {
 // FIXME: Implement real
 final class FakeFileCache: FileCache {
 
-    func saveFile(at url: URL, key: String) async throws {}
+    private let directory = URL.temporaryDirectory.appending(component: UUID().uuidString, directoryHint: .isDirectory)
 
-    func deleteFile(forKey key: String) async throws {}
+    init() {
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
+    func saveFile(at url: URL, key: String) async throws {
+        let destination = directory.appending(component: key, directoryHint: .notDirectory)
+        try FileManager.default.moveItem(at: url, to: destination)
+    }
+
+    func deleteFile(forKey key: String) async throws {
+        let fileURL = directory.appending(component: key, directoryHint: .notDirectory)
+        try FileManager.default.removeItem(at: fileURL)
+    }
 
 }
 
