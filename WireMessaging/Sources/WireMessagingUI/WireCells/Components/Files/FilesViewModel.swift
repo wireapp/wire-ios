@@ -136,17 +136,14 @@ package final class FilesViewModel: ObservableObject {
         FilesItemViewModel(item: state.items[index], localAssetRepository: localAssetRepository)
     }
 
-    // TODO: [WPB-19395] Implement correctly. This current implementation is just to confirm that downloading works.
-    func viewAsset(item: FilesViewItem) {
-        guard let asset = try? localAssetRepository.asset(nodeID: item.id) else { return }
-
-        switch asset.downloadState {
-        case let .downloaded(cacheKey):
-            if let url = fileCache.fileURL(forKey: cacheKey) {
+    /// Downloads if necessary and views the asset represented by the given item.
+    func viewAsset(item: FilesViewItem) async throws {
+        if let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
+            let url = fileCache.fileURL(forKey: cacheKey) {
                 viewingURL = url
-            }
-        default:
-            break
+        } else {
+            // Download the asset
+            // Open the asset
         }
     }
 
@@ -202,4 +199,16 @@ package final class FilesViewModel: ObservableObject {
         return (items, nextPage)
     }
 
+}
+
+private extension WireCellsLocalAsset.DownloadState {
+
+    var cacheKey: String? {
+        switch self {
+        case let .downloaded(key):
+            return key
+        default:
+            return nil
+        }
+    }
 }
