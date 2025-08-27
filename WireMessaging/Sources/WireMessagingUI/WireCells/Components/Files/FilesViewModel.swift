@@ -73,6 +73,7 @@ package final class FilesViewModel: ObservableObject {
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
+    private var localURLTask: Task<URL?, any Error>?
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
@@ -138,16 +139,35 @@ package final class FilesViewModel: ObservableObject {
 
     /// Downloads if necessary and views the asset represented by the given item.
     func viewAsset(item: FilesViewItem) async throws {
-        if let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
-            let url = fileCache.fileURL(forKey: cacheKey) {
-                viewingURL = url
-        } else {
-            // Download the asset
-            // Open the asset
-        }
+        localURLTask?.cancel()
+        localURLTask = nil
+
+        let task = Task { try await localURL(for: item) }
+        localURLTask = task
+
+        viewingURL = try await task.value
     }
 
     // MARK: - Private
+
+    private func localURL(for item: FilesViewItem) async throws -> URL? {
+        // If the file is already downloaded, return the local URL.
+        if
+            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
+            let url = fileCache.fileURL(forKey: cacheKey) {
+                return url
+        }
+
+        let cacheKey: String?
+        do {
+            try await localAssetRepository.downloadAsset(nodeID: item.id)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
+            try await awaitDownload(item: item)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        }
+        return cacheKey.map { fileCache.fileURL(forKey: $0) } ?? nil
+    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -197,6 +217,21 @@ package final class FilesViewModel: ObservableObject {
 
         try Task.checkCancellation()
         return (items, nextPage)
+    }
+
+    private func awaitDownload(item: FilesViewItem) async throws {
+        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
+            try Task.checkCancellation()
+
+            switch item?.downloadState {
+            case .downloaded:
+                return
+            case let .failed(error):
+                throw error
+            default:
+                break
+            }
+        }
     }
 
 }

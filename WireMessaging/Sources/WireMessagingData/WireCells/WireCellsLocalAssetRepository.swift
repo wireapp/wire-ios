@@ -137,6 +137,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
 
     @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
+        // FIXME: Send current value immediately
         updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
     }
 
