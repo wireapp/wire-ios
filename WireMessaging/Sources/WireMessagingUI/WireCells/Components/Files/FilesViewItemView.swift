@@ -76,9 +76,9 @@ struct FilesViewItemView: View {
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .padding(.all, 8)
                 }
                 .menuOrder(.fixed)
-                .padding(.horizontal, 8)
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
