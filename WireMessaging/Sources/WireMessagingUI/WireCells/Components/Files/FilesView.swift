@@ -117,10 +117,13 @@ private extension FilesView {
     }
 
     var closeButton: some View {
-        Button(action: { dismiss() }) {
-            Image(.close)
-                .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-        }
+        Button(
+            action: { dismiss() },
+            label: {
+                Image(.close)
+                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+            }
+        )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
     }

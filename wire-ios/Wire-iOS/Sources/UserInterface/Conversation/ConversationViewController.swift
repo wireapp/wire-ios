@@ -896,9 +896,14 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         )
 
         Task {
-            self.wireCellsState = try await syncCellsStateUseCase.invoke(
-                conversationObjectID: conversation.objectID
-            )
+            do {
+                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                    conversationObjectID: conversation.objectID
+                )
+            } catch {
+                WireLogger.conversation
+                    .error("could not sync cells state for conversation")
+            }
         }
 
     }

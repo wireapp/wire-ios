@@ -65,7 +65,7 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
               let conversationID = conversationInfo.id,
               let conversationDomain = conversationInfo.domain else {
             assertionFailure("could not find conversation locally")
-            return .disabled
+            return .pending
         }
 
         // sync conversation with backend
