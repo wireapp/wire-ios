@@ -1,0 +1,286 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import NeedleFoundation
+import WireDataModel
+import WireFoundation
+import WireNetwork
+
+protocol NSEUserScopeDependency: Dependency {
+
+    var appContainerURL: URL { get }
+    var accountDataURL: URL { get }
+    var backendStore: BackendEnvironmentStore { get }
+    var sharedUserDefaults: UserDefaults { get }
+    var cookieEncryptionKey: Data { get }
+    var minTLSVersion: WireNetwork.TLSVersion { get }
+    var preferredAPIVersion: WireNetwork.APIVersion? { get }
+
+}
+
+/// The scope of user within the NSE flow.
+///
+/// Within this scope, validation for the user is performed
+/// and the next scope is prepared: `NSEClientScope`.
+
+final class NSEUserScope: Component<NSEUserScopeDependency> {
+
+    enum Failure: Error {
+
+        case mainAppRequired(message: String)
+        case failedToFetchBackendEnvironment(any Error)
+        case failedToFetchProxyCredentials(any Error)
+        case failedToStoreMetadata(any Error)
+        case persistenceStoresNotFound
+        case failedToLoadPersistenceStack(any Error)
+        case failedToFetchCookies(any Error)
+        case userNotAuthenticated
+
+    }
+
+    public let account: Account
+    public var accountID: UUID {
+        account.userIdentifier
+    }
+
+    public var userAccountDataURL: URL {
+        dependency.accountDataURL.appending(path: accountID.uuidString)
+    }
+
+    public var journal: Journal {
+        shared {
+            Journal(
+                userID: accountID,
+                storage: dependency.sharedUserDefaults
+            )
+        }
+    }
+
+    public var cookieStorage: CookieStorage {
+        shared {
+            CookieStorage(
+                userID: accountID,
+                cookieEncryptionKey: dependency.cookieEncryptionKey,
+                keychain: Keychain()
+            )
+        }
+    }
+
+    public let cryptoboxMigrationManager: CryptoboxMigrationManager = .init()
+
+    init(
+        parent: any Scope,
+        account: Account
+    ) {
+        self.account = account
+        super.init(parent: parent)
+    }
+
+    func processPayload(
+        eventID: UUID,
+        contentHandler: @escaping (UNNotificationContent) -> Void
+    ) async throws {
+        // Set up network stack.
+        guard let environment = try fetchBackendEnvironment() else {
+            throw Failure.mainAppRequired(message: "no stored backend for account")
+        }
+
+        var proxyCredentials: WireNetwork.ProxyCredentials?
+        if let config = environment.config.proxyConfig {
+            proxyCredentials = try await fetchProxyCredentials(for: config)
+        }
+
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion,
+            proxyCredentials: proxyCredentials
+        )
+
+        let metadata = try await resolveBackendMetadata(with: networkStack)
+        let networkServices = try await networkStack.networkServices
+
+        // Set up persistence stack.
+        let coreDataStack = try await setupPersistenceStack()
+
+        // Return early if needed.
+        guard journal[.isSyncV2Enabled] else {
+            throw Failure.mainAppRequired(message: "sync v2 should be enabled")
+        }
+
+        guard try await isAuthenticated() else {
+            throw Failure.userNotAuthenticated
+        }
+
+        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
+            throw Failure.mainAppRequired(message: "cryptobox migration required")
+        }
+
+        // TODO: guard no app version migration needed.
+
+        guard let clientID = await coreDataStack.syncContext.perform({
+            let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
+            return selfUser.selfClient()?.remoteIdentifier
+        }) else {
+            throw Failure.mainAppRequired(message: "no self client id")
+        }
+
+        // Continue with client.
+        let clientScope = clientScope(
+            clientID: clientID,
+            networkService: networkServices.rest,
+            apiVersion: metadata.apiVersion,
+            coreDataStack: coreDataStack
+        )
+
+        try await clientScope.processPayload(
+            eventID: eventID,
+            contentHandler: contentHandler
+        )
+    }
+
+    private func fetchBackendEnvironment() throws -> BackendEnvironment2? {
+        do {
+            return try dependency.backendStore.fetchBackendEnvironment(accountID: accountID)
+        } catch {
+            throw Failure.failedToFetchBackendEnvironment(error)
+        }
+    }
+
+    private func fetchProxyCredentials(for config: BackendEnvironment2.ProxyConfig) async throws -> WireNetwork
+        .ProxyCredentials? {
+        guard config.needsAuthentication else {
+            return nil
+        }
+
+        let proxyCredentialStore = ProxyCredentialStore()
+
+        do {
+            guard let (username, password) = try await proxyCredentialStore.fetchCredentials(
+                host: config.host,
+                port: config.port
+            ) else {
+                return nil
+            }
+
+            return ProxyCredentials(
+                username: username,
+                password: password
+            )
+        } catch {
+            throw Failure.failedToFetchProxyCredentials(error)
+        }
+    }
+
+    private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
+        // Get the last known metadata.
+        guard let prevMetadata = try dependency.backendStore.fetchBackendMetadata(accountID: accountID)  else {
+            throw Failure.mainAppRequired(message: "no previous backend metadata")
+        }
+
+        // Get new metadata.
+        let newMetadata = try await networkStack.resolvedBackendMetadata()
+
+        // TODO: deduplicate
+        if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
+            // TODO: [WPB-14630] mark federation migration needed
+        }
+
+        // TODO: deduplicate
+        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
+            // TODO: [WPB-14630] mark access token migration needed
+        }
+
+        // Store new metadata.
+        do {
+            try dependency.backendStore.storeBackendMetadata(
+                newMetadata,
+                for: accountID
+            )
+        } catch {
+            throw Failure.failedToStoreMetadata(error)
+        }
+
+        return newMetadata
+    }
+
+    // TODO: deduplicate
+    private func setupPersistenceStack() async throws -> CoreDataStack {
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: dependency.appContainerURL
+        )
+
+        guard coreDataStack.storesExists else {
+            throw Failure.persistenceStoresNotFound
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw Failure.mainAppRequired(message: "database migration required")
+        }
+
+        do {
+            try await coreDataStack.load()
+        } catch {
+            throw Failure.failedToLoadPersistenceStack(error)
+        }
+
+        return coreDataStack
+    }
+
+    // TODO: make extension on cookie storage
+    private func isAuthenticated() async throws -> Bool {
+        let cookies: [HTTPCookie]
+        do {
+            cookies = try await cookieStorage.fetchCookies()
+        } catch {
+            throw Failure.failedToFetchCookies(error)
+        }
+
+
+        for cookie in cookies where cookie.name == "zuid" {
+            if let cookieExpirationDate = cookie.expiresDate {
+                return cookieExpirationDate > .now
+            } else {
+                return false
+            }
+        }
+
+        // no cookies found
+        return false
+    }
+
+    // MARK: - Children
+
+    private func clientScope(
+        clientID: String,
+        networkService: NetworkService,
+        apiVersion: WireNetwork.APIVersion,
+        coreDataStack: CoreDataStack
+    ) -> NSEClientScope {
+        NSEClientScope(
+            parent: self,
+            clientID: clientID,
+            networkService: networkService,
+            apiVersion: apiVersion,
+            coreDataStack: coreDataStack
+        )
+    }
+
+}

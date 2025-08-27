@@ -62,22 +62,66 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     private func loadNotificationService() -> NotificationServiceProtocol? {
-        // API version decides which service to use, if we don't have it
-        // yet then we simply supress the notification request.
-        guard let apiVersion = BackendInfo.apiVersion else {
-            WireLogger.notifications.warn("no resolved api version, not loading service")
+        let info = Bundle.appMainBundle.infoDictionary
+
+        guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
+            WireLogger.notifications.warn("no current app version, not loading service")
             return nil
         }
 
-        /// With v8, the new extension is available, but not necessarily
-        /// turned on yet. Regardless, we will use it and later check
-        /// if the new sync is enabled.
-        if apiVersion >= .v8 {
+        guard let appGroupID = info?["WireGroupId"] as? String else {
+            WireLogger.notifications.warn("no app group id, not loading service")
+            return nil
+        }
+
+        let appID = "group.\(appGroupID)"
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appID)
+
+        guard let sharedUserDefaults = UserDefaults(suiteName: appID) else {
+            WireLogger.notifications.warn("no shared user defaults, not loading service")
+            return nil
+        }
+
+        if DeveloperFlag.multibackend.isOn {
+            // Only new extension is supported in multibackend mode.
             WireLogger.notifications.warn("loading new notification service")
-            return NotificationServiceExtension()
+            return NotificationServiceExtension(
+                currentAppVersion: currentAppVersion,
+                appContainerURL: appContainerURL,
+                sharedUserDefaults: sharedUserDefaults,
+                cookieEncryptionKey: UserDefaults.cookiesKey(),
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                    UInt($0.rawValue)
+                }
+            )
         } else {
-            WireLogger.notifications.warn("loading legacy notification service")
-            return LegacyNotificationService()
+            // API version decides which service to use, if we don't have it
+            // yet then we simply supress the notification request.
+            guard let apiVersion = BackendInfo.apiVersion else {
+                WireLogger.notifications.warn("no resolved api version, not loading service")
+                return nil
+            }
+
+            /// With v8, the new extension is available, but not necessarily
+            /// turned on yet. Regardless, we will use it and later check
+            /// if the new sync is enabled.
+            if apiVersion >= .v8 {
+                WireLogger.notifications.warn("loading new notification service")
+                return NotificationServiceExtension(
+                    currentAppVersion: currentAppVersion,
+                    appContainerURL: appContainerURL,
+                    sharedUserDefaults: sharedUserDefaults,
+                    cookieEncryptionKey: UserDefaults.cookiesKey(),
+                    minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+                    preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                        UInt($0.rawValue)
+                    }
+                )
+            } else {
+                WireLogger.notifications.warn("loading legacy notification service")
+                return LegacyNotificationService()
+            }
         }
     }
 
