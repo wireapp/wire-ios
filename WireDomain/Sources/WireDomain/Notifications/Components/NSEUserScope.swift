@@ -132,7 +132,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
 
-        // TODO: guard no app version migration needed.
+        // TODO: [WPB-19778] guard no app version migration needed.
 
         guard let clientID = await coreDataStack.syncContext.perform({
             let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
@@ -198,12 +198,12 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         // Get new metadata.
         let newMetadata = try await networkStack.resolvedBackendMetadata()
 
-        // TODO: deduplicate
+        // TODO: [WPB-19777] deduplicate
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
             // TODO: [WPB-14630] mark federation migration needed
         }
 
-        // TODO: deduplicate
+        // TODO: [WPB-19777] deduplicate
         if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
             // TODO: [WPB-14630] mark access token migration needed
         }
@@ -221,7 +221,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         return newMetadata
     }
 
-    // TODO: deduplicate
+    // TODO: [WPB-19777] deduplicate
     private func setupPersistenceStack() async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,

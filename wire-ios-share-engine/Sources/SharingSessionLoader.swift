@@ -106,6 +106,8 @@ public struct SharingSessionLoader {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
+        // TODO: [WPB-19778] guard no app version migration needed.
+
         guard let selfClientID = await coreDataStack.syncContext.perform({
             let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
             return selfUser.selfClient()?.remoteIdentifier
