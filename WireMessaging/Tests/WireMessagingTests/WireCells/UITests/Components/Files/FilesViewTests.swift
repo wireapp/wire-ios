@@ -123,7 +123,7 @@ final class FilesViewTests: XCTestCase {
             path: "some/path",
             contentType: "some/content/type",
             size: nil,
-            downloadState: .downloading(progress: 50)
+            downloadState: .downloading(progress: 0.5)
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))

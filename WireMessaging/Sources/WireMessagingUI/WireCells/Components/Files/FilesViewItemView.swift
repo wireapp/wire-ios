@@ -82,7 +82,7 @@ struct FilesViewItemView: View {
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
 
-            ProgressView(value: viewModel.progress, total: 100)
+            ProgressView(value: viewModel.progress, total: 1)
                 .opacity(viewModel.progress == nil ? 0 : 1)
                 .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
 
