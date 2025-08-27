@@ -34,7 +34,7 @@ extension FilesViewModel {
                 configuration: .conversationFileView(root: .path("root")),
                 repository: previewNodesRepository()
             ),
-            localAssetRepository: PreviewLocalAssetRepository()
+            localAssetRepository: PreviewLocalAssetRepository(), fileCache: MockFileCache()
         )
     }
 

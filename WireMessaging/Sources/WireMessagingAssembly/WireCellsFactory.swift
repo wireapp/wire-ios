@@ -27,6 +27,7 @@ public struct WireCellsFactory {
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
+    private let fileCache = FakeFileCache()
     private let localAssetRepository: WireCellsLocalAssetRepository
 
     public init(serverURL: URL, accessToken: any AccessTokenProvider) {
@@ -45,7 +46,7 @@ public struct WireCellsFactory {
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
-            fileCache: FakeFileCache(),
+            fileCache: fileCache,
             store: FakeWireCellsLocalAssetMetadataStore()
         )
     }
@@ -100,7 +101,8 @@ public extension WireCellsFactory {
                 configuration: .conversationFileView(root: .path(cellName)),
                 repository: nodesAPI
             ),
-            localAssetRepository: localAssetRepository
+            localAssetRepository: localAssetRepository,
+            fileCache: fileCache
         )
 
         return FilesHostingController(
@@ -128,6 +130,10 @@ final class FakeFileCache: FileCache {
     func deleteFile(forKey key: String) async throws {
         let fileURL = directory.appending(component: key, directoryHint: .notDirectory)
         try FileManager.default.removeItem(at: fileURL)
+    }
+
+    func fileURL(forKey key: String) -> URL? {
+        directory.appending(component: key, directoryHint: .notDirectory)
     }
 
 }

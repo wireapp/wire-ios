@@ -38,9 +38,10 @@ package struct FilesView: View {
         NavigationStack {
             List {
                 Group {
-                    ForEach(Array(viewModel.items.enumerated()), id: \.offset) { index, _ in
+                    ForEach(Array(viewModel.items.enumerated()), id: \.offset) { index, item in
                         FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
                             .onAppear { Task { await viewModel.loadMoreIfNeeded(index: index) } }
+                            .onTapGesture { viewModel.viewAsset(item: item) }
                     }
 
                     if viewModel.hasMore {
@@ -62,6 +63,7 @@ package struct FilesView: View {
                     Button(L10n.Localizable.General.confirm, action: {})
                 }
             )
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {

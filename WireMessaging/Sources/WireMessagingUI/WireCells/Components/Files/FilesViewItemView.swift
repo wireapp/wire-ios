@@ -29,6 +29,7 @@ struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
+    @State private var viewingURL: URL?
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())

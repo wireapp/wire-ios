@@ -56,19 +56,23 @@ package final class FilesViewModel: ObservableObject {
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let fileCache: any FileCache
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
         self.localAssetRepository = localAssetRepository
+        self.fileCache = fileCache
     }
 
     @Published private(set) var items: [FilesViewItem] = []
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var alert: AlertModel?
+    @Published var viewingURL: URL?
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -108,6 +112,20 @@ package final class FilesViewModel: ObservableObject {
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
         FilesItemViewModel(item: items[index], localAssetRepository: localAssetRepository)
+    }
+
+    // TODO: [WPB-19395] Implement correctly. This current implementation is just to confirm that downloading works.
+    func viewAsset(item: FilesViewItem) {
+        guard let asset = try? localAssetRepository.asset(nodeID: item.id) else { return }
+
+        switch asset.downloadState {
+        case let .downloaded(cacheKey):
+            if let url = fileCache.fileURL(forKey: cacheKey) {
+                viewingURL = url
+            }
+        default:
+            break
+        }
     }
 
     // MARK: - Private
