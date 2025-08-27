@@ -51,27 +51,32 @@ package final class FilesViewModel: ObservableObject {
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
     }
-
+    
     enum State {
         case loading
         case received(items: [FilesViewItem])
         case noData
         case pending // cells are not ready yet
-
+        
         var items: [FilesViewItem] {
             switch self {
-            case let .received(items):
-                items
+            case .received(let items):
+                return items
             default:
-                []
+                return []
             }
         }
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let isCellsStatePending: Bool
 
-    package init(fetchNodesUseCase: WireCellsFetchNodesUseCase) {
+    package init(
+        fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        isCellsStatePending: Bool
+    ) {
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.isCellsStatePending = isCellsStatePending
     }
 
     @Published private var nextPageToken: WireCellsPageToken?
@@ -128,6 +133,9 @@ package final class FilesViewModel: ObservableObject {
 
     private func loadMore(initialFetch: Bool) async {
         guard loadMoreTask == nil else { return }
+        guard !isCellsStatePending else {
+            return state = .pending
+        }
 
         let task = Task { try await fetchItems(token: nextPageToken) }
 
@@ -141,10 +149,6 @@ package final class FilesViewModel: ObservableObject {
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
             state = .noData
-        } catch _ as WireCellsFetchNodesUseCase.Failure {
-            // when receiving a CellsSDK.ErrorResponse, we assume the cells are not ready yet and let the user know the
-            // files are being prepared.
-            state = .pending
         } catch {
             alert = .unknownError
             state = .noData

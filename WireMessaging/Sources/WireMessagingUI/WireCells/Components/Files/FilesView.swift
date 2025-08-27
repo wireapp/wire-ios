@@ -24,7 +24,7 @@ import WireMessagingDomainSupport
 import WireReusableUIComponents
 
 typealias Strings = L10n.Localizable.Conversation.WireCells
-private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: View {
     @ObservedObject var viewModel: FilesViewModel
@@ -46,15 +46,9 @@ package struct FilesView: View {
                         .listStyle(.plain)
                         .refreshable { reloadTask() }
                 case .noData:
-                    InfoView(
-                        title: Strings.Files.NoData.title,
-                        message: Strings.Files.NoData.message
-                    )
+                    InfoView(info: .noFilesFound)
                 case .pending:
-                    InfoView(
-                        title: Strings.Files.PendingCells.title,
-                        message: Strings.Files.PendingCells.message
-                    )
+                    InfoView(info: .preparingFiles)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -74,7 +68,8 @@ package struct FilesView: View {
 
 private extension FilesView {
 
-    @ViewBuilder var filesList: some View {
+    @ViewBuilder
+    var filesList: some View {
         List {
             Group {
                 itemsSection
@@ -85,7 +80,8 @@ private extension FilesView {
         }
     }
 
-    @ViewBuilder var itemsSection: some View {
+    @ViewBuilder
+    var itemsSection: some View {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, _ in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
@@ -111,7 +107,8 @@ private extension FilesView {
 
 private extension FilesView {
 
-    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+    @ToolbarContentBuilder
+    var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .principal) { titleView }
         ToolbarItem(placement: .navigationBarTrailing) { closeButton }
     }
@@ -165,7 +162,8 @@ private extension FilesView {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("root")),
                 repository: makeNodesRepository()
-            )
+            ),
+            isCellsStatePending: false
         )
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
@@ -197,21 +195,32 @@ private struct LoadMoreView: View {
 }
 
 private struct InfoView: View {
-    var title: String
-    var message: String
+    
+    enum Info {
+        case preparingFiles
+        case noFilesFound
+    }
+    
+    let info: Info
 
     var body: some View {
         VStack(spacing: 25) {
-            Text(title)
+            Text(info == .preparingFiles ? Strings.Files.PendingCells.title : Strings.Files.NoData.title)
+                .padding([.leading, .trailing], info == .preparingFiles ? 30 : 0)
                 .font(.title3.weight(.semibold))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.primary)
+                .foregroundStyle(SemanticColors.Label.textDefault.color)
+                .accessibilityLabel(info == .preparingFiles ? Accessibility.Files.PendingCells.title : Accessibility.Files.NoData.title)
+                .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-title" : "no-files-title")
 
-            Text(message)
+            Text(info == .preparingFiles ? Strings.Files.PendingCells.message: Strings.Files.NoData.message)
+                .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
                 .font(.body)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel(info == .preparingFiles ? Accessibility.Files.PendingCells.message : Accessibility.Files.NoData.message)
+                .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-message" : "no-files-message")
         }
         .padding(20)
         .frame(maxWidth: 420)
