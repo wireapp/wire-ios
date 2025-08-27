@@ -17,6 +17,7 @@
 //
 
 import Combine
+import QuickLook
 import SwiftUI
 import WireDesign
 import WireFoundation

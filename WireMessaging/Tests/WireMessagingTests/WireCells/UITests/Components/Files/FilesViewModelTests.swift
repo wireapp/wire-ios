@@ -38,7 +38,8 @@ final class FilesViewModelTests {
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
             ),
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            fileCache: MockFileCache()
         )
 
         sut.$items.dropFirst().sink { [weak self] items in
