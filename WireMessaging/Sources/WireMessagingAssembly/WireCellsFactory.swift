@@ -135,10 +135,14 @@ final class FakeFileCache: FileCache {
 // FIXME: Implement real
 final class FakeWireCellsLocalAssetMetadataStore: WireCellsLocalAssetMetadataStore {
 
+    private var storage: [UUID: WireMessagingDomain.WireCellsLocalAssetMetadata] = [:]
+
     func assetMetadata(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAssetMetadata? {
-        nil
+        storage[nodeID]
     }
 
-    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {}
+    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {
+        storage[metadata.nodeID] = metadata
+    }
 
 }

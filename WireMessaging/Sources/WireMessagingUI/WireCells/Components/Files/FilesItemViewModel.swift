@@ -79,7 +79,7 @@ final class FilesItemViewModel: ObservableObject {
         case let .downloading(progress):
             progress
         case .failed:
-            100 // We show a full red progress bar on failure
+            1 // We show a full red progress bar on failure
         default:
             nil
         }
