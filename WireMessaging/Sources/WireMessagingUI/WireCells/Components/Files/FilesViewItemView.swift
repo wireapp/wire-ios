@@ -76,6 +76,7 @@ struct FilesViewItemView: View {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
+                .menuOrder(.fixed)
                 .padding(.horizontal, 8)
             }
             .padding(.top, 8)
