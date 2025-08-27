@@ -19,6 +19,7 @@
 import Foundation
 import NeedleFoundation
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 protocol NSEClientScopeDependency: Dependency {
@@ -49,19 +50,22 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private let clientID: String
-    private let networkService: NetworkService
+    private let restNetworkService: NetworkService
+    private let webSocketNetworkService: NetworkService
     private let apiVersion: WireNetwork.APIVersion
     private let coreDataStack: CoreDataStack
 
     init(
         parent: any Scope,
         clientID: String,
-        networkService: NetworkService,
+        restNetworkService: NetworkService,
+        webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
         coreDataStack: CoreDataStack
     ) {
         self.clientID = clientID
-        self.networkService = networkService
+        self.restNetworkService = restNetworkService
+        self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
         self.coreDataStack = coreDataStack
         super.init(parent: parent)
@@ -71,6 +75,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         eventID: UUID,
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
+        // Pull pending update events.
+        let eventStream: AsyncStream<[UpdateEvent]>
+
         if dependency.journal[.isConsumableNotificationsEnabled] {
             guard !PushChannelState(
                 sharedContainerURL: dependency.appContainerURL,
@@ -79,17 +86,70 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 throw Failure.mainAppPushChannelOpened
             }
 
-            // TODO: sync events step
-            fatalError()
+            let (useCase, stream) = syncEventsUseCase()
+            eventStream = stream
+
+            do {
+                try await useCase.invoke()
+            } catch {
+                // either we timeout during decrypting/storing events OR an issue
+                // with the sync. In both cases, we end up with a stream of
+                // notifications that has not been shown, so we need to continue
+                // to show them.
+                WireLogger.sync.warn(
+                    "syncing events via websocket: \(error.localizedDescription)",
+                    attributes: .syncAttributes(initialSync: false)
+                )
+            }
         } else {
-            // Pull pending update events.
-            let eventStream = try await pullEventsUseCase.invoke()
+            eventStream = try await pullEventsUseCase.invoke()
+        }
 
-            // Generate notifications from events.
-            let notifications = try await generateNotificationsUseCase(eventID: eventID).invoke(updateEvents: eventStream)
+        // Generate notifications from events.
+        let notifications = try await generateNotificationsUseCase(
+            eventID: eventID
+        ).invoke(
+            updateEvents: eventStream
+        )
 
-            // Show notifications.
-            try await showNotificationsUseCase(contentHandler: contentHandler).invoke(userNotifications: notifications)
+        // Show notifications.
+        try await showNotificationsUseCase(
+            contentHandler: contentHandler
+        ).invoke(
+            userNotifications: notifications
+        )
+    }
+
+    // MARK: - Pull events consumable notifications
+
+    private func syncEventsUseCase() -> (SyncEventsUseCase, AsyncStream<[UpdateEvent]>) {
+        let sync = pullPendingUpdateEventsSyncV2
+        return (SyncEventsUseCase(pendingEventsSync: sync), sync.stream)
+    }
+
+    private var pullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2 {
+        PullPendingUpdateEventsSyncV2(
+            selfClientID: clientID,
+            pushChannelAPI: pushChannelV2API,
+            updateEventsStore: updateEventsLocalStore,
+            journal: dependency.journal,
+            decryptor: updateEventDecryptor,
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }
+
+    private var pushChannelV2API: PushChannelV2API {
+        shared {
+            PushChannelV2APIBuilder(pushChannelService: pushChannelService).makeAPI(for: apiVersion)
+        }
+    }
+
+    private var pushChannelService: PushChannelService {
+        shared {
+            PushChannelService(
+                networkService: webSocketNetworkService,
+                authenticationManager: authenticationManager
+            )
         }
     }
 
@@ -104,7 +164,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             AuthenticationManager(
                 clientID: clientID,
                 cookieStorage: dependency.cookieStorage,
-                networkService: networkService,
+                networkService: restNetworkService,
                 onAuthenticationFailure: {}
             )
         }
@@ -113,7 +173,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var apiService: APIService {
         shared {
             APIService(
-                networkService: networkService,
+                networkService: restNetworkService,
                 authenticationManager: authenticationManager
             )
         }

@@ -144,7 +144,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         // Continue with client.
         let clientScope = clientScope(
             clientID: clientID,
-            networkService: networkServices.rest,
+            restNetworkService: networkServices.rest,
+            webSocketNetworkService: networkServices.webSocket,
             apiVersion: metadata.apiVersion,
             coreDataStack: coreDataStack
         )
@@ -270,14 +271,16 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
     private func clientScope(
         clientID: String,
-        networkService: NetworkService,
+        restNetworkService: NetworkService,
+        webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
         coreDataStack: CoreDataStack
     ) -> NSEClientScope {
         NSEClientScope(
             parent: self,
             clientID: clientID,
-            networkService: networkService,
+            restNetworkService: restNetworkService,
+            webSocketNetworkService: webSocketNetworkService,
             apiVersion: apiVersion,
             coreDataStack: coreDataStack
         )
