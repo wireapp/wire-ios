@@ -23,7 +23,7 @@ import WireDataModel
 /// Sync conversation cells state with backend since we don't receive an event for it (yet)
 public protocol SyncCellsStateUseCaseProtocol {
     func invoke(
-        conversation: ZMConversation
+        conversationObjectID: NSManagedObjectID
     ) async throws -> CellsState
 }
 
@@ -40,14 +40,31 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
     }
 
     public func invoke(
-        conversation: ZMConversation
+        conversationObjectID: NSManagedObjectID
     ) async throws -> CellsState {
-        let (conversationID, conversationDomain): (UUID, String?) = await context.perform {
-            (conversation.remoteIdentifier, conversation.domain ?? BackendInfo.domain)
+        
+        typealias ConversationInfo = (
+            conversation: ZMConversation?,
+            id: UUID?,
+            domain: String?
+        )
+        
+        let conversationInfo: ConversationInfo = try await context.perform { [context] in
+            let conversation = try context.existingObject(
+                with: conversationObjectID
+            ) as? ZMConversation
+            
+            return (
+                conversation,
+                conversation?.remoteIdentifier,
+                conversation?.domain ?? BackendInfo.domain
+            )
         }
         
-        guard let conversationDomain else {
-            assertionFailure("conversation should have a domain")
+        guard let conversation = conversationInfo.conversation,
+              let conversationID = conversationInfo.id,
+              let conversationDomain = conversationInfo.domain else {
+            assertionFailure("could not find conversation locally")
             return .disabled
         }
 
