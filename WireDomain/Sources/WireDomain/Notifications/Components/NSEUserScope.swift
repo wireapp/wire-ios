@@ -254,7 +254,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.failedToFetchCookies(error)
         }
 
-
         for cookie in cookies where cookie.name == "zuid" {
             if let cookieExpirationDate = cookie.expiresDate {
                 return cookieExpirationDate > .now

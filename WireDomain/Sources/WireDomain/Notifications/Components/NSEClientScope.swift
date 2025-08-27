@@ -593,7 +593,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     // MARK: - Show notifications
 
-    private func showNotificationsUseCase(contentHandler: @escaping (UNNotificationContent) -> Void) -> ShowNotificationUseCase {
+    private func showNotificationsUseCase(contentHandler: @escaping (UNNotificationContent) -> Void)
+        -> ShowNotificationUseCase {
         ShowNotificationUseCase(
             contentHandler: contentHandler,
             conversationLocalStore: conversationLocalStore,

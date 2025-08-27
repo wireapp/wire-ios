@@ -42,7 +42,7 @@ final class NSEFlow: BootstrapComponent {
     public let minTLSVersion: WireNetwork.TLSVersion
     public let preferredAPIVersion: WireNetwork.APIVersion?
 
-    // TODO: use to check app version migration
+    // TODO: [WPB-19778] use to check app version migration
     private let currentAppVersion: String
     private var scopesByAccount = [Account: NSEUserScope]()
 
@@ -64,12 +64,12 @@ final class NSEFlow: BootstrapComponent {
         }
 
         let accountURLs = AccountURLs(root: appContainerURL)
-        accountDataURL = accountURLs.accountData
-        accountManager = try AccountManager(
+        self.accountDataURL = accountURLs.accountData
+        self.accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
             directory: accountURLs.accounts
         )
-        backendStore = try BackendEnvironmentStore(directory: accountDataURL)
+        self.backendStore = try BackendEnvironmentStore(directory: accountDataURL)
     }
 
     func start(
