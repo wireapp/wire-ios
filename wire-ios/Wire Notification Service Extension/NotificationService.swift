@@ -65,12 +65,12 @@ final class NotificationService: UNNotificationServiceExtension {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
-            WireLogger.notifications.warn("no current app version, not loading service")
+            WireLogger.notifications.critical("no current app version, not loading service")
             return nil
         }
 
         guard let appGroupID = info?["WireGroupId"] as? String else {
-            WireLogger.notifications.warn("no app group id, not loading service")
+            WireLogger.notifications.critical("no app group id, not loading service")
             return nil
         }
 
@@ -78,13 +78,13 @@ final class NotificationService: UNNotificationServiceExtension {
         let appContainerURL = FileManager.sharedContainerDirectory(for: appID)
 
         guard let sharedUserDefaults = UserDefaults(suiteName: appID) else {
-            WireLogger.notifications.warn("no shared user defaults, not loading service")
+            WireLogger.notifications.critical("no shared user defaults, not loading service")
             return nil
         }
 
         if DeveloperFlag.multibackend.isOn {
             // Only new extension is supported in multibackend mode.
-            WireLogger.notifications.warn("loading new notification service")
+            WireLogger.notifications.info("loading new notification service")
             return NotificationServiceExtension(
                 currentAppVersion: currentAppVersion,
                 appContainerURL: appContainerURL,
