@@ -16,9 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Вернуться к обзору новой беседы";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Закрыть баннер обновления";
+import Foundation
 
-// MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Закрыть файлы";
-"conversation.wireCells.files.loadMore.title" = "Загрузить еще";
+/// A configuration for the *Chat Bubbles Simple* feature.
+
+public struct ChatBubblesSimpleFeatureConfig: Equatable, Sendable {
+
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
+    }
+
+}

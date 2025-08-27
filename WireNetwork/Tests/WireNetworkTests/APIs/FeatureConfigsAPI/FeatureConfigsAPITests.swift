@@ -635,7 +635,8 @@ extension FeatureConfigsAPITests {
         ]
 
         static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
-            .consumableNotifications(.init(status: .enabled))
+            .consumableNotifications(.init(status: .enabled)),
+            .chatBubblesSimple(.init(status: .enabled))
         ]
 
     }

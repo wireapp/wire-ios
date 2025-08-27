@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Arama";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Dosyalar";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Resim";

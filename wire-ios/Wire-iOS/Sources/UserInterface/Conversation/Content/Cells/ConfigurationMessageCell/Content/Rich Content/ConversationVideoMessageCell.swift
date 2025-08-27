@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
@@ -56,7 +57,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = if DeveloperFlag.chatBubblesSimple.isOn {
+        let cornerRadius: CGFloat = if isChatBubbleSimpleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -98,7 +99,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -154,6 +155,9 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
         transferView.bounds
     }
 
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 }
 
 extension ConversationVideoMessageCell: TransferViewDelegate {
@@ -170,7 +174,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     weak var message: ZMConversationMessage? {
         didSet {

@@ -30,6 +30,7 @@
 "cloud_user_login.forgot_password" = "Забыли пароль?";
 "create_account_or_team.title" = "У вас нет аккаунта Wire?";
 "create_account_or_team.button" = "Создать аккаунт или команду";
+"create_account.button" = "Создать аккаунт";
 
 "account_type_selector.title" = "Как вы будете использовать Wire?";
 "account_type_selector.option_team.title" = "Для совместной работы";
@@ -129,7 +130,7 @@
 "create_personal_account.title" = "Создание личного аккаунта";
 "create_personal_account.continue" = "Продолжить";
 "create_personal_account.share_data_usage" = "Я согласен делиться анонимными данными об использовании. Найдите все детали в [Политике конфиденциальности](%@) (необязательно)";
-"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.looking_for_collaboration" = "Хотите сотрудничать в команде?";
 "create_personal_account.create_team" = "Создать команду";
 "create_personal_account.input_name.title" = "Имя";
 "create_personal_account.input_name.placeholder" = "Введите свое имя";
