@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
 "general.loading" = "Загрузка…";
 "general.confirm" = "OK";
 "general.failure" = "Что-то пошло не так";
+"general.error.unknown.title." = "Что-то пошло не так";
+"general.error.unknown.message." = "Повторите попытку позже.";
+"general.error.noInternet.title." = "Отсутствует подключение к интернету";
+"general.error.noInternet.message." = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "Публичный";
 "channel_access_level.private" = "Приватный";
 "channel_access_level.admins" = "Администраторы";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "История беседы и многое другое";
 "conversation.create.group.title" = "Новая группа";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "Назад";
 "conversation.create.channel.next" = "Вперед";
 
@@ -94,3 +99,11 @@
 "conversation.file.preview.open" = "Открыть предпросмотр";
 "conversation.draft.attachmentMenu.retry" = "Повторить";
 "conversation.draft.attachmentMenu.remove" = "Удалить файл";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.navigationTitle" = "Файлы";
+"conversation.wireCells.files.item.subtitle" = "%@ от %@";
+"conversation.wireCells.files.loadMore.title" = "Загрузить еще";
+"conversation.wireCells.files.item.menu.download" = "Скачать";
+"conversation.wireCells.files.item.menu.rename" = "Переименовать";
+"conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";

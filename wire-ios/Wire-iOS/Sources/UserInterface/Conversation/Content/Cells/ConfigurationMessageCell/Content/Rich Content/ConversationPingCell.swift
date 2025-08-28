@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCellDescription>, ConversationMessageCell {
 
@@ -157,7 +158,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
-    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

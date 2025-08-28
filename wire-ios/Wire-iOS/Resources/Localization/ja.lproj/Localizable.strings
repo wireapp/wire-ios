@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "検索";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "ファイル";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "画像";

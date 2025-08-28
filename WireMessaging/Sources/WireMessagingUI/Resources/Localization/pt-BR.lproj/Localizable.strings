@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
 "general.loading" = "Carregando…";
 "general.confirm" = "OK";
 "general.failure" = "Algo deu errado";
+"general.error.unknown.title." = "Algo deu errado";
+"general.error.unknown.message." = "Tente novamente mais tarde.";
+"general.error.noInternet.title." = "Sem conexão à Internet";
+"general.error.noInternet.message." = "Parece que há um problema com a sua rede. Por favor, tente novamente mais tarde.";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "Público";
 "channel_access_level.private" = "Privado";
 "channel_access_level.admins" = "Administradores";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "Histórico de conversas e mais";
 "conversation.create.group.title" = "Novo grupo";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "Voltar";
 "conversation.create.channel.next" = "Próximo";
 
@@ -94,3 +99,11 @@
 "conversation.file.preview.open" = "Open preview";
 "conversation.draft.attachmentMenu.retry" = "Tentar novamente";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.navigationTitle" = "Arquivos";
+"conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.download" = "Baixar";
+"conversation.wireCells.files.item.menu.rename" = "Renomear";
+"conversation.wireCells.files.item.menu.delete" = "Delete permanently";

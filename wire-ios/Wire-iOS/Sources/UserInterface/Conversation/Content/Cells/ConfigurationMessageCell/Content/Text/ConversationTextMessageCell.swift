@@ -193,9 +193,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private var isChatBubbleSimpleEnabled: Bool {
         // the additional DeveloperFlag check is needed for the snapshot test
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
+        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
     }
-
 }
 
 // MARK: - Description
@@ -212,13 +211,16 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+        self.configuration = View.Configuration(
+            attributedText: attributedString,
+            isObfuscated: isObfuscated
+        )
     }
 }
 

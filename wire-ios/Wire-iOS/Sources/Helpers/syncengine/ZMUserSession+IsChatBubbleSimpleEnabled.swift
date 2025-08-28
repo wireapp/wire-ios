@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Вернуться к обзору новой беседы";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Закрыть баннер обновления";
+import WireSyncEngine
 
-// MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Закрыть файлы";
-"conversation.wireCells.files.loadMore.title" = "Загрузить еще";
+extension ZMUserSession {
+    static var isChatBubbleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
+}
