@@ -26,10 +26,10 @@ public struct SSOID: Equatable, Sendable {
 
     /// The self user's sso subject
 
-    public let subject: String
+    public let subject: String?
 
     /// The self user's tenant
 
-    public let tenant: String
+    public let tenant: String?
 
 }
