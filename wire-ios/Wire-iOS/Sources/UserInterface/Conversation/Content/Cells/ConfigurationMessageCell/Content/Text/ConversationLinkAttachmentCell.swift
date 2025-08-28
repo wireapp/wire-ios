@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 
@@ -96,7 +97,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
             widthConstraint
         ])
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -180,7 +181,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

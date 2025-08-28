@@ -18,3 +18,7 @@
 
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.close" = "Dateien schließen";
+"conversation.wireCells.files.loadMore.title" = "Load more";
