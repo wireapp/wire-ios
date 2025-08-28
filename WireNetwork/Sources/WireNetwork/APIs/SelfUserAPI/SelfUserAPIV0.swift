@@ -174,8 +174,8 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
 
     let scimExternalId: String?
-    let subject: String
-    let tenant: String
+    let subject: String?
+    let tenant: String?
 
     enum CodingKeys: String, CodingKey {
         case scimExternalId = "scim_external_id"
