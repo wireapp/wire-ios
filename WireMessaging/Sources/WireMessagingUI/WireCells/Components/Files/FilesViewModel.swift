@@ -73,7 +73,6 @@ package final class FilesViewModel: ObservableObject {
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
-    private var localURLTask: Task<URL?, any Error>?
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
@@ -138,24 +137,26 @@ package final class FilesViewModel: ObservableObject {
     }
 
     /// Downloads if necessary and views the asset represented by the given item.
-    func viewAsset(item: FilesViewItem) async throws {
-        localURLTask?.cancel()
-        localURLTask = nil
-
-        let task = Task { try await localURL(for: item) }
-        localURLTask = task
-
-        viewingURL = try await task.value
+    func viewAsset(item: FilesViewItem) async {
+        do {
+            if let result = try await localURL(for: item), result.item == item {
+                viewingURL = result.url
+            }
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            alert = .noInternet
+        } catch {
+            alert = .unknownError
+        }
     }
 
     // MARK: - Private
 
-    private func localURL(for item: FilesViewItem) async throws -> URL? {
+    private func localURL(for item: FilesViewItem) async throws -> (item: FilesViewItem, url: URL)? {
         // If the file is already downloaded, return the local URL.
         if
             let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
-                return url
+                return (item, url)
         }
 
         let cacheKey: String?
@@ -166,7 +167,8 @@ package final class FilesViewModel: ObservableObject {
             try await awaitDownload(item: item)
             cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
         }
-        return cacheKey.map { fileCache.fileURL(forKey: $0) } ?? nil
+        let url = cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
+        return url.map { (item, $0) } ?? nil
     }
 
     private func cancelLoad() {
