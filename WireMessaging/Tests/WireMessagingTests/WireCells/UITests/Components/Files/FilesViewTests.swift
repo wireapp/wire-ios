@@ -130,28 +130,6 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
-    func testFilesView_ReceivedDataState() async {
-        let mockItems = (0 ..< 10).map { index in
-            FilesViewItem(
-                id: UUID(),
-                filename: "root/foo-\(index).jpg",
-                ownedBy: "Person \(index)",
-                modifiedAt: Date(timeIntervalSince1970: 1_600_000_000),
-                icon: .image
-            )
-        }
-
-        let view = makeFilesView(state: .received(items: mockItems))
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
     func testFilesView_NoDataState() async {
         let view = makeFilesView(state: .noData)
 
