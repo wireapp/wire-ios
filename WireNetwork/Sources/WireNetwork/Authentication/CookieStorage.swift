@@ -163,8 +163,8 @@ public actor CookieStorage: CookieStorageProtocol {
     }
 
     private func updateCookieInKeychain(_ cookieData: Data) async throws {
-        let updateQuery = updateQuery(cookieData: cookieData)
-        try await keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
+        let updateQuery: Set<KeychainQueryItem> = [.data(cookieData.base64EncodedData())]
+        try await keychain.updateItem(query: baseQuery, attributesToUpdate: updateQuery)
     }
 
     private func fetchCookieDataFromKeychain() async throws -> Data? {
