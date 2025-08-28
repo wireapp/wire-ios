@@ -38,6 +38,7 @@ extern NSString * const ZMPushChannelIsOpenKey;
 @property (nonatomic, readonly) id<TransportSessionType> transportSession;
 @property (nonatomic) BOOL isDeveloperModeEnabled;
 @property (nonatomic) BOOL isSyncV2Enabled;
+// Only used for multibackend support.
 @property (nonatomic, strong, nullable) NSNumber *apiVersion;
 
 - (instancetype)init NS_UNAVAILABLE;
