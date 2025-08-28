@@ -39,10 +39,10 @@ public struct WireCellsConversationID: Codable, Equatable, Hashable, Identifiabl
     public init?(string: String) {
         // The CellsSDK provides the qualifiedID as a string in the format `uuid@domain`
         let components = string.split(separator: "@")
-        guard components.count == 2, let uuid = UUID(uuidString: String(components[1])) else {
+        guard components.count == 2, let uuid = UUID(uuidString: String(components[0])) else {
             return nil
         }
-        self.domain = String(components[0])
+        self.domain = String(components[1])
         self.uuid = uuid
     }
 }
