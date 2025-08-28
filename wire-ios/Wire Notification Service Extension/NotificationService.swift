@@ -65,12 +65,18 @@ final class NotificationService: UNNotificationServiceExtension {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
-            WireLogger.notifications.critical("no current app version, not loading service")
+            WireLogger.notifications.critical(
+                "no current app version, not loading service",
+                attributes: .safePublic
+            )
             return nil
         }
 
         guard let appGroupID = info?["WireGroupId"] as? String else {
-            WireLogger.notifications.critical("no app group id, not loading service")
+            WireLogger.notifications.critical(
+                "no app group id, not loading service",
+                attributes: .safePublic
+            )
             return nil
         }
 
@@ -78,13 +84,19 @@ final class NotificationService: UNNotificationServiceExtension {
         let appContainerURL = FileManager.sharedContainerDirectory(for: appID)
 
         guard let sharedUserDefaults = UserDefaults(suiteName: appID) else {
-            WireLogger.notifications.critical("no shared user defaults, not loading service")
+            WireLogger.notifications.critical(
+                "no shared user defaults, not loading service",
+                attributes: .safePublic
+            )
             return nil
         }
 
         if DeveloperFlag.multibackend.isOn {
             // Only new extension is supported in multibackend mode.
-            WireLogger.notifications.info("loading new notification service")
+            WireLogger.notifications.info(
+                "loading new notification service",
+                attributes: .safePublic
+            )
             return NotificationServiceExtension(
                 currentAppVersion: currentAppVersion,
                 appContainerURL: appContainerURL,
@@ -99,7 +111,10 @@ final class NotificationService: UNNotificationServiceExtension {
             // API version decides which service to use, if we don't have it
             // yet then we simply supress the notification request.
             guard let apiVersion = BackendInfo.apiVersion else {
-                WireLogger.notifications.warn("no resolved api version, not loading service")
+                WireLogger.notifications.warn(
+                    "no resolved api version, not loading service",
+                    attributes: .safePublic
+                )
                 return nil
             }
 
@@ -107,7 +122,10 @@ final class NotificationService: UNNotificationServiceExtension {
             /// turned on yet. Regardless, we will use it and later check
             /// if the new sync is enabled.
             if apiVersion >= .v8 {
-                WireLogger.notifications.warn("loading new notification service")
+                WireLogger.notifications.info(
+                    "loading new notification service",
+                    attributes: .safePublic
+                )
                 return NotificationServiceExtension(
                     currentAppVersion: currentAppVersion,
                     appContainerURL: appContainerURL,
@@ -119,7 +137,10 @@ final class NotificationService: UNNotificationServiceExtension {
                     }
                 )
             } else {
-                WireLogger.notifications.warn("loading legacy notification service")
+                WireLogger.notifications.info(
+                    "loading legacy notification service",
+                    attributes: .safePublic
+                )
                 return LegacyNotificationService()
             }
         }
