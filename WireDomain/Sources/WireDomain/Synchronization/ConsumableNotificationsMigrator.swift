@@ -29,7 +29,7 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
     let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
     let featureConfigRepository: FeatureConfigRepositoryProtocol
-    
+
     init(
         sync: SyncMigratorProtocol,
         featureConfigRepository: FeatureConfigRepositoryProtocol,
