@@ -155,7 +155,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+    private lazy var updateEventsAPI: some UpdateEventsAPI = UpdateEventsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 

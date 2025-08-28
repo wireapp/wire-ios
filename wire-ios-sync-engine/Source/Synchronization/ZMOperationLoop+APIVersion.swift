@@ -23,8 +23,18 @@ import WireDataModel
 public extension ZMOperationLoop {
 
     var currentAPIVersion: APIVersionWrapper? {
-        guard let current = BackendInfo.apiVersion else { return nil }
-        return .init(value: current)
+        if DeveloperFlag.multibackend.isOn {
+            guard
+                let rawAPIVersion = apiVersion?.int32Value,
+                let apiVersion = APIVersion(rawValue: rawAPIVersion)
+            else {
+                return nil
+            }
+            return .init(value: apiVersion)
+        } else {
+            guard let current = BackendInfo.apiVersion else { return nil }
+            return .init(value: current)
+        }
     }
 
 }
