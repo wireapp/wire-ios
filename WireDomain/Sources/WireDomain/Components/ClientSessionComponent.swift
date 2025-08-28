@@ -416,6 +416,7 @@ public final class ClientSessionComponent {
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
+            featureConfigRepository: featureConfigRepository,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,
