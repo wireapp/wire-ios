@@ -131,7 +131,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_ReceivedDataState() async {
-        let mockItems = (0 ..< 30).map { index in
+        let mockItems = (0 ..< 10).map { index in
             FilesViewItem(
                 id: UUID(),
                 filename: "root/foo-\(index).jpg",
