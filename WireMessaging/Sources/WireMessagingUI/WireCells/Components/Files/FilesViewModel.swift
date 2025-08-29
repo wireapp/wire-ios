@@ -52,7 +52,7 @@ package final class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
-    enum State {
+    enum State: Equatable {
         case loading
         case received(items: [FilesViewItem])
         case noData
@@ -69,20 +69,19 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
-    private let isCellsStatePending: Bool
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         isCellsStatePending: Bool
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
-        self.isCellsStatePending = isCellsStatePending
+        self.state = isCellsStatePending ? .pending : .loading
     }
 
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var alert: AlertModel?
-    @Published var state: State = .loading
+    @Published var state: State
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -98,6 +97,10 @@ package final class FilesViewModel: ObservableObject {
     ///
     /// This method cancels any ongoing load operation and starts a new one.
     func reload() async {
+        guard state != .pending else {
+            return
+        }
+
         cancelLoad()
         state = .loading
         nextPageToken = nil
@@ -133,9 +136,6 @@ package final class FilesViewModel: ObservableObject {
 
     private func loadMore(initialFetch: Bool) async {
         guard loadMoreTask == nil else { return }
-        guard !isCellsStatePending else {
-            return state = .pending
-        }
 
         let task = Task { try await fetchItems(token: nextPageToken) }
 

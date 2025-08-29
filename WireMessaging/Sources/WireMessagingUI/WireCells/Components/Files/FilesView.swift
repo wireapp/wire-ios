@@ -23,8 +23,8 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 import WireReusableUIComponents
 
-typealias Strings = L10n.Localizable.Conversation.WireCells
-typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: View {
     @ObservedObject var viewModel: FilesViewModel

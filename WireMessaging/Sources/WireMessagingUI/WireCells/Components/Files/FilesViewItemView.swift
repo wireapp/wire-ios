@@ -19,6 +19,9 @@
 import SwiftUI
 import WireDesign
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel

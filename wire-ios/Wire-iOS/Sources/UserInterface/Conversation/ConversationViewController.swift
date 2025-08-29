@@ -284,7 +284,6 @@ final class ConversationViewController: UIViewController {
 
         resolveConversationIfOneOnOne()
         updateVerificationStatusIfNeeded()
-        syncCellsStateIfPending()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -881,7 +880,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     /// If cells state is pending we need to sync it to ensure the value is up to date
     /// as it might have been updated to a `ready` state.
-    private func syncCellsStateIfPending() {
+    func syncCellsStateIfPending() {
         guard wireCellsState == .pending else {
             return
         }

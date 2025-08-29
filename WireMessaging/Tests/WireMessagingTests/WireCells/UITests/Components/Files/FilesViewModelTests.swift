@@ -316,20 +316,3 @@ final class FilesViewModelTests {
     }
 
 }
-
-extension FilesViewModel.State {
-    static func == (lhs: FilesViewModel.State, rhs: FilesViewModel.State) -> Bool {
-        switch (lhs, rhs) {
-        case (.noData, .noData):
-            true
-        case (.pending, .pending):
-            true
-        case (.loading, .loading):
-            true
-        case let (.received(lhsItems), .received(rhsItems)):
-            lhsItems == rhsItems
-        default:
-            false
-        }
-    }
-}
