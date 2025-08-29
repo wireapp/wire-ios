@@ -102,16 +102,16 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
 
-        for progress in 0 ... 100 {
-            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail, progress > 10 {
+        for progress in stride(from: 0.0, to: 1.1, by: 0.1) {
+            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail, progress > 0.1 {
                 .failed(error: URLError(.notConnectedToInternet))
-            } else if progress < 100 {
+            } else if progress < 1 {
                 .downloading(progress: Double(progress))
             } else {
                 .downloaded(cacheKey: "cacheKey")
             }
 
-            try await Task.sleep(nanoseconds: 50_000_000)
+            try await Task.sleep(nanoseconds: 200_000_000)
             let update = WireCellsLocalAsset(
                 nodeID: nodeID,
                 eTag: "something",
@@ -123,7 +123,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
             publishers[nodeID]?.send(update)
 
-            if shouldFail, progress > 10 {
+            if shouldFail, progress > 0.1 {
                 break
             }
         }
