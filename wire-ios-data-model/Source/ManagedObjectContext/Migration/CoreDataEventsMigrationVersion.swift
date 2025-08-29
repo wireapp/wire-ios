@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
 
@@ -64,7 +65,7 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
-        WireDataModelBundle.bundle.url(
+        WireDataBundle.bundle.url(
             forResource: rawValue,
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory

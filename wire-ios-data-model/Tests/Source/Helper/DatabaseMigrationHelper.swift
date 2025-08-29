@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireData
 @testable import WireDataModel
 
 enum Database {
@@ -48,7 +49,7 @@ struct DatabaseMigrationHelper {
 
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
-    private let bundle = WireDataModelBundle.bundle
+    private let bundle = WireDataBundle.bundle
     private let dataModelName = "zmessaging"
 
     func createObjectModel(version: String) throws -> NSManagedObjectModel {
