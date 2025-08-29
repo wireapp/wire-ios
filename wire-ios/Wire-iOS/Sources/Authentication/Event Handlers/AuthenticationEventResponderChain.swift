@@ -19,6 +19,7 @@
 import Foundation
 import WireAuthenticationAPI
 import WireDataModel
+import WireNetwork
 import WireSystem
 
 /// Provides information to the event responder chain and executes actions.
@@ -51,7 +52,7 @@ final class AuthenticationEventResponderChain {
     enum EventType: CustomStringConvertible {
 
         case wireAuthenticationModuleComplete((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
-        case flowStart(NSError?, Int)
+        case flowStart(BackendEnvironment2?, NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
         case clientRegistrationSuccess
@@ -112,7 +113,7 @@ final class AuthenticationEventResponderChain {
 
     // MARK: - Configuration
 
-    var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
+    var flowStartHandlers: [AnyAuthenticationEventHandler<(BackendEnvironment2?, NSError?, Int)>] = []
     var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(
         AuthenticationResult,
         RegistrationAnalyticsTrackingConsent
@@ -229,8 +230,8 @@ final class AuthenticationEventResponderChain {
         switch eventType {
         case let .wireAuthenticationModuleComplete(context):
             handleEvent(with: wireAuthenticationModuleHandlers, context: context)
-        case let .flowStart(error, numberOfAccounts):
-            handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
+        case let .flowStart(environment, error, numberOfAccounts):
+            handleEvent(with: flowStartHandlers, context: (environment, error, numberOfAccounts))
         case let .backupReady(existingAccount):
             handleEvent(with: backupEventHandlers, context: existingAccount)
         case let .clientRegistrationError(error, accountID):

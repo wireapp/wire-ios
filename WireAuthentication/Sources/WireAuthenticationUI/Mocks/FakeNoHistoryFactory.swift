@@ -20,8 +20,11 @@ import Foundation
 
 struct FakeNoHistoryFactory: NoHistoryFactory {
 
+    let didReauthenticate: Bool
+
     var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
+            didReauthenticate: didReauthenticate,
             didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,

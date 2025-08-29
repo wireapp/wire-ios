@@ -22,6 +22,7 @@
 "authentication.identity.input.submit" = "Next";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "Email";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Password";
@@ -80,6 +81,8 @@
 
 "authentication.no_history.title" = "It’s the first time you’re using Wire on this device.";
 "authentication.no_history.message" = "For privacy reasons, your conversation history will not appear here.";
+"authentication.missing_history.title" = "You’ve used Wire on this device before.";
+"authentication.missing_history.message" = "Messages sent in the meantime will not appear.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";

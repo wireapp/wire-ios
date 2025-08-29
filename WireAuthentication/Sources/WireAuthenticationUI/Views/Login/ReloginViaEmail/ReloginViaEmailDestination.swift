@@ -18,26 +18,17 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
-final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
+enum ReloginViaEmailDestination: Hashable {
 
-    var statusProvider: AuthenticationStatusProvider?
-
-    func handleEvent(
-        currentStep: AuthenticationFlowStep,
-        context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
-    ) -> [AuthenticationCoordinatorAction]? {
-        switch currentStep {
-        case .wireAuthenticationModule:
-            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
-
-        case .reauthenticate:
-            return [.completeWireAuthenticationLogin(context)]
-
-        default:
-            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
-            return nil
-        }
-    }
+    case verifyLogin(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    )
+    case noHistory(
+        authenticationResult: AuthenticationResult
+    )
 
 }

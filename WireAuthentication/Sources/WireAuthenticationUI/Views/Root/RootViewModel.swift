@@ -55,11 +55,16 @@ package final class RootViewModel: ObservableObject, Router {
         factory: any Factory,
         bridge: WireAuthenticationBridge,
         environment: BackendEnvironment2,
+        reauthEmail: String?,
         isMultibackendEnabled: Bool,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
-        self.modalDestination = .authFlow(environment: environment)
+        if let reauthEmail {
+            self.modalDestination = .reauthFlow(email: reauthEmail)
+        } else {
+            self.modalDestination = .authFlow(environment: environment)
+        }
         self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge

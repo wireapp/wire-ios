@@ -38,6 +38,7 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
+        reauthEmail: String?,
         environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
@@ -53,6 +54,7 @@ public struct WireAuthenticationAssembly {
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
+            reauthEmail: reauthEmail,
             environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
