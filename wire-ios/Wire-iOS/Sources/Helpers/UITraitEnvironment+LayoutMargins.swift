@@ -72,10 +72,12 @@ extension UITraitEnvironment {
         let margins = conversationHorizontalMargins
 
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-            return HorizontalMargins(left: margins.right,
-                                     right: margins.left,
-                                     chatBubbleMinimumLeading: margins.chatBubbleMinimumTrailing,
-                                     chatBubbleMinimumTrailing: margins.chatBubbleMinimumLeading)
+            return HorizontalMargins(
+                left: margins.right,
+                right: margins.left,
+                chatBubbleMinimumLeading: margins.chatBubbleMinimumTrailing,
+                chatBubbleMinimumTrailing: margins.chatBubbleMinimumLeading
+            )
         } else {
             return margins
         }
