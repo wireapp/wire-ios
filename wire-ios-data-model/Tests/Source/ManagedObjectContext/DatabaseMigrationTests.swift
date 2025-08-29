@@ -17,8 +17,8 @@
 //
 //
 
-import XCTest
 import WireData
+import XCTest
 
 @testable import WireDataModel
 
