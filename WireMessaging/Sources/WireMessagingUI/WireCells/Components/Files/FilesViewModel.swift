@@ -156,7 +156,7 @@ package final class FilesViewModel: ObservableObject {
         if
             let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
-                return (item, url)
+            return (item, url)
         }
 
         let cacheKey: String?
@@ -243,9 +243,9 @@ private extension WireCellsLocalAsset.DownloadState {
     var cacheKey: String? {
         switch self {
         case let .downloaded(key):
-            return key
+            key
         default:
-            return nil
+            nil
         }
     }
 }
