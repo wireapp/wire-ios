@@ -93,6 +93,7 @@ struct FilesViewItemView: View {
 
             Divider()
         }
+        .contentShape(Rectangle()) // Tap area
     }
 
     private func open() {
