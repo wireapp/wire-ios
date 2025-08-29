@@ -21,10 +21,14 @@ import UIKit
 struct HorizontalMargins {
     var left: CGFloat
     var right: CGFloat
+    var chatBubbleMinimumLeading: CGFloat
+    var chatBubbleMinimumTrailing: CGFloat
 
-    init(left: CGFloat, right: CGFloat) {
+    init(left: CGFloat, right: CGFloat, chatBubbleMinimumLeading: CGFloat, chatBubbleMinimumTrailing: CGFloat) {
         self.left = left
         self.right = right
+        self.chatBubbleMinimumLeading = chatBubbleMinimumLeading
+        self.chatBubbleMinimumTrailing = chatBubbleMinimumTrailing
     }
 
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
@@ -32,9 +36,13 @@ struct HorizontalMargins {
         case .regular:
             self.left = 96
             self.right = 96
+            self.chatBubbleMinimumLeading = 136.0
+            self.chatBubbleMinimumTrailing = 136.0
         default:
             self.left = 56
             self.right = 16
+            self.chatBubbleMinimumLeading = 104.0
+            self.chatBubbleMinimumTrailing = 72.0
         }
     }
 
@@ -64,7 +72,10 @@ extension UITraitEnvironment {
         let margins = conversationHorizontalMargins
 
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-            return HorizontalMargins(left: margins.right, right: margins.left)
+            return HorizontalMargins(left: margins.right,
+                                     right: margins.left,
+                                     chatBubbleMinimumLeading: margins.chatBubbleMinimumTrailing,
+                                     chatBubbleMinimumTrailing: margins.chatBubbleMinimumLeading)
         } else {
             return margins
         }
