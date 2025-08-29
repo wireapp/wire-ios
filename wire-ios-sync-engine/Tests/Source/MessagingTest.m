@@ -148,7 +148,13 @@ static ZMReachability *sharedReachabilityMock = nil;
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    self.coreDataStack = [self createCoreDataStack];
+    [self.dispatchGroup enter];
+    [self createCoreDataStackWithCompletionHandler:^(CoreDataStack * _Nullable stack, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        self.coreDataStack = stack;
+        [self.dispatchGroup leave];
+    }];
+    Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
     [self setupKeyStore];
     [self setupCaches];

@@ -20,6 +20,7 @@ import MapKit
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -74,7 +75,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -114,7 +115,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margins = conversationHorizontalMargins
-        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let containerInsets: UIEdgeInsets = isChatBubbleSimpleEnabled
+            ? .zero
+            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
@@ -193,6 +196,10 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     private func openInMaps() {
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
     }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 }
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
@@ -214,6 +221,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"

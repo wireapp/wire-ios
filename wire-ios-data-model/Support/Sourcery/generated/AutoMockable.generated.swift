@@ -2110,19 +2110,24 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
     public var underlyingEventContext: NSManagedObjectContext!
 
 
-    // MARK: - loadStores
+    // MARK: - load
 
-    public var loadStoresCompletionHandler_Invocations: [(Error?) -> Void] = []
-    public var loadStoresCompletionHandler_MockMethod: ((@escaping (Error?) -> Void) -> Void)?
+    public var load_Invocations: [Void] = []
+    public var load_MockError: Error?
+    public var load_MockMethod: (() async throws -> Void)?
 
-    public func loadStores(completionHandler: @escaping (Error?) -> Void) {
-        loadStoresCompletionHandler_Invocations.append(completionHandler)
+    public func load() async throws {
+        load_Invocations.append(())
 
-        guard let mock = loadStoresCompletionHandler_MockMethod else {
-            fatalError("no mock for `loadStoresCompletionHandler`")
+        if let error = load_MockError {
+            throw error
         }
 
-        mock(completionHandler)
+        guard let mock = load_MockMethod else {
+            fatalError("no mock for `load`")
+        }
+
+        try await mock()
     }
 
     // MARK: - newBackgroundContext
@@ -3677,6 +3682,72 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         }
 
         mock(channels)
+    }
+
+    // MARK: - fetchConsumableNotifications
+
+    public var fetchConsumableNotifications_Invocations: [Void] = []
+    public var fetchConsumableNotifications_MockMethod: (() -> Feature.ConsumableNotifications)?
+    public var fetchConsumableNotifications_MockValue: Feature.ConsumableNotifications?
+
+    public func fetchConsumableNotifications() -> Feature.ConsumableNotifications {
+        fetchConsumableNotifications_Invocations.append(())
+
+        if let mock = fetchConsumableNotifications_MockMethod {
+            return mock()
+        } else if let mock = fetchConsumableNotifications_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConsumableNotifications`")
+        }
+    }
+
+    // MARK: - storeConsumableNotifications
+
+    public var storeConsumableNotifications_Invocations: [Feature.ConsumableNotifications] = []
+    public var storeConsumableNotifications_MockMethod: ((Feature.ConsumableNotifications) -> Void)?
+
+    public func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications) {
+        storeConsumableNotifications_Invocations.append(consumableNotifications)
+
+        guard let mock = storeConsumableNotifications_MockMethod else {
+            fatalError("no mock for `storeConsumableNotifications`")
+        }
+
+        mock(consumableNotifications)
+    }
+
+    // MARK: - fetchChatBubblesSimple
+
+    public var fetchChatBubblesSimple_Invocations: [Void] = []
+    public var fetchChatBubblesSimple_MockMethod: (() -> Feature.ChatBubblesSimple)?
+    public var fetchChatBubblesSimple_MockValue: Feature.ChatBubblesSimple?
+
+    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
+        fetchChatBubblesSimple_Invocations.append(())
+
+        if let mock = fetchChatBubblesSimple_MockMethod {
+            return mock()
+        } else if let mock = fetchChatBubblesSimple_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChatBubblesSimple`")
+        }
+    }
+
+    // MARK: - storeChatBubblesSimple
+
+    public var storeChatBubblesSimple_Invocations: [Feature.ChatBubblesSimple] = []
+    public var storeChatBubblesSimple_MockMethod: ((Feature.ChatBubblesSimple) -> Void)?
+
+    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
+        storeChatBubblesSimple_Invocations.append(chatBubblesSimple)
+
+        guard let mock = storeChatBubblesSimple_MockMethod else {
+            fatalError("no mock for `storeChatBubblesSimple`")
+        }
+
+        mock(chatBubblesSimple)
     }
 
 }

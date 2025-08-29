@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Iščite";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Zbirke";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";

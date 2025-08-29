@@ -92,7 +92,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                         accountIdentifier: account.userIdentifier,
                         from: unzippedURL,
                         applicationContainer: sharedContainerURL,
-                        dispatchGroup: dispatchGroup
                     )
 
                     logger.debug("opening a temporary context")

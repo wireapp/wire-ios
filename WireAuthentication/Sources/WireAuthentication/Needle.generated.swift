@@ -99,6 +99,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
+    var isMultibackendEnabled: Bool {
+        return rootComponent.isMultibackendEnabled
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -191,8 +194,8 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
-    var backendInfo: BackendInfo {
-        return rootComponent.backendInfo
+    var environment: BackendEnvironment2 {
+        return rootComponent.environment
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -231,6 +234,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\DetermineAuthMethodComponentDependency.isMultibackendEnabled] = "isMultibackendEnabled-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
@@ -248,7 +252,7 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["backendInfo-BackendInfo"] = { [unowned self] in self.backendInfo as Any }
+        localTable["environment-BackendEnvironment2"] = { [unowned self] in self.environment as Any }
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
@@ -284,7 +288,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
-        keyPathToName[\LoginViaEmailComponentDependency.backendInfo] = "backendInfo-BackendInfo"
+        keyPathToName[\LoginViaEmailComponentDependency.environment] = "environment-BackendEnvironment2"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }

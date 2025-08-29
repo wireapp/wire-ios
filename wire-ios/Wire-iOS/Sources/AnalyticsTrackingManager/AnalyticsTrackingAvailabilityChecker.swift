@@ -17,6 +17,7 @@
 //
 
 import WireAuthenticationAPI
+import WireNetwork
 
 struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
 
@@ -28,8 +29,8 @@ struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityChecke
         return whitelistedDomains.contains(domain)
     }
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
-        guard let backendConfigHost = backendConfig.endpoints.backendURL.host() else { return false }
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
+        guard let backendConfigHost = environment.config.endpoints.restAPIURL.host() else { return false }
 
         let whitelistedHosts = [
             // prod

@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireNetwork
 import WireReusableUIComponents
 
 protocol PersonalAccountCreationComponentDependency: Dependency {

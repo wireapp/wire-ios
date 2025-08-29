@@ -62,7 +62,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
 
         stack.storesExists = true
         stack.needsMigration = false
-        stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
+        stack.load_MockMethod = {}
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
         cookieStorage.fetchCookies_MockValue = [validCookie]
 

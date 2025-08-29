@@ -24,12 +24,13 @@ public enum WireMessagingAssembly {
 
     @MainActor
     public static func makeConversationScreen(
-        loadMessagesRepo: any LoadConversationMessagesRepositoryProtocol
+        loadMessagesRepo: any (LoadConversationMessagesRepositoryProtocol & MonitorMessagesRepositoryProtocol)
     ) -> UIViewController {
         ConversationMessagesViewController(
             viewModel: ConversationMessagesViewModel(
                 dataSource: ConversationMessagesDataSource(
-                    loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo)
+                    loadMessagesUseCase: LoadConversationMessagesUseCase(repo: loadMessagesRepo),
+                    monitorMessagesUseCase: MonitorMessagesUseCase(repo: loadMessagesRepo)
                 )
             )
         )

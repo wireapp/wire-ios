@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -43,7 +44,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
         let view = NavigationStack {
             PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
                 email: "foo@bar.com",
-                backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+                environment: Scaffolding.environment(backendURL: "https://prod-nginz-https.wire.com"),
                 privacyPolicyURL: URL(string: "www.wire.com")!,
                 termsOfUseURL: URL(string: "www.wire.com")!,
                 passwordValidator: MockPasswordValidator()
@@ -65,7 +66,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
         let view = NavigationStack {
             PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
                 email: "foo@bar.com",
-                backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+                environment: Scaffolding.environment(backendURL: "https://prod-nginz-https.wire.com"),
                 privacyPolicyURL: URL(string: "www.wire.com")!,
                 termsOfUseURL: URL(string: "www.wire.com")!,
                 passwordValidator: MockPasswordValidator()
@@ -84,20 +85,23 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
 private enum Scaffolding {
 
-    static func backendConfig(backendURL: String) -> BackendConfig {
-        BackendConfig(
+    static func environment(backendURL: String) -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: "mock",
-            endpoints: Endpoints(
-                backendURL: URL(string: backendURL)!,
-                backendWSURL: URL(string: "https://wire.com")!,
-                blackListURL: URL(string: "https://wire.com")!,
-                teamsURL: URL(string: "https://wire.com")!,
-                accountsURL: URL(string: "https://wire.com")!,
-                websiteURL: URL(string: "https://wire.com")!,
-                countlyURL: URL(string: "https://wire.com")!
-            ),
-            proxySettings: .none,
-            pinnedKeys: .none
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: backendURL)!,
+                    websocketURL: URL(string: "https://wire.com")!,
+                    blacklistURL: URL(string: "https://wire.com")!,
+                    teamsURL: URL(string: "https://wire.com")!,
+                    accountsURL: URL(string: "https://wire.com")!,
+                    websiteURL: URL(string: "https://wire.com")!,
+                    countlyURL: URL(string: "https://wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     }
 

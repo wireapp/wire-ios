@@ -48,8 +48,8 @@ final class LegacyNotificationServiceTests: XCTestCase {
         coreDataFixture.mockUserClient()
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         sut = LegacyNotificationService()
         callEventHandlerMock = CallEventHandlerMock()
@@ -61,7 +61,7 @@ final class LegacyNotificationServiceTests: XCTestCase {
             trigger: nil
         )
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         mockConversation = createTeamGroupConversation()
         client.user = otherUser
         createAccount(with: currentUserIdentifier)

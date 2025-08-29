@@ -112,6 +112,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
+    private let isChatBubbleSimpleEnabled: Bool
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -128,7 +129,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         userSession: UserSession,
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        isChatBubbleSimpleEnabled: Bool,
     ) {
         self.message = message
         self.context = context
@@ -141,6 +143,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             userID: selfUser.remoteIdentifier,
             storage: userDefaults
         )
+
+        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
+        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
+        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
 
         super.init()
 
@@ -460,14 +466,26 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        if isToolboxVisible(in: context) {
-            let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
-            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        func addToolbox() {
+            if isToolboxVisible(in: context) {
+                let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
         }
 
-        if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-            let description = MessageReactionsCellDescription(message: message)
-            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        func addReactions() {
+            if !message.isSystem, !message.isEphemeral, message.hasReactions() {
+                let description = MessageReactionsCellDescription(message: message)
+                cellDescriptions.append(AnyConversationMessageCellDescription(description))
+            }
+        }
+
+        if isChatBubbleSimpleEnabled {
+            addReactions()
+            addToolbox()
+        } else {
+            addToolbox()
+            addReactions()
         }
 
         if isFailedRecipientsVisible(in: context) {

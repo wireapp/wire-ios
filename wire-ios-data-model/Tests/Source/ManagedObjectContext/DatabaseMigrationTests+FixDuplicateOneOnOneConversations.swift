@@ -51,7 +51,7 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
         var newConversationMessageNonces: [UUID]!
         let draftMessageText = "test"
 
-        try helper.migrateStoreToCurrentVersion(
+        try await helper.migrateStoreToCurrentVersion(
             sourceVersion: "2.118.0",
             preMigrationAction: { context in
                 try context.performAndWait {

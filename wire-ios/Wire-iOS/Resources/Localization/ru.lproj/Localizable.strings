@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
+"conversation.action.files" = "Файлы";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -700,7 +701,7 @@
 "content.message.open" = "Открыть";
 "content.message.sign" = "Подписать";
 "content.message.copy" = "Скопировать";
-"content.message.download" = "Загрузить";
+"content.message.download" = "Скачать";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
 "content.message.collapse" = "Свернуть";

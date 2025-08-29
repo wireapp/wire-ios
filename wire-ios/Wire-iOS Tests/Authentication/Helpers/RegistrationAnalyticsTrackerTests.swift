@@ -18,6 +18,7 @@
 
 import WireAnalyticsSupport
 import WireAuthenticationAPI
+import WireNetwork
 import XCTest
 
 @testable import Wire
@@ -39,50 +40,53 @@ final class RegistrationAnalyticsTrackerTests: XCTestCase {
 
     func testIsAnalyticsTrackingAvailableCallsChecker() {
         // Given
-        let backendConfig = makeBackendConfig(backendURL: "https://account.bella.wire.link")
-        availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue = true
+        let environment = makeBackendEnvironment(backendURL: "https://account.bella.wire.link")
+        availabilityChecker.isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReturnValue = true
 
         // When
-        let result = sut.isAnalyticsTrackingAvailable(for: backendConfig)
+        let result = sut.isAnalyticsTrackingAvailable(for: environment)
 
         // Then
         XCTAssertTrue(result)
         XCTAssertEqual(
-            availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations,
-            [backendConfig]
+            availabilityChecker.isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedInvocations,
+            [environment]
         )
     }
 
     func testIsAnalyticsTrackingUnavailableDueToNoConfig() {
         // Given
         sut = makeSUT(useNilConfig: true)
-        let backendConfig = makeBackendConfig(backendURL: "https://account.bella.wire.link")
+        let environment = makeBackendEnvironment(backendURL: "https://account.bella.wire.link")
 
         // When
-        let result = sut.isAnalyticsTrackingAvailable(for: backendConfig)
+        let result = sut.isAnalyticsTrackingAvailable(for: environment)
 
         // Then
         XCTAssertFalse(result)
         XCTAssertEqual(
-            availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations,
+            availabilityChecker.isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedInvocations,
             []
         )
     }
 
-    private func makeBackendConfig(backendURL: String) -> BackendConfig {
-        BackendConfig(
+    private func makeBackendEnvironment(backendURL: String) -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: "mock",
-            endpoints: Endpoints(
-                backendURL: URL(string: backendURL)!,
-                backendWSURL: URL(string: "https://wire.com")!,
-                blackListURL: URL(string: "https://wire.com")!,
-                teamsURL: URL(string: "https://wire.com")!,
-                accountsURL: URL(string: "https://wire.com")!,
-                websiteURL: URL(string: "https://wire.com")!,
-                countlyURL: URL(string: "https://wire.com")!
-            ),
-            proxySettings: .none,
-            pinnedKeys: .none
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: backendURL)!,
+                    websocketURL: URL(string: "https://wire.com")!,
+                    blacklistURL: URL(string: "https://wire.com")!,
+                    teamsURL: URL(string: "https://wire.com")!,
+                    accountsURL: URL(string: "https://wire.com")!,
+                    websiteURL: URL(string: "https://wire.com")!,
+                    countlyURL: URL(string: "https://wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     }
 
@@ -125,24 +129,24 @@ private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsT
 
     // MARK: - isAnalyticsTrackingAvailable
 
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount = 0
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCalled: Bool {
-        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount > 0
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolCallsCount = 0
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolCalled: Bool {
+        isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolCallsCount > 0
     }
 
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig: BackendConfig?
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations: [BackendConfig] = []
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue: Bool!
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure: ((BackendConfig) -> Bool)?
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedEnvironment: BackendEnvironment2?
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedInvocations: [BackendEnvironment2] = []
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReturnValue: Bool!
+    var isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolClosure: ((BackendEnvironment2) -> Bool)?
 
-    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
-        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount += 1
-        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig = backendConfig
-        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations.append(backendConfig)
-        if let isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure {
-            return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure(backendConfig)
+    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
+        isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolCallsCount += 1
+        isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedEnvironment = environment
+        isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReceivedInvocations.append(environment)
+        if let isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolClosure {
+            return isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolClosure(environment)
         } else {
-            return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue
+            return isAnalyticsTrackingAvailableForEnvironmentBackendEnvironment2BoolReturnValue
         }
     }
 

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 // MARK: - MessageReactionsCellDescription
 
@@ -27,6 +28,8 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     typealias View = MessageReactionsCell
     let configuration: View.Configuration
+
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     init(message: ZMConversationMessage) {
         self.message = message

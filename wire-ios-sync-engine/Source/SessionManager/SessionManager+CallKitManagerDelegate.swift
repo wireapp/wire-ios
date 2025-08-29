@@ -38,11 +38,14 @@ extension SessionManager: CallKitManagerDelegate {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
-        withSession(for: account) { userSession in
-            guard let conversation = ZMConversation.fetch(
-                with: handle.conversationID,
-                in: userSession.managedObjectContext
-            ) else {
+        Task { @MainActor in
+            guard
+                let userSession = await withSession(for: account),
+                let conversation = ZMConversation.fetch(
+                    with: handle.conversationID,
+                    in: userSession.managedObjectContext
+                )
+            else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
@@ -60,27 +63,29 @@ extension SessionManager: CallKitManagerDelegate {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
-        withSession(for: account) { userSession in
-            guard let conversation = ZMConversation.fetch(
-                with: handle.conversationID,
-                in: userSession.managedObjectContext
-            ) else {
+        Task { @MainActor in
+            guard
+                let userSession = await withSession(for: account),
+                let conversation = ZMConversation.fetch(
+                    with: handle.conversationID,
+                    in: userSession.managedObjectContext
+                )
+            else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            Task {
-                await userSession.processPendingCallEvents()
-                WireLogger.calling.info("did process call events, returning conversation...")
-                await MainActor.run {
-                    completionHandler(.success(conversation))
-                }
-            }
+            await userSession.processPendingCallEvents()
+
+            WireLogger.calling.info("did process call events, returning conversation...")
+            completionHandler(.success(conversation))
         }
     }
 
     func endAllCalls() {
         for userSession in backgroundUserSessions.values {
-            userSession.callCenter?.endAllCalls()
+            userSession.viewContext.perform {
+                userSession.callCenter?.endAllCalls()
+            }
         }
     }
 

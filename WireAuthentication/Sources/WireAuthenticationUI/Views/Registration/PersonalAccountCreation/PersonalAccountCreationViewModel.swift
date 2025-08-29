@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 
 @MainActor
@@ -55,12 +56,12 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     var isAnalyticsTrackingAvailable: Bool {
         // `analyticsEventTracker` will be nil if the app is not shipped with Countly credentials.
         // If credentials are available, we only want to enable Countly for prod and staging backends.
-        analyticsEventTracker?.isAnalyticsTrackingAvailable(for: backendConfig) ?? false
+        analyticsEventTracker?.isAnalyticsTrackingAvailable(for: environment) ?? false
     }
 
     package let factory: any Factory
     private let router: any Router
-    package let backendConfig: BackendConfig
+    package let environment: BackendEnvironment2
     package let privacyPolicyURL: URL
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
@@ -71,7 +72,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         email: String,
-        backendConfig: BackendConfig,
+        environment: BackendEnvironment2,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
@@ -81,7 +82,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.factory = factory
         self.router = router
         self.email = email
-        self.backendConfig = backendConfig
+        self.environment = environment
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink

@@ -45,14 +45,13 @@ class GroupConversationPage: PageModel {
     }
 
     func sendMessage(input: String) throws -> GroupConversationPage {
-        typeMessageField.tap()
-        typeMessageField.typeText(input)
+        try typeMessageField.tapIfKeyboardNotFocused().typeText(input)
         sendButton.tap()
         return self
     }
 
     func getSenderName() -> String? {
-        senderNameLabel.label as? String
+        senderNameLabel.label
     }
 
     func getSentMessages() -> [String] {

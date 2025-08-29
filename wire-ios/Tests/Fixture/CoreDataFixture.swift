@@ -83,7 +83,8 @@ final class CoreDataFixture {
 
     var documentsDirectory: URL?
 
-    init() {
+    @MainActor
+    init() async throws {
         /// From ZMSnapshotTestCase
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
@@ -95,16 +96,12 @@ final class CoreDataFixture {
         UIView.setAnimationsEnabled(false)
         self.snapshotBackgroundColor = UIColor.clear
 
-        do {
-            self.documentsDirectory = try FileManager.default.url(
-                for: .documentDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: true
-            )
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        self.documentsDirectory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
 
         let account = Account(userName: "", userIdentifier: UUID())
         let group = ZMSDispatchGroup(dispatchGroup: dispatchGroup, label: "CoreDataStack")
@@ -115,7 +112,7 @@ final class CoreDataFixture {
             dispatchGroup: group
         )
 
-        coreDataStack.loadStores(completionHandler: { _ in })
+        try await coreDataStack.load()
         self.uiMOC = coreDataStack.viewContext
         self.coreDataStack = coreDataStack
 
