@@ -29,7 +29,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     typealias View = MessageReactionsCell
     let configuration: View.Configuration
 
-    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.isChatBubbleEnabled
 
     init(message: ZMConversationMessage) {
         self.message = message

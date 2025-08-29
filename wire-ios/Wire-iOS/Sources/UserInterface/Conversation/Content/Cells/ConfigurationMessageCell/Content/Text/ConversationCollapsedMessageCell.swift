@@ -315,7 +315,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     private var isChatBubbleSimpleEnabled: Bool {
         // the additional DeveloperFlag check is needed for the snapshot test
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false || DeveloperFlag.chatBubblesSimple.isOn
+        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 }
 

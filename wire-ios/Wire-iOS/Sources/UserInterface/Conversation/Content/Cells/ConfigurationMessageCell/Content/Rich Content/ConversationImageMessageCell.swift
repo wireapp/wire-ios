@@ -75,7 +75,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
+        containerView.layer.cornerRadius = if ZMUserSession.isChatBubbleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -121,7 +121,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             widthConstraint!,
             heightConstraint!
         ])
-        if isChatBubbleSimpleEnabled {
+        if ZMUserSession.isChatBubbleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -187,10 +187,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
@@ -215,7 +211,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"

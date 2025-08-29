@@ -97,7 +97,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
             widthConstraint
         ])
 
-        if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
+        if ZMUserSession.isChatBubbleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -181,7 +181,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

@@ -56,7 +56,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     )
 
     private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+        ZMUserSession.isChatBubbleEnabled
     }
 
     // MARK: - Life cycle

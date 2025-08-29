@@ -57,7 +57,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = if isChatBubbleSimpleEnabled {
+        let cornerRadius: CGFloat = if ZMUserSession.isChatBubbleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -98,7 +98,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
-        if isChatBubbleSimpleEnabled {
+        if ZMUserSession.isChatBubbleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -138,10 +138,6 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     var selectionRect: CGRect {
         transferView.bounds
     }
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 }
 
 extension ConversationAudioMessageCell: TransferViewDelegate {
@@ -159,7 +155,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
 
     weak var message: ZMConversationMessage? {
         didSet {

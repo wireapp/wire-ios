@@ -73,7 +73,7 @@ final class ArticleView: UIView {
     private func setupViews() {
         accessibilityElements = [imageView, messageLabel, authorLabel]
         backgroundColor = containerColor
-        layer.cornerRadius = if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
+        layer.cornerRadius = if ZMUserSession.isChatBubbleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             4

@@ -183,7 +183,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
 
-        if isChatBubbleSimpleEnabled {
+        if ZMUserSession.isChatBubbleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             NSLayoutConstraint.activate(existingConstraints)
@@ -275,10 +275,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         return NSAttributedString(attachment: attachment)
     }
 
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
-
     // MARK: - Tap gesture of avatar
 
     @objc
@@ -311,7 +307,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
 

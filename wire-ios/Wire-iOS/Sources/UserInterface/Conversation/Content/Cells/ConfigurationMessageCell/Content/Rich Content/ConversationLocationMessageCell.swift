@@ -75,7 +75,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
+        containerView.layer.cornerRadius = if ZMUserSession.isChatBubbleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -115,7 +115,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margins = conversationHorizontalMargins
-        let containerInsets: UIEdgeInsets = isChatBubbleSimpleEnabled
+        let containerInsets: UIEdgeInsets = ZMUserSession.isChatBubbleEnabled
             ? .zero
             : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
@@ -196,10 +196,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     private func openInMaps() {
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
     }
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 }
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
@@ -221,7 +217,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.isChatBubbleEnabled
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
