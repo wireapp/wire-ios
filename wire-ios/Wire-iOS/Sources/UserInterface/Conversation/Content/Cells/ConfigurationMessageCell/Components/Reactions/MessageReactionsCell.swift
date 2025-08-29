@@ -117,7 +117,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
         verticalFittingPriority: UILayoutPriority
     ) -> CGSize {
-        let insetsWidth = insets.left + insets.right
+        let insetsWidth = conversationHorizontalMargins.left + conversationHorizontalMargins
+            .right + (isChatBubbleSimpleEnabled ? 48 : 0)
         reactionsView.widthForCalculations = targetSize.width - insetsWidth
         reactionsView.setNeedsLayout()
         reactionsView.layoutIfNeeded()
