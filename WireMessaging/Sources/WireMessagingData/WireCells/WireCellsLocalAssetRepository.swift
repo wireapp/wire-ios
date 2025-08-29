@@ -137,9 +137,11 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
 
     @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
-        // FIXME: [WPB-19785] Send current value immediately - this should be possible with planned changes in
-        // WPB-19785
-        updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
+        updates
+            .filter { $0.0 == nodeID }
+            .map(\.1)
+            .prepend([try? asset(nodeID: nodeID)])
+            .eraseToAnyPublisher()
     }
 
     /// Cancels the asset download for a given `nodeID`.
