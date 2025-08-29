@@ -53,7 +53,8 @@ extension FilesItemViewModel {
                 modifiedAt: Date(),
                 icon: .image
             ),
-            localAssetRepository: PreviewLocalAssetRepository()
+            localAssetRepository: PreviewLocalAssetRepository(),
+            onOpen: { _ in },
         )
     }
 

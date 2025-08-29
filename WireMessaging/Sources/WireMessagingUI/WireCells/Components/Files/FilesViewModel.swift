@@ -133,7 +133,13 @@ package final class FilesViewModel: ObservableObject {
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(item: state.items[index], localAssetRepository: localAssetRepository)
+        FilesItemViewModel(
+            item: state.items[index],
+            localAssetRepository: localAssetRepository,
+            onOpen: { [weak self] item in
+                await self?.viewAsset(item: item)
+            }
+        )
     }
 
     /// Downloads if necessary and views the asset represented by the given item.
