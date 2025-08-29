@@ -19,7 +19,7 @@
 import Foundation
 
 /// An enum representing the three possible states of Wire cells, whether `ready`, `pending` or `disabled`.
-/// Server side, this is value returned by Pydio backend forwarded to Wire backend.
+/// Server side, this value is returned by Pydio backend forwarded to Wire backend.
 
 @objc
 public enum CellsState: Int16 {

@@ -496,6 +496,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func setup(
+        apiVersion: WireNetwork.APIVersion?,
         eventProcessor: (any UpdateEventProcessor)?,
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
@@ -525,7 +526,10 @@ public final class ZMUserSession: NSObject {
             self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
-            self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
+            self.operationLoop = operationLoop ?? createOperationLoop(
+                apiVersion: apiVersion,
+                isDeveloperModeEnabled: isDeveloperModeEnabled
+            )
             urlActionProcessors = createURLActionProcessors()
             callStateObserver = CallStateObserver(
                 localNotificationDispatcher: localNotificationDispatcher!,
@@ -637,17 +641,13 @@ public final class ZMUserSession: NSObject {
             throw ZMUserSessionError.selfClientNotReady
         }
 
-        let featureConfigRepository = clientSessionComponent.featureConfigRepository
-        guard await featureConfigRepository.isFeatureEnabled(
-            .consumableNotifications
-        ) else { return }
-
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
         do {
             try await migrator.migrate()
-        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
+        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow,
+            ConsumableNotificationsMigrator.Failure.featureConfigNotEnabled {
             // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
@@ -782,7 +782,10 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    private func createOperationLoop(isDeveloperModeEnabled: Bool) -> ZMOperationLoop {
+    private func createOperationLoop(
+        apiVersion: WireNetwork.APIVersion?,
+        isDeveloperModeEnabled: Bool
+    ) -> ZMOperationLoop {
         ZMOperationLoop(
             transportSession: transportSession,
             requestStrategy: syncStrategy,
@@ -793,7 +796,8 @@ public final class ZMUserSession: NSObject {
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            apiVersion: apiVersion.map { NSNumber(value: $0.rawValue) }
         )
     }
 
