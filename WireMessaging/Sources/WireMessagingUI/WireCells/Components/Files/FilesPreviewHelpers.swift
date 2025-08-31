@@ -35,7 +35,8 @@ extension FilesViewModel {
                 repository: previewNodesRepository()
             ),
             isCellsStatePending: false,
-            localAssetRepository: PreviewLocalAssetRepository(), fileCache: MockFileCache()
+            localAssetRepository: PreviewLocalAssetRepository(),
+            fileCache: fileCache()
         )
     }
 
@@ -84,6 +85,17 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
         return (nodes, nextOffset)
     }
     return repository
+}
+
+private func fileCache() -> any FileCache {
+    let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
+    let file = Data("Some text file content".utf8)
+    try? file.write(to: fileURL)
+
+    let cache = MockFileCache()
+    cache.fileURLForKey_MockValue = fileURL
+
+    return cache
 }
 
 private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {

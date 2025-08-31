@@ -59,7 +59,7 @@ struct FilesViewItemView: View {
                 Spacer()
 
                 Menu {
-                    Button(action: `open`) {
+                    Button(action: open) {
                         Label(Strings.Files.Item.Menu.open, systemImage: "document")
                     }.disabled(viewModel.isDownloading)
 
