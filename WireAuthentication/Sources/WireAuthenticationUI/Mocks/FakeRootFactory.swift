@@ -30,7 +30,7 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
             factory: self,
             bridge: WireAuthenticationBridge(),
             environment: mockDependencies.backendEnvironment,
-            reauthEmail: nil,
+            authenticationType: .new,
             isMultibackendEnabled: false,
             hasOtherAccountsProvider: { true },
         )
@@ -41,6 +41,10 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
     }
 
     func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        fatalError()
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
         fatalError()
     }
 

@@ -54,10 +54,10 @@ final class RootComponent: BootstrapComponent {
         viewModel
     }
 
-    private let reauthEmail: String?
+    private let authenticationType: AuthenticationType
 
     init(
-        reauthEmail: String?,
+        authenticationType: AuthenticationType,
         environment: BackendEnvironment2,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
@@ -72,7 +72,7 @@ final class RootComponent: BootstrapComponent {
         isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
-        self.reauthEmail = reauthEmail
+        self.authenticationType = authenticationType
         self.environment = environment
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
@@ -118,7 +118,7 @@ extension RootComponent: RootViewModel.Factory {
                 factory: self,
                 bridge: bridge,
                 environment: environment,
-                reauthEmail: reauthEmail,
+                authenticationType: authenticationType,
                 isMultibackendEnabled: isMultibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
@@ -142,6 +142,20 @@ extension RootComponent: RootViewModel.Factory {
         return ReloginViaEmailComponent(
             parent: self,
             email: email,
+            networkStack: networkStack
+        )
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        let networkStack = NetworkStack(
+            backendEnvironment: environment,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
+        )
+
+        return ReloginViaSSOComponent(
+            parent: self,
             networkStack: networkStack
         )
     }

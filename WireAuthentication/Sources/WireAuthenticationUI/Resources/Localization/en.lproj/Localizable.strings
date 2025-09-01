@@ -29,6 +29,13 @@
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Forgot password?";
+
+"login.sso.title" = "Log in";
+"login.sso.expiration_message" = "Your session expired. Log in with yoour enterprise account to continue.";
+"login.sso.input_code.title" = "SSO access code";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
 "create_account.button" = "Create account";

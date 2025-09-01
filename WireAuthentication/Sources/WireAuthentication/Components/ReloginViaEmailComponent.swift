@@ -27,10 +27,7 @@ import WireReusableUIComponents
 protocol ReloginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
-    var preferredAPIVersion: APIVersion? { get }
     var environment: BackendEnvironment2 { get }
-    var minTLSVersion: TLSVersion { get }
 
 }
 

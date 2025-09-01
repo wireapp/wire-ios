@@ -20,6 +20,7 @@ import Combine
 import SwiftUI
 import UIKit
 import WireAuthentication
+import WireAuthenticationAPI
 import WireCommonComponents
 import WireCountly
 import WireDataModel
@@ -100,7 +101,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let (rootView, bridge) = wireAuthenticationAssembly(
-                reauthEmail: nil,
+                authenticationType: .new,
                 environment: environment,
                 registrationAnalyticsTracker: registrationAnalyticsTracker
             )
@@ -118,7 +119,6 @@ final class AuthenticationInterfaceBuilder {
             return landingViewController
 
         case let .reauthenticate(credentials, environment, _, _) where DeveloperFlag.multibackend.isOn:
-            // TODO: check if need to pass sso code.
             let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
             let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
                 RegistrationAnalyticsTracker(
@@ -129,8 +129,18 @@ final class AuthenticationInterfaceBuilder {
                 )
             }
 
+            let authenticationType: WireAuthenticationAPI.AuthenticationType
+            if credentials?.usesCompanyLogin == true && credentials?.hasPassword == false {
+                authenticationType = .reauthSSO
+            } else if let email = credentials?.emailAddress {
+                authenticationType = .reauthEmail(email)
+            } else {
+                assertionFailure("invalid state: reauthentication without email credentials")
+                authenticationType = .new
+            }
+
             let (rootView, bridge) = wireAuthenticationAssembly(
-                reauthEmail: credentials?.emailAddress,
+                authenticationType: authenticationType,
                 environment: environment!,
                 registrationAnalyticsTracker: registrationAnalyticsTracker
             )
@@ -316,7 +326,7 @@ final class AuthenticationInterfaceBuilder {
 
     @MainActor
     private func wireAuthenticationAssembly(
-        reauthEmail: String?,
+        authenticationType: WireAuthenticationAPI.AuthenticationType,
         environment: BackendEnvironment2,
         registrationAnalyticsTracker: RegistrationAnalyticsTracker?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -332,7 +342,7 @@ final class AuthenticationInterfaceBuilder {
         }
 
         return assembly.assemble(
-            reauthEmail: reauthEmail,
+            authenticationType: authenticationType,
             environment: environment,
             minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
             preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,

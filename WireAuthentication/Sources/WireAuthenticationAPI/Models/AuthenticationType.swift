@@ -17,15 +17,19 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
-import WireNetwork
 
-package enum RootViewSheet: Identifiable, Hashable {
+public enum AuthenticationType {
 
-    public var id: Self { self }
+    /// Authenticate for the first time.
 
-    case authFlow(environment: BackendEnvironment2)
-    case reauthFlow(email: String)
+    case new
+
+    /// Reauthenticate an account with email.
+
+    case reauthEmail(String)
+
+    /// Reauthenticate an account with SSO.
+
     case reauthSSO
 
 }

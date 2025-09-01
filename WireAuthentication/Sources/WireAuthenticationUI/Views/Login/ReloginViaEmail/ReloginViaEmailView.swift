@@ -33,7 +33,6 @@ package protocol ReloginViaEmailFactory {
         proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView
 
-    // TODO: history view
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 

@@ -104,6 +104,28 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
 private func factoryd3638676a47fce1fe62317031e1ba787d83cb463(_ component: NeedleFoundation.Scope) -> AnyObject {
     return VerificationCodeComponentDependency48f3b80358781bc7c928Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
 }
+private class ReloginViaSSOComponentDependency1fa713d341e1cd065fabProvider: ReloginViaSSOComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
+    }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
+    }
+    var ssoCallbackURLScheme: String {
+        return rootComponent.ssoCallbackURLScheme
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->ReloginViaSSOComponent
+private func factory98c97a7d16256e5f522fb3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return ReloginViaSSOComponentDependency1fa713d341e1cd065fabProvider(rootComponent: parent1(component) as! RootComponent)
+}
 private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider: DetermineAuthMethodComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -166,17 +188,8 @@ private class ReloginViaEmailComponentDependencye0e4f0af4d91e372688eProvider: Re
     var router: any Router {
         return rootComponent.router
     }
-    var bridge: WireAuthenticationBridge {
-        return rootComponent.bridge
-    }
-    var preferredAPIVersion: APIVersion? {
-        return rootComponent.preferredAPIVersion
-    }
     var environment: BackendEnvironment2 {
         return rootComponent.environment
-    }
-    var minTLSVersion: TLSVersion {
-        return rootComponent.minTLSVersion
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -263,6 +276,30 @@ private func factory5f94de319ad3e04a9423c770221f242f9204cf85(_ component: Needle
 private func factory5f94de319ad3e04a94230d0d1062090c141f4368(_ component: NeedleFoundation.Scope) -> AnyObject {
     return NoHistoryComponentDependencya1005f718577ea03ea08Provider(determineAuthMethodComponent: parent2(component) as! DetermineAuthMethodComponent, rootComponent: parent3(component) as! RootComponent)
 }
+private class NoHistoryComponentDependency0ccc6e9877b3e68b8dcfProvider: NoHistoryComponentDependency {
+    var didReauthenticate: Bool {
+        return reloginViaSSOComponent.didReauthenticate
+    }
+    var howToChangeEmailURL: URL {
+        return rootComponent.howToChangeEmailURL
+    }
+    var howToDeleteAccountURL: URL {
+        return rootComponent.howToDeleteAccountURL
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
+    private let reloginViaSSOComponent: ReloginViaSSOComponent
+    private let rootComponent: RootComponent
+    init(reloginViaSSOComponent: ReloginViaSSOComponent, rootComponent: RootComponent) {
+        self.reloginViaSSOComponent = reloginViaSSOComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->ReloginViaSSOComponent->NoHistoryComponent
+private func factory98b867c04adda3043350ec0cf2b5c604e8c6aa9b(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NoHistoryComponentDependency0ccc6e9877b3e68b8dcfProvider(reloginViaSSOComponent: parent1(component) as! ReloginViaSSOComponent, rootComponent: parent2(component) as! RootComponent)
+}
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -304,6 +341,15 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
 
+    }
+}
+extension ReloginViaSSOComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\ReloginViaSSOComponentDependency.router] = "router-any Router"
+        keyPathToName[\ReloginViaSSOComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
+        keyPathToName[\ReloginViaSSOComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\ReloginViaSSOComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        localTable["didReauthenticate-Bool"] = { [unowned self] in self.didReauthenticate as Any }
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
@@ -353,10 +399,7 @@ extension RootComponent: NeedleFoundation.Registration {
 extension ReloginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ReloginViaEmailComponentDependency.router] = "router-any Router"
-        keyPathToName[\ReloginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
-        keyPathToName[\ReloginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\ReloginViaEmailComponentDependency.environment] = "environment-BackendEnvironment2"
-        keyPathToName[\ReloginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         localTable["email-String"] = { [unowned self] in self.email as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
         localTable["didReauthenticate-Bool"] = { [unowned self] in self.didReauthenticate as Any }
@@ -408,6 +451,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent->VerificationEmailCodeComponent", factoryd09536bf5bccb74b4ca640b4d17f468382eeae3b)
     registerProviderFactory("^->RootComponent->ReloginViaEmailComponent->VerificationCodeComponent", factoryca1bd85b931d32e1f1f63e5bc7275f3d892b3f56)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
+    registerProviderFactory("^->RootComponent->ReloginViaSSOComponent", factory98c97a7d16256e5f522fb3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd17031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
@@ -418,6 +462,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a9423f4a04d5110b9125fa4a4)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423c770221f242f9204cf85)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->NoHistoryComponent", factory5f94de319ad3e04a94230d0d1062090c141f4368)
+    registerProviderFactory("^->RootComponent->ReloginViaSSOComponent->NoHistoryComponent", factory98b867c04adda3043350ec0cf2b5c604e8c6aa9b)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061a9403e3301bb54f80df0)
 }
 #endif

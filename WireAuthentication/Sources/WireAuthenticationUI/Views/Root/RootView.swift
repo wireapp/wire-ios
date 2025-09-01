@@ -33,6 +33,9 @@ package protocol RootFactory {
     func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory
 
     @MainActor
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory
+
+    @MainActor
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
@@ -59,126 +62,78 @@ package struct RootView: View {
 
     @ViewBuilder
     private func sheetContent(for sheet: RootViewSheet) -> some View {
-        switch sheet {
-        case let .authFlow(environment):
-            NavigationStack(path: $viewModel.path) {
+        NavigationStack(path: $viewModel.path) {
+            switch sheet {
+            case let .authFlow(environment):
                 DetermineAuthMethodView(
                     factory: viewModel.factory.determineAuthMethodFactory(
                         environment: environment
                     )
                 )
-                .navigationDestination(for: RootDestination.self) { destination in
-                    switch destination {
-                    case .switchAccounts:
-                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
-                    }
-                }
-            }
-            // We must provide an explicit id so it knows to create a new
-            // view when the backend info changes.
-            .id(environment)
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-            // The alert should be shown on the navigation stack, otherwise
-            // it will dismiss the sheet.
-            .alert(
-                item: $viewModel.alert,
-                title: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
-                                .title : L10n.Localizable.ObsoleteClient.Alert.title
-                        )
-                    default:
-                        Text(alert.title)
-                    }
-                },
-                message: { alert in
-                    switch alert {
-                    case .obsoleteBackend:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
-                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
-                        )
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
-                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
-                        )
-                    default:
-                        Text(alert.message)
-                    }
-                },
-                actions: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        obsoleteClientAlertActions()
-                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
-                        obsoleteBackendAlertActions()
-                    default:
-                        Button(Strings.Authentication.Error.confirm, action: {})
-                    }
-                }
-            )
-        case let .reauthFlow(email):
-            NavigationStack(path: $viewModel.path) {
-                // FIXME: Aside from this, everything is duplicated
+                // We must provide an explicit id so it knows to create a new
+                // view when the backend environment changes.
+                .id(environment)
+            case let .reauthFlow(email):
                 ReloginViaEmailView(
                     factory: viewModel.factory.reloginViaEmailFactory(
                         email: email
                     )
                 )
-                .navigationDestination(for: RootDestination.self) { destination in
-                    switch destination {
-                    case .switchAccounts:
-                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
-                    }
+            case .reauthSSO:
+                ReloginViaSSOView(
+                    factory: viewModel.factory.reloginViaSSOFactory()
+                )
+            }
+        }
+        .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+        .navigationDestination(for: RootDestination.self) { destination in
+            switch destination {
+            case .switchAccounts:
+                AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
+            }
+        }
+        // The alert should be shown on the navigation stack, otherwise
+        // it will dismiss the sheet.
+        .alert(
+            item: $viewModel.alert,
+            title: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Text(
+                        viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
+                            .title : L10n.Localizable.ObsoleteClient.Alert.title
+                    )
+                default:
+                    Text(alert.title)
+                }
+            },
+            message: { alert in
+                switch alert {
+                case .obsoleteBackend:
+                    Text(
+                        viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
+                            .message : L10n.Localizable.ObsoleteBackend.Alert.message
+                    )
+                case .obsoleteClient:
+                    Text(
+                        viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                            .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
+                    )
+                default:
+                    Text(alert.message)
+                }
+            },
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    obsoleteClientAlertActions()
+                case .obsoleteBackend where viewModel.isMultibackendEnabled:
+                    obsoleteBackendAlertActions()
+                default:
+                    Button(Strings.Authentication.Error.confirm, action: {})
                 }
             }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-            // The alert should be shown on the navigation stack, otherwise
-            // it will dismiss the sheet.
-            .alert(
-                item: $viewModel.alert,
-                title: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
-                                .title : L10n.Localizable.ObsoleteClient.Alert.title
-                        )
-                    default:
-                        Text(alert.title)
-                    }
-                },
-                message: { alert in
-                    switch alert {
-                    case .obsoleteBackend:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
-                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
-                        )
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
-                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
-                        )
-                    default:
-                        Text(alert.message)
-                    }
-                },
-                actions: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        obsoleteClientAlertActions()
-                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
-                        obsoleteBackendAlertActions()
-                    default:
-                        Button(Strings.Authentication.Error.confirm, action: {})
-                    }
-                }
-            )
-        }
+        )
     }
 
     @ViewBuilder

@@ -18,14 +18,9 @@
 
 import Foundation
 import WireAuthenticationAPI
-import WireNetwork
 
-package enum RootViewSheet: Identifiable, Hashable {
+package enum ReloginViaSSODestination: Hashable {
 
-    public var id: Self { self }
-
-    case authFlow(environment: BackendEnvironment2)
-    case reauthFlow(email: String)
-    case reauthSSO
+    case noHistory(AuthenticationResult)
 
 }
