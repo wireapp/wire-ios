@@ -73,6 +73,14 @@ package final class FilesViewModel: ObservableObject {
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
+    private var lastSelectedItem: FilesViewItem?
+
+    @Published private(set) var items: [FilesViewItem] = []
+    @Published private var nextPageToken: WireCellsPageToken?
+    @Published private var loadMoreTask: LoadItemsTask?
+    @Published var alert: AlertModel?
+    @Published var viewingURL: URL?
+    @Published var state: State
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
@@ -85,12 +93,6 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
     }
-
-    @Published private var nextPageToken: WireCellsPageToken?
-    @Published private var loadMoreTask: LoadItemsTask?
-    @Published var alert: AlertModel?
-    @Published var viewingURL: URL?
-    @Published var state: State
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -144,9 +146,12 @@ package final class FilesViewModel: ObservableObject {
 
     /// Downloads if necessary and views the asset represented by the given item.
     func viewAsset(item: FilesViewItem) async {
+        // Bookkeeping ensure we only attempt to display the most recently selected item.
+        lastSelectedItem = item
+
         do {
-            if let result = try await localURL(for: item), result.item == item {
-                viewingURL = result.url
+            if let url = try await localURL(for: item), item == lastSelectedItem {
+                viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
@@ -157,12 +162,12 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func localURL(for item: FilesViewItem) async throws -> (item: FilesViewItem, url: URL)? {
+    private func localURL(for item: FilesViewItem) async throws -> URL? {
         // If the file is already downloaded, return the local URL.
         if
             let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
-            return (item, url)
+                return url
         }
 
         let cacheKey: String?
@@ -173,8 +178,7 @@ package final class FilesViewModel: ObservableObject {
             try await awaitDownload(item: item)
             cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
         }
-        let url = cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
-        return url.map { (item, $0) } ?? nil
+        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
     }
 
     private func cancelLoad() {
