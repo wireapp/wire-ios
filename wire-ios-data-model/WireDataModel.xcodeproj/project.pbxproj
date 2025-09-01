@@ -1786,7 +1786,6 @@
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		CB9615DC2D47B0E10016389E /* EntityValidation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = EntityValidation; sourceTree = "<group>"; };
 		CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsMessageAttachmentDraftEntity; sourceTree = "<group>"; };
-		CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsLocalAsset; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3125,7 +3124,6 @@
 		F9A7080A1CAEEB7400C2F5FE /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
 				069D07B6256266F000DBA592 /* FeatureConfiguration */,
 				06F98D61243B2446007E914A /* DigitalSignature */,
@@ -3777,7 +3775,6 @@
 				CB5273202D9C0FA000CF8099 /* Channels */,
 				CB9615DC2D47B0E10016389E /* EntityValidation */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
-				CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */,
 			);
 			name = WireDataModelTests;
 			productName = WireDataModelTests;
