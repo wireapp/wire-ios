@@ -87,7 +87,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         let syncMarker = syncMarkerGenerator()
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
-        logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
+        logger.debug("creating push channel with marker \(syncMarker)", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
         let liveEventStream: PushChannelV2.Stream
