@@ -75,7 +75,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private let instanceId = UUID().uuidString
     
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
-        WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
 
@@ -89,7 +89,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     do {
                         result = try receiveMessage(message)
                     } catch PushChannelError.receivedInvalidMessage {
-                        WireLogger.pushChannel.warn("ignore invalid message, continue", attributes: .pushChannelV2)
+                        WireLogger.pushChannel.warn("[\(instanceId)] ignore invalid message, continue", attributes: .pushChannelV2)
                         continue
                     } catch {
                         throw error
@@ -98,7 +98,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     switch result {
                     case let .event(event):
                         WireLogger.pushChannel.debug(
-                            "push channel received events: \(event.events.map(\.name))",
+                            "[\(instanceId)]  push channel received events: \(event.events.map(\.name))",
                             attributes: .pushChannelV2
                         )
                         await batchBuffer.append(event)
@@ -106,7 +106,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel
-                                .debug("reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
+                                .debug("[\(instanceId)] reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
                         }
 
                     case .missedEvents:
@@ -117,7 +117,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         let drained = await batchBuffer.drain()
                         if !drained.isEmpty {
                             continuation.yield(.events(drained))
-                            WireLogger.pushChannel.debug("syncMarker reached batch of size '\(drained.count)' yield")
+                            WireLogger.pushChannel.debug("[\(instanceId)] syncMarker reached \(id) batch of size '\(drained.count)' yield")
                         }
 
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
@@ -128,11 +128,11 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 let drained = await batchBuffer.drain()
                 if !drained.isEmpty {
                     continuation.yield(.events(drained))
-                    WireLogger.pushChannel.debug("end batch of size '\(drained.count)' yield")
+                    WireLogger.pushChannel.debug("[\(instanceId)] end batch of size '\(drained.count)' yield")
                 }
 
             } catch {
-                WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
+                WireLogger.pushChannel.error("[\(instanceId)] got error: \(error)", attributes: .pushChannelV2)
                 continuation.finish(throwing: error)
                 await close()
                 return
@@ -176,7 +176,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     // MARK: - Batch task
 
     private func setUpBatchTask() {
-        WireLogger.pushChannel.debug("batchTask setup", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] batchTask setup", attributes: .pushChannelV2)
         tearDownBatchTask()
         batchTask = Task { [batchInterval] in
             do {
@@ -185,7 +185,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     if !(await batchBuffer.isEmpty()) {
                         let drained = await batchBuffer.drain()
                         WireLogger.pushChannel.debug(
-                            "timeout yielding batch '\(drained.count)'",
+                            "[\(instanceId)] timeout yielding batch '\(drained.count)'",
                             attributes: .pushChannelV2
                         )
                         continuation.yield(.events(drained))
@@ -242,7 +242,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     public func acknowledgeFullSync() async throws {
-        WireLogger.pushChannel.debug("acknowledgeFullSync", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] acknowledgeFullSync", attributes: .pushChannelV2)
         let acknowledgement = FullSyncAcknowledgment()
         let data = try encoder.encode(acknowledgement)
         try await write(data: data)
@@ -266,7 +266,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     return .event(element)
                 } else {
                     WireLogger.pushChannel.debug(
-                        "received web socket invalid data \(String(describing: data)), ignoring...",
+                        "[\(instanceId)] received web socket invalid data \(String(describing: data)), ignoring...",
                         attributes: .pushChannelV2
                     )
                     throw PushChannelError.receivedInvalidMessage
