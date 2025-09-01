@@ -27,7 +27,7 @@ struct WireCellsLocalAssetTests {
     private let container: NSPersistentContainer
 
     init() throws {
-        container = try NSPersistentContainer.inMemoryContainer()
+        self.container = try NSPersistentContainer.inMemoryContainer()
     }
 
     @Test
@@ -83,4 +83,3 @@ private extension NSPersistentContainer {
     }
 
 }
-
