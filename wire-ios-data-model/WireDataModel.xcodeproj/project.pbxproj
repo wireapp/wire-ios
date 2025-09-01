@@ -1782,6 +1782,7 @@
 		594C4E382CCAAB9B00F13D03 /* AccountImageSource */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImageSource; sourceTree = "<group>"; };
 		5991D76C2DAD037F00EF63C7 /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5991D77C2DAD038000EF63C7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		59D2642C2CF7249D0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+		CB202D4D2E65E99100852362 /* SchemaTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SchemaTests; sourceTree = "<group>"; };
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		CB9615DC2D47B0E10016389E /* EntityValidation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = EntityValidation; sourceTree = "<group>"; };
 		CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsMessageAttachmentDraftEntity; sourceTree = "<group>"; };
@@ -3547,6 +3548,7 @@
 		F9C9A79A1CAEA8FC0039E10C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CB202D4D2E65E99100852362 /* SchemaTests */,
 				E6E504442BC56DF1004948E7 /* Authentication */,
 				59BAE10E2C3429DA00F8EEDC /* ConversationSearch */,
 				069BCC632B3098F500DF4EC2 /* E2EIdentity */,
@@ -3771,6 +3773,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				594C4E382CCAAB9B00F13D03 /* AccountImageSource */,
+				CB202D4D2E65E99100852362 /* SchemaTests */,
 				CB5273202D9C0FA000CF8099 /* Channels */,
 				CB9615DC2D47B0E10016389E /* EntityValidation */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
