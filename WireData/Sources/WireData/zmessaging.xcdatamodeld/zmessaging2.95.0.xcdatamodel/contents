@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H15" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.95.0">
-    <entity name="Action" representedClassName=".Action" syncable="YES">
+    <entity name="Action" representedClassName="WireDataModel.Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
     </entity>
-    <entity name="AddressBookEntry" representedClassName=".AddressBookEntry" syncable="YES">
+    <entity name="AddressBookEntry" representedClassName="WireDataModel.AddressBookEntry" syncable="YES">
         <attribute name="cachedName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="localIdentifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="addressBookEntry" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="AssetClientMessage" representedClassName=".ZMAssetClientMessage" parentEntity="Message" syncable="YES">
+    <entity name="AssetClientMessage" representedClassName="WireDataModel.ZMAssetClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="assetId" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="assetId_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="associatedTaskIdentifier" optional="YES" transient="YES" syncable="YES"/>
@@ -23,13 +23,13 @@
         <attribute name="version" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="asset" inverseEntity="GenericMessageData" syncable="YES"/>
     </entity>
-    <entity name="ButtonState" representedClassName=".ButtonState" syncable="YES">
+    <entity name="ButtonState" representedClassName="WireDataModel.ButtonState" syncable="YES">
         <attribute name="isExpired" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="stateValue" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="buttonStates" inverseEntity="Message" syncable="YES"/>
     </entity>
-    <entity name="ClientMessage" representedClassName=".ZMClientMessage" parentEntity="Message" syncable="YES">
+    <entity name="ClientMessage" representedClassName="WireDataModel.ZMClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="linkPreviewState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updatedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="message" inverseEntity="GenericMessageData" syncable="YES"/>
@@ -100,7 +100,7 @@
             </compoundIndex>
         </compoundIndexes>
     </entity>
-    <entity name="Feature" representedClassName=".Feature" syncable="YES">
+    <entity name="Feature" representedClassName="WireDataModel.Feature" syncable="YES">
         <attribute name="configData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="hasInitialDefault" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
@@ -109,7 +109,7 @@
         <attribute name="needsToNotifyUser" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="statusValue" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="FeatureFlag" representedClassName=".FeatureFlag" syncable="YES">
+    <entity name="FeatureFlag" representedClassName="WireDataModel.FeatureFlag" syncable="YES">
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
@@ -133,7 +133,7 @@
         <attribute name="originalSize_data" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <entity name="KnockMessage" representedClassName="ZMKnockMessage" parentEntity="Message" syncable="YES"/>
-    <entity name="Label" representedClassName=".Label" syncable="YES">
+    <entity name="Label" representedClassName="WireDataModel.Label" syncable="YES">
         <attribute name="markedForDeletion" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
@@ -142,7 +142,7 @@
         <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="labels" inverseEntity="Conversation" syncable="YES"/>
     </entity>
-    <entity name="Member" representedClassName=".Member" syncable="YES">
+    <entity name="Member" representedClassName="WireDataModel.Member" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="permissionsRawValue" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -200,19 +200,19 @@
         <relationship name="message" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="confirmations" inverseEntity="Message" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
     </entity>
-    <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
+    <entity name="ParticipantRole" representedClassName="WireDataModel.ParticipantRole" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role" syncable="YES"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
+    <entity name="Reaction" representedClassName="WireDataModel.Reaction" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="unicodeValue" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="reactions" inverseEntity="Message" syncable="YES"/>
         <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="reactions" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Role" representedClassName=".Role" syncable="YES">
+    <entity name="Role" representedClassName="WireDataModel.Role" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Action" inverseName="role" inverseEntity="Action" syncable="YES"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="nonTeamRoles" inverseEntity="Conversation" syncable="YES"/>
@@ -240,7 +240,7 @@
         <relationship name="removedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="showingUserRemoved" inverseEntity="User" syncable="YES"/>
         <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="systemMessages" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Team" representedClassName=".Team" syncable="YES">
+    <entity name="Team" representedClassName="WireDataModel.Team" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToDownloadRoles" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO" syncable="YES"/>
@@ -305,7 +305,7 @@
         <relationship name="showingUserRemoved" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="removedUsers" inverseEntity="SystemMessage" syncable="YES"/>
         <relationship name="systemMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="users" inverseEntity="SystemMessage" syncable="YES"/>
     </entity>
-    <entity name="UserClient" representedClassName=".UserClient" syncable="YES">
+    <entity name="UserClient" representedClassName="WireDataModel.UserClient" syncable="YES">
         <attribute name="activationAddress" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="activationDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="activationLocationLatitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
