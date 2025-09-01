@@ -72,6 +72,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
         self.batchInterval = batchDelay
     }
 
+    private let instanceId = UUID().uuidString
+    
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
@@ -150,7 +152,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     public func close() async {
-        WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] closing push channel", attributes: .pushChannelV2)
 
         await webSocket.close()
         tearDownKeepAliveTask()
@@ -163,7 +165,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
             tearDownBatchTask()
             if !(await batchBuffer.isEmpty()) {
                 let drained = await batchBuffer.drain()
-                WireLogger.pushChannel.debug("drain batch '\(drained.count)'", attributes: .pushChannelV2)
+                WireLogger.pushChannel.debug("[\(instanceId)] drain batch '\(drained.count)'", attributes: .pushChannelV2)
                 continuation.yield(.events(drained))
             }
         } else {
@@ -190,7 +192,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     }
                 }
             } catch {
-                WireLogger.pushChannel.warn("batch task was cancelled", attributes: .pushChannelV2)
+                WireLogger.pushChannel.warn("[\(instanceId)] batch task was cancelled", attributes: .pushChannelV2)
                 tearDownBatchTask()
             }
         }
@@ -198,7 +200,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private func tearDownBatchTask() {
         guard let batchTask else { return }
-        WireLogger.pushChannel.debug("tearing down batch task", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] tearing down batch task", attributes: .pushChannelV2)
         batchTask.cancel()
         self.batchTask = nil
     }
@@ -211,19 +213,18 @@ public final class PushChannelV2: PushChannelV2Protocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV2)
+                    WireLogger.pushChannel.debug("[\(instanceId)] sending keep alive ping", attributes: .pushChannelV2)
                     await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV2)
-                tearDownKeepAliveTask()
+                WireLogger.pushChannel.warn("[\(instanceId)] keep alive task was cancelled", attributes: .pushChannelV2)
             }
         }
     }
 
     private func tearDownKeepAliveTask() {
         guard let keepAliveTask else { return }
-        WireLogger.pushChannel.debug("tearing down keep alive task", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] tearing down keep alive task", attributes: .pushChannelV2)
         keepAliveTask.cancel()
         self.keepAliveTask = nil
     }
@@ -231,7 +232,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     // MARK: - Acknowledgement
 
     public func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
-        WireLogger.pushChannel.debug("acknowledgeEvent \(deliveryTag)", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] acknowledgeEvent \(deliveryTag)", attributes: .pushChannelV2)
         let acknowledgement = EventAcknowledgment(
             deliveryTag: deliveryTag,
             multiple: multiple
@@ -254,7 +255,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
         switch message {
         case let .data(data):
             WireLogger.pushChannel.debug(
-                "received web socket data, decoding...",
+                "[\(instanceId)] received web socket data, decoding...",
                 attributes: .pushChannelV2
             )
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
@@ -281,17 +282,17 @@ public final class PushChannelV2: PushChannelV2Protocol {
             }
 
         case .string:
-            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug("[\(instanceId)] received web socket string, ignoring...", attributes: .pushChannelV2)
             throw PushChannelError.receivedInvalidMessage
 
         @unknown default:
-            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug("[\(instanceId)] received web socket message, ignoring...", attributes: .pushChannelV2)
             throw PushChannelError.receivedInvalidMessage
         }
     }
 
     private func write(data: Data) async throws {
-        WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug("[\(instanceId)] write data to push channel", attributes: .pushChannelV2)
         try await webSocket.write(data: data)
     }
 }
