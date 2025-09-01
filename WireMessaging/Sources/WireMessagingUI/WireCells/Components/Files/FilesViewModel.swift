@@ -167,7 +167,7 @@ package final class FilesViewModel: ObservableObject {
         if
             let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
-                return url
+            return url
         }
 
         let cacheKey: String?
