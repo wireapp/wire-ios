@@ -121,6 +121,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 try await retrier.retry { [self] in
                     try await performSync()
                 }
+            } catch is CancellationError {
+                // ignore error
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
