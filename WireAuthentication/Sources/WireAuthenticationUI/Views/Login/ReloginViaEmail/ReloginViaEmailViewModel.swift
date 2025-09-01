@@ -28,8 +28,8 @@ package final class ReloginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
         CreateAuthenticationResultUseCaseFactory &
-        ReloginViaEmailFactory &
         LoginViaEmailUseCaseFactory &
+        ReloginViaEmailFactory &
         SubmitProxyCredentialsUseCaseFactory &
         ValidateEmailUseCaseFactory
 
@@ -40,6 +40,8 @@ package final class ReloginViaEmailViewModel: ObservableObject {
 
     @Published var proxyUsername: String = ""
     @Published var proxyPassword: String = ""
+
+    @Published var existsAnotherAccount: Bool
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
@@ -75,19 +77,24 @@ package final class ReloginViaEmailViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
+    private let bridge: WireAuthenticationBridge
 
     // MARK: - Life cycle
 
     package init(
         factory: any Factory,
         router: any Router,
+        bridge: WireAuthenticationBridge,
         email: String,
-        environment: BackendEnvironment2
+        environment: BackendEnvironment2,
+        existsAnotherAccount: Bool
     ) {
         self.factory = factory
         self.router = router
+        self.bridge = bridge
         self.email = email
         self.environment = environment
+        self.existsAnotherAccount = existsAnotherAccount
     }
 
     // MARK: - Actions
@@ -157,6 +164,10 @@ package final class ReloginViaEmailViewModel: ObservableObject {
         UIApplication.shared.open(
             environment.config.endpoints.accountsURL.appendingPathComponent("forgot")
         )
+    }
+
+    func exitFlow() {
+        bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
     // MARK: - Private

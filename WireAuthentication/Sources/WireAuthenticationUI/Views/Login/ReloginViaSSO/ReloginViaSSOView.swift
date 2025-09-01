@@ -21,11 +21,9 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-
 package protocol ReloginViaSSOFactory {
 
-    @MainActor
-    var viewModel: ReloginViaSSOViewModel { get }
+    @MainActor var viewModel: ReloginViaSSOViewModel { get }
 
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView
@@ -61,6 +59,13 @@ package struct ReloginViaSSOView: View {
             .padding(32)
             .setPreferredSize(navigationBarHidden: false)
             .background(ColorTheme.Backgrounds.surface.color)
+        }
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    dismissButton
+                }
+            }
         }
         .navigationDestination(for: ReloginViaSSODestination.self, destination: destinationView)
         .presentationDetents([.medium, .large])
@@ -111,5 +116,12 @@ package struct ReloginViaSSOView: View {
         .bold()
     }
 
+    @ViewBuilder private var dismissButton: some View {
+        Button {
+            viewModel.exitFlow()
+        } label: {
+            Image(systemName: "xmark")
+        }
+    }
 
 }

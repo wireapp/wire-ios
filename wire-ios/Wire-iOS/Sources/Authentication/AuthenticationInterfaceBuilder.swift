@@ -130,7 +130,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let authenticationType: WireAuthenticationAPI.AuthenticationType
-            if credentials?.usesCompanyLogin == true && credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
                 authenticationType = .reauthSSO
             } else if let email = credentials?.emailAddress {
                 authenticationType = .reauthEmail(email)

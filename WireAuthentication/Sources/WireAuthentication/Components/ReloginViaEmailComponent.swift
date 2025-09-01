@@ -27,6 +27,7 @@ import WireReusableUIComponents
 protocol ReloginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var environment: BackendEnvironment2 { get }
 
 }
@@ -36,15 +37,18 @@ final class ReloginViaEmailComponent: Component<ReloginViaEmailComponentDependen
     public let email: String
     public let networkStack: NetworkStack
     public let didReauthenticate: Bool = true
+    private let existsAnotherAccount: Bool
     public let didDetectDomainConflict: Bool = false
 
     init(
         parent: any Scope,
         email: String,
-        networkStack: NetworkStack
+        networkStack: NetworkStack,
+        existsAnotherAccount: Bool
     ) {
         self.email = email
         self.networkStack = networkStack
+        self.existsAnotherAccount = existsAnotherAccount
         super.init(parent: parent)
     }
 
@@ -74,13 +78,14 @@ extension ReloginViaEmailComponent: ReloginViaEmailViewModel.Factory {
         return NoHistoryView(factory: factory)
     }
 
-    @MainActor
-    var viewModel: ReloginViaEmailViewModel {
+    @MainActor var viewModel: ReloginViaEmailViewModel {
         ReloginViaEmailViewModel(
             factory: self,
             router: dependency.router,
+            bridge: dependency.bridge,
             email: email,
-            environment: networkStack.backendEnvironment
+            environment: networkStack.backendEnvironment,
+            existsAnotherAccount: existsAnotherAccount
         )
     }
 

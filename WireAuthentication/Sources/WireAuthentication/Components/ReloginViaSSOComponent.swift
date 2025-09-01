@@ -26,6 +26,7 @@ import WireNetwork
 protocol ReloginViaSSOComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
@@ -36,15 +37,17 @@ final class ReloginViaSSOComponent: Component<ReloginViaSSOComponentDependency> 
 
     private let networkStack: NetworkStack
     public let didReauthenticate: Bool = true
+    private let existsAnotherAccount: Bool
 
     init(
         parent: any Scope,
-        networkStack: NetworkStack
+        networkStack: NetworkStack,
+        existsAnotherAccount: Bool
     ) {
         self.networkStack = networkStack
+        self.existsAnotherAccount = existsAnotherAccount
         super.init(parent: parent)
     }
-
 
     // MARK: - Children
 
@@ -66,7 +69,9 @@ extension ReloginViaSSOComponent: ReloginViaSSOViewModel.Factory {
         ReloginViaSSOViewModel(
             factory: self,
             router: dependency.router,
-            environment: networkStack.backendEnvironment
+            bridge: dependency.bridge,
+            environment: networkStack.backendEnvironment,
+            existsAnotherAccount: existsAnotherAccount
         )
     }
 

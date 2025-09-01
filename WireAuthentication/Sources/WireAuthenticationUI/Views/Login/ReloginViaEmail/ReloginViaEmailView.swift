@@ -51,7 +51,6 @@ package struct ReloginViaEmailView: View {
     }
 
     // TODO: add logout button
-    // TODO: add close button if other account exists (see determine auth method view)
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
@@ -75,6 +74,13 @@ package struct ReloginViaEmailView: View {
             .padding(32)
             .setPreferredSize(navigationBarHidden: false)
             .background(ColorTheme.Backgrounds.surface.color)
+        }
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    dismissButton
+                }
+            }
         }
         .alert(
             item: $viewModel.alert,
@@ -200,6 +206,14 @@ package struct ReloginViaEmailView: View {
                 isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
+        }
+    }
+
+    @ViewBuilder private var dismissButton: some View {
+        Button {
+            viewModel.exitFlow()
+        } label: {
+            Image(systemName: "xmark")
         }
     }
 

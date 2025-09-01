@@ -45,7 +45,7 @@ enum AppState: Equatable {
             true
         case let (.unauthenticated(env1, error1), .unauthenticated(env2, error2)):
             env1 == env2 &&
-            error1 === error2
+                error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             reason1 == reason2
         case (jailbroken, jailbroken):

@@ -108,6 +108,9 @@ private class ReloginViaSSOComponentDependency1fa713d341e1cd065fabProvider: Relo
     var router: any Router {
         return rootComponent.router
     }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
@@ -187,6 +190,9 @@ private func factory98c59649331d50383edd17031e1ba787d83cb463(_ component: Needle
 private class ReloginViaEmailComponentDependencye0e4f0af4d91e372688eProvider: ReloginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
     }
     var environment: BackendEnvironment2 {
         return rootComponent.environment
@@ -346,6 +352,7 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
 extension ReloginViaSSOComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ReloginViaSSOComponentDependency.router] = "router-any Router"
+        keyPathToName[\ReloginViaSSOComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\ReloginViaSSOComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\ReloginViaSSOComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\ReloginViaSSOComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
@@ -399,6 +406,7 @@ extension RootComponent: NeedleFoundation.Registration {
 extension ReloginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ReloginViaEmailComponentDependency.router] = "router-any Router"
+        keyPathToName[\ReloginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\ReloginViaEmailComponentDependency.environment] = "environment-BackendEnvironment2"
         localTable["email-String"] = { [unowned self] in self.email as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }

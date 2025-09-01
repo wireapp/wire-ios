@@ -23,41 +23,47 @@ import WireNetwork
 
 @MainActor
 package final class ReloginViaSSOViewModel: ObservableObject {
-    
+
     package typealias Factory =
-    ReloginViaSSOFactory &
-    LoginViaSSOUseCaseFactory
-    
+        LoginViaSSOUseCaseFactory &
+        ReloginViaSSOFactory
+
     // MARK: - View state
 
     @Published var rawSSOCode = ""
     @Published var isSSOCodeRequired = false
+    @Published var existsAnotherAccount: Bool
 
     var isOnPremiseBackend: Bool {
         environment.environmentType != .default
     }
-    
+
     let environment: BackendEnvironment2
-    
+
     // MARK: - Dependencies
-    
+
     package let factory: any Factory
     private let router: any Router
-    
+    private let bridge: WireAuthenticationBridge
+
     // MARK: - Life cycle
-    
+
     package init(
         factory: any Factory,
         router: any Router,
-        environment: BackendEnvironment2
+        bridge: WireAuthenticationBridge,
+        environment: BackendEnvironment2,
+        existsAnotherAccount: Bool
     ) {
         self.factory = factory
         self.router = router
+        self.bridge = bridge
         self.environment = environment
+        self.existsAnotherAccount = existsAnotherAccount
     }
-    
+
     // MARK: - Actions
-    
+
     func login() async {
         var code: UUID?
         if isSSOCodeRequired {
@@ -80,12 +86,16 @@ package final class ReloginViaSSOViewModel: ObservableObject {
             router.presentAlert(.incorrectSSOCode)
         } catch LoginViaSSOUseCaseError.invalidURL {
             router.presentAlert(.invalidSSOLink)
-        } catch let LoginViaSSOUseCaseError .authenticationFailed(error) {
+        } catch let LoginViaSSOUseCaseError.authenticationFailed(error) {
             WireLogger.authentication.error("sso failed: \(String(describing: error))")
             router.presentAlert(.ssoLoginFailed)
         } catch {
             router.presentAlert(for: error)
         }
+    }
+
+    func exitFlow() {
+        bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
 }

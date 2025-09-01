@@ -75,11 +75,11 @@ package final class RootViewModel: ObservableObject, Router {
 
         switch authenticationType {
         case .new:
-            modalDestination = .authFlow(environment: environment)
+            self.modalDestination = .authFlow(environment: environment)
         case let .reauthEmail(email):
-            modalDestination = .reauthFlow(email: email)
+            self.modalDestination = .reauthFlow(email: email)
         case .reauthSSO:
-            modalDestination = .reauthSSO
+            self.modalDestination = .reauthSSO
         }
     }
 

@@ -142,7 +142,8 @@ extension RootComponent: RootViewModel.Factory {
         return ReloginViaEmailComponent(
             parent: self,
             email: email,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
@@ -156,7 +157,8 @@ extension RootComponent: RootViewModel.Factory {
 
         return ReloginViaSSOComponent(
             parent: self,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
