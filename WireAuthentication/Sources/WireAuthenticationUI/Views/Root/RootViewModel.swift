@@ -122,6 +122,10 @@ package final class RootViewModel: ObservableObject, Router {
         navigate(to: RootDestination.switchAccounts)
     }
 
+    func logout(deleteData: Bool) {
+        bridge.sendOutboundEvent(.logoutRequested(deleteData: deleteData))
+    }
+
     // MARK: - Private
 
     private func restoreSheet() {

@@ -166,6 +166,10 @@ package final class ReloginViaEmailViewModel: ObservableObject {
         )
     }
 
+    func logout() {
+        router.presentAlert(.logoutConfirmation)
+    }
+
     func exitFlow() {
         bridge.sendOutboundEvent(.exitFlowRequested)
     }

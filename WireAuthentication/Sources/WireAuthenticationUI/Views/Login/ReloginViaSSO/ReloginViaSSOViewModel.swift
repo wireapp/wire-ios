@@ -94,6 +94,10 @@ package final class ReloginViaSSOViewModel: ObservableObject {
         }
     }
 
+    func logout() {
+        router.presentAlert(.logoutConfirmation)
+    }
+
     func exitFlow() {
         bridge.sendOutboundEvent(.exitFlowRequested)
     }

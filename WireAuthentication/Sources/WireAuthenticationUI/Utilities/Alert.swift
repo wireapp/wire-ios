@@ -108,6 +108,11 @@ extension Alert {
         message: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.message
     )
 
+    static let logoutConfirmation = Alert(
+        title: L10n.Localizable.Logout.Alert.title,
+        message: L10n.Localizable.Logout.Alert.message
+    )
+
 }
 
 extension Alert {

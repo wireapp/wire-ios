@@ -36,6 +36,13 @@
 "login.sso.input_code.placeholder" = "Enter SSO access code";
 "login.sso.submit" = "Enterprise log in";
 
+"logout.button.title" = "Log out";
+"logout.alert.title" = "Log out";
+"logout.alert.message" = "Delete all your personal information and conversations on this device?";
+"logout.alert.delete_data_button" = "Log out and clear data";
+"logout.alert.keep_data_button" = "Log out and keep data";
+"logout.alert.cancel" = "Cancel";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
 "create_account.button" = "Create account";

@@ -61,6 +61,9 @@ package struct ReloginViaSSOView: View {
             .background(ColorTheme.Backgrounds.surface.color)
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                logoutButton
+            }
             if viewModel.existsAnotherAccount {
                 ToolbarItem(placement: .topBarTrailing) {
                     dismissButton
@@ -114,6 +117,14 @@ package struct ReloginViaSSOView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
+    }
+
+    @ViewBuilder private var logoutButton: some View {
+        Button {
+            viewModel.logout()
+        } label: {
+            Text(L10n.Localizable.Logout.Button.title)
+        }
     }
 
     @ViewBuilder private var dismissButton: some View {

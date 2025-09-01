@@ -96,6 +96,8 @@ package struct RootView: View {
                             obsoleteClientAlertActions()
                         case .obsoleteBackend where viewModel.isMultibackendEnabled:
                             obsoleteBackendAlertActions()
+                        case .logoutConfirmation:
+                            logoutConfirmationButtons
                         default:
                             Button(Strings.Authentication.Error.confirm, action: {})
                         }
@@ -162,6 +164,17 @@ package struct RootView: View {
                 action: viewModel.dismissAlert
             )
         }
+    }
+
+    @ViewBuilder
+    private var logoutConfirmationButtons: some View {
+        Button(Strings.Logout.Alert.keepDataButton) {
+            viewModel.logout(deleteData: false)
+        }
+        Button(Strings.Logout.Alert.deleteDataButton, role: .destructive) {
+            viewModel.logout(deleteData: true)
+        }
+        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
     }
 
 }

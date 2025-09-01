@@ -52,6 +52,7 @@ final class AuthenticationEventResponderChain {
     enum EventType: CustomStringConvertible {
 
         case wireAuthenticationModuleComplete((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
+        case logoutRequested(deleteData: Bool)
         case flowStart(BackendEnvironment2?, NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -68,6 +69,8 @@ final class AuthenticationEventResponderChain {
             switch self {
             case .wireAuthenticationModuleComplete:
                 "wireAuthenticationModuleComplete"
+            case .logoutRequested:
+                "logoutRequested"
             case .flowStart:
                 "flowStart"
             case .backupReady:
@@ -118,6 +121,7 @@ final class AuthenticationEventResponderChain {
         AuthenticationResult,
         RegistrationAnalyticsTrackingConsent
     )>] = []
+    var logoutHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -153,6 +157,7 @@ final class AuthenticationEventResponderChain {
 
         // wire authentication module handlers
         registerHandler(WireAuthenticationModuleCompletionHandler(), to: &wireAuthenticationModuleHandlers)
+        registerHandler(LogoutRequestedHandler(), to: &logoutHandlers)
 
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
@@ -230,6 +235,8 @@ final class AuthenticationEventResponderChain {
         switch eventType {
         case let .wireAuthenticationModuleComplete(context):
             handleEvent(with: wireAuthenticationModuleHandlers, context: context)
+        case let .logoutRequested(deleteData):
+            handleEvent(with: logoutHandlers, context: deleteData)
         case let .flowStart(environment, error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (environment, error, numberOfAccounts))
         case let .backupReady(existingAccount):

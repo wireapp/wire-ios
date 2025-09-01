@@ -50,7 +50,6 @@ package struct ReloginViaEmailView: View {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
-    // TODO: add logout button
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
@@ -76,6 +75,9 @@ package struct ReloginViaEmailView: View {
             .background(ColorTheme.Backgrounds.surface.color)
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                logoutButton
+            }
             if viewModel.existsAnotherAccount {
                 ToolbarItem(placement: .topBarTrailing) {
                     dismissButton
@@ -206,6 +208,14 @@ package struct ReloginViaEmailView: View {
                 isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
+        }
+    }
+
+    @ViewBuilder private var logoutButton: some View {
+        Button {
+            viewModel.logout()
+        } label: {
+            Text(Strings.Logout.Button.title)
         }
     }
 
