@@ -166,8 +166,7 @@ package struct RootView: View {
         }
     }
 
-    @ViewBuilder
-    private var logoutConfirmationButtons: some View {
+    @ViewBuilder private var logoutConfirmationButtons: some View {
         Button(Strings.Logout.Alert.keepDataButton) {
             viewModel.logout(deleteData: false)
         }
