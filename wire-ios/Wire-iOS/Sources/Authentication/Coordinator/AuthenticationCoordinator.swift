@@ -249,7 +249,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.startAuthentication(with: nil, numberOfAccounts: SessionManager.numberOfAccounts)
+            self?.startAuthentication(
+                environment: nil,
+                error: nil,
+                numberOfAccounts: SessionManager.numberOfAccounts
+            )
         }
     }
 
@@ -508,8 +512,18 @@ extension AuthenticationCoordinator {
     /// - parameter error: The error that caused the unauthenticated state, if any.
     /// - parameter numberOfAccounts: The number of accounts that are signed in with the app.
 
-    func startAuthentication(with error: NSError?, numberOfAccounts: Int) {
-        eventResponderChain.handleEvent(ofType: .flowStart(error, numberOfAccounts))
+    func startAuthentication(
+        environment: BackendEnvironment2?,
+        error: NSError?,
+        numberOfAccounts: Int
+    ) {
+        eventResponderChain.handleEvent(
+            ofType: .flowStart(
+                environment,
+                error,
+                numberOfAccounts
+            )
+        )
     }
 
     /// Creates a new unregistered user for starting a registration flow.

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireUtilities
 
 /// Handles requests to add a new user account.
@@ -31,7 +32,7 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
         if DeveloperFlag.useWireAuthentication.isOn {
             [.transition(.wireAuthenticationModule, mode: .reset)]

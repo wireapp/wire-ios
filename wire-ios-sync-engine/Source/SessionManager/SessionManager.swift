@@ -70,8 +70,11 @@ public protocol SessionActivationObserver: AnyObject {
 
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
-    func sessionManagerDidFailToLogin(error: Error?)
-    func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
+    func sessionManagerWillLogout(
+        environment: BackendEnvironment2?,
+        error: Error?,
+        userSessionCanBeTornDown: (() -> Void)?
+    )
     func sessionManagerWillOpenAccount(
         _ account: Account,
         from selectedAccount: Account?,
@@ -261,6 +264,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
+    let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
     public internal(set) var activeUserSession: ZMUserSession? {
@@ -557,6 +561,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             currentAppVersion: currentAppVersion,
             directory: accountURLs.accounts
         )
+        self.environmentStore = try BackendEnvironmentStore(directory: accountURLs.accountData)
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
@@ -641,7 +646,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
         } else {
             createUnauthenticatedSession()
-            delegate?.sessionManagerDidFailToLogin(error: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: nil,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 
@@ -776,9 +785,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-            self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
+            self?.delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error
+            ) { [weak self] in
                 self?.activeUserSession = nil
-            })
+            }
         }
     }
 
@@ -886,7 +898,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
-            delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
 
             if deleteAccount {
                 deleteAccountData(for: account)
@@ -896,7 +912,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
+        // TODO: [WPB-19941] Better error handling
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+        delegate?.sessionManagerWillLogout(
+            environment: environment,
+            error: error
+        ) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
@@ -926,7 +948,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                 userInfo: account.loginCredentials?.dictionaryRepresentation
             )
 
-            delegate?.sessionManagerDidFailToLogin(error: error)
+            let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+            delegate?.sessionManagerWillLogout(
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
 
         return nil
