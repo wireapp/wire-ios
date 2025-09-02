@@ -47,7 +47,7 @@ class BackupOrRestorePage: PageModel {
 
     func tapRestoreFromBackupButton() throws -> OnMyiPhonePage {
         restoreFromBackupButton.tap()
-        if !browseButtonOnBottom.isSelected{
+        if !browseButtonOnBottom.isSelected {
             browseButtonOnBottom.tap()
         }
         return try OnMyiPhonePage()
