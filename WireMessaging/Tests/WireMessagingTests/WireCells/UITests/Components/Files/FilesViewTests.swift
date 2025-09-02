@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -28,14 +30,24 @@ final class FilesViewTests: XCTestCase {
 
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
+    private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
+    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
 
     override func setUp() {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+        nodesRepository = MockWireCellsNodesRepositoryProtocol()
+        nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
+        fetchNodesUseCase = WireCellsFetchNodesUseCase(
+            configuration: .conversationFileView(root: .id(.mockID1)),
+            repository: nodesRepository
+        )
     }
 
     override func tearDown() {
         snapshotHelper = nil
+        nodesRepository = nil
+        fetchNodesUseCase = nil
     }
 
     @MainActor
@@ -103,6 +115,58 @@ final class FilesViewTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
+    }
+
+    @MainActor
+    func testFilesView_LoadingState() async {
+        let view = makeFilesView(state: .loading)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesView_NoDataState() async {
+        let view = makeFilesView(state: .noData)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesView_PendingState() async {
+        let view = makeFilesView(state: .pending)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    private func makeFilesView(
+        state: FilesViewModel.State
+    ) -> some View {
+        let filesViewModel = FilesViewModel(
+            fetchNodesUseCase: fetchNodesUseCase,
+            isCellsStatePending: false
+        )
+
+        filesViewModel.state = state
+
+        return FilesView(viewModel: filesViewModel)
+            .frame(width: 375, height: 667)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 
