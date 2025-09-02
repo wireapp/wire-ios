@@ -251,7 +251,7 @@ final class MessageToolboxView: UIView {
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
             messageFailureView.trailingAnchor.constraint(
-                equalTo: trailingAnchor
+                lessThanOrEqualTo: trailingAnchor
             )
         ]
 
@@ -363,13 +363,9 @@ final class MessageToolboxView: UIView {
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
-            statusSeparatorContainer.isHidden = true
-            countdownContainer.isHidden = true
-            countdownLabel.isHidden = true
-            timestampSeparatorContainer.isHidden = false
+            setAllContentHidden()
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString)
-            editedLabel.isHidden = true
 
         case let .details(timestamp, state, countdown):
             detailsLabel.text = timestamp
