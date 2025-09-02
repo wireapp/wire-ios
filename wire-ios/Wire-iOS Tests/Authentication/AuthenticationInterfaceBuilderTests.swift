@@ -223,24 +223,24 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     @MainActor
     func testReauthenticate_Email_TokenExpired() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
+        runSnapshotTest(for: .reauthenticate(credentials: credentials, environment: nil, numberOfAccounts: 1, isSignedOut: true))
     }
 
     @MainActor
     func testReauthenticate_Email_DuringLogin() {
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
+        runSnapshotTest(for: .reauthenticate(credentials: credentials, environment: nil, numberOfAccounts: 1, isSignedOut: false))
     }
 
     @MainActor
     func testReauthenticate_CompanyLogin() {
         let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
+        runSnapshotTest(for: .reauthenticate(credentials: credentials, environment: nil, numberOfAccounts: 1, isSignedOut: true))
     }
 
     @MainActor
     func testReauthenticate_NoCredentials() {
-        runSnapshotTest(for: .reauthenticate(credentials: nil, numberOfAccounts: 1, isSignedOut: true))
+        runSnapshotTest(for: .reauthenticate(credentials: nil, environment: nil, numberOfAccounts: 1, isSignedOut: true))
     }
 
     // MARK: - Helpers
