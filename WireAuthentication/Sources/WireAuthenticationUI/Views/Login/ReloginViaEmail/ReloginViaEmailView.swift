@@ -38,6 +38,7 @@ package protocol ReloginViaEmailFactory {
 
 }
 
+// TODO: [WPB-19938] Minimize duplication here and LoginViaEmailView
 package struct ReloginViaEmailView: View {
 
     @StateObject private var viewModel: ReloginViaEmailViewModel
