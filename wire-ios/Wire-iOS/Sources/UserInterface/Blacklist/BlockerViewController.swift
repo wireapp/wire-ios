@@ -79,11 +79,10 @@ final class BlockerViewController: LaunchImageViewController {
 
     private func showBackendObsoleteMessage() {
         if DeveloperFlag.multibackend.isOn {
-            let alert = MultibackendAlertMainApp.obsoleteServer { [weak self] in
-                self?.presentAccountSwitcher()
-            } logoutAction: { [weak self] in
-                self?.handleLogout()
-            }
+            let alert = MultibackendAlertMainApp.obsoleteServer(
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
 
             present(alert, animated: true)
         } else {
@@ -98,13 +97,11 @@ final class BlockerViewController: LaunchImageViewController {
 
     private func showClientObsoleteMessage() {
         if DeveloperFlag.multibackend.isOn {
-            let alert = MultibackendAlertMainApp.obsoleteClient {
-                UIApplication.shared.open(WireURLs.shared.appOnItunes)
-            } switchAccountAction: { [weak self] in
-                self?.presentAccountSwitcher()
-            } logoutAction: { [weak self] in
-                self?.handleLogout()
-            }
+            let alert = MultibackendAlertMainApp.obsoleteClient(
+                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
 
             present(alert, animated: true)
         } else {
@@ -328,6 +325,19 @@ extension BlockerViewController {
 // MARK: - Account management
 
 extension BlockerViewController {
+
+    private var switchAccountAction: (() -> Void)? {
+        guard
+            let accountManager = sessionManager?.accountManager,
+            accountManager.numberOfAccounts > 1 else
+        {
+            return nil
+        }
+
+        return { [weak self] in
+            self?.presentAccountSwitcher()
+        }
+    }
 
     private func presentAccountSwitcher() {
         guard let accountManager = sessionManager?.accountManager else {
