@@ -19,10 +19,10 @@
 import WireFoundation
 import XCTest
 
-final class BackupRestoreHistoryTests: WireUITestCase {
+final class BackupRestoreTests: WireUITestCase {
 
     @MainActor
-    func test_CreateBackupAndRestoreHistory() async throws {
+    func test_CreateBackupAndRestore() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -99,7 +99,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .openAccountSettings()
             .tapBackupOrRestore()
             .tapRestoreFromBackupButton()
-            .selectBackupFile(withName: backupFileName)
+            .searchAndSelectBackupFile(withName: backupFileName)
             .enterBackupPasswordAndRestore(teamOwner.password)
 
         XCTAssertTrue(
