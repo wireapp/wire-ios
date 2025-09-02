@@ -25,6 +25,13 @@ import WireLogging
 
 public actor NetworkStack {
 
+    public static var envNamesForObsoleteBackend: Set<String> = [
+        "staging"
+    ]
+    public static var envNamesForObsoleteClient: Set<String> = [
+        "anta"
+    ]
+
     public nonisolated let backendEnvironment: BackendEnvironment2
     public private(set) var proxyCredentials: ProxyCredentials?
 
@@ -99,6 +106,14 @@ public actor NetworkStack {
         if let backendMetadata {
             return backendMetadata
         }
+
+        #if DEBUG
+        if Self.envNamesForObsoleteBackend.contains(backendEnvironment.title) {
+            throw NetworkStackError.backendAPIVersionObsolete
+        } else if Self.envNamesForObsoleteClient.contains(backendEnvironment.title) {
+            throw NetworkStackError.clientAPIVersionObsolete
+        }
+        #endif
 
         let api = BackendMetadataAPIBuilder(networkService: try networkServices.rest).makeAPI()
 
