@@ -41,9 +41,9 @@ class BackupOrRestorePage: PageModel {
         return try SetPasswordPage()
     }
 
-    func tapRestoreFromBackupButton() throws -> DeviceRecentBackupsPage {
+    func tapRestoreFromBackupButton() throws -> SavedBackupsInDevicePage {
         restoreFromBackupButton.tap()
-        return try DeviceRecentBackupsPage()
+        return try SavedBackupsInDevicePage()
     }
 
     func goBackToAccountPage() throws -> AccountSettingsPage {

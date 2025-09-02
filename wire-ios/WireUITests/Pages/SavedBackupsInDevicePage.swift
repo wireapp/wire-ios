@@ -18,14 +18,14 @@
 
 import XCTest
 
-class DeviceRecentBackupsPage: PageModel {
+class SavedBackupsInDevicePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        recentsPageLabel
+        onMyIphonePageLabel
     }
 
-    var recentsPageLabel: XCUIElement {
-        app.staticTexts["Recents"]
+    var onMyIphonePageLabel: XCUIElement {
+        app.staticTexts["On My iPhone"]
     }
 
     var searchField: XCUIElement {
@@ -39,10 +39,7 @@ class DeviceRecentBackupsPage: PageModel {
         }
     }
 
-    func searchAndSelectBackupFile(withName name: String) throws -> SetPasswordPage {
-        let trimmedNameWithoutExtension = name.components(separatedBy: ".").dropLast().joined(separator: ".")
-        searchField.tap()
-        searchField.typeText(trimmedNameWithoutExtension)
+    func selectBackupFile(withName name: String) throws -> SetPasswordPage {
         backupFile(name).tap()
         return try SetPasswordPage()
     }

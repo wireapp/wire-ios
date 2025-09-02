@@ -47,6 +47,10 @@ class ConversationsPage: PageModel {
         app.buttons["Block"]
     }
 
+    var videoCallButton: XCUIElement {
+        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -65,15 +69,23 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-        if conversationCell.waitForExistence(timeout: 7) {
+        if conversationCell.waitForExistence(timeout: 5) {
             conversationCell.tap()
         }
         return try ConnectionRequestsPage()
     }
 
     func openConversation() throws -> ActiveConversationPage {
-        if conversationCell.waitForExistence(timeout: 7) {
-            conversationCell.tap()
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
+
+        let maxDuration: TimeInterval = 10
+        let start = Date()
+
+        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
+            if conversationCell.isHittable {
+                conversationCell.tap()
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
     }
@@ -92,5 +104,4 @@ class ConversationsPage: PageModel {
     func getNameLabel() -> String? {
         conversationCell.label
     }
-
 }
