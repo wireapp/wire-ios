@@ -147,6 +147,8 @@ extension NotificationServiceExtension {
             logVerifyUserStepError(verifyUserStepError)
         case let pullEventsStepError as PullEventsStep.Failure:
             logPullEventsStepError(pullEventsStepError)
+        case let syncEventsStepError as SyncEventsStep.Failure:
+            logSyncEventsStepError(syncEventsStepError)
         default:
             logDefaultError(error)
         }
@@ -222,6 +224,26 @@ extension NotificationServiceExtension {
         case .mainAppPushChannelOpened:
             logger.error(
                 "Main app is running in foreground with push channel open",
+                attributes: .newNSE
+            )
+        }
+    }
+    
+    private func logSyncEventsStepError(_ error: SyncEventsStep.Failure) {
+        switch error {
+        case .pushChannelAlreadyOpened:
+            logger.error(
+                "Main app is running in foreground with push channel open",
+                attributes: .newNSE
+            )
+        case .missingProxyCredentials:
+            logger.error(
+                "Proxy needs authentication but credentials are missing",
+                attributes: .newNSE
+            )
+        case .apiVersionNotFound:
+            logger.error(
+                "API version not found",
                 attributes: .newNSE
             )
         }

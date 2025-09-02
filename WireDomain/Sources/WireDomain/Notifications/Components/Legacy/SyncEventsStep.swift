@@ -45,6 +45,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     enum Failure: Error {
         case missingProxyCredentials
         case apiVersionNotFound
+        case pushChannelAlreadyOpened
     }
 
     private var selfUserID: UUID {
@@ -62,6 +63,16 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     }
 
     func pullEvents() async throws {
+        // make sure no pushChannel is open
+        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: selfClientID)
+        if pushChannelState.isOpen() {
+            throw Failure.pushChannelAlreadyOpened
+        }
+        pushChannelState.markAsOpen()
+
+        defer {
+            pushChannelState.markAsClosed()
+        }
 
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,

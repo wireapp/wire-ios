@@ -82,6 +82,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
 
+        
+        while (pushChannelState.isOpen()) {
+            logger.debug("waiting for pushChannel NSE to be closed", attributes: .syncAttributes(initialSync: false))
+        }
+        
         try await pullServerTimeSync.pull()
 
         let syncMarker = syncMarkerGenerator()

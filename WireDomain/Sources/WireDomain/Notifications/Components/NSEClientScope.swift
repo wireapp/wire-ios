@@ -45,7 +45,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     enum Failure: Error {
 
-        case mainAppPushChannelOpened
+        case pushChannelAlreadyOpened
 
     }
 
@@ -79,12 +79,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let eventStream: AsyncStream<[UpdateEvent]>
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
-            guard !PushChannelState(
-                sharedContainerURL: dependency.appContainerURL,
-                clientID: clientID
-            ).isOpen() else {
-                throw Failure.mainAppPushChannelOpened
+            // make sure no pushChannel is open
+            let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
+            if pushChannelState.isOpen() {
+                throw Failure.pushChannelAlreadyOpened
             }
+            pushChannelState.markAsOpen()
 
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
@@ -100,7 +100,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     "syncing events via websocket: \(error.localizedDescription)",
                     attributes: .syncAttributes(initialSync: false)
                 )
+                pushChannelState.markAsClosed()
             }
+            pushChannelState.markAsClosed()
+            
         } else {
             eventStream = try await pullEventsUseCase.invoke()
         }
