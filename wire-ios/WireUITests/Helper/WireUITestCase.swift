@@ -51,4 +51,35 @@ class WireUITestCase: XCTestCase {
         await userHelper.deleteCreatedUsers()
     }
 
+    func setCustomBackend(byDeeplink deeplink: String, timeout: TimeInterval = 5) {
+        XCTContext.runActivity(named: "Set custom backend via deeplink") { _ in
+            let deeplinkFullURL = "wire://access/?config=\(deeplink)"
+            guard let url = URL(string: deeplinkFullURL) else {
+                XCTFail("Invalid deeplink: \(deeplinkFullURL)")
+                return
+            }
+
+            XCUIDevice.shared.system.open(url)
+
+            let alert = springboard.alerts.firstMatch
+            if alert.waitForExistence(timeout: 2) {
+                let openButton = springboard.alerts.buttons
+                    .matching(NSPredicate(format: "label BEGINSWITH[c] 'Open'"))
+                    .firstMatch
+                if openButton.waitForExistence(timeout: 1) {
+                    openButton.tap()
+                }
+            }
+
+            XCTAssertTrue(
+                app.wait(for: .runningForeground, timeout: timeout),
+                "App did not return to foreground after opening deeplink"
+            )
+//            XCTAssertTrue(app.staticTexts[deeplink].exists)
+            let proceedButton = app.buttons["Proceed"]
+            if proceedButton.waitForExistence(timeout: 2) {
+                proceedButton.tap()
+            }
+        }
+    }
 }

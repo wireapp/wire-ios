@@ -24,7 +24,9 @@ enum InbucketClient {
         let envVariables = try EnvironmentVariables()
 
         var verificationCode = ""
-        let requestUrl = envVariables.inbucketURL.appending(path: "api/v1/mailbox/\(email)/latest")
+//        let requestUrl = envVariables.inbucketURL.appending(path: "api/v1/mailbox/\(email)/latest")
+        let antaURL = URL(filePath: "https://inbucket.anta.wire.link/")!
+        let requestUrl = antaURL.appending(path: "api/v1/mailbox/\(email)/latest")
 
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "GET"

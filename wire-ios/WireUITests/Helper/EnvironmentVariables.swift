@@ -23,12 +23,15 @@ struct EnvironmentVariables {
         case missingInbucketURL
         case missingInbucketUsername
         case missingInbucketPassword
+        case missingDeepLinkURL
     }
 
     var backendURL: URL
     var inbucketURL: URL
     var inbucketUsername: String
     var inbucketPassword: String
+    var antaDeepLinkURL: URL
+    var antaInbucketURL: URL
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -50,9 +53,20 @@ struct EnvironmentVariables {
             throw Failure.missingInbucketUsername
         }
 
+        guard let antaDeepLinkURL = ProcessInfo.processInfo.environment["ANTA_DEEPLINK_URL"],
+              !antaDeepLinkURL.isEmpty else {
+            throw Failure.missingDeepLinkURL
+        }
+        guard let antaInbucketURL = ProcessInfo.processInfo.environment["INBUCKET_URL"],
+              !antaInbucketURL.isEmpty else {
+            throw Failure.missingInbucketURL
+        }
+
         self.backendURL = URL(string: "https://\(backendURLString)")!
         self.inbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
+        self.antaDeepLinkURL = URL(string: antaDeepLinkURL)!
+        self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
     }
 }

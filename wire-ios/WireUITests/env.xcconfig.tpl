@@ -21,3 +21,5 @@ INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPasswor
 INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
 BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL
 BASIC_AUTH=op://Test Automation/BackendConnection staging/basicAuth
+ANTA_DEEPLINK_URL=op://Test Automation/BackendConnection anta/deeplink
+ANTA_INBUCKET_URL=op://Test Automation/BackendConnection anta/inbucketUrl
