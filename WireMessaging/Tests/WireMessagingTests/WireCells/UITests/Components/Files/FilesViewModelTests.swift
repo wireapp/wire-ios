@@ -287,7 +287,7 @@ final class FilesViewModelTests {
     ])
     func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
         // given
-        sut = FilesViewModel(
+        let sut = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
@@ -319,6 +319,7 @@ final class FilesViewModelTests {
 
         // then
         #expect(state == sut.state)
+    }
 
     // MARK: - viewAsset
 
