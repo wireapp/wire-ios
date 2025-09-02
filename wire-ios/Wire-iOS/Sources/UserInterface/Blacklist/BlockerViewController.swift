@@ -368,7 +368,18 @@ extension BlockerViewController {
     }
 
     private func handleLogout() {
-        // TODO: handle logout
+        guard
+            let sessionManager,
+            let account = sessionManager.currentAccount
+        else {
+            return
+        }
+
+        // TODO: [WPB-18071] allow user to choose whether to delete data
+        sessionManager.delete(
+            account: account,
+            eraseData: true
+        )
     }
 
 }
