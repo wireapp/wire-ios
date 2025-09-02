@@ -36,14 +36,21 @@ class BackupOrRestorePage: PageModel {
         app.buttons["Account"]
     }
 
+    var browseButtonOnBottom: XCUIElement {
+        app.tabBars.buttons["Browse"].firstMatch
+    }
+
     func tapBackupNow() throws -> SetPasswordPage {
         backupNowButton.tap()
         return try SetPasswordPage()
     }
 
-    func tapRestoreFromBackupButton() throws -> SavedBackupsInDevicePage {
+    func tapRestoreFromBackupButton() throws -> OnMyiPhonePage {
         restoreFromBackupButton.tap()
-        return try SavedBackupsInDevicePage()
+        if !browseButtonOnBottom.isSelected{
+            browseButtonOnBottom.tap()
+        }
+        return try OnMyiPhonePage()
     }
 
     func goBackToAccountPage() throws -> AccountSettingsPage {

@@ -32,8 +32,24 @@ class OnMyiPhonePage: PageModel {
         app.buttons["Save"]
     }
 
+    var searchField: XCUIElement {
+        app.searchFields["Search"]
+    }
+
+    var backupFile: (String) -> XCUIElement {
+        { name in
+            let predicate = NSPredicate(format: "identifier CONTAINS %@", name)
+            return self.app.cells.matching(predicate).firstMatch
+        }
+    }
+
     func tapSaveButtonOnMyiPhonePage() throws -> BackupOrRestorePage {
         saveButton.tap()
         return try BackupOrRestorePage()
+    }
+
+    func selectBackupFile(withName name: String) throws -> SetPasswordPage {
+        backupFile(name).tap()
+        return try SetPasswordPage()
     }
 }
