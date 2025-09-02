@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandler {
 
@@ -24,9 +25,9 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let (error, _) = context
+        let (_, error, _) = context
 
         // Only handle canNotRegisterMoreClients errors
         guard

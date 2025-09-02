@@ -31,6 +31,9 @@ final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandle
         case .wireAuthenticationModule:
             return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
 
+        case .reauthenticate:
+            return [.completeWireAuthenticationLogin(context)]
+
         default:
             assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
             return nil

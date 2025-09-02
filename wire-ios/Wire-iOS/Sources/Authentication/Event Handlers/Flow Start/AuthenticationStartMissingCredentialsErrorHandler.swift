@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEventHandler {
 
@@ -24,9 +25,9 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let error = context.0
+        let error = context.1
 
         // Only handle errors on start
         guard case .start = currentStep else {
