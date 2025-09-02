@@ -19,6 +19,7 @@
 import SwiftUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireTestingPackage
 import XCTest
 @testable import WireAuthenticationUI
@@ -60,7 +61,12 @@ final class AccountSwitcherViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
+            AccountSwitcherModalView(
+                factory: FakeAccountSwitcherFactory(
+                    accounts: accounts,
+                    defaultEnvironment: .fixture()
+                )
+            )
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
