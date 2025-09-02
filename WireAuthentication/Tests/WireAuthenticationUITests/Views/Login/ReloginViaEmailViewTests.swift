@@ -41,24 +41,7 @@ final class ReloginViaEmailViewTests: XCTestCase {
     @MainActor
     func testReloginViaEmail() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "backend name",
-            environmentType: .staging,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: nil
-            )
-        )
+        let environment = BackendEnvironment2.fixture(environmentType: .staging)
 
         let view = NavigationStack {
             ReloginViaEmailView(factory: FakeReloginViaEmailFactory(
@@ -83,27 +66,9 @@ final class ReloginViaEmailViewTests: XCTestCase {
     @MainActor
     func testReloginViaEmail_WithProxy() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "backend name",
+        let environment = BackendEnvironment2.fixture(
             environmentType: .staging,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: .init(
-                    host: "host",
-                    port: 111,
-                    needsAuthentication: true
-                )
-            )
+            proxyConfig: .init(host: "host", port: 111, needsAuthentication: true)
         )
 
         let view = NavigationStack {
