@@ -167,13 +167,13 @@ package struct RootView: View {
     }
 
     @ViewBuilder private var logoutConfirmationButtons: some View {
+        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
         Button(Strings.Logout.Alert.keepDataButton) {
             viewModel.logout(deleteData: false)
         }
         Button(Strings.Logout.Alert.deleteDataButton, role: .destructive) {
             viewModel.logout(deleteData: true)
         }
-        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
     }
 
 }
