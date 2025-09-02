@@ -857,12 +857,6 @@ public extension FileAssetCache {
 
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-    guard let input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
-}
-
 /// A file cache
 /// This class is NOT thread safe. However, the only problematic operation is deleting.
 /// Any thread can read objects that are never deleted without any problem.
