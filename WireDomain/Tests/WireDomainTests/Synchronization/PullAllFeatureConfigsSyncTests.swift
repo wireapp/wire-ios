@@ -53,7 +53,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 10)
+        try XCTAssertCount(storeInvocations, count: 12)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -115,6 +115,14 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             storeInvocations[9].config as? Feature.E2EI.Config,
             Scaffolding.endToEndIdentityFeatureConfig.toDomainModel()
         )
+
+        XCTAssertEqual(storeInvocations[10].name, .consumableNotifications)
+        XCTAssertTrue(storeInvocations[10].isEnabled)
+        XCTAssertNil(storeInvocations[10].config)
+
+        XCTAssertEqual(storeInvocations[11].name, .chatBubblesSimple)
+        XCTAssertTrue(storeInvocations[11].isEnabled)
+        XCTAssertNil(storeInvocations[11].config)
     }
 
 }
@@ -131,7 +139,9 @@ private enum Scaffolding {
         .selfDeletingMessages(selfDeletingMessagesFeatureConfig),
         .mls(mlsFeatureConfig),
         .mlsMigration(mlsMigrationFeatureConfig),
-        .endToEndIdentity(endToEndIdentityFeatureConfig)
+        .endToEndIdentity(endToEndIdentityFeatureConfig),
+        .consumableNotifications(consumableNotificationsFeatureConfig),
+        .chatBubblesSimple(chatBubblesSimpleFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -192,6 +202,14 @@ private enum Scaffolding {
         verificationExpiration: 9_223_372_036_854_776_000,
         crlProxy: "https://example.com",
         useProxyOnMobile: true
+    )
+
+    static let consumableNotificationsFeatureConfig = ConsumableNotificationsFeatureConfig(
+        status: .enabled
+    )
+
+    static let chatBubblesSimpleFeatureConfig = ChatBubblesSimpleFeatureConfig(
+        status: .enabled
     )
 
 }

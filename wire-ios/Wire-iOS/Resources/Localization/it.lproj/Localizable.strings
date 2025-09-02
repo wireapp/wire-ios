@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Cerca";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Allegati";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Immagine";

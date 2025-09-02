@@ -155,7 +155,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+    private lazy var updateEventsAPI: some UpdateEventsAPI = UpdateEventsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -416,6 +416,7 @@ public final class ClientSessionComponent {
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
+            featureConfigRepository: featureConfigRepository,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,
@@ -447,7 +448,7 @@ public final class ClientSessionComponent {
         mlsProvider: mlsProvider
     )
 
-    private lazy var featureConfigRepository = FeatureConfigRepository(
+    public lazy var featureConfigRepository = FeatureConfigRepository(
         featureConfigsAPI: featureConfigsAPI,
         featureConfigLocalStore: featureConfigsLocalStore
     )

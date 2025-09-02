@@ -21,7 +21,7 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
+public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Properties
 
@@ -42,66 +42,63 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Public
 
-    func pullFeatureConfigs() async throws {
+    public func pullFeatureConfigs() async throws {
         let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
         for featureConfig in featureConfigs {
-            if let featureConfigInfo = getFeatureConfigInfo(featureConfig) {
-                await featureConfigLocalStore.storeFeature(
-                    name: featureConfigInfo.name,
-                    isEnabled: featureConfigInfo.isEnabled,
-                    config: featureConfigInfo.config
-                )
-
-                await sendFeatureState(for: featureConfig)
-            }
+            await featureConfigLocalStore.storeFeatureConfig(featureConfig)
+            await sendFeatureState(for: featureConfig)
         }
     }
 
-    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+    public func isFeatureEnabled(
+        _ feature: Feature.Name
+    ) async -> Bool {
+        do {
+            let feature = try await featureConfigLocalStore.fetchFeature(
+                name: feature
+            )
+            return await featureConfigLocalStore.isFeatureEnabled(
+                feature: feature
+            )
+        } catch {
+            return false
+        }
+    }
+
+    public func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func updateFeatureConfig(
+    public func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
-        guard let featureConfigInfo = getFeatureConfigInfo(
-            featureConfig
-        ) else {
-            return
-        }
-
-        await featureConfigLocalStore.storeFeature(
-            name: featureConfigInfo.name,
-            isEnabled: featureConfigInfo.isEnabled,
-            config: featureConfigInfo.config
-        )
-
+        await featureConfigLocalStore.storeFeatureConfig(featureConfig)
         await sendFeatureState(for: featureConfig)
     }
 
-    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+    public func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
         try await fetchFeatureConfig(
             name: .allowedGlobalOperations,
             type: Feature.AllowedGlobalOperations.Config.self
         )
     }
 
-    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+    public func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
         try await fetchFeatureConfig(
             name: .mls,
             type: Feature.MLS.Config.self
         )
     }
 
-    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+    public func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
         try await fetchFeatureConfig(
             name: .mlsMigration,
             type: Feature.MLSMigration.Config.self
         )
     }
 
-    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+    public func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
         try await fetchFeatureConfig(
             name: .appLock,
             type: Feature.AppLock.Config.self
@@ -203,112 +200,16 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
-        case let .unknown(featureName):
-            logger.warn(
-                "Unknown feature name: \(featureName)"
+        case let .consumableNotifications(config):
+            return FeatureState(
+                name: .consumableNotifications,
+                isEnabled: config.status == .enabled
             )
 
-            return nil
-        }
-    }
-
-    private func getFeatureConfigInfo(
-        _ featureConfig: FeatureConfig
-    ) -> (name: Feature.Name, isEnabled: Bool, config: (any Codable)?)? {
-        switch featureConfig {
-        case let .appLock(appLockFeatureConfig):
-
-            return (
-                .appLock,
-                appLockFeatureConfig.status == .enabled,
-                appLockFeatureConfig.toDomainModel()
-            )
-
-        case let .classifiedDomains(classifiedDomainsFeatureConfig):
-
-            return (
-                .classifiedDomains,
-                classifiedDomainsFeatureConfig.status == .enabled,
-                classifiedDomainsFeatureConfig.toDomainModel()
-            )
-
-        case let .conferenceCalling(conferenceCallingFeatureConfig):
-
-            return (
-                .conferenceCalling,
-                conferenceCallingFeatureConfig.status == .enabled,
-                conferenceCallingFeatureConfig.toDomainModel()
-            )
-
-        case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
-
-            return (
-                .conversationGuestLinks,
-                conversationGuestLinksFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .digitalSignature(digitalSignatureFeatureConfig):
-
-            return (
-                .digitalSignature,
-                digitalSignatureFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .endToEndIdentity(endToEndIdentityFeatureConfig):
-
-            return (
-                .e2ei,
-                endToEndIdentityFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .fileSharing(fileSharingFeatureConfig):
-
-            return (
-                .fileSharing,
-                fileSharingFeatureConfig.status == .enabled,
-                nil
-            )
-
-        case let .mls(mlsFeatureConfig):
-
-            return (
-                .mls,
-                mlsFeatureConfig.status == .enabled,
-                mlsFeatureConfig.toDomainModel()
-            )
-
-        case let .mlsMigration(mLSMigrationFeatureConfig):
-
-            return (
-                .mlsMigration,
-                mLSMigrationFeatureConfig.status == .enabled,
-                mLSMigrationFeatureConfig.toDomainModel()
-            )
-
-        case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
-
-            return (
-                .selfDeletingMessages,
-                selfDeletingMessagesFeatureConfig.status == .enabled,
-                selfDeletingMessagesFeatureConfig.toDomainModel()
-            )
-
-        case let .channels(channelsFeatureConfig):
-
-            return (
-                .channels,
-                channelsFeatureConfig.status == .enabled,
-                channelsFeatureConfig.toDomainModel()
-            )
-
-        case let .allowedGlobalOperations(config):
-            return (
-                .allowedGlobalOperations,
-                config.status == .enabled,
-                config.toDomainModel()
+        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
+            return FeatureState(
+                name: .chatBubblesSimple,
+                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
             )
 
         case let .unknown(featureName):
@@ -322,7 +223,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private func fetchFeatureConfig<T: Decodable>(
         name: Feature.Name,
-        type: T.Type
+        type: T.Type?
     ) async throws -> LocalFeature<T> {
         let feature = try await featureConfigLocalStore.fetchFeature(
             name: name
@@ -330,7 +231,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         let featureConfig = await featureConfigLocalStore.featureConfig(feature: feature)
 
-        if let config = featureConfig.config {
+        if let type, let config = featureConfig.config {
             let decoder = JSONDecoder()
             let config = try decoder.decode(type, from: config)
 

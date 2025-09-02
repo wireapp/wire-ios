@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
 
@@ -33,13 +34,14 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
-        let backendEnvironment = try await networkStack.makeBackendEnvironment()
-        return AuthenticationResult(
+        AuthenticationResult(
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,
             emailCredentials: emailCredentials,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: networkStack.backendEnvironment,
+            backendMetadata: try await networkStack.resolvedBackendMetadata(),
+            proxyCredentials: await networkStack.proxyCredentials
         )
     }
 

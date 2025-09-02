@@ -295,6 +295,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case type
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
+        case cellsState = "cells_state"
     }
 
     var access: Set<ConversationAccessModeV0>?
@@ -317,6 +318,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var type: ConversationTypeV0?
     var groupType: ConversationGroupTypeV8? // Introduced in v8
     var addPermission: ChannelPermissionV8? // Introduced in v8
+    var cellsState: CellsStateV8 // Introduced in v8
 
     func toAPIModel() -> Conversation {
         let access = access?.map { $0.toAPIModel() }
@@ -342,7 +344,25 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date,
             groupType: groupType?.toAPIModel(),
-            addPermission: addPermission?.toAPIModel()
+            addPermission: addPermission?.toAPIModel(),
+            cellsState: cellsState.toAPIModel()
         )
+    }
+}
+
+enum CellsStateV8: String, Decodable, ToAPIModelConvertible {
+    case ready
+    case pending
+    case disabled
+
+    func toAPIModel() -> Conversation.CellsState {
+        switch self {
+        case .ready:
+            .ready
+        case .pending:
+            .pending
+        case .disabled:
+            .disabled
+        }
     }
 }

@@ -941,24 +941,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - localParticipantsExcludingSelfAsMLSUsers
-
-    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
-
-    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
-        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
-
-        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
-            return await mock(conversation)
-        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
-        }
-    }
-
     // MARK: - isGroupConversation
 
     public var isGroupConversation_Invocations: [ZMConversation] = []
@@ -2010,19 +1992,20 @@ public class MockDatabaseSaverProtocol: DatabaseSaverProtocol {
 
 }
 
-class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
+public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - pullFeatureConfigs
 
-    var pullFeatureConfigs_Invocations: [Void] = []
-    var pullFeatureConfigs_MockError: Error?
-    var pullFeatureConfigs_MockMethod: (() async throws -> Void)?
+    public var pullFeatureConfigs_Invocations: [Void] = []
+    public var pullFeatureConfigs_MockError: Error?
+    public var pullFeatureConfigs_MockMethod: (() async throws -> Void)?
 
-    func pullFeatureConfigs() async throws {
+    public func pullFeatureConfigs() async throws {
         pullFeatureConfigs_Invocations.append(())
 
         if let error = pullFeatureConfigs_MockError {
@@ -2038,11 +2021,11 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - observeFeatureStates
 
-    var observeFeatureStates_Invocations: [Void] = []
-    var observeFeatureStates_MockMethod: (() -> AnyPublisher<FeatureState, Never>)?
-    var observeFeatureStates_MockValue: AnyPublisher<FeatureState, Never>?
+    public var observeFeatureStates_Invocations: [Void] = []
+    public var observeFeatureStates_MockMethod: (() -> AnyPublisher<FeatureState, Never>)?
+    public var observeFeatureStates_MockValue: AnyPublisher<FeatureState, Never>?
 
-    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+    public func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         observeFeatureStates_Invocations.append(())
 
         if let mock = observeFeatureStates_MockMethod {
@@ -2056,10 +2039,10 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - updateFeatureConfig
 
-    var updateFeatureConfig_Invocations: [FeatureConfig] = []
-    var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
+    public var updateFeatureConfig_Invocations: [FeatureConfig] = []
+    public var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
 
-    func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
+    public func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
         updateFeatureConfig_Invocations.append(featureConfig)
 
         guard let mock = updateFeatureConfig_MockMethod else {
@@ -2071,12 +2054,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchAllowedGlobalOperations
 
-    var fetchAllowedGlobalOperations_Invocations: [Void] = []
-    var fetchAllowedGlobalOperations_MockError: Error?
-    var fetchAllowedGlobalOperations_MockMethod: (() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>)?
-    var fetchAllowedGlobalOperations_MockValue: LocalFeature<Feature.AllowedGlobalOperations.Config>?
+    public var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowedGlobalOperations_MockError: Error?
+    public var fetchAllowedGlobalOperations_MockMethod: (() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>)?
+    public var fetchAllowedGlobalOperations_MockValue: LocalFeature<Feature.AllowedGlobalOperations.Config>?
 
-    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+    public func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
         fetchAllowedGlobalOperations_Invocations.append(())
 
         if let error = fetchAllowedGlobalOperations_MockError {
@@ -2094,12 +2077,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchMLSConfig
 
-    var fetchMLSConfig_Invocations: [Void] = []
-    var fetchMLSConfig_MockError: Error?
-    var fetchMLSConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLS.Config>)?
-    var fetchMLSConfig_MockValue: LocalFeature<Feature.MLS.Config>?
+    public var fetchMLSConfig_Invocations: [Void] = []
+    public var fetchMLSConfig_MockError: Error?
+    public var fetchMLSConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLS.Config>)?
+    public var fetchMLSConfig_MockValue: LocalFeature<Feature.MLS.Config>?
 
-    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+    public func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
         fetchMLSConfig_Invocations.append(())
 
         if let error = fetchMLSConfig_MockError {
@@ -2117,12 +2100,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchMLSMigrationConfig
 
-    var fetchMLSMigrationConfig_Invocations: [Void] = []
-    var fetchMLSMigrationConfig_MockError: Error?
-    var fetchMLSMigrationConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLSMigration.Config>)?
-    var fetchMLSMigrationConfig_MockValue: LocalFeature<Feature.MLSMigration.Config>?
+    public var fetchMLSMigrationConfig_Invocations: [Void] = []
+    public var fetchMLSMigrationConfig_MockError: Error?
+    public var fetchMLSMigrationConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLSMigration.Config>)?
+    public var fetchMLSMigrationConfig_MockValue: LocalFeature<Feature.MLSMigration.Config>?
 
-    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+    public func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
         fetchMLSMigrationConfig_Invocations.append(())
 
         if let error = fetchMLSMigrationConfig_MockError {
@@ -2140,12 +2123,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchAppLock
 
-    var fetchAppLock_Invocations: [Void] = []
-    var fetchAppLock_MockError: Error?
-    var fetchAppLock_MockMethod: (() async throws -> LocalFeature<Feature.AppLock.Config>)?
-    var fetchAppLock_MockValue: LocalFeature<Feature.AppLock.Config>?
+    public var fetchAppLock_Invocations: [Void] = []
+    public var fetchAppLock_MockError: Error?
+    public var fetchAppLock_MockMethod: (() async throws -> LocalFeature<Feature.AppLock.Config>)?
+    public var fetchAppLock_MockValue: LocalFeature<Feature.AppLock.Config>?
 
-    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+    public func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
         fetchAppLock_Invocations.append(())
 
         if let error = fetchAppLock_MockError {
@@ -2158,6 +2141,24 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchAppLock`")
+        }
+    }
+
+    // MARK: - isFeatureEnabled
+
+    public var isFeatureEnabled_Invocations: [Feature.Name] = []
+    public var isFeatureEnabled_MockMethod: ((Feature.Name) async -> Bool)?
+    public var isFeatureEnabled_MockValue: Bool?
+
+    public func isFeatureEnabled(_ feature: Feature.Name) async -> Bool {
+        isFeatureEnabled_Invocations.append(feature)
+
+        if let mock = isFeatureEnabled_MockMethod {
+            return await mock(feature)
+        } else if let mock = isFeatureEnabled_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isFeatureEnabled`")
         }
     }
 

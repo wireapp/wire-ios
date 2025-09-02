@@ -53,7 +53,8 @@
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
-                                                 isSyncV2Enabled:NO];
+                                                 isSyncV2Enabled:NO
+                                                      apiVersion:nil];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
                                                                                         name:ZMOperationLoop.pushChannelStateChangeNotificationName
                                                                                      context:self.uiMOC.notificationContext
@@ -118,7 +119,8 @@
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC
                                                      isDeveloperModeEnabled:NO
-                                                            isSyncV2Enabled:NO];
+                                                            isSyncV2Enabled:NO
+                                                                 apiVersion:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

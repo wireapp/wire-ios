@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -44,10 +45,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .default,
-                    backendConfig: MockDependencies()._backendConfig
-                ),
+                environment: MockDependencies().backendEnvironment,
                 canCreateAccount: true,
                 didDetectDomainConflict: false
             ))
@@ -69,10 +67,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .default,
-                    backendConfig: MockDependencies()._backendConfig
-                ),
+                environment: MockDependencies().backendEnvironment,
                 canCreateAccount: true,
                 didDetectDomainConflict: false
             ))
@@ -92,13 +87,28 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
+        let environment = BackendEnvironment2(
+            title: "backend name",
+            environmentType: .staging,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "https://example.com")!,
+                    websocketURL: URL(string: "https://example.com")!,
+                    blacklistURL: URL(string: "https://example.com")!,
+                    teamsURL: URL(string: "https://example.com")!,
+                    accountsURL: URL(string: "https://example.com")!,
+                    websiteURL: URL(string: "https://example.com")!,
+                    countlyURL: URL(string: "https://example.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
+        )
+
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .anta,
-                    backendConfig: MockDependencies()._backendConfig
-                ),
+                environment: environment,
                 canCreateAccount: false,
                 didDetectDomainConflict: false
             ))
@@ -117,13 +127,28 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
+        let environment = BackendEnvironment2(
+            title: "backend name",
+            environmentType: .staging,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "https://example.com")!,
+                    websocketURL: URL(string: "https://example.com")!,
+                    blacklistURL: URL(string: "https://example.com")!,
+                    teamsURL: URL(string: "https://example.com")!,
+                    accountsURL: URL(string: "https://example.com")!,
+                    websiteURL: URL(string: "https://example.com")!,
+                    countlyURL: URL(string: "https://example.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
+        )
+
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .anta,
-                    backendConfig: MockDependencies()._backendConfig
-                ),
+                environment: environment,
                 canCreateAccount: false,
                 didDetectDomainConflict: false
             ))
@@ -143,28 +168,32 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let backendConfig = BackendConfig(
+        let environment = BackendEnvironment2(
             title: "<backend name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "https://example.com")!,
-                backendWSURL: URL(string: "https://example.com")!,
-                blackListURL: URL(string: "https://example.com")!,
-                teamsURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!,
-                countlyURL: URL(string: "https://example.com")!
-            ),
-            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
-            pinnedKeys: nil
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "https://example.com")!,
+                    websocketURL: URL(string: "https://example.com")!,
+                    blacklistURL: URL(string: "https://example.com")!,
+                    teamsURL: URL(string: "https://example.com")!,
+                    accountsURL: URL(string: "https://example.com")!,
+                    websiteURL: URL(string: "https://example.com")!,
+                    countlyURL: URL(string: "https://example.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: .init(
+                    host: "host",
+                    port: 111,
+                    needsAuthentication: true
+                )
+            )
         )
 
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .default,
-                    backendConfig: backendConfig
-                ),
+                environment: environment,
                 canCreateAccount: false,
                 didDetectDomainConflict: false
             ))
@@ -183,27 +212,32 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let backendConfig = BackendConfig(
+        let environment = BackendEnvironment2(
             title: "<backend name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "https://example.com")!,
-                backendWSURL: URL(string: "https://example.com")!,
-                blackListURL: URL(string: "https://example.com")!,
-                teamsURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!,
-                countlyURL: URL(string: "https://example.com")!
-            ),
-            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
-            pinnedKeys: nil
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "https://example.com")!,
+                    websocketURL: URL(string: "https://example.com")!,
+                    blacklistURL: URL(string: "https://example.com")!,
+                    teamsURL: URL(string: "https://example.com")!,
+                    accountsURL: URL(string: "https://example.com")!,
+                    websiteURL: URL(string: "https://example.com")!,
+                    countlyURL: URL(string: "https://example.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: .init(
+                    host: "host",
+                    port: 111,
+                    needsAuthentication: true
+                )
+            )
         )
+
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
                 email: "foo@bar.com",
-                backendInfo: BackendInfo(
-                    environmentType: .default,
-                    backendConfig: backendConfig
-                ),
+                environment: environment,
                 canCreateAccount: false,
                 didDetectDomainConflict: false
             ))

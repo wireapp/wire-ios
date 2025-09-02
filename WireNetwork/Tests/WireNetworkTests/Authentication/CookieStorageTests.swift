@@ -127,7 +127,7 @@ final class CookieStorageTests: XCTestCase {
         let updateInvocations = await keychain.updateItemQueryAttributesToUpdate_Invocations
         try XCTAssertCount(updateInvocations, count: 1)
 
-        XCTAssertEqual(updateInvocations[0].query, Scaffolding.fetchQuery)
+        XCTAssertEqual(updateInvocations[0].query, Scaffolding.baseQuery)
         try assertUpdateQuery(updateInvocations[0].attributesToUpdate, updatedCookie: validCookie)
     }
 
@@ -181,10 +181,6 @@ final class CookieStorageTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        XCTAssertTrue(query.contains(.service("Wire: Credentials for wire.com")), file: file, line: line)
-        XCTAssertTrue(query.contains(.account(Scaffolding.userID.uuidString)), file: file, line: line)
-        XCTAssertTrue(query.contains(.itemClass(.genericPassword)), file: file, line: line)
-
         var storedData: Data?
         for item in query {
             if case let .data(data) = item {
@@ -246,13 +242,16 @@ private enum Scaffolding {
         try AES256Crypto.generateRandomEncryptionKey()
     }
 
-    static var fetchQuery: Set<KeychainQueryItem> {
+    static var baseQuery: Set<KeychainQueryItem> {
         [
             .service("Wire: Credentials for wire.com"),
             .account(userID.uuidString),
-            .itemClass(.genericPassword),
-            .returningData(true)
+            .itemClass(.genericPassword)
         ]
+    }
+
+    static var fetchQuery: Set<KeychainQueryItem> {
+        baseQuery.union([.returningData(true)])
     }
 
     static let invalidCookie = HTTPCookie(properties: [

@@ -37,7 +37,7 @@ public struct UpdateEventsAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `UpdateEventsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any UpdateEventsAPI {
+    public func makeAPI(for version: APIVersion) -> some UpdateEventsAPI {
         switch version {
         case .v0:
             UpdateEventsAPIV0(apiService: apiService)
@@ -61,6 +61,8 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV9(apiService: apiService)
         case .v10:
             UpdateEventsAPIV10(apiService: apiService)
+        case .v11:
+            UpdateEventsAPIV11(apiService: apiService)
         }
     }
 
