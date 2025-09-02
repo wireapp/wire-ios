@@ -47,7 +47,6 @@ class ConversationsPage: PageModel {
         app.buttons["Block"]
     }
 
-<<<<<<< HEAD
     var videoCallButton: XCUIElement {
         app.descendants(matching: .any)["videoCallBarButton"].firstMatch
     }
@@ -56,8 +55,6 @@ class ConversationsPage: PageModel {
         app.buttons["accept"]
     }
 
-=======
->>>>>>> parent of 28cb1d91d9 (some flaky fixes)
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -76,7 +73,6 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-<<<<<<< HEAD
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -87,17 +83,21 @@ class ConversationsPage: PageModel {
                 conversationCell.tap()
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
-=======
-        if conversationCell.waitForExistence(timeout: 7) {
-            conversationCell.tap()
->>>>>>> parent of 28cb1d91d9 (some flaky fixes)
         }
         return try ConnectionRequestsPage()
     }
 
     func openConversation() throws -> ActiveConversationPage {
-        if conversationCell.waitForExistence(timeout: 7) {
-            conversationCell.tap()
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
+
+        let maxDuration: TimeInterval = 10
+        let start = Date()
+
+        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
+            if conversationCell.isHittable {
+                conversationCell.tap()
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
     }
@@ -116,5 +116,4 @@ class ConversationsPage: PageModel {
     func getNameLabel() -> String? {
         conversationCell.label
     }
-
 }

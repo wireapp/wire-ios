@@ -45,18 +45,12 @@ class BackupOrRestorePage: PageModel {
         return try SetPasswordPage()
     }
 
-<<<<<<< HEAD
     func tapRestoreFromBackupButton() throws -> OnMyiPhonePage {
         restoreFromBackupButton.tap()
         if !browseButtonOnBottom.isSelected {
             browseButtonOnBottom.tap()
         }
         return try OnMyiPhonePage()
-=======
-    func tapRestoreFromBackupButton() throws -> DeviceRecentBackupsPage {
-        restoreFromBackupButton.tap()
-        return try DeviceRecentBackupsPage()
->>>>>>> parent of 28cb1d91d9 (some flaky fixes)
     }
 
     func goBackToAccountPage() throws -> AccountSettingsPage {
