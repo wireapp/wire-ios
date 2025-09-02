@@ -21,14 +21,14 @@ import WireAuthenticationAPI
 import WireNetwork
 import WireReusableUIComponents
 
-struct FakeReloginViaEmailFactory: ReloginViaEmailFactory, CreateAuthenticationResultUseCaseFactory, LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
+struct FakeReloginViaEmailFactory: ReloginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
+    LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
 
     let email: String
     let environment: BackendEnvironment2
     let existsAnotherAccount: Bool
 
-    @MainActor
-    var viewModel: ReloginViaEmailViewModel {
+    @MainActor var viewModel: ReloginViaEmailViewModel {
         ReloginViaEmailViewModel(
             factory: self,
             router: FakeRootFactory().viewModel,
