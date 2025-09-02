@@ -39,5 +39,7 @@ extension ConversationViewController {
         ZMUserSession.shared()?.didOpen(conversation: conversation)
 
         isAppearing = false
+
+        syncCellsStateIfPending()
     }
 }
