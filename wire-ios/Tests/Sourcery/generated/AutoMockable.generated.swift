@@ -1784,20 +1784,20 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellName_Invocations: [String] = []
-    var makeFilesViewCellName_MockMethod: ((String) -> UIViewController)?
-    var makeFilesViewCellName_MockValue: UIViewController?
+    var makeFilesViewCellNameIsCellsStatePending_Invocations: [(cellName: String, isCellsStatePending: Bool)] = []
+    var makeFilesViewCellNameIsCellsStatePending_MockMethod: ((String, Bool) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePending_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String) -> UIViewController {
-        makeFilesViewCellName_Invocations.append(cellName)
+    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePending_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending))
 
-        if let mock = makeFilesViewCellName_MockMethod {
-            return mock(cellName)
-        } else if let mock = makeFilesViewCellName_MockValue {
+        if let mock = makeFilesViewCellNameIsCellsStatePending_MockMethod {
+            return mock(cellName, isCellsStatePending)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePending_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellName`")
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePending`")
         }
     }
 
