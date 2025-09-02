@@ -35,7 +35,6 @@ package final class ReloginViaEmailViewModel: ObservableObject {
 
     // MARK: - View state
 
-    @Published var email: String
     @Published var password: String = ""
 
     @Published var proxyUsername: String = ""
@@ -47,6 +46,7 @@ package final class ReloginViaEmailViewModel: ObservableObject {
     @Published var alert: Alert?
     @Published var onSheetDismissAction: (() -> Void)?
 
+    let email: String
     let environment: BackendEnvironment2
 
     var areProxyCredentialsRequired: Bool {

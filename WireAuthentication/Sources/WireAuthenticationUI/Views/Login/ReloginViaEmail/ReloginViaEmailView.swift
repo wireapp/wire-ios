@@ -128,7 +128,7 @@ package struct ReloginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email
+            string: .constant(viewModel.email)
         )
         .autocapitalization(.none)
         .autocorrectionDisabled()
