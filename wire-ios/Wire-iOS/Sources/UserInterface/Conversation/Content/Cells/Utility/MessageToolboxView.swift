@@ -251,7 +251,7 @@ final class MessageToolboxView: UIView {
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
             messageFailureView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor
+                equalTo: trailingAnchor
             )
         ]
 
