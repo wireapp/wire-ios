@@ -20,12 +20,14 @@ import MessageUI
 import UIKit
 import WireLogging
 import WireSyncEngine
+import WireMultiBackendUI
 
 enum BlockerViewControllerContext {
     case blacklist
     case jailbroken
     case databaseFailure
-    case backendNotSupported
+    case backendObsolete
+    case clientObsolete
     case pendingCertificateEnroll
 }
 
@@ -66,20 +68,48 @@ final class BlockerViewController: LaunchImageViewController {
             showJailbrokenMessage()
         case .databaseFailure:
             showDatabaseFailureMessage()
-        case .backendNotSupported:
-            showBackendNotSupportedMessage()
+        case .backendObsolete:
+            showBackendObsoleteMessage()
+        case .clientObsolete:
+            showClientObsoleteMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
         }
     }
 
-    private func showBackendNotSupportedMessage() {
-        typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
+    private func showBackendObsoleteMessage() {
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteServer { [weak self] in
+                self?.presentAccountSwitcher()
+            } logoutAction: { [weak self] in
+                self?.handleLogout()
+            }
 
-        presentOKAlert(
-            title: BackendNotSupported.title,
-            message: BackendNotSupported.message
-        )
+            present(alert, animated: true)
+        } else {
+            typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
+
+            presentOKAlert(
+                title: BackendNotSupported.title,
+                message: BackendNotSupported.message
+            )
+        }
+    }
+
+    private func showClientObsoleteMessage() {
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteClient {
+                UIApplication.shared.open(WireURLs.shared.appOnItunes)
+            } switchAccountAction: { [weak self] in
+                self?.presentAccountSwitcher()
+            } logoutAction: { [weak self] in
+                self?.handleLogout()
+            }
+
+            present(alert, animated: true)
+        } else {
+            showBlacklistMessage()
+        }
     }
 
     private func showBlacklistMessage() {
@@ -291,6 +321,55 @@ extension BlockerViewController {
             viewController.dismiss(animated: true)
         }
         successEnrollmentViewController.presentOverAll()
+    }
+
+}
+
+// MARK: - Account management
+
+extension BlockerViewController {
+
+    private func presentAccountSwitcher() {
+        guard let accountManager = sessionManager?.accountManager else {
+            return
+        }
+
+        let otherAccounts = accountManager.sortedAccounts()
+            .filter {
+                !$0.isEqual(accountManager.selectedAccount)
+            }
+            .map { account in
+                account.toUIModel(action: { [weak self] in
+                    self?.handleSwitch(to: account)
+                })
+            }
+
+        let accountSwitcher = AccountSwitcherHostingController(
+            otherAccounts: otherAccounts,
+            options: []
+        )
+
+        accountSwitcher.view.backgroundColor = .systemBackground
+
+        if let sheet = accountSwitcher.sheetPresentationController {
+            sheet.detents = [
+                .custom(resolver: { context in
+                    context.maximumDetentValue * 0.3
+                })
+            ]
+            sheet.prefersGrabberVisible = false
+            sheet.preferredCornerRadius = 24
+        }
+        present(accountSwitcher, animated: true)
+    }
+
+    private func handleSwitch(to account: Account) {
+        // TODO: handle switch
+        //sessionManager?.switchTo(account: account)
+    }
+
+    private func handleLogout() {
+        // TODO: handle logout
     }
 
 }

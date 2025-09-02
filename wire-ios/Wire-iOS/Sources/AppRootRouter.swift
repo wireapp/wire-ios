@@ -326,12 +326,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     }
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
+        let blockerViewController = BlockerViewController(
+            context: reason.blockerViewControllerContext,
+            sessionManager: sessionManager
+        )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: .jailbroken)
+        let blockerViewController = BlockerViewController(
+            context: .jailbroken,
+            sessionManager: sessionManager
+        )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
