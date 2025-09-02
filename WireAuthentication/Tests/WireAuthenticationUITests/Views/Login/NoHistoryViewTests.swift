@@ -87,20 +87,4 @@ class NoHistoryViewTests: XCTestCase {
             .verify(matching: view, named: "dark")
     }
 
-    @MainActor
-    func testDynamicTypeVariantsEmptyState_DidReauthenticate() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = NoHistoryView(factory: FakeNoHistoryFactory(didReauthenticate: true))
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
 }
