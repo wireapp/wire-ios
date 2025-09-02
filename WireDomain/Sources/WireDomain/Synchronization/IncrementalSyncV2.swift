@@ -194,6 +194,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
+                    logger.debug("marker \(id) - deliveryTag \(deliveryTag)", attributes: .syncAttributes(initialSync: false))
                     try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
 
                     if id == syncMarker {
