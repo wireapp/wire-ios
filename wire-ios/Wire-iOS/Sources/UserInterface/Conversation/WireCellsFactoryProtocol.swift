@@ -31,7 +31,7 @@ protocol WireCellsFactoryProtocol {
     func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
     @MainActor
-    func makeFilesView(cellName: String) -> UIViewController
+    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController
 }
 
 extension WireCellsFactory: WireCellsFactoryProtocol {}

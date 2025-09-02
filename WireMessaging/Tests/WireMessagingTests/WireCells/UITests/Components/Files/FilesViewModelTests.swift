@@ -28,7 +28,7 @@ import WireMessagingDomain
 final class FilesViewModelTests {
 
     private let nodesRepository = MockWireCellsNodesRepositoryProtocol()
-    private let sut: FilesViewModel
+    private var sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
     private var cancellables = Set<AnyCancellable>()
 
@@ -38,12 +38,13 @@ final class FilesViewModelTests {
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
             ),
+            isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache()
         )
 
-        sut.$items.dropFirst().sink { [weak self] items in
-            self?.itemsUpdates.append(items)
+        sut.$state.dropFirst().sink { [weak self] state in
+            self?.itemsUpdates.append(state.items)
         }.store(in: &cancellables)
     }
 
@@ -149,7 +150,7 @@ final class FilesViewModelTests {
         await sut.reload()
 
         // then
-        #expect(sut.items == [
+        #expect(sut.state.items == [
             FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .image),
             FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
@@ -179,7 +180,7 @@ final class FilesViewModelTests {
         await sut.loadMoreIfNeeded(index: 0) // Index doesn't related to pagination
 
         // then
-        #expect(sut.items == [
+        #expect(sut.state.items == [
             FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
             FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other),
             FilesViewItem(id: node3.id, filename: "c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
@@ -193,7 +194,7 @@ final class FilesViewModelTests {
             (nodes: [WireCellsNode.fixture()], nextOffset: nil) // No more pages available
         }
         await sut.reload()
-        #expect(sut.items.count == 1)
+        #expect(sut.state.items.count == 1)
         itemsUpdates = [] // Reset updates to track only the next ones
 
         // when
@@ -212,7 +213,7 @@ final class FilesViewModelTests {
         nodesRepository.getNodes_MockMethod = { _ in (nodes: nodes, nextOffset: 10) }
 
         await sut.reload()
-        #expect(sut.items.count == 10)
+        #expect(sut.state.items.count == 10)
         nodesRepository.getNodes_Invocations.removeAll() // Reset invocations to track only the next ones
 
         // when
@@ -236,7 +237,7 @@ final class FilesViewModelTests {
             return (nodes: [WireCellsNode.fixture()], nextOffset: request.offset + 1)
         }
         await sut.reload()
-        #expect(sut.items.count == 1)
+        #expect(sut.state.items.count == 1)
         nodesRepository.getNodes_Invocations.removeAll() // Reset invocations to track only the next ones
 
         // when
@@ -249,7 +250,7 @@ final class FilesViewModelTests {
 
         // then
         #expect(nodesRepository.getNodes_Invocations.count == 1)
-        #expect(sut.items.count == 2)
+        #expect(sut.state.items.count == 2)
     }
 
     @Test(arguments: [
@@ -267,6 +268,55 @@ final class FilesViewModelTests {
         // then
         #expect(sut.alert == expectedAlert)
         #expect(sut.isLoading == false)
+    }
+
+    @Test(arguments: [
+        FilesViewModel.State.received(items: (0 ..< 10).map { i in
+            FilesViewItem(
+                id: UUID(),
+                filename: "\(i).jpg",
+                ownedBy: "Person \(i)",
+                modifiedAt: Date(timeIntervalSince1970: 1_600_000_000),
+                icon: .image
+            )
+        }),
+        .noData,
+        .pending
+    ])
+    func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
+        // given
+        sut = FilesViewModel(
+            fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                configuration: .conversationFileView(root: .path("some-cell")),
+                repository: nodesRepository
+            ),
+            isCellsStatePending: state == .pending,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            fileCache: MockFileCache()
+        )
+
+        nodesRepository.getNodes_MockValue = switch state {
+        case .noData, .pending:
+            ([], nil)
+        case let .received(items):
+            (items.map { element in
+                WireCellsNode.fixture(
+                    uuid: element.id,
+                    path: element.filename,
+                    modified: element.modifiedAt,
+                    mimeType: "image/jpeg",
+                    ownerUserName: element.ownedBy
+                )
+            }, nil)
+        case .loading:
+            fatalError("Not tested")
+        }
+
+        // when
+        await sut.reload()
+
+        // then
+        #expect(state == sut.state)
     }
 
 }

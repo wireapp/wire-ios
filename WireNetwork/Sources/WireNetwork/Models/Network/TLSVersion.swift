@@ -20,7 +20,7 @@ import Foundation
 
 /// Supported TLS versions.
 
-public enum TLSVersion {
+public enum TLSVersion: Sendable {
 
     /// TLS version 1.2
 

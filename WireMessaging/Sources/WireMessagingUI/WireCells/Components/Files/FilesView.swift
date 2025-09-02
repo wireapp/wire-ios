@@ -37,58 +37,124 @@ package struct FilesView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Group {
-                    ForEach(Array(viewModel.items.enumerated()), id: \.offset) { index, item in
-                        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
-                            .onAppear { Task { await viewModel.loadMoreIfNeeded(index: index) } }
-                            .onTapGesture { viewModel.viewAsset(item: item) }
-                    }
-
-                    if viewModel.hasMore {
-                        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
-                    }
-
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .received:
+                    filesList
+                        .listStyle(.plain)
+                        .refreshable { reloadTask() }
+                case .noData:
+                    InfoView(info: .noFilesFound)
+                case .pending:
+                    InfoView(info: .preparingFiles)
                 }
-                .listRowInsets(EdgeInsets())
-                .listRowSeparator(.hidden)
             }
-            .listStyle(.plain)
-            .refreshable { Task { await viewModel.reload() } }
-            .onAppear { Task { await viewModel.reload() } }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent }
+            .onAppear { reloadTask() }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },
                 message: { Text($0.message) },
-                actions: { _ in
-                    Button(L10n.Localizable.General.confirm, action: {})
-                }
+                actions: { _ in confirmButton }
             )
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(Strings.Files.navigationTitle)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(SemanticColors.Label.textDefault.color)
-                }
+        }
+    }
+}
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(.close)
-                            .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    }
-                    .accessibilityLabel(Accessibility.Files.close)
-                    .accessibilityIdentifier("close")
-                }
+// MARK: - List
+
+private extension FilesView {
+
+    @ViewBuilder var filesList: some View {
+        List {
+            Group {
+                itemsSection
+                if viewModel.hasMore { loadMoreRow }
             }
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
         }
     }
 
-    private func loadMore() {
-        let lastRowIndex = viewModel.items.count - 1
+    @ViewBuilder var itemsSection: some View {
+        ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, item in
+            itemRow(index: index)
+                .onAppear { loadMoreIfNeededTask(index: index) }
+                .onTapGesture { viewModel.viewAsset(item: item) }
+        }
+    }
+}
+
+// MARK: - Rows
+
+private extension FilesView {
+
+    @ViewBuilder
+    func itemRow(index: Int) -> some View {
+        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
+    }
+
+    var loadMoreRow: some View {
+        LoadMoreView(isLoading: viewModel.isLoading, onLoadMore: loadMore)
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) { titleView }
+        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+    }
+
+    var titleView: some View {
+        Text(Strings.Files.navigationTitle)
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(SemanticColors.Label.textDefault.color)
+    }
+
+    var closeButton: some View {
+        Button(
+            action: { dismiss() },
+            label: {
+                Image(.close)
+                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+            }
+        )
+        .accessibilityLabel(Accessibility.Files.close)
+        .accessibilityIdentifier("close")
+    }
+}
+
+// MARK: - Buttons
+
+private extension FilesView {
+
+    var confirmButton: some View {
+        Button(L10n.Localizable.General.confirm, action: {})
+    }
+}
+
+// MARK: - Tasks
+
+private extension FilesView {
+
+    func reloadTask() {
+        Task { await viewModel.reload() }
+    }
+
+    func loadMoreIfNeededTask(index: Int) {
+        Task { await viewModel.loadMoreIfNeeded(index: index) }
+    }
+
+    func loadMore() {
+        let lastRowIndex = viewModel.state.items.count - 1
         Task { await viewModel.loadMoreIfNeeded(index: lastRowIndex) }
     }
 }
@@ -116,6 +182,46 @@ private struct LoadMoreView: View {
         .frame(maxWidth: .infinity, minHeight: 56, alignment: .center)
     }
 
+}
+
+private struct InfoView: View {
+
+    enum Info {
+        case preparingFiles
+        case noFilesFound
+    }
+
+    let info: Info
+
+    var body: some View {
+        VStack(spacing: 25) {
+            Text(info == .preparingFiles ? Strings.Files.PendingCells.title : Strings.Files.NoData.title)
+                .padding([.leading, .trailing], info == .preparingFiles ? 30 : 0)
+                .font(.title3.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(SemanticColors.Label.textDefault.color)
+                .accessibilityLabel(
+                    info == .preparingFiles ? Accessibility.Files.PendingCells.title : Accessibility
+                        .Files.NoData.title
+                )
+                .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-title" : "no-files-title")
+
+            Text(info == .preparingFiles ? Strings.Files.PendingCells.message : Strings.Files.NoData.message)
+                .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel(
+                    info == .preparingFiles ? Accessibility.Files.PendingCells.message : Accessibility
+                        .Files.NoData.message
+                )
+                .accessibilityIdentifier(info == .preparingFiles ? "preparing-files-message" : "no-files-message")
+        }
+        .padding(20)
+        .frame(maxWidth: 420)
+        .padding()
+    }
 }
 
 #Preview {

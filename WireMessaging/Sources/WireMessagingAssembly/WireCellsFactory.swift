@@ -95,12 +95,13 @@ public struct WireCellsFactory {
 public extension WireCellsFactory {
 
     @MainActor
-    func makeFilesView(cellName: String) -> UIViewController {
+    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
         let viewModel = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path(cellName)),
                 repository: nodesAPI
             ),
+            isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache
         )

@@ -211,9 +211,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
 
-        let isConsumableNotificationsEnabled = await featureConfigRepository.isFeatureEnabled(
-            .consumableNotifications
-        ) && journal[.isConsumableNotificationsEnabled]
+        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled]
 
         if isSyncV2Enabled {
 

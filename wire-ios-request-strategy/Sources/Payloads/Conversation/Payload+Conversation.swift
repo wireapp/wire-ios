@@ -42,6 +42,7 @@ extension Payload {
             case epochTimestamp = "epoch_timestamp"
             case groupType = "group_conv_type"
             case addPermission = "add_permission"
+            case cellsState = "cells_state"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -69,6 +70,7 @@ extension Payload {
         var epochTimestamp: Date?
         var groupType: ConversationGroupType?
         var addPermission: ChannelPermission?
+        var cellsState: CellsState?
 
         init(
             qualifiedID: QualifiedID? = nil,
@@ -91,7 +93,8 @@ extension Payload {
             epoch: UInt? = nil,
             epochTimestamp: Date? = nil,
             groupType: ConversationGroupType? = nil,
-            addPermission: ChannelPermission? = nil
+            addPermission: ChannelPermission? = nil,
+            cellState: CellsState? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -114,6 +117,7 @@ extension Payload {
             self.epochTimestamp = epochTimestamp
             self.groupType = groupType
             self.addPermission = addPermission
+            self.cellsState = cellState
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -168,6 +172,7 @@ extension Payload {
             case .v8, .v9, .v10, .v11:
                 self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
                 self.addPermission = try container.decodeIfPresent(ChannelPermission.self, forKey: .addPermission)
+                self.cellsState = try container.decodeIfPresent(CellsState.self, forKey: .cellsState)
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 break
             }
@@ -209,6 +214,7 @@ extension Payload {
             case .v8, .v9, .v10, .v11:
                 try container.encodeIfPresent(groupType, forKey: .groupType)
                 try container.encodeIfPresent(addPermission, forKey: .addPermission)
+                try container.encodeIfPresent(cellsState, forKey: .cellsState)
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
                 break
             }
