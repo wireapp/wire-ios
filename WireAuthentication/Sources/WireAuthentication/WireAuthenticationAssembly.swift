@@ -38,6 +38,7 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
+        authenticationType: AuthenticationType,
         environment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
@@ -53,6 +54,7 @@ public struct WireAuthenticationAssembly {
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
+            authenticationType: authenticationType,
             environment: environment,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,

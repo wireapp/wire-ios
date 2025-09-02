@@ -38,6 +38,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     public let networkStack: NetworkStack
+    public let didReauthenticate: Bool = false
     private let existsAnotherAccount: Bool
 
     init(
