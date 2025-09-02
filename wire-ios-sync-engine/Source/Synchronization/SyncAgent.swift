@@ -301,6 +301,7 @@ extension SyncAgent: LiveSyncDelegate {
     }
 
     func didFail(sync: IncrementalSyncV2, error: any Error) {
+        guard !(error is CancellationError) else { return }
         delegate?.syncAgentDidFailSyncing(
             self,
             error: error
