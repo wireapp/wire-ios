@@ -104,11 +104,11 @@ public actor NetworkStack {
         }
 
         #if DEBUG
-        if Self.envNameForObsoleteBackend == backendEnvironment.title {
-            throw NetworkStackError.backendAPIVersionObsolete
-        } else if Self.envNameForObsoleteClient == backendEnvironment.title {
-            throw NetworkStackError.clientAPIVersionObsolete
-        }
+            if Self.envNameForObsoleteBackend == backendEnvironment.title {
+                throw NetworkStackError.backendAPIVersionObsolete
+            } else if Self.envNameForObsoleteClient == backendEnvironment.title {
+                throw NetworkStackError.clientAPIVersionObsolete
+            }
         #endif
 
         let api = BackendMetadataAPIBuilder(networkService: try networkServices.rest).makeAPI()

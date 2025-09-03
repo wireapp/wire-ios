@@ -19,8 +19,8 @@
 import MessageUI
 import UIKit
 import WireLogging
-import WireSyncEngine
 import WireMultiBackendUI
+import WireSyncEngine
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -329,8 +329,7 @@ extension BlockerViewController {
     private var switchAccountAction: (() -> Void)? {
         guard
             let accountManager = sessionManager?.accountManager,
-            accountManager.numberOfAccounts > 1 else
-        {
+            accountManager.numberOfAccounts > 1 else {
             return nil
         }
 
