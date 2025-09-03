@@ -70,4 +70,17 @@ public struct URLSessionConfigurationFactory {
         return configuration
     }
 
+    public func makeBlacklistSessionConfiguration() -> URLSessionConfiguration {
+        let configuration = URLSessionConfiguration.default
+        configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+
+        if let proxySettings {
+            configuration.connectionProxyDictionary = proxySettings.proxyDictionary()
+            configuration.httpShouldUsePipelining = true
+        }
+        
+        return configuration
+    }
+
 }
