@@ -92,7 +92,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
             // to show them
             WireLogger.sync.warn(
-                "syncing events via websocket: \(error.localizedDescription)",
+                "syncing events via websocket: \(String(describing: error))",
                 attributes: .syncAttributes(initialSync: false)
             )
         }
