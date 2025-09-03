@@ -35,7 +35,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var onGoingtask: Task<Void, Never>?
+    private var onGoingTask: Task<Void, Never>?
 
     private let currentAppVersion: String
     private let appContainerURL: URL
@@ -44,6 +44,8 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let minTLSVersion: String?
     private let preferredAPIVersion: UInt?
 
+    private var pushChannelObserver: PushChannelObserver?
+    
     public init(
         currentAppVersion: String,
         appContainerURL: URL,
@@ -60,6 +62,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE)
+        self.pushChannelObserver = PushChannelObserver(action: { [weak self] in
+            WireLogger.sync.info("Cancelling ongoing task")
+            self?.onGoingTask?.cancel()
+        })
     }
 
     // MARK: - Notifications
@@ -69,7 +75,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
-        if onGoingtask != nil {
+        if onGoingTask != nil {
             logger.warn(
                 "onGoingtask not null: a notification is already being processed",
                 attributes: .newNSE
@@ -78,10 +84,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
             contentHandler($0) // Finishes current notification flow by calling system built-in handler.
-            self?.onGoingtask = nil // Current notification flow was completed, nil out the task.
+            self?.onGoingTask = nil // Current notification flow was completed, nil out the task.
         }
 
-        onGoingtask = Task {
+        onGoingTask = Task {
             do {
                 try Task.checkCancellation()
             } catch {
@@ -128,7 +134,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     public func serviceExtensionTimeWillExpire() {
         logger.warn("new notification service will expire", attributes: .newNSE)
-        onGoingtask?.cancel()
+        onGoingTask?.cancel()
     }
 }
 
@@ -269,5 +275,23 @@ extension NotificationServiceExtension {
             "Unable to create a session: \(error.localizedDescription)",
             attributes: .newNSE
         )
+    }
+}
+
+class PushChannelObserver {
+    
+    var observationToken: NSObject?
+
+    init(action: @escaping () -> Void) {      
+        observationToken = DarwinNotify.observe(DarwinNotification.requestingPushChannelAccess as CFString) {
+            action()
+        }
+    }
+    
+    deinit {
+        if let observationToken {
+            DarwinNotify.removeObserver(observationToken)
+        }
+        observationToken = nil
     }
 }

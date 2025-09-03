@@ -26,9 +26,10 @@ import WireNetwork
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
-    enum Failure: Error {
+    public enum Failure: Error {
         /// Contains all envelopes that were successfully processed
         case incompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
+        case pushChannelAlreadyOpened
     }
 
     private let selfClientID: String
@@ -82,11 +83,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
 
-        
-        while (pushChannelState.isOpen()) {
-            logger.debug("waiting for pushChannel NSE to be closed", attributes: .syncAttributes(initialSync: false))
+        guard !pushChannelState.isOpen() else {
+            throw Failure.pushChannelAlreadyOpened
         }
-        
+                    
         try await pullServerTimeSync.pull()
 
         let syncMarker = syncMarkerGenerator()
@@ -264,9 +264,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 
+                try Task.checkCancellation()
+
                 // store
                 let index = try await storeEnvelope(envelope)
                 storedEnvelopes.append((envelope, index))
+                try Task.checkCancellation()
             }
         }
 
@@ -274,7 +277,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         if let lastEnvelope = storedEnvelopes.last?.0 {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
-
+        try Task.checkCancellation()
+        
         // process
         var envelopeIdsToDelete = [Int64]()
         for (envelope, index) in storedEnvelopes {
@@ -290,12 +294,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         }
 
-        // only delete successful processed envelopes
-        await deleteEnvelopes(at: envelopeIdsToDelete)
-        // TODO: [WPB-10458] save the message db and then event db
-
+        // save message db first then
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
+        
+        // only delete successful processed envelopes
+        await deleteEnvelopes(at: envelopeIdsToDelete)
     }
 
     private func decryptEnvelope(

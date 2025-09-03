@@ -221,7 +221,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-
+                    
                     if isConsumableNotificationsEnabled {
                         incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
                             .perform()
@@ -231,6 +231,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                     }
                 }
+            } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
+                handlePushChannelAlreadyOpened()
+                syncStateSubject.send(.suspended)
+                
             } catch IncrementalSync.Failure.missedEvents {
                 WireLogger.sync.error(
                     "failed to perform new incremental sync (missed events): recovering with a full sync"
@@ -307,6 +311,12 @@ extension SyncAgent: LiveSyncDelegate {
             error: error
         )
     }
+    
+    private func handlePushChannelAlreadyOpened() {
+        WireLogger.sync.debug("handlePushChannelAlreadyOpened", attributes: .syncAttributes)
+        DarwinNotify.post(DarwinNotification.requestingPushChannelAccess)
+        
+    }
 }
 
 // MARK: - MLS sync delegate
@@ -328,6 +338,8 @@ extension SyncAgent: MLSSyncDelegate {
                         .perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
+            } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
+                    handlePushChannelAlreadyOpened()
             } catch {
                 WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
                 throw error
