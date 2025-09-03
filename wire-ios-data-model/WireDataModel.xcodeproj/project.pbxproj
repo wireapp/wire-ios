@@ -502,7 +502,6 @@
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
 		CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
-		CB2093AF2E68196300852362 /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2093AE2E68196300852362 /* FileCache.swift */; };
 		CB3437012DF32846007CFB34 /* MultipartMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3437002DF3283E007CFB34 /* MultipartMessageData.swift */; };
 		CB3437032DF329D2007CFB34 /* ZMClientMessage+MultipartMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3437022DF329D2007CFB34 /* ZMClientMessage+MultipartMessageData.swift */; };
 		CB417B082D9FDA2B00F0701B /* store2-123-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CB417B072D9FDA2B00F0701B /* store2-123-0.wiredatabase */; };
@@ -1392,7 +1391,6 @@
 		CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSource.swift; sourceTree = "<group>"; };
 		CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSourceTests.swift; sourceTree = "<group>"; };
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
-		CB2093AE2E68196300852362 /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		CB3437002DF3283E007CFB34 /* MultipartMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartMessageData.swift; sourceTree = "<group>"; };
 		CB3437022DF329D2007CFB34 /* ZMClientMessage+MultipartMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+MultipartMessageData.swift"; sourceTree = "<group>"; };
 		CB417B072D9FDA2B00F0701B /* store2-123-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-123-0.wiredatabase"; sourceTree = "<group>"; };
@@ -3131,7 +3129,6 @@
 				E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */,
 				1657FA9B2D9C432200A7B337 /* CoreCryptoContextProtocolExt.swift */,
 				E66029D12BDA43E10033C524 /* SearchUsersCache.swift */,
-				CB2093AE2E68196300852362 /* FileCache.swift */,
 			);
 			path = Utilis;
 			sourceTree = "<group>";
@@ -4334,7 +4331,6 @@
 				63C2EABD2A93B174008A0AB7 /* AddParticipantAction.swift in Sources */,
 				CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */,
 				1687ABAE20ECD51E0007C240 /* ZMSearchUser.swift in Sources */,
-				CB2093AF2E68196300852362 /* FileCache.swift in Sources */,
 				EEF09CA02B1DB0C600D729A1 /* OneOnOneProtocolSelector.swift in Sources */,
 				163C92AA2630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift in Sources */,
 				63298D9E24374489006B6018 /* Dictionary+ObjectForKey.swift in Sources */,
