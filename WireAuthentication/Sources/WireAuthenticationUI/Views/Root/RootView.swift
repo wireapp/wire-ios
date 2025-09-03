@@ -128,6 +128,10 @@ package struct RootView: View {
             ReloginViaSSOView(
                 factory: viewModel.factory.reloginViaSSOFactory()
             )
+        case .accountSwitcher:
+            AccountSwitcherModalView(
+                factory: viewModel.factory.accountsSwitcherFactory()
+            )
         }
     }
 

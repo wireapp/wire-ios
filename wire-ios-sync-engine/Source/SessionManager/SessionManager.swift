@@ -766,11 +766,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                             return
                         }
 
+                        accountManager.select(account)
                         let session = await loadSession(for: account)
                         isSelectingAccount = false
 
                         if let session {
-                            accountManager.select(account)
                             completion?(session)
                         } else {
                             completion?(nil)

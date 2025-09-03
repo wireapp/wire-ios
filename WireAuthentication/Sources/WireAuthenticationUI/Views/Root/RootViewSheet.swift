@@ -27,5 +27,6 @@ package enum RootViewSheet: Identifiable, Hashable {
     case authFlow(environment: BackendEnvironment2)
     case reauthFlow(email: String)
     case reauthSSO
+    case accountSwitcher
 
 }
