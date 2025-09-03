@@ -27,10 +27,10 @@ public struct WireCellsFactory {
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
-    private let fileCache = FakeFileCache()
+    private let fileCache: any FileCache
     private let localAssetRepository: WireCellsLocalAssetRepository
 
-    public init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    public init(serverURL: URL, accessToken: any AccessTokenProvider, fileCache: any FileCache) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
         case "prod-nginz-https.wire.com": // Production
@@ -48,6 +48,7 @@ public struct WireCellsFactory {
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
+        self.fileCache = fileCache
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
@@ -119,31 +120,6 @@ public extension WireCellsFactory {
 }
 
 // MARK: - Temporary
-
-// FIXME: [WPB-19785] Implement real
-final class FakeFileCache: FileCache {
-
-    private let directory = URL.temporaryDirectory.appending(component: UUID().uuidString, directoryHint: .isDirectory)
-
-    init() {
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    }
-
-    func saveFile(at url: URL, key: String) async throws {
-        let destination = directory.appending(component: key, directoryHint: .notDirectory)
-        try FileManager.default.moveItem(at: url, to: destination)
-    }
-
-    func deleteFile(forKey key: String) async throws {
-        let fileURL = directory.appending(component: key, directoryHint: .notDirectory)
-        try FileManager.default.removeItem(at: fileURL)
-    }
-
-    func fileURL(forKey key: String) -> URL? {
-        directory.appending(component: key, directoryHint: .notDirectory)
-    }
-
-}
 
 // FIXME: [WPB-19785] Implement real
 final class FakeWireCellsLocalAssetMetadataStore: WireCellsLocalAssetMetadataStore {

@@ -50,12 +50,14 @@ struct ZClientControllerBuilder {
         if DeveloperFlag.wireCellsManualAuthentication.isOn {
             WireCellsFactory(
                 serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-                accessToken: ManualTokenProvider()
+                accessToken: ManualTokenProvider(),
+                fileCache: userSession.fileAssetCache
             )
         } else {
             WireCellsFactory(
                 serverURL: environment.backendURL,
-                accessToken: DefaultAccessTokenProvider(userSession: userSession)
+                accessToken: DefaultAccessTokenProvider(userSession: userSession),
+                fileCache: userSession.fileAssetCache
             )
         }
     }
@@ -91,3 +93,5 @@ private struct ManualTokenProvider: AccessTokenProvider {
         )
     }
 }
+
+extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}

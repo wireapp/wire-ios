@@ -301,6 +301,9 @@ public protocol UserSession: AnyObject {
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
 
+    /// Cache for file assets.
+    var fileAssetCache: FileAssetCache { get }
+
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
 }

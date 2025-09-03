@@ -46,7 +46,7 @@ protocol Cache {
     /// - parameter createdAt: date when the asset data was created
     ///
     /// This will probably cause I/O
-    func storeAssetFromURL(_ url: URL, key: String, createdAt: Date)
+    func storeAssetFromURL(_ url: URL, key: String, movingOriginal: Bool, createdAt: Date)
 
     /// Deletes the data for a key.
     func deleteAssetData(_ key: String)
