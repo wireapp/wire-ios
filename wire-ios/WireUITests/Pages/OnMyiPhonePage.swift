@@ -35,11 +35,11 @@ class OnMyiPhonePage: PageModel {
     var searchField: XCUIElement {
         app.searchFields["Search"]
     }
-    
+
     var moreButton: XCUIElement {
         app.buttons["More"]
     }
-    
+
     var sortByDateButton: XCUIElement {
         app.buttons["Date"]
     }
