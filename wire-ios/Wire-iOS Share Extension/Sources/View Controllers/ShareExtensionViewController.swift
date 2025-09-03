@@ -530,15 +530,23 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         do {
             try await recreateSharingSession(account: account)
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            presentError(message: L10n.ShareExtension.NoInternetConnection.title)
+        } catch NetworkStackError.backendAPIVersionObsolete {
+            presentError(
+                title: L10n.ShareExtension.Error.UpdateRequired.title,
+                message: L10n.ShareExtension.Error.UpdateRequired.obsoleteBackend
+            )
+        } catch NetworkStackError.clientAPIVersionObsolete {
+            presentError(
+                title: L10n.ShareExtension.Error.UpdateRequired.title,
+                message: L10n.ShareExtension.Error.UpdateRequired.obsoleteClient
+            )
+        } catch NetworkStackError.proxyCredentialsRequired {
             // TODO: [WPB-19678] determine copy
-            presentError(message: "No internet connection")
-        } catch
-        NetworkStackError.backendAPIVersionObsolete,
-            NetworkStackError.clientAPIVersionObsolete,
-            NetworkStackError.proxyCredentialsRequired,
-            SharingSessionLoader.Failure.mainAppRequired {
+            presentError(message: "Proxy credentials required.")
+        } catch let SharingSessionLoader.Failure.mainAppRequired(message) {
             // TODO: [WPB-19678] determine copy
-            presentError(message: "Open this account in the Wire app or switch accounts.")
+            presentError(message: "Open main app: \(message)")
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
@@ -680,9 +688,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
     }
 
-    private func presentError(message: String) {
+    private func presentError(
+        title: String? = nil,
+        message: String
+    ) {
         let alert = UIAlertController(
-            title: nil,
+            title: title,
             message: message,
             preferredStyle: .alert
         )

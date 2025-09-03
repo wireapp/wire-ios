@@ -20,6 +20,7 @@ import Combine
 import SwiftUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 
 @MainActor
 package class AccountSwitcherModalViewModel: ObservableObject {
@@ -28,19 +29,22 @@ package class AccountSwitcherModalViewModel: ObservableObject {
 
     private let router: any Router
     private var cancellables = Set<AnyCancellable>()
+    private let defaultEnvironment: BackendEnvironment2
 
     package init(
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        router: any Router
+        router: any Router,
+        defaultEnvironment: BackendEnvironment2
     ) {
         self.accounts = accountsPublisher.value
         self.router = router
+        self.defaultEnvironment = defaultEnvironment
         accountsPublisher.sink { [weak self] accounts in
             self?.accounts = accounts
         }.store(in: &cancellables)
     }
 
     func onCloseButtonTapped() {
-        router.pop()
+        router.presentSheet(.authFlow(environment: defaultEnvironment))
     }
 }
