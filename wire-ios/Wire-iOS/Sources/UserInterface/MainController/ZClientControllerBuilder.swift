@@ -30,6 +30,7 @@ struct ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let environment: WireTransport.BackendEnvironment
 
+    @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
@@ -42,10 +43,12 @@ struct ZClientControllerBuilder {
         return viewController
     }
 
+    @MainActor
     func callAsFunction(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         build(router: router)
     }
 
+    @MainActor
     private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
         if DeveloperFlag.wireCellsManualAuthentication.isOn {
             WireCellsFactory(

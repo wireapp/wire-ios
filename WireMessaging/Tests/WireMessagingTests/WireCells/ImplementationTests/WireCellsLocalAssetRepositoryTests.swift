@@ -31,9 +31,8 @@ final class WireCellsLocalAssetRepositoryTests {
     private let nodesAPI = MockNodesAPIProtocol()
     private let fileDownloader = MockFileDownloading()
     private let fileCache = MockFileCache()
-    private let store = MockWireCellsLocalAssetMetadataStore()
+    private let store = WireCellsLocalAssetStore()
     private let sut: WireCellsLocalAssetRepository
-    private var storeBacking: [UUID: WireCellsLocalAssetMetadata] = [:]
     private var cancellables = Set<AnyCancellable>()
     private var observedAssets: [WireCellsLocalAsset?] = []
 
@@ -49,105 +48,39 @@ final class WireCellsLocalAssetRepositoryTests {
         fileCache.saveFileAtKey_MockMethod = { _, _ in }
         fileCache.deleteFileForKey_MockMethod = { _ in }
 
-        store.assetMetadataNodeID_MockMethod = { [weak self] nodeID in
-            self?.storeBacking[nodeID]
-        }
-        store.upsertAssetMetadata_MockMethod = { [weak self] metadata in
-            self?.storeBacking[metadata.nodeID] = metadata
-        }
-
         sut.observeAsset(nodeID: nodeID).dropFirst().sink { [weak self] asset in
             self?.observedAssets.append(asset)
         }.store(in: &cancellables)
     }
 
     @Test
-    func asset_whenNoMetadataInStore() throws {
+    func asset_whenNoAssetInStore() throws {
         // given
-        store.assetMetadataNodeID_MockValue = nil
-
-        #expect(try sut.asset(nodeID: UUID()) == nil)
-    }
-
-    @Test(arguments: [WireCellsLocalAssetRepository.DownloadState?]([
-        nil,
-        .downloading(progress: 0.5, task: .fixture()),
-        .error(error: URLError(.badURL))
-    ]))
-    func asset_whenFileDownloaded(downloadState: WireCellsLocalAssetRepository.DownloadState?) throws {
-        // given
-        let assetMetadata = WireCellsLocalAssetMetadata.fixture(isDownloaded: true)
-        storeBacking[nodeID] = assetMetadata
-
-        var downloadStates: [UUID: WireCellsLocalAssetRepository.DownloadState] = [:]
-        downloadStates[nodeID] = downloadState
-        let sut = WireCellsLocalAssetRepository(
-            nodesAPI: nodesAPI,
-            fileDownloader: fileDownloader,
-            fileCache: fileCache,
-            store: store,
-            downloadStates: downloadStates
-        )
+        try store.deleteAsset(nodeID: nodeID)
 
         // when
         let asset = try sut.asset(nodeID: nodeID)
 
         // then
-        #expect(
-            asset == WireCellsLocalAsset(
-                nodeID: assetMetadata.nodeID,
-                eTag: assetMetadata.eTag,
-                path: assetMetadata.path,
-                contentType: assetMetadata.contentType,
-                size: assetMetadata.size,
-                downloadState: .downloaded(cacheKey: assetMetadata.cacheKey),
-            )
-        )
-    }
-
-    @Test(arguments: [(WireCellsLocalAssetRepository.DownloadState?, WireCellsLocalAsset.DownloadState)]([
-        (nil, .pending),
-        (.downloading(progress: 0.5, task: .fixture()), .downloading(progress: 0.5)),
-        (.error(error: URLError(.badURL)), .failed(error: URLError(.badURL)))
-    ]))
-    func asset_whenFileNotDownloaded(
-        inputDownloadState: WireCellsLocalAssetRepository.DownloadState?,
-        expectedDownloadState: WireCellsLocalAsset.DownloadState
-    ) throws {
-        // given
-        let assetMetadata = WireCellsLocalAssetMetadata.fixture(isDownloaded: false)
-        storeBacking[nodeID] = assetMetadata
-
-        var downloadStates: [UUID: WireCellsLocalAssetRepository.DownloadState] = [:]
-        downloadStates[nodeID] = inputDownloadState
-        let sut = WireCellsLocalAssetRepository(
-            nodesAPI: nodesAPI,
-            fileDownloader: fileDownloader,
-            fileCache: fileCache,
-            store: store,
-            downloadStates: downloadStates
-        )
-
-        // when
-        let asset = try sut.asset(nodeID: nodeID)
-
-        // then
-        #expect(
-            asset == WireCellsLocalAsset(
-                nodeID: assetMetadata.nodeID,
-                eTag: assetMetadata.eTag,
-                path: assetMetadata.path,
-                contentType: assetMetadata.contentType,
-                size: assetMetadata.size,
-                downloadState: expectedDownloadState,
-            )
-        )
+        #expect(asset == nil)
     }
 
     @Test
-    func refreshMetadata_success_whenNoExistingMetadata() async throws {
+    func asset_whenAssetInStore() throws {
         // given
-        storeBacking[nodeID] = nil
+        try store.upsertAsset(WireCellsLocalAsset.fixture(nodeID: nodeID))
+
+        // when
+        let asset = try sut.asset(nodeID: nodeID)
+
+        // then
+        #expect(asset == asset)
+    }
+
+    @Test
+    func refreshMetadata_success_whenNoStoredAsset() async throws {
+        // given
+        try store.deleteAsset(nodeID: nodeID)
 
         let node = WireCellsNode.fixture(
             uuid: nodeID,
@@ -160,17 +93,17 @@ final class WireCellsLocalAssetRepositoryTests {
         nodesAPI.getNodeNodeID_MockValue = node
 
         // when
-        try await sut.refreshMetadata(nodeID: nodeID)
+        try await sut.refreshAssetMetadata(nodeID: nodeID)
 
         // then the store is updated with the new metadata
         #expect(
-            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
+            try store.asset(nodeID: nodeID) == WireCellsLocalAsset(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
-                isDownloaded: false
+                downloadState: .pending
             )
         )
 
@@ -194,14 +127,17 @@ final class WireCellsLocalAssetRepositoryTests {
     @Test
     func refreshMetadata_success_whenOutOfDateExistingMetadata() async throws {
         // given
-        storeBacking[nodeID] = WireCellsLocalAssetMetadata(
-            nodeID: nodeID,
-            eTag: "def", // eTag is out of date
-            path: "path/file.png",
-            contentType: "image/png",
-            size: 1234,
-            isDownloaded: true
+        try store.upsertAsset(
+            WireCellsLocalAsset(
+                nodeID: nodeID,
+                eTag: "def", // eTag is out of date
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                downloadState: .downloaded(cacheKey: "some-cache-key")
+            )
         )
+        observedAssets = []
 
         nodesAPI.getNodeNodeID_MockValue = WireCellsNode.fixture(
             uuid: nodeID,
@@ -213,22 +149,22 @@ final class WireCellsLocalAssetRepositoryTests {
         )
 
         // when
-        try await sut.refreshMetadata(nodeID: nodeID)
+        try await sut.refreshAssetMetadata(nodeID: nodeID)
 
         // then the store is updated with the new metadata
         #expect(
-            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
+            try store.asset(nodeID: nodeID) == WireCellsLocalAsset(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
-                isDownloaded: false
+                downloadState: .pending
             )
         )
 
         // then old files are deleted
-        #expect(fileCache.deleteFileForKey_Invocations == ["\(nodeID.uuidString)-def.png"])
+        #expect(fileCache.deleteFileForKey_Invocations == ["some-cache-key"])
 
         // then one asset change is observed
         try #require(observedAssets.count == 1)
@@ -245,28 +181,9 @@ final class WireCellsLocalAssetRepositoryTests {
     }
 
     @Test
-    func downloadAsset_whenDownloadInProgress() async throws {
-        // given
-        let sut = WireCellsLocalAssetRepository(
-            nodesAPI: nodesAPI,
-            fileDownloader: fileDownloader,
-            fileCache: fileCache,
-            store: store,
-            downloadStates: [nodeID: .downloading(progress: 0.5, task: Task.fixture())]
-        )
-
-        // when, then
-
-        let nodeID = nodeID // Necessary for the macro compiler :(
-        await #expect(throws: WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress) {
-            _ = try await sut.downloadAsset(nodeID: nodeID)
-        }
-    }
-
-    @Test
     func downloadAsset_whenSuccess() async throws {
         // given
-        storeBacking[nodeID] = nil
+        try store.deleteAsset(nodeID: nodeID)
 
         let node = WireCellsNode.fixture(
             uuid: nodeID,
@@ -292,13 +209,13 @@ final class WireCellsLocalAssetRepositoryTests {
 
         // then
         #expect(
-            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
+            try store.asset(nodeID: nodeID) == WireCellsLocalAsset(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
-                isDownloaded: true
+                downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
             )
         )
 
@@ -339,6 +256,107 @@ final class WireCellsLocalAssetRepositoryTests {
             ]
         )
     }
+
+    @Test
+    func downloadAsset_whenDownloadInProgress() async throws {
+        // given
+        try store.deleteAsset(nodeID: nodeID)
+
+        let node = WireCellsNode.fixture(
+            uuid: nodeID,
+            path: "path/file.png",
+            size: 1234,
+            eTag: "abc",
+            mimeType: "image/png",
+            downloadURL: URL(string: "https://example.com/file.png")!
+        )
+        nodesAPI.getNodeNodeID_MockValue = node
+
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        fileDownloader.downloadFrom_MockValue = (progress: progressStream, download: Task.fixture())
+
+        Task {
+            progressContinuation.yield(0.5)
+            progressContinuation.yield(1)
+            progressContinuation.finish()
+        }
+
+        // when downloading multiple times concurrently
+        let assets = try await withThrowingTaskGroup(
+            of: WireCellsLocalAsset?.self,
+            returning: [WireCellsLocalAsset].self
+        ) { [nodeID, sut, store] taskGroup in
+            for _ in 1 ... 3 {
+                taskGroup.addTask {
+                    try await sut.downloadAsset(nodeID: nodeID)
+                    return try await store.asset(nodeID: nodeID)
+                }
+            }
+
+            var results = [WireCellsLocalAsset]()
+            for try await result in taskGroup {
+                if let result {
+                    results.append(result)
+                }
+            }
+
+            return results
+        }
+
+        // then
+        #expect(assets.count == 3)
+
+        #expect(
+            try assets.allSatisfy { asset in
+                asset == WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                )
+            }
+        )
+
+        #expect(
+            observedAssets == [
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .pending,
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 0.5)
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 1.0)
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                )
+            ]
+        )
+    }
+
 }
 
 // MARK: - Helper Extensions

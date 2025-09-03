@@ -30,6 +30,7 @@ public struct WireCellsFactory {
     private let fileCache: any FileCache
     private let localAssetRepository: WireCellsLocalAssetRepository
 
+    @MainActor
     public init(serverURL: URL, accessToken: any AccessTokenProvider, fileCache: any FileCache) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
@@ -52,7 +53,7 @@ public struct WireCellsFactory {
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
-            store: FakeWireCellsLocalAssetMetadataStore()
+            store: WireCellsLocalAssetStore()
         )
     }
 
