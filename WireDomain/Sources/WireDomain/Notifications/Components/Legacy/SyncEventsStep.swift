@@ -63,16 +63,6 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     }
 
     func pullEvents() async throws {
-        // make sure no pushChannel is open
-        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: selfClientID)
-        if pushChannelState.isOpen() {
-            throw Failure.pushChannelAlreadyOpened
-        }
-        pushChannelState.markAsOpen()
-
-        defer {
-            pushChannelState.markAsClosed()
-        }
 
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
@@ -83,6 +73,14 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             coreCryptoProvider: coreCryptoProvider
         )
 
+        // make sure no pushChannel is open
+        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: selfClientID)
+        if pushChannelState.isOpen() {
+            throw Failure.pushChannelAlreadyOpened
+        }
+        WireLogger.sync.debug("😀 opening push channel")
+        pushChannelState.markAsOpen()
+        
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
 
         do {
@@ -92,11 +90,13 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
             // to show them
             WireLogger.sync.warn(
-                "syncing events via websocket: \(String(describing: error))",
+                "😀 syncing events via websocket: \(String(describing: error))",
                 attributes: .syncAttributes(initialSync: false)
             )
         }
-
+        WireLogger.sync.debug("😀 closing push channel")
+        pushChannelState.markAsClosed()
+        
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream
         )

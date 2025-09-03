@@ -62,9 +62,12 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE)
+
         self.pushChannelObserver = PushChannelObserver(action: { [weak self] in
-            WireLogger.sync.info("Cancelling ongoing task")
+            WireLogger.sync.info("😀 Cancelling ongoing task in favor of main app", attributes: .newNSE)
             self?.onGoingTask?.cancel()
+            self?.onGoingTask = nil
+            DarwinNotificationManager.shared.postNotification(name: DarwinNotification.releasingPushChannelAccess)
         })
     }
 
@@ -280,18 +283,13 @@ extension NotificationServiceExtension {
 
 class PushChannelObserver {
     
-    var observationToken: NSObject?
-
-    init(action: @escaping () -> Void) {      
-        observationToken = DarwinNotify.observe(DarwinNotification.requestingPushChannelAccess as CFString) {
+    init(action: @escaping () -> Void) {
+        DarwinNotificationManager.shared.startObserving(name: DarwinNotification.requestingPushChannelAccess) {
             action()
         }
     }
     
     deinit {
-        if let observationToken {
-            DarwinNotify.removeObserver(observationToken)
-        }
-        observationToken = nil
+        DarwinNotificationManager.shared.stopObserving(name: DarwinNotification.requestingPushChannelAccess)
     }
 }

@@ -79,15 +79,15 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let eventStream: AsyncStream<[UpdateEvent]>
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
+            let (useCase, stream) = syncEventsUseCase()
+            eventStream = stream
+            
             // make sure no pushChannel is open
             let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
             if pushChannelState.isOpen() {
                 throw Failure.pushChannelAlreadyOpened
             }
             pushChannelState.markAsOpen()
-
-            let (useCase, stream) = syncEventsUseCase()
-            eventStream = stream
 
             do {
                 try await useCase.invoke()
@@ -100,7 +100,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     "syncing events via websocket: \(String(describing: error))",
                     attributes: .syncAttributes(initialSync: false)
                 )
-                pushChannelState.markAsClosed()
             }
             pushChannelState.markAsClosed()
             

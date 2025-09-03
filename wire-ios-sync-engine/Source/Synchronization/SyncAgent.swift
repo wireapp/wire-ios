@@ -313,9 +313,17 @@ extension SyncAgent: LiveSyncDelegate {
     }
     
     private func handlePushChannelAlreadyOpened() {
-        WireLogger.sync.debug("handlePushChannelAlreadyOpened", attributes: .syncAttributes)
-        DarwinNotify.post(DarwinNotification.requestingPushChannelAccess)
-        
+        WireLogger.sync.debug("😀 handlePushChannelAlreadyOpened", attributes: .syncAttributes)
+        DarwinNotificationManager.shared.startObserving(name: DarwinNotification.releasingPushChannelAccess) { [weak self] in
+            self?.retrySyncAfterPushChannelClosed()
+        }
+        DarwinNotificationManager.shared.postNotification(name: DarwinNotification.requestingPushChannelAccess)        
+    }
+    
+    private func retrySyncAfterPushChannelClosed() {
+        WireLogger.sync.debug("😀 retrySyncAfterPushChannelClosed", attributes: .syncAttributes)
+        DarwinNotificationManager.shared.stopObserving(name: DarwinNotification.releasingPushChannelAccess)
+        resume()
     }
 }
 
