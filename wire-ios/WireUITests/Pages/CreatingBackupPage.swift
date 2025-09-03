@@ -18,28 +18,35 @@
 
 import XCTest
 
-class SettingsPage: PageModel {
+class CreatingBackupPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        accountSettingsMenu
+        creatingBackupPageLabel
     }
 
-    var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+    var creatingBackupPageLabel: XCUIElement {
+        app.descendants(matching: .any)["Creating Backup"]
     }
 
-    var conversationsTab: XCUIElement {
-        app.buttons["bottomBarRecentListButton"]
+    var backupSuccessfullyCreatedLabel: XCUIElement {
+        app.descendants(matching: .any)["Backup successfully created."]
     }
 
-    func openAccountSettings() throws -> AccountSettingsPage {
-        accountSettingsMenu.tap()
-        return try AccountSettingsPage()
+    var backupProgressLabel: XCUIElement {
+        app.descendants(matching: .any)["progressView"]
     }
 
-    func switchToConversationsTab() throws -> ConversationsPage {
-        conversationsTab.tap()
-        return try ConversationsPage()
+    var saveFileButton: XCUIElement {
+        app.buttons["exportButton"]
     }
+
+    func getBackupProgressValue() -> String? {
+        backupProgressLabel.value as? String
+    }
+
+    func tapSaveFile() throws -> SaveBackupFileBottomSheetPage {
+        saveFileButton.tap()
+        return try SaveBackupFileBottomSheetPage()
+    }
+
 }
