@@ -86,24 +86,7 @@ final class LoginViaEmailViewTests: XCTestCase {
     @MainActor
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "backend name",
-            environmentType: .staging,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: nil
-            )
-        )
+        let environment = BackendEnvironment2.fixture(environmentType: .staging)
 
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
@@ -126,24 +109,7 @@ final class LoginViaEmailViewTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "backend name",
-            environmentType: .staging,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: nil
-            )
-        )
+        let environment = BackendEnvironment2.fixture(environmentType: .staging)
 
         let view = NavigationStack {
             LoginViaEmailView(factory: FakeLoginViaEmailFactory(
@@ -167,27 +133,8 @@ final class LoginViaEmailViewTests: XCTestCase {
     @MainActor
     func testColorSchemeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "<backend name>",
-            environmentType: .default,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: .init(
-                    host: "host",
-                    port: 111,
-                    needsAuthentication: true
-                )
-            )
+        let environment = BackendEnvironment2.fixture(
+            proxyConfig: .init(host: "host", port: 111, needsAuthentication: true)
         )
 
         let view = NavigationStack {
@@ -211,27 +158,8 @@ final class LoginViaEmailViewTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
-
-        let environment = BackendEnvironment2(
-            title: "<backend name>",
-            environmentType: .default,
-            config: .init(
-                endpoints: .init(
-                    restAPIURL: URL(string: "https://example.com")!,
-                    websocketURL: URL(string: "https://example.com")!,
-                    blacklistURL: URL(string: "https://example.com")!,
-                    teamsURL: URL(string: "https://example.com")!,
-                    accountsURL: URL(string: "https://example.com")!,
-                    websiteURL: URL(string: "https://example.com")!,
-                    countlyURL: URL(string: "https://example.com")!
-                ),
-                pinnedKeys: [],
-                proxyConfig: .init(
-                    host: "host",
-                    port: 111,
-                    needsAuthentication: true
-                )
-            )
+        let environment = BackendEnvironment2.fixture(
+            proxyConfig: .init(host: "host", port: 111, needsAuthentication: true)
         )
 
         let view = NavigationStack {
