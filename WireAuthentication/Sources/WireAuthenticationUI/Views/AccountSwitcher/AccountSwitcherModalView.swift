@@ -29,7 +29,7 @@ struct AccountSwitcherModalView: View {
 
     @ObservedObject var viewModel: AccountSwitcherModalViewModel
 
-    init(_ factory: AccountSwitcherFactory) {
+    init(factory: AccountSwitcherFactory) {
         self._viewModel = ObservedObject(initialValue: factory.viewModel)
     }
 

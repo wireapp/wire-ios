@@ -119,7 +119,7 @@ package final class RootViewModel: ObservableObject, Router {
     }
 
     func switchAccounts() {
-        navigate(to: RootDestination.switchAccounts)
+        modalDestination = .accountSwitcher
     }
 
     func logout(deleteData: Bool) {
