@@ -58,6 +58,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let legacySyncStatus: any SyncStatusProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
+    private let pushChannelMonitor: PushChannelMonitorProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -82,7 +83,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
-        syncStateSubject: CurrentValueSubject<SyncState, Never>
+        syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        pushChannelMonitor: PushChannelMonitorProtocol
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -92,6 +94,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.legacySyncStatus = legacySyncStatus
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
+        self.pushChannelMonitor = pushChannelMonitor
         super.init()
 
         setupBindings()
@@ -286,6 +289,20 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 self?.resume()
             }
     }
+    
+    private func handlePushChannelAlreadyOpened() {
+        WireLogger.sync.debug("😀 handlePushChannelAlreadyOpened", attributes: .syncAttributes)
+        pushChannelMonitor.startMonitoring { [weak self] in
+            self?.retrySyncAfterPushChannelClosed()
+        }
+        pushChannelMonitor.notify()
+    }
+    
+    private func retrySyncAfterPushChannelClosed() {
+        WireLogger.sync.debug("😀 retrySyncAfterPushChannelClosed", attributes: .syncAttributes)
+        pushChannelMonitor.stopMonitoring()
+        resume()
+    }
 }
 
 extension SyncAgent: LiveSyncDelegate {
@@ -311,21 +328,9 @@ extension SyncAgent: LiveSyncDelegate {
             error: error
         )
     }
-    
-    private func handlePushChannelAlreadyOpened() {
-        WireLogger.sync.debug("😀 handlePushChannelAlreadyOpened", attributes: .syncAttributes)
-        DarwinNotificationManager.shared.startObserving(name: DarwinNotification.releasingPushChannelAccess) { [weak self] in
-            self?.retrySyncAfterPushChannelClosed()
-        }
-        DarwinNotificationManager.shared.postNotification(name: DarwinNotification.requestingPushChannelAccess)        
-    }
-    
-    private func retrySyncAfterPushChannelClosed() {
-        WireLogger.sync.debug("😀 retrySyncAfterPushChannelClosed", attributes: .syncAttributes)
-        DarwinNotificationManager.shared.stopObserving(name: DarwinNotification.releasingPushChannelAccess)
-        resume()
-    }
+
 }
+
 
 // MARK: - MLS sync delegate
 

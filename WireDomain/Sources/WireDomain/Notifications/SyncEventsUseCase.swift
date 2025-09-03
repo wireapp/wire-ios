@@ -48,14 +48,7 @@ struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
                 }
 
                 group.addTask {
-                    do {
-                        try await Task.sleep(for: timeout)
-                    } catch {
-                        // should catch cancellation from parent
-                        WireLogger.sync.debug("😀 cancel from parent", attributes: .syncAttributes)
-                        throw error
-                        return
-                    }
+                    try await Task.sleep(for: timeout)
                     // we're almost out of time better to stop the pulling
                     throw CancellationError()
                 }

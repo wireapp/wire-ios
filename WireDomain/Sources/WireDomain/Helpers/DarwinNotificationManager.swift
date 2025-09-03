@@ -17,7 +17,7 @@
 //
 
 
-@preconcurrency import Foundation
+import Foundation
 
 public enum DarwinNotification {
     public static let requestingPushChannelAccess = "com.wire.RequestingPushChannelAccess"
@@ -25,15 +25,11 @@ public enum DarwinNotification {
 }
 
 public class DarwinNotificationManager {
-
-    public static let shared = DarwinNotificationManager()
-
-    private init() {}
-
+    public init() {}
 
     private var callbacks: [String: () -> Void] = [:]
 
-    // Method to post a Darwin notification
+    /// Method to post a Darwin notification
     public func postNotification(name: String) {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
         CFNotificationCenterPostNotification(notificationCenter, CFNotificationName(name as CFString), nil, nil, true)
@@ -70,55 +66,3 @@ public class DarwinNotificationManager {
         }
     }
  }
-//public enum DarwinNotify {
-//    private static var center: CFNotificationCenter {
-//        CFNotificationCenterGetDarwinNotifyCenter()
-//    }
-//
-//    // Trampoline: top-level C function pointer
-//    private static let notificationCallback: CFNotificationCallback = { _, observer, _, _, _ in
-//        if let observer = observer {
-//            let handler = Unmanaged<AnyObject>.fromOpaque(observer).takeUnretainedValue()
-//            (handler as? () -> Void)?()
-//        }
-//    }
-//
-//    @discardableResult
-//    static func observe(_ name: CFString, _ handler: @escaping () -> Void) -> NSObject {
-//        // Store handler in an object to keep it alive
-//        let box = HandlerBox(handler)
-//        let pointer = Unmanaged.passRetained(box).toOpaque()
-//
-//        CFNotificationCenterAddObserver(
-//            center,
-//            pointer,
-//            notificationCallback,
-//            name,
-//            nil,
-//            .deliverImmediately
-//        )
-//
-//        return box
-//    }
-//
-//    public static func post(_ name: CFString) {
-//        CFNotificationCenterPostNotification(center, CFNotificationName(name), nil, nil, true)
-//    }
-//
-//    static func removeObserver(_ token: NSObject) {
-//        let pointer = Unmanaged.passUnretained(token).toOpaque()
-//        CFNotificationCenterRemoveEveryObserver(center, pointer)
-//        Unmanaged.passUnretained(token).release()
-//    }
-//
-//    // Box object to hold the closure
-//    private final class HandlerBox: NSObject {
-//        let handler: () -> Void
-//        init(_ handler: @escaping () -> Void) {
-//            self.handler = handler
-//        }
-//        override func responds(to aSelector: Selector!) -> Bool { true }
-//        override func forwardingTarget(for aSelector: Selector!) -> Any? { handler }
-//        func callAsFunction() { handler() }
-//    }
-//}

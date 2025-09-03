@@ -43,8 +43,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let cookieEncryptionKey: Data
     private let minTLSVersion: String?
     private let preferredAPIVersion: UInt?
-
-    private var pushChannelObserver: PushChannelObserver?
     
     public init(
         currentAppVersion: String,
@@ -62,13 +60,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE)
-
-        self.pushChannelObserver = PushChannelObserver(action: { [weak self] in
-            WireLogger.sync.info("😀 Cancelling ongoing task in favor of main app", attributes: .newNSE)
-            self?.onGoingTask?.cancel()
-            self?.onGoingTask = nil
-            DarwinNotificationManager.shared.postNotification(name: DarwinNotification.releasingPushChannelAccess)
-        })
     }
 
     // MARK: - Notifications
@@ -281,15 +272,3 @@ extension NotificationServiceExtension {
     }
 }
 
-class PushChannelObserver {
-    
-    init(action: @escaping () -> Void) {
-        DarwinNotificationManager.shared.startObserving(name: DarwinNotification.requestingPushChannelAccess) {
-            action()
-        }
-    }
-    
-    deinit {
-        DarwinNotificationManager.shared.stopObserving(name: DarwinNotification.requestingPushChannelAccess)
-    }
-}
