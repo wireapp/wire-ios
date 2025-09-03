@@ -68,7 +68,11 @@ final class UserClientRequestFactoryTests: MessagingTest {
     func testThatItCreatesRegistrationRequestWithConsumableNotificationsCapabitilityCorrectly() throws {
         // GIVEN
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
-        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        syncMOC.performAndWait {
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
+        }
 
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
@@ -142,6 +146,9 @@ final class UserClientRequestFactoryTests: MessagingTest {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
             let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
+            Feature.updateOrCreate(havingName: .consumableNotifications, in: syncMOC) {
+                $0.status = .enabled
+            }
 
             // when
             return try sut.registerClientRequest(
@@ -175,7 +182,11 @@ final class UserClientRequestFactoryTests: MessagingTest {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
 
-        if apiVersion >= .v9, DeveloperFlag.consumableNotifications.isOn {
+        let isConsumableNotificationsEnabled = syncMOC.performAndWait {
+            Feature.fetch(name: .consumableNotifications, context: syncMOC)?.status == .enabled
+        }
+
+        if apiVersion >= .v9, isConsumableNotificationsEnabled {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
         } else {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])

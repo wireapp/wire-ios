@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
@@ -56,7 +57,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            guard let message, isChatBubbleSimpleEnabled else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -100,7 +101,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureConstraints() {
         let insets: UIEdgeInsets
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             insets = ConversationMessageContainerView.bubbleEdgeInsets
         } else {
             let margins = conversationHorizontalMargins
@@ -110,10 +111,27 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
+        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
-        messageTextView.textColor = ownMessage ? ownColor : otherColor
+
+        let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
+        let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
+
+        let linkTextAttributes: [NSAttributedString.Key: Any] = if ownMessage {
+            [
+                .foregroundColor: linkForegroundColor,
+                .underlineColor: linkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
+        } else {
+            [
+                .foregroundColor: linkForegroundColor
+            ]
+        }
+
+        messageTextView.textColor = textForegroundColor
+        messageTextView.linkTextAttributes = linkTextAttributes
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -126,7 +144,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
         accessibilityLabel = messageTextView.attributedText.string
 
-        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        container?.isBubble = isChatBubbleSimpleEnabled
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
 
@@ -173,6 +191,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
+    private var isChatBubbleSimpleEnabled: Bool {
+        // the additional DeveloperFlag check is needed for the snapshot test
+        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
+    }
 }
 
 // MARK: - Description
@@ -189,11 +211,16 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
+
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+        self.configuration = View.Configuration(
+            attributedText: attributedString,
+            isObfuscated: isObfuscated
+        )
     }
 }
 

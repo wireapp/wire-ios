@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -74,7 +75,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = if DeveloperFlag.chatBubblesSimple.isOn {
+        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
             ConversationMessageContainerView.bubbleCornerRadius
         } else {
             12
@@ -91,13 +92,23 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let trailing = containerView.trailingAnchor.constraint(
-            lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.right
-        )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+
+        let existingConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            containerView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -margins.right
+            )
+        ]
+
+        let chatBubbleConstraints = [
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        ]
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -105,13 +116,16 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         heightConstraint?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            leading,
-            trailing,
             top,
             bottom,
             widthConstraint!,
             heightConstraint!
         ])
+        if isChatBubbleSimpleEnabled {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -173,6 +187,10 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             imageResourceView.layer.borderWidth = UIScreen.hairline
         }
     }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
@@ -196,6 +214,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"

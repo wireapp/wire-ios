@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
 "general.loading" = "Laadimine…";
 "general.confirm" = "OK";
 "general.failure" = "Midagi läks valesti";
+"general.error.unknown.title." = "Midagi läks valesti";
+"general.error.unknown.message." = "Please retry later.";
+"general.error.noInternet.title." = "No internet connection";
+"general.error.noInternet.message." = "Sinu võrguühendusega tundub olevat probleeme. Palun proovi hiljem uuesti.";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
 "channel_access_level.admins" = "Admins";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "Conversation history and more";
 "conversation.create.group.title" = "New group";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "Tagasi";
 "conversation.create.channel.next" = "Järgmine";
 
@@ -94,3 +99,11 @@
 "conversation.file.preview.open" = "Open preview";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.navigationTitle" = "Failid";
+"conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.download" = "Laadi alla";
+"conversation.wireCells.files.item.menu.rename" = "Nimeta ümber";
+"conversation.wireCells.files.item.menu.delete" = "Delete permanently";

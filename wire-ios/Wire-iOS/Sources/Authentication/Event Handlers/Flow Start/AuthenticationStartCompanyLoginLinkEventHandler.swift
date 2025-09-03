@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
 /// Handles the case where the app is opened from an SSO link.
@@ -27,9 +28,9 @@ final class AuthenticationStartCompanyLoginLinkEventHandler: AuthenticationEvent
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let error = context.0
+        let error = context.1
 
         // Only handle "add account" request errors
         guard case .addAccountRequested? = error?.userSessionErrorCode else {

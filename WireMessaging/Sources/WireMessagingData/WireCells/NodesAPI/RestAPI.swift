@@ -40,7 +40,7 @@ final class RestAPI: Sendable {
         self.accessTokenProvider = accessToken
     }
 
-    func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
+    func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
         let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
@@ -48,30 +48,33 @@ final class RestAPI: Sendable {
         return dto
     }
 
-    func getFiles(query: String, limit: Int, offset: Int) async throws -> WireCellsGetFilesResponseDTO {
+    func getNodes(
+        _ request: WireCellsGetNodesRequest
+    ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
         let request = RestLookupRequest(
+            filters: RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
+                    isDraft: false
+                ),
+                text: request.filter.text.map { LookupFilterTextSearch(searchIn: .baseName, term: $0) },
+                type: TreeNodeType(request.filter.type)
+            ),
             flags: [.withPreSignedURLs],
-            limit: "\(limit)",
-            offset: "\(offset)",
-            query: TreeQuery(fileName: query, type: .leaf),
+            limit: "\(request.limit)",
+            offset: "\(request.offset)",
+            scope: RestLookupScope(
+                recursive: request.scope.isRecursive,
+                root: request.scope.root.map { RestNodeLocator($0) }
+            ),
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration()).toDTO()
-    }
+        let collection = try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration())
+        let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
+        let nextOffset = collection.pagination?.nextOffset
 
-    func getFilesForPath(path: String, limit: Int, offset: Int) async throws -> WireCellsGetFilesResponseDTO {
-        let request = RestLookupRequest(
-            flags: [.withPreSignedURLs],
-            limit: "\(limit)",
-            locators: RestNodeLocators(many: [
-                RestNodeLocator(path: "\(path)/*")
-            ]),
-            offset: "\(offset)",
-            sortField: Constants.sortedBy
-        )
-
-        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration()).toDTO()
+        return (nodes: nodes, nextOffset: nextOffset)
     }
 
     func delete(uuid: UUID) async throws {
@@ -189,5 +192,48 @@ final class RestAPI: Sendable {
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
 
         return config
+    }
+}
+
+// MARK: - Helpers
+
+private extension StatusFilterDeletedStatus {
+
+    init(_ value: WireCellsNodeDeletionStatus) {
+        switch value {
+        case .deleted:
+            self = .only
+        case .notDeleted:
+            self = .not
+        case .any:
+            self = .any
+        }
+    }
+}
+
+private extension RestNodeLocator {
+
+    init(_ value: WireCellsNodeLocator) {
+        switch value {
+        case let .path(path):
+            self.init(path: path)
+        case let .id(uuid):
+            self.init(uuid: uuid.uuidString.lowercased())
+        }
+    }
+
+}
+
+private extension TreeNodeType {
+
+    init(_ value: WireCellsNodeType) {
+        switch value {
+        case .leaf:
+            self = .leaf
+        case .collection:
+            self = .collection
+        case .any:
+            self = .unknown
+        }
     }
 }

@@ -20,7 +20,7 @@ import WireDataModel
 
 /// The state of the feature
 
-struct FeatureState {
+public struct FeatureState {
     let name: Feature.Name
     let isEnabled: Bool
 }

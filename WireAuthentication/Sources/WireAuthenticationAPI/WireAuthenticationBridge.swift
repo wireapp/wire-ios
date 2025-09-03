@@ -53,6 +53,7 @@ public final class WireAuthenticationBridge {
 
         case userAuthenticated(AuthenticationResult, RegistrationAnalyticsTrackingConsent)
         case exitFlowRequested
+        case logoutRequested(deleteData: Bool)
 
     }
 

@@ -47,12 +47,10 @@ public final class ClientSessionComponent {
     private let selfUserID: UUID
     private let selfClientID: String
 
-    private let networkService: NetworkService
-    private let pushChannelNetworkService: NetworkService
-    private let apiVersion: WireNetwork.APIVersion
+    private let restNetworkService: NetworkService
+    private let websocketNetworkService: NetworkService
+    private let backendMetadata: ResolvedBackendMetadata
 
-    private let localDomain: String
-    private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
 
     private let cookieStorage: any CookieStorageProtocol
@@ -70,11 +68,9 @@ public final class ClientSessionComponent {
     public init(
         selfUserID: UUID,
         selfClientID: String,
-        networkService: NetworkService,
-        pushChannelNetworkService: NetworkService,
-        apiVersion: WireNetwork.APIVersion,
-        localDomain: String,
-        isFederationEnabled: Bool,
+        restNetworkService: NetworkService,
+        websocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
         cookieStorage: any CookieStorageProtocol,
         sharedContainerURL: URL?,
@@ -89,10 +85,10 @@ public final class ClientSessionComponent {
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
+        self.restNetworkService = restNetworkService
+        self.websocketNetworkService = websocketNetworkService
+        self.backendMetadata = backendMetadata
         self.cookieStorage = cookieStorage
-        self.networkService = networkService
-        self.pushChannelNetworkService = pushChannelNetworkService
-        self.apiVersion = apiVersion
         self.sharedContainerURL = sharedContainerURL
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
@@ -100,8 +96,6 @@ public final class ClientSessionComponent {
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
-        self.localDomain = localDomain
-        self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
@@ -110,19 +104,27 @@ public final class ClientSessionComponent {
     public private(set) lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
-        networkService: networkService,
+        networkService: restNetworkService,
         onAuthenticationFailure: completionHandlers.onAuthenticationFailure
     )
 
     // MARK: - Network API clients
 
+    private var apiVersion: WireNetwork.APIVersion {
+        backendMetadata.apiVersion
+    }
+
     private lazy var apiService = APIService(
-        networkService: networkService,
+        networkService: restNetworkService,
         authenticationManager: authenticationManager
     )
 
+    public lazy var accountsAPI = AccountsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+
     private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
-        networkService: networkService
+        networkService: restNetworkService
     ).makeAPI()
 
     public lazy var conversationsAPI = ConversationsAPIBuilder(
@@ -133,7 +135,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var mlsAPI = MLSAPIBuilder(
+    public lazy var mlsAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -153,11 +155,11 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+    private lazy var updateEventsAPI: some UpdateEventsAPI = UpdateEventsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var userClientsAPI = UserClientsAPIBuilder(
+    public lazy var userClientsAPI = UserClientsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -185,13 +187,13 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    private lazy var conversationLocalStore = ConversationLocalStore(
+    public lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
         messageLocalStore: messageLocalStore
     )
 
-    private lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
+    public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
         context: syncContext
     )
 
@@ -211,7 +213,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    private lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
+    public lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
@@ -228,8 +230,8 @@ public final class ClientSessionComponent {
     // MARK: - Pull syncs
 
     public lazy var pullAllConversationsSync = PullAllConversationsSync(
-        localDomain: localDomain,
-        isFederationEnabled: BackendInfo.isFederationEnabled,
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled,
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
         store: conversationLocalStore,
@@ -369,7 +371,7 @@ public final class ClientSessionComponent {
     }()
 
     private lazy var pushChannelService = PushChannelService(
-        networkService: pushChannelNetworkService,
+        networkService: websocketNetworkService,
         authenticationManager: authenticationManager
     )
 
@@ -414,6 +416,7 @@ public final class ClientSessionComponent {
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
+            featureConfigRepository: featureConfigRepository,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,
@@ -438,14 +441,14 @@ public final class ClientSessionComponent {
         teamRepository: teamRepository,
         messageRepository: messageRepository,
         backendInfo: .init(
-            domain: localDomain,
-            isFederationEnabled: isFederationEnabled,
+            domain: backendMetadata.domain,
+            isFederationEnabled: backendMetadata.isFederationEnabled,
             isMLSEnabled: isMLSEnabled
         ),
         mlsProvider: mlsProvider
     )
 
-    private lazy var featureConfigRepository = FeatureConfigRepository(
+    public lazy var featureConfigRepository = FeatureConfigRepository(
         featureConfigsAPI: featureConfigsAPI,
         featureConfigLocalStore: featureConfigsLocalStore
     )
@@ -733,6 +736,28 @@ public final class ClientSessionComponent {
         pushSupportedProtocolsSync: pushSupportedProtocolsSync,
         calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase
     )
+
+    public func createGroupConversationUseCase() -> some CreateGroupConversationUseCaseProtocol {
+        CreateGroupConversationUseCase(
+            api: conversationsAPI,
+            store: conversationLocalStore,
+            mlsService: mlsService,
+            context: syncContext,
+            isFederationEnabled: backendMetadata.isFederationEnabled,
+            isMLSEnabled: isMLSEnabled
+        )
+
+    }
+
+    public func createChannelUseCase() -> some CreateChannelUseCaseProtocol {
+        CreateChannelUseCase(
+            api: conversationsAPI,
+            store: conversationLocalStore,
+            mlsService: mlsService,
+            context: syncContext,
+            isFederationEnabled: backendMetadata.isFederationEnabled
+        )
+    }
 
     // MARK: - Other
 

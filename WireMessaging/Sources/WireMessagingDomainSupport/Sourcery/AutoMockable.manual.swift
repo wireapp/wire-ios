@@ -207,3 +207,20 @@ package class MockLoadConversationMessagesUseCaseProtocol: LoadConversationMessa
     }
 
 }
+
+package class MockMonitorMessagesUseCaseProtocol: MonitorMessagesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    package init() { }
+
+    // MARK: - messagesUpdatesStream
+
+    package var messagesUpdatesStream: AsyncStream<MessagesUpdate> {
+        get { return underlyingMessagesUpdatesStream }
+        set(value) { underlyingMessagesUpdatesStream = value }
+    }
+
+    package var underlyingMessagesUpdatesStream: AsyncStream<MessagesUpdate>!
+
+}

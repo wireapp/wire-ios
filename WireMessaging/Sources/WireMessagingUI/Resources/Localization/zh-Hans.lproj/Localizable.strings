@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
 "general.loading" = "载入中...";
 "general.confirm" = "好";
 "general.failure" = "好像出了点问题。";
+"general.error.unknown.title." = "好像出了点问题。";
+"general.error.unknown.message." = "请稍后重试。";
+"general.error.noInternet.title." = "无网络连接";
+"general.error.noInternet.message." = "您的网络好像有些问题，请稍候再试。";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "公开";
 "channel_access_level.private" = "私人";
 "channel_access_level.admins" = "管理员";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "对话历史记录等";
 "conversation.create.group.title" = "新群组";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "返回";
 "conversation.create.channel.next" = "继续";
 
@@ -94,3 +99,11 @@
 "conversation.file.preview.open" = "打开预览";
 "conversation.draft.attachmentMenu.retry" = "重试";
 "conversation.draft.attachmentMenu.remove" = "移除文件";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.navigationTitle" = "文件";
+"conversation.wireCells.files.item.subtitle" = "%@ 作者 %@";
+"conversation.wireCells.files.loadMore.title" = "加载更多";
+"conversation.wireCells.files.item.menu.download" = "下载";
+"conversation.wireCells.files.item.menu.rename" = "重新命名";
+"conversation.wireCells.files.item.menu.delete" = "永久删除";

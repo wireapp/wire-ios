@@ -28,10 +28,10 @@ final class ZClientViewControllerTests: XCTestCase {
     private var sut: ZClientViewController!
     private var userSession: UserSessionMock!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataFixture = .init()
+        coreDataFixture = try await .init()
         imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.coreDataStack = coreDataFixture.coreDataStack

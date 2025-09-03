@@ -132,6 +132,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil

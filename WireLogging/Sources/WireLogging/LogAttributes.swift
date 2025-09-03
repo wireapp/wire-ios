@@ -55,3 +55,7 @@ public extension LogAttributes {
     static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
     static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
 }
+
+public extension LogAttributes {
+    nonisolated(unsafe) static var consumableNotificationsEnabled: Bool = false
+}

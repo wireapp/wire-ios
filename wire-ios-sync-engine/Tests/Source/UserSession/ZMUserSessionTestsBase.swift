@@ -182,7 +182,6 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: "3.120.0",
@@ -210,6 +209,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         let userSession = builder.build()
         userSession.setup(
+            apiVersion: nil,
             eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,

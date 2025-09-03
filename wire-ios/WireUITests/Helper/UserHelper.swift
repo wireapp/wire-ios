@@ -137,10 +137,10 @@ class UserHelper {
         }
     }
 
-    func registerUserAsTeamOwner() async throws -> UserInfo {
+    func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
-        let (teamID, id) = try await authenticationAPI.registerTeamOwner(
+        let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
             email: teamOwner.email,
             password: teamOwner.password,
             name: teamOwner.name,
@@ -148,9 +148,8 @@ class UserHelper {
         )
 
         teamOwner.teamID = teamID
-        teamOwner.id = id
         createdUsers.append(teamOwner)
-        return teamOwner
+        return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
     func fetchAccessToken(email: String, password: String) async throws -> String {
@@ -168,13 +167,18 @@ class UserHelper {
         return accessToken.token
     }
 
-    func registerUsersAsTeamMember(accessToken: String, teamID: UUID, member: UserInfo) async throws -> String {
+    func registerUsersAsTeamMember(
+        ownerAccessToken: String,
+        teamID: UUID
+    ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
+
+        let teamMember = UserGenerator.generateUniqueUserInfo()
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
-            access_token: accessToken,
+            access_token: ownerAccessToken,
             teamID: teamID,
-            memberName: member.name,
-            memberEmail: member.email
+            memberName: teamMember.name,
+            memberEmail: teamMember.email
         )
 
         let invitationCode = try await authenticationAPI.getInvitationCode(
@@ -182,12 +186,75 @@ class UserHelper {
             invitationID: invitationID
         )
 
-        return try await authenticationAPI.registerTeamMember(
-            email: member.email,
-            password: member.password,
-            name: member.name,
+        let qualifiedID = try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
             invitationCode: invitationCode
         )
+
+        return (qualifiedID, teamMember)
+    }
+
+    func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
+        var conversationIDs = [QualifiedID]()
+
+        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+            conversationIDs.append(contentsOf: ids)
+        }
+        return conversationIDs
+    }
+
+    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
+        -> (conversationID: UUID?, domain: String?) {
+        let conversationIDs = try await getQualifiedIdsFromConversationList()
+
+        let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
+
+        let filtered = conversations.found.filter { conversation in
+            switch criteria {
+            case let .groupName(name):
+                conversation.name == name
+            case let .conversationType(type):
+                conversation.type == type
+            }
+        }
+
+        if let match = filtered.first {
+            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        }
+        return (nil, nil)
+    }
+
+    func createGroupConversations(
+        qualifiedIds: [QualifiedID],
+        owner: UserInfo,
+        groupName: String
+    ) async throws {
+
+        let params = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .proteus,
+            creatorClientID: "deprecated",
+            qualifiedUserIDs: qualifiedIds,
+            unqualifiedUserIDs: [],
+            name: groupName,
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember, .guest, .service, .nonTeamMember],
+            legacyAccessRole: nil,
+            teamID: owner.teamID,
+            isReadReceiptsEnabled: true
+        )
+
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: owner.email,
+            password: owner.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+
+        _ = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 }
 
@@ -199,6 +266,11 @@ private extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+enum FilterConversationsByCriteria {
+    case groupName(String)
+    case conversationType(ConversationType?)
 }
 
 private final class MockCookieStorage: CookieStorageProtocol {

@@ -22,9 +22,10 @@ import XCTest
 
 final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         selfUserInTeam = true
-        super.setUp()
+        try await super.setUp()
     }
 
     override var needsCaches: Bool {

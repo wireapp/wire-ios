@@ -33,8 +33,6 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
 
-public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
-
 enum ZMUserSessionError: Error {
     case selfClientNotReady
 }
@@ -52,13 +50,6 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     public private(set) var coreDataStack: CoreDataStack!
-    private let apiServiceFactory: APIServiceFactory
-    public var apiService: APIServiceProtocol? {
-        guard let clientId = selfUserClient?.remoteIdentifier else {
-            return nil
-        }
-        return apiServiceFactory(clientId, userId)
-    }
 
     let application: ZMApplication
     let flowManager: FlowManagerType
@@ -165,6 +156,15 @@ public final class ZMUserSession: NSObject {
     public var channelsFeature: Feature.Channels {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()
+    }
+
+    public var chatBubbleSimpleFeature: Feature.ChatBubblesSimple {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchChatBubblesSimple()
+    }
+
+    public var isChatBubbleSimpleEnabled: Bool {
+        chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 
     public var gracePeriodEndDate: Date? {
@@ -372,6 +372,14 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
+    public var createGroupConversationUseCase: (some CreateGroupConversationUseCaseProtocol)? {
+        clientSessionComponent?.createGroupConversationUseCase()
+    }
+
+    public var createChannelUseCase: (some CreateChannelUseCaseProtocol)? {
+        clientSessionComponent?.createChannelUseCase()
+    }
+
     private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
@@ -400,10 +408,12 @@ public final class ZMUserSession: NSObject {
 
     init(
         userId: UUID,
+        restNetworkService: NetworkService,
+        websocketNetworkService: NetworkService,
+        backendMetadata: ResolvedBackendMetadata,
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping APIServiceFactory,
         application: ZMApplication,
         currentAppVersion: String,
         currentBuildNumber: String,
@@ -423,13 +433,10 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
-        backendEnvironment: WireNetwork.BackendEnvironment,
-        minTLSVersion: WireNetwork.TLSVersion,
-        apiVersion: WireNetwork.APIVersion,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        cookieStorage: any CookieStorageProtocol
     ) {
-        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
@@ -463,11 +470,10 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
-            backendEnvironment: backendEnvironment,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
-            localDomain: WireTransport.BackendInfo.domain!,
-            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            cookieStorage: cookieStorage,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: websocketNetworkService,
+            backendMetaData: backendMetadata,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -490,6 +496,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func setup(
+        apiVersion: WireNetwork.APIVersion?,
         eventProcessor: (any UpdateEventProcessor)?,
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
@@ -519,7 +526,10 @@ public final class ZMUserSession: NSObject {
             self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
-            self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
+            self.operationLoop = operationLoop ?? createOperationLoop(
+                apiVersion: apiVersion,
+                isDeveloperModeEnabled: isDeveloperModeEnabled
+            )
             urlActionProcessors = createURLActionProcessors()
             callStateObserver = CallStateObserver(
                 localNotificationDispatcher: localNotificationDispatcher!,
@@ -576,7 +586,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func setUpSyncAgent(clientID: String) {
+    func setUpSyncAgent(clientID: String) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
@@ -597,6 +607,7 @@ public final class ZMUserSession: NSObject {
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
+            featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -630,13 +641,13 @@ public final class ZMUserSession: NSObject {
             throw ZMUserSessionError.selfClientNotReady
         }
 
-        guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
         do {
             try await migrator.migrate()
-        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
+        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow,
+            ConsumableNotificationsMigrator.Failure.featureConfigNotEnabled {
             // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
@@ -771,7 +782,10 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    private func createOperationLoop(isDeveloperModeEnabled: Bool) -> ZMOperationLoop {
+    private func createOperationLoop(
+        apiVersion: WireNetwork.APIVersion?,
+        isDeveloperModeEnabled: Bool
+    ) -> ZMOperationLoop {
         ZMOperationLoop(
             transportSession: transportSession,
             requestStrategy: syncStrategy,
@@ -782,7 +796,8 @@ public final class ZMUserSession: NSObject {
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            apiVersion: apiVersion.map { NSNumber(value: $0.rawValue) }
         )
     }
 
@@ -1292,41 +1307,29 @@ extension ZMUserSession: SyncAgentDelegate {
         context: NSManagedObjectContext,
         conversationRepository: ConversationRepositoryProtocol
     ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+        guard let clientSessionComponent else {
+            fatalError()
+        }
 
-        return InitiateResetMLSConversationUseCase
-            .make(
-                apiService: apiService,
-                apiVersion: apiVersion,
-                mlsService: mlsService,
-                conversationRepository: conversationRepository,
-                context: context,
+        return InitiateResetMLSConversationUseCase(
+            api: clientSessionComponent.mlsAPI,
+            mlsService: mlsService,
+            conversationLocalStore: clientSessionComponent.conversationLocalStore,
+            conversationRepository: clientSessionComponent.conversationRepository,
+            lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
             )
-    }
-
-    private func makeApiServiceAndAPIVersion() -> (APIServiceProtocol, WireNetwork.APIVersion) {
-        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
-            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-        }
-        guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
-            WireLogger.backend.warn("apiVersion not resolved")
-
-            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-
-        }
-
-        return (apiService, wireAPIVersion)
+        )
     }
 
     private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
-        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+        guard let clientSessionComponent else {
+            fatalError()
+        }
 
-        return PullSelfUserClientsSync.make(
-            apiService: apiService,
-            apiVersion: apiVersion,
-            context: context
+        return PullSelfUserClientsSync(
+            api: clientSessionComponent.userClientsAPI,
+            store: clientSessionComponent.userClientsLocalStore
         )
     }
 

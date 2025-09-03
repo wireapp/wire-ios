@@ -798,6 +798,47 @@ public final class MLSService: MLSServiceInterface {
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
+    public func establishPendingGroup(groupID: MLSGroupID) async throws {
+        guard let context else {
+            return
+        }
+        let conversation = await context.perform {
+            ZMConversation.fetch(with: groupID, in: context)
+        }
+
+        guard let conversation else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        try await internalEstablishPendingGroup(
+            groupID: groupID,
+            pendingGroup: conversation,
+            context: context
+        )
+
+        await save(context)
+    }
+
+    private func internalEstablishPendingGroup(
+        groupID: MLSGroupID,
+        pendingGroup: ZMConversation,
+        context: NSManagedObjectContext
+    ) async throws {
+        let mlsUsers = await context.perform {
+            pendingGroup.localParticipants.map(MLSUser.init)
+        }
+
+        let ciphersuite = try await establishGroup(
+            for: groupID,
+            with: mlsUsers
+        )
+
+        await context.perform {
+            pendingGroup.ciphersuite = ciphersuite
+            pendingGroup.mlsStatus = .ready
+        }
+    }
+
     public func performPendingJoins() async throws {
         guard let context else {
             return
@@ -812,11 +853,11 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("joining \(pendingGroups.count) group(s)")
 
-        await withTaskGroup(of: Void.self) { group in
+        let needToSave = await withTaskGroup(of: Bool.self) { group in
             for pendingGroup in pendingGroups {
                 group.addTask {
                     guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }) else {
-                        return
+                        return false
                     }
 
                     do {
@@ -829,32 +870,40 @@ public final class MLSService: MLSServiceInterface {
                         let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
 
                         if shouldEstablishGroup {
-
-                            let mlsUsers = await context.perform {
-                                pendingGroup.localParticipants.map(MLSUser.init)
-                            }
-
-                            let ciphersuite = try await self.establishGroup(
-                                for: mlsGroupID,
-                                with: mlsUsers
+                            try await self.internalEstablishPendingGroup(
+                                groupID: mlsGroupID,
+                                pendingGroup: pendingGroup,
+                                context: context
                             )
-
-                            await context.perform {
-                                pendingGroup.ciphersuite = ciphersuite
-                                pendingGroup.mlsStatus = .ready
-                            }
-
+                            return true
                         } else {
                             try await self.joinByExternalCommit(groupID: mlsGroupID)
+                            return false
                         }
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
                             attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
                         )
+                        return false
                     }
                 }
             }
+
+            var needToSave = false
+            for await groupResult in group {
+                needToSave = needToSave || groupResult
+            }
+            return needToSave
+        }
+        if needToSave {
+            await save(context)
+        }
+    }
+
+    private func save(_ context: NSManagedObjectContext) async {
+        _ = await context.perform { [context] in
+            context.saveOrRollback()
         }
     }
 
@@ -1154,7 +1203,7 @@ public final class MLSService: MLSServiceInterface {
         })
     }
 
-    enum MLSSendExternalCommitError: Error {
+    enum MLSServiceError: Error {
         case conversationNotFound
     }
 
@@ -1177,7 +1226,7 @@ public final class MLSService: MLSServiceInterface {
                 with: parentID,
                 in: context
             ) else {
-                throw MLSSendExternalCommitError.conversationNotFound
+                throw MLSServiceError.conversationNotFound
             }
 
             let groupInfo = try await actionsProvider.fetchConversationGroupInfo(
@@ -1525,6 +1574,13 @@ public final class MLSService: MLSServiceInterface {
                 )
 
                 guard retryCount <= maxRetryAttempts else {
+                    // If MLS conversation reset is DISABLED we quarantine the group to avoid repeated commit attempts
+                    // otherwise assume that things will sort themselves out through conversation reset.
+                    let feature = await featureRepository.fetchAllowedGlobalOperations()
+                    if feature.status == .disabled || feature.config.mlsConversationReset == false {
+                        brokenGroupIDs.insert(groupID)
+                    }
+
                     throw MLSRetryError.retryLimitReached
                 }
 
@@ -1558,7 +1614,10 @@ public final class MLSService: MLSServiceInterface {
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                guard DeveloperFlag.resetMLSConversations.isOn,
+                      feature.status == .enabled,
+                      feature.config.mlsConversationReset == true
+                else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]

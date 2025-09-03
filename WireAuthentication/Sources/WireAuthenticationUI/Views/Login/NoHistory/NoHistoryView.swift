@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
 package struct NoHistoryView: View {
 
@@ -33,12 +34,12 @@ package struct NoHistoryView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(Strings.NoHistory.title)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
                 .font(.textStyle(.h2))
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(Strings.NoHistory.message)
+            Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)

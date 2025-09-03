@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireNetwork
 
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
@@ -53,12 +54,12 @@ package final class RootViewModel: ObservableObject, Router {
     package init(
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo,
+        environment: BackendEnvironment2,
+        authenticationType: AuthenticationType,
         isMultibackendEnabled: Bool,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
-        self.modalDestination = .authFlow(backendInfo: backendInfo)
         self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
@@ -70,6 +71,15 @@ package final class RootViewModel: ObservableObject, Router {
             default:
                 break
             }
+        }
+
+        switch authenticationType {
+        case .new:
+            self.modalDestination = .authFlow(environment: environment)
+        case let .reauthEmail(email):
+            self.modalDestination = .reauthFlow(email: email)
+        case .reauthSSO:
+            self.modalDestination = .reauthSSO
         }
     }
 
@@ -110,6 +120,10 @@ package final class RootViewModel: ObservableObject, Router {
 
     func switchAccounts() {
         navigate(to: RootDestination.switchAccounts)
+    }
+
+    func logout(deleteData: Bool) {
+        bridge.sendOutboundEvent(.logoutRequested(deleteData: deleteData))
     }
 
     // MARK: - Private

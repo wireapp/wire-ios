@@ -18,23 +18,34 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
+
     var mockDependencies = MockDependencies()
 
     var viewModel: RootViewModel {
         RootViewModel(
             factory: self,
             bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo,
+            environment: mockDependencies.backendEnvironment,
+            authenticationType: .new,
             isMultibackendEnabled: false,
             hasOtherAccountsProvider: { true },
         )
     }
 
-    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
+    func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
         FakeDetermineAuthMethodFactory()
+    }
+
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory {
+        fatalError()
+    }
+
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory {
+        fatalError()
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {

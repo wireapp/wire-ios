@@ -27,6 +27,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
     var mockSync: MockSyncMigratorProtocol!
     var mockUserClientsAPI: MockUserClientsAPI!
     var mockLocalStore: MockUserClientsLocalStoreProtocol!
+    var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
     var journal: JournalProtocol!
 
     enum Scaffolding {
@@ -39,10 +40,14 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         mockSync = .init()
         mockUserClientsAPI = .init()
         mockLocalStore = .init()
+        mockFeatureConfigRepository = MockFeatureConfigRepositoryProtocol()
+        mockFeatureConfigRepository.isFeatureEnabled_MockValue = true
+
         journal = Journal(userID: Scaffolding.userID, storage: UserDefaults.temporary())
 
         sut = ConsumableNotificationsMigrator(
             sync: mockSync,
+            featureConfigRepository: mockFeatureConfigRepository,
             userClientsAPI: mockUserClientsAPI,
             userClientsLocalStore: mockLocalStore,
             apiVersion: .v9,
@@ -135,6 +140,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         // GIVEN
         sut = ConsumableNotificationsMigrator(
             sync: mockSync,
+            featureConfigRepository: mockFeatureConfigRepository,
             userClientsAPI: mockUserClientsAPI,
             userClientsLocalStore: mockLocalStore,
             apiVersion: .v7,
@@ -145,6 +151,18 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
 
         // WHEN / THEN
         await XCTAssertThrowsErrorAsync(ConsumableNotificationsMigrator.Failure.apiVersionTooLow) {
+            try await self.sut.migrate()
+        }
+    }
+
+    func test_migrate_featureConfigDisabled_throws() async throws {
+        // GIVEN
+        mockFeatureConfigRepository.isFeatureEnabled_MockValue = false
+
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
+
+        // WHEN / THEN
+        await XCTAssertThrowsErrorAsync(ConsumableNotificationsMigrator.Failure.featureConfigNotEnabled) {
             try await self.sut.migrate()
         }
     }

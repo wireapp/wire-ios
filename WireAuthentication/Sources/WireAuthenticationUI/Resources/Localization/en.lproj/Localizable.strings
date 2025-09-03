@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Next";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "Email";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Password";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Forgot password?";
+
+"login.sso.title" = "Log in";
+"login.sso.expiration_message" = "Your session expired. Log in with yoour enterprise account to continue.";
+"login.sso.input_code.title" = "SSO access code";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Enterprise log in";
+
+"logout.button.title" = "Log out";
+"logout.alert.title" = "Log out";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Cancel";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "It’s the first time you’re using Wire on this device.";
 "authentication.no_history.message" = "For privacy reasons, your conversation history will not appear here.";
+"authentication.missing_history.title" = "You’ve used Wire on this device before.";
+"authentication.missing_history.message" = "Messages sent in the meantime will not appear.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";

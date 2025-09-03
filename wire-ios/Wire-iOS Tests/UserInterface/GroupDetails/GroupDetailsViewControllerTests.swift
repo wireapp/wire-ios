@@ -24,9 +24,9 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
     var sut: GroupDetailsFooterView!
     var coreDataFixture: CoreDataFixture!
 
-    override func setUp() {
-        super.setUp()
-        coreDataFixture = CoreDataFixture()
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
     }
 

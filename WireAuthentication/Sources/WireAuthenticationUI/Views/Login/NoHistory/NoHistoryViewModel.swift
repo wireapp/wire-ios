@@ -32,6 +32,8 @@ package final class NoHistoryViewModel: ObservableObject {
 
     // MARK: - View state
 
+    let didReauthenticate: Bool
+
     @Published var isLoading = false
     @Published var alert: Alert?
 
@@ -48,11 +50,13 @@ package final class NoHistoryViewModel: ObservableObject {
     // MARK: - Life cycle
 
     package init(
+        didReauthenticate: Bool,
         didDetectDomainConflict: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping () -> Void
     ) {
+        self.didReauthenticate = didReauthenticate
         self.didDetectDomainConflict = didDetectDomainConflict
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL

@@ -21,6 +21,7 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -30,6 +31,7 @@ final class AppRootRouter {
 
     // MARK: - Private Properties
 
+    private let defaultEnvironment: BackendEnvironment2
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
     private let trackingManager: TrackingManager
@@ -37,7 +39,6 @@ final class AppRootRouter {
     private let switchingAccountRouter: SwitchingAccountRouter
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
-    private var quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter?
 
     private var observerTokens: [NSObjectProtocol] = []
@@ -65,11 +66,13 @@ final class AppRootRouter {
     // MARK: - Initialization
 
     init(
+        defaultEnvironment: BackendEnvironment2,
         mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator,
         trackingManager: TrackingManager
     ) {
+        self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
@@ -78,14 +81,12 @@ final class AppRootRouter {
             sessionManager: sessionManager
         )
         self.switchingAccountRouter = SwitchingAccountRouter()
-        self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
         self.trackingManager = trackingManager
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
-        quickActionsManager.sessionManager = sessionManager
 
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
@@ -111,13 +112,6 @@ final class AppRootRouter {
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
         urlActionRouter.open(url: deepLinkURL)
-    }
-
-    func performQuickAction(
-        for shortcutItem: UIApplicationShortcutItem,
-        completionHandler: ((Bool) -> Void)?
-    ) {
-        quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 
     // MARK: - Private implementation
@@ -232,10 +226,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case let .unauthenticated(error: error):
+        case let .unauthenticated(environment, error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
-            showUnauthenticatedFlow(error: error, completion: completion)
+            showUnauthenticatedFlow(
+                environment: environment,
+                error: error,
+                completion: completion
+            )
         case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
@@ -321,7 +319,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            Task { @MainActor in
+                await self?.sessionManager.start(launchOptions: launchOptions)
+            }
         }
     }
 
@@ -361,7 +361,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: launchViewController, completion: completion)
     }
 
-    private func showUnauthenticatedFlow(error: NSError?, completion: @escaping () -> Void) {
+    private func showUnauthenticatedFlow(
+        environment: BackendEnvironment2?,
+        error: NSError?,
+        completion: @escaping () -> Void
+    ) {
         // Only execute handle events if there is no current flow
         guard
             self.authenticationCoordinator == nil ||
@@ -383,6 +387,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         authenticationCoordinator?.tearDown()
 
         authenticationCoordinator = AuthenticationCoordinator(
+            defaultEnvironment: defaultEnvironment,
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
@@ -396,7 +401,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         authenticationCoordinator.delegate = appStateCalculator
         authenticationCoordinator.startAuthentication(
-            with: error,
+            environment: environment,
+            error: error,
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
@@ -408,14 +414,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
-        guard
-            let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(
-                account: selectedAccount,
-                userSession: userSession,
-                trackingManager: trackingManager
-            )
-        else {
+        guard let authenticatedRouter = buildAuthenticatedRouter(
+            account: userSession.contextProvider.account,
+            userSession: userSession,
+            trackingManager: trackingManager
+        ) else {
             completion()
             return
         }
@@ -433,7 +436,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         guard let launchOptions = lastLaunchOptions else { return }
         completion()
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            Task { @MainActor in
+                await self?.sessionManager.start(launchOptions: launchOptions)
+            }
         }
     }
 
@@ -490,7 +495,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case let .unauthenticated(error: error):
+        case let .unauthenticated(_, error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:

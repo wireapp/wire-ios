@@ -28,7 +28,9 @@ import WireDesign
 import WireDomain
 import WireLinkPreview
 import WireLogging
+import WireNetwork
 import WireShareEngine
+import WireUtilities
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -155,10 +157,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        updateAccount(currentAccount)
 
-        if let sortedAttachments = extensionContext?.attachments.sorted {
-            attachments = sortedAttachments
+        Task { @MainActor in
+            await updateAccount(currentAccount)
+
+            if let sortedAttachments = extensionContext?.attachments.sorted {
+                attachments = sortedAttachments
+            }
         }
     }
 
@@ -190,23 +195,42 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
-    private func recreateSharingSession(account: Account?) throws {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-              let accountIdentifier = account?.userIdentifier
-        else { return }
+    private func recreateSharingSession(account: Account?) async throws {
+        guard
+            let account,
+            let appGroupID = Bundle.main.applicationGroupIdentifier,
+            let hostBundleID = Bundle.main.hostBundleIdentifier,
+            let bundleInfo = Bundle.main.infoDictionary,
+            let buildNumber = bundleInfo[kCFBundleVersionKey as String] as? String
+        else {
+            return
+        }
 
-        let legacyConfig = AppLockController.LegacyConfig.fromBundle()
+        if DeveloperFlag.multibackend.isOn {
+            let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
 
-        sharingSession = try SharingSession(
-            applicationGroupIdentifier: applicationGroupIdentifier,
-            accountIdentifier: accountIdentifier,
-            hostBundleIdentifier: hostBundleIdentifier,
-            environment: BackendEnvironment.shared,
-            appLockConfig: legacyConfig,
-            sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-        )
+            let loader = try SharingSessionLoader(
+                account: account,
+                appContainerURL: appContainerURL,
+                appGroupID: appGroupID,
+                buildNumber: buildNumber,
+                sharedUserDefaults: .applicationGroup,
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            )
+            sharingSession = try await loader.load()
+        } else {
+            let legacyConfig = AppLockController.LegacyConfig.fromBundle()
+
+            sharingSession = try await SharingSession(
+                applicationGroupIdentifier: appGroupID,
+                accountIdentifier: account.userIdentifier,
+                hostBundleIdentifier: hostBundleID,
+                environment: BackendEnvironment.shared,
+                appLockConfig: legacyConfig,
+                sharedUserDefaults: .applicationGroup,
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            )
+        }
     }
 
     override func configurationItems() -> [Any]! {
@@ -488,7 +512,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         postContent?.target = conversation
     }
 
-    func updateAccount(_ account: Account?) {
+    @MainActor
+    func updateAccount(_ account: Account?) async {
 
         var account = account
         let authenticated = authenticatedAccounts
@@ -503,7 +528,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         }
 
         do {
-            try recreateSharingSession(account: account)
+            try await recreateSharingSession(account: account)
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            // TODO: [WPB-19678] determine copy
+            presentError(message: "No internet connection")
+        } catch
+        NetworkStackError.backendAPIVersionObsolete,
+            NetworkStackError.clientAPIVersionObsolete,
+            NetworkStackError.proxyCredentialsRequired,
+            SharingSessionLoader.Failure.mainAppRequired {
+            // TODO: [WPB-19678] determine copy
+            presentError(message: "Open this account in the Wire app or switch accounts.")
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
@@ -570,9 +605,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         )
 
         accountSelectionViewController.selectionHandler = { [weak self] account in
-            self?.updateAccount(account)
-            self?.popConfigurationViewController()
-            self?.validateContent()
+            Task { @MainActor in
+                await self?.updateAccount(account)
+                self?.popConfigurationViewController()
+                self?.validateContent()
+            }
         }
 
         pushConfigurationViewController(accountSelectionViewController)
@@ -641,6 +678,20 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func degradationMessageForUsers(_ users: String, count: Int) -> String {
         typealias DegradationReasonMessageLocale = L10n.ShareExtension.Meta.Degraded.DegradationReasonMessage
         return count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
+    }
+
+    private func presentError(message: String) {
+        let alert = UIAlertController(
+            title: nil,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.General.ok,
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
     }
 
 }

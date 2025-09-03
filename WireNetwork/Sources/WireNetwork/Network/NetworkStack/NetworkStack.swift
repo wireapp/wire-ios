@@ -23,10 +23,10 @@ import WireLogging
 /// High level access to a specific backend with automatic api
 /// version resolution.
 
-final class NetworkStack {
+public actor NetworkStack {
 
-    let backendEnvironment: BackendEnvironment2
-    private(set) var proxyCredentials: ProxyCredentials?
+    public nonisolated let backendEnvironment: BackendEnvironment2
+    public private(set) var proxyCredentials: ProxyCredentials?
 
     let minTLSVersion: TLSVersion
     let preferredAPIVersion: APIVersion?
@@ -34,7 +34,7 @@ final class NetworkStack {
     private var state: NetworkState
     private var backendMetadata: ResolvedBackendMetadata?
 
-    var networkServices: (rest: NetworkService, webSocket: NetworkService) {
+    public var networkServices: (rest: NetworkService, webSocket: NetworkService) {
         get throws {
             switch state {
             case .awaitingProxyCredentials:
@@ -45,7 +45,7 @@ final class NetworkStack {
         }
     }
 
-    init(
+    public init(
         backendEnvironment: BackendEnvironment2,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
@@ -75,14 +75,8 @@ final class NetworkStack {
 
     // MARK: - Methods
 
-    func setProxyCredentials(
-        username: String,
-        password: String
-    ) throws {
-        proxyCredentials = ProxyCredentials(
-            username: username,
-            password: password
-        )
+    public func setProxyCredentials(proxyCredentials: ProxyCredentials) throws {
+        self.proxyCredentials = proxyCredentials
 
         let (restService, webSocketService) = try NetworkService.makeServices(
             backendConfig: backendEnvironment.config,
@@ -96,12 +90,12 @@ final class NetworkStack {
         )
     }
 
-    func resolvedAPIVersion() async throws -> APIVersion {
+    public func resolvedAPIVersion() async throws -> APIVersion {
         let backendMetadata = try await resolvedBackendMetadata()
         return backendMetadata.apiVersion
     }
 
-    func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
+    public func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
         if let backendMetadata {
             return backendMetadata
         }
@@ -121,7 +115,7 @@ final class NetworkStack {
         } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
             throw NetworkStackError.backendAPIVersionObsolete
         } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            throw NetworkStackError.clientVersionObsolete
+            throw NetworkStackError.clientAPIVersionObsolete
         }
     }
 

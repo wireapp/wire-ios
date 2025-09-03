@@ -20,6 +20,7 @@ import Foundation
 import UIKit
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 
 @MainActor
@@ -45,16 +46,16 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var modalDestination: LoginViaEmailSheet?
     @Published var onSheetDismissAction: (() -> Void)?
 
-    let backendInfo: BackendInfo
+    let environment: BackendEnvironment2
     let isEmailPrefilled: Bool
     let canCreateAccount: Bool
 
     var areProxyCredentialsRequired: Bool {
-        backendInfo.backendConfig.proxySettings?.needsAuthentication == true
+        environment.config.proxyConfig?.needsAuthentication == true
     }
 
-    var proxyServer: String {
-        backendInfo.backendConfig.endpoints.backendURL.absoluteString
+    var proxyServer: String? {
+        environment.config.proxyConfig?.host
     }
 
     func isPasswordValid(_ password: String) -> Bool {
@@ -62,7 +63,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .default
+        environment.environmentType != .default
     }
 
     var canSubmitCredentials: Bool {
@@ -74,7 +75,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     lazy var teamAccountCreationLink: URL? = {
-        let teamsURL = backendInfo.backendConfig.endpoints.teamsURL
+        let teamsURL = environment.config.endpoints.teamsURL
         guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
             WireLogger.authentication
                 .warn("Unable to generate team account creation link. Invalid teamsURL: \(teamsURL.absoluteString)")
@@ -103,14 +104,14 @@ package final class LoginViaEmailViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         email: String?,
-        backendInfo: BackendInfo,
+        environment: BackendEnvironment2,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool
     ) {
         self.factory = factory
         self.router = router
         self.email = email ?? ""
-        self.backendInfo = backendInfo
+        self.environment = environment
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.isEmailPrefilled = email != nil
@@ -126,7 +127,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             if let proxyCredentials {
-                try submitProxyCredentials(proxyCredentials)
+                try await submitProxyCredentials(proxyCredentials)
             }
 
             let (cookies, accessToken) = try await logIn(
@@ -181,12 +182,14 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     func recoverPassword() {
         UIApplication.shared.open(
-            backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+            environment.config.endpoints.accountsURL.appendingPathComponent("forgot")
         )
     }
 
     func createAccount() {
-        modalDestination = .accountTypeSelection
+        router.navigate(
+            to: LoginViaEmailDestination.createPersonalAccount
+        )
     }
 
     func handleTeamAccountCreation() {
@@ -236,9 +239,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
         return isUsernameValid && isPasswordValid
     }
 
-    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) async throws {
         let useCase = factory.submitProxyCredentialsUseCase()
-        try useCase.invoke(proxyCredentials: proxyCredentials)
+        try await useCase.invoke(proxyCredentials: proxyCredentials)
     }
 
     private func logIn(

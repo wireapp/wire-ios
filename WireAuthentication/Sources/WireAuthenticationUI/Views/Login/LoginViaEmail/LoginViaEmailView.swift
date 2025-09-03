@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireNetwork
 import WireReusableUIComponents
 
 package protocol LoginViaEmailFactory {
@@ -120,7 +121,7 @@ package struct LoginViaEmailView: View {
     }
 
     @ViewBuilder private var welcomeMessage: some View {
-        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
+        OnPremHeaderView(environment: viewModel.environment)
     }
 
     @ViewBuilder private var emailField: some View {
@@ -183,7 +184,7 @@ package struct LoginViaEmailView: View {
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(Strings.CreateAccountOrTeam.button)
+                Text(Strings.CreateAccount.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
@@ -216,11 +217,13 @@ package struct LoginViaEmailView: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(Strings.ProxyCredentials.message(viewModel.proxyServer))
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+            if let proxyServer = viewModel.proxyServer {
+                Text(Strings.ProxyCredentials.message(proxyServer))
+                    .multilineTextAlignment(.center)
+                    .wireTextStyle(.body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             LabeledTextField(
                 placeholder: "jane@example.com",

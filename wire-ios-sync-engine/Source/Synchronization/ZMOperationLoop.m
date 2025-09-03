@@ -65,6 +65,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
                          isSyncV2Enabled:(BOOL)isSyncV2Enabled
+                              apiVersion:(nullable NSNumber *)apiVersion;
 {
     Check(uiMOC != nil);
     Check(syncMOC != nil);
@@ -82,6 +83,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.operationStatus.delegate = self;
         self.isDeveloperModeEnabled = isDeveloperModeEnabled;
         self.isSyncV2Enabled = isSyncV2Enabled;
+        self.apiVersion = apiVersion;
 
         [ZMRequestAvailableNotification addObserver:self];
         

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 import WireReusableUIComponents
 
 struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
@@ -26,7 +27,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     var mockDependencies = MockDependencies()
 
     var email: String?
-    var backendInfo: BackendInfo
+    var environment: BackendEnvironment2
     var canCreateAccount: Bool
     var didDetectDomainConflict: Bool
 
@@ -35,7 +36,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
-            backendInfo: backendInfo,
+            environment: environment,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
         )
