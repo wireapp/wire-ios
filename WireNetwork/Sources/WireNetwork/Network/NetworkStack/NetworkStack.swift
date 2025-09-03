@@ -103,6 +103,8 @@ public actor NetworkStack {
             return backendMetadata
         }
 
+        // To simulate api version errors, set these static vars with the names of backend environments.
+        // As a precaution to not affect prod builds, only make this available for debug builds.
         #if DEBUG
             if Self.envNameForObsoleteBackend == backendEnvironment.title {
                 throw NetworkStackError.backendAPIVersionObsolete
