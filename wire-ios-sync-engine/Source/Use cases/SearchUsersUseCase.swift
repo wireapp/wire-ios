@@ -103,6 +103,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         guard let messageProtocol else {
             return isFederationUsageAllowed
         }
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         return BackendInfo.isMLSEnabled ? messageProtocol != .proteus : true
     }
 

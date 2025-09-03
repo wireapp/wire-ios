@@ -127,6 +127,7 @@ extension ConversationListViewController {
             if userSession.selfUser.isTeamMember {
                 return true
             }
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             guard let apiVersion = BackendInfo.apiVersion,
                   apiVersion >= .v7 else {
                 return true

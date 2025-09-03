@@ -89,7 +89,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation.toDomainModel(),
             timestamp: .now,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isFederationEnabled: backendInfo.isFederationEnabled,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: backendInfo.isMLSEnabled
         )
     }
@@ -121,7 +123,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation,
             timestamp: timestamp,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isFederationEnabled: backendInfo.isFederationEnabled,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: backendInfo.isMLSEnabled
         )
     }
@@ -143,7 +147,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             mlsConversation.toDomainModel(),
             timestamp: .now,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isFederationEnabled: backendInfo.isFederationEnabled,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: backendInfo.isMLSEnabled
         )
 

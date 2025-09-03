@@ -101,6 +101,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     let apiVersion = BackendInfo.apiVersion,
                     let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser,
                     let userID = user.remoteIdentifier
@@ -123,6 +124,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     }
 
                 case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
@@ -177,6 +179,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func fetch(userClients: [UserClient]) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { result, userClient in
@@ -228,6 +231,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         guard let userID = userClient.user?.remoteIdentifier, let domain else { return nil }
 

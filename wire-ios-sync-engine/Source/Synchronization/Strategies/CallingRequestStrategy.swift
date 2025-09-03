@@ -451,6 +451,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 // With MLS we will fetch all clients for each group participant at once
                 // directly from the backend.
                 let userIDs = conversation.localParticipants.map { user in
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? BackendInfo.domain!)
                 }
 
@@ -657,6 +658,7 @@ private extension Calling {
 
 private extension AVSIdentifier {
     func toQualifiedId() -> QualifiedID {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
     }
 }

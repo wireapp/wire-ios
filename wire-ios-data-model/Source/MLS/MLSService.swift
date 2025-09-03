@@ -2032,6 +2032,7 @@ public struct MLSUser: Equatable {
 
     public init(from user: ZMUser) {
         self.id = user.remoteIdentifier
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {

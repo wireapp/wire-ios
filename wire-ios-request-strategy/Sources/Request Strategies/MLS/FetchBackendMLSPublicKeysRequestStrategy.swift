@@ -85,6 +85,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
                     var action = FetchBackendMLSPublicKeysAction()
                     let backendPublicKeys = try await action.perform(in: managedObjectContext.notificationContext)
                     let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     BackendInfo.isMLSEnabled = hasValidKeys
 
                     WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
@@ -92,6 +93,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
                     // If we get an error while fetching MLS public keys,
                     // it shouldn't fail the current phase. This is expected behavior for some customers.
                     // More details here: https://wearezeta.atlassian.net/browse/WPB-14455
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     BackendInfo.isMLSEnabled = false
 
                     WireLogger.mls.info("slow sync can't fetch backend MLS public keys!")

@@ -68,6 +68,7 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         for user: ZMUser,
         authoritative: Bool = true
     ) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         if let qualifiedID = payload.qualifiedID, BackendInfo.isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)

@@ -189,6 +189,7 @@ final class AppStateCalculator {
             return
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
             completion?()
             return

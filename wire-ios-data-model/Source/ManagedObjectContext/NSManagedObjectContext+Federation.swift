@@ -51,6 +51,7 @@ extension NSManagedObjectContext {
         fetchRequest.predicate = T.predicateForObjectsNeedingFederationMigration
 
         try fetchRequest.execute().modifyAndSaveInBatches { instance in
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             instance.domain = BackendInfo.domain
         }
     }

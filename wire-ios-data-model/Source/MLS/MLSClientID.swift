@@ -47,6 +47,7 @@ public struct MLSClientID: Equatable, Hashable {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = userClient.user?.domain ?? BackendInfo.domain
         else {
             return nil

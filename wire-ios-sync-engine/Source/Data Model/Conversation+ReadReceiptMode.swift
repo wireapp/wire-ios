@@ -43,6 +43,7 @@ public extension ZMConversation {
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<Void, Error>) -> Void
     ) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
@@ -55,6 +56,7 @@ public extension ZMConversation {
             if domain == nil {
                 WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
             }
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = domain ?? BackendInfo.domain ?? "None"
             path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
         } else {

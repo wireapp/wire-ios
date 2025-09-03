@@ -774,6 +774,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 

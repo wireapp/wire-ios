@@ -182,6 +182,7 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     init(
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         context: Context,
         userSession: UserSession

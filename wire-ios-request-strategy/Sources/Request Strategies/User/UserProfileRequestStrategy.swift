@@ -115,6 +115,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
+                // TODO: [WPB-19987] remove dependency on BackendInfo
             } else if let domain = BackendInfo.domain {
                 let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: domain)
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
@@ -147,6 +148,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
@@ -163,6 +165,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         guard
             let users = objects as? Set<ZMUser>,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion
         else {
             return

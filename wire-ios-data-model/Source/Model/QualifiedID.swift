@@ -85,6 +85,7 @@ extension ZMConversation: HasQualifiedID {
     public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = domain ?? BackendInfo.domain
         else {
             return nil

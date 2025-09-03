@@ -149,6 +149,7 @@ public extension ServiceUser {
             fatal("Not a service user")
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(nil)
         }
@@ -176,6 +177,7 @@ public extension ServiceUser {
             fatal("Not a service user")
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(nil)
         }
@@ -335,6 +337,7 @@ public extension ZMConversation {
             return
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completionHandler(.failure(AddBotError.missingAPIVersion))
         }

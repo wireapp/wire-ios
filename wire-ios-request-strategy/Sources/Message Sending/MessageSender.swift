@@ -87,6 +87,7 @@ public final class MessageSender: MessageSenderInterface {
         await incrementalSyncObserver.waitUntilCanSendMessage()
 
         do {
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
@@ -133,6 +134,7 @@ public final class MessageSender: MessageSenderInterface {
     private func attemptToSend(message: any SendableMessage) async throws {
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
             throw MessageSendError.missingMessageProtocol

@@ -70,6 +70,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -103,6 +104,7 @@ public extension ZMConversation {
 
     /// Checks if a guest link can be generated or not
     func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -141,6 +143,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -234,6 +237,7 @@ enum WirelessRequestFactory {
         switch apiVersion {
 
         case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")

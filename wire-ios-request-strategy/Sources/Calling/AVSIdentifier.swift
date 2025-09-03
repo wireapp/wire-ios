@@ -24,6 +24,7 @@ public struct AVSIdentifier: Hashable, Equatable {
 
     public init(identifier: UUID, domain: String?) {
         self.identifier = identifier
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         self.domain = BackendInfo.isFederationEnabled ? domain : nil
     }
 }

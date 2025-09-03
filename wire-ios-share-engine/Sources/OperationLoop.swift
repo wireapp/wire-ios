@@ -42,6 +42,7 @@ final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append {
+                        // TODO: [WPB-19987] remove dependency on BackendInfo
                         guard let apiVersion = BackendInfo.apiVersion else { return nil }
                         return requestGenerator.nextRequest(for: apiVersion)
                     }
@@ -58,6 +59,7 @@ final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append {
+                    // TODO: [WPB-19987] remove dependency on BackendInfo
                     guard let apiVersion = BackendInfo.apiVersion else { return nil }
                     return requestStrategy.nextRequest(for: apiVersion)
                 }

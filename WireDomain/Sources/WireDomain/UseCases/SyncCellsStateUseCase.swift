@@ -57,6 +57,7 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
             return (
                 conversation,
                 conversation?.remoteIdentifier,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 conversation?.domain ?? BackendInfo.domain
             )
         }

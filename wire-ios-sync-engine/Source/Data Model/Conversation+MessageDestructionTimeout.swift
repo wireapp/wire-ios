@@ -59,6 +59,7 @@ public extension ZMConversation {
     ) {
         // TODO: [WPB-5730] move this method to a useCase
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion,
               let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
@@ -101,6 +102,7 @@ private enum MessageDestructionTimeoutRequestFactory {
             if conversation.domain == nil {
                 WireLogger.conversation.warn("MessageDestructionTimeoutRequestFactory: conversation.domain == nil")
             }
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = conversation.domain ?? BackendInfo.domain ?? "None"
             path = "/conversations/\(domain)/\(identifier)/message-timer"
         }

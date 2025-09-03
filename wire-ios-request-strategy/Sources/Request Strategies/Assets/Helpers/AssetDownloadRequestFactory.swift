@@ -27,7 +27,7 @@ public final class AssetDownloadRequestFactory {
         domain: String?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         let path: String
         switch apiVersion {

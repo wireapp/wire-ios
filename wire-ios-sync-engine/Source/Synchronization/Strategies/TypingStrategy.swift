@@ -225,6 +225,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
         case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"

@@ -382,6 +382,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 isMLSEnabled: BackendInfo.isMLSEnabled
             )
 

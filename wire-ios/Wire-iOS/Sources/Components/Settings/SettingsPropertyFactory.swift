@@ -150,6 +150,7 @@ final class SettingsPropertyFactory {
         case .handle:
             return getOnlyProperty(
                 propertyName: propertyName,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled)
             )
 

@@ -125,6 +125,7 @@ final class SelfProfileViewController: UIViewController {
                 selfUser.refreshTeamData()
             }
         } else if
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let backendInfoApiVersion = BackendInfo.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
@@ -323,6 +324,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     func triggerCreateTeamFlow() {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         if let backendInfoApiVersion = BackendInfo.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {

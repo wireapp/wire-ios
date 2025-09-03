@@ -30,6 +30,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let domain = action.domain?.nilIfEmpty ?? BackendInfo.domain else {
             action.fail(with: .missingDomain)
             return nil

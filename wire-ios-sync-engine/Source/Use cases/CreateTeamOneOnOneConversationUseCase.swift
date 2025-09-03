@@ -72,6 +72,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
 
             guard
                 let userID = user.remoteIdentifier,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let domain = user.domain ?? BackendInfo.domain
             else {
                 throw Error.missingUserQualifiedID

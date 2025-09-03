@@ -254,6 +254,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     init(
         state: HandleChangeState,
         useTypeIntrinsicSizeTableView: Bool,
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         federationEnabled: Bool = BackendInfo.isFederationEnabled,
         settingsCoordinator: AnySettingsCoordinator
     ) {

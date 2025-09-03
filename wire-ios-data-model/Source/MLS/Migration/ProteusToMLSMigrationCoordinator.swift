@@ -168,6 +168,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Helpers (migration start)
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }

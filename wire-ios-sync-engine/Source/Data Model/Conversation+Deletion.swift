@@ -113,6 +113,7 @@ enum ConversationDeletionRequestFactory {
 
     static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             let conversationId = conversation.remoteIdentifier,
             let teamRemoteIdentifier = conversation.teamRemoteIdentifier

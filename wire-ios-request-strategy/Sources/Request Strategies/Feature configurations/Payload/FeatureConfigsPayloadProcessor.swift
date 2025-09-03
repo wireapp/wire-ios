@@ -248,6 +248,7 @@ struct FeatureConfigsPayloadProcessor {
     ) throws {
         switch featureName {
         case .conferenceCalling:
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             if let apiVersion = BackendInfo.apiVersion,
                apiVersion >= .v6 {
                 let response = try decoder.decode(

@@ -305,6 +305,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
                 Payload.UpdateConversationMLSWelcome.self,
                 from: event.payload
             ),
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
                 QualifiedID(uuid: payload.id, domain: $0)
             })

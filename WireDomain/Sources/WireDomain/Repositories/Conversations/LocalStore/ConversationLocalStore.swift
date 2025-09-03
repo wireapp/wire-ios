@@ -151,6 +151,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let otherUserDomain = otherUser.domain ?? BackendInfo.domain
             else {
                 WireLogger.conversation.warn(

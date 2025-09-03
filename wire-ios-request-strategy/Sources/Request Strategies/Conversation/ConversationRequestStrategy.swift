@@ -188,6 +188,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
+                // TODO: [WPB-19987] remove dependency on BackendInfo
             } else if let domain = BackendInfo.domain {
                 let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: domain)
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
@@ -262,6 +263,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
         switch apiVersion {
@@ -272,6 +274,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
+                // TODO: [WPB-19987] remove dependency on BackendInfo
             } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
                 let qualifiedID = QualifiedID(uuid: identifier, domain: domain)
                 synchronize(qualifiedID: qualifiedID)
@@ -441,6 +444,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 
@@ -483,6 +487,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
                 guard let domain else { return nil }
 

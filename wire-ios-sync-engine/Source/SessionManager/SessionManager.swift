@@ -1180,6 +1180,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             fatalError("api version unknown")
         }
@@ -1193,6 +1194,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         journal: Journal,
         coreDataStack: CoreDataStack
     ) async {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let localDomain = BackendInfo.domain else {
             fatalError("local domain unknown")
         }

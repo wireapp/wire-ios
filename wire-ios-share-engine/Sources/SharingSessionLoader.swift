@@ -342,6 +342,7 @@ public struct SharingSessionLoader {
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
             backendMetaData: backendMetadata,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case

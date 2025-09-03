@@ -362,6 +362,7 @@ extension SearchTask {
     func performUserLookup() {
         guard
             case let .lookup(qualifiedID) = task,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion
         else { return }
 
@@ -416,6 +417,7 @@ extension SearchTask {
 
     func performRemoteSearch() {
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             apiVersion >= .v1,
             case let .search(searchRequest) = task,
@@ -466,6 +468,7 @@ extension SearchTask {
         let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
 
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             let teamID = ZMUser.selfUser(in: contextProvider.viewContext).team?.remoteIdentifier,
             !teamMembersIDs.isEmpty
@@ -568,6 +571,7 @@ extension SearchTask {
 
     func performRemoteSearchForTeamUser() {
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1,
             case let .search(searchRequest) = task,
@@ -663,6 +667,7 @@ extension SearchTask {
 
     func performRemoteSearchForServices() {
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),

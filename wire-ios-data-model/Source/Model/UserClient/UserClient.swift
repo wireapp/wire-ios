@@ -889,6 +889,7 @@ extension UserClient {
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
         guard
             let user,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = user.domain ?? BackendInfo.domain,
             let userIdentifier = user.remoteIdentifier,
             let clientIdentifier = remoteIdentifier
@@ -934,6 +935,7 @@ extension UserClient {
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
             let user,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let domain = user.domain ?? BackendInfo.domain,
             let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier

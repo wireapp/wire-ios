@@ -53,6 +53,7 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         hasRegisteredMLSClient: Bool,
         mlsFeature: Feature.MLS
     ) async {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard BackendInfo.isMLSEnabled, mlsFeature.isEnabled else {
             WireLogger.mls.info("MLS feature in not enabled.")
             return

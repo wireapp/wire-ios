@@ -357,6 +357,7 @@ public final class ZMUserSession: NSObject {
             queue: syncContext
         )
         let apiProvider = APIProvider(httpClient: httpClient)
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             WireLogger.backend.warn("apiVersion not resolved")
 
@@ -474,6 +475,7 @@ public final class ZMUserSession: NSObject {
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
             backendMetaData: backendMetadata,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -967,6 +969,7 @@ public final class ZMUserSession: NSObject {
 
     private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
         guard
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
             let clientID = userClient.remoteIdentifier
@@ -1366,6 +1369,7 @@ extension ZMUserSession: SyncAgentDelegate {
             var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
             let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
             let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             BackendInfo.isMLSEnabled = hasValidKeys
         } catch {
             WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")

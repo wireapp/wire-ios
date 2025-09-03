@@ -471,6 +471,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             switch result {
             case let .success(backendPublicKeys):
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 BackendInfo.isMLSEnabled = hasValidKeys
             case .failure:
                 WireLogger.authentication.info("Backend doesn't have MLS public keys")
@@ -692,6 +693,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         let canRegisterMLSCLient = BackendInfo.isMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient

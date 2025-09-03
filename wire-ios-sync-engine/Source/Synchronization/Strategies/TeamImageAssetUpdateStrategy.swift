@@ -84,6 +84,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         case .v0, .v1:
             path = "/assets/v3/\(assetId)"
         case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             guard let domain = BackendInfo.domain else { return nil }
             path = "/assets/\(domain)/\(assetId)"
         }

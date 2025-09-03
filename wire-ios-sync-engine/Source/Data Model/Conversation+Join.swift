@@ -195,6 +195,7 @@ enum ConversationJoinRequestFactory {
         code: String,
         password: String? = nil
     ) -> ZMTransportRequest? {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         let path = joinConversationsPath
@@ -217,6 +218,7 @@ enum ConversationJoinRequestFactory {
     }
 
     static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         var url = URLComponents()

@@ -88,6 +88,7 @@ extension ZMUserSession {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             let apiVersion = BackendInfo.apiVersion
         else {
             return

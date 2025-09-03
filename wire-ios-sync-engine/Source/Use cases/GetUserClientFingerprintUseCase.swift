@@ -80,6 +80,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         let shouldEstablishSession = await existingClient.hasSessionWithSelfClient == false
 
         if shouldEstablishSession {
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             if let apiVersion = BackendInfo.apiVersion {
                 do {
                     try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)

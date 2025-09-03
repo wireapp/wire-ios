@@ -46,6 +46,7 @@ public struct E2EIClientID: Equatable, Hashable {
         guard let selfClient = user.selfClient(),
               let userID = selfClient.user?.remoteIdentifier.transportString(),
               let clientID = selfClient.remoteIdentifier,
+              // TODO: [WPB-19987] remove dependency on BackendInfo
               let domain = selfClient.user?.domain ?? BackendInfo.domain
         else {
             return nil

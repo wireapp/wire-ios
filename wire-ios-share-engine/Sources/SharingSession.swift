@@ -435,6 +435,7 @@ public final class SharingSession {
             restNetworkService: networkServices.rest,
             websocketNetworkService: networkServices.webSocket,
             backendMetaData: metadata,
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case

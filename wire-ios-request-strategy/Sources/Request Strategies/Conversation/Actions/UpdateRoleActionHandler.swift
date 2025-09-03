@@ -43,6 +43,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
             path = "/conversations/\(convID)/members/\(userID)"
         case .v7, .v8, .v9, .v10, .v11:
             guard
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let convDomain = conversation.domain ?? BackendInfo.domain,
                 let userDomain = participant.domain ?? BackendInfo.domain
             else {

@@ -117,6 +117,7 @@ final class ConversationGuestOptionsViewModel {
     weak var delegate: ConversationGuestOptionsViewModelDelegate?
 
     private var isGuestLinkWithPasswordAvailable: Bool {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else { return false }
 
         return apiVersion >= .v4

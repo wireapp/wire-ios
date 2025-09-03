@@ -120,6 +120,7 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
@@ -330,9 +331,11 @@ final class StartUIViewController: UIViewController {
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
     private var areChannelsSupported: Bool {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
             return false
         }
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard BackendInfo.isMLSEnabled else {
             return false
         }

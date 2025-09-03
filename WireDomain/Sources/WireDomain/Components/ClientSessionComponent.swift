@@ -232,6 +232,7 @@ public final class ClientSessionComponent {
     public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled,
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
         store: conversationLocalStore,
@@ -262,7 +263,9 @@ public final class ClientSessionComponent {
     private lazy var pullMLSOneOnOneSync = PullMLSOneOnOneSync(
         api: conversationsAPI,
         store: conversationLocalStore,
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         isFederationEnabled: BackendInfo.isFederationEnabled,
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         isMLSEnabled: BackendInfo.isMLSEnabled
     )
 

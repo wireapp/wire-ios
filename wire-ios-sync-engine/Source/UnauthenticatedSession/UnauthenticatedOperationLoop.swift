@@ -74,6 +74,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
     private var generator: ZMTransportRequestGenerator {
         { [weak self] in
             guard let self else { return nil }
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             guard let apiVersion = BackendInfo.apiVersion else { return nil }
             let request = (requestStrategies as NSArray).nextRequest(for: apiVersion)
             guard let queue = operationQueue else { return nil }

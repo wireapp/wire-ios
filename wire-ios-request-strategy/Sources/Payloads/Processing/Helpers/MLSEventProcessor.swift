@@ -227,6 +227,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
+                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let otherUserDomain = otherUser.domain ?? BackendInfo.domain
             else {
                 WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")

@@ -234,6 +234,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion,
               let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {
@@ -264,6 +265,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         logger.info("get Wire access token")
 
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion,
               let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {

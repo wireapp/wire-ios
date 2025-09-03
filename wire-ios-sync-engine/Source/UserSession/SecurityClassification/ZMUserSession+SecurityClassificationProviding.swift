@@ -59,7 +59,9 @@ extension ZMUserSession: SecurityClassificationProviding {
     // If federation is disabled we know that the user is from local backend, so we can fallback to local domain and
     // check if it is classified
     private func domain(for user: UserType) -> String? {
+        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard BackendInfo.isFederationEnabled else {
+            // TODO: [WPB-19987] remove dependency on BackendInfo
             return user.domain ?? BackendInfo.domain
         }
         return user.domain
