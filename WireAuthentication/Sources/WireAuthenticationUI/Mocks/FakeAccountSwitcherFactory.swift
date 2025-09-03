@@ -19,18 +19,26 @@
 import Combine
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 
 struct FakeAccountSwitcherFactory: AccountSwitcherFactory {
-    let accounts: [AccountUIModel]
 
-    init(accounts: [AccountUIModel]) {
+    let accounts: [AccountUIModel]
+    let defaultEnvironment: BackendEnvironment2
+
+    init(
+        accounts: [AccountUIModel],
+        defaultEnvironment: BackendEnvironment2
+    ) {
         self.accounts = accounts
+        self.defaultEnvironment = defaultEnvironment
     }
 
     var viewModel: AccountSwitcherModalViewModel {
         .init(
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            router: FakeRootFactory().viewModel
+            router: FakeRootFactory().viewModel,
+            defaultEnvironment: defaultEnvironment
         )
     }
 }
