@@ -2,6 +2,12 @@
 
 As it is hard to spot changes from version to version of database models (.xcdatamodeld), here's a changelog highlighting changes per version.
 
+## Special changes
+
+### Moving of `zmessaging` & `ZMEventModel` to `WireData` SPM target
+
+* Move `zmessaging` & `ZMEventModel` to `WireData` SPM target while keeping managed object subclasses in `WireDataModel` project target. This is an intermediary state. Eventually all managed object subclasses should be moved to `WireData` target. To achieve this, in **ALL VERSIONS** of `zmessaging` the _Module_ field in the Data Model Inspector was set to `WireDataModel` for non obj-c based entities. The same changes were applied to `ZMEventModel` in version `6.0`. These changes did not require a migration. See [PR](https://github.com/wireapp/wire-ios/pull/3521) for more information.
+
 ## zmessaging
 
 ### 2.129.0
