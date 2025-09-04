@@ -199,6 +199,9 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(in: context)
+        }
         userLocalStore.fetchSelfUserAvailability_MockValue = .available
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
@@ -217,6 +220,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         userLocalStore.idFor_MockValue = .mockID1
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
+        userLocalStore.isSelfUserIdDomain_MockValue = (user: selfUser, isSelfUser: false)
     }
 
     private enum Scaffolding {
