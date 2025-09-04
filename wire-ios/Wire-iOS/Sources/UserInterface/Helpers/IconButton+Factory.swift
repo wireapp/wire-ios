@@ -55,11 +55,13 @@ extension IconButton {
             accessibilityId: "sendButton",
             backgroundColor: [
                 UIControl.State.normal.rawValue: UIColor.accent(),
+                UIControl.State.selected.rawValue: UIColor.accent(),
                 UIControl.State.highlighted.rawValue: UIColor.accentDarken,
                 UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled
             ],
             iconColor: [
                 UIControl.State.normal.rawValue: sendButtonIconColor,
+                UIControl.State.selected.rawValue: sendButtonIconColor,
                 UIControl.State.highlighted.rawValue: sendButtonIconColor,
                 UIControl.State.disabled.rawValue: sendButtonIconColor
             ]
