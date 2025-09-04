@@ -48,11 +48,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case failedToStoreMetadata(any Error)
-        case failedToCheckBuildBlacklist(any Error)
         case persistenceStoresNotFound
         case failedToLoadPersistenceStack(any Error)
         case failedToFetchCookies(any Error)
         case userNotAuthenticated
+        case failedToCheckBuildBlacklist(any Error)
         case buildIsBlacklisted(buildNumber: String)
 
     }

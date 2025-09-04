@@ -536,7 +536,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 title: L10n.ShareExtension.Error.UpdateRequired.title,
                 message: L10n.ShareExtension.Error.UpdateRequired.obsoleteBackend
             )
-        } catch NetworkStackError.clientAPIVersionObsolete {
+        } catch NetworkStackError.clientAPIVersionObsolete, SharingSessionLoader.Failure.buildIsBlacklisted {
             presentError(
                 title: L10n.ShareExtension.Error.UpdateRequired.title,
                 message: L10n.ShareExtension.Error.UpdateRequired.obsoleteClient
