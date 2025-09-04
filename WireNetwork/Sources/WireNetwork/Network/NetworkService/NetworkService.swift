@@ -28,7 +28,7 @@ public protocol NetworkServiceProtocol {
 
 public final class NetworkService: NSObject, NetworkServiceProtocol {
 
-    private let baseURL: URL
+    let baseURL: URL
     private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
