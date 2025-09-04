@@ -43,8 +43,7 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
         let canDisplayNotification = await validator.validate(
             conversationID: event.conversationID,
             senderID: event.senderID,
-            time: event.timestamp,
-            isMessageAddEvent: event.isMessageAddEvent
+            time: event.timestamp
         )
 
         guard canDisplayNotification else {
@@ -109,8 +108,7 @@ extension ConversationEventNotificationBuilder {
         func validate(
             conversationID: ConversationID,
             senderID: UserID,
-            time: Date?,
-            isMessageAddEvent: Bool
+            time: Date?
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
@@ -124,20 +122,9 @@ extension ConversationEventNotificationBuilder {
 
             let isConversationMuted = conversationMutedMessages == .all
 
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
-
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-            // `selfUser` can be the sender for `mlsMessageAdd` and `proteusMessageAdd` events:
-            // calls can be answered on another device,
-            // so sending notifications is still relevant.
-            let isSenderSelfUserAllowed = isMessageAddEvent ? true : !isSenderSelfUser
-
-            guard isSenderSelfUserAllowed,
-                  !isConversationMuted else {
+            guard !isConversationMuted else {
                 return false
             }
 
@@ -148,17 +135,6 @@ extension ConversationEventNotificationBuilder {
             }
 
             return true
-        }
-    }
-}
-
-private extension ConversationEvent {
-    var isMessageAddEvent: Bool {
-        switch self {
-        case .mlsMessageAdd, .proteusMessageAdd:
-            true
-        default:
-            false
         }
     }
 }
