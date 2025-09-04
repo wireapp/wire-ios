@@ -92,11 +92,11 @@ final class ConversationMessageCellTableViewAdapter<
                 constant: -conversationHorizontalMargins.right
             )
         ]
-        
+
         self.othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
-                   equalTo: contentView.leadingAnchor,
-                   constant: conversationHorizontalMargins.left
-               )
+            equalTo: contentView.leadingAnchor,
+            constant: conversationHorizontalMargins.left
+        )
         self.othersMessagesHorizontalConstraints = [
             othersMessagesLeadingConstraint,
             cellView.trailingAnchor.constraint(
@@ -156,7 +156,7 @@ final class ConversationMessageCellTableViewAdapter<
         }
         setNeedsLayout()
     }
-    
+
     private func isCellAlreadyAligned() -> Bool {
         guard let cellDescription else { return false }
         return cellDescription.isCellAlreadyAligned

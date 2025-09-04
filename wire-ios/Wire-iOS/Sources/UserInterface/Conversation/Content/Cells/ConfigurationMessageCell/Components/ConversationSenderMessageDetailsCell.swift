@@ -313,7 +313,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     let containsHighlightableContent: Bool = false
     lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     lazy var isAlreadyAlignedInsideCell: Bool = true
-    
+
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
 

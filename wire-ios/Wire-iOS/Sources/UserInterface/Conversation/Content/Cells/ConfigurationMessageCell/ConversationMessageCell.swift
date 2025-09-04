@@ -160,7 +160,7 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// Boolean to check for aligning message content for Bubbles
     var shouldAlignMessageContentForBubbles: Bool { get }
-    
+
     /// Boolean to check if isAlreadyAlignedinsideCell
     var isCellAlreadyAligned: Bool { get }
 
@@ -207,7 +207,7 @@ extension ConversationMessageCellDescription {
     var shouldAlignMessageContentForBubbles: Bool {
         false
     }
-    
+
     var isCellAlreadyAligned: Bool {
         false
     }
