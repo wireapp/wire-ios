@@ -84,7 +84,7 @@ final class ConversationMessageCellTableViewAdapter<
             cellView.leadingAnchor
                 .constraint(
                     greaterThanOrEqualTo: contentView.leadingAnchor,
-                    constant: ChatBubbleLayoutConfig.ownMessageMinimumLeadingDistance
+                    constant: conversationHorizontalMargins.chatBubbleMinimumLeading
                 ),
             cellView.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
@@ -98,7 +98,7 @@ final class ConversationMessageCellTableViewAdapter<
             ),
             cellView.trailingAnchor.constraint(
                 lessThanOrEqualTo: contentView.trailingAnchor,
-                constant: -ChatBubbleLayoutConfig.otherMessageMinimumTrailingDistance
+                constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
             )
         ]
 
