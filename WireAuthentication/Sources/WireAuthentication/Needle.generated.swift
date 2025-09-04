@@ -213,6 +213,9 @@ private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: Ac
     var accountsPublisher: CurrentValuePublisher<[AccountUIModel]> {
         return rootComponent.accountsPublisher
     }
+    var environment: BackendEnvironment2 {
+        return rootComponent.environment
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -418,6 +421,7 @@ extension AccountSwitcherComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\AccountSwitcherComponentDependency.router] = "router-any Router"
         keyPathToName[\AccountSwitcherComponentDependency.accountsPublisher] = "accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"
+        keyPathToName[\AccountSwitcherComponentDependency.environment] = "environment-BackendEnvironment2"
     }
 }
 extension NoHistoryComponent: NeedleFoundation.Registration {
