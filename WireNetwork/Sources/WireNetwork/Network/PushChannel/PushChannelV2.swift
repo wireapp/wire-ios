@@ -192,7 +192,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
             guard let self else { return }
             do {
                 while batchSize > 1 {
-                    try Task.checkCancellation()
                     try await Task.sleep(for: .seconds(batchInterval))
                     if !(await batchBuffer.isEmpty()) {
                         let drained = await batchBuffer.drain()

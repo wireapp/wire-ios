@@ -61,7 +61,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
-
         pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -86,7 +85,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         guard !pushChannelState.isOpen() else {
             throw Failure.pushChannelAlreadyOpened
         }
-                    
+        pushChannelState.markAsOpen()
+        defer {
+            pushChannelState.markAsClosed()
+        }
         try await pullServerTimeSync.pull()
 
         let syncMarker = syncMarkerGenerator()
@@ -98,7 +100,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         let liveEventStream: PushChannelV2.Stream
         do {
             liveEventStream = try await pushChannel.open()
-            pushChannelState.markAsOpen()
         } catch {
             pushChannelState.markAsClosed()
             throw error
@@ -114,7 +115,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             throw error
         }
 
-        let task = Task { @Sendable [self, pushChannel] in
+        let task = Task { @Sendable [self] in
             await processLiveStream(
                 liveEventStream,
                 pushChannel: pushChannel,
@@ -223,7 +224,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             envelopes: envelopes,
                             pushChannel: pushChannel
                         )
-
                     } catch {
                         WireLogger.sync.error("event processing failed: \(error)", attributes: .syncAttributes)
                         assertionFailure("event processing failed: \(error)")
