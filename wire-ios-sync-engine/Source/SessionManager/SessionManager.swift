@@ -654,8 +654,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // TODO: disable if multibackend is enabled.
     private func configureBlacklistDownload() {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         if configuration.blacklistDownloadInterval > 0 {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
