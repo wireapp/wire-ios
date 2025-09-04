@@ -359,7 +359,7 @@ public struct SharingSessionLoader {
             keychain: Keychain()
         )
         let userSessionComponent = UserSessionComponent(
-            currentBuildNumber: "", // TODO: build number for main app
+            currentBuildNumber: buildNumber,
             selfUserID: accountID,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,

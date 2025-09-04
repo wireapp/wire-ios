@@ -120,7 +120,8 @@ public final class SharingSession {
         environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        currentBuildNumber: String
     ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -239,7 +240,8 @@ public final class SharingSession {
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: URL("unused")!,
             legacyEnvironment: environment,
-            proxyCredentials: credentials
+            proxyCredentials: credentials,
+            currentBuildNumber: currentBuildNumber
         )
     }
 
@@ -327,7 +329,8 @@ public final class SharingSession {
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
-        proxyCredentials: WireTransport.ProxyCredentials?
+        proxyCredentials: WireTransport.ProxyCredentials?,
+        currentBuildNumber: String
     ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
@@ -431,7 +434,7 @@ public final class SharingSession {
         )
 
         let userSessionComponent = UserSessionComponent(
-            currentBuildNumber: "", // TODO: get current build number of main app.
+            currentBuildNumber: currentBuildNumber,
             selfUserID: accountIdentifier,
             cookieStorage: cookieStorage,
             restNetworkService: networkServices.rest,
