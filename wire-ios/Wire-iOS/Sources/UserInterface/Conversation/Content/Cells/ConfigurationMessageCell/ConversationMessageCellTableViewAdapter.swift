@@ -55,6 +55,7 @@ final class ConversationMessageCellTableViewAdapter<
     private var existingHorizontalConstraints: [NSLayoutConstraint] = []
     private var ownMessagesHorizontalConstraints: [NSLayoutConstraint] = []
     private var othersMessagesHorizontalConstraints: [NSLayoutConstraint] = []
+    private var othersMessagesLeadingConstraint: NSLayoutConstraint!
 
     private var longPressGesture: UILongPressGestureRecognizer!
     private var doubleTapGesture: UITapGestureRecognizer!
@@ -91,11 +92,13 @@ final class ConversationMessageCellTableViewAdapter<
                 constant: -conversationHorizontalMargins.right
             )
         ]
+        
+        self.othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
+                   equalTo: contentView.leadingAnchor,
+                   constant: conversationHorizontalMargins.left
+               )
         self.othersMessagesHorizontalConstraints = [
-            cellView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: conversationHorizontalMargins.left
-            ),
+            othersMessagesLeadingConstraint,
             cellView.trailingAnchor.constraint(
                 lessThanOrEqualTo: contentView.trailingAnchor,
                 constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
@@ -144,12 +147,19 @@ final class ConversationMessageCellTableViewAdapter<
                 NSLayoutConstraint.activate(ownMessagesHorizontalConstraints)
             } else {
                 // Left-align the bubble content
+                let otherMessageLeadingConstant = isCellAlreadyAligned() ? 0 : conversationHorizontalMargins.left
+                othersMessagesLeadingConstraint.constant = otherMessageLeadingConstant
                 NSLayoutConstraint.activate(othersMessagesHorizontalConstraints)
             }
         } else {
             setupExistingLayout()
         }
         setNeedsLayout()
+    }
+    
+    private func isCellAlreadyAligned() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isCellAlreadyAligned
     }
 
     private func setupExistingLayout() {
