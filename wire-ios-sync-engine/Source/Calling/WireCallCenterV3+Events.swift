@@ -80,11 +80,20 @@ extension WireCallCenterV3: ZMConversationObserver {
     private func informMLSMigrationFinalizedIfNeeded(_ changeInfo: ConversationChangeInfo) {
         let conversation = changeInfo.conversation
 
+        // We arrive here after observing a change in the conversation.
+        // If the change info indicates that the message protocol changed,
+        // Then we verify that it changed to mls.
+        //
+        // Note: it may happen that the message protocol key is marked as updated while its value didn't actually change.
+        // We therefore double check that the protocol saved in the callSnapshot upon call creation was not mls.
+
         guard
             let avsIdentifier = conversation.avsIdentifier,
+            let snapshot = callSnapshots[avsIdentifier],
             let context = conversation.managedObjectContext,
             changeInfo.messageProtocolChanged,
             conversation.messageProtocol == .mls,
+            snapshot.messageProtocol != .mls,
             !isMLSConferenceCall(conversationId: avsIdentifier)
         else {
             return
