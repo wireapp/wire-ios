@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
@@ -37,8 +38,19 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return nil
         }
 
+        var resolvedConversationID: ConversationID {
+            let callingConversationID = calling.qualifiedConversationID
+            guard !callingConversationID.id.isEmpty,
+                  let conversationUUID = UUID(uuidString: callingConversationID.id)
+            else {
+                return conversationID
+            }
+            return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
+        }
+
+        WireLogger.notifications.info("Build content for the calling event")
         let displayCallKitNotification = await validator.validateCallKitNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             accountID: accountID,
             eventTimestamp: time,
@@ -46,7 +58,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         )
 
         let displayCallNotification = await validator.validateCallNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             eventTimestamp: time,
             callContent: callContent
@@ -57,7 +69,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
-                conversationID: conversationID,
+                conversationID: resolvedConversationID,
                 senderID: senderID
             )
 
@@ -66,7 +78,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallNotification(
                 callContent: callContent,
                 senderID: senderID,
-                conversationID: conversationID
+                conversationID: resolvedConversationID
             )
         } else {
             // Else, this is not a call, return nil.

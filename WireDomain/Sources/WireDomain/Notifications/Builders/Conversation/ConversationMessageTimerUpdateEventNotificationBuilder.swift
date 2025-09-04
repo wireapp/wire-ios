@@ -27,7 +27,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: ConversationMessa
     func buildContent(
         event: ConversationMessageTimerUpdateEvent
     ) async -> UserNotification? {
-        let canBuildNotification = await validator.validate()
+        let canBuildNotification = await validator.validate(senderID: event.senderID)
 
         guard canBuildNotification else {
             return nil
@@ -178,9 +178,15 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: ConversationMessa
 
 extension ConversationMessageTimerUpdateEventNotificationBuilder {
     struct Validator {
+        let userLocalStore: any UserLocalStoreProtocol
 
-        func validate() async -> Bool {
-            true // No validation criteria for this notification
+        func validate(senderID: UserID) async -> Bool {
+            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
+                id: senderID.id,
+                domain: senderID.domain
+            ).isSelfUser) ?? false
+
+            return !isSenderSelfUser
         }
     }
 

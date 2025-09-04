@@ -122,16 +122,9 @@ extension ConversationEventNotificationBuilder {
 
             let isConversationMuted = conversationMutedMessages == .all
 
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
-
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-
-            guard !isSenderSelfUser,
-                  !isConversationMuted else {
+            guard !isConversationMuted else {
                 return false
             }
 
