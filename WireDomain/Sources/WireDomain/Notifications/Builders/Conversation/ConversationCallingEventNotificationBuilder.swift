@@ -48,7 +48,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
         }
 
-        WireLogger.notifications.info("Calling notification content: \(callContent)")
+        WireLogger.notifications.info("Build content for the calling event")
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
