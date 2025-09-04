@@ -30,6 +30,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
         let conversationID = event.conversationID
 
         let canBuildNotification = await validator.validate(
+            senderID: event.senderID,
             conversationID: conversationID
         )
 
@@ -168,12 +169,24 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
 extension ConversationDeleteEventNotificationBuilder {
     struct Validator {
         let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
 
-        func validate(conversationID: ConversationID) async -> Bool {
+        func validate(
+            senderID: UserID,
+            conversationID: ConversationID
+        ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
                 domain: conversationID.domain
             )
+            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
+                id: senderID.id,
+                domain: senderID.domain
+            ).isSelfUser) ?? false
+
+            guard !isSenderSelfUser else {
+                return false
+            }
 
             return await conversationLocalStore.isGroupConversation(conversation)
         }
