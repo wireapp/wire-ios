@@ -75,7 +75,6 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
 
             senderID = proteusMessageEvent.senderID
             conversationID = proteusMessageEvent.conversationID
-
             timestamp = proteusMessageEvent.timestamp
         }
 
