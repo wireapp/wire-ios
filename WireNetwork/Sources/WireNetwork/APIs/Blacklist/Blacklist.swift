@@ -31,4 +31,12 @@ public struct BuildNumberBlacklist: Equatable, Sendable {
 
     public let illegalBuildNumbers: Set<String>
 
+    public init(
+        minimumLegalBuildNumber: String,
+        illegalBuildNumbers: Set<String>
+    ) {
+        self.minimumLegalBuildNumber = minimumLegalBuildNumber
+        self.illegalBuildNumbers = illegalBuildNumbers
+    }
+
 }
