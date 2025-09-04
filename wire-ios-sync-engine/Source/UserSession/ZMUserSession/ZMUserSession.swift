@@ -28,7 +28,8 @@ import WireNetwork
 import WireRequestStrategy
 import WireSystem
 
-protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSessionEncryptionAtRestDelegate, UserSessionLogoutDelegate, UserSessionSelfUserClientDelegate {
+protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSessionEncryptionAtRestDelegate,
+    UserSessionLogoutDelegate, UserSessionSelfUserClientDelegate {
 
     func userSessionDidDiscoverBuildIsBlacklisted()
 

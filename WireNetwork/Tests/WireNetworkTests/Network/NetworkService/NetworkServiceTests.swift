@@ -62,7 +62,7 @@ final class NetworkServiceTests: XCTestCase {
     func testInit_It_Adds_Slash_To_Path() async throws {
         // Given
         let baseURL = try XCTUnwrap(URL(string: "www.wire.com/staging"))
-        
+
         // When
         let sut = NetworkService(
             baseURL: baseURL,

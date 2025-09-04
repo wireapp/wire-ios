@@ -29,7 +29,7 @@ struct BlacklistAPITests {
     init() async throws {
         let dateProvider = CurrentDateProvidingMock()
         dateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
-        snapshotter = await RequestSnapshotter(
+        self.snapshotter = await RequestSnapshotter(
             baseURL: URL(string: "https://www.blacklist.com")!,
             currentDateProvider: dateProvider
         )

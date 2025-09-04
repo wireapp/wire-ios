@@ -79,7 +79,7 @@ public struct URLSessionConfigurationFactory {
             configuration.connectionProxyDictionary = proxySettings.proxyDictionary()
             configuration.httpShouldUsePipelining = true
         }
-        
+
         return configuration
     }
 

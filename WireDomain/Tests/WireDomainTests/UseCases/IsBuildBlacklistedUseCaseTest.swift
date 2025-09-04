@@ -27,7 +27,7 @@ struct IsBuildBlacklistedUseCaseTest {
     let api: MockBlacklistAPI
 
     init() {
-        api = MockBlacklistAPI()
+        self.api = MockBlacklistAPI()
         api.getBlacklist_MockValue = BuildNumberBlacklist(
             minimumLegalBuildNumber: "100",
             illegalBuildNumbers: ["50", "150", "200"]
@@ -71,4 +71,3 @@ struct IsBuildBlacklistedUseCaseTest {
     }
 
 }
-

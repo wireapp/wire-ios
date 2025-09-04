@@ -45,7 +45,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         // directory then the path will be replaced by the relative path
         // (e.g www.wire.com/staging + foo -> www.wire.com/foo) rather than
         // concatenated (e.g www.wire.com/staging/foo).
-        if !baseURL.path().isEmpty && !baseURL.hasDirectoryPath {
+        if !baseURL.path().isEmpty, !baseURL.hasDirectoryPath {
             let lastComponent = baseURL.lastPathComponent
             self.baseURL = baseURL.deletingLastPathComponent().appending(
                 path: lastComponent,
@@ -78,7 +78,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         // To properly concatenate this URL to the base (which should be
         // a directory), we must remove the leading slash.
         var urlString = url.absoluteString
-        urlString = String(urlString.drop(while: { $0 == "/"}))
+        urlString = String(urlString.drop(while: { $0 == "/" }))
 
         var request = request
         request.url = URL(
