@@ -161,7 +161,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// Boolean to check for aligning message content for Bubbles
     var shouldAlignMessageContentForBubbles: Bool { get }
 
-    /// Boolean to check if isAlreadyAlignedinsideCell
+    /// Boolean to check if isCellAlreadyAligned
     var isCellAlreadyAligned: Bool { get }
 
     /// The message that is displayed.
