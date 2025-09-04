@@ -62,16 +62,18 @@ final class BlockerViewController: LaunchImageViewController {
 
     func showAlert() {
         switch context {
+        case .blacklist where DeveloperFlag.multibackend.isOn:
+            showClientObsoleteMessage()
+        case .backendObsolete:
+            showBackendObsoleteMessage()
+        case .clientObsolete:
+            showClientObsoleteMessage()
         case .blacklist:
             showBlacklistMessage()
         case .jailbroken:
             showJailbrokenMessage()
         case .databaseFailure:
             showDatabaseFailureMessage()
-        case .backendObsolete:
-            showBackendObsoleteMessage()
-        case .clientObsolete:
-            showClientObsoleteMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
         }
@@ -110,11 +112,21 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showBlacklistMessage() {
-        presentOKAlert(
-            title: L10n.Localizable.Force.Update.title,
-            message: L10n.Localizable.Force.Update.message
-        ) { _ in
-            UIApplication.shared.open(WireURLs.shared.appOnItunes)
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteClient(
+                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
+
+            present(alert, animated: true)
+        } else {
+            presentOKAlert(
+                title: L10n.Localizable.Force.Update.title,
+                message: L10n.Localizable.Force.Update.message
+            ) { _ in
+                UIApplication.shared.open(WireURLs.shared.appOnItunes)
+            }
         }
     }
 
