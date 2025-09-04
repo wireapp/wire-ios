@@ -80,10 +80,13 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
             try await mlsService.wipeGroup(oldMLSGroupID)
             let conversationExists = try await mlsService.conversationExists(groupID: newMLSGroupID)
-            
+
             if conversationExists {
                 // CoreCrypto group already exists, just make sure state is set in ZMConversation
-                await conversationLocalStore.storeMLSConversationEstablished(mlsGroupID: newMLSGroupID, conversation: localConversation)
+                await conversationLocalStore.storeMLSConversationEstablished(
+                    mlsGroupID: newMLSGroupID,
+                    conversation: localConversation
+                )
             } else {
                 await conversationLocalStore.storeMLSConversationPendingJoin(
                     newMLSGroupID: newMLSGroupID,
