@@ -29,6 +29,12 @@ package protocol RootFactory {
     func determineAuthMethodFactory(environment: BackendEnvironment2) -> any DetermineAuthMethodFactory
 
     @MainActor
+    func reloginViaEmailFactory(email: String) -> any ReloginViaEmailFactory
+
+    @MainActor
+    func reloginViaSSOFactory() -> any ReloginViaSSOFactory
+
+    @MainActor
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
@@ -49,7 +55,54 @@ package struct RootView: View {
     package var body: some View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
-                sheetContent(for: item)
+                NavigationStack(path: $viewModel.path) {
+                    sheetContent(for: item)
+                }
+                .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+                // The alert should be shown on the navigation stack, otherwise
+                // it will dismiss the sheet.
+                .alert(
+                    item: $viewModel.alert,
+                    title: { alert in
+                        switch alert {
+                        case .obsoleteClient:
+                            Text(
+                                viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                    .title : L10n.Localizable.ObsoleteClient.Alert.title
+                            )
+                        default:
+                            Text(alert.title)
+                        }
+                    },
+                    message: { alert in
+                        switch alert {
+                        case .obsoleteBackend:
+                            Text(
+                                viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
+                                    .message : L10n.Localizable.ObsoleteBackend.Alert.message
+                            )
+                        case .obsoleteClient:
+                            Text(
+                                viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                                    .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
+                            )
+                        default:
+                            Text(alert.message)
+                        }
+                    },
+                    actions: { alert in
+                        switch alert {
+                        case .obsoleteClient:
+                            obsoleteClientAlertActions()
+                        case .obsoleteBackend where viewModel.isMultibackendEnabled:
+                            obsoleteBackendAlertActions()
+                        case .logoutConfirmation:
+                            logoutConfirmationButtons
+                        default:
+                            Button(Strings.Authentication.Error.confirm, action: {})
+                        }
+                    }
+                )
             }
     }
 
@@ -57,64 +110,27 @@ package struct RootView: View {
     private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
         case let .authFlow(environment):
-            NavigationStack(path: $viewModel.path) {
-                DetermineAuthMethodView(
-                    factory: viewModel.factory.determineAuthMethodFactory(
-                        environment: environment
-                    )
+            DetermineAuthMethodView(
+                factory: viewModel.factory.determineAuthMethodFactory(
+                    environment: environment
                 )
-                .navigationDestination(for: RootDestination.self) { destination in
-                    switch destination {
-                    case .switchAccounts:
-                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
-                    }
-                }
-            }
+            )
             // We must provide an explicit id so it knows to create a new
-            // view when the backend info changes.
+            // view when the backend environment changes.
             .id(environment)
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-            // The alert should be shown on the navigation stack, otherwise
-            // it will dismiss the sheet.
-            .alert(
-                item: $viewModel.alert,
-                title: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
-                                .title : L10n.Localizable.ObsoleteClient.Alert.title
-                        )
-                    default:
-                        Text(alert.title)
-                    }
-                },
-                message: { alert in
-                    switch alert {
-                    case .obsoleteBackend:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
-                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
-                        )
-                    case .obsoleteClient:
-                        Text(
-                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
-                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
-                        )
-                    default:
-                        Text(alert.message)
-                    }
-                },
-                actions: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        obsoleteClientAlertActions()
-                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
-                        obsoleteBackendAlertActions()
-                    default:
-                        Button(Strings.Authentication.Error.confirm, action: {})
-                    }
-                }
+        case let .reauthFlow(email):
+            ReloginViaEmailView(
+                factory: viewModel.factory.reloginViaEmailFactory(
+                    email: email
+                )
+            )
+        case .reauthSSO:
+            ReloginViaSSOView(
+                factory: viewModel.factory.reloginViaSSOFactory()
+            )
+        case .accountSwitcher:
+            AccountSwitcherModalView(
+                factory: viewModel.factory.accountsSwitcherFactory()
             )
         }
     }
@@ -151,6 +167,16 @@ package struct RootView: View {
                 Strings.Obsolete.Alert.cancel,
                 action: viewModel.dismissAlert
             )
+        }
+    }
+
+    @ViewBuilder private var logoutConfirmationButtons: some View {
+        Button(Strings.Logout.Alert.cancel, role: .cancel) {}
+        Button(Strings.Logout.Alert.keepDataButton) {
+            viewModel.logout(deleteData: false)
+        }
+        Button(Strings.Logout.Alert.deleteDataButton, role: .destructive) {
+            viewModel.logout(deleteData: true)
         }
     }
 

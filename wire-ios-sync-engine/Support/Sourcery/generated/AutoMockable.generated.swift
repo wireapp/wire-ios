@@ -27,6 +27,7 @@
 import WireDataModel
 import WireDomain
 import Combine
+import WireNetwork
 
 @testable import WireSyncEngine
 
@@ -828,34 +829,19 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
     public var underlyingIsInUnathenticatedAppState: Bool!
 
 
-    // MARK: - sessionManagerDidFailToLogin
-
-    public var sessionManagerDidFailToLoginError_Invocations: [Error?] = []
-    public var sessionManagerDidFailToLoginError_MockMethod: ((Error?) -> Void)?
-
-    public func sessionManagerDidFailToLogin(error: Error?) {
-        sessionManagerDidFailToLoginError_Invocations.append(error)
-
-        guard let mock = sessionManagerDidFailToLoginError_MockMethod else {
-            fatalError("no mock for `sessionManagerDidFailToLoginError`")
-        }
-
-        mock(error)
-    }
-
     // MARK: - sessionManagerWillLogout
 
-    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations: [(error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
-    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod: ((Error?, (() -> Void)?) -> Void)?
+    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations: [(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
+    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod: ((BackendEnvironment2?, Error?, (() -> Void)?) -> Void)?
 
-    public func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
-        sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations.append((error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
+    public func sessionManagerWillLogout(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
+        sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations.append((environment: environment, error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
 
-        guard let mock = sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod else {
-            fatalError("no mock for `sessionManagerWillLogoutErrorUserSessionCanBeTornDown`")
+        guard let mock = sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown`")
         }
 
-        mock(error, userSessionCanBeTornDown)
+        mock(environment, error, userSessionCanBeTornDown)
     }
 
     // MARK: - sessionManagerWillOpenAccount

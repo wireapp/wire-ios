@@ -44,9 +44,9 @@ class SelectParticipantsPage: PageModel {
         return self
     }
 
-    func doneSelectingMembers() throws -> GroupConversationPage {
+    func doneSelectingMembers() throws -> ActiveConversationPage {
         doneButton.tap()
-        return try GroupConversationPage()
+        return try ActiveConversationPage()
     }
 
     func addSelectedParticipant() throws -> GroupConversationPage {

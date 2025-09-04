@@ -170,6 +170,7 @@
 		3416A3182DC0D53600827BCB /* IncrementalSyncObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3416A3172DC0D53600827BCB /* IncrementalSyncObserver.swift */; };
 		3416A5982DC0E4A200827BCB /* IncrementalSyncObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3416A5972DC0E4A200827BCB /* IncrementalSyncObserverTests.swift */; };
 		342189D32DA7C278000FA6A1 /* UpdateEventMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */; };
+		342DDD882E66B41300A94CCF /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 342DDD872E66B41300A94CCF /* WireNetwork */; };
 		34B448382E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B448372E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift */; };
 		34BBF76A2E57220C00491987 /* NewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BBF7692E57220C00491987 /* NewEnvironment.swift */; };
 		34BD6E002DB26C4100DFA11A /* UpdateEventMigratorDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD6DFF2DB26C4100DFA11A /* UpdateEventMigratorDAO.swift */; };
@@ -1248,6 +1249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				342DDD882E66B41300A94CCF /* WireNetwork in Frameworks */,
 				06E47CF12E16E3AE0096FEEA /* WireSyncEngine.framework in Frameworks */,
 				59C8F6522DF1BE17005AAC9D /* WireFoundation in Frameworks */,
 				06E47CF02E16E3A70096FEEA /* WireLogging in Frameworks */,
@@ -2534,6 +2536,7 @@
 			packageProductDependencies = (
 				59C8F6512DF1BE17005AAC9D /* WireFoundation */,
 				06E47CEF2E16E3A70096FEEA /* WireLogging */,
+				342DDD872E66B41300A94CCF /* WireNetwork */,
 			);
 			productName = WireSyncEngineSupport;
 			productReference = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */;
@@ -3732,6 +3735,10 @@
 		06E47CEF2E16E3A70096FEEA /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		342DDD872E66B41300A94CCF /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
 		};
 		34DC44B02E01C1FC004D5DD5 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;

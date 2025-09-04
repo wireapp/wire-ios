@@ -52,16 +52,36 @@ package final class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
-    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    enum State: Equatable {
+        case loading
+        case received(items: [FilesViewItem])
+        case noData
+        case pending // cells are not ready yet
 
-    package init(fetchNodesUseCase: WireCellsFetchNodesUseCase) {
-        self.fetchNodesUseCase = fetchNodesUseCase
+        var items: [FilesViewItem] {
+            switch self {
+            case let .received(items):
+                items
+            default:
+                []
+            }
+        }
     }
 
-    @Published private(set) var items: [FilesViewItem] = []
+    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+
+    package init(
+        fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        isCellsStatePending: Bool
+    ) {
+        self.fetchNodesUseCase = fetchNodesUseCase
+        self.state = isCellsStatePending ? .pending : .loading
+    }
+
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var alert: AlertModel?
+    @Published var state: State
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -77,11 +97,15 @@ package final class FilesViewModel: ObservableObject {
     ///
     /// This method cancels any ongoing load operation and starts a new one.
     func reload() async {
+        guard state != .pending else {
+            return
+        }
+
         cancelLoad()
-        items = []
+        state = .loading
         nextPageToken = nil
 
-        await loadMore()
+        await loadMore(initialFetch: true)
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -92,15 +116,15 @@ package final class FilesViewModel: ObservableObject {
     ///
     /// - Parameter index: The index of the item which requested load more.
     func loadMoreIfNeeded(index: Int) async {
-        let remaining = items.count - index - 1
+        let remaining = state.items.count - index - 1
         if remaining < Constants.loadMoreThreshold, nextPageToken != nil {
-            await loadMore()
+            await loadMore(initialFetch: false)
         }
     }
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(item: items[index])
+        FilesItemViewModel(item: state.items[index])
     }
 
     // MARK: - Private
@@ -110,7 +134,7 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore() async {
+    private func loadMore(initialFetch: Bool) async {
         guard loadMoreTask == nil else { return }
 
         let task = Task { try await fetchItems(token: nextPageToken) }
@@ -118,12 +142,16 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = task
         do {
             let (newItems, nextPage) = try await task.value
+            var items = state.items
             items.append(contentsOf: newItems)
+            state = initialFetch && items.isEmpty ? .noData : .received(items: items)
             nextPageToken = nextPage
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
+            state = .noData
         } catch {
             alert = .unknownError
+            state = .noData
         }
         loadMoreTask = nil
     }

@@ -55,11 +55,11 @@ package final class RootViewModel: ObservableObject, Router {
         factory: any Factory,
         bridge: WireAuthenticationBridge,
         environment: BackendEnvironment2,
+        authenticationType: AuthenticationType,
         isMultibackendEnabled: Bool,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
-        self.modalDestination = .authFlow(environment: environment)
         self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
@@ -71,6 +71,15 @@ package final class RootViewModel: ObservableObject, Router {
             default:
                 break
             }
+        }
+
+        switch authenticationType {
+        case .new:
+            self.modalDestination = .authFlow(environment: environment)
+        case let .reauthEmail(email):
+            self.modalDestination = .reauthFlow(email: email)
+        case .reauthSSO:
+            self.modalDestination = .reauthSSO
         }
     }
 
@@ -110,7 +119,11 @@ package final class RootViewModel: ObservableObject, Router {
     }
 
     func switchAccounts() {
-        navigate(to: RootDestination.switchAccounts)
+        modalDestination = .accountSwitcher
+    }
+
+    func logout(deleteData: Bool) {
+        bridge.sendOutboundEvent(.logoutRequested(deleteData: deleteData))
     }
 
     // MARK: - Private

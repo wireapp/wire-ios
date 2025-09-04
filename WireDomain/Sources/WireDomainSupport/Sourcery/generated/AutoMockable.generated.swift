@@ -941,24 +941,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - localParticipantsExcludingSelfAsMLSUsers
-
-    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
-
-    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
-        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
-
-        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
-            return await mock(conversation)
-        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
-        }
-    }
-
     // MARK: - isGroupConversation
 
     public var isGroupConversation_Invocations: [ZMConversation] = []
@@ -3629,6 +3611,38 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfUser`")
+        }
+    }
+
+}
+
+public class MockSyncCellsStateUseCaseProtocol: SyncCellsStateUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationObjectID_Invocations: [NSManagedObjectID] = []
+    public var invokeConversationObjectID_MockError: Error?
+    public var invokeConversationObjectID_MockMethod: ((NSManagedObjectID) async throws -> CellsState)?
+    public var invokeConversationObjectID_MockValue: CellsState?
+
+    public func invoke(conversationObjectID: NSManagedObjectID) async throws -> CellsState {
+        invokeConversationObjectID_Invocations.append(conversationObjectID)
+
+        if let error = invokeConversationObjectID_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationObjectID_MockMethod {
+            return try await mock(conversationObjectID)
+        } else if let mock = invokeConversationObjectID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeConversationObjectID`")
         }
     }
 
