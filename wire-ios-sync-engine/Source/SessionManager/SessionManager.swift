@@ -654,6 +654,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    // TODO: disable if multibackend is enabled.
     private func configureBlacklistDownload() {
         if configuration.blacklistDownloadInterval > 0 {
             blacklistVerificator?.tearDown()
@@ -2007,4 +2008,14 @@ public extension SessionManager {
     static func stopAVSLogging() {
         avsLogObserver = nil
     }
+}
+
+// MARK: - User session delegate
+
+extension SessionManager: UserSessionDelegate {
+
+    func userSessionDidDiscoverBuildIsBlacklisted() {
+        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+    }
+
 }

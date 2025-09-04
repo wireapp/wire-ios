@@ -198,6 +198,7 @@ public final class SharingSession {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -430,10 +431,12 @@ public final class SharingSession {
         )
 
         let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: "", // TODO: get current build number of main app.
             selfUserID: accountIdentifier,
             cookieStorage: cookieStorage,
             restNetworkService: networkServices.rest,
             websocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetaData: metadata,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,

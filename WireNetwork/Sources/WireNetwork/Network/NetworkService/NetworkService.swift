@@ -59,10 +59,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         }
 
         var request = request
-        request.url = URL(
-            string: url.absoluteString,
-            relativeTo: baseURL
-        )
+        request.url = baseURL.appending(path: url.relativePath)
 
         let (data, response) = try await urlSession.data(for: request)
 

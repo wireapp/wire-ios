@@ -122,6 +122,7 @@ public struct SharingSessionLoader {
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack
         )
@@ -231,6 +232,7 @@ public struct SharingSessionLoader {
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
@@ -337,10 +339,12 @@ public struct SharingSessionLoader {
             keychain: Keychain()
         )
         let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: "", // TODO: build number for main app
             selfUserID: accountID,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,

@@ -28,10 +28,11 @@ import WireNetwork
 import WireRequestStrategy
 import WireSystem
 
-typealias UserSessionDelegate = UserSessionAppLockDelegate
-    & UserSessionEncryptionAtRestDelegate
-    & UserSessionLogoutDelegate
-    & UserSessionSelfUserClientDelegate
+protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSessionEncryptionAtRestDelegate, UserSessionLogoutDelegate, UserSessionSelfUserClientDelegate {
+
+    func userSessionDidDiscoverBuildIsBlacklisted()
+
+}
 
 enum ZMUserSessionError: Error {
     case selfClientNotReady
@@ -44,6 +45,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
+    public internal(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -401,7 +403,7 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
-    private let userSessionComponent: UserSessionComponent
+    let userSessionComponent: UserSessionComponent
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
@@ -410,6 +412,7 @@ public final class ZMUserSession: NSObject {
         userId: UUID,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
@@ -469,10 +472,12 @@ public final class ZMUserSession: NSObject {
         self.dependencies = dependencies
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
+            currentBuildNumber: currentBuildNumber,
             selfUserID: userId,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
@@ -807,6 +812,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
+        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {
