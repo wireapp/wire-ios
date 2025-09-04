@@ -23,7 +23,8 @@ enum CallSnapshotTestFixture {
     static func degradedCallSnapshot(
         conversationId: AVSIdentifier,
         user: ZMUser,
-        callCenter: WireCallCenterV3
+        callCenter: WireCallCenterV3,
+        messageProtocol: MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callMember = AVSCallMember(client: AVSClient(
@@ -38,6 +39,7 @@ enum CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantSnapshot,
             callState: .established,
             callStarter: AVSIdentifier.stub,
@@ -59,7 +61,8 @@ enum CallSnapshotTestFixture {
         callCenter: WireCallCenterV3,
         clients: [AVSClient],
         state: CallState = .established,
-        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = []
+        activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = [],
+        messageProtocol: MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callParticipantsSnapshot = CallParticipantsSnapshot(
@@ -69,6 +72,7 @@ enum CallSnapshotTestFixture {
         )
 
         return CallSnapshot(
+            messageProtocol: messageProtocol,
             callParticipants: callParticipantsSnapshot,
             callState: state,
             callStarter: AVSIdentifier.stub,
