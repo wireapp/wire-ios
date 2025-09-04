@@ -2119,7 +2119,11 @@ extension WireCallCenterV3Tests {
         return AVSActiveSpeakersChange(activeSpeakers: activeSpeakers)
     }
 
-    private func callSnapshot(conversationId: AVSIdentifier, clients: [AVSClient], messageProtocol: MessageProtocol = .mls) -> [AVSIdentifier: CallSnapshot] {
+    private func callSnapshot(
+        conversationId: AVSIdentifier,
+        clients: [AVSClient],
+        messageProtocol: MessageProtocol = .mls
+    ) -> [AVSIdentifier: CallSnapshot] {
         [
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
