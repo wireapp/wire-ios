@@ -255,6 +255,7 @@
 		CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */; };
 		CB5A461D2D940BB700D469F1 /* Payload+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */; };
 		CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEA58F192B71179D006DEE32 /* WireRequestStrategySupport.framework */; };
+		CBBCB3852E69E19300D79B11 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = CBBCB3842E69E19300D79B11 /* WireData */; };
 		CBF2BD5F2C5BD468002BCBDD /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */; };
 		D33B57B12A56BDCA0078A4F9 /* FederationTerminationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57B02A56BDCA0078A4F9 /* FederationTerminationManager.swift */; };
 		D3DA067C2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA067B2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift */; };
@@ -972,6 +973,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D04332C89C6CF00B64D71 /* WireFoundation in Frameworks */,
+				CBBCB3852E69E19300D79B11 /* WireData in Frameworks */,
 				59537D852CFF9D1600920B59 /* WireLogging in Frameworks */,
 				591B6E3B2C8B09AA009F8A7B /* WireDataModel.framework in Frameworks */,
 			);
@@ -2197,6 +2199,7 @@
 			packageProductDependencies = (
 				598D04322C89C6CF00B64D71 /* WireFoundation */,
 				59537D842CFF9D1600920B59 /* WireLogging */,
+				CBBCB3842E69E19300D79B11 /* WireData */,
 			);
 			productName = WireRequestStrategy;
 			productReference = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */;
@@ -3218,6 +3221,10 @@
 		59D398D12D5525DB001C9C5F /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
+		};
+		CBBCB3842E69E19300D79B11 /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

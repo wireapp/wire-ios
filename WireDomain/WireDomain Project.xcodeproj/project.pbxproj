@@ -26,6 +26,7 @@
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */ = {isa = PBXBuildFile; productRef = CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
+		CBBCB3872E69E5CF00D79B11 /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = CBBCB3862E69E5CF00D79B11 /* WireData */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +98,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
+				CBBCB3872E69E5CF00D79B11 /* WireData in Frameworks */,
 				34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */,
 				CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */,
 				C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */,
@@ -227,6 +229,7 @@
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 				CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */,
 				34DC44B22E01C206004D5DD5 /* WireNetwork */,
+				CBBCB3862E69E5CF00D79B11 /* WireData */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -829,6 +832,10 @@
 		CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireUpdateEventCoding;
+		};
+		CBBCB3862E69E5CF00D79B11 /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
