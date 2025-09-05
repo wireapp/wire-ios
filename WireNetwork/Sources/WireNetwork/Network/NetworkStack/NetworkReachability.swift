@@ -32,7 +32,6 @@ public final class NetworkReachability: Sendable {
 
     public init() {
         monitor.pathUpdateHandler = { [weak self] path in
-            print("[DEBUG] reachability changed: \(path.status)")
             self?.isReachableSubject.send(path.status == .satisfied)
         }
         monitor.start(queue: queue)
