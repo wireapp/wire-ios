@@ -228,7 +228,7 @@ final class WireCellsLocalAssetRepositoryTests {
         )
 
         // then old files are deleted
-        #expect(fileCache.deleteFileForKey_Invocations == ["\(nodeID.uuidString)-def"])
+        #expect(fileCache.deleteFileForKey_Invocations == ["\(nodeID.uuidString)-def.png"])
 
         // then one asset change is observed
         try #require(observedAssets.count == 1)
@@ -334,7 +334,7 @@ final class WireCellsLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc")
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
                 )
             ]
         )

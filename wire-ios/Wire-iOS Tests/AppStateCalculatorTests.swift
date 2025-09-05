@@ -118,10 +118,10 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
@@ -132,10 +132,10 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerDidFailToLogin(error: error)
+        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
     }
 
@@ -145,10 +145,10 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerDidFailToLogin(error: error)
+        sut.sessionManagerWillLogout(environment: nil, error: error, userSessionCanBeTornDown: nil)
 
         // THEN
-        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
+        XCTAssertEqual(sut.appState, .unauthenticated(environment: nil, error: error))
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {
@@ -207,7 +207,7 @@ final class AppStateCalculatorTests: XCTestCase {
         if let userSession {
             XCTAssertEqual(sut.appState, .authenticated(userSession))
         } else {
-            guard case let .unauthenticated(error: error) = sut.appState else {
+            guard case let .unauthenticated(_, error: error) = sut.appState else {
                 return XCTFail("Error - unauthenticated")
             }
 

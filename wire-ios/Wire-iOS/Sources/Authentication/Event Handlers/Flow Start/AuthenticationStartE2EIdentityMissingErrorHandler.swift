@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 /// Handles client registration errors related to the lack of a e2e identity enrollment on launch
 
@@ -26,9 +27,9 @@ final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEve
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: (NSError?, Int)
+        context: (BackendEnvironment2?, NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        let (error, _) = context
+        let (_, error, _) = context
 
         // Only handle errors on start
         guard case .start = currentStep else {

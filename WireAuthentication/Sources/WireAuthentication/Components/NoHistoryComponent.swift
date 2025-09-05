@@ -25,6 +25,7 @@ import WireReusableUIComponents
 
 protocol NoHistoryComponentDependency: Dependency {
 
+    var didReauthenticate: Bool { get }
     var howToChangeEmailURL: URL { get }
     var howToDeleteAccountURL: URL { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
@@ -54,6 +55,7 @@ extension NoHistoryComponent: NoHistoryFactory {
 
     @MainActor var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
+            didReauthenticate: dependency.didReauthenticate,
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,

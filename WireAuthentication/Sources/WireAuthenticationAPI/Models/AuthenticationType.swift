@@ -16,6 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum RootDestination: Hashable {
-    case switchAccounts
+import Foundation
+
+public enum AuthenticationType {
+
+    /// Authenticate for the first time.
+
+    case new
+
+    /// Reauthenticate an account with email.
+
+    case reauthEmail(String)
+
+    /// Reauthenticate an account with SSO.
+
+    case reauthSSO
+
 }

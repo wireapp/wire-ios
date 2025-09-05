@@ -226,10 +226,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case let .unauthenticated(error: error):
+        case let .unauthenticated(environment, error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
-            showUnauthenticatedFlow(error: error, completion: completion)
+            showUnauthenticatedFlow(
+                environment: environment,
+                error: error,
+                completion: completion
+            )
         case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
@@ -322,12 +326,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     }
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
+        let blockerViewController = BlockerViewController(
+            context: reason.blockerViewControllerContext,
+            sessionManager: sessionManager
+        )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(context: .jailbroken)
+        let blockerViewController = BlockerViewController(
+            context: .jailbroken,
+            sessionManager: sessionManager
+        )
         replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
@@ -357,7 +367,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         replaceRootViewController(by: launchViewController, completion: completion)
     }
 
-    private func showUnauthenticatedFlow(error: NSError?, completion: @escaping () -> Void) {
+    private func showUnauthenticatedFlow(
+        environment: BackendEnvironment2?,
+        error: NSError?,
+        completion: @escaping () -> Void
+    ) {
         // Only execute handle events if there is no current flow
         guard
             self.authenticationCoordinator == nil ||
@@ -393,7 +407,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         authenticationCoordinator.delegate = appStateCalculator
         authenticationCoordinator.startAuthentication(
-            with: error,
+            environment: environment,
+            error: error,
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
@@ -486,7 +501,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case let .unauthenticated(error: error):
+        case let .unauthenticated(_, error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:

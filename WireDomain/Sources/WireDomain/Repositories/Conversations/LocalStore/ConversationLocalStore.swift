@@ -1067,6 +1067,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.privateChannelPermission = conversation
                 .addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
+            localConversation.cellsState = conversation.cellsState.map { cellsState in
+                switch cellsState {
+                case .ready:
+                    .ready
+                case .pending:
+                    .pending
+                case .disabled:
+                    .disabled
+                }
+            } ?? .disabled
+
             commonUpdate(
                 from: conversation,
                 for: localConversation,

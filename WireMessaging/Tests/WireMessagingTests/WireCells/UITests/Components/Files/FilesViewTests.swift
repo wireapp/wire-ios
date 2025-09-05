@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -28,14 +31,24 @@ final class FilesViewTests: XCTestCase {
 
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
+    private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
+    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
 
     override func setUp() {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+        nodesRepository = MockWireCellsNodesRepositoryProtocol()
+        nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
+        fetchNodesUseCase = WireCellsFetchNodesUseCase(
+            configuration: .conversationFileView(root: .id(.mockID1)),
+            repository: nodesRepository
+        )
     }
 
     override func tearDown() {
         snapshotHelper = nil
+        nodesRepository = nil
+        fetchNodesUseCase = nil
     }
 
     @MainActor
@@ -104,15 +117,138 @@ final class FilesViewTests: XCTestCase {
                 )
         }
     }
+
+    @MainActor
+    func testFilesViewItemView_whenDownloading() {
+        let item = FilesViewItem(
+            id: UUID(),
+            filename: "image.jpg",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image
+        )
+        let asset = WireCellsLocalAsset(
+            nodeID: item.id,
+            eTag: "eTag",
+            path: "some/path",
+            contentType: "some/content/type",
+            size: nil,
+            downloadState: .downloading(progress: 0.5)
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
+            .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesViewItemView_whenDownloadFailed() {
+        let item = FilesViewItem(
+            id: UUID(),
+            filename: "image.jpg",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image
+        )
+        let asset = WireCellsLocalAsset(
+            nodeID: item.id,
+            eTag: "eTag",
+            path: "some/path",
+            contentType: "some/content/type",
+            size: nil,
+            downloadState: .failed(error: URLError(.notConnectedToInternet))
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
+            .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesView_LoadingState() async {
+        let view = makeFilesView(state: .loading)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesView_NoDataState() async {
+        let view = makeFilesView(state: .noData)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilesView_PendingState() async {
+        let view = makeFilesView(state: .pending)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    private func makeFilesView(
+        state: FilesViewModel.State
+    ) -> some View {
+        let filesViewModel = FilesViewModel(
+            fetchNodesUseCase: fetchNodesUseCase,
+            isCellsStatePending: false,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            fileCache: MockFileCache()
+        )
+
+        filesViewModel.state = state
+
+        return FilesView(viewModel: filesViewModel)
+            .frame(width: 375, height: 667)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+
 }
 
 // MARK: - Private Helpers
 
 private extension FilesItemViewModel {
 
-    static func make(item: FilesViewItem) -> FilesItemViewModel {
-        FilesItemViewModel(
+    static func make(
+        item: FilesViewItem,
+        asset: WireCellsLocalAsset? = nil
+    ) -> FilesItemViewModel {
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        localAssetRepository.observeAssetNodeID_MockValue = CurrentValueSubject<WireCellsLocalAsset?, Never>(asset)
+            .eraseToAnyPublisher()
+
+        return FilesItemViewModel(
             item: item,
+            localAssetRepository: localAssetRepository,
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

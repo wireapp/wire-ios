@@ -37,7 +37,27 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let logger = WireLogger.notifications
     private var onGoingtask: Task<Void, Never>?
 
-    public init() {
+    private let currentAppVersion: String
+    private let appContainerURL: URL
+    private let sharedUserDefaults: UserDefaults
+    private let cookieEncryptionKey: Data
+    private let minTLSVersion: String?
+    private let preferredAPIVersion: UInt?
+
+    public init(
+        currentAppVersion: String,
+        appContainerURL: URL,
+        sharedUserDefaults: UserDefaults,
+        cookieEncryptionKey: Data,
+        minTLSVersion: String?,
+        preferredAPIVersion: UInt?
+    ) {
+        self.currentAppVersion = currentAppVersion
+        self.appContainerURL = appContainerURL
+        self.sharedUserDefaults = sharedUserDefaults
+        self.cookieEncryptionKey = cookieEncryptionKey
+        self.minTLSVersion = minTLSVersion
+        self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE)
     }
@@ -70,16 +90,38 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 return notificationContentHandler(.emptyNotification)
             }
 
-            do {
-                let rootComponent = try NotificationServiceExtensionFlow(
-                    contentHandler: notificationContentHandler
-                )
+            if DeveloperFlag.multibackend.isOn {
+                do {
+                    let nseFlow = try NSEFlow(
+                        currentAppVersion: currentAppVersion,
+                        appContainerURL: appContainerURL,
+                        sharedUserDefaults: sharedUserDefaults,
+                        cookieEncryptionKey: cookieEncryptionKey,
+                        minTLSVersion: minTLSVersion,
+                        preferredAPIVersion: preferredAPIVersion
+                    )
 
-                try await rootComponent.start(request: request)
+                    try await nseFlow.start(
+                        request: request,
+                        contentHandler: notificationContentHandler
+                    )
+                } catch {
+                    // TODO: [WPB-19762] show errors
+                    logError(error)
+                    notificationContentHandler(.emptyNotification)
+                }
+            } else {
+                do {
+                    let rootComponent = try NotificationServiceExtensionFlow(
+                        contentHandler: notificationContentHandler
+                    )
 
-            } catch {
-                logError(error)
-                notificationContentHandler(.emptyNotification)
+                    try await rootComponent.start(request: request)
+
+                } catch {
+                    logError(error)
+                    notificationContentHandler(.emptyNotification)
+                }
             }
         }
     }
