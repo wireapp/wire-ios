@@ -379,6 +379,12 @@ extension ZMUserSession: UserSession {
             isFederationUsageAllowed: isFederationUsageAllowed
         )
     }
+
+    public var resolvedBackendMetadata: LegacyResovedBackendMetadata {
+        // TODO: check multibackend flag and inject
+        LegacyResovedBackendMetadata()
+    }
+
 }
 
 extension UInt64 {

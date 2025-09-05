@@ -301,4 +301,29 @@ public protocol UserSession: AnyObject {
 
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: LegacyResovedBackendMetadata { get }
+
+}
+
+public class LegacyResovedBackendMetadata {
+
+    public var apiVersion: WireTransport.APIVersion? {
+        BackendInfo.apiVersion
+    }
+
+    public var domain: String? {
+        BackendInfo.domain
+    }
+
+    public var isFederationEnabled: Bool {
+        BackendInfo.isFederationEnabled
+    }
+
+    public var isMLSEnabled: Bool {
+        BackendInfo.isMLSEnabled
+    }
+
 }
