@@ -75,14 +75,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private let useInvertedIndices: Bool
 
     /// The object that controls actions for the cell.
-    var actionController: ConversationMessageActionController? {
-        didSet { updateDelegates() }
-    }
+    var actionController: ConversationMessageActionController?
 
     /// The message that is being presented.
-    var message: ConversationMessage {
+    private(set) var message: ConversationMessage {
         didSet {
-            updateDelegates()
             changeObservers.removeAll()
             startObservingChanges(for: message)
         }
@@ -91,9 +88,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.
-    weak var cellDelegate: ConversationMessageCellDelegate? {
-        didSet { updateDelegates() }
-    }
+    weak var cellDelegate: ConversationMessageCellDelegate?
 
     /// The object that receives informations from the section.
     weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
@@ -500,7 +495,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.cellDescriptions = cellDescriptions
     }
 
-    private func updateDelegates() {
+    func updateMessage(_ message: ConversationMessage) {
+        self.message = message
         actionController?.message = message
         cellDescriptions.forEach { cellDescription in
             cellDescription.message = message
@@ -512,7 +508,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     func recreateCellDescriptions(in context: ConversationMessageContext) {
         self.context = context
         createCellDescriptions(in: context)
-        updateDelegates()
+        updateMessage(message)
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
