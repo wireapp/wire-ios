@@ -1067,7 +1067,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
                 return nil
             } catch {
-                // TODO: [WPB-19625] handle
+                WireLogger.sessionManager.critical("failed to load user session: \(String(describing: error))")
                 return nil
             }
         } else {
