@@ -18,6 +18,9 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -26,6 +29,7 @@ struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
+    @State private var viewingURL: URL?
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -52,15 +56,14 @@ struct FilesViewItemView: View {
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
-                .padding(.vertical, 8)
 
                 Spacer()
 
                 Menu {
-                    if !viewModel.isDownloaded {
+                    if !viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
-                        }
+                        }.disabled(viewModel.isDownloadOptionDisabled)
                     }
 
                     Button(action: rename) {
@@ -73,15 +76,24 @@ struct FilesViewItemView: View {
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .frame(minHeight: 24)
+                        .padding(.horizontal, 8)
                 }
-                .padding(.all, 8)
+                .menuOrder(.fixed)
             }
+            .padding(.top, 8)
+            .padding(.bottom, 5) // Less padding to accommodate progress bar
+
+            ProgressView(value: viewModel.progress, total: 1)
+                .opacity(viewModel.progress == nil ? 0 : 1)
+                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+
             Divider()
         }
     }
 
     private func download() {
-        // FIXME: [WPB-19436] Implement
+        Task { await viewModel.download() }
     }
 
     private func rename() {
@@ -92,4 +104,13 @@ struct FilesViewItemView: View {
         // FIXME: [WPB-19392] Implement
     }
 
+    private var progressColor: Color {
+        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+    }
+
+}
+
+#Preview {
+    FilesViewItemView(viewModel: .preview())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
