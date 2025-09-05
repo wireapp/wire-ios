@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
+import QuickLook
 import SwiftUI
 import WireDesign
 import WireFoundation
 import WireMessagingDomain
-import WireMessagingDomainSupport
 import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -51,6 +52,7 @@ package struct FilesView: View {
                     InfoView(info: .preparingFiles)
                 }
             }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
@@ -80,9 +82,10 @@ private extension FilesView {
     }
 
     @ViewBuilder var itemsSection: some View {
-        ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, _ in
+        ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
+                .onTapGesture { viewModel.viewAsset(item: item) }
         }
     }
 }
@@ -156,19 +159,6 @@ private extension FilesView {
     }
 }
 
-#Preview {
-    FilesView(
-        viewModel: FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root")),
-                repository: makeNodesRepository()
-            ),
-            isCellsStatePending: false
-        )
-    )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-}
-
 private struct LoadMoreView: View {
     let isLoading: Bool
     let onLoadMore: () -> Void
@@ -234,26 +224,7 @@ private struct InfoView: View {
     }
 }
 
-private func makeNodesRepository() -> MockWireCellsNodesRepositoryProtocol {
-    let repository = MockWireCellsNodesRepositoryProtocol()
-    repository.getNodes_MockMethod = { request in
-        try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
-
-        if request.offset >= 120 {
-            throw URLError(.notConnectedToInternet)
-        }
-
-        let nodes = (request.offset ..< request.offset + 30).map { index in
-            WireCellsNode(
-                uuid: UUID(),
-                path: "root/foo-\(index).jpg",
-                modified: Date(),
-                mimeType: "image/jpeg",
-                ownerUserName: "Person \(index)",
-            )
-        }
-        let nextOffset = request.offset + 30
-        return (nodes, nextOffset)
-    }
-    return repository
+#Preview {
+    FilesView(viewModel: .preview())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

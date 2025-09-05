@@ -38,7 +38,9 @@ final class FilesViewModelTests {
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
             ),
-            isCellsStatePending: false
+            isCellsStatePending: false,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            fileCache: MockFileCache()
         )
 
         sut.$state.dropFirst().sink { [weak self] state in
@@ -288,7 +290,9 @@ final class FilesViewModelTests {
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
             ),
-            isCellsStatePending: state == .pending
+            isCellsStatePending: state == .pending,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            fileCache: MockFileCache()
         )
 
         nodesRepository.getNodes_MockValue = switch state {

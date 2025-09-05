@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
 package import WireMessagingDomain
+import WireMessagingDomainSupport
 
 /// An item in the `FilesView`.
 struct FilesViewItem: Identifiable, Equatable {
@@ -69,18 +71,25 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let fileCache: any FileCache
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
-        isCellsStatePending: Bool
+        isCellsStatePending: Bool,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.localAssetRepository = localAssetRepository
+        self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
     }
 
     @Published private var nextPageToken: WireCellsPageToken?
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var alert: AlertModel?
+    @Published var viewingURL: URL?
     @Published var state: State
 
     /// Whether there are more items to load.
@@ -124,7 +133,21 @@ package final class FilesViewModel: ObservableObject {
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(item: state.items[index])
+        FilesItemViewModel(item: state.items[index], localAssetRepository: localAssetRepository)
+    }
+
+    // TODO: [WPB-19395] Implement correctly. This current implementation is just to confirm that downloading works.
+    func viewAsset(item: FilesViewItem) {
+        guard let asset = try? localAssetRepository.asset(nodeID: item.id) else { return }
+
+        switch asset.downloadState {
+        case let .downloaded(cacheKey):
+            if let url = fileCache.fileURL(forKey: cacheKey) {
+                viewingURL = url
+            }
+        default:
+            break
+        }
     }
 
     // MARK: - Private
@@ -177,60 +200,6 @@ package final class FilesViewModel: ObservableObject {
 
         try Task.checkCancellation()
         return (items, nextPage)
-    }
-
-}
-
-@MainActor
-/// A view model for a single item in the `FilesView`.
-///
-/// A view model is needed as the item is _live_ - it can be updated remotely, it's file downloaded locally, and so on.
-/// A locally downloaded file may also become out of date and need to be re-downloaded. Using a view model allows us to
-/// have granular subscriptions to events that are cancelled when the view is no longer in view.
-final class FilesItemViewModel: ObservableObject {
-
-    let fileName: String
-    let subtitle: String?
-    let icon: FileIcon
-
-    init(
-        item: FilesViewItem,
-        locale: Locale = .autoupdatingCurrent,
-        calendar: Calendar = .autoupdatingCurrent,
-        timeZone: TimeZone = .autoupdatingCurrent
-    ) {
-        self.fileName = item.filename
-        self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
-        self.icon = item.icon
-    }
-
-    var isDownloaded: Bool {
-        // FIXME: [WPB-19436] Implement
-        false
-    }
-
-    private static func subtitle(
-        from item: FilesViewItem,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
-    ) -> String? {
-        let modifiedAt = item.modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
-        return if let modifiedAt, let ownedBy = item.ownedBy {
-            L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
-        } else {
-            [modifiedAt, item.ownedBy].compactMap(\.self).first
-        }
     }
 
 }
