@@ -404,6 +404,9 @@ public final class ZMUserSession: NSObject {
     private let userSessionComponent: UserSessionComponent
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
+    private let networkReachability = NetworkReachability()
+    private var isNetworkReachableCancellable: AnyCancellable?
+
     // MARK: - Initialize
 
     init(
@@ -489,6 +492,11 @@ public final class ZMUserSession: NSObject {
 
         super.init()
 
+        if DeveloperFlag.multibackend.isOn {
+            isNetworkReachableCancellable = networkReachability.isReachablePublisher.sink { [weak self] isReachable in
+                isReachable ? self?.didReceiveData() : self?.didGoOffline()
+            }
+        }
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -698,7 +706,10 @@ public final class ZMUserSession: NSObject {
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
-        transportSession.setNetworkStateDelegate(self)
+        // When multibackend is on. we use another reachability.
+        if !DeveloperFlag.multibackend.isOn {
+            transportSession.setNetworkStateDelegate(self)
+        }
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
         }
