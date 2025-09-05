@@ -493,9 +493,10 @@ public final class ZMUserSession: NSObject {
         super.init()
 
         if DeveloperFlag.multibackend.isOn {
-            isNetworkReachableCancellable = networkReachability.isReachablePublisher.sink { [weak self] isReachable in
-                isReachable ? self?.didReceiveData() : self?.didGoOffline()
-            }
+            self.isNetworkReachableCancellable = networkReachability.isReachablePublisher
+                .sink { [weak self] isReachable in
+                    isReachable ? self?.didReceiveData() : self?.didGoOffline()
+                }
         }
     }
 
