@@ -271,7 +271,17 @@ final class UserSessionLoader {
         }
 
         // Get new metadata.
-        let newMetadata = try await networkStack.resolvedBackendMetadata()
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            // To allow offline browsing fallback to previous metadata if possible.
+            if let prevMetadata {
+                newMetadata = prevMetadata
+            } else {
+                throw Failure.noResolvedBackendMetadataAvailable
+            }
+        }
 
         if let prevMetadata {
             if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
@@ -620,6 +630,7 @@ final class UserSessionLoader {
         case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
+        case noResolvedBackendMetadataAvailable
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
