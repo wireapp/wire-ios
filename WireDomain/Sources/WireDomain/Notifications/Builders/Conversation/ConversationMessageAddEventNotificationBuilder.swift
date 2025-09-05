@@ -208,7 +208,6 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
 extension ConversationMessageAddEventNotificationBuilder {
     struct Validator {
         let conversationLocalStore: any ConversationLocalStoreProtocol
-        let userLocalStore: any UserLocalStoreProtocol
 
         func validate(
             message: GenericMessage,
@@ -225,12 +224,8 @@ extension ConversationMessageAddEventNotificationBuilder {
                 senderID: senderID.id,
                 conversation: conversation
             )
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
 
-            return !isMessageSilenced && !isSenderSelfUser
+            return !isMessageSilenced
         }
     }
 

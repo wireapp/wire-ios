@@ -223,9 +223,6 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
-        let selfUser = await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-        }
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
         conversationLocalStore.lastReadServerTimestamp_MockValue = .now
@@ -244,7 +241,6 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
         conversationLocalStore.decreaseUnreadCountFor_MockMethod = { _ in }
-        userLocalStore.isSelfUserIdDomain_MockValue = (user: selfUser, isSelfUser: false)
     }
 
     private enum Scaffolding {
