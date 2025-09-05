@@ -1230,9 +1230,11 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(false)
         }
-
+        
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
+            try Task.checkCancellation()
+            
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
@@ -1254,6 +1256,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
             if !isRecovering, mlsFeature.isEnabled {
                 Task.detached { [mlsService] in
+                    try Task.checkCancellation()
                     // we don't need to wait for this, as it can take a while to finish
                     await mlsService.commitPendingProposalsIfNeeded()
                 }

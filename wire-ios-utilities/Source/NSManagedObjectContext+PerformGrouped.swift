@@ -97,10 +97,10 @@ public struct WaitingGroupTask {
         self.context = context
     }
 
-    public func callAsFunction(_ block: @escaping () async -> Void) {
+    public func callAsFunction(_ block: @escaping () async throws -> Void) {
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
-            await block()
+            try await block()
             context.leaveAllGroups(groups)
         }
     }
