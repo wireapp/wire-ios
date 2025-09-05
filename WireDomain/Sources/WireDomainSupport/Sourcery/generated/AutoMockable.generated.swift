@@ -3442,37 +3442,24 @@ public class MockPushChannelStateProtocol: PushChannelStateProtocol {
     public init() {}
 
 
-    // MARK: - isOpen
-
-    public var isOpen_Invocations: [Void] = []
-    public var isOpen_MockMethod: (() -> Bool)?
-    public var isOpen_MockValue: Bool?
-
-    public func isOpen() -> Bool {
-        isOpen_Invocations.append(())
-
-        if let mock = isOpen_MockMethod {
-            return mock()
-        } else if let mock = isOpen_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isOpen`")
-        }
-    }
-
     // MARK: - markAsOpen
 
     public var markAsOpen_Invocations: [Void] = []
-    public var markAsOpen_MockMethod: (() -> Void)?
+    public var markAsOpen_MockError: Error?
+    public var markAsOpen_MockMethod: (() throws -> Void)?
 
-    public func markAsOpen() {
+    public func markAsOpen() throws {
         markAsOpen_Invocations.append(())
+
+        if let error = markAsOpen_MockError {
+            throw error
+        }
 
         guard let mock = markAsOpen_MockMethod else {
             fatalError("no mock for `markAsOpen`")
         }
 
-        mock()
+        try mock()
     }
 
     // MARK: - markAsClosed

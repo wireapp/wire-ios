@@ -57,6 +57,13 @@ public extension SafeFileContext {
             fatal("Failed to unlock \(fileURL)")
         }
     }
+    
+    @discardableResult
+    public func tryAcquireLock() -> Bool {
+        if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 { return true }
+        return false
+    }
+
 
     /// Check if the file is already locked by another process
     func isLocked() -> Bool {

@@ -19,12 +19,16 @@ import WireDataModel
 
 /// sourcery: AutoMockable
 public protocol PushChannelStateProtocol {
-    func isOpen() -> Bool
-    func markAsOpen()
+
+    func markAsOpen() throws
     func markAsClosed()
 }
 
 struct PushChannelState: PushChannelStateProtocol {
+    enum Failure: Error {
+        case alreadyLocked
+    }
+    
     let fileContext: SafeFileContext
     init(sharedContainerURL: URL, clientID: String) {
         let url = sharedContainerURL.appendingPathComponent(clientID)
@@ -37,12 +41,10 @@ struct PushChannelState: PushChannelStateProtocol {
         self.fileContext = SafeFileContext(fileURL: url)
     }
 
-    func isOpen() -> Bool {
-        fileContext.isLocked()
-    }
-
-    func markAsOpen() {
-        fileContext.acquireDirectoryLock()
+    func markAsOpen() throws {
+        if !fileContext.tryAcquireLock() {
+            throw Failure.alreadyLocked
+        }
     }
 
     func markAsClosed() {

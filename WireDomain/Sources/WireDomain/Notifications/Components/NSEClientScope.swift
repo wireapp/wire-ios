@@ -84,11 +84,12 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             
             // make sure no pushChannel is open
             let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
-            if pushChannelState.isOpen() {
+            do {
+                try pushChannelState.markAsOpen()
+            } catch {
                 throw Failure.pushChannelAlreadyOpened
             }
-            pushChannelState.markAsOpen()
-
+            
             do {
                 try await useCase.invoke()
             } catch {

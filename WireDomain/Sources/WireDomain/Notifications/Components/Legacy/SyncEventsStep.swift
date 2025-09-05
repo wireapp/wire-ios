@@ -67,7 +67,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         super.init(parent: parent)
     }
 
-    private var currentTask: Task<Void, Never>?
+    private var currentTask: Task<Void, any Error>?
     
     func pullEvents() async throws {
         self.pushChannelMonitor.startMonitoring { [weak self] in
@@ -88,15 +88,15 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 
         // make sure no pushChannel is open
         let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: selfClientID)
-        if pushChannelState.isOpen() {
+        do {
+            try pushChannelState.markAsOpen()
+        } catch {
             throw Failure.pushChannelAlreadyOpened
         }
-        WireLogger.sync.debug("😀 opening push channel")
-        pushChannelState.markAsOpen()
-        
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
 
         currentTask = Task {
+            try Task.checkCancellation()
             do {
                 try await useCase.invoke()
             } catch {
@@ -107,9 +107,10 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
                     "😀 syncing events via websocket: \(String(describing: error))",
                     attributes: .syncAttributes(initialSync: false)
                 )
+                pushChannelState.markAsClosed()
             }
         }
-        await currentTask?.value
+        try await currentTask?.value
         WireLogger.sync.debug("😀 closing push channel")
         pushChannelState.markAsClosed()
         

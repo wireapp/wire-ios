@@ -83,10 +83,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
         try Task.checkCancellation()
         
-        guard !pushChannelState.isOpen() else {
+        do {
+            try pushChannelState.markAsOpen()
+        } catch {
             throw Failure.pushChannelAlreadyOpened
         }
-        pushChannelState.markAsOpen()
         defer {
             pushChannelState.markAsClosed()
         }
