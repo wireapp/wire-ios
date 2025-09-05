@@ -813,7 +813,10 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-        recurringActionService.registerAction(checkBuildBlacklistAction)
+
+        if DeveloperFlag.multibackend.isOn {
+            recurringActionService.registerAction(checkBuildBlacklistAction)
+        }
     }
 
     func startRequestLoopTracker() {
