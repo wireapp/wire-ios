@@ -58,7 +58,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         mlsService.conversationExistsGroupID_MockValue = false
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in  }
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in    }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
         mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
@@ -140,7 +140,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             1
         )
 
-
         conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations
             .forEach {
                 XCTAssertEqual(
@@ -180,7 +179,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             try await self.sut.processEvent(Scaffolding.event)
         }
     }
-
 
     func testErrorOnWipeGroup() async throws {
 
