@@ -278,7 +278,8 @@ public final class ZMUserSession: NSObject {
         GetUserClientFingerprintUseCase(
             syncContext: coreDataStack.syncContext,
             transportSession: transportSession,
-            proteusProvider: proteusProvider
+            proteusProvider: proteusProvider,
+            metadata: resolvedBackendMetadata
         )
     }
 
@@ -357,8 +358,7 @@ public final class ZMUserSession: NSObject {
             queue: syncContext
         )
         let apiProvider = APIProvider(httpClient: httpClient)
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = resolvedBackendMetadata.apiVersion else {
             WireLogger.backend.warn("apiVersion not resolved")
 
             return nil
@@ -633,7 +633,8 @@ public final class ZMUserSession: NSObject {
                 transportSession: transportSession,
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
-                incrementalSyncObserver: incrementalSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver,
+                localDomain: resolvedBackendMetadata.domain
             )
         }
     }
@@ -739,7 +740,8 @@ public final class ZMUserSession: NSObject {
                     context: context,
                     conversationRepository: repo
                 )
-            }
+            },
+            localDomain: resolvedBackendMetadata.domain
         )
     }
 
@@ -762,13 +764,15 @@ public final class ZMUserSession: NSObject {
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: conversationEventProcessor
+                eventProcessor: conversationEventProcessor,
+                metadata: resolvedBackendMetadata
             ),
             ConnectToBotURLActionProcessor(
                 contextprovider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
-                searchUsersCache: dependencies.caches.searchUsers
+                searchUsersCache: dependencies.caches.searchUsers,
+                metadata: resolvedBackendMetadata
             )
         ]
     }
@@ -969,8 +973,7 @@ public final class ZMUserSession: NSObject {
 
     private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion = resolvedBackendMetadata.apiVersion,
             apiVersion > .v2,
             let clientID = userClient.remoteIdentifier
         else { return }

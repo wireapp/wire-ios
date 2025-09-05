@@ -59,7 +59,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
         initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
-            .InitiateResetMLSConversationUseCaseProtocol
+            .InitiateResetMLSConversationUseCaseProtocol,
+        localDomain: String?
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -75,7 +76,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            localDomain: localDomain
         )
         self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
@@ -115,7 +117,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        localDomain: String?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -208,7 +211,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC
+                managedObjectContext: syncMOC,
+                localDomain: localDomain
             ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
@@ -282,7 +286,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             AssetDeletionRequestStrategy(
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                identifierProvider: applicationStatusDirectory.assetDeletionStatus
+                identifierProvider: applicationStatusDirectory.assetDeletionStatus,
+                localDomain: localDomain
             ),
             UserRichProfileRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -290,7 +295,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TeamImageAssetUpdateStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: localDomain
             ),
             LabelDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -340,7 +346,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
-                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus
+                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus,
+                localDomain: localDomain
             ),
             localNotificationDispatcher,
             MLSRequestStrategy(
@@ -367,7 +374,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        localDomain: String?
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -417,7 +425,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     managedObjectContext: syncContext,
                     applicationStatus: applicationStatusDirectory,
                     flowManager: flowManager,
-                    messageSender: messageSender
+                    messageSender: messageSender,
+                    localDomain: localDomain
                 ),
                 ResetSessionRequestStrategy(
                     managedObjectContext: syncContext,

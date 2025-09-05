@@ -59,8 +59,7 @@ public extension ZMConversation {
     ) {
         // TODO: [WPB-5730] move this method to a useCase
 
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion,
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion,
               let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -68,7 +67,8 @@ public extension ZMConversation {
         let request = MessageDestructionTimeoutRequestFactory.set(
             timeout: Int(timeout.rawValue),
             for: self,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            localDomain: userSession.resolvedBackendMetadata.domain
         )
         request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
@@ -91,7 +91,12 @@ public extension ZMConversation {
 
 private enum MessageDestructionTimeoutRequestFactory {
 
-    static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func set(
+        timeout: Int,
+        for conversation: ZMConversation,
+        apiVersion: APIVersion,
+        localDomain: String?
+    ) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString()
         else { fatal("conversation inserted on backend") }
 
@@ -102,8 +107,7 @@ private enum MessageDestructionTimeoutRequestFactory {
             if conversation.domain == nil {
                 WireLogger.conversation.warn("MessageDestructionTimeoutRequestFactory: conversation.domain == nil")
             }
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = conversation.domain ?? BackendInfo.domain ?? "None"
+            let domain = conversation.domain ?? localDomain ?? "None"
             path = "/conversations/\(domain)/\(identifier)/message-timer"
         }
 

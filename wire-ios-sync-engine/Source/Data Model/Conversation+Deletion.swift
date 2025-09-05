@@ -42,12 +42,18 @@ extension ZMConversation {
     ///
     /// Only team conversations can be deleted.
     public func delete(in userSession: ZMUserSession, completion: @escaping (Result<Void, Error>) -> Void) {
-        delete(in: userSession.coreDataStack, transportSession: userSession.transportSession, completion: completion)
+        delete(
+            in: userSession.coreDataStack,
+            transportSession: userSession.transportSession,
+            metadata: userSession.resolvedBackendMetadata,
+            completion: completion
+        )
     }
 
     func delete(
         in contextProvider: ContextProvider,
         transportSession: TransportSessionType,
+        metadata: LegacyResovedBackendMetadata,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         let removeLocalConversation = RemoveLocalConversationUseCase()
@@ -55,7 +61,10 @@ extension ZMConversation {
         guard
             ZMUser.selfUser(in: contextProvider.viewContext).canDeleteConversation(self),
             let conversationId = remoteIdentifier,
-            let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(self)
+            let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(
+                self,
+                metadata: metadata
+            )
         else {
             return completion(.failure(ConversationDeletionError.invalidOperation))
         }
@@ -111,10 +120,12 @@ extension ZMConversation {
 
 enum ConversationDeletionRequestFactory {
 
-    static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
+    static func requestForDeletingTeamConversation(
+        _ conversation: ZMConversation,
+        metadata: LegacyResovedBackendMetadata
+    ) -> ZMTransportRequest? {
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion = metadata.apiVersion,
             let conversationId = conversation.remoteIdentifier,
             let teamRemoteIdentifier = conversation.teamRemoteIdentifier
         else { return nil }

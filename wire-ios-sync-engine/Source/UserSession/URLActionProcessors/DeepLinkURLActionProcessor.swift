@@ -25,15 +25,18 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     var contextProvider: ContextProvider
     var transportSession: TransportSessionType
     var eventProcessor: LegacyConversationEventProcessorProtocol
+    let metadata: LegacyResovedBackendMetadata
 
     init(
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        eventProcessor: LegacyConversationEventProcessorProtocol
+        eventProcessor: LegacyConversationEventProcessorProtocol,
+        metadata: LegacyResovedBackendMetadata
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
+        self.metadata = metadata
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
@@ -62,7 +65,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             key: key,
             code: code,
             transportSession: transportSession,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak self] response in
             guard let self, let delegate else {
                 return
@@ -151,7 +155,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             password: password,
             transportSession: transportSession,
             eventProcessor: eventProcessor,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak self] response in
             guard let self else { return }
 

@@ -125,8 +125,7 @@ final class SelfProfileViewController: UIViewController {
                 selfUser.refreshTeamData()
             }
         } else if
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
@@ -324,8 +323,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     func triggerCreateTeamFlow() {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        if let backendInfoApiVersion = BackendInfo.apiVersion,
+        if let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
             onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)

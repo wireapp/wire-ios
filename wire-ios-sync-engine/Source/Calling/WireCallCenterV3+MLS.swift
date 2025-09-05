@@ -95,8 +95,7 @@ extension WireCallCenterV3 {
     func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
         guard
             let context = uiMOC,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = callID.domain ?? BackendInfo.domain,
+            let domain = callID.domain ?? localDomain,
             let conversation = ZMConversation.fetch(
                 with: callID.identifier,
                 domain: domain,

@@ -182,8 +182,6 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     init(
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         context: Context,
         userSession: UserSession
     ) {
@@ -220,13 +218,13 @@ final class AddParticipantsViewController: UIViewController {
             userSession: userSession,
             isAddingParticipants: true,
             shouldIncludeGuests: viewModel.context.includeGuests,
-            isFederationEnabled: isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
         let user = SelfUser.provider?.providedSelfUser
         self.emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: user?.canManageTeam == true,
-            isFederationEnabled: isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
         super.init(nibName: nil, bundle: nil)
 

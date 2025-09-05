@@ -89,8 +89,7 @@ extension SettingsCellDescriptorFactory {
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
     ) -> SettingsSectionDescriptorType {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        let federationEnabled = BackendInfo.isFederationEnabled
+        let federationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [
             nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),

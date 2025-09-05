@@ -46,6 +46,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private var cancellables = Set<AnyCancellable>()
 
+    private let localDomain: String?
+
     // MARK: - Internal Properties
 
     var callCenter: WireCallCenterV3?
@@ -57,12 +59,13 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         applicationStatus: ApplicationStatus,
         flowManager: FlowManagerType,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        localDomain: String?
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
-
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [
@@ -86,7 +89,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                     clientId: clientId,
                     uiMOC: managedObjectContext.zm_userInterface,
                     flowManager: flowManager,
-                    transport: self
+                    transport: self,
+                    localDomain: localDomain
                 )
             }
         }
@@ -223,7 +227,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                         clientId: clientId,
                         uiMOC: uiContext.zm_userInterface,
                         flowManager: self.flowManager,
-                        transport: self
+                        transport: self,
+                        localDomain: self.localDomain
                     )
                 }
                 break
@@ -328,7 +333,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         completionHandler: @escaping ((Int) -> Void)
     ) {
         let dataString = String(decoding: data, as: UTF8.self)
-        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
+        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId(localDomain: localDomain))
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
@@ -451,8 +456,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 // With MLS we will fetch all clients for each group participant at once
                 // directly from the backend.
                 let userIDs = conversation.localParticipants.map { user in
-                    // TODO: [WPB-19987] remove dependency on BackendInfo
-                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? BackendInfo.domain!)
+                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? localDomain!)
                 }
 
                 Task {
@@ -657,8 +661,7 @@ private extension Calling {
 }
 
 private extension AVSIdentifier {
-    func toQualifiedId() -> QualifiedID {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
+    func toQualifiedId(localDomain: String?) -> QualifiedID {
+        QualifiedID(uuid: identifier, domain: domain ?? localDomain ?? "")
     }
 }

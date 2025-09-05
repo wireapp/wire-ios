@@ -119,18 +119,24 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     fileprivate let typingEventQueue = TypingEventQueue()
     fileprivate var tornDown: Bool = false
     fileprivate var observers: [Any] = []
+    private let localDomain: String?
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    public convenience init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
+    public convenience init(
+        applicationStatus: ApplicationStatus,
+        managedObjectContext: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
             applicationStatus: applicationStatus,
             syncContext: managedObjectContext,
             uiContext: managedObjectContext.zm_userInterface,
-            typing: nil
+            typing: nil,
+            localDomain: localDomain
         )
     }
 
@@ -138,9 +144,11 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         applicationStatus: ApplicationStatus,
         syncContext: NSManagedObjectContext,
         uiContext: NSManagedObjectContext,
-        typing: Typing?
+        typing: Typing?,
+        localDomain: String?
     ) {
         self.typing = typing ?? Typing(uiContext: uiContext, syncContext: syncContext)
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
@@ -225,8 +233,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
         case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }

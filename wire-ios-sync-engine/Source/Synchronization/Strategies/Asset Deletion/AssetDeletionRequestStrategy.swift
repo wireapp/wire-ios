@@ -23,6 +23,7 @@ private extension AssetRequestFactory {
         for identifier: String,
         on queue: GroupQueue,
         apiVersion: APIVersion,
+        localDomain: String?,
         block: @escaping ZMCompletionHandlerBlock
     ) -> ZMTransportRequest? {
 
@@ -32,12 +33,11 @@ private extension AssetRequestFactory {
         case .v0, .v1:
             path = "/assets/v3/\(identifier)"
         case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            guard let domain = BackendInfo.domain else {
+            guard let localDomain else {
                 return nil
             }
 
-            path = "/assets/\(domain)/\(identifier)"
+            path = "/assets/\(localDomain)/\(identifier)"
         }
 
         let request = ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
@@ -50,14 +50,16 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
 
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType
+    private let localDomain: String?
 
-    @objc(initWithManagedObjectContext:applicationStatus:identifierProvider:)
     public required init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        identifierProvider: AssetDeletionIdentifierProviderType
+        identifierProvider: AssetDeletionIdentifierProviderType,
+        localDomain: String?
     ) {
         self.identifierProvider = identifierProvider
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
         self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
@@ -80,7 +82,12 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard sync == requestSync, let identifier = identifierProvider.nextIdentifierToDelete() else { return nil }
         return AssetRequestFactory
-            .request(for: identifier, on: managedObjectContext, apiVersion: apiVersion) { [weak self] response in
+            .request(
+                for: identifier,
+                on: managedObjectContext,
+                apiVersion: apiVersion,
+                localDomain: localDomain
+            ) { [weak self] response in
                 self?.handle(response: response, for: identifier)
             }
     }

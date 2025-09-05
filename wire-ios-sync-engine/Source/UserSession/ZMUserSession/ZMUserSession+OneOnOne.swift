@@ -48,7 +48,11 @@ public extension ZMUserSession {
 
                     let migrator = syncContext.mlsService.map(OneOnOneMigrator.init(mlsService:))
                     let service = ConversationService(context: syncContext)
-                    let useCase = CreateTeamOneOnOneConversationUseCase(migrator: migrator, service: service)
+                    let useCase = CreateTeamOneOnOneConversationUseCase(
+                        migrator: migrator,
+                        service: service,
+                        localDomain: self.resolvedBackendMetadata.domain
+                    )
 
                     return (useCase, syncUser)
                 }

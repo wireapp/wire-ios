@@ -104,6 +104,8 @@ public class WireCallCenterV3: NSObject {
 
     private(set) var isEnabled = true
 
+    let localDomain: String?
+
     // MARK: - Initialization
 
     deinit {
@@ -127,13 +129,15 @@ public class WireCallCenterV3: NSObject {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        localDomain: String?
     ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
         self.notificationCenter = notificationCenter
+        self.localDomain = localDomain
 
         super.init()
 

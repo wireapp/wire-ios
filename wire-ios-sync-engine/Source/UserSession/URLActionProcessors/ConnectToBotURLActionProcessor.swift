@@ -24,16 +24,19 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     var eventProcessor: LegacyConversationEventProcessorProtocol
     var contextProvider: ContextProvider
     var searchUsersCache: SearchUsersCache?
+    let metadata: LegacyResovedBackendMetadata
 
     init(
         contextprovider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        metadata: LegacyResovedBackendMetadata
     ) {
         self.contextProvider = contextprovider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
+        self.metadata = metadata
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
@@ -53,7 +56,8 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
         serviceUser.createConversation(
             transportSession: transportSession,
             eventProcessor: eventProcessor,
-            contextProvider: contextProvider
+            contextProvider: contextProvider,
+            metadata: metadata
         ) { [weak delegate] result in
             switch result {
             case .success:

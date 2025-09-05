@@ -117,22 +117,23 @@ final class ConversationGuestOptionsViewModel {
     weak var delegate: ConversationGuestOptionsViewModelDelegate?
 
     private var isGuestLinkWithPasswordAvailable: Bool {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else { return false }
-
+        guard let apiVersion = metadata.apiVersion else { return false }
         return apiVersion >= .v4
     }
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
+    private let metadata: LegacyResovedBackendMetadata
 
     init(
         configuration: ConversationGuestOptionsViewModelConfiguration,
         conversation: ZMConversation,
-        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol,
+        metadata: LegacyResovedBackendMetadata
     ) {
         self.configuration = configuration
         self.conversation = conversation
         self.createSecureGuestLinkUseCase = createSecureGuestLinkUseCase
+        self.metadata = metadata
 
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in

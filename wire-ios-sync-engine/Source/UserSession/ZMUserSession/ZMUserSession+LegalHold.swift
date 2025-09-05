@@ -43,8 +43,7 @@ public extension ZMUserSession {
         password: String?,
         completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void
     ) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = resolvedBackendMetadata.apiVersion else {
             return completionHandler(.missingAPIVersion)
         }
 
