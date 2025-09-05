@@ -30,7 +30,6 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
         let removedUserIDs = Set(event.removedUserIDs.compactMap(\.id))
 
         let canBuildNotification = await validator.validate(
-            senderID: event.senderID,
             removedUserIDs: removedUserIDs
         )
 
@@ -166,20 +165,11 @@ extension ConversationMemberLeaveEventNotificationBuilder {
         let userLocalStore: any UserLocalStoreProtocol
 
         func validate(
-            senderID: UserID,
             removedUserIDs: Set<UUID>
         ) async -> Bool {
 
             let selfUser = await userLocalStore.fetchSelfUser()
             let selfUserID = await userLocalStore.id(for: selfUser)
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
-
-            guard !isSenderSelfUser else {
-                return false
-            }
 
             return removedUserIDs.contains(selfUserID)
         }

@@ -30,7 +30,6 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
         let addedUserIDs = Set(event.members.compactMap(\.id))
 
         let canBuildNotification = await validator.validate(
-            senderID: event.senderID,
             addedUserIDs: addedUserIDs
         )
 
@@ -166,20 +165,11 @@ extension ConversationMemberJoinEventNotificationBuilder {
         let userLocalStore: any UserLocalStoreProtocol
 
         func validate(
-            senderID: UserID,
             addedUserIDs: Set<UUID>
         ) async -> Bool {
 
             let selfUser = await userLocalStore.fetchSelfUser()
             let selfUserID = await userLocalStore.id(for: selfUser)
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
-
-            guard !isSenderSelfUser else {
-                return false
-            }
 
             return addedUserIDs.contains(selfUserID)
         }
