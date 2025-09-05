@@ -163,7 +163,7 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// Boolean to check if isCellAlreadyAligned
     var isCellAlreadyAligned: Bool { get }
-    
+
     /// Boolean to check if isBubbleHasMaximumWidth
     var isBubbleHasMaximumWidth: Bool { get }
 
@@ -214,12 +214,11 @@ extension ConversationMessageCellDescription {
     var isCellAlreadyAligned: Bool {
         false
     }
-    
+
     /// Boolean to check if isBubbleHasMaximumWidth
     var isBubbleHasMaximumWidth: Bool {
         false
     }
-    
 
     var isAccessibilityElement: Bool {
         false

@@ -112,20 +112,20 @@ final class ConversationMessageCellTableViewAdapter<
         bottom.constant = cellDescription?.bottomMargin ?? 0
         configureChatBubbleConstraints()
     }
-    
+
     private func configureChatBubbleConstraints() {
         // Deactivate all horizontal constraints before applying new ones.
         NSLayoutConstraint.deactivate(
             ownMessagesHorizontalConstraints +
-            othersMessagesHorizontalConstraints
+                othersMessagesHorizontalConstraints
         )
         let othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
             equalTo: contentView.leadingAnchor,
             constant: isCellAlreadyAligned() ? 0 : conversationHorizontalMargins.left
         )
-        
+
         if isBubbleHasMaximumWidth() {
-            self.ownMessagesHorizontalConstraints = [
+            ownMessagesHorizontalConstraints = [
                 cellView.leadingAnchor
                     .constraint(
                         equalTo: contentView.leadingAnchor,
@@ -134,16 +134,19 @@ final class ConversationMessageCellTableViewAdapter<
                 cellView.trailingAnchor.constraint(
                     equalTo: contentView.trailingAnchor,
                     constant: -conversationHorizontalMargins.right
-                )]
-            
-            self.othersMessagesHorizontalConstraints = [
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
                 othersMessagesLeadingConstraint,
                 cellView.trailingAnchor.constraint(
                     equalTo: contentView.trailingAnchor,
-                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing)]
-            
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+
         } else {
-            self.ownMessagesHorizontalConstraints = [
+            ownMessagesHorizontalConstraints = [
                 cellView.leadingAnchor
                     .constraint(
                         greaterThanOrEqualTo: contentView.leadingAnchor,
@@ -152,16 +155,18 @@ final class ConversationMessageCellTableViewAdapter<
                 cellView.trailingAnchor.constraint(
                     equalTo: contentView.trailingAnchor,
                     constant: -conversationHorizontalMargins.right
-                )]
-            
-            self.othersMessagesHorizontalConstraints = [
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
                 othersMessagesLeadingConstraint,
                 cellView.trailingAnchor.constraint(
                     lessThanOrEqualTo: contentView.trailingAnchor,
                     constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
-                )]
+                )
+            ]
         }
-        
+
         if cellDescription?.shouldAlignMessageContentForBubbles == true {
             if cellDescription?.message?.isSentBySelfUser == true {
                 // Right-align the bubble content
@@ -180,7 +185,7 @@ final class ConversationMessageCellTableViewAdapter<
         guard let cellDescription else { return false }
         return cellDescription.isCellAlreadyAligned
     }
-    
+
     private func isBubbleHasMaximumWidth() -> Bool {
         guard let cellDescription else { return false }
         return cellDescription.isBubbleHasMaximumWidth
