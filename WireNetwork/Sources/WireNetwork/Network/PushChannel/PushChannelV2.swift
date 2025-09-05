@@ -22,6 +22,7 @@ import WireLogging
 
 /// PushChannel using new consumable notifications
 public final class PushChannelV2: PushChannelV2Protocol {
+    private static var instanceCount = 0
 
     public enum Element: Equatable {
         case syncMarker(id: String, deliveryTag: UInt64)
@@ -70,8 +71,20 @@ public final class PushChannelV2: PushChannelV2Protocol {
         self.maxBatchEventsCount = max(maxBatchEventsCount, 1)
         self.batchSize = self.maxBatchEventsCount
         self.batchInterval = batchDelay
+        PushChannelV2.instanceCount += 1
+        assert(PushChannelV2.instanceCount == 1,
+               "Multiple PushChannelV2 instances detected! count=\(PushChannelV2.instanceCount)")
+        
+        print("PushChannelV2.init id=\(instanceId) ptr=\(Unmanaged.passUnretained(self).toOpaque())")
+
     }
 
+    deinit {
+        PushChannelV2.instanceCount -= 1
+        print("PushChannelV2.deinit id=\(instanceId)")
+    }
+
+    
     private let instanceId = UUID().uuidString
     
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
