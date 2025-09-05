@@ -23,5 +23,6 @@ public protocol FileCache: Sendable {
 
     func saveFile(at url: URL, key: String) async throws
     func deleteFile(forKey key: String) async throws
+    func fileURL(forKey key: String) -> URL?
 
 }
