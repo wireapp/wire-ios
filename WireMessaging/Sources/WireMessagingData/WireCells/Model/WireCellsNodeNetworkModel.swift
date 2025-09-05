@@ -176,7 +176,7 @@ package extension PreviewDTO {
 
 private extension WireFoundation.QualifiedID {
 
-    /// Creates a QualifiedID from a string in the format `domain@uuid`.
+    /// Creates a QualifiedID from a string in the format `uuid@domain`.
     init?(string: String) {
         let components = string.split(separator: "@")
         guard components.count == 2, let uuid = UUID(uuidString: String(components[0])) else {
