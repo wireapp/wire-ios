@@ -72,7 +72,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
 
         sut = ConversationMessageAddEventNotificationBuilder(
             context: .init(conversationLocalStore: conversationLocalStore),
-            validator: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(conversationLocalStore: conversationLocalStore),
             conversationCallingEventNotificationBuilder: conversationCallingEventNotificationBuilder,
             conversationAudioMessageNotificationBuilder: conversationAudioMessageNotificationBuilder,
             conversationEphemeralMessageNotificationBuilder: conversationEphemeralMessageNotificationBuilder,
@@ -104,16 +104,12 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
-        let selfUser = await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-        }
         conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
         conversationTextNotificationBuilder
             .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
         conversationLocalStore.shouldHideNotification_MockValue = false
-        userLocalStore.isSelfUserIdDomain_MockValue = (user: selfUser, isSelfUser: false)
 
         // When
 
@@ -131,16 +127,12 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
-        let selfUser = await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-        }
         conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
         conversationTextNotificationBuilder
             .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
         conversationLocalStore.shouldHideNotification_MockValue = false
-        userLocalStore.isSelfUserIdDomain_MockValue = (user: selfUser, isSelfUser: false)
 
         // When
 
