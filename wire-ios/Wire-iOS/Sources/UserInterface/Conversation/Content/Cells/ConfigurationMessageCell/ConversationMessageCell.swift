@@ -161,6 +161,9 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// Boolean to check for aligning message content for Bubbles
     var shouldAlignMessageContentForBubbles: Bool { get }
 
+    /// Boolean to check if isCellAlreadyAligned
+    var isCellAlreadyAligned: Bool { get }
+
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -202,6 +205,10 @@ extension ConversationMessageCellDescription {
     }
 
     var shouldAlignMessageContentForBubbles: Bool {
+        false
+    }
+
+    var isCellAlreadyAligned: Bool {
         false
     }
 

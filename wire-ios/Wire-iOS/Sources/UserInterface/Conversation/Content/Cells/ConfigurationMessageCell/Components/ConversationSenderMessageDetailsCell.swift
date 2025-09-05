@@ -160,7 +160,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         ]
 
         let chatBubbleConstraints = [
-            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -(24 + 12)),
+            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
             authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
             authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
         ]
@@ -312,6 +312,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     let containsHighlightableContent: Bool = false
     lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let isCellAlreadyAligned: Bool = true
+
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
 
