@@ -81,7 +81,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
-
+        try Task.checkCancellation()
+        
         guard !pushChannelState.isOpen() else {
             throw Failure.pushChannelAlreadyOpened
         }
@@ -224,6 +225,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             envelopes: envelopes,
                             pushChannel: pushChannel
                         )
+                    } catch let error as CancellationError {
+                        // we cancelled processing Events, as a safety,
+                        // reopen the websocket to get the events
+                        throw error
                     } catch {
                         WireLogger.sync.error("event processing failed: \(error)", attributes: .syncAttributes)
                         assertionFailure("event processing failed: \(error)")
