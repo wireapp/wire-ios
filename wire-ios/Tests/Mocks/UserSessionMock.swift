@@ -31,6 +31,8 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var isBuildBlacklisted = false
+
     var isTornDown = false
 
     var userProfile: UserProfile

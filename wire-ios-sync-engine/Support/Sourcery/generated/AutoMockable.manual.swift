@@ -251,6 +251,8 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
 public class MockUserSession: UserSession {
 
+    public var isBuildBlacklisted = false
+
     // MARK: - Life cycle
 
     public init() {}
