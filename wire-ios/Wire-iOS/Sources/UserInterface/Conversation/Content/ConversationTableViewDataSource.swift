@@ -189,7 +189,7 @@ final class ConversationTableViewDataSource: NSObject {
                     // with data
                     if let managedID = (sectionController.message as? ZMMessage)?.objectID,
                        let mainThreadMessage = try? mainThreadContext.existingObject(with: managedID) as? ZMMessage {
-                        sectionController.message = mainThreadMessage
+                        sectionController.updateMessage(mainThreadMessage)
                     } else {
                         WireLogger.conversation
                             .debug(
