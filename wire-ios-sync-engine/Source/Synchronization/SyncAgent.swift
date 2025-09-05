@@ -351,6 +351,7 @@ extension SyncAgent: MLSSyncDelegate {
                         .perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
+                // TODO: add consumable-notifications here
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
                     handlePushChannelAlreadyOpened()
             } catch {
