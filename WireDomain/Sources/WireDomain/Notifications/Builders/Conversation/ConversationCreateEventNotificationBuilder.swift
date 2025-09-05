@@ -27,7 +27,7 @@ struct ConversationCreateEventNotificationBuilder: ConversationCreateEventNotifi
     func buildContent(
         event: ConversationCreateEvent
     ) async -> UserNotification? {
-        let canBuildNotification = await validator.validate(senderID: event.senderID)
+        let canBuildNotification = await validator.validate()
 
         guard canBuildNotification else {
             return nil
@@ -160,17 +160,8 @@ extension ConversationCreateEventNotificationBuilder {
     struct Validator {
         let userLocalStore: any UserLocalStoreProtocol
 
-        func validate(senderID: UserID) async -> Bool {
+        func validate() async -> Bool {
             let availability = await userLocalStore.fetchSelfUserAvailability()
-            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.id,
-                domain: senderID.domain
-            ).isSelfUser) ?? false
-
-            guard !isSenderSelfUser else {
-                return false
-            }
-
             return [Availability.none, .available].contains(availability)
         }
     }
