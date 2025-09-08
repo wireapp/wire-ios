@@ -228,7 +228,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 environment: BackendEnvironment.shared,
                 appLockConfig: legacyConfig,
                 sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+                localDomain: BackendInfo.domain
             )
         }
     }

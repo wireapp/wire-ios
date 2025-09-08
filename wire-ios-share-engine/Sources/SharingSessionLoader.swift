@@ -281,7 +281,8 @@ public struct SharingSessionLoader {
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
-            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue))
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
+            localDomain: backendMetadata.domain
         )
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         let operationLoop = RequestGeneratingOperationLoop(

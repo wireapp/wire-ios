@@ -150,7 +150,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain
             ),
             VerifyLegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,

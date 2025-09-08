@@ -120,7 +120,8 @@ public final class SharingSession {
         environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        localDomain: String?
     ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -238,7 +239,8 @@ public final class SharingSession {
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: URL("unused")!,
             legacyEnvironment: environment,
-            proxyCredentials: credentials
+            proxyCredentials: credentials,
+            localDomain: localDomain
         )
     }
 
@@ -326,7 +328,8 @@ public final class SharingSession {
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
-        proxyCredentials: WireTransport.ProxyCredentials?
+        proxyCredentials: WireTransport.ProxyCredentials?,
+        localDomain: String?
     ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
@@ -344,7 +347,8 @@ public final class SharingSession {
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
-            apiVersion: .init(rawValue: Int32(apiVersion.rawValue))
+            apiVersion: .init(rawValue: Int32(apiVersion.rawValue)),
+            localDomain: localDomain
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)

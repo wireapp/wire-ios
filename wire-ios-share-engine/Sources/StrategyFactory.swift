@@ -28,6 +28,8 @@ final class StrategyFactory {
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
     let messageSender: MessageSenderInterface
     private(set) var strategies = [AnyObject]()
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     private var tornDown = false
 
@@ -37,7 +39,8 @@ final class StrategyFactory {
         linkPreviewPreprocessor: LinkPreviewPreprocessor,
         transportSession: TransportSessionType,
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
@@ -56,6 +59,8 @@ final class StrategyFactory {
             featureRepository: LegacyFeatureRepository(context: syncContext),
             apiVersion: apiVersion
         )
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -96,7 +101,7 @@ final class StrategyFactory {
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus, apiVersion: apiVersion, localDomain: localDomain)
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
