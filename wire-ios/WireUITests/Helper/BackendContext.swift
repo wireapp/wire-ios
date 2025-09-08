@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-INBUCKET_USERNAME=op://Test Automation/BackendConnection staging/inbucketUsername
-INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPassword
-INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
-BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL
-BASIC_AUTH=op://Test Automation/BackendConnection staging/basicAuth
-ANTA_BACKEND_URL=op://Test Automation/BackendConnection anta/trimmedBackendUrl
-ANTA_DEEPLINK_URL=op://Test Automation/BackendConnection anta/trimmedDeeplinkUrl
-ANTA_INBUCKET_URL=op://Test Automation/BackendConnection anta/trimmedInbucketUrl
+import Foundation
+
+public enum BackendContext {
+    public static var current: BackendTarget = .staging
+}
+
+public enum BackendTarget { case staging, anta }

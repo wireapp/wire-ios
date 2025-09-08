@@ -22,21 +22,19 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
-//        let user_Backend1 = try await userHelper.createPersonalUser()
-//
-//        let firstTimePage = try app.loginUser(email: user_Backend1.email, password: user_Backend1.password)
-//        var conversationsPage = try  firstTimePage.acceptPopup()
-//
-//        _ = try conversationsPage.openUserAccountPageForUser(with: user_Backend1.name)
-//            .tapAddAccountOrTeamButton()
-        
-        //NEEDFIXING: Currently env variable returns only 'https:' in place of full URL, need to add a trim version of deeplink without 'https://'
-//        let deeplink = try EnvironmentVariables().antaDeepLinkURL
-        let deeplink = "https://nginz-https.anta.wire.link/deeplink.json"
-        
-        //NEEDFIXING: Not able to set backend due to already loggedin
-        setCustomBackend(byDeeplink: deeplink)
+        let user_Backend1 = try await userHelper.createPersonalUser()
 
+        let firstTimePage = try app.loginUser(email: user_Backend1.email, password: user_Backend1.password)
+        var conversationsPage = try  firstTimePage.acceptPopup()
+
+        _ = try conversationsPage.openUserAccountPageForUser(with: user_Backend1.name)
+            .tapAddAccountOrTeamButton()
+
+        let deeplink = try EnvironmentVariables().antaDeepLinkURL
+        setCustomBackend(byDeeplink: deeplink)
+        BackendContext.current = .anta
+        
+        //Register for backend2
         let user_Backend2 = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
@@ -57,8 +55,14 @@ final class MultiBackendSupportTests: WireUITestCase {
         let setUsernamePage = try verificationPage
             .enterVerificationCodeAndConfirm(verificationCode)
 
-        let conversationsPage = try setUsernamePage
+         conversationsPage = try setUsernamePage
             .setUsername(user_Backend2.username)
+
+        let settingsPage = try conversationsPage
+            .openSettings()
+
+        let accountPage = try settingsPage
+            .openAccountSettings()
 
     }
 }

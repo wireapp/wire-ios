@@ -51,7 +51,7 @@ class WireUITestCase: XCTestCase {
         await userHelper.deleteCreatedUsers()
     }
 
-    func setCustomBackend(byDeeplink deeplink: String, timeout: TimeInterval = 5) {
+    func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5) {
         XCTContext.runActivity(named: "Set custom backend via deeplink") { _ in
             let deeplinkFullURL = "wire://access/?config=\(deeplink)"
             guard let url = URL(string: deeplinkFullURL) else {

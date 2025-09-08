@@ -67,7 +67,7 @@ class UserHelper {
         cookieStorage.cookies = cookies
 
         // Get activation code
-        let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(forEmail: user.email)
 
         // Activate user
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
