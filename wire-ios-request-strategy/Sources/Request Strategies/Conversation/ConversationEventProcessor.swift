@@ -170,7 +170,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.Conversation>.self,
+            Payload.ConversationEvent<Payload.CreatedConversation>.self,
             from: event.payload
         ) else { return }
 
