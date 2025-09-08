@@ -16,21 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
 
-public enum WireCellsNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
-}
+@testable import WireMessagingUI
 
-public protocol WireCellsNodeConversationRepository {
-    func getCellName(conversationID: QualifiedID) async throws(WireCellsNodeConversationRepositoryError)
-        -> String
+extension FilesViewItem {
 
-    func setWireCell(
-        conversationID: QualifiedID,
-        cellName: String
-    ) async throws(WireCellsNodeConversationRepositoryError)
+    static func fixture(
+        id: UUID = UUID(),
+        filename: String = "filename.png",
+        ownedBy: String? = nil,
+        modifiedAt: Date? = nil,
+        icon: FileIcon = .image
+    ) -> FilesViewItem {
+        FilesViewItem(
+            id: id,
+            filename: filename,
+            ownedBy: ownedBy,
+            modifiedAt: modifiedAt,
+            icon: icon
+        )
+    }
 
-    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
 }

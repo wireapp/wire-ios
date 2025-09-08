@@ -36,7 +36,7 @@ extension WireCellsNode {
         previews: [WireCellsNodePreview] = [],
         ownerUserID: QualifiedID? = nil,
         ownerUserName: String? = nil,
-        conversationID: WireCellsConversationID? = nil,
+        conversationID: QualifiedID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
         downloadURL: URL? = nil
     ) -> WireCellsNode {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireMessagingDomain
 
 final class WireCellConversationDataSource: WireCellsNodeConversationRepository {
@@ -26,7 +27,7 @@ final class WireCellConversationDataSource: WireCellsNodeConversationRepository 
         self.conversationDAO = conversationDAO
     }
 
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
+    func getCellName(conversationID: QualifiedID) async throws(WireCellsNodeConversationRepositoryError)
         -> String {
         do {
             return try await conversationDAO.getCellName(conversationID: conversationID)
@@ -38,7 +39,7 @@ final class WireCellConversationDataSource: WireCellsNodeConversationRepository 
     }
 
     func setWireCell(
-        conversationID: WireCellsConversationID,
+        conversationID: QualifiedID,
         cellName: String
     ) async throws(WireCellsNodeConversationRepositoryError) {
         do {
