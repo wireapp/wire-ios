@@ -30,15 +30,16 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Life cycle
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
         self.entitySync = EntityActionSync(actionHandlers: [
             SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
-            ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
+            ClaimMLSKeyPackageActionHandler(context: managedObjectContext, localDomain: localDomain),
             FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
             FetchSubgroupActionHandler(context: managedObjectContext),
@@ -46,7 +47,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             FetchSupportedProtocolsActionHandler(context: managedObjectContext),
-            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext, localDomain: localDomain)
         ])
 
         super.init(

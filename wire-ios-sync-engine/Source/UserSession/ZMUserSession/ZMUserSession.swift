@@ -96,7 +96,7 @@ public final class ZMUserSession: NSObject {
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
+    var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
 
@@ -464,7 +464,6 @@ public final class ZMUserSession: NSObject {
         self.mlsService = mlsService
         self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
@@ -492,6 +491,7 @@ public final class ZMUserSession: NSObject {
 
         super.init()
 
+        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext, localDomain: resolvedBackendMetadata.domain)
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -742,7 +742,7 @@ public final class ZMUserSession: NSObject {
                     conversationRepository: repo
                 )
             },
-            localDomain: resolvedBackendMetadata.domain
+            metadata: resolvedBackendMetadata
         )
     }
 

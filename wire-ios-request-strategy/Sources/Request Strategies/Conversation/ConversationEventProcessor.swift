@@ -36,11 +36,14 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
             context: context,
             conversationService: ConversationService(context: context),
-            mlsEventProcessor: MLSEventProcessor(context: context)
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain)
         )
     }
 

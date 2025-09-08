@@ -60,7 +60,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         searchUsersCache: SearchUsersCache?,
         initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
             .InitiateResetMLSConversationUseCaseProtocol,
-        localDomain: String?
+        metadata: LegacyResovedBackendMetadata
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -77,7 +77,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache,
-            localDomain: localDomain
+            metadata: metadata
         )
         self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
@@ -118,7 +118,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
-        localDomain: String?
+        metadata: LegacyResovedBackendMetadata
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -212,7 +212,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
                 managedObjectContext: syncMOC,
-                localDomain: localDomain
+                localDomain: metadata.domain
             ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
@@ -230,14 +230,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
-                removeLocalConversation: RemoveLocalConversationUseCase()
+                removeLocalConversation: RemoveLocalConversationUseCase(),
+                localDomain: metadata.domain
             ),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 oneOnOneResolver: oneOnOneResolver,
-                localDomain: localDomain
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
@@ -288,7 +290,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 identifierProvider: applicationStatusDirectory.assetDeletionStatus,
-                localDomain: localDomain
+                localDomain: metadata.domain
             ),
             UserRichProfileRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -297,7 +299,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             TeamImageAssetUpdateStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                localDomain: localDomain
+                localDomain: metadata.domain
             ),
             LabelDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -348,12 +350,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
                 userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus,
-                localDomain: localDomain
+                localDomain: metadata.domain
             ),
             localNotificationDispatcher,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             SelfSupportedProtocolsRequestStrategy(
                 context: syncMOC,

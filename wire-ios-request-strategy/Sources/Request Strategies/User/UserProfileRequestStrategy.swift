@@ -40,18 +40,20 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let oneOnOneResolver: any OneOnOneResolverInterface
     private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
         oneOnOneResolver: any OneOnOneResolverInterface,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.syncProgress = syncProgress
         self.oneOnOneResolver = oneOnOneResolver
-        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
-        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
+        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
+        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
 
         self.userProfileByID = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -62,8 +64,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             transcoder: userProfileByQualifiedIDTranscoder
         )
 
-        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext, isFederationEnabled: isFederationEnabled)])
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -210,7 +213,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             in: managedObjectContext
         )
 
-        let processor = UserProfilePayloadProcessor()
+        let processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
         processor.updateUserProfile(
             from: userProfile,
             for: user,
@@ -281,10 +284,14 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = UserProfilePayloadProcessor()
+    private let processor: UserProfilePayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -345,10 +352,14 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = UserProfilePayloadProcessor()
+    private let processor: UserProfilePayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

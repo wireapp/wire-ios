@@ -30,6 +30,12 @@ protocol UserProfilePayloadProcessing {
 
 final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
+    private let isFederationEnabled: Bool
+
+    init(isFederationEnabled: Bool) {
+        self.isFederationEnabled = isFederationEnabled
+    }
+
     /// Update all user entities with the data from the user profiles.
     ///
     /// - parameter context: `NSManagedObjectContext` on which the update should be performed.
@@ -68,8 +74,7 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         for user: ZMUser,
         authoritative: Bool = true
     ) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        if let qualifiedID = payload.qualifiedID, BackendInfo.isFederationEnabled {
+        if let qualifiedID = payload.qualifiedID, isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)
 

@@ -35,7 +35,18 @@ public extension UpdateAccessRolesError {
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
 
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    private let eventProcessor: ConversationEventProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
+        eventProcessor = ConversationEventProcessor(
+            context: context,
+            localDomain: localDomain
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Methods
 
