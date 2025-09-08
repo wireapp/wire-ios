@@ -37,10 +37,10 @@ package protocol WireCellsLocalAssetStoreProtocol: Sendable {
 
 }
 
+private typealias ManagedLocalAsset = WireData.WireCellsLocalAsset
+
 @MainActor
 package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
-
-    private typealias ManagedLocalAsset = WireData.WireCellsLocalAsset
 
     private let updates = PassthroughSubject<(UUID, WireMessagingDomain.WireCellsLocalAsset?), Never>()
     private let contextProvider: any ManagedObjectContextProvider
@@ -73,12 +73,7 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
         let context = contextProvider.newBackgroundContext()
         Task.detached {
             try await context.perform {
-                let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
-                request.predicate = NSPredicate(format: "nodeID == %@", asset.nodeID as any CVarArg)
-                request.fetchLimit = 1
-                let results = try context.fetch(request)
-
-                let stored = results.first ?? ManagedLocalAsset(context: context)
+                let stored = try context.fetchLocalAsset(nodeID: asset.nodeID) ?? ManagedLocalAsset(context: context)
                 stored.nodeID = asset.nodeID
                 stored.eTag = asset.eTag
                 stored.path = asset.path
@@ -104,11 +99,7 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
     private func storedAsset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
         let context = contextProvider.viewContext
         return try context.performAndWait {
-            let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
-            request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
-            request.fetchLimit = 1
-            let results = try context.fetch(request)
-            return results.first.map { managed in
+            try context.fetchLocalAsset(nodeID: nodeID).map { managed in
                 var asset = WireCellsLocalAsset(
                     nodeID: managed.nodeID,
                     eTag: managed.eTag,
@@ -146,6 +137,17 @@ private extension WireMessagingDomain.WireCellsLocalAsset {
         && contentType == other.contentType
         && size == other.size
         && isDownloaded == other.isDownloaded
+    }
+
+}
+
+private extension NSManagedObjectContext {
+
+    func fetchLocalAsset(nodeID: UUID) throws -> ManagedLocalAsset? {
+        let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+        request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
+        request.fetchLimit = 1
+        return try fetch(request).first
     }
 
 }
