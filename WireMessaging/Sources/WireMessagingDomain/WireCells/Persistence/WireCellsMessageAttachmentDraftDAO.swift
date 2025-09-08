@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 public enum WireCellsMessageAttachmentDraftDAOError: Error {
     case attachmentNotFound
@@ -37,23 +38,23 @@ public protocol WireCellsMessageAttachmentDraftDAO {
     func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(WireCellsMessageAttachmentDraftDAOError)
         -> WireCellsMessageAttachmentDraft?
 
-    func getAttachments(conversationID: WireCellsConversationID) async throws(WireCellsMessageAttachmentDraftDAOError)
+    func getAttachments(conversationID: QualifiedID) async throws(WireCellsMessageAttachmentDraftDAOError)
         -> [WireCellsMessageAttachmentDraft]
 
     func deleteAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(
         WireCellsMessageAttachmentDraftDAOError
     )
 
-    func deleteAttachments(conversationID: WireCellsConversationID) async throws(
+    func deleteAttachments(conversationID: QualifiedID) async throws(
         WireCellsMessageAttachmentDraftDAOError
     )
 
-    func observeAttachments(conversationID: WireCellsConversationID) async throws -> DraftsObserver
+    func observeAttachments(conversationID: QualifiedID) async throws -> DraftsObserver
 
     func addAttachment(
         uuid: UUID,
         versionID: String,
-        conversationID: WireCellsConversationID,
+        conversationID: QualifiedID,
         mimeType: String,
         fileName: String,
         fileSize: UInt64,

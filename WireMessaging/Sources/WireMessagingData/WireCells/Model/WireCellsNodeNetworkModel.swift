@@ -96,7 +96,7 @@ package extension WireCellsNodeNetworkModel {
             previews: previews.map { $0.toModel() },
             ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             ownerUserName: ownerUserName,
-            conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
+            conversationID: conversationId.flatMap(QualifiedID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
             downloadURL: downloadURL
         )
@@ -120,7 +120,7 @@ package extension WireCellsNode {
             previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
-            conversationId: conversationID?.pydioQualifiedID,
+            conversationId: conversationID?.transportString,
             publicLinkId: publicLinkID?.string
         )
     }
@@ -186,7 +186,7 @@ private extension WireFoundation.QualifiedID {
     }
 
     var transportString: String {
-        "\(domain)@\(id.uuidString.lowercased())"
+        "\(id.uuidString.lowercased())@\(domain)"
     }
 }
 
