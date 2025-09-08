@@ -45,7 +45,7 @@ final class PushChannelStateTests: XCTestCase {
         XCTAssertNoThrow(try sut.markAsOpen())
     }
 
-    func test_markAsOpen() throws {
+    func test_markAsOpen_throwsWhenAlreadyOpened() throws {
         XCTAssertNoThrow(try sut.markAsOpen())
         
         XCTAssertThrowsError(try sut.markAsOpen())

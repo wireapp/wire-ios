@@ -82,20 +82,26 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
         try Task.checkCancellation()
+
+        try await pullServerTimeSync.pull()
+        
         
         do {
             try pushChannelState.markAsOpen()
         } catch {
             throw Failure.pushChannelAlreadyOpened
         }
-        defer {
-            pushChannelState.markAsClosed()
-        }
-        try await pullServerTimeSync.pull()
 
         let syncMarker = syncMarkerGenerator()
-        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
-
+        
+        let pushChannel: PushChannelV2Protocol
+        do {
+            pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
+        } catch {
+            pushChannelState.markAsClosed()
+            throw error
+        }
+        
         logger.debug("creating push channel with marker \(syncMarker)", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 

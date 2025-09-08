@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSystem
+import WireLogging
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
@@ -59,8 +60,12 @@ public extension SafeFileContext {
     }
     
     @discardableResult
-    public func tryAcquireLock() -> Bool {
-        if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 { return true }
+    func tryAcquireLock() -> Bool {
+        if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 {
+            WireLogger.sync.debug("😀 lock acquired")
+            return true
+        }
+        WireLogger.sync.debug("😀 already locked")
         return false
     }
 

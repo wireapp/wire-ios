@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import WireDataModel
+import WireLogging
 
 /// sourcery: AutoMockable
 public protocol PushChannelStateProtocol {
@@ -29,6 +30,10 @@ struct PushChannelState: PushChannelStateProtocol {
         case alreadyLocked
     }
     
+    /// The file context only prevents other processes to get the lock
+    /// same process will succeed, so we need an extra state
+    static private var locked: Bool = false
+    
     let fileContext: SafeFileContext
     init(sharedContainerURL: URL, clientID: String) {
         let url = sharedContainerURL.appendingPathComponent(clientID)
@@ -38,16 +43,21 @@ struct PushChannelState: PushChannelStateProtocol {
                 fatal("could not create file")
             }
         }
+        WireLogger.sync.debug("😀lock at \(url.absoluteString)")
         self.fileContext = SafeFileContext(fileURL: url)
     }
 
     func markAsOpen() throws {
-        if !fileContext.tryAcquireLock() {
+        if !fileContext.tryAcquireLock() || Self.locked {
             throw Failure.alreadyLocked
         }
+        Self.locked = true
     }
 
     func markAsClosed() {
         fileContext.releaseDirectoryLock()
+        WireLogger.sync.debug("😀 unlock")
+        Self.locked = false
     }
 }
+
