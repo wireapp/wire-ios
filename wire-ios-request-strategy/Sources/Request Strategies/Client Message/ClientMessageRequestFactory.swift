@@ -30,6 +30,12 @@ public final class ClientMessageRequestFactory: NSObject {
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
 
+    private let localDomain: String?
+
+    init(localDomain: String?) {
+        self.localDomain = localDomain
+    }
+
     public func upstreamRequestForFetchingClients(
         conversationId: UUID,
         domain: String?,
@@ -58,8 +64,7 @@ public final class ClientMessageRequestFactory: NSObject {
             )
 
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil

@@ -151,7 +151,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
         self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
 
-        self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext)
+        self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext, localDomain: localDomain)
 
         self.actionSync = EntityActionSync(actionHandlers: [
             addParticipantActionHandler,

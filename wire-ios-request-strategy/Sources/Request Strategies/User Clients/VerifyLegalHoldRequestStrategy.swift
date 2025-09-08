@@ -25,17 +25,19 @@ import Foundation
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate let requestFactory = ClientMessageRequestFactory()
+    fileprivate let requestFactory: ClientMessageRequestFactory
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         conversationSync.nextRequest(for: apiVersion)
     }
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [

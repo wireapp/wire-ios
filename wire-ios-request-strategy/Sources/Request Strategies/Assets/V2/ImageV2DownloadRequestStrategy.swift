@@ -21,13 +21,15 @@ import Foundation
 public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let requestFactory: ClientMessageRequestFactory = .init()
+    fileprivate let requestFactory: ClientMessageRequestFactory
     private var token: Any?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let downloadPredicate = NSPredicate { object, _ -> Bool in

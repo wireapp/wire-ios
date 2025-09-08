@@ -25,11 +25,14 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
+    private let localDomain: String?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsWhileOnline]
@@ -180,7 +183,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     self.managedObjectContext.enqueueDelayedSave()
                 }
 
-                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(
+                if let request = ClientMessageRequestFactory(localDomain: localDomain).downstreamRequestForEcryptedOriginalFileMessage(
                     assetClientMessage,
                     apiVersion: apiVersion
                 ) {

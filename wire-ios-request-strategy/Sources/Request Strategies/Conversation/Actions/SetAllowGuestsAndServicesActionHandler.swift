@@ -21,6 +21,7 @@ import WireDataModel
 final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
 
     private let eventProcessor: ConversationEventProcessor
+    private let localDomain: String?
 
     init(
         context: NSManagedObjectContext,
@@ -32,6 +33,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
+        self.localDomain = localDomain
         super.init(context: context)
     }
 
@@ -74,8 +76,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         let path: String
         switch apiVersion {
         case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 action.fail(with: .domainUnavailable)
                 return nil
