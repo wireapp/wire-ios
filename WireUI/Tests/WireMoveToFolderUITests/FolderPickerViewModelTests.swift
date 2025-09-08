@@ -35,6 +35,7 @@ final class FolderPickerViewModelTests: XCTestCase {
     override func setUp() async throws {
         mockDirectory = MockFolderDirectoryTypeProtocol()
         mockUpdateFolderUseCase = MockUpdateConversationFolderUseCase()
+        mockCreateFolderUseCase = MockCreateConversationFolderUseCase()
     }
 
     // MARK: - tearDown
@@ -44,6 +45,7 @@ final class FolderPickerViewModelTests: XCTestCase {
         sut = nil
         mockDirectory = nil
         mockUpdateFolderUseCase = nil
+        mockCreateFolderUseCase = nil
     }
 
     // MARK: - Initialization
@@ -156,7 +158,8 @@ final class FolderPickerViewModelTests: XCTestCase {
         sut = FolderPickerViewModel(
             conversation: conversation,
             directory: mockDirectory,
-            updateConversationFolderUseCase: mockUpdateFolderUseCase, createFolderUseCase: mockCreateFolderUseCase
+            updateConversationFolderUseCase: mockUpdateFolderUseCase,
+            createFolderUseCase: mockCreateFolderUseCase
         )
     }
 }
