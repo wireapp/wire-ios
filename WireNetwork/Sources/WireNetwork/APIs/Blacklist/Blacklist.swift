@@ -23,7 +23,7 @@ import Foundation
 
 public struct BuildNumberBlacklist: Equatable, Sendable {
 
-    /// All build numbers less than this number is considered illegal.
+    /// All build numbers less than this number are considered illegal.
 
     public let minimumLegalBuildNumber: String
 

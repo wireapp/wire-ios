@@ -38,10 +38,10 @@ struct IsBuildBlacklistedUseCaseTest {
         "Blacklisted versions",
         arguments: ["1", "50", "95", "98", "99", "150", "200"]
     )
-    func blacklistedVersions(currentBuidlNumber: String) async throws {
+    func blacklistedVersions(currentBuildNumber: String) async throws {
         // Given
         let sut = IsBuildBlacklistedUseCaseImpl(
-            currentBuildNumber: currentBuidlNumber,
+            currentBuildNumber: currentBuildNumber,
             api: api
         )
 
@@ -56,10 +56,10 @@ struct IsBuildBlacklistedUseCaseTest {
         "Allowed versions",
         arguments: ["100", "101", "149", "151", "199", "201"]
     )
-    func allowedVersions(currentBuidlNumber: String) async throws {
+    func allowedVersions(currentBuildNumber: String) async throws {
         // Given
         let sut = IsBuildBlacklistedUseCaseImpl(
-            currentBuildNumber: currentBuidlNumber,
+            currentBuildNumber: currentBuildNumber,
             api: api
         )
 
