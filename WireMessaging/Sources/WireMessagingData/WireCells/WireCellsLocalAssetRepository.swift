@@ -31,7 +31,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     private let nodesAPI: any NodesAPIProtocol
     private let fileDownloader: any FileDownloading
     private let fileCache: any FileCache
-    private let store: WireCellsLocalAssetStore
+    private let store: any WireCellsLocalAssetStoreProtocol
 
     @MainActor private var getNodeTasks: [NodeID: GetNodeTask] = [:]
 
@@ -40,7 +40,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     package convenience init(
         nodesAPI: any NodesAPIProtocol,
         fileCache: any FileCache,
-        store: WireCellsLocalAssetStore,
+        store: any WireCellsLocalAssetStoreProtocol,
     ) {
         self.init(nodesAPI: nodesAPI, fileDownloader: URLSession.shared, fileCache: fileCache, store: store)
     }
@@ -49,7 +49,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
         nodesAPI: any NodesAPIProtocol,
         fileDownloader: any FileDownloading,
         fileCache: any FileCache,
-        store: WireCellsLocalAssetStore
+        store: any WireCellsLocalAssetStoreProtocol
     ) {
         self.nodesAPI = nodesAPI
         self.fileDownloader = fileDownloader

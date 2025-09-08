@@ -22,8 +22,23 @@ package import Foundation
 package import WireData
 package import WireMessagingDomain
 
+// sourcery: AutoMockable
 @MainActor
-package final class WireCellsLocalAssetStore {
+package protocol WireCellsLocalAssetStoreProtocol: Sendable {
+
+    /// Returns the `WireCellsLocalAsset` for a given `nodeID` or `nil`.
+    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset?
+
+    /// Updates an existing `WireCellsLocalAsset` or creates a new one if none exists with its `nodeID`.
+    func upsertAsset(_ asset: WireMessagingDomain.WireCellsLocalAsset) throws
+
+    /// Returns a publish to monitor changes to an `WireCellsLocalAsset` for a given `nodeID`.
+    func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireCellsLocalAsset?, Never>
+
+}
+
+@MainActor
+package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
 
     private typealias ManagedLocalAsset = WireData.WireCellsLocalAsset
 
@@ -35,7 +50,7 @@ package final class WireCellsLocalAssetStore {
         self.contextProvider = contextProvider
     }
 
-    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
+    package func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
         if let asset = assets[nodeID] {
             return asset
         } else if let asset = try storedAsset(nodeID: nodeID) {
@@ -46,7 +61,7 @@ package final class WireCellsLocalAssetStore {
         }
     }
 
-    func upsertAsset(_ asset: WireMessagingDomain.WireCellsLocalAsset) throws {
+    package func upsertAsset(_ asset: WireMessagingDomain.WireCellsLocalAsset) throws {
         guard assets[asset.nodeID] != asset else { return }
 
         let oldAsset = assets[asset.nodeID]
@@ -76,15 +91,6 @@ package final class WireCellsLocalAssetStore {
         }
     }
 
-    func deleteAsset(nodeID: UUID) throws {
-        guard assets.removeValue(forKey: nodeID) != nil else { return }
-
-        updates.send((nodeID, nil))
-
-        // TODO: Update persistent store if necessary)
-    }
-
-    @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireCellsLocalAsset?, Never> {
         updates
             .filter { $0.0 == nodeID }
@@ -95,7 +101,6 @@ package final class WireCellsLocalAssetStore {
 
     // MARK: Helpers
 
-    @MainActor
     private func storedAsset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
         let context = contextProvider.viewContext
         return try context.performAndWait {
