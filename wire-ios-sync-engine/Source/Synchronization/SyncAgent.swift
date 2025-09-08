@@ -44,6 +44,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         journal[.isSyncV2Enabled]
     }
 
+    var isConsumableNotificationsEnabled: Bool {
+        journal[.isConsumableNotificationsEnabled]
+    }
+
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     var syncStatePublisher: AnyPublisher<SyncState, Never> {
         syncStateSubject.eraseToAnyPublisher()
@@ -215,8 +219,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-
-        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled]
 
         if isSyncV2Enabled {
 
