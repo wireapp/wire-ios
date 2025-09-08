@@ -42,11 +42,15 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     var oneOnOneResolutionDelay: TimeInterval = 3
 
+    private let apiVersion: WireTransport.APIVersion?
+
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        oneOneOneResolver: OneOnOneResolverInterface
+        oneOneOneResolver: OneOnOneResolverInterface,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
 
         self.syncProgress = syncProgress
@@ -78,7 +82,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConnection.entityName(), \.needsToBeUpdatedFromBackend)
 
-        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext)
+        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext, localDomain: localDomain)
         self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [
             connectToUserActionHandler,
@@ -86,6 +90,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         ])
 
         self.oneOnOneResolver = oneOneOneResolver
+        self.apiVersion = apiVersion
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -186,8 +191,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         defer { completion() }
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         switch apiVersion {
         case .v0:

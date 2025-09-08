@@ -23,6 +23,11 @@ import WireLogging
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
+    private let apiVersion: WireTransport.APIVersion?
+
+    init(apiVersion: WireTransport.APIVersion?) {
+        self.apiVersion = apiVersion
+    }
 
     func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
@@ -248,9 +253,7 @@ struct FeatureConfigsPayloadProcessor {
     ) throws {
         switch featureName {
         case .conferenceCalling:
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            if let apiVersion = BackendInfo.apiVersion,
-               apiVersion >= .v6 {
+            if let apiVersion, apiVersion >= .v6 {
                 let response = try decoder.decode(
                     FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self,
                     from: data

@@ -66,6 +66,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationEventProcessor: ConversationEventProcessor
 
     let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -73,6 +75,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         syncProgress: SyncProgress,
         mlsService: MLSServiceInterface,
         removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
+        apiVersion: WireTransport.APIVersion?,
         localDomain: String?
     ) {
         self.removeLocalConversation = removeLocalConversation
@@ -161,6 +164,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             SetAllowGuestsAndServicesActionHandler(context: managedObjectContext, localDomain: localDomain)
         ])
 
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
+
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
@@ -194,9 +200,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
-                // TODO: [WPB-19987] remove dependency on BackendInfo
-            } else if let domain = BackendInfo.domain {
-                let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: domain)
+            } else if let localDomain {
+                let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: localDomain)
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             }
         }
@@ -269,8 +274,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         switch apiVersion {
         case .v0:
@@ -280,9 +284,8 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
-                // TODO: [WPB-19987] remove dependency on BackendInfo
-            } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
-                let qualifiedID = QualifiedID(uuid: identifier, domain: domain)
+            } else if let identifier = object.remoteIdentifier, let localDomain {
+                let qualifiedID = QualifiedID(uuid: identifier, domain: localDomain)
                 synchronize(qualifiedID: qualifiedID)
             }
         }
@@ -451,7 +454,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
                 // TODO: [WPB-19987] remove dependency on BackendInfo
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
                 request = ZMTransportRequest(
@@ -493,8 +496,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-                // TODO: [WPB-19987] remove dependency on BackendInfo
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
                 request = ZMTransportRequest(

@@ -24,6 +24,15 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let encoder: JSONEncoder = .defaultEncoder
 
     private let processor = ConnectionPayloadProcessor()
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
 
     override func request(
         for action: ActionHandler<ConnectToUserAction>.Action,
@@ -65,8 +74,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         for action: ActionHandler<ConnectToUserAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { localDomain }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
             return nil

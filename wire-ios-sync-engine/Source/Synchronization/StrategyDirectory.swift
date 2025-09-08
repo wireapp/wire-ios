@@ -225,7 +225,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: oneOnOneResolver
+                oneOneOneResolver: oneOnOneResolver,
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -233,6 +235,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
                 removeLocalConversation: RemoveLocalConversationUseCase(),
+                apiVersion: metadata.apiVersion,
                 localDomain: metadata.domain
             ),
             UserProfileRequestStrategy(
@@ -324,7 +327,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                mlsClientManager: mlsClientManager
+                mlsClientManager: mlsClientManager,
+                apiVersion: metadata.apiVersion
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
