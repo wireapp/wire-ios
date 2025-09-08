@@ -42,12 +42,14 @@ public struct E2EIClientID: Equatable, Hashable {
         self.domain = domain.lowercased()
     }
 
-    public init?(user: ZMUser) {
+    public init?(
+        user: ZMUser,
+        localDomain: String?
+    ) {
         guard let selfClient = user.selfClient(),
               let userID = selfClient.user?.remoteIdentifier.transportString(),
               let clientID = selfClient.remoteIdentifier,
-              // TODO: [WPB-19987] remove dependency on BackendInfo
-              let domain = selfClient.user?.domain ?? BackendInfo.domain
+              let domain = selfClient.user?.domain ?? localDomain
         else {
             return nil
         }

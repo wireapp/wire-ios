@@ -441,11 +441,9 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore,
         teamRepository: teamRepository,
         messageRepository: messageRepository,
-        backendInfo: .init(
-            domain: backendMetadata.domain,
-            isFederationEnabled: backendMetadata.isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
-        ),
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled,
         mlsProvider: mlsProvider
     )
 

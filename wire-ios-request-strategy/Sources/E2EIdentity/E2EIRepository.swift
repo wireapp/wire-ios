@@ -52,6 +52,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let logger: WireLogger = .e2ei
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
     private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
@@ -62,7 +63,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         keyRotator: E2EIKeyPackageRotating,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
@@ -71,6 +73,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         self.coreCryptoProvider = coreCryptoProvider
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
         self.apiVersion = apiVersion
+        self.localDomain = localDomain
     }
 
     // MARK: - Interface
@@ -108,7 +111,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             guard let userName = selfUser.name,
                   let userHandle = selfUser.handle,
                   let teamId = selfUser.teamIdentifier,
-                  let clientID = E2EIClientID(user: selfUser) else {
+                  let clientID = E2EIClientID(user: selfUser, localDomain: self.localDomain) else {
                 throw Error.failedToGetSelfUserInfo
             }
             return (userName, userHandle, teamId, clientID, isUpgradingClient)

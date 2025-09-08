@@ -312,7 +312,8 @@ public final class ZMUserSession: NSObject {
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider,
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
-            apiVersion: resolvedBackendMetadata.apiVersion
+            apiVersion: resolvedBackendMetadata.apiVersion,
+            localDomain: resolvedBackendMetadata.domain
         )
 
         assert(
