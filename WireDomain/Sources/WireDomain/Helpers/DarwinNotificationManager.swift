@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 public enum DarwinNotification {
@@ -35,34 +34,38 @@ public class DarwinNotificationManager {
         CFNotificationCenterPostNotification(notificationCenter, CFNotificationName(name as CFString), nil, nil, true)
     }
 
-
     public func startObserving(name: String, callback: @escaping () -> Void) {
         callbacks[name] = callback
 
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
 
-        CFNotificationCenterAddObserver(notificationCenter,
-                                        Unmanaged.passUnretained(self).toOpaque(),
-                                        DarwinNotificationManager.notificationCallback,
-                                        name as CFString,
-                                        nil,
-                                        .deliverImmediately)
+        CFNotificationCenterAddObserver(
+            notificationCenter,
+            Unmanaged.passUnretained(self).toOpaque(),
+            DarwinNotificationManager.notificationCallback,
+            name as CFString,
+            nil,
+            .deliverImmediately
+        )
     }
-
 
     public func stopObserving(name: String) {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-        CFNotificationCenterRemoveObserver(notificationCenter, Unmanaged.passUnretained(self).toOpaque(), CFNotificationName(name as CFString), nil)
+        CFNotificationCenterRemoveObserver(
+            notificationCenter,
+            Unmanaged.passUnretained(self).toOpaque(),
+            CFNotificationName(name as CFString),
+            nil
+        )
         callbacks.removeValue(forKey: name)
     }
 
-
-    private static let notificationCallback: CFNotificationCallback = { center, observer, name, _, _ in
-        guard let observer = observer else { return }
+    private static let notificationCallback: CFNotificationCallback = { _, observer, name, _, _ in
+        guard let observer else { return }
         let manager = Unmanaged<DarwinNotificationManager>.fromOpaque(observer).takeUnretainedValue()
 
         if let name = name?.rawValue as String?, let callback = manager.callbacks[name] {
             callback()
         }
     }
- }
+}

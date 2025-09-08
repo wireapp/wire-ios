@@ -224,7 +224,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    
+
                     if isConsumableNotificationsEnabled {
                         incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
                             .perform()
@@ -237,7 +237,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
                 handlePushChannelAlreadyOpened()
                 syncStateSubject.send(.suspended)
-                
+
             } catch IncrementalSync.Failure.missedEvents {
                 WireLogger.sync.error(
                     "failed to perform new incremental sync (missed events): recovering with a full sync"
@@ -289,7 +289,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 self?.resume()
             }
     }
-    
+
     private func handlePushChannelAlreadyOpened() {
         WireLogger.sync.debug("😀 handlePushChannelAlreadyOpened", attributes: .syncAttributes)
         pushChannelMonitor.startMonitoring { [weak self] in
@@ -297,7 +297,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
         pushChannelMonitor.notify()
     }
-    
+
     private func retrySyncAfterPushChannelClosed() {
         WireLogger.sync.debug("😀 retrySyncAfterPushChannelClosed", attributes: .syncAttributes)
         pushChannelMonitor.stopMonitoring()
@@ -331,7 +331,6 @@ extension SyncAgent: LiveSyncDelegate {
 
 }
 
-
 // MARK: - MLS sync delegate
 
 extension SyncAgent: MLSSyncDelegate {
@@ -353,7 +352,7 @@ extension SyncAgent: MLSSyncDelegate {
                 }
                 // TODO: add consumable-notifications here
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
-                    handlePushChannelAlreadyOpened()
+                handlePushChannelAlreadyOpened()
             } catch {
                 WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
                 throw error

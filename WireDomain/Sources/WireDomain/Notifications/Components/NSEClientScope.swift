@@ -81,7 +81,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
-            
+
             // make sure no pushChannel is open
             let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
             do {
@@ -89,7 +89,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             } catch {
                 throw Failure.pushChannelAlreadyOpened
             }
-            
+
             do {
                 try await useCase.invoke()
             } catch {
@@ -103,7 +103,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 )
             }
             pushChannelState.markAsClosed()
-            
+
         } else {
             eventStream = try await pullEventsUseCase.invoke()
         }

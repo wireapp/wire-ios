@@ -23,7 +23,7 @@ final class PushChannelStateTests: XCTestCase {
 
     var sut: PushChannelState!
     var fileURL: URL!
-    
+
     override func setUpWithError() throws {
         let tempDir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let clientID = UUID().uuidString
@@ -41,13 +41,13 @@ final class PushChannelStateTests: XCTestCase {
     func test_markAsClosed() throws {
 
         sut.markAsClosed()
-        
+
         XCTAssertNoThrow(try sut.markAsOpen())
     }
 
     func test_markAsOpen_throwsWhenAlreadyOpened() throws {
         XCTAssertNoThrow(try sut.markAsOpen())
-        
+
         XCTAssertThrowsError(try sut.markAsOpen())
 
     }

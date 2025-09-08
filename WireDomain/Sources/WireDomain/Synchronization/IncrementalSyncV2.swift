@@ -84,8 +84,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         try Task.checkCancellation()
 
         try await pullServerTimeSync.pull()
-        
-        
+
         do {
             try pushChannelState.markAsOpen()
         } catch {
@@ -93,7 +92,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
 
         let syncMarker = syncMarkerGenerator()
-        
+
         let pushChannel: PushChannelV2Protocol
         do {
             pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
@@ -101,7 +100,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             pushChannelState.markAsClosed()
             throw error
         }
-        
+
         logger.debug("creating push channel with marker \(syncMarker)", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
@@ -208,7 +207,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
-                    logger.debug("marker \(id) - deliveryTag \(deliveryTag)", attributes: .syncAttributes(initialSync: false))
+                    logger.debug(
+                        "marker \(id) - deliveryTag \(deliveryTag)",
+                        attributes: .syncAttributes(initialSync: false)
+                    )
                     try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
 
                     if id == syncMarker {
@@ -290,7 +292,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
         try Task.checkCancellation()
-        
+
         // process
         var envelopeIdsToDelete = [Int64]()
         for (envelope, index) in storedEnvelopes {
@@ -309,7 +311,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         // save message db first then
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
-        
+
         // only delete successful processed envelopes
         await deleteEnvelopes(at: envelopeIdsToDelete)
     }

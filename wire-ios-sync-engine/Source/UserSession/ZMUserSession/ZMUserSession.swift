@@ -1230,11 +1230,11 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(false)
         }
-        
+
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
             try Task.checkCancellation()
-            
+
             await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 

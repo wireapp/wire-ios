@@ -55,22 +55,26 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     private var selfClientID: String
 
     private let pushChannelMonitor: PushChannelMonitor
-    
+
     init(
         parent: any Scope,
         selfClientID: String
     ) {
         self.selfClientID = selfClientID
-        self.pushChannelMonitor = PushChannelMonitor(clientID: selfClientID,
-                                                     postingNotificationName: DarwinNotification.releasingPushChannelAccess,
-                                                     observingNotificationName: DarwinNotification.requestingPushChannelAccess)
+        self.pushChannelMonitor = PushChannelMonitor(
+            clientID: selfClientID,
+            postingNotificationName: DarwinNotification
+                .releasingPushChannelAccess,
+            observingNotificationName: DarwinNotification
+                .requestingPushChannelAccess
+        )
         super.init(parent: parent)
     }
 
     private var currentTask: Task<Void, any Error>?
-    
+
     func pullEvents() async throws {
-        self.pushChannelMonitor.startMonitoring { [weak self] in
+        pushChannelMonitor.startMonitoring { [weak self] in
             WireLogger.sync.debug("😀 requested to cancel sync", attributes: .syncAttributes, .newNSE)
             self?.currentTask?.cancel()
             self?.pushChannelMonitor.notify()
@@ -87,7 +91,10 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         )
 
         // make sure no pushChannel is open
-        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: selfClientID)
+        let pushChannelState = PushChannelState(
+            sharedContainerURL: dependency.applicationContainer,
+            clientID: selfClientID
+        )
         do {
             try pushChannelState.markAsOpen()
         } catch {
@@ -101,7 +108,8 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
                 try await useCase.invoke()
             } catch {
                 // either we timeout during decrypting/storing events OR an issue with the sync
-                // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
+                // In both cases, we end up with a stream of notifications that has not been shown, so we need to
+                // continue
                 // to show them
                 WireLogger.sync.warn(
                     "😀 syncing events via websocket: \(String(describing: error))",
@@ -113,7 +121,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         try await currentTask?.value
         WireLogger.sync.debug("😀 closing push channel")
         pushChannelState.markAsClosed()
-        
+
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream
         )

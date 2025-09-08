@@ -52,7 +52,7 @@ struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
                     // we're almost out of time better to stop the pulling
                     throw CancellationError()
                 }
-                
+
                 defer { group.cancelAll() }
                 // get the first task to finish
                 try await group.next()

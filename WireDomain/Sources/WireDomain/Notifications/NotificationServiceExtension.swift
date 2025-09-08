@@ -43,7 +43,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let cookieEncryptionKey: Data
     private let minTLSVersion: String?
     private let preferredAPIVersion: UInt?
-    
+
     public init(
         currentAppVersion: String,
         appContainerURL: URL,
@@ -228,7 +228,7 @@ extension NotificationServiceExtension {
             )
         }
     }
-    
+
     private func logSyncEventsStepError(_ error: SyncEventsStep.Failure) {
         switch error {
         case .pushChannelAlreadyOpened:
@@ -271,4 +271,3 @@ extension NotificationServiceExtension {
         )
     }
 }
-

@@ -68,7 +68,6 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         super.init(parent: parent)
     }
 
-
     func verifyUserSession() async throws {
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             journal: journal,
@@ -89,7 +88,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
             try await syncEventsStep(
                 selfClientID: selfClientID
             ).pullEvents()
-                        
+
         } else {
             try await pullEventsStep(
                 selfClientID: selfClientID

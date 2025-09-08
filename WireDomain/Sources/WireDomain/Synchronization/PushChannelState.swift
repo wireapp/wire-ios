@@ -29,11 +29,11 @@ struct PushChannelState: PushChannelStateProtocol {
     enum Failure: Error {
         case alreadyLocked
     }
-    
+
     /// The file context only prevents other processes to get the lock
     /// same process will succeed, so we need an extra state
-    static private var locked: Bool = false
-    
+    private static var locked: Bool = false
+
     let fileContext: SafeFileContext
     init(sharedContainerURL: URL, clientID: String) {
         let url = sharedContainerURL.appendingPathComponent(clientID)
@@ -60,4 +60,3 @@ struct PushChannelState: PushChannelStateProtocol {
         Self.locked = false
     }
 }
-

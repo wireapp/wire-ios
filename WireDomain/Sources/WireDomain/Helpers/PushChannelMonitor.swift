@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public protocol PushChannelMonitorProtocol {
     func startMonitoring(action: @escaping () -> Void)
     func stopMonitoring()
@@ -24,23 +23,24 @@ public protocol PushChannelMonitorProtocol {
 }
 
 public final class PushChannelMonitor: PushChannelMonitorProtocol {
-    let darwinNotificationManager: DarwinNotificationManager = DarwinNotificationManager()
-    
+    let darwinNotificationManager: DarwinNotificationManager = .init()
+
     private var observingNotificationName: String
     private var postingNotificationName: String
 
-    public init(clientID: String,
-                postingNotificationName: String,
-                observingNotificationName: String) {
+    public init(
+        clientID: String,
+        postingNotificationName: String,
+        observingNotificationName: String
+    ) {
         self.postingNotificationName = postingNotificationName + "_" + clientID
         self.observingNotificationName = observingNotificationName + "_" + clientID
     }
-    
+
     deinit {
         darwinNotificationManager.stopObserving(name: observingNotificationName)
     }
 
-    
     public func startMonitoring(action: @escaping () -> Void) {
         darwinNotificationManager.startObserving(name: observingNotificationName) {
             action()
@@ -51,7 +51,7 @@ public final class PushChannelMonitor: PushChannelMonitorProtocol {
     public func stopMonitoring() {
         darwinNotificationManager.stopObserving(name: observingNotificationName)
     }
-    
+
     public func notify() {
         darwinNotificationManager.postNotification(name: postingNotificationName)
     }
