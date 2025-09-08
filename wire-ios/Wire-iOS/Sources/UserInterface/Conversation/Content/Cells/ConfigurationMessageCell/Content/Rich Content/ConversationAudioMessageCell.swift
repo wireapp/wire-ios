@@ -160,6 +160,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
     lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let isBubbleHasMaximumWidth: Bool = true
 
     weak var message: ZMConversationMessage? {
         didSet {
