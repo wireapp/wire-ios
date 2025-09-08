@@ -119,7 +119,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             }
         }
         try await currentTask?.value
-        WireLogger.sync.debug("😀 closing push channel")
+        WireLogger.sync.debug("closing push channel")
         pushChannelState.markAsClosed()
 
         try await generateNotificationStep.generateNotification(

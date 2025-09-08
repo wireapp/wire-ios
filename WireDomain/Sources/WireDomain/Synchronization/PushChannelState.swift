@@ -43,7 +43,6 @@ struct PushChannelState: PushChannelStateProtocol {
                 fatal("could not create file")
             }
         }
-        WireLogger.sync.debug("😀lock at \(url.absoluteString)")
         self.fileContext = SafeFileContext(fileURL: url)
     }
 
@@ -56,7 +55,6 @@ struct PushChannelState: PushChannelStateProtocol {
 
     func markAsClosed() {
         fileContext.releaseDirectoryLock()
-        WireLogger.sync.debug("😀 unlock")
         Self.locked = false
     }
 }
