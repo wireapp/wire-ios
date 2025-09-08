@@ -190,7 +190,8 @@ public final class ClientSessionComponent {
     public lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
-        messageLocalStore: messageLocalStore
+        messageLocalStore: messageLocalStore,
+        localDomain: backendMetadata.domain
     )
 
     public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
@@ -232,8 +233,7 @@ public final class ClientSessionComponent {
     public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled,
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        isMLSEnabled: BackendInfo.isMLSEnabled,
+        isMLSEnabled: isMLSEnabled,
         api: conversationsAPI,
         store: conversationLocalStore,
         journal: journal
@@ -263,10 +263,8 @@ public final class ClientSessionComponent {
     private lazy var pullMLSOneOnOneSync = PullMLSOneOnOneSync(
         api: conversationsAPI,
         store: conversationLocalStore,
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        isFederationEnabled: BackendInfo.isFederationEnabled,
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        isMLSEnabled: BackendInfo.isMLSEnabled
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled
     )
 
     private lazy var pullMLSStatusSync = PullMLSStatusSync(

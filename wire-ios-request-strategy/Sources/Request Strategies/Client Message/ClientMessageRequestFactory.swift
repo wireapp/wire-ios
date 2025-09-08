@@ -32,7 +32,7 @@ public final class ClientMessageRequestFactory: NSObject {
 
     private let localDomain: String?
 
-    init(localDomain: String?) {
+    public init(localDomain: String?) {
         self.localDomain = localDomain
     }
 

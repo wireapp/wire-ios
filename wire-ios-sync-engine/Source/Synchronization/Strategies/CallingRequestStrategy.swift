@@ -143,7 +143,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return nil
             }
 
-            let factory = ClientMessageRequestFactory()
+            let factory = ClientMessageRequestFactory(localDomain: localDomain)
 
             return factory.upstreamRequestForFetchingClients(
                 conversationId: request.conversationId,

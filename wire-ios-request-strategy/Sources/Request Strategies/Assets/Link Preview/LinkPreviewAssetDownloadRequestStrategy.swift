@@ -21,15 +21,17 @@ import Foundation
 @objcMembers
 public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
 
-    private let requestFactory = AssetDownloadRequestFactory()
+    private let requestFactory: AssetDownloadRequestFactory
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationToken: Any?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus

@@ -147,6 +147,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             apiVersion: metadata.apiVersion,
+            localDomain: metadata.domain,
             coreDataStack: coreDataStack
         )
 
@@ -272,6 +273,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
+        localDomain: String,
         coreDataStack: CoreDataStack
     ) -> NSEClientScope {
         NSEClientScope(
@@ -280,6 +282,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: restNetworkService,
             webSocketNetworkService: webSocketNetworkService,
             apiVersion: apiVersion,
+            localDomain: localDomain,
             coreDataStack: coreDataStack
         )
     }

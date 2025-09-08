@@ -94,7 +94,8 @@ extension PullEventsStep {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: dependency.messageLocalStore,
+            localDomain: BackendInfo.domain
         )
     }
 

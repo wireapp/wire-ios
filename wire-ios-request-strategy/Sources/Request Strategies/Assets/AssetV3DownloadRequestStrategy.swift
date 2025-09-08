@@ -26,17 +26,19 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
 
-    private let requestFactory = AssetDownloadRequestFactory()
+    private let requestFactory: AssetDownloadRequestFactory
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
+        requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = .allowsRequestsWhileOnline

@@ -53,6 +53,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let restNetworkService: NetworkService
     private let webSocketNetworkService: NetworkService
     private let apiVersion: WireNetwork.APIVersion
+    private let localDomain: String
     private let coreDataStack: CoreDataStack
 
     init(
@@ -61,12 +62,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
+        localDomain: String,
         coreDataStack: CoreDataStack
     ) {
         self.clientID = clientID
         self.restNetworkService = restNetworkService
         self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
+        self.localDomain = localDomain
         self.coreDataStack = coreDataStack
         super.init(parent: parent)
     }
@@ -282,7 +285,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             ConversationLocalStore(
                 context: coreDataStack.syncContext,
                 mlsService: nil,
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                localDomain: localDomain
             )
         }
     }

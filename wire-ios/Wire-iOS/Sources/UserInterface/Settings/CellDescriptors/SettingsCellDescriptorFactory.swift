@@ -30,6 +30,7 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCoordinator: AnySettingsCoordinator
+    let localDomain: String?
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {

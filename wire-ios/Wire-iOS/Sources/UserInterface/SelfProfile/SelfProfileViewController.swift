@@ -95,7 +95,8 @@ final class SelfProfileViewController: UIViewController {
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
-            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
+            localDomain: userSession.resolvedBackendMetadata.domain
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)

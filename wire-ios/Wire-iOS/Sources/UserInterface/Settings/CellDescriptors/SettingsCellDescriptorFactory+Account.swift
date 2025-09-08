@@ -397,7 +397,10 @@ extension SettingsCellDescriptorFactory {
         }
         let backupLocalStore = BackupLocalStore(
             context: context,
-            processor: ConversationProtobufMessageProcessor(context: context)
+            processor: ConversationProtobufMessageProcessor(
+                context: context,
+                localDomain: localDomain
+            )
         )
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
@@ -528,14 +531,18 @@ extension SettingsCellDescriptorFactory {
 
 private extension ConversationProtobufMessageProcessor {
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         let messageLocalStore = MessageLocalStore(context: context)
         self.init(
             messageLocalStore: messageLocalStore,
             conversationLocalStore: ConversationLocalStore(
                 context: context,
                 mlsService: context.performAndWait { context.mlsService },
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                localDomain: localDomain
             ),
             userLocalStore: UserLocalStore(
                 context: context,

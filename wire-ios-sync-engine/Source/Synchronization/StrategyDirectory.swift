@@ -156,7 +156,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             VerifyLegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             ProxiedRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -174,15 +175,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             AssetV3DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             UserPropertyRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -201,11 +205,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             PushTokenStrategy(
                 withManagedObjectContext: syncMOC,
