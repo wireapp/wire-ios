@@ -94,12 +94,14 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
     required init(
         context: NSManagedObjectContext,
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.removeLocalConversationUseCase = removeLocalConversationUseCase
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: removeLocalConversationUseCase
+            removeLocalConversation: removeLocalConversationUseCase,
+            isFederationEnabled: isFederationEnabled
         )
         super.init(context: context)
     }

@@ -25,11 +25,13 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
 
     init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: RemoveLocalConversationUseCase()
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
         )
         super.init(context: context)
     }

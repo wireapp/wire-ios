@@ -236,7 +236,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 mlsService: mlsService,
                 removeLocalConversation: RemoveLocalConversationUseCase(),
                 apiVersion: metadata.apiVersion,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -363,7 +364,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             SelfSupportedProtocolsRequestStrategy(
                 context: syncMOC,

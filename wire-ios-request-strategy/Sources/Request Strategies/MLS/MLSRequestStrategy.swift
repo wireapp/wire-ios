@@ -33,7 +33,8 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.entitySync = EntityActionSync(actionHandlers: [
             SendCommitBundleActionHandler(context: managedObjectContext),
@@ -47,7 +48,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             FetchSupportedProtocolsActionHandler(context: managedObjectContext),
-            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext, localDomain: localDomain)
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
         ])
 
         super.init(

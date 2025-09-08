@@ -30,22 +30,26 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: mlsEventProcessor,
-        removeLocalConversation: RemoveLocalConversationUseCase()
+        removeLocalConversation: RemoveLocalConversationUseCase(),
+        isFederationEnabled: isFederationEnabled
     )
     private let eventPayloadDecoder = EventPayloadDecoder()
     private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
     public convenience init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.init(
             context: context,
             conversationService: ConversationService(context: context),
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -53,12 +57,14 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         context: NSManagedObjectContext,
         conversationService: ConversationServiceInterface,
         mlsEventProcessor: MLSEventProcessing,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.conversationService = conversationService
         self.mlsEventProcessor = mlsEventProcessor
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init()
     }
 

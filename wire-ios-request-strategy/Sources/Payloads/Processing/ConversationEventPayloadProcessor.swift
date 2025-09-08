@@ -35,15 +35,18 @@ struct ConversationEventPayloadProcessor {
 
     private let mlsEventProcessor: MLSEventProcessing
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
     init(
         mlsEventProcessor: MLSEventProcessing,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
+        isFederationEnabled: Bool
     ) {
         self.mlsEventProcessor = mlsEventProcessor
         self.removeLocalConversation = removeLocalConversation
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Conversation creation
@@ -799,8 +802,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
+        conversation.domain = isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
         if let epoch = payload.epoch {

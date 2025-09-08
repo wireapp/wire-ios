@@ -37,11 +37,13 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
     init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         eventProcessor = ConversationEventProcessor(
             context: context,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         super.init(context: context)
     }

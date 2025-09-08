@@ -76,7 +76,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         mlsService: MLSServiceInterface,
         removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
         apiVersion: WireTransport.APIVersion?,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.removeLocalConversation = removeLocalConversation
 
@@ -96,7 +97,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByIDListTranscoder = ConversationByIDListTranscoder(
             context: managedObjectContext,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByIDListSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -106,7 +108,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.conversationByQualifiedIDListTranscoder = ConversationByQualifiedIDListTranscoder(
             context: managedObjectContext,
             removeLocalConversationUseCase: removeLocalConversation,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByQualifiedIDListSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -116,7 +119,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.conversationByIDTranscoder = ConversationByIDTranscoder(
             context: managedObjectContext,
             removeLocalConversationUseCase: removeLocalConversation,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -126,7 +130,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.conversationByQualifiedIDTranscoder = ConversationByQualifiedIDTranscoder(
             context: managedObjectContext,
             removeLocalConversationUseCase: removeLocalConversation,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -138,13 +143,13 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             \.needsToBeUpdatedFromBackend
         )
 
-        self.conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext, localDomain: localDomain)
+        self.conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
         self.addParticipantActionHandler = AddParticipantActionHandler(
             context: managedObjectContext,
             eventProcessor: conversationEventProcessor
         )
-        self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext, localDomain: localDomain)
-        self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext, localDomain: localDomain)
+        self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
+        self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
 
         self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext)
 
@@ -153,15 +158,16 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             removeParticipantActionHandler,
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
-            SyncConversationActionHandler(context: managedObjectContext, localDomain: localDomain),
+            SyncConversationActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled),
             CreateGroupConversationActionHandler(
                 context: managedObjectContext,
                 removeLocalConversationUseCase: removeLocalConversation,
-                localDomain: localDomain
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
             CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext, localDomain: localDomain)
+            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
         ])
 
         self.apiVersion = apiVersion
@@ -545,13 +551,15 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     init(
         context: NSManagedObjectContext,
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: removeLocalConversation
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -670,13 +678,15 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     init(
         context: NSManagedObjectContext,
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: removeLocalConversation
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -814,12 +824,14 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: RemoveLocalConversationUseCase()
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -884,13 +896,15 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     init(
         context: NSManagedObjectContext,
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
         processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
-            removeLocalConversation: removeLocalConversation
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
         )
     }
 

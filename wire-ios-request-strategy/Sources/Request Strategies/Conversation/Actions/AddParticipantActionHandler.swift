@@ -43,11 +43,12 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     convenience init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.init(
             context: context,
-            eventProcessor: ConversationEventProcessor(context: context, localDomain: localDomain)
+            eventProcessor: ConversationEventProcessor(context: context, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
         )
     }
 
