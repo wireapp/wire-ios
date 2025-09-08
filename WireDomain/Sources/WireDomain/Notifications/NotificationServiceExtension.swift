@@ -159,27 +159,27 @@ extension NotificationServiceExtension {
         case .syncV2IsNotEnabled:
             logger.error(
                 "Not displaying notification because sync v2 is not enabled yet",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .userUnauthenticated:
             logger.error(
                 "Not displaying notification because app is not authenticated",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .coreDataMissingSharedContainer:
             logger.error(
                 "Core data missing shared container",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .coreDataMigrationRequired:
             logger.error(
                 "Core data migration required",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case let .unableToLoadStores(loadStoresError):
             logger.error(
                 "Loading coreDataStack with error: \(loadStoresError.localizedDescription)",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -199,12 +199,12 @@ extension NotificationServiceExtension {
         case .missingCurrentAppVersion:
             logger.error(
                 "Missing current app version",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .missingAppGroupID:
             logger.error(
                 "Missing app group ID",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -214,12 +214,12 @@ extension NotificationServiceExtension {
         case .noAccountFound:
             logger.error(
                 "No selected account found",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .missingSelfClientID:
             logger.error(
                 "Self client ID is missing",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .mainAppPushChannelOpened:
             logger.error(
@@ -239,12 +239,12 @@ extension NotificationServiceExtension {
         case .missingProxyCredentials:
             logger.error(
                 "Proxy needs authentication but credentials are missing",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .apiVersionNotFound:
             logger.error(
                 "API version not found",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -254,12 +254,12 @@ extension NotificationServiceExtension {
         case .missingProxyCredentials:
             logger.error(
                 "Proxy needs authentication but credentials are missing",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .apiVersionNotFound:
             logger.error(
                 "API version not found",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -267,7 +267,7 @@ extension NotificationServiceExtension {
     private func logDefaultError(_ error: any Error) {
         logger.error(
             "Unable to create a session: \(error.localizedDescription)",
-            attributes: .newNSE
+            attributes: .newNSE, .safePublic
         )
     }
 }

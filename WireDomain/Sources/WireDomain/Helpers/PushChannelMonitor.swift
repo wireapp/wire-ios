@@ -22,6 +22,7 @@ public protocol PushChannelMonitorProtocol {
     func notify()
 }
 
+/// Object to communicate intent between NSE and main App about PushChannel
 public final class PushChannelMonitor: PushChannelMonitorProtocol {
     let darwinNotificationManager: DarwinNotificationManager = .init()
 
@@ -45,7 +46,6 @@ public final class PushChannelMonitor: PushChannelMonitorProtocol {
         darwinNotificationManager.startObserving(name: observingNotificationName) {
             action()
         }
-//        darwinNotificationManager.postNotification(name: postingNotificationName)
     }
 
     public func stopMonitoring() {

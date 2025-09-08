@@ -346,11 +346,16 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                        .perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
+
+                    if isConsumableNotificationsEnabled {
+                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
+                            .perform()
+                    } else {
+                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                            .perform()
+                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                    }
                 }
-                // TODO: add consumable-notifications here
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
                 handlePushChannelAlreadyOpened()
             } catch {
