@@ -95,7 +95,8 @@ package extension WireCellsNodeNetworkModel {
             mimeType: mimeType,
             previews: previews.map { $0.toModel() },
             ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
-            conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
+            ownerUserName: ownerUserName,
+            conversationID: conversationId.flatMap(QualifiedID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
             downloadURL: downloadURL
         )
@@ -119,7 +120,7 @@ package extension WireCellsNode {
             previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
-            conversationId: conversationID?.pydioQualifiedID,
+            conversationId: conversationID?.transportString,
             publicLinkId: publicLinkID?.string
         )
     }
@@ -175,17 +176,17 @@ package extension PreviewDTO {
 
 private extension WireFoundation.QualifiedID {
 
-    /// Creates a QualifiedID from a string in the format `domain@uuid`.
+    /// Creates a QualifiedID from a string in the format `uuid@domain`.
     init?(string: String) {
         let components = string.split(separator: "@")
-        guard components.count == 2, let uuid = UUID(uuidString: String(components[1])) else {
+        guard components.count == 2, let uuid = UUID(uuidString: String(components[0])) else {
             return nil
         }
-        self.init(id: uuid, domain: String(components[0]))
+        self.init(id: uuid, domain: String(components[1]))
     }
 
     var transportString: String {
-        "\(domain)@\(id.uuidString.lowercased())"
+        "\(id.uuidString.lowercased())@\(domain)"
     }
 }
 

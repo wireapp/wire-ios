@@ -42,7 +42,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let previews: [WireCellsNodePreview]
     public let ownerUserID: QualifiedID?
     public let ownerUserName: String?
-    public let conversationID: WireCellsConversationID?
+    public let conversationID: QualifiedID?
     public let publicLinkID: WireCellsPublicLinkID?
 
     /// A pre-signed URL to download the file. Note that this URL will expire so shouldn't be stored long-term.
@@ -64,7 +64,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         previews: [WireCellsNodePreview] = [],
         ownerUserID: QualifiedID? = nil,
         ownerUserName: String? = nil,
-        conversationID: WireCellsConversationID? = nil,
+        conversationID: QualifiedID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
         downloadURL: URL? = nil
     ) {

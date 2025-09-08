@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 public enum MessageAttachmentDraftRepositoryError: Error, Sendable {
     case genericError(any Error)
@@ -27,7 +28,7 @@ public protocol WireCellsMessageAttachmentDraftRepository {
 
     @discardableResult
     func add(
-        conversationID: WireCellsConversationID,
+        conversationID: QualifiedID,
         node: WireCellsNode,
         versionID: UUID,
         mimeType: String,
@@ -39,10 +40,10 @@ public protocol WireCellsMessageAttachmentDraftRepository {
     func get(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
         -> WireCellsMessageAttachmentDraft
 
-    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
+    func getAll(conversationID: QualifiedID) async throws(MessageAttachmentDraftRepositoryError)
         -> [WireCellsMessageAttachmentDraft]
 
-    func observe(conversationID: WireCellsConversationID) async throws -> AsyncStream<[WireCellsMessageAttachmentDraft]>
+    func observe(conversationID: QualifiedID) async throws -> AsyncStream<[WireCellsMessageAttachmentDraft]>
 
     func updateStatus(
         draftID: WireCellsMessageAttachmentDraftID,
@@ -51,5 +52,5 @@ public protocol WireCellsMessageAttachmentDraftRepository {
 
     func remove(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
 
-    func removeAttachmentDrafts(conversationID: WireCellsConversationID) async
+    func removeAttachmentDrafts(conversationID: QualifiedID) async
 }
