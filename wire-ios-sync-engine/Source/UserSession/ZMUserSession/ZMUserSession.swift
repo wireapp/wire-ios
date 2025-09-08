@@ -182,7 +182,8 @@ public final class ZMUserSession: NSObject {
     public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol =
         SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
-            context: syncContext
+            context: syncContext,
+            localDomain: resolvedBackendMetadata.domain
         )
 
     public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol =

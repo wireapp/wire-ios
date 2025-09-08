@@ -371,7 +371,8 @@ final class UserSessionLoader {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: backendMetadata.domain
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -397,7 +398,8 @@ final class UserSessionLoader {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: backendMetadata.domain
         )
 
         let e2eiActivationDateRepository = E2EIActivationDateRepository(

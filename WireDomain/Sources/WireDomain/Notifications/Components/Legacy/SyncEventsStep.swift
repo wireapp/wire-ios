@@ -156,7 +156,8 @@ extension SyncEventsStep {
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: BackendInfo.domain
         )
     }
 

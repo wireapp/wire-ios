@@ -141,7 +141,7 @@ extension WireCallCenterV3 {
         guard
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
-            let selfClientID = MLSClientID(userClient: selfClient),
+            let selfClientID = MLSClientID(userClient: selfClient, localDomain: localDomain),
             let parentIDs = mlsParentIDS(for: conversationID)
         else {
             return

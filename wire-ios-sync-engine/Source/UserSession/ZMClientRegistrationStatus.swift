@@ -125,14 +125,18 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
+    private let localDomain: String?
+
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        localDomain: String?
     ) {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
         self.coreCryptoProvider = coreCryptoProvider
+        self.localDomain = localDomain
 
         super.init()
 
@@ -520,7 +524,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             isWaitingForE2EIEnrollment = true
             notifyE2EIEnrollmentNecessary()
         } else {
-            guard let mlsClientID = MLSClientID(userClient: client) else {
+            guard let mlsClientID = MLSClientID(userClient: client, localDomain: localDomain) else {
                 fatalError("Needs to register MLS client but can't retrieve qualified client ID")
             }
 
