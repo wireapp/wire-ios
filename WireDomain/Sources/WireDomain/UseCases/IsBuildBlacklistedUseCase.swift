@@ -33,8 +33,8 @@ public enum IsBuildBlacklistedUseCaseError: Error {
 
 public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
 
-    let currentBuildNumber: String
-    let api: any BlacklistAPI
+    private let currentBuildNumber: String
+    private let api: any BlacklistAPI
 
     public init(
         currentBuildNumber: String,
