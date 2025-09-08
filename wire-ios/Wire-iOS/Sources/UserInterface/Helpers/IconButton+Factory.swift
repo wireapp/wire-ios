@@ -50,7 +50,7 @@ extension IconButton {
 
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        return IconButton(
+        return .init(
             icon: .send,
             accessibilityId: "sendButton",
             backgroundColor: [
