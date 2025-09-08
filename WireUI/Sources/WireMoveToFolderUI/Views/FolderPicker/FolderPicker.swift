@@ -39,8 +39,8 @@ public struct FolderPicker: View {
         self.isContextMenuAllowed = isContextMenuAllowed
         self.conversationName = conversationName
         self._createFolderViewModel = StateObject(
-                   wrappedValue: CreateFolderViewModel(useCase: createFolderUseCase)
-               )
+            wrappedValue: CreateFolderViewModel(useCase: createFolderUseCase)
+        )
     }
 
     public var body: some View {
