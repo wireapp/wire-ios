@@ -453,7 +453,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-                // TODO: [WPB-19987] remove dependency on BackendInfo
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 

@@ -243,6 +243,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 oneOnOneResolver: oneOnOneResolver,
+                apiVersion: metadata.apiVersion,
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),

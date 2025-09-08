@@ -39,6 +39,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let actionSync: EntityActionSync
 
     let oneOnOneResolver: any OneOnOneResolverInterface
+    private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
     private let isFederationEnabled: Bool
 
@@ -47,6 +48,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
         oneOnOneResolver: any OneOnOneResolverInterface,
+        apiVersion: WireTransport.APIVersion?,
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
@@ -65,6 +67,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         )
 
         self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext, isFederationEnabled: isFederationEnabled)])
+        self.apiVersion = apiVersion
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
 
@@ -152,8 +155,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
             .compactMap { $0 as? ZMUser }
@@ -169,8 +171,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         guard
             let users = objects as? Set<ZMUser>,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion
+            let apiVersion
         else {
             return
         }

@@ -33,6 +33,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         removeLocalConversation: RemoveLocalConversationUseCase()
     )
     private let eventPayloadDecoder = EventPayloadDecoder()
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
@@ -43,18 +44,21 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         self.init(
             context: context,
             conversationService: ConversationService(context: context),
-            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain)
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            localDomain: localDomain
         )
     }
 
     public init(
         context: NSManagedObjectContext,
         conversationService: ConversationServiceInterface,
-        mlsEventProcessor: MLSEventProcessing
+        mlsEventProcessor: MLSEventProcessing,
+        localDomain: String?
     ) {
         self.context = context
         self.conversationService = conversationService
         self.mlsEventProcessor = mlsEventProcessor
+        self.localDomain = localDomain
         super.init()
     }
 
@@ -308,8 +312,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
                 Payload.UpdateConversationMLSWelcome.self,
                 from: event.payload
             ),
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+            let qualifiedID = payload.qualifiedID ?? localDomain.map({
                 QualifiedID(uuid: payload.id, domain: $0)
             })
         else { return }
