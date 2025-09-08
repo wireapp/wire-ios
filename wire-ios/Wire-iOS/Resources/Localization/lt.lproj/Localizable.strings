@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Ieškoti";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Failai";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Paveikslėlis";

@@ -3717,6 +3717,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(consumableNotifications)
     }
 
+    // MARK: - fetchChatBubblesSimple
+
+    public var fetchChatBubblesSimple_Invocations: [Void] = []
+    public var fetchChatBubblesSimple_MockMethod: (() -> Feature.ChatBubblesSimple)?
+    public var fetchChatBubblesSimple_MockValue: Feature.ChatBubblesSimple?
+
+    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
+        fetchChatBubblesSimple_Invocations.append(())
+
+        if let mock = fetchChatBubblesSimple_MockMethod {
+            return mock()
+        } else if let mock = fetchChatBubblesSimple_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChatBubblesSimple`")
+        }
+    }
+
+    // MARK: - storeChatBubblesSimple
+
+    public var storeChatBubblesSimple_Invocations: [Feature.ChatBubblesSimple] = []
+    public var storeChatBubblesSimple_MockMethod: ((Feature.ChatBubblesSimple) -> Void)?
+
+    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
+        storeChatBubblesSimple_Invocations.append(chatBubblesSimple)
+
+        guard let mock = storeChatBubblesSimple_MockMethod else {
+            fatalError("no mock for `storeChatBubblesSimple`")
+        }
+
+        mock(chatBubblesSimple)
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
@@ -4280,6 +4313,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `establishGroupForWithRemovalKeys`")
         }
+    }
+
+    // MARK: - establishPendingGroup
+
+    public var establishPendingGroupGroupID_Invocations: [MLSGroupID] = []
+    public var establishPendingGroupGroupID_MockError: Error?
+    public var establishPendingGroupGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func establishPendingGroup(groupID: MLSGroupID) async throws {
+        establishPendingGroupGroupID_Invocations.append(groupID)
+
+        if let error = establishPendingGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = establishPendingGroupGroupID_MockMethod else {
+            fatalError("no mock for `establishPendingGroupGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
     // MARK: - joinGroup

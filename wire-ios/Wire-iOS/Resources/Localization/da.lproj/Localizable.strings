@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Søg";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Filer";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";

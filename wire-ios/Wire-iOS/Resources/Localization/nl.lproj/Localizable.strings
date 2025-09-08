@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Zoeken";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Bestanden";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Afbeelding";

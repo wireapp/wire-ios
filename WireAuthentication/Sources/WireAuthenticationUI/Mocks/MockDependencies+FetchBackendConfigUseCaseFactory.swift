@@ -18,33 +18,23 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 extension MockDependencies: FetchBackendConfigUseCaseFactory {
 
-    nonisolated
+    @MainActor
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        MockFetchBackendConfigUseCase()
+        MockFetchBackendConfigUseCase(environment: backendEnvironment)
     }
 
 }
 
 struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig {
-        BackendConfig(
-            title: "backend name",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: URL(string: "example")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+    let environment: BackendEnvironment2
+
+    func invoke(at configURL: URL) async throws -> BackendEnvironment2 {
+        environment
     }
 
 }

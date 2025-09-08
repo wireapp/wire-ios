@@ -2119,12 +2119,17 @@ extension WireCallCenterV3Tests {
         return AVSActiveSpeakersChange(activeSpeakers: activeSpeakers)
     }
 
-    private func callSnapshot(conversationId: AVSIdentifier, clients: [AVSClient]) -> [AVSIdentifier: CallSnapshot] {
+    private func callSnapshot(
+        conversationId: AVSIdentifier,
+        clients: [AVSClient],
+        messageProtocol: MessageProtocol = .mls
+    ) -> [AVSIdentifier: CallSnapshot] {
         [
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
                 callCenter: sut,
-                clients: clients
+                clients: clients,
+                messageProtocol: messageProtocol
             )
         ]
     }
@@ -2420,6 +2425,7 @@ extension WireCallCenterV3Tests {
         sut.callSnapshots[conversationID] = CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: (parentGroupID, subconversationGroupID),
+            messageProtocol: .mls,
             callParticipants: CallParticipantsSnapshot(
                 conversationId: conversationID,
                 members: [],
@@ -2486,7 +2492,11 @@ extension WireCallCenterV3Tests {
 
     func test_SystemMessageIsAppended_WhenProtocolChangesToMLS() throws {
         // Given
-        sut.callSnapshots = callSnapshot(conversationId: groupConversation.avsIdentifier!, clients: [])
+        sut.callSnapshots = callSnapshot(
+            conversationId: groupConversation.avsIdentifier!,
+            clients: [],
+            messageProtocol: .proteus
+        )
         groupConversation.messageProtocol = .mls
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
@@ -2499,6 +2509,24 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(lastMessage.isSystem)
         let systemMessageData = try XCTUnwrap(lastMessage.systemMessageData)
         XCTAssertEqual(systemMessageData.systemMessageType, .mlsMigrationOngoingCall)
+    }
+
+    func test_SystemMessageIsNotAppended_WhenMessageProtocolKeyIsUpdated_ButProtocolDidNotChange() throws {
+        // Given
+        sut.callSnapshots = callSnapshot(
+            conversationId: groupConversation.avsIdentifier!,
+            clients: [],
+            messageProtocol: .mls
+        )
+        groupConversation.messageProtocol = .mls
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertNil(groupConversation.lastMessage)
     }
 
     func test_CallIsClosed_WhenConversationIsDeleted() throws {

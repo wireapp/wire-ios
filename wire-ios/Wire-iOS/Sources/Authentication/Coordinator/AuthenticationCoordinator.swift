@@ -17,8 +17,10 @@
 //
 
 import UIKit
+import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -94,6 +96,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     // MARK: - Internal State
 
+    private let defaultEnvironment: BackendEnvironment2
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
@@ -115,11 +118,13 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     /// Creates a new authentication coordinator with the required supporting objects.
     init(
+        defaultEnvironment: BackendEnvironment2,
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
         statusProvider: AuthenticationStatusProvider
     ) {
+        self.defaultEnvironment = defaultEnvironment
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
         self.sessionManager = sessionManager
@@ -128,7 +133,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
-            accountSelector: SessionManager.shared
+            accountSelector: SessionManager.shared,
+            defaultEnvironment: defaultEnvironment
         )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
         super.init()
@@ -243,7 +249,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.startAuthentication(with: nil, numberOfAccounts: SessionManager.numberOfAccounts)
+            self?.startAuthentication(
+                environment: nil,
+                error: nil,
+                numberOfAccounts: SessionManager.numberOfAccounts
+            )
         }
     }
 
@@ -304,20 +314,29 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
-                // Make sure we use the same backend from the authentication flow.
-                let backendEnvironment = BackendEnvironment(
-                    type: result.backendEnvironment.environmentType,
-                    backendConfig: result.backendEnvironment.config
-                )
+                if !DeveloperFlag.multibackend.isOn {
+                    // Make sure we use the same backend from the authentication flow.
+                    let backendEnvironment = BackendEnvironment(result.backendEnvironment)
 
-                BackendEnvironment.shared = backendEnvironment
-                SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                    SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
 
-                // Make sure we persist and backend info gathered during authentication.
-                let backendMetadata = result.backendEnvironment.metadata
-                BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
-                BackendInfo.domain = backendMetadata.domain
-                BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
+                    // Make sure we persist and backend info gathered during authentication.
+                    let backendMetadata = result.backendMetadata
+                    BackendInfo.apiVersion = APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
+                    BackendInfo.domain = backendMetadata.domain
+                    BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
+
+                    if let proxyCredentials = result.proxyCredentials {
+                        sessionManager.saveProxyCredentials(
+                            username: proxyCredentials.username,
+                            password: proxyCredentials.password
+                        )
+                    }
+                } else {
+                    // Don't store the env here... pass it along when upgrading
+                    // to an authenticated session.
+                }
 
                 if let emailCredentials = result.emailCredentials {
                     // Set credentials so we can register a new client via registration status.
@@ -333,13 +352,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     cookieData: HTTPCookie.extractData(from: result.cookies)!,
                     cookies: result.cookies
                 )
-
-                if case let .authenticated(_, _, username, password) = result.backendEnvironment.proxySettings {
-                    sessionManager.saveProxyCredentials(
-                        username: username,
-                        password: password
-                    )
-                }
 
                 switch trackingConsent {
                 case .declined:
@@ -360,7 +372,20 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     break
                 }
 
-                unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
+                if DeveloperFlag.multibackend.isOn {
+                    let newEnvironment = NewEnvironment(
+                        backendEnvironment: result.backendEnvironment,
+                        metadata: result.backendMetadata,
+                        cookies: result.cookies,
+                        proxyCredentials: result.proxyCredentials
+                    )
+                    unauthenticatedSession.upgradeToAuthenticatedSession(
+                        with: userInfo,
+                        newEnvironment: newEnvironment
+                    )
+                } else {
+                    unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
+                }
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
@@ -487,8 +512,18 @@ extension AuthenticationCoordinator {
     /// - parameter error: The error that caused the unauthenticated state, if any.
     /// - parameter numberOfAccounts: The number of accounts that are signed in with the app.
 
-    func startAuthentication(with error: NSError?, numberOfAccounts: Int) {
-        eventResponderChain.handleEvent(ofType: .flowStart(error, numberOfAccounts))
+    func startAuthentication(
+        environment: BackendEnvironment2?,
+        error: NSError?,
+        numberOfAccounts: Int
+    ) {
+        eventResponderChain.handleEvent(
+            ofType: .flowStart(
+                environment,
+                error,
+                numberOfAccounts
+            )
+        )
     }
 
     /// Creates a new unregistered user for starting a registration flow.

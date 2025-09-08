@@ -23,10 +23,13 @@ import WireLogging
 /// High level access to a specific backend with automatic api
 /// version resolution.
 
-public final class NetworkStack {
+public actor NetworkStack {
 
-    let backendEnvironment: BackendEnvironment2
-    private(set) var proxyCredentials: ProxyCredentials?
+    public static var envNameForObsoleteBackend: String?
+    public static var envNameForObsoleteClient: String?
+
+    public nonisolated let backendEnvironment: BackendEnvironment2
+    public private(set) var proxyCredentials: ProxyCredentials?
 
     let minTLSVersion: TLSVersion
     let preferredAPIVersion: APIVersion?
@@ -75,14 +78,8 @@ public final class NetworkStack {
 
     // MARK: - Methods
 
-    func setProxyCredentials(
-        username: String,
-        password: String
-    ) throws {
-        proxyCredentials = ProxyCredentials(
-            username: username,
-            password: password
-        )
+    public func setProxyCredentials(proxyCredentials: ProxyCredentials) throws {
+        self.proxyCredentials = proxyCredentials
 
         let (restService, webSocketService) = try NetworkService.makeServices(
             backendConfig: backendEnvironment.config,
@@ -105,6 +102,16 @@ public final class NetworkStack {
         if let backendMetadata {
             return backendMetadata
         }
+
+        // To simulate api version errors, set these static vars with the names of backend environments.
+        // As a precaution to not affect prod builds, only make this available for debug builds.
+        #if DEBUG
+            if Self.envNameForObsoleteBackend == backendEnvironment.title {
+                throw NetworkStackError.backendAPIVersionObsolete
+            } else if Self.envNameForObsoleteClient == backendEnvironment.title {
+                throw NetworkStackError.clientAPIVersionObsolete
+            }
+        #endif
 
         let api = BackendMetadataAPIBuilder(networkService: try networkServices.rest).makeAPI()
 

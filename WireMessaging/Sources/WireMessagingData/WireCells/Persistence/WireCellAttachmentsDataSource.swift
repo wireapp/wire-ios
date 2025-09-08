@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireMessagingDomain
 
 package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftRepository {
@@ -29,7 +30,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
 
     @discardableResult
     func add(
-        conversationID: WireCellsConversationID,
+        conversationID: QualifiedID,
         node: WireCellsNode,
         versionID: UUID,
         mimeType: String,
@@ -58,7 +59,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     }
 
     func observe(
-        conversationID: WireCellsConversationID
+        conversationID: QualifiedID
     ) async throws -> AsyncStream<[WireCellsMessageAttachmentDraft]> {
         try await messageAttachmentDAO.observeAttachments(
             conversationID: conversationID
@@ -84,7 +85,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         }
     }
 
-    func removeAttachmentDrafts(conversationID: WireCellsConversationID) async {
+    func removeAttachmentDrafts(conversationID: QualifiedID) async {
         do {
             try await messageAttachmentDAO.deleteAttachments(
                 conversationID: conversationID
@@ -109,7 +110,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         }
     }
 
-    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
+    func getAll(conversationID: QualifiedID) async throws(MessageAttachmentDraftRepositoryError)
         -> [WireCellsMessageAttachmentDraft] {
         do {
             return try await messageAttachmentDAO.getAttachments(

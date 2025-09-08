@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol LoginViaEmailUseCaseProtocol: Sendable {

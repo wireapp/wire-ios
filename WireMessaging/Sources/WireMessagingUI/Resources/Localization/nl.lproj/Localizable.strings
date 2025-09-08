@@ -15,12 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
 "general.loading" = "Laden…";
 "general.confirm" = "OK";
 "general.failure" = "Er is iets mis gegaan";
+"general.error.unknown.title." = "Er is iets mis gegaan";
+"general.error.unknown.message." = "Please retry later.";
+"general.error.noInternet.title." = "No internet connection";
+"general.error.noInternet.message." = "Er lijkt een probleem te zijn met het netwerk. Probeer het later opnieuw.";
 
-// Channel Access level
+// MARK: - Channel Access level
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
 "channel_access_level.admins" = "Admins";
@@ -44,7 +49,7 @@
 "conversation.create.channel.subtitle" = "Conversation history and more";
 "conversation.create.group.title" = "New group";
 
-// MARK: Navigation
+// MARK: - Navigation
 "conversation.create.channel.back" = "Vorige";
 "conversation.create.channel.next" = "Volgende";
 
@@ -94,3 +99,11 @@
 "conversation.file.preview.open" = "Open preview";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.navigationTitle" = "Bestanden";
+"conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.download" = "Download";
+"conversation.wireCells.files.item.menu.rename" = "Wijzig naam";
+"conversation.wireCells.files.item.menu.delete" = "Delete permanently";

@@ -55,6 +55,12 @@ public struct Conversation: Equatable {
         case everyone
     }
 
+    public enum CellsState: Equatable, Sendable {
+        case ready
+        case pending
+        case disabled
+    }
+
     let id: UUID?
     let qualifiedID: QualifiedID?
     let teamID: UUID?
@@ -76,5 +82,6 @@ public struct Conversation: Equatable {
     let lastEventTime: Date?
     let groupType: GroupType?
     let addPermission: ChannelPermission?
+    let cellsState: CellsState?
 
 }

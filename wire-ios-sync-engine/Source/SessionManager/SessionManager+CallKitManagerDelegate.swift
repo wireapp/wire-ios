@@ -83,7 +83,9 @@ extension SessionManager: CallKitManagerDelegate {
 
     func endAllCalls() {
         for userSession in backgroundUserSessions.values {
-            userSession.callCenter?.endAllCalls()
+            userSession.viewContext.perform {
+                userSession.callCenter?.endAllCalls()
+            }
         }
     }
 

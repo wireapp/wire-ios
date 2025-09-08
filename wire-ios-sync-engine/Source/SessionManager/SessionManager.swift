@@ -70,8 +70,11 @@ public protocol SessionActivationObserver: AnyObject {
 
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
-    func sessionManagerDidFailToLogin(error: Error?)
-    func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
+    func sessionManagerWillLogout(
+        environment: BackendEnvironment2?,
+        error: Error?,
+        userSessionCanBeTornDown: (() -> Void)?
+    )
     func sessionManagerWillOpenAccount(
         _ account: Account,
         from selectedAccount: Account?,
@@ -261,6 +264,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
+    let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
     public internal(set) var activeUserSession: ZMUserSession? {
@@ -557,6 +561,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             currentAppVersion: currentAppVersion,
             directory: accountURLs.accounts
         )
+        self.environmentStore = try BackendEnvironmentStore(directory: accountURLs.accountData)
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
@@ -641,7 +646,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
         } else {
             createUnauthenticatedSession()
-            delegate?.sessionManagerDidFailToLogin(error: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: nil,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 
@@ -757,11 +766,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                             return
                         }
 
+                        accountManager.select(account)
                         let session = await loadSession(for: account)
                         isSelectingAccount = false
 
                         if let session {
-                            accountManager.select(account)
                             completion?(session)
                         } else {
                             completion?(nil)
@@ -776,9 +785,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-            self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
+            self?.delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error
+            ) { [weak self] in
                 self?.activeUserSession = nil
-            })
+            }
         }
     }
 
@@ -886,7 +898,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
-            delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
 
             if deleteAccount {
                 deleteAccountData(for: account)
@@ -896,7 +912,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
+        // TODO: [WPB-19941] Better error handling
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+        delegate?.sessionManagerWillLogout(
+            environment: environment,
+            error: error
+        ) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
@@ -926,16 +948,26 @@ public final class SessionManager: NSObject, SessionManagerType {
                 userInfo: account.loginCredentials?.dictionaryRepresentation
             )
 
-            delegate?.sessionManagerDidFailToLogin(error: error)
+            let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+            delegate?.sessionManagerWillLogout(
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
 
         return nil
     }
 
     @MainActor
-    fileprivate func activateSession(for account: Account) async -> ZMUserSession? {
+    fileprivate func activateSession(
+        for account: Account,
+        newEnvironment: NewEnvironment? = nil
+    ) async -> ZMUserSession? {
         guard let session = await withSession(
             for: account,
+            newEnvironment: newEnvironment,
             notifyAboutMigration: true
         ) else {
             return nil
@@ -950,8 +982,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
         configureUserNotifications()
-
-        // Completion was here.
 
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
@@ -991,6 +1021,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
+        newEnvironment: NewEnvironment? = nil,
         notifyAboutMigration: Bool = false
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
@@ -1015,7 +1046,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     isDeveloperModeEnabled: isDeveloperModeEnabled
                 )
 
-                let userSession = try await loader.load()
+                let userSession = try await loader.load(newEnvironment: newEnvironment)
                 finishSettingUpUserSession(
                     account: account,
                     newSession: userSession,
@@ -1662,7 +1693,8 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(
         session: UnauthenticatedSession,
-        createdAccount account: Account
+        createdAccount account: Account,
+        newEnvironment: NewEnvironment? = nil
     ) {
         let numberOfExistingAccounts = accountManager.numberOfAccounts
         let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
@@ -1678,7 +1710,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            guard let userSession = await activateSession(for: account) else {
+            guard let userSession = await activateSession(
+                for: account,
+                newEnvironment: newEnvironment
+            ) else {
                 return
             }
 

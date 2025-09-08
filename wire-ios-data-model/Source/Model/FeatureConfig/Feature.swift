@@ -45,6 +45,7 @@ public class Feature: ZMManagedObject {
         case channels
         case allowedGlobalOperations
         case consumableNotifications
+        case chatBubblesSimple
 
     }
 
@@ -235,7 +236,8 @@ public class Feature: ZMManagedObject {
              .allowedGlobalOperations,
              .e2ei,
              .channels,
-             .consumableNotifications:
+             .consumableNotifications,
+             .chatBubblesSimple:
             break
         }
     }

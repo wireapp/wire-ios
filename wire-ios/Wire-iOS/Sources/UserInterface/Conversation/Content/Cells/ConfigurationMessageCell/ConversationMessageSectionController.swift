@@ -75,14 +75,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private let useInvertedIndices: Bool
 
     /// The object that controls actions for the cell.
-    var actionController: ConversationMessageActionController? {
-        didSet { updateDelegates() }
-    }
+    var actionController: ConversationMessageActionController?
 
     /// The message that is being presented.
-    var message: ConversationMessage {
+    private(set) var message: ConversationMessage {
         didSet {
-            updateDelegates()
             changeObservers.removeAll()
             startObservingChanges(for: message)
         }
@@ -91,9 +88,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.
-    weak var cellDelegate: ConversationMessageCellDelegate? {
-        didSet { updateDelegates() }
-    }
+    weak var cellDelegate: ConversationMessageCellDelegate?
 
     /// The object that receives informations from the section.
     weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
@@ -112,6 +107,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
+    private let isChatBubbleSimpleEnabled: Bool
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -128,7 +124,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         userSession: UserSession,
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        isChatBubbleSimpleEnabled: Bool,
     ) {
         self.message = message
         self.context = context
@@ -141,6 +138,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             userID: selfUser.remoteIdentifier,
             storage: userDefaults
         )
+
+        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
+        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
+        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
 
         super.init()
 
@@ -474,7 +475,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             }
         }
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             addReactions()
             addToolbox()
         } else {
@@ -494,7 +495,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.cellDescriptions = cellDescriptions
     }
 
-    private func updateDelegates() {
+    func updateMessage(_ message: ConversationMessage) {
+        self.message = message
         actionController?.message = message
         cellDescriptions.forEach { cellDescription in
             cellDescription.message = message
@@ -506,7 +508,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     func recreateCellDescriptions(in context: ConversationMessageContext) {
         self.context = context
         createCellDescriptions(in: context)
-        updateDelegates()
+        updateMessage(message)
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
