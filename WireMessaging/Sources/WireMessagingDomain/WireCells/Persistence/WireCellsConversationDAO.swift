@@ -17,9 +17,10 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 public struct WireCellsConversation {
-    public var id: WireMessagingDomain.WireCellsConversationID
+    public var id: QualifiedID
     public var cellName: String
     public var name: String
 
@@ -33,9 +34,9 @@ public struct WireCellsConversation {
         guard let cellName else { return nil }
         guard let name else { return nil }
 
-        self.id = WireCellsConversationID(
-            domain: domain,
-            uuid: uuid
+        self.id = QualifiedID(
+            id: uuid,
+            domain: domain
         )
         self.cellName = cellName
         self.name = name
@@ -51,9 +52,9 @@ public enum WireCellsConversationDAOError: Error {
 
 public protocol WireCellsConversationDAO {
 
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsConversationDAOError) -> String
+    func getCellName(conversationID: QualifiedID) async throws(WireCellsConversationDAOError) -> String
     func setWireCell(
-        conversationID: WireCellsConversationID,
+        conversationID: QualifiedID,
         cellName: String
     ) async throws(WireCellsConversationDAOError)
     func getAllConversations() async throws(WireCellsConversationDAOError) -> [WireCellsConversation]

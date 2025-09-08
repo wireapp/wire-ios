@@ -137,7 +137,11 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
 
     @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
-        updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
+        updates
+            .filter { $0.0 == nodeID }
+            .map(\.1)
+            .prepend([try? asset(nodeID: nodeID)])
+            .eraseToAnyPublisher()
     }
 
     /// Cancels the asset download for a given `nodeID`.

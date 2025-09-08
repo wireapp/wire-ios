@@ -85,7 +85,7 @@ private extension FilesView {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { viewModel.viewAsset(item: item) }
+                .onTapGesture { Task { await viewModel.viewAsset(item: item) } }
         }
     }
 }
