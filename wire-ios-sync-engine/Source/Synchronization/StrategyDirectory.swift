@@ -236,7 +236,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOnOneResolver: oneOnOneResolver
+                oneOnOneResolver: oneOnOneResolver,
+                localDomain: localDomain
             ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
@@ -375,7 +376,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
-        localDomain: String?
+        metadata: LegacyResovedBackendMetadata
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -396,7 +397,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
-                featureRepository: LegacyFeatureRepository(context: syncContext)
+                featureRepository: LegacyFeatureRepository(context: syncContext),
+                apiVersion: metadata.apiVersion
             )
 
             let strategies: [Any] = [
@@ -426,7 +428,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     applicationStatus: applicationStatusDirectory,
                     flowManager: flowManager,
                     messageSender: messageSender,
-                    localDomain: localDomain
+                    localDomain: metadata.domain
                 ),
                 ResetSessionRequestStrategy(
                     managedObjectContext: syncContext,

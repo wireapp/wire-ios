@@ -51,6 +51,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger: WireLogger = .e2ei
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+    private let apiVersion: WireTransport.APIVersion?
 
     // MARK: - Life cycle
 
@@ -60,7 +61,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         e2eiSetupService: E2EISetupServiceInterface,
         keyRotator: E2EIKeyPackageRotating,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
@@ -68,6 +70,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         self.keyRotator = keyRotator
         self.coreCryptoProvider = coreCryptoProvider
         self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
+        self.apiVersion = apiVersion
     }
 
     // MARK: - Interface
@@ -133,7 +136,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             apiProvider: apiProvider,
             e2eiService: e2eiService,
             acmeDirectory: acmeDirectory,
-            keyRotator: keyRotator
+            keyRotator: keyRotator,
+            apiVersion: apiVersion
         )
     }
 

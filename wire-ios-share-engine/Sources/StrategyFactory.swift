@@ -36,7 +36,8 @@ final class StrategyFactory {
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor,
         transportSession: TransportSessionType,
-        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
+        apiVersion: WireTransport.APIVersion?
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
@@ -52,7 +53,8 @@ final class StrategyFactory {
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-            featureRepository: LegacyFeatureRepository(context: syncContext)
+            featureRepository: LegacyFeatureRepository(context: syncContext),
+            apiVersion: apiVersion
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }

@@ -311,7 +311,8 @@ public final class ZMUserSession: NSObject {
             e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            apiVersion: resolvedBackendMetadata.apiVersion
         )
 
         assert(
@@ -634,7 +635,7 @@ public final class ZMUserSession: NSObject {
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
                 incrementalSyncObserver: incrementalSyncObserver,
-                localDomain: resolvedBackendMetadata.domain
+                metadata: resolvedBackendMetadata
             )
         }
     }

@@ -39,14 +39,15 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let actionSync: EntityActionSync
 
     let oneOnOneResolver: any OneOnOneResolverInterface
+    private let localDomain: String?
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        oneOnOneResolver: any OneOnOneResolverInterface
+        oneOnOneResolver: any OneOnOneResolverInterface,
+        localDomain: String?
     ) {
-
         self.syncProgress = syncProgress
         self.oneOnOneResolver = oneOnOneResolver
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
@@ -62,6 +63,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         )
 
         self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+        self.localDomain = localDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -115,9 +117,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
-                // TODO: [WPB-19987] remove dependency on BackendInfo
-            } else if let domain = BackendInfo.domain {
-                let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: domain)
+            } else if let localDomain {
+                let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: localDomain)
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             }
         }

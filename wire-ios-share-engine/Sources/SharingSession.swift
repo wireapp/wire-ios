@@ -343,7 +343,8 @@ public final class SharingSession {
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: .init(rawValue: Int32(apiVersion.rawValue))
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
