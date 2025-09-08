@@ -22,19 +22,34 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
+
         let user_Backend1 = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user_Backend1.email, password: user_Backend1.password)
-        var conversationsPage = try  firstTimePage.acceptPopup()
+        var accountPage = try  firstTimePage.acceptPopup()
+            .openSettings()
+            .openAccountSettings()
 
-        _ = try conversationsPage.openUserAccountPageForUser(with: user_Backend1.name)
+        var accountName = try XCTUnwrap(accountPage.getAccountName())
+        var domanInfo = try XCTUnwrap(accountPage.getDomainInfo())
+        XCTAssertEqual(accountName, user_Backend1.name, "Account name didn't match \(user_Backend1.name)")
+        XCTAssertTrue(
+            accountPage.getUsername().contains(user_Backend1.username),
+            "Username didn't contain \(user_Backend1.username)"
+        )
+        XCTAssertEqual(accountPage.getEmail(), user_Backend1.email, "Email didn't contain \(user_Backend1.email)")
+        XCTAssertEqual(domanInfo, "staging.zinfra.io", "Domain info \(domanInfo) mismatched on account page")
+
+        _ = try accountPage.backToSettings()
+            .openConversationsTab()
+            .openUserAccountPageForUser(with: user_Backend1.name)
             .tapAddAccountOrTeamButton()
 
         let deeplink = try EnvironmentVariables().antaDeepLinkURL
         setCustomBackend(byDeeplink: deeplink)
         BackendContext.current = .anta
-        
-        //Register for backend2
+
+        // Register for backend2
         let user_Backend2 = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
@@ -55,14 +70,19 @@ final class MultiBackendSupportTests: WireUITestCase {
         let setUsernamePage = try verificationPage
             .enterVerificationCodeAndConfirm(verificationCode)
 
-         conversationsPage = try setUsernamePage
+        accountPage = try setUsernamePage
             .setUsername(user_Backend2.username)
-
-        let settingsPage = try conversationsPage
             .openSettings()
-
-        let accountPage = try settingsPage
             .openAccountSettings()
 
+        accountName = try XCTUnwrap(accountPage.getAccountName())
+        domanInfo = try XCTUnwrap(accountPage.getDomainInfo())
+        XCTAssertEqual(accountName, user_Backend2.name, "Account name didn't match \(user_Backend2.name)")
+        XCTAssertTrue(
+            accountPage.getUsername().contains(user_Backend2.username),
+            "Username didn't contain \(user_Backend2.username)"
+        )
+        XCTAssertEqual(accountPage.getEmail(), user_Backend2.email, "Email didn't contain \(user_Backend2.email)")
+        XCTAssertEqual(domanInfo, "anta.wire.link", "Domain info \(domanInfo) mismatched on account page")
     }
 }
