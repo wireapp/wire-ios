@@ -291,15 +291,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func handlePushChannelAlreadyOpened() {
-        WireLogger.sync.debug("😀 handlePushChannelAlreadyOpened", attributes: .syncAttributes)
         pushChannelMonitor.startMonitoring { [weak self] in
             self?.retrySyncAfterPushChannelClosed()
         }
+        WireLogger.sync.debug("push channel already opened, request NSE release", attributes: .syncAttributes)
         pushChannelMonitor.notify()
     }
 
     private func retrySyncAfterPushChannelClosed() {
-        WireLogger.sync.debug("😀 retrySyncAfterPushChannelClosed", attributes: .syncAttributes)
+        WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
         pushChannelMonitor.stopMonitoring()
         resume()
     }

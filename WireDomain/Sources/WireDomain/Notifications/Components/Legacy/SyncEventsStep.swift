@@ -75,10 +75,10 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 
     func pullEvents() async throws {
         pushChannelMonitor.startMonitoring { [weak self] in
-            WireLogger.sync.debug("😀 requested to cancel sync", attributes: .syncAttributes, .newNSE)
+            WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
             self?.currentTask?.cancel()
             self?.pushChannelMonitor.notify()
-            WireLogger.sync.debug("😀 notify mainAPP", attributes: .syncAttributes, .newNSE)
+            WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
         }
 
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
@@ -112,7 +112,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
                 // continue
                 // to show them
                 WireLogger.sync.warn(
-                    "😀 syncing events via websocket: \(String(describing: error))",
+                    "syncing events via websocket: \(String(describing: error))",
                     attributes: .syncAttributes(initialSync: false)
                 )
                 pushChannelState.markAsClosed()
