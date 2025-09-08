@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireData
+@preconcurrency import WireDataModel
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
@@ -54,13 +55,15 @@ struct ZClientControllerBuilder {
             WireCellsFactory(
                 serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
                 accessToken: ManualTokenProvider(),
-                fileCache: userSession.fileAssetCache
+                fileCache: userSession.fileAssetCache,
+                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
             )
         } else {
             WireCellsFactory(
                 serverURL: environment.backendURL,
                 accessToken: DefaultAccessTokenProvider(userSession: userSession),
-                fileCache: userSession.fileAssetCache
+                fileCache: userSession.fileAssetCache,
+                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
             )
         }
     }
@@ -98,3 +101,17 @@ private struct ManualTokenProvider: AccessTokenProvider {
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
+
+private struct DefaultContextProvider: ManagedObjectContextProvider {
+
+    let contextProvider: any ContextProvider
+
+    var viewContext: NSManagedObjectContext {
+        contextProvider.viewContext
+    }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
+
+}

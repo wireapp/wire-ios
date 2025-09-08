@@ -17,30 +17,63 @@
 //
 
 package import Combine
+import CoreData
 package import Foundation
+package import WireData
 package import WireMessagingDomain
 
 @MainActor
 package final class WireCellsLocalAssetStore {
 
-    private let updates = PassthroughSubject<(UUID, WireCellsLocalAsset?), Never>()
-    private var assets: [UUID: WireCellsLocalAsset] = [:]
+    private typealias ManagedLocalAsset = WireData.WireCellsLocalAsset
 
-    package init() {}
+    private let updates = PassthroughSubject<(UUID, WireMessagingDomain.WireCellsLocalAsset?), Never>()
+    private let contextProvider: any ManagedObjectContextProvider
+    private var assets: [UUID: WireMessagingDomain.WireCellsLocalAsset] = [:]
 
-    func asset(nodeID: UUID) throws -> WireCellsLocalAsset? {
-        assets[nodeID]
-
-        // TODO: lazy populate from persistent store
+    package init(contextProvider: any ManagedObjectContextProvider) {
+        self.contextProvider = contextProvider
     }
 
-    func upsertAsset(_ asset: WireCellsLocalAsset) throws {
+    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
+        if let asset = assets[nodeID] {
+            return asset
+        } else if let asset = try storedAsset(nodeID: nodeID) {
+            assets[nodeID] = asset
+            return asset
+        } else {
+            return nil
+        }
+    }
+
+    func upsertAsset(_ asset: WireMessagingDomain.WireCellsLocalAsset) throws {
         guard assets[asset.nodeID] != asset else { return }
 
+        let oldAsset = assets[asset.nodeID]
         assets[asset.nodeID] = asset
         updates.send((asset.nodeID, asset))
 
-        // TODO: Update persistent store if necessary)
+        if let oldAsset, asset.hasEqualMetadata(to: oldAsset) { return }
+
+        let context = contextProvider.newBackgroundContext()
+        Task.detached {
+            try await context.perform {
+                let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+                request.predicate = NSPredicate(format: "nodeID == %@", asset.nodeID as any CVarArg)
+                request.fetchLimit = 1
+                let results = try context.fetch(request)
+
+                let stored = results.first ?? ManagedLocalAsset(context: context)
+                stored.nodeID = asset.nodeID
+                stored.eTag = asset.eTag
+                stored.path = asset.path
+                stored.contentType = asset.contentType
+                stored.size = asset.size.map { Int64($0) } ?? -1
+                stored.isDownloaded = asset.isDownloaded
+
+                try context.save()
+            }
+        }
     }
 
     func deleteAsset(nodeID: UUID) throws {
@@ -52,12 +85,62 @@ package final class WireCellsLocalAssetStore {
     }
 
     @MainActor
-    package func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
+    package func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireCellsLocalAsset?, Never> {
         updates
             .filter { $0.0 == nodeID }
             .map(\.1)
             .prepend([try? asset(nodeID: nodeID)])
             .eraseToAnyPublisher()
+    }
+
+    // MARK: Helpers
+
+    @MainActor
+    private func storedAsset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
+        let context = contextProvider.viewContext
+        return try context.performAndWait {
+            let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+            request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
+            request.fetchLimit = 1
+            let results = try context.fetch(request)
+            return results.first.map { managed in
+                var asset = WireCellsLocalAsset(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path,
+                    contentType: managed.contentType,
+                    size: UInt64(managed.size),
+                    downloadState: .pending
+                )
+                if managed.isDownloaded {
+                    asset.downloadState = .downloaded(cacheKey: asset.cacheKey)
+                }
+                return asset
+            }
+        }
+    }
+
+}
+
+// MARK: Private helpers
+
+private extension WireMessagingDomain.WireCellsLocalAsset {
+
+    var isDownloaded: Bool {
+        switch downloadState {
+        case .downloaded:
+            true
+        default:
+            false
+        }
+    }
+
+    func hasEqualMetadata(to other: WireMessagingDomain.WireCellsLocalAsset) -> Bool {
+        eTag == other.eTag
+        && path == other.path
+        && contentType == other.contentType
+        && size == other.size
+        && isDownloaded == other.isDownloaded
     }
 
 }

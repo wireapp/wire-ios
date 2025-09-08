@@ -18,6 +18,7 @@
 
 public import Foundation
 public import UIKit
+public import WireData
 public import WireMessagingDomain
 import WireMessagingData
 import WireMessagingUI
@@ -31,7 +32,12 @@ public struct WireCellsFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
 
     @MainActor
-    public init(serverURL: URL, accessToken: any AccessTokenProvider, fileCache: any FileCache) {
+    public init(
+        serverURL: URL,
+        accessToken: any AccessTokenProvider,
+        fileCache: any FileCache,
+        contextProvider: any ManagedObjectContextProvider
+    ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
         case "prod-nginz-https.wire.com": // Production
@@ -53,7 +59,7 @@ public struct WireCellsFactory {
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
-            store: WireCellsLocalAssetStore()
+            store: WireCellsLocalAssetStore(contextProvider: contextProvider)
         )
     }
 
