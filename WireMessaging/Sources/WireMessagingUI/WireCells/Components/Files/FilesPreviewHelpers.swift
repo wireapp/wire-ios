@@ -123,7 +123,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
                 .downloaded(cacheKey: "cacheKey")
             }
 
-            try await Task.sleep(nanoseconds: 200_000_000)
+            try await Task.sleep(for: .milliseconds(200))
             let update = WireCellsLocalAsset(
                 nodeID: nodeID,
                 eTag: "something",
