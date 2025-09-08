@@ -52,13 +52,12 @@ class AccountSettingsPage: PageModel {
         app.buttons["OK"]
     }
 
-
     var backToSettingsButton: XCUIElement {
         app.buttons["Settings"]
+    }
 
     var backupOrRestoreButton: XCUIElement {
         app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
-
     }
 
     func getAccountName() -> String? {
@@ -73,7 +72,6 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
-
     func getDomainInfo() -> String {
         domainField.value as! String
     }
@@ -81,9 +79,6 @@ class AccountSettingsPage: PageModel {
     func backToSettings() throws -> SettingsPage {
         backToSettingsButton.tap()
         return try SettingsPage()
-
-    var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
     }
 
     @discardableResult

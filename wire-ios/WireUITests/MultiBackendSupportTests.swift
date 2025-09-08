@@ -41,7 +41,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         XCTAssertEqual(domanInfo, "staging.zinfra.io", "Domain info \(domanInfo) mismatched on account page")
 
         _ = try accountPage.backToSettings()
-            .openConversationsTab()
+            .switchToConversationsTab()
             .openUserAccountPageForUser(with: user_Backend1.name)
             .tapAddAccountOrTeamButton()
 
@@ -84,5 +84,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         )
         XCTAssertEqual(accountPage.getEmail(), user_Backend2.email, "Email didn't contain \(user_Backend2.email)")
         XCTAssertEqual(domanInfo, "anta.wire.link", "Domain info \(domanInfo) mismatched on account page")
+        
+        BackendContext.current = .staging
     }
 }

@@ -38,9 +38,6 @@ class SettingsPage: PageModel {
         return try AccountSettingsPage()
     }
 
-
-    func openConversationsTab() throws -> ConversationsPage {
-
     func switchToConversationsTab() throws -> ConversationsPage {
         conversationsTab.tap()
         return try ConversationsPage()
