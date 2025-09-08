@@ -60,7 +60,7 @@ extension ZMConversation {
 
         let users = participants.materialize(in: session.viewContext)
         let syncContext = session.syncContext
-        let service = ConversationParticipantsService(context: syncContext)
+        let service = ConversationParticipantsService(context: syncContext, localDomain: session.resolvedBackendMetadata.domain)
 
         Task {
             do {
@@ -108,7 +108,7 @@ extension ZMConversation {
         }
 
         let syncContext = session.syncContext
-        let service = ConversationParticipantsService(context: syncContext)
+        let service = ConversationParticipantsService(context: syncContext, localDomain: session.resolvedBackendMetadata.domain)
 
         Task {
             do {

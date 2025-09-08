@@ -428,7 +428,8 @@ final class UserSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
 
         let proteusToMLSMigrationCoordinator = ProteusToMLSMigrationCoordinator(

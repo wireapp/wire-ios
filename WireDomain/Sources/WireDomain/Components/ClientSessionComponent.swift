@@ -742,10 +742,10 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled,
             isMLSEnabled: isMLSEnabled
         )
-
     }
 
     public func createChannelUseCase() -> some CreateChannelUseCaseProtocol {
@@ -754,6 +754,7 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
         )
     }

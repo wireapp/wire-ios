@@ -91,7 +91,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         localDomain: String?
     ) {
         self.init(
-            conversationService: ConversationService(context: context),
+            conversationService: ConversationService(context: context, localDomain: localDomain),
             staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
             localDomain: localDomain
         )

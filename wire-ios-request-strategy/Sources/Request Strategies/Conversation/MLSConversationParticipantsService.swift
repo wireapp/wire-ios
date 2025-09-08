@@ -47,10 +47,14 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
     private let context: NSManagedObjectContext
     private let clientIDsProvider: MLSClientIDsProviding
     private let mlsService: MLSServiceInterface
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
-    init?(context: NSManagedObjectContext) {
+    init?(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
 
         guard let syncContext = context.performAndWait({ context.zm_sync }) else {
             return nil
@@ -63,18 +67,21 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         self.init(
             context: context,
             mlsService: mlsService,
-            clientIDsProvider: MLSClientIDsProvider()
+            clientIDsProvider: MLSClientIDsProvider(),
+            localDomain: localDomain
         )
     }
 
     init(
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
-        clientIDsProvider: MLSClientIDsProviding
+        clientIDsProvider: MLSClientIDsProviding,
+        localDomain: String?
     ) {
         self.context = context
         self.mlsService = mlsService
         self.clientIDsProvider = clientIDsProvider
+        self.localDomain = localDomain
     }
 
     // MARK: - Interface
@@ -98,7 +105,11 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             throw MLSConversationParticipantsError.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: self.localDomain)
+            }
+        }
 
         do {
 
@@ -107,7 +118,9 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
 
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 

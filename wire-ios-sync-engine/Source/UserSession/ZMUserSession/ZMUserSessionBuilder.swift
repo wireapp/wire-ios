@@ -256,7 +256,8 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: BackendInfo.domain
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,

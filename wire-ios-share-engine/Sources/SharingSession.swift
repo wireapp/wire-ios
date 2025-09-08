@@ -405,7 +405,8 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: localDomain
         )
 
         let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {

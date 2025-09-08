@@ -331,7 +331,8 @@ public struct SharingSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
             userID: accountID,

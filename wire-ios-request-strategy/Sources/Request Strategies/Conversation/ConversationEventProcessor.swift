@@ -46,7 +46,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
     ) {
         self.init(
             context: context,
-            conversationService: ConversationService(context: context),
+            conversationService: ConversationService(context: context, localDomain: localDomain),
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled

@@ -230,7 +230,7 @@ public extension ServiceUser {
         }
 
         let context = contextProvider.viewContext
-        let conversationService = ConversationService(context: context)
+        let conversationService = ConversationService(context: context, localDomain: metadata.domain)
         conversationService.createGroupConversation(
             name: nil,
             users: [],

@@ -230,7 +230,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             return
         }
 
-        let service = ConversationService(context: contextProvider.syncContext)
+        let service = ConversationService(context: contextProvider.syncContext, localDomain: metadata.domain)
         let viewContext = contextProvider.viewContext
 
         service.syncConversation(qualifiedID: qualifiedID) {
