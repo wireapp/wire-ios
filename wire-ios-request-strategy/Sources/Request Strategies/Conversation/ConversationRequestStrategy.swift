@@ -893,6 +893,8 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     private let processor: ConversationEventPayloadProcessor
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
+    private let isFederationEnabled: Bool
+
     init(
         context: NSManagedObjectContext,
         removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
@@ -906,6 +908,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             removeLocalConversation: removeLocalConversation,
             isFederationEnabled: isFederationEnabled
         )
+        self.isFederationEnabled = isFederationEnabled
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -971,7 +974,8 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             let conversation = ZMConversation.fetchOrCreate(
                 with: qualifiedID.uuid,
                 domain: qualifiedID.domain,
-                in: context
+                in: context,
+                isFederationEnabled: isFederationEnabled
             )
             conversation.isPendingMetadataRefresh = true
             conversation.needsToBeUpdatedFromBackend = true

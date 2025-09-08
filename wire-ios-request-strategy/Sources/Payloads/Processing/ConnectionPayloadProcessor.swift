@@ -21,6 +21,12 @@ import WireLogging
 
 final class ConnectionPayloadProcessor {
 
+    private let isFederationEnabled: Bool
+
+    init(isFederationEnabled: Bool) {
+        self.isFederationEnabled = isFederationEnabled
+    }
+
     func processPayload(
         _ payload: Payload.UserConnectionEvent,
         in context: NSManagedObjectContext
@@ -54,7 +60,8 @@ final class ConnectionPayloadProcessor {
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: payload.qualifiedConversationID?.domain,
-            in: context
+            in: context,
+            isFederationEnabled: isFederationEnabled
         )
 
         conversation.needsToBeUpdatedFromBackend = true

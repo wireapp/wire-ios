@@ -353,6 +353,6 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
-        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
+        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context, isFederationEnabled: isFederationEnabled)
     }
 }

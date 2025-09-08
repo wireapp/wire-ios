@@ -120,7 +120,8 @@ extension SyncEventsStep {
             context: dependency.coreData.syncContext,
             mlsService: nil,
             messageLocalStore: dependency.messageLocalStore,
-            localDomain: BackendInfo.domain
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }
 

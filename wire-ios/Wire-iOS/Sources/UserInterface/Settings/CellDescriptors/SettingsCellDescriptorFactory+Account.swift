@@ -399,7 +399,8 @@ extension SettingsCellDescriptorFactory {
             context: context,
             processor: ConversationProtobufMessageProcessor(
                 context: context,
-                localDomain: localDomain
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
         )
         let userSession = sessionManager.activeUserSession!
@@ -533,7 +534,8 @@ private extension ConversationProtobufMessageProcessor {
 
     init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         let messageLocalStore = MessageLocalStore(context: context)
         self.init(
@@ -542,7 +544,8 @@ private extension ConversationProtobufMessageProcessor {
                 context: context,
                 mlsService: context.performAndWait { context.mlsService },
                 messageLocalStore: messageLocalStore,
-                localDomain: localDomain
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             ),
             userLocalStore: UserLocalStore(
                 context: context,

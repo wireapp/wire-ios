@@ -53,12 +53,14 @@ actor EventProcessor: UpdateEventProcessor {
         earService: EARServiceInterface,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         strategyDirectory: any StrategyDirectoryProtocol,
-        additionalEventConsumers: [any ZMEventAsyncConsumer]
+        additionalEventConsumers: [any ZMEventAsyncConsumer],
+        isFederationEnabled: Bool
     ) {
         let eventDecoder = EventDecoder(
             eventMOC: storeProvider.eventContext,
             syncMOC: storeProvider.syncContext,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isFederationEnabled: isFederationEnabled
         )
 
         self.init(

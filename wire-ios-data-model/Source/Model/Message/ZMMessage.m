@@ -329,7 +329,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     [conversation updateTimestampsAfterUpdatingMessage:self];
 }
 
-+ (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
++ (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult isFederationEnabled:(bool)isFederationEnabled
 {
     NSUUID *conversationUUID = event.conversationUUID;
     
@@ -340,7 +340,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         return conversation;
     }
 
-    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc];
+    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc isFederationEnabled:isFederationEnabled];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender

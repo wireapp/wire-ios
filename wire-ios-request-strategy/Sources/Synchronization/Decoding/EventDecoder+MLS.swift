@@ -43,7 +43,8 @@ extension EventDecoder {
                 let conversation = ZMConversation.fetchOrCreate(
                     with: payload.id,
                     domain: payload.qualifiedID?.domain,
-                    in: context
+                    in: context,
+                    isFederationEnabled: self.isFederationEnabled
                 )
                 conversation.remoteIdentifier = payload.qualifiedID?.uuid
                 conversation.domain = payload.qualifiedID?.domain

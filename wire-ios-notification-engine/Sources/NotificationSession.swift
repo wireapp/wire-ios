@@ -311,7 +311,8 @@ public final class NotificationSession {
         self.eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
             syncMOC: coreDataStack.syncContext,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         pushNotificationStrategy.delegate = self

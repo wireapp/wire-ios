@@ -23,13 +23,16 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
     ) {
         self.context = context
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -70,7 +73,8 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
         return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: connection.qualifiedConversationID?.domain,
-            in: context
+            in: context,
+            isFederationEnabled: isFederationEnabled
         )
     }
 

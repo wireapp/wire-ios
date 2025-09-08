@@ -436,7 +436,8 @@ final class UserSessionLoader {
 
         let proteusToMLSMigrationCoordinator = ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: accountID
+            userID: accountID,
+            apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
             storage: sharedUserDefaults,

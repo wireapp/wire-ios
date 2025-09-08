@@ -120,6 +120,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     fileprivate var tornDown: Bool = false
     fileprivate var observers: [Any] = []
     private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -129,14 +130,16 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     public convenience init(
         applicationStatus: ApplicationStatus,
         managedObjectContext: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.init(
             applicationStatus: applicationStatus,
             syncContext: managedObjectContext,
             uiContext: managedObjectContext.zm_userInterface,
             typing: nil,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -145,10 +148,12 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         syncContext: NSManagedObjectContext,
         uiContext: NSManagedObjectContext,
         typing: Typing?,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.typing = typing ?? Typing(uiContext: uiContext, syncContext: syncContext)
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
@@ -285,7 +290,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: event.conversationDomain,
-            in: managedObjectContext
+            in: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
         )
 
         if event.type == .conversationTyping {

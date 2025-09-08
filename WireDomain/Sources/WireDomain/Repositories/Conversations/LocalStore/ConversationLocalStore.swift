@@ -36,6 +36,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let updateEventLogger = WireLogger.updateEvent
     let messageLocalStore: any MessageLocalStoreProtocol
     private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
@@ -43,12 +44,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         context: NSManagedObjectContext,
         mlsService: (any MLSServiceInterface)?,
         messageLocalStore: any MessageLocalStoreProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.mlsService = mlsService
         self.messageLocalStore = messageLocalStore
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -70,7 +73,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: lastReadMessage,
-                in: context
+                in: context,
+                isFederationEnabled: self.isFederationEnabled
             )
         }
     }
@@ -86,7 +90,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             ZMConversation.updateConversation(
                 withClearedFromSelfConversation: clearedMessage,
-                in: context
+                in: context,
+                isFederationEnabled: self.isFederationEnabled
             )
         }
     }
@@ -219,7 +224,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ZMConversation.fetchOrCreate(
                 with: id,
                 domain: domain,
-                in: context
+                in: context,
+                isFederationEnabled: self.isFederationEnabled
             )
         }
     }
@@ -546,7 +552,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: conversationDomain,
-                in: context
+                in: context,
+                isFederationEnabled: self.isFederationEnabled
             )
 
             conversation.remoteIdentifier = conversationID

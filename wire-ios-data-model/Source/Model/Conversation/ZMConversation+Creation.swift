@@ -32,10 +32,11 @@ public extension ZMConversation {
     static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        isFederationEnabled: Bool
     ) -> ZMConversation {
         var created = false
-        return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
+        return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created, isFederationEnabled: isFederationEnabled)
     }
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
@@ -52,14 +53,14 @@ public extension ZMConversation {
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext,
-        created: UnsafeMutablePointer<Bool>
+        created: UnsafeMutablePointer<Bool>,
+        isFederationEnabled: Bool
     ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
         // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
         // having two duplicates of that user, and we'd have a really hard time recovering from that.
         require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        let domain: String? = BackendInfo.isFederationEnabled ? domain : nil
+        let domain: String? = isFederationEnabled ? domain : nil
 
         if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
             return conversation

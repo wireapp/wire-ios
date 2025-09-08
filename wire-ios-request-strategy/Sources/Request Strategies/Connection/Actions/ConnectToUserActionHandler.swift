@@ -23,14 +23,16 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
     private let localDomain: String?
 
     init(
         context: NSManagedObjectContext,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.localDomain = localDomain
+        processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 

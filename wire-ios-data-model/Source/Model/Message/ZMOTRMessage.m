@@ -127,6 +127,7 @@ NSString * const DeliveredKey = @"delivered";
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
                                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
+                                 isFederationEnabled:(bool)isFederationEnabled
 {
     // `createOrUpdateMessageFromUpdateEvent..` is originally declared in `ZMMessage`
     // We must override the original implementation in `ZMOTRMessage`
@@ -134,7 +135,7 @@ NSString * const DeliveredKey = @"delivered";
     // (Extensions can add new functionality to a type, but they cannot override existing functionality)
     // So, for now we call the Swift implementation of this method.
     // When converting ZMOTRMessage to Swift, we can move the code of the extension method to the Swift override
-    return [ZMOTRMessage createOrUpdateFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:prefetchResult];
+    return [ZMOTRMessage createOrUpdateFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:prefetchResult isFederationEnabled:isFederationEnabled];
 }
 
 -(void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(NSSet *)updatedKeys {

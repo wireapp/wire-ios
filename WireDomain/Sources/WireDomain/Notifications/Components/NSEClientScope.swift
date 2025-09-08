@@ -54,6 +54,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let webSocketNetworkService: NetworkService
     private let apiVersion: WireNetwork.APIVersion
     private let localDomain: String
+    private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
 
     init(
@@ -63,6 +64,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
+        isFederationEnabled: Bool,
         coreDataStack: CoreDataStack
     ) {
         self.clientID = clientID
@@ -70,6 +72,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         self.coreDataStack = coreDataStack
         super.init(parent: parent)
     }
@@ -287,7 +290,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 context: coreDataStack.syncContext,
                 mlsService: nil,
                 messageLocalStore: messageLocalStore,
-                localDomain: localDomain
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
         }
     }

@@ -148,6 +148,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             webSocketNetworkService: networkServices.webSocket,
             apiVersion: metadata.apiVersion,
             localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled,
             coreDataStack: coreDataStack
         )
 
@@ -274,6 +275,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
+        isFederationEnabled: Bool,
         coreDataStack: CoreDataStack
     ) -> NSEClientScope {
         NSEClientScope(
@@ -283,6 +285,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             webSocketNetworkService: webSocketNetworkService,
             apiVersion: apiVersion,
             localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled,
             coreDataStack: coreDataStack
         )
     }

@@ -220,7 +220,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
                 managedObjectContext: syncMOC,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
@@ -233,7 +234,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncProgress: applicationStatusDirectory.syncStatus,
                 oneOneOneResolver: oneOnOneResolver,
                 apiVersion: metadata.apiVersion,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,

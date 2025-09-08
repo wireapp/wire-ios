@@ -755,7 +755,8 @@ public final class ZMUserSession: NSObject {
             earService: earService,
             lastEventIDRepository: lastEventIDRepository,
             strategyDirectory: strategyDirectory!,
-            additionalEventConsumers: [conversationEventProcessor]
+            additionalEventConsumers: [conversationEventProcessor],
+            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
         )
     }
 

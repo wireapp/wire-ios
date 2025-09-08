@@ -43,6 +43,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     var oneOnOneResolutionDelay: TimeInterval = 3
 
     private let apiVersion: WireTransport.APIVersion?
+    private let isFederationEnabled: Bool
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
@@ -50,7 +51,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         syncProgress: SyncProgress,
         oneOneOneResolver: OneOnOneResolverInterface,
         apiVersion: WireTransport.APIVersion?,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
 
         self.syncProgress = syncProgress
@@ -69,12 +71,12 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 context: managedObjectContext
             )
 
-        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
+        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
         self.connectionByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByIDTranscoder
         )
-        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
+        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
         self.connectionByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByQualifiedIDTranscoder
@@ -82,8 +84,8 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConnection.entityName(), \.needsToBeUpdatedFromBackend)
 
-        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext, localDomain: localDomain)
-        self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext)
+        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
+        self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
         self.actionSync = EntityActionSync(actionHandlers: [
             connectToUserActionHandler,
             updateConnectionActionHandler
@@ -91,7 +93,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.oneOnOneResolver = oneOneOneResolver
         self.apiVersion = apiVersion
-
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
@@ -145,7 +147,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 
     private func createConnectionsAndFinishSyncPhase(_ connections: [Payload.Connection], hasMore: Bool) {
-        let processor = ConnectionPayloadProcessor()
+        let processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
 
         for connection in connections {
             processor.updateOrCreateConnection(
@@ -242,7 +244,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
     private func processUserConnectionEvent(_ payload: Payload.UserConnectionEvent) {
         let context = managedObjectContext
 
-        let processor = ConnectionPayloadProcessor()
+        let processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
         processor.processPayload(
             payload,
             in: context
@@ -304,10 +306,14 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -362,10 +368,14 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

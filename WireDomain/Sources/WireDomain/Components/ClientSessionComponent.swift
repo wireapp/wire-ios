@@ -191,7 +191,8 @@ public final class ClientSessionComponent {
         context: syncContext,
         mlsService: mlsService,
         messageLocalStore: messageLocalStore,
-        localDomain: backendMetadata.domain
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
     public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
@@ -219,7 +220,8 @@ public final class ClientSessionComponent {
     )
 
     private lazy var userConnectionsStore = ConnectionsLocalStore(
-        context: syncContext
+        context: syncContext,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
     private lazy var userLocalStore = UserLocalStore(

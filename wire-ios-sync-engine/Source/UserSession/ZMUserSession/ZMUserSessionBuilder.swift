@@ -262,7 +262,8 @@ struct ZMUserSessionBuilder {
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: userId
+            userID: userId,
+            apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
             storage: sharedUserDefaults,

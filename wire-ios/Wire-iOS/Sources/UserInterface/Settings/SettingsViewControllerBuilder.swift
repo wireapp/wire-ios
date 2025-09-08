@@ -43,7 +43,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator,
-            localDomain: userSession.resolvedBackendMetadata.domain
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
     }
 
