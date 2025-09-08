@@ -29,6 +29,9 @@ import WireMessagingDomain
 final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
+    private let item: FilesViewItem
+    private let onOpen: (FilesViewItem) async -> Void
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     @Published private var asset: WireCellsLocalAsset?
@@ -36,16 +39,18 @@ final class FilesItemViewModel: ObservableObject {
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
-    let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
 
     init(
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        onOpen: @escaping (FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
     ) {
         self.nodeID = item.id
+        self.item = item
+        self.onOpen = onOpen
         self.fileName = item.filename
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -65,7 +70,7 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    var isDownloadOptionDisabled: Bool {
+    var isDownloading: Bool {
         switch asset?.downloadState {
         case .downloading:
             true
@@ -92,6 +97,10 @@ final class FilesItemViewModel: ObservableObject {
         default:
             false
         }
+    }
+
+    func open() async {
+        await onOpen(item)
     }
 
     func download() async {

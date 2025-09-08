@@ -56,7 +56,7 @@ final class WireCellsLocalAssetRepositoryTests {
             self?.storeBacking[metadata.nodeID] = metadata
         }
 
-        sut.observeAsset(nodeID: nodeID).sink { [weak self] asset in
+        sut.observeAsset(nodeID: nodeID).dropFirst().sink { [weak self] asset in
             self?.observedAssets.append(asset)
         }.store(in: &cancellables)
     }

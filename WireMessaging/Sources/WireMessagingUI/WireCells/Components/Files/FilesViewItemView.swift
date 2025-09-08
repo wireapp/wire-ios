@@ -29,7 +29,6 @@ struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
-    @State private var viewingURL: URL?
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -60,10 +59,14 @@ struct FilesViewItemView: View {
                 Spacer()
 
                 Menu {
+                    Button(action: open) {
+                        Label(Strings.Files.Item.Menu.open, systemImage: "document")
+                    }.disabled(viewModel.isDownloading)
+
                     if !viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
-                        }.disabled(viewModel.isDownloadOptionDisabled)
+                        }.disabled(viewModel.isDownloading)
                     }
 
                     Button(action: rename) {
@@ -90,6 +93,11 @@ struct FilesViewItemView: View {
 
             Divider()
         }
+        .contentShape(Rectangle()) // Tap area
+    }
+
+    private func open() {
+        Task { await viewModel.open() }
     }
 
     private func download() {

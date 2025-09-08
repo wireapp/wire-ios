@@ -73,6 +73,14 @@ package final class FilesViewModel: ObservableObject {
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
+    private var lastSelectedItem: FilesViewItem?
+
+    @Published private(set) var items: [FilesViewItem] = []
+    @Published private var nextPageToken: WireCellsPageToken?
+    @Published private var loadMoreTask: LoadItemsTask?
+    @Published var alert: AlertModel?
+    @Published var viewingURL: URL?
+    @Published var state: State
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
@@ -85,12 +93,6 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
     }
-
-    @Published private var nextPageToken: WireCellsPageToken?
-    @Published private var loadMoreTask: LoadItemsTask?
-    @Published var alert: AlertModel?
-    @Published var viewingURL: URL?
-    @Published var state: State
 
     /// Whether there are more items to load.
     var hasMore: Bool {
@@ -133,24 +135,51 @@ package final class FilesViewModel: ObservableObject {
 
     /// Returns a `FilesItemViewModel` for the item at the given index.
     func itemViewModel(index: Int) -> FilesItemViewModel {
-        FilesItemViewModel(item: state.items[index], localAssetRepository: localAssetRepository)
+        FilesItemViewModel(
+            item: state.items[index],
+            localAssetRepository: localAssetRepository,
+            onOpen: { [weak self] item in
+                await self?.viewAsset(item: item)
+            }
+        )
     }
 
-    // TODO: [WPB-19395] Implement correctly. This current implementation is just to confirm that downloading works.
-    func viewAsset(item: FilesViewItem) {
-        guard let asset = try? localAssetRepository.asset(nodeID: item.id) else { return }
+    /// Downloads if necessary and views the asset represented by the given item.
+    func viewAsset(item: FilesViewItem) async {
+        // Bookkeeping ensure we only attempt to display the most recently selected item.
+        lastSelectedItem = item
 
-        switch asset.downloadState {
-        case let .downloaded(cacheKey):
-            if let url = fileCache.fileURL(forKey: cacheKey) {
+        do {
+            if let url = try await localURL(for: item), item == lastSelectedItem {
                 viewingURL = url
             }
-        default:
-            break
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            alert = .noInternet
+        } catch {
+            alert = .unknownError
         }
     }
 
     // MARK: - Private
+
+    private func localURL(for item: FilesViewItem) async throws -> URL? {
+        // If the file is already downloaded, return the local URL.
+        if
+            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
+            let url = fileCache.fileURL(forKey: cacheKey) {
+            return url
+        }
+
+        let cacheKey: String?
+        do {
+            try await localAssetRepository.downloadAsset(nodeID: item.id)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
+            try await awaitDownload(item: item)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        }
+        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
+    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -202,4 +231,31 @@ package final class FilesViewModel: ObservableObject {
         return (items, nextPage)
     }
 
+    private func awaitDownload(item: FilesViewItem) async throws {
+        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
+            try Task.checkCancellation()
+
+            switch item?.downloadState {
+            case .downloaded:
+                return
+            case let .failed(error):
+                throw error
+            default:
+                break
+            }
+        }
+    }
+
+}
+
+private extension WireCellsLocalAsset.DownloadState {
+
+    var cacheKey: String? {
+        switch self {
+        case let .downloaded(key):
+            key
+        default:
+            nil
+        }
+    }
 }

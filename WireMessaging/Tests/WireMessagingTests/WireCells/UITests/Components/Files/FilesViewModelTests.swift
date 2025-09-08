@@ -28,7 +28,9 @@ import WireMessagingDomain
 final class FilesViewModelTests {
 
     private let nodesRepository = MockWireCellsNodesRepositoryProtocol()
-    private var sut: FilesViewModel
+    private let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+    private let fileCache = MockFileCache()
+    private let sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
     private var cancellables = Set<AnyCancellable>()
 
@@ -39,8 +41,8 @@ final class FilesViewModelTests {
                 repository: nodesRepository
             ),
             isCellsStatePending: false,
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
+            localAssetRepository: localAssetRepository,
+            fileCache: fileCache
         )
 
         sut.$state.dropFirst().sink { [weak self] state in
@@ -258,7 +260,7 @@ final class FilesViewModelTests {
         (error: URLError(.networkConnectionLost), expectedAlert: AlertModel.noInternet),
         (error: URLError(.badURL), expectedAlert: AlertModel.unknownError)
     ])
-    func loadFailure(error: any Error, expectedAlert: AlertModel) async throws {
+    func loadFailure(error: any Error, expectedAlert: AlertModel) async {
         // given
         nodesRepository.getNodes_MockError = error
 
@@ -285,7 +287,7 @@ final class FilesViewModelTests {
     ])
     func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
         // given
-        sut = FilesViewModel(
+        let sut = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
@@ -317,6 +319,89 @@ final class FilesViewModelTests {
 
         // then
         #expect(state == sut.state)
+    }
+
+    // MARK: - viewAsset
+
+    @Test
+    func viewAsset_whenFileAlreadyDownloaded() async throws {
+        // given
+        let nodeID = UUID()
+        localAssetRepository.assetNodeID_MockValue = WireCellsLocalAsset.fixture(
+            downloadState: .downloaded(cacheKey: "some-key")
+        )
+        fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
+
+        // when
+        await sut.viewAsset(item: .fixture(id: nodeID))
+
+        // then
+        #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
+        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
+    }
+
+    @Test
+    func viewAsset_whenFileNeedsDownloaded() async throws {
+        // given
+        var assets: [UUID: WireCellsLocalAsset] = [:]
+        let nodeID = UUID()
+        localAssetRepository.assetNodeID_MockMethod = { nodeID in
+            assets[nodeID]
+        }
+        localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
+            assets[nodeID] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
+        }
+        fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
+
+        // when
+        await sut.viewAsset(item: .fixture(id: nodeID))
+
+        // then
+        #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
+        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
+    }
+
+    @Test
+    func viewAsset_whenFileAlreadyDownloading() async throws {
+        // given
+        var assets: [UUID: WireCellsLocalAsset] = [:]
+        let nodeID = UUID()
+        localAssetRepository.assetNodeID_MockMethod = { nodeID in
+            assets[nodeID]
+        }
+        localAssetRepository
+            .downloadAssetNodeID_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
+
+        localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
+            let asset = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
+            assets[nodeID] = asset
+            return [asset].publisher.eraseToAnyPublisher()
+        }
+
+        fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
+
+        // when
+        await sut.viewAsset(item: .fixture(id: nodeID))
+
+        // then
+        #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
+        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
+    }
+
+    @Test(arguments: [
+        (error: URLError(.notConnectedToInternet), expectedAlert: AlertModel.noInternet),
+        (error: URLError(.networkConnectionLost), expectedAlert: AlertModel.noInternet),
+        (error: URLError(.badURL), expectedAlert: AlertModel.unknownError)
+    ])
+    func viewAsset_triggersAlertOnFailure(error: any Error, expectedAlert: AlertModel) async {
+        // given
+        localAssetRepository.assetNodeID_MockError = error
+
+        // when
+        await sut.viewAsset(item: .fixture())
+
+        // then
+        #expect(sut.alert == expectedAlert)
     }
 
 }
