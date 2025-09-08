@@ -80,7 +80,8 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case 200:
             guard
                 let data = response.rawData,
-                let payload = ResponsePayload(data)
+                let apiVersion = WireTransport.APIVersion(rawValue: response.apiVersion),
+                let payload = ResponsePayload(data, apiVersion: apiVersion)
             else {
                 action.fail(with: .invalidResponsePayload)
                 return

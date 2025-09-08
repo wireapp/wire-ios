@@ -176,8 +176,7 @@ protocol CodableAPIVersionAware: EncodableAPIVersionAware & DecodableAPIVersionA
 extension DecodableAPIVersionAware {
 
     init(from decoder: Decoder) throws {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = decoder.apiVersion ?? BackendInfo.apiVersion else {
+        guard let apiVersion = decoder.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion
         }
 
@@ -189,8 +188,7 @@ extension DecodableAPIVersionAware {
 extension EncodableAPIVersionAware {
 
     func encode(to encoder: Encoder) throws {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard let apiVersion = encoder.apiVersion ?? BackendInfo.apiVersion else {
+        guard let apiVersion = encoder.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion
         }
 
