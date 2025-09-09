@@ -18,7 +18,3 @@
 
 #include "../Project-Debug.xcconfig"
 #include "Notification-Extension-Base.xcconfig"
-
-PRODUCT_NAME = NSE
-
-
