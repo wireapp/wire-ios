@@ -196,6 +196,7 @@ extension WireCallCenterV3 {
         let group = conversation.conversationType == .group
 
         callSnapshots[conversationId] = CallSnapshot(
+            messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,

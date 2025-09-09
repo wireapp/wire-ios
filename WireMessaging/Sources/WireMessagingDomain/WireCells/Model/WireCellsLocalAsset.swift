@@ -20,7 +20,7 @@ public import Foundation
 
 /// Information of a Wire Cells local asset (e.g file) including it's download state.
 
-public struct WireCellsLocalAsset: Equatable {
+public struct WireCellsLocalAsset: Equatable, Sendable {
 
     /// The current download state of the asset.
 

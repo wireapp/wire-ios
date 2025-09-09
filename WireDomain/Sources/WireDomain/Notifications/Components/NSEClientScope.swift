@@ -365,8 +365,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
 
         let validator = ConversationMessageAddEventNotificationBuilder.Validator(
-            conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            conversationLocalStore: conversationLocalStore
         )
 
         return ConversationMessageAddEventNotificationBuilder(
@@ -542,8 +541,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
 
         let validator = ConversationDeleteEventNotificationBuilder.Validator(
-            conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            conversationLocalStore: conversationLocalStore
         )
 
         return ConversationDeleteEventNotificationBuilder(
@@ -558,9 +556,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             userLocalStore: userLocalStore
         )
 
-        let validator = ConversationMessageTimerUpdateEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
-        )
+        let validator = ConversationMessageTimerUpdateEventNotificationBuilder.Validator()
 
         return ConversationMessageTimerUpdateEventNotificationBuilder(
             context: context,

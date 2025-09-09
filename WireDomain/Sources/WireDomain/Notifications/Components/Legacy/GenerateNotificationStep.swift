@@ -124,9 +124,7 @@ extension GenerateNotificationStep {
             userLocalStore: dependency.userLocalStore
         )
 
-        let validator = ConversationMessageTimerUpdateEventNotificationBuilder.Validator(
-            userLocalStore: dependency.userLocalStore
-        )
+        let validator = ConversationMessageTimerUpdateEventNotificationBuilder.Validator()
 
         return ConversationMessageTimerUpdateEventNotificationBuilder(
             context: context,
@@ -157,8 +155,7 @@ extension GenerateNotificationStep {
         )
 
         let validator = ConversationDeleteEventNotificationBuilder.Validator(
-            conversationLocalStore: dependency.conversationLocalStore,
-            userLocalStore: dependency.userLocalStore
+            conversationLocalStore: dependency.conversationLocalStore
         )
 
         return ConversationDeleteEventNotificationBuilder(
@@ -174,8 +171,7 @@ extension GenerateNotificationStep {
         )
 
         let validator = ConversationMessageAddEventNotificationBuilder.Validator(
-            conversationLocalStore: dependency.conversationLocalStore,
-            userLocalStore: dependency.userLocalStore
+            conversationLocalStore: dependency.conversationLocalStore
         )
 
         return ConversationMessageAddEventNotificationBuilder(

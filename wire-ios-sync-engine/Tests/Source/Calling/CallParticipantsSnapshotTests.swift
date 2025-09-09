@@ -188,6 +188,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 
     func setupCallSnapshot() {
         mockWireCallCenterV3.callSnapshots[conversationId] = CallSnapshot(
+            messageProtocol: .proteus,
             callParticipants: CallParticipantsSnapshot(
                 conversationId: conversationId,
                 members: [],
