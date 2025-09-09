@@ -141,6 +141,7 @@ public final class NotificationSession {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
+            localDomain: BackendInfo.domain,
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
 

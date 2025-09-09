@@ -130,6 +130,7 @@ public final class SharingSession {
         let coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: accountIdentifier),
             applicationContainer: sharedContainerURL,
+            localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
 

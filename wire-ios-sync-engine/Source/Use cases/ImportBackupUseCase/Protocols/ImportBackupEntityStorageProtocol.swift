@@ -36,6 +36,7 @@ public protocol ImportBackupEntityStorageProtocol: Sendable {
         account: Account,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
         isFederationEnabled: Bool
     ) async throws -> ContextProvider
 

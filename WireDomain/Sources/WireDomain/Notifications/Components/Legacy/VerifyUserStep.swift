@@ -178,6 +178,7 @@ extension VerifyUserStep {
         return CoreDataStack(
             account: account,
             applicationContainer: applicationContainer,
+            localDomain: BackendInfo.domain,
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }

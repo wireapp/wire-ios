@@ -1107,6 +1107,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup,
+            localDomain: BackendInfo.domain,
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
 

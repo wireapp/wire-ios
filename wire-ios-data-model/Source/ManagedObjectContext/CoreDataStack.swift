@@ -150,6 +150,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
+    private let localDomain: String?
     private let isFederationEnabled: Bool
 
     // MARK: - Initialization
@@ -159,6 +160,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         applicationContainer: URL,
         inMemoryStore: Bool = false,
         dispatchGroup: ZMSDispatchGroup? = nil,
+        localDomain: String?,
         isFederationEnabled: Bool
     ) {
 
@@ -167,6 +169,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         self.applicationContainer = applicationContainer
         self.account = account
         self.dispatchGroup = dispatchGroup
+        self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
 
         let accountDirectory = Self.accountDataFolder(
@@ -360,6 +363,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     func configureViewContext(_ context: NSManagedObjectContext) async {
         context.markAsUIContext()
         await context.perform {
+            context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
@@ -381,6 +385,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     func configureSyncContext(_ context: NSManagedObjectContext) async {
         context.markAsSyncContext()
         await context.perform {
+            context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
@@ -406,6 +411,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     func configureSearchContext(_ context: NSManagedObjectContext) async {
         context.markAsSearch()
         await context.perform {
+            context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))

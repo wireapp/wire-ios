@@ -118,6 +118,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
         // Set up persistence stack.
         let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
             isFederationEnabled: metadata.isFederationEnabled
         )
 
@@ -226,10 +227,14 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     }
 
     // TODO: [WPB-19777] deduplicate
-    private func setupPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool,
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: dependency.appContainerURL,
+            localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
 

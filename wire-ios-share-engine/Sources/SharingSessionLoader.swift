@@ -100,6 +100,7 @@ public struct SharingSessionLoader {
 
         // Set up persistence stack.
         let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
             isFederationEnabled: metadata.isFederationEnabled
         )
 
@@ -197,10 +198,14 @@ public struct SharingSessionLoader {
         return newMetadata
     }
 
-    private func setupPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: appContainerURL,
+            localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
 

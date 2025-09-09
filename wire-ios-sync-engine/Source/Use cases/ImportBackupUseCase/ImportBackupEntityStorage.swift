@@ -42,6 +42,7 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
         account: Account,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
         isFederationEnabled: Bool
     ) async throws -> any ContextProvider {
 
@@ -49,6 +50,7 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
             account: account,
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
 

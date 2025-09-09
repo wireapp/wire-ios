@@ -128,6 +128,7 @@ final class UserSessionLoader {
 
         // Load persistence stack.
         let coreDataStack = try await loadPersistenceStack(
+            localDomain: metadata.domain,
             isFederationEnabled: metadata.isFederationEnabled
         )
 
@@ -275,11 +276,15 @@ final class UserSessionLoader {
         return newMetadata
     }
 
-    private func loadPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
+    private func loadPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
             isFederationEnabled: isFederationEnabled
         )
 
