@@ -77,6 +77,7 @@ final class MessageSendFailureView: UIView {
             setupViewsWithChatBubble()
         } else {
             stackView.alignment = .leading
+            stackView.spacing = 15
             [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
         }
         stackView.spacing = 8
@@ -90,6 +91,7 @@ final class MessageSendFailureView: UIView {
     }
 
     private func setupViewsWithChatBubble() {
+        stackView.spacing = 8
         buttonContainer.translatesAutoresizingMaskIntoConstraints = false
         buttonContainer.addSubview(retryButton)
         [titleLabel, buttonContainer].forEach(stackView.addArrangedSubview)
