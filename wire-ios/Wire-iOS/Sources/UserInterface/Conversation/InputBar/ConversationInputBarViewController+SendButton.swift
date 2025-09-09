@@ -64,7 +64,17 @@ extension ConversationInputBarViewController {
                         contentType: draft.mimeType,
                         initialName: draft.name,
                         initialSize: draft.bytes,
-                        initialMetadata: nil // FIXME: [WPB-18130] Send metadata
+                        initialMetadata: draft.metadata.map { metadata in
+                            switch metadata {
+                            case let .image(width, height):
+                                return .image(width: width, height: height)
+                            case let .video(width, height, duration):
+                                return .video(width: width, height: height, duration: duration)
+                            case let .audio(duration):
+                                // Currently normalized loudness is not supported
+                                return .audio(duration: duration, normalizedLoudness: nil)
+                            }
+                        }
                     )
                 },
                 mentions: mentions,
