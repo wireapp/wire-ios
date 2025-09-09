@@ -826,7 +826,6 @@ final class ZClientViewController: UIViewController {
     }
 
     private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
         !user.isTeamMember && userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
     }
 

@@ -89,13 +89,11 @@ extension SettingsCellDescriptorFactory {
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
     ) -> SettingsSectionDescriptorType {
-        let federationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [
             nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
             handleElement(
                 enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
-                federationEnabled: federationEnabled,
                 useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             )
         ]
@@ -116,7 +114,7 @@ extension SettingsCellDescriptorFactory {
             }
         }
 
-        if federationEnabled {
+        if isFederationEnabled {
             cellDescriptors.append(domainElement())
         }
 
@@ -249,7 +247,6 @@ extension SettingsCellDescriptorFactory {
 
     func handleElement(
         enabled: Bool = true,
-        federationEnabled: Bool,
         useTypeIntrinsicSizeTableView: Bool
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
@@ -257,20 +254,21 @@ extension SettingsCellDescriptorFactory {
             let presentation = {
                 ChangeHandleViewController(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-                    settingsCoordinator: settingsCoordinator
+                    settingsCoordinator: settingsCoordinator,
+                    isFederationEnabled: isFederationEnabled
                 )
             }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
 
                 let preview: PreviewGeneratorType = { _ in
-                    guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
+                    guard let handleDisplayString = selfUser.handleDisplayString(withDomain: isFederationEnabled) else {
                         return .none
                     }
                     return .text(handleDisplayString)
                 }
 
-                let copiableText = selfUser.handleDisplayString(withDomain: federationEnabled)
+                let copiableText = selfUser.handleDisplayString(withDomain: isFederationEnabled)
 
                 return SettingsExternalScreenCellDescriptor(
                     title: AccountSection.Handle.title,

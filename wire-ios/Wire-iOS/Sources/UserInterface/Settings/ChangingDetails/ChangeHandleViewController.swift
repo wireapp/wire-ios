@@ -226,25 +226,29 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     convenience init(
         useTypeIntrinsicSizeTableView: Bool,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool
     ) {
         let user = SelfUser.provider?.providedSelfUser
         self.init(
             state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
     convenience init(
         suggestedHandle handle: String,
         useTypeIntrinsicSizeTableView: Bool,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool
     ) {
         self.init(
             state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: isFederationEnabled
         )
         setupViews()
         checkAvailability(of: handle)
@@ -254,12 +258,11 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     init(
         state: HandleChangeState,
         useTypeIntrinsicSizeTableView: Bool,
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        federationEnabled: Bool = BackendInfo.isFederationEnabled,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        isFederationEnabled: Bool
     ) {
         self.state = state
-        self.federationEnabled = federationEnabled
+        self.federationEnabled = isFederationEnabled
         super.init(
             style: .grouped,
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,

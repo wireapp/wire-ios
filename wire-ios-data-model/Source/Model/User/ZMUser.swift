@@ -567,8 +567,7 @@ extension ZMUser: UserConnections {
         guard
             let connection,
             let userID = remoteIdentifier,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? managedObjectContext?.localDomain
         else {
             completion(AcceptConnectionError.invalidState)
             return
