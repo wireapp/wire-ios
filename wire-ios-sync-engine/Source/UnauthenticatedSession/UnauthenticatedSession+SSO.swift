@@ -56,7 +56,6 @@ public extension UnauthenticatedSession {
     /// - parameter completion: The result closure with the sso settings
 
     func fetchSSOSettings(completion: @escaping (Result<SSOSettings, Error>) -> Void) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(SSOSettingsError.unknown))
         }

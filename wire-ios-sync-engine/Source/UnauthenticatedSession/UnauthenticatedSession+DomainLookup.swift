@@ -63,7 +63,6 @@ public extension UnauthenticatedSession {
     /// - parameter completion: The result closure will with the result of the lookup.
 
     func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(DomainLookupError.noApiVersion))
         }
