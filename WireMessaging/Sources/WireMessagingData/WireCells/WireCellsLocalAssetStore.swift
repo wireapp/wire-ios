@@ -100,18 +100,19 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
         let context = contextProvider.viewContext
         return try context.performAndWait {
             try context.fetchLocalAsset(nodeID: nodeID).map { managed in
-                var asset = WireCellsLocalAsset(
+                let cacheKey = WireCellsLocalAsset.cacheKey(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path
+                )
+                return WireCellsLocalAsset(
                     nodeID: managed.nodeID,
                     eTag: managed.eTag,
                     path: managed.path,
                     contentType: managed.contentType,
                     size: UInt64(managed.size),
-                    downloadState: .pending
+                    downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
                 )
-                if managed.isDownloaded {
-                    asset.downloadState = .downloaded(cacheKey: asset.cacheKey)
-                }
-                return asset
             }
         }
     }

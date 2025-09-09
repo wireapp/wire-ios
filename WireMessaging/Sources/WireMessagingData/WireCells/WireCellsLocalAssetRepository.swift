@@ -223,15 +223,10 @@ private extension WireCellsNode {
 
 }
 
-extension WireCellsLocalAsset {
+private extension WireCellsLocalAsset {
 
     var cacheKey: String {
-        // TODO: [WPB-19395] Determine best cache key strategy
-        var result = "\(nodeID.uuidString)-\(eTag)"
-        if let pathExtension = URL(string: path)?.pathExtension, !pathExtension.isEmpty {
-            result.append(".\(pathExtension)")
-        }
-        return result
+        WireCellsLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: path)
     }
 
 }
