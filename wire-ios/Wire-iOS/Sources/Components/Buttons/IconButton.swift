@@ -219,7 +219,7 @@ class IconButton: ButtonWithLargerHitArea {
     ///   - state: UIControl state
     ///   - renderingMode: Default rendering mode is AlwaysTemplate
     ///   - force: force update
-    func setIcon(
+    private func setIcon(
         _ iconType: StyleKitIcon?,
         iconSize: CGFloat,
         for state: UIControl.State,
