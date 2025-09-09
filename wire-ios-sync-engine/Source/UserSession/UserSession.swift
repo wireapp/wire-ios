@@ -306,6 +306,8 @@ public protocol UserSession: AnyObject {
     // properties are added here to help achieve this.
     var resolvedBackendMetadata: LegacyResovedBackendMetadata { get }
 
+    var isBackendMLSEnabled: Bool { get }
+
 }
 
 public class LegacyResovedBackendMetadata {

@@ -89,7 +89,7 @@ final class ConversationCreationController: UIViewController {
             return true
         }
 
-        return userSession.selfUser.canCreateMLSGroups
+        return userSession.isBackendMLSEnabled && userSession.selfUser.canCreateMLSGroups
     }
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
@@ -382,8 +382,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                // TODO: [WPB-19987] remove dependency on BackendInfo
-                isMLSEnabled: BackendInfo.isMLSEnabled
+                isMLSEnabled: session.isBackendMLSEnabled
             )
 
             // Switching back to UI context

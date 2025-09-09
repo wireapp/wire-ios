@@ -332,8 +332,7 @@ final class StartUIViewController: UIViewController {
         guard let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return false
         }
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard BackendInfo.isMLSEnabled else {
+        guard userSession.isBackendMLSEnabled else {
             return false
         }
         guard backendInfoApiVersion >= .v8 else {

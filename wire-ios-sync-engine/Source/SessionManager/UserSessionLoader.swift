@@ -163,6 +163,10 @@ final class UserSessionLoader {
             cookieStorage: cookieStorage
         )
 
+        // Check if this backend supports MLS.
+        let isBackendMLSEnabled = try await isBackendMLSEnabled(userSession: userSession)
+        userSession.journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+
         // Perform pending migrations.
         try await performPendingMigrations(userSession: userSession)
 
@@ -516,6 +520,22 @@ final class UserSessionLoader {
         userSession.startRequestLoopTracker()
 
         return userSession
+    }
+
+    private func isBackendMLSEnabled(userSession: ZMUserSession) async throws -> Bool {
+        do {
+            let api = userSession.userSessionComponent.mlsAPI
+            let keys = try await api.getBackendMLSPublicKeys()
+            return keys.removal.isValid
+        } catch
+            URLError.notConnectedToInternet,
+            URLError.networkConnectionLost,
+            MLSAPIError.unsupportedEndpointForAPIVersion,
+            MLSAPIError.mlsNotEnabled
+        {
+            // Don't block session loading, we'll try again later.
+            return false
+        }
     }
 
     private func performPendingMigrations(userSession: ZMUserSession) async throws {

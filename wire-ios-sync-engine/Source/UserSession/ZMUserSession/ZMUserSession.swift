@@ -113,6 +113,14 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Computed Properties
 
+    public var isBackendMLSEnabled: Bool {
+        if DeveloperFlag.multibackend.isOn {
+            journal[.isBackendMLSEnabled]
+        } else {
+            BackendInfo.isMLSEnabled
+        }
+    }
+
     var isPerformingSync = true {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
@@ -405,7 +413,7 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
-    private let userSessionComponent: UserSessionComponent
+    let userSessionComponent: UserSessionComponent
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
@@ -439,7 +447,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol
+        cookieStorage: any CookieStorageProtocol,
+        isMLSEnabled: Bool
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -477,8 +486,7 @@ public final class ZMUserSession: NSObject {
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
             backendMetaData: backendMetadata,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,

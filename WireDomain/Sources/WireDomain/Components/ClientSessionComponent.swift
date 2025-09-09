@@ -135,7 +135,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    public lazy var mlsAPI = MLSAPIBuilder(
+    public lazy var mlsAPI: some MLSAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 

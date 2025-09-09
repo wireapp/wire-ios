@@ -75,6 +75,22 @@ public final class UserSessionComponent {
 
     private let cookieStorage: any CookieStorageProtocol
 
+    private lazy var authenticationManager = AuthenticationManager(
+        clientID: nil,
+        cookieStorage: cookieStorage,
+        networkService: restNetworkService,
+        onAuthenticationFailure: {}
+    )
+
+    private lazy var apiService = APIService(
+        networkService: restNetworkService,
+        authenticationManager: authenticationManager
+    )
+
+    public var mlsAPI: some MLSAPI {
+        MLSAPIBuilder(apiService: apiService).makeAPI(for: backendMetadata.apiVersion)
+    }
+
     // MARK: - Children
 
     public func clientSessionComponent(

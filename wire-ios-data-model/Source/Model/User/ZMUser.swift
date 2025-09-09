@@ -161,8 +161,7 @@ extension ZMUser: UserType {
         }
 
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
+        return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
 }
