@@ -27,7 +27,7 @@ struct BlacklistAPITests {
     private let mockDateProvider: CurrentDateProvidingMock
 
     init() throws {
-        mockDateProvider = CurrentDateProvidingMock()
+        self.mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
     }
 
