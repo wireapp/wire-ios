@@ -56,8 +56,8 @@ public extension ZMUser {
         // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
         // having two duplicates of that user, and we'd have a really hard time recovering from that.
         require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        let domain: String? = BackendInfo.isFederationEnabled ? domain : nil
+
+        let domain: String? = context.isFederationEnabled ? domain : nil
 
         if let user = fetch(with: remoteIdentifier, domain: domain, in: context) {
             return user
