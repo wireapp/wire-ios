@@ -31,7 +31,7 @@ package struct WireCellsDraftMetadataRepository: WireCellsDraftMetadataRepositor
             let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any],
             let width = properties[kCGImagePropertyPixelWidth] as? Int,
             let height = properties[kCGImagePropertyPixelHeight] as? Int else {
-                return nil
+            return nil
         }
 
         return .image(width: width, height: height)

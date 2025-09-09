@@ -25,7 +25,8 @@ struct WireCellsDraftMetadataRepositoryTests {
 
     private let sut = WireCellsDraftMetadataRepository()
 
-    @Test func testImageMetadata() async throws {
+    @Test
+    func testImageMetadata() async throws {
         // given
         let fileURL = try #require(Bundle.module.url(forResource: "animated", withExtension: "gif"))
 
@@ -36,7 +37,8 @@ struct WireCellsDraftMetadataRepositoryTests {
         #expect(metadata == .image(width: 640, height: 400))
     }
 
-    @Test func testVideoMetadata() async throws {
+    @Test
+    func testVideoMetadata() async throws {
         // given
         let fileURL = try #require(Bundle.module.url(forResource: "video", withExtension: "mp4"))
 
@@ -47,7 +49,8 @@ struct WireCellsDraftMetadataRepositoryTests {
         #expect(metadata == .video(width: 568, height: 320, duration: 3003))
     }
 
-    @Test func testAudioMetadata() async throws {
+    @Test
+    func testAudioMetadata() async throws {
         // given
         let fileURL = try #require(Bundle.module.url(forResource: "audio", withExtension: "m4a"))
 
@@ -55,7 +58,7 @@ struct WireCellsDraftMetadataRepositoryTests {
         let metadata = try await sut.audioMetadata(fileURL: fileURL)
 
         // then
-        #expect(metadata ==  .audio(duration: 934))
+        #expect(metadata == .audio(duration: 934))
     }
 
 }

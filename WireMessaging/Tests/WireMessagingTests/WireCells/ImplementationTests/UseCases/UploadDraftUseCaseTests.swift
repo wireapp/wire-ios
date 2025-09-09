@@ -185,11 +185,11 @@ final class UploadDraftUseCaseTests {
         #expect(arguments.draft.deleteAfterUpload == false)
     }
 
-    @Test(arguments: Array<(fileName: String, expectedMetadata: WireCellsDraft.Metadata?)>([
+    @Test(arguments: [(fileName: String, expectedMetadata: WireCellsDraft.Metadata?)]([
         (fileName: "animated.gif", expectedMetadata: .image(width: 5, height: 5)),
         (fileName: "video.mp4", expectedMetadata: .video(width: 10, height: 10, duration: 10)),
         (fileName: "audio.m4a", expectedMetadata: .audio(duration: 15)),
-        (fileName: "text.md", expectedMetadata: nil),
+        (fileName: "text.md", expectedMetadata: nil)
     ]))
     func invokeWithFileURL_addsCorrectDraftMetadata(
         fileName: String,
