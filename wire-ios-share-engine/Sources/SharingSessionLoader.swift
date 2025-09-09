@@ -99,7 +99,9 @@ public struct SharingSessionLoader {
         let metadata = try await resolveBackendMetadata(with: networkStack)
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
         guard !shouldEnableSyncV2(metadata: metadata) else {
@@ -195,10 +197,11 @@ public struct SharingSessionLoader {
         return newMetadata
     }
 
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: appContainerURL
+            applicationContainer: appContainerURL,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {

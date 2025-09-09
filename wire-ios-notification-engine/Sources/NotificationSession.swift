@@ -140,7 +140,8 @@ public final class NotificationSession {
 
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: sharedContainerURL
+            applicationContainer: sharedContainerURL,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {

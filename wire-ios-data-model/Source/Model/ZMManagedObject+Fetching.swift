@@ -36,6 +36,7 @@ public extension ZMManagedObject {
     @objc
     static func fetch(with remoteIdentifier: UUID, domain: String?, in context: NSManagedObjectContext) -> Self? {
         // TODO: [WPB-19987] remove dependency on BackendInfo
+
         let domain: String? = if BackendInfo.isFederationEnabled, let domain, !domain.isEmpty { domain } else { .none }
 
         let localDomain = ZMUser.selfUser(in: context).domain

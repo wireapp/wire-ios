@@ -18,25 +18,17 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ImportBackupEntityStorageProtocol: Sendable {
+extension NSManagedObjectContext {
 
-    var importsDirectory: URL { get }
+    private static let key = "isFederationEnabled"
 
-    /// Replace all the data of the storage.
-    /// - Returns: The directory where all data was written to.
-    @discardableResult
-    func replacePersistentStore(
-        accountIdentifier: UUID,
-        from backupDirectory: URL,
-        applicationContainer: URL,
-    ) async throws -> URL
-
-    func createContextProvider(
-        account: Account,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?,
-        isFederationEnabled: Bool
-    ) async throws -> ContextProvider
+    var isFederationEnabled: Bool {
+        get {
+            userInfo[Self.key] as? Bool ?? false
+        }
+        set {
+            userInfo[Self.key] = newValue
+        }
+    }
 
 }

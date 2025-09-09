@@ -177,7 +177,8 @@ extension VerifyUserStep {
 
         return CoreDataStack(
             account: account,
-            applicationContainer: applicationContainer
+            applicationContainer: applicationContainer,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }
 

@@ -127,7 +127,9 @@ final class UserSessionLoader {
         }
 
         // Load persistence stack.
-        let coreDataStack = try await loadPersistenceStack()
+        let coreDataStack = try await loadPersistenceStack(
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
@@ -273,11 +275,12 @@ final class UserSessionLoader {
         return newMetadata
     }
 
-    private func loadPersistenceStack() async throws -> CoreDataStack {
+    private func loadPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            isFederationEnabled: isFederationEnabled
         )
 
         if coreDataStack.needsMigration {

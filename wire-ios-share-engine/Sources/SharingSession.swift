@@ -121,14 +121,16 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
         let coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: accountIdentifier),
-            applicationContainer: sharedContainerURL
+            applicationContainer: sharedContainerURL,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {

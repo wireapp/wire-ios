@@ -117,7 +117,9 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         let networkServices = try await networkStack.networkServices
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
         guard journal[.isSyncV2Enabled] else {
@@ -224,10 +226,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     }
 
     // TODO: [WPB-19777] deduplicate
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(isFederationEnabled: Bool) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: dependency.appContainerURL
+            applicationContainer: dependency.appContainerURL,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
