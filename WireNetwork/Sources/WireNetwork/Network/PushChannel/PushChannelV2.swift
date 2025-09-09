@@ -103,7 +103,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     switch result {
                     case let .event(event):
                         WireLogger.pushChannel.debug(
-                            " push channel received events: \(event.events.map(\.name))",
+                            "push channel received events: \(event.events.map(\.name))",
                             attributes: .pushChannelV2
                         )
                         await batchBuffer.append(event)
