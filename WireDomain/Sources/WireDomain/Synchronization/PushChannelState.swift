@@ -33,7 +33,8 @@ struct PushChannelState: PushChannelStateProtocol {
     /// The file context only prevents other processes to get the lock
     /// same process will succeed, so we need an extra state
     private static var locked: Bool = false
-
+    private static let stateLock = NSLock()
+    
     let fileContext: SafeFileContext
     init(sharedContainerURL: URL, clientID: String) {
         let url = sharedContainerURL.appendingPathComponent(clientID)
@@ -47,13 +48,23 @@ struct PushChannelState: PushChannelStateProtocol {
     }
 
     func markAsOpen() throws {
-        if !fileContext.tryAcquireLock() || Self.locked {
+        Self.stateLock.lock()
+        defer { Self.stateLock.unlock() }
+        
+        if Self.locked {
+            throw Failure.alreadyLocked
+        }
+        
+        if !fileContext.tryAcquireLock() {
             throw Failure.alreadyLocked
         }
         Self.locked = true
     }
 
     func markAsClosed() {
+        Self.stateLock.lock()
+        defer { Self.stateLock.unlock() }
+
         fileContext.releaseDirectoryLock()
         Self.locked = false
     }

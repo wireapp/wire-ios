@@ -64,9 +64,9 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         self.pushChannelMonitor = PushChannelMonitor(
             clientID: selfClientID,
             postingNotificationName: DarwinNotification
-                .releasingPushChannelAccess,
+                .didReleasePushChannelAccess,
             observingNotificationName: DarwinNotification
-                .requestingPushChannelAccess
+                .didRequestPushChannelAccess
         )
         super.init(parent: parent)
     }

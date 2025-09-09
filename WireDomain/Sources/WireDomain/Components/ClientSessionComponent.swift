@@ -416,9 +416,9 @@ public final class ClientSessionComponent {
     public lazy var pushChannelMonitor: PushChannelMonitor = .init(
         clientID: selfClientID,
         postingNotificationName: DarwinNotification
-            .requestingPushChannelAccess,
+            .didRequestPushChannelAccess,
         observingNotificationName: DarwinNotification
-            .releasingPushChannelAccess
+            .didReleasePushChannelAccess
     )
 
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {

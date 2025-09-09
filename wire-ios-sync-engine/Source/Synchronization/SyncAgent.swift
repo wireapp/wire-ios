@@ -237,7 +237,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     }
                 }
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
-                handlePushChannelAlreadyOpened()
+                await handlePushChannelAlreadyOpened()
                 syncStateSubject.send(.suspended)
 
             } catch IncrementalSync.Failure.missedEvents {
@@ -292,18 +292,28 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             }
     }
 
-    private func handlePushChannelAlreadyOpened() {
-        pushChannelMonitor.startMonitoring { [weak self] in
-            self?.retrySyncAfterPushChannelClosed()
-        }
-        WireLogger.sync.debug("push channel already opened, request NSE release", attributes: .syncAttributes)
-        pushChannelMonitor.notify()
-    }
-
-    private func retrySyncAfterPushChannelClosed() {
+    private func handlePushChannelAlreadyOpened() async {
+        await pushChannelMonitor.waitUntilPushChannelClosed()
         WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
-        pushChannelMonitor.stopMonitoring()
         resume()
+    }
+}
+
+private extension PushChannelMonitorProtocol {
+
+    func waitUntilPushChannelClosed() async {
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            
+            startMonitoring {
+                guard !resumed else { return }
+                resumed = true
+                stopMonitoring()
+                continuation.resume()
+            }
+            WireLogger.sync.debug("push channel already opened, request NSE release", attributes: .syncAttributes)
+            notify()
+        }
     }
 }
 
@@ -359,7 +369,7 @@ extension SyncAgent: MLSSyncDelegate {
                     }
                 }
             } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
-                handlePushChannelAlreadyOpened()
+                await handlePushChannelAlreadyOpened()
             } catch {
                 WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
                 throw error

@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 public protocol PushChannelMonitorProtocol {
-    func startMonitoring(action: @escaping () -> Void)
+    func startMonitoring(onNotification: @escaping () -> Void)
     func stopMonitoring()
     func notify()
 }
@@ -42,7 +43,7 @@ public final class PushChannelMonitor: PushChannelMonitorProtocol {
         darwinNotificationManager.stopObserving(name: observingNotificationName)
     }
 
-    public func startMonitoring(action: @escaping () -> Void) {
+    public func startMonitoring(onNotification action: @escaping () -> Void) {
         darwinNotificationManager.startObserving(name: observingNotificationName) {
             action()
         }

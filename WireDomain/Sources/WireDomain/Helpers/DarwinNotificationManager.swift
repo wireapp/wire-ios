@@ -19,8 +19,8 @@
 import Foundation
 
 public enum DarwinNotification {
-    public static let requestingPushChannelAccess = "com.wire.RequestingPushChannelAccess"
-    public static let releasingPushChannelAccess  = "com.wire.ReleasingPushChannelAccess"
+    public static let didRequestPushChannelAccess = "com.wire.didRequestPushChannelAccess"
+    public static let didReleasePushChannelAccess  = "com.wire.didReleasePushChannelAccess"
 }
 
 public class DarwinNotificationManager {
@@ -28,12 +28,21 @@ public class DarwinNotificationManager {
 
     private var callbacks: [String: () -> Void] = [:]
 
-    /// Method to post a Darwin notification
+    /// Post an in inter-process Darwin notification.
+    ///
+    /// You can post this notification in one process (such as the main app) observe observe
+    /// it from another process (such as an app extension).
     public func postNotification(name: String) {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
         CFNotificationCenterPostNotification(notificationCenter, CFNotificationName(name as CFString), nil, nil, true)
     }
 
+    
+    /// Observe inter-process Darwin notification.
+    /// - Parameters:
+    ///   - name: name of the notification
+    ///   - callback: block to execute when notification is received
+    /// - Note: setting the callback will remove previous callbacks for the same notification
     public func startObserving(name: String, callback: @escaping () -> Void) {
         callbacks[name] = callback
 

@@ -49,8 +49,8 @@ internal enum L10n {
       internal enum UpdateRequired {
         /// Your Wire server needs to be updated. Please notify your system administrator.
         internal static let obsoleteBackend = L10n.tr("Localizable", "share_extension.error.update_required.obsolete_backend", fallback: "Your Wire server needs to be updated. Please notify your system administrator.")
-        /// You are missing out on new features. Get the latest version of  Wire to continue using the app with this account.
-        internal static let obsoleteClient = L10n.tr("Localizable", "share_extension.error.update_required.obsolete_client", fallback: "You are missing out on new features. Get the latest version of  Wire to continue using the app with this account.")
+        /// You are missing out on new features. Get the latest version of Wire to continue using the app with this account.
+        internal static let obsoleteClient = L10n.tr("Localizable", "share_extension.error.update_required.obsolete_client", fallback: "You are missing out on new features. Get the latest version of Wire to continue using the app with this account.")
         /// Update required
         internal static let title = L10n.tr("Localizable", "share_extension.error.update_required.title", fallback: "Update required")
       }

@@ -23,6 +23,7 @@ import XCTest
 
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
+@testable import WireDomainSupport
 
 final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProvider {
 
@@ -38,7 +39,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var backgroundActivity: BackgroundActivityFactory!
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
-
+    var pushChannelMonitor: MockPushChannelMonitorProtocol!
+    
     override func setUp() {
         journal = Journal(
             userID: UUID(),
@@ -56,7 +58,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.backgroundTaskTimeout = 2
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
-
+        pushChannelMonitor = MockPushChannelMonitorProtocol()
+        
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
@@ -65,7 +68,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             incrementalSyncProvider: self,
             legacySyncStatus: legacySyncStatus,
             featureConfigRepository: featureConfigRepository,
-            syncStateSubject: syncStateSubject
+            syncStateSubject: syncStateSubject,
+            pushChannelMonitor: pushChannelMonitor
         )
     }
 
