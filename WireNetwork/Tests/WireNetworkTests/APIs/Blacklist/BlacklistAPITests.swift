@@ -24,21 +24,20 @@ import WireFoundationSupport
 
 struct BlacklistAPITests {
 
-    let snapshotter: RequestSnapshotter
+    private let mockDateProvider: CurrentDateProvidingMock
 
-    init() async throws {
-        let dateProvider = CurrentDateProvidingMock()
-        dateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
-        self.snapshotter = await RequestSnapshotter(
-            baseURL: URL(string: "https://www.blacklist.com")!,
-            currentDateProvider: dateProvider
-        )
+    init() throws {
+        mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
     }
 
     @Test("Generate request")
     func generateRequest() async throws {
         // Then
-        try await snapshotter.verifyRequest { _, networkService in
+        try await RequestSnapshotter(
+            baseURL: URL(string: "https://www.blacklist.com")!,
+            currentDateProvider: mockDateProvider
+        ).verifyRequest { _, networkService in
             // Given
             let sut = BlacklistAPIBuilder(networkService: networkService).makeAPI()
             // When
