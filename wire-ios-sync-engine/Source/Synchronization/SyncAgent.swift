@@ -304,7 +304,7 @@ private extension PushChannelMonitorProtocol {
     func waitUntilPushChannelClosed() async {
         await withCheckedContinuation { continuation in
             var resumed = false
-            
+
             startMonitoring {
                 guard !resumed else { return }
                 resumed = true

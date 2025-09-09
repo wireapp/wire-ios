@@ -22,8 +22,8 @@ import WireDomainSupport
 import XCTest
 
 @testable import WireDataModelSupport
-@testable import WireSyncEngine
 @testable import WireDomainSupport
+@testable import WireSyncEngine
 
 final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProvider {
 
@@ -40,7 +40,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
     var pushChannelMonitor: MockPushChannelMonitorProtocol!
-    
+
     override func setUp() {
         journal = Journal(
             userID: UUID(),
@@ -59,7 +59,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
         pushChannelMonitor = MockPushChannelMonitorProtocol()
-        
+
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
@@ -86,6 +86,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivityManager = nil
         backgroundActivity = nil
         featureConfigRepository = nil
+        pushChannelMonitor = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {

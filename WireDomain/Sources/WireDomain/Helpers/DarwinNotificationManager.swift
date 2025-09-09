@@ -37,7 +37,7 @@ public class DarwinNotificationManager {
         CFNotificationCenterPostNotification(notificationCenter, CFNotificationName(name as CFString), nil, nil, true)
     }
 
-    
+
     /// Observe inter-process Darwin notification.
     /// - Parameters:
     ///   - name: name of the notification

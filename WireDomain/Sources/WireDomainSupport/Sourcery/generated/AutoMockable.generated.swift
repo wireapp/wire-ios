@@ -3417,6 +3417,60 @@ class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
 
 }
 
+public class MockPushChannelMonitorProtocol: PushChannelMonitorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - startMonitoring
+
+    public var startMonitoringOnNotification_Invocations: [() -> Void] = []
+    public var startMonitoringOnNotification_MockMethod: ((@escaping () -> Void) -> Void)?
+
+    public func startMonitoring(onNotification: @escaping () -> Void) {
+        startMonitoringOnNotification_Invocations.append(onNotification)
+
+        guard let mock = startMonitoringOnNotification_MockMethod else {
+            fatalError("no mock for `startMonitoringOnNotification`")
+        }
+
+        mock(onNotification)
+    }
+
+    // MARK: - stopMonitoring
+
+    public var stopMonitoring_Invocations: [Void] = []
+    public var stopMonitoring_MockMethod: (() -> Void)?
+
+    public func stopMonitoring() {
+        stopMonitoring_Invocations.append(())
+
+        guard let mock = stopMonitoring_MockMethod else {
+            fatalError("no mock for `stopMonitoring`")
+        }
+
+        mock()
+    }
+
+    // MARK: - notify
+
+    public var notify_Invocations: [Void] = []
+    public var notify_MockMethod: (() -> Void)?
+
+    public func notify() {
+        notify_Invocations.append(())
+
+        guard let mock = notify_MockMethod else {
+            fatalError("no mock for `notify`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockPushChannelStateProtocol: PushChannelStateProtocol {
 
     // MARK: - Life cycle
@@ -3598,6 +3652,38 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfUser`")
+        }
+    }
+
+}
+
+public class MockSyncCellsStateUseCaseProtocol: SyncCellsStateUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationObjectID_Invocations: [NSManagedObjectID] = []
+    public var invokeConversationObjectID_MockError: Error?
+    public var invokeConversationObjectID_MockMethod: ((NSManagedObjectID) async throws -> CellsState)?
+    public var invokeConversationObjectID_MockValue: CellsState?
+
+    public func invoke(conversationObjectID: NSManagedObjectID) async throws -> CellsState {
+        invokeConversationObjectID_Invocations.append(conversationObjectID)
+
+        if let error = invokeConversationObjectID_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationObjectID_MockMethod {
+            return try await mock(conversationObjectID)
+        } else if let mock = invokeConversationObjectID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeConversationObjectID`")
         }
     }
 
