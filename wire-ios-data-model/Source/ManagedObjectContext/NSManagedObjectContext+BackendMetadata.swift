@@ -23,7 +23,7 @@ extension NSManagedObjectContext {
     private static let isFederationenabledKey = "isFederationEnabled"
     private static let localDomainKey = "localDomain"
 
-    var isFederationEnabled: Bool {
+    public var isFederationEnabled: Bool {
         get {
             userInfo[Self.isFederationenabledKey] as? Bool ?? false
         }
@@ -32,7 +32,7 @@ extension NSManagedObjectContext {
         }
     }
 
-    var localDomain: String? {
+    public var localDomain: String? {
         get {
             userInfo[Self.localDomainKey] as? String
         }

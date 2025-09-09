@@ -154,13 +154,29 @@ extension WireCallCenterV3 {
 
     /// Handles incoming calls.
     func handleIncomingCall(
-        conversationId: AVSIdentifier,
+        conversationId: String,
         messageTime: Date,
-        client: AVSClient,
+        userId: String,
+        clientId: String,
         isVideoCall: Bool,
         shouldRing: Bool,
         conversationType: AVSConversationType
     ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
+        let userId = AVSIdentifier.from(
+            string: userId,
+            isFederationEnabled: isFederationEnabled
+        )
+
+        let client = AVSClient(
+            userId: userId,
+            clientId: clientId
+        )
+
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(isVideo: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
@@ -169,7 +185,7 @@ extension WireCallCenterV3 {
             self.createSnapshot(
                 callState: callState,
                 members: members,
-                callStarter: client.avsIdentifier,
+                callStarter: client.avsIdentifier(isFederationEnabled: self.isFederationEnabled),
                 video: isVideoCall,
                 for: conversationId,
                 conversationType: conversationType
@@ -179,7 +195,22 @@ extension WireCallCenterV3 {
     }
 
     /// Handles missed calls.
-    func handleMissedCall(conversationId: AVSIdentifier, messageTime: Date, userId: AVSIdentifier, isVideoCall: Bool) {
+    func handleMissedCall(
+        conversationId: String,
+        messageTime: Date,
+        userId: String,
+        isVideoCall: Bool
+    ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
+        let userId = AVSIdentifier.from(
+            string: userId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("missed-call") {
             self.missed(
                 conversationId: conversationId,
@@ -191,7 +222,12 @@ extension WireCallCenterV3 {
     }
 
     /// Handles answered calls.
-    func handleAnsweredCall(conversationId: AVSIdentifier) {
+    func handleAnsweredCall(conversationId: String) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("answered-call") {
             let callState = CallState.answered(degraded: self.isDegraded(conversationId: conversationId))
             self.handle(callState: callState, conversationId: conversationId)
@@ -199,7 +235,12 @@ extension WireCallCenterV3 {
     }
 
     /// Handles when data channel gets established.
-    func handleDataChannelEstablishement(conversationId: AVSIdentifier) {
+    func handleDataChannelEstablishement(conversationId: String) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("data-channel-established") {
             // Ignore if data channel was established after audio
             if self.callState(conversationId: conversationId) != .established {
@@ -209,7 +250,12 @@ extension WireCallCenterV3 {
     }
 
     /// Handles established calls.
-    func handleEstablishedCall(conversationId: AVSIdentifier) {
+    func handleEstablishedCall(conversationId: String) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("established-call") {
             // WORKAROUND: the call established handler is called once for every participant in a
             // group call. Until that's no longer the case we must take care to only set establishedDate once.
@@ -236,11 +282,22 @@ extension WireCallCenterV3 {
 
     func handleCallEnd(
         reason: CallClosedReason,
-        conversationId: AVSIdentifier,
+        conversationId: String,
         messageTime: Date?,
-        userId: AVSIdentifier
+        userId: String
     ) {
         guard isEnabled else { return }
+
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
+        let userId = AVSIdentifier.from(
+            string: userId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("closed-call") {
             self.handle(
                 callState: .terminating(reason: reason),
@@ -252,7 +309,7 @@ extension WireCallCenterV3 {
     }
 
     /// Handles call metrics.
-    func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
+    func handleCallMetrics(conversationId: String, metrics: String) {
         let metricsData = Data(metrics.utf8)
         WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self))")
     }
@@ -267,15 +324,24 @@ extension WireCallCenterV3 {
     /// Handles sending call messages
     func handleCallMessageRequest(
         token: WireCallMessageToken,
-        conversationId: AVSIdentifier,
-        senderUserId: AVSIdentifier,
+        conversationId: String,
+        senderUserId: String,
         senderClientId: String,
         targets: AVSClientList?,
         data: Data,
         overMLSSelfConversation: Bool = false
     ) {
-
         guard isEnabled else { return }
+
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
+        let senderUserId = AVSIdentifier.from(
+            string: senderUserId,
+            isFederationEnabled: isFederationEnabled
+        )
 
         handleEventInContext("send-call-message") { managedObjectContext in
             let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -307,7 +373,15 @@ extension WireCallCenterV3 {
         }
     }
 
-    func handleParticipantChange(conversationId: AVSIdentifier, data: String) {
+    func handleParticipantChange(
+        conversationId: String,
+        data: String
+    ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("participant-change") {
             guard let data = data.data(using: .utf8) else {
                 Self.logger.info("Invalid participant change data", attributes: .safePublic)
@@ -332,7 +406,7 @@ extension WireCallCenterV3 {
                 let change = try self.decoder.decode(AVSParticipantsChange.self, from: data)
                 let members = change.members.map(AVSCallMember.init)
                 self.callParticipantsChanged(
-                    conversationId: AVSIdentifier.from(string: change.convid),
+                    conversationId: AVSIdentifier.from(string: change.convid, isFederationEnabled: self.isFederationEnabled),
                     participants: members
                 )
             } catch {
@@ -357,7 +431,12 @@ extension WireCallCenterV3 {
     }
 
     /// Stopped when the media stream of a call was ended.
-    func handleMediaStopped(conversationId: AVSIdentifier) {
+    func handleMediaStopped(conversationId: String) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("media-stopped") {
             self.handle(callState: .mediaStopped, conversationId: conversationId)
         }
@@ -375,11 +454,16 @@ extension WireCallCenterV3 {
     ///   - quality: the network quality
     ///
     func handleNetworkQualityChange(
-        conversationId: AVSIdentifier,
+        conversationId: String,
         userId: String,
         clientId: String,
         quality: NetworkQuality
     ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEventInContext("network-quality-change") {
 
             // We ignore the `usedId` and `clientID` because we only need to know the network quality
@@ -401,10 +485,40 @@ extension WireCallCenterV3 {
         }
     }
 
-    func handleClientsRequest(conversationId: AVSIdentifier, completion: @escaping (_ clients: String) -> Void) {
-        handleEventInContext("request-clients") { [encoder] _ in
-            self.transport?.requestClientsList(conversationId: conversationId) { clients in
+    func handleClientsRequest(
+        conversationId: String,
+        completion: @escaping (_ clients: String) -> Void
+    ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
 
+        handleClientsRequest(
+            conversationId: conversationId,
+            completion: completion
+        )
+    }
+
+    func handleClientsRequest(
+        conversationId: AVSIdentifier,
+        completion: @escaping (_ clients: String) -> Void
+    ) {
+        handleEventInContext("request-clients") { [weak self, encoder] _ in
+            guard
+                let self,
+                self.conversationType(from: conversationId) != .mlsConference
+            else {
+                return
+            }
+
+            // This handler is called once per call, but the participants may be
+            // added or removed from the conversation during this time. Therefore
+            // we store the completion so that it can be re-invoked with an updated
+            // client list.
+            self.clientsRequestCompletionsByConversationId[conversationId] = completion
+
+            self.transport?.requestClientsList(conversationId: conversationId) { clients in
                 guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
                     Self.logger.error("Could not encode client list to JSON")
                     return
@@ -421,7 +535,15 @@ extension WireCallCenterV3 {
         }
     }
 
-    func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
+    func handleActiveSpeakersChange(
+        conversationId: String,
+        data: String
+    ) {
+        let conversationId = AVSIdentifier.from(
+            string: conversationId,
+            isFederationEnabled: isFederationEnabled
+        )
+
         // TODO: [WPB-9604]: - refactor to avoid processing call data on the UI context
         handleEventInContext("active-speakers-change") {
 
@@ -475,7 +597,9 @@ extension WireCallCenterV3 {
 
         for newSpeaker in newSpeakers {
             let currentSpeaker = currentSpeakers.first {
-                $0.client.avsIdentifier == newSpeaker.client.avsIdentifier
+                let currentSpeakerID = $0.client.avsIdentifier(isFederationEnabled: isFederationEnabled)
+                let newSpeakerID = newSpeaker.client.avsIdentifier(isFederationEnabled: isFederationEnabled)
+                return currentSpeakerID == newSpeakerID
             }
 
             if let currentSpeaker {
@@ -491,7 +615,12 @@ extension WireCallCenterV3 {
         return isSignificant
     }
 
-    func handleNewEpochRequest(conversationID: AVSIdentifier) {
+    func handleNewEpochRequest(conversationID: String) {
+        let conversationID = AVSIdentifier.from(
+            string: conversationID,
+            isFederationEnabled: isFederationEnabled
+        )
+
         handleEvent("new-epoch-request") {
             guard
                 let viewContext = self.uiMOC,

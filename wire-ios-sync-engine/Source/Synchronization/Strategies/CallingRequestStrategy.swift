@@ -47,6 +47,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private var cancellables = Set<AnyCancellable>()
 
     private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Internal Properties
 
@@ -60,12 +61,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
         messageSender: MessageSenderInterface,
-        localDomain: String?
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
         self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [
@@ -90,7 +93,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                     uiMOC: managedObjectContext.zm_userInterface,
                     flowManager: flowManager,
                     transport: self,
-                    localDomain: localDomain
+                    localDomain: localDomain,
+                    isFederationEnabled: isFederationEnabled
                 )
             }
         }
@@ -186,7 +190,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             guard let jsonData = response.rawData else { return }
 
             let apiVersion = APIVersion(rawValue: response.apiVersion)!
-            decoder.userInfo = [ClientDiscoveryResponsePayload.apiVersionKey: apiVersion]
+            decoder.userInfo = [
+                ClientDiscoveryResponsePayload.apiVersionKey: apiVersion,
+                ClientDiscoveryResponsePayload.isFederationEnabledKey: isFederationEnabled,
+            ]
 
             do {
                 let payload = try decoder.decode(ClientDiscoveryResponsePayload.self, from: jsonData)
@@ -228,7 +235,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                         uiMOC: uiContext.zm_userInterface,
                         flowManager: self.flowManager,
                         transport: self,
-                        localDomain: self.localDomain
+                        localDomain: self.localDomain,
+                        isFederationEnabled: self.isFederationEnabled
                     )
                 }
                 break
@@ -299,12 +307,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         let conversationId = AVSIdentifier(
             identifier: identifier,
-            domain: domain
+            domain: domain,
+            isFederationEnabled: isFederationEnabled
         )
 
         let userId = AVSIdentifier(
             identifier: senderUUID,
-            domain: senderDomain
+            domain: senderDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         let callEvent = CallEvent(
@@ -471,7 +481,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
                         let avsClients = qualifiedClientIDs.map {
                             AVSClient(
-                                userId: AVSIdentifier(identifier: $0.userID, domain: $0.domain),
+                                userId: AVSIdentifier(identifier: $0.userID, domain: $0.domain, isFederationEnabled: self.isFederationEnabled),
                                 clientId: $0.clientID
                             )
                         }
@@ -530,7 +540,8 @@ extension CallingRequestStrategy {
     }
 
     struct ClientDiscoveryResponsePayload: Decodable {
-        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptions")!
+        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsAPIVersion")!
+        static let isFederationEnabledKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsIsFederationEnabled")!
 
         let clients: [AVSClient]
 
@@ -561,7 +572,10 @@ extension CallingRequestStrategy {
         ///    ...
         /// }
         init(from decoder: Decoder) throws {
-            guard let apiVersion = decoder.userInfo[Self.apiVersionKey] as? APIVersion else {
+            guard
+                let apiVersion = decoder.userInfo[Self.apiVersionKey] as? APIVersion,
+                let isFederationEnabled = decoder.userInfo[Self.isFederationEnabledKey] as? Bool
+            else {
                 fatalError("missing api version")
             }
 
@@ -583,7 +597,8 @@ extension CallingRequestStrategy {
 
                         let identifier = AVSIdentifier(
                             identifier: UUID(uuidString: userIdKey.stringValue)!,
-                            domain: domain
+                            domain: domain,
+                            isFederationEnabled: isFederationEnabled
                         )
 
                         clients += clientIds.compactMap {

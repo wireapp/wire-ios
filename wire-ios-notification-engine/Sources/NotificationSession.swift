@@ -538,7 +538,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         // Should not handle a call if the caller is a self user and it's an incoming call or call end.
         // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
         let selfUser = ZMUser.selfUser(in: context)
-        if let callerID = callContent.callerID,
+        if let callerID = callContent.callerID(isFederationEnabled: BackendInfo.isFederationEnabled),
            callerID.identifier == selfUser.remoteIdentifier,
            callerID.domain == selfUser.domain,
            callContent.isIncomingCall || callContent.isEndCall {
@@ -629,7 +629,7 @@ extension NotificationSession {
             /// the age of the event is less than 30 seconds
             guard
                 let callState = callEventContent.callState,
-                let callerID = callEventContent.callerID,
+                let callerID = callEventContent.callerID(isFederationEnabled: BackendInfo.isFederationEnabled),
                 let caller = ZMUser.fetch(with: callerID.identifier, domain: callerID.domain, in: context),
                 caller != ZMUser.selfUser(in: context),
                 !isEventTimedOut(currentTimestamp: currentTimestamp, eventTimestamp: event.timestamp)

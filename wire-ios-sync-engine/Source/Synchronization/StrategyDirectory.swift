@@ -448,7 +448,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     applicationStatus: applicationStatusDirectory,
                     flowManager: flowManager,
                     messageSender: messageSender,
-                    localDomain: metadata.domain
+                    localDomain: metadata.domain,
+                    isFederationEnabled: metadata.isFederationEnabled
                 ),
                 ResetSessionRequestStrategy(
                     managedObjectContext: syncContext,

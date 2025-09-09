@@ -1646,12 +1646,14 @@ extension ZMUserSession {
 
             let conversationId = AVSIdentifier(
                 identifier: callEventInfo.conversationID,
-                domain: callEventInfo.conversationDomain
+                domain: callEventInfo.conversationDomain,
+                isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
 
             let userId = AVSIdentifier(
                 identifier: callEventInfo.userID,
-                domain: callEventInfo.userDomain
+                domain: callEventInfo.userDomain,
+                isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
 
             let callEvent = CallEvent(
