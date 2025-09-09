@@ -30,11 +30,13 @@ final class UploadDraftUseCaseTests {
     private let draftsRepository = MockDraftsRepositoryProtocol()
     private let uploadManager = MockWireCellsNodeUploadManagerProtocol()
     private let nodesAPI = MockNodesAPIProtocol()
+    private let metadataRepository = MockWireCellsDraftMetadataRepositoryProtocol()
     private lazy var sut = UploadDraftUseCase(
         cellName: "cell-name",
         draftRepository: draftsRepository,
         uploadManager: uploadManager,
-        nodesAPI: nodesAPI
+        nodesAPI: nodesAPI,
+        metadataRepository: metadataRepository
     )
 
     deinit {

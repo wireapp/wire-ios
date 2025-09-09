@@ -56,7 +56,8 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository()
         )
     }
 
@@ -86,7 +87,8 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository()
         )
     }
 
