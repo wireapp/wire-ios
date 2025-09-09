@@ -28,6 +28,7 @@ public class SearchTask {
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
 
+    private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
     private let searchContext: NSManagedObjectContext
     private let contextProvider: ContextProvider
@@ -68,14 +69,16 @@ public class SearchTask {
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.init(
             task: .search(searchRequest: request),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            apiVersion: apiVersion
         )
     }
 
@@ -84,14 +87,16 @@ public class SearchTask {
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.init(
             task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            apiVersion: apiVersion
         )
     }
 
@@ -100,13 +105,15 @@ public class SearchTask {
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.task = task
         self.transportSession = transportSession
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
+        self.apiVersion = apiVersion
     }
 
     public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
@@ -362,8 +369,7 @@ extension SearchTask {
     func performUserLookup() {
         guard
             case let .lookup(qualifiedID) = task,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion
+            let apiVersion
         else { return }
 
         tasksRemaining += 1
@@ -417,8 +423,7 @@ extension SearchTask {
 
     func performRemoteSearch() {
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion,
             apiVersion >= .v1,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
@@ -468,8 +473,7 @@ extension SearchTask {
         let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
 
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion,
             let teamID = ZMUser.selfUser(in: contextProvider.viewContext).team?.remoteIdentifier,
             !teamMembersIDs.isEmpty
         else {
@@ -571,8 +575,7 @@ extension SearchTask {
 
     func performRemoteSearchForTeamUser() {
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion,
             apiVersion <= .v1,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
@@ -667,8 +670,7 @@ extension SearchTask {
 
     func performRemoteSearchForServices() {
         guard
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
