@@ -134,10 +134,10 @@ private extension WireMessagingDomain.WireCellsLocalAsset {
 
     func hasEqualMetadata(to other: WireMessagingDomain.WireCellsLocalAsset) -> Bool {
         eTag == other.eTag
-        && path == other.path
-        && contentType == other.contentType
-        && size == other.size
-        && isDownloaded == other.isDownloaded
+            && path == other.path
+            && contentType == other.contentType
+            && size == other.size
+            && isDownloaded == other.isDownloaded
     }
 
 }
