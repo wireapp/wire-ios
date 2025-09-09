@@ -187,4 +187,65 @@ final class UploadDraftUseCaseTests {
         #expect(arguments.draft.deleteAfterUpload == false)
     }
 
+    @Test(arguments: Array<(fileName: String, expectedMetadata: WireCellsDraft.Metadata?)>([
+        (fileName: "animated.gif", expectedMetadata: .image(width: 5, height: 5)),
+        (fileName: "video.mp4", expectedMetadata: .video(width: 10, height: 10, duration: 10)),
+        (fileName: "audio.m4a", expectedMetadata: .audio(duration: 15)),
+        (fileName: "text.md", expectedMetadata: nil),
+    ]))
+    func invokeWithFileURL_addsCorrectDraftMetadata(
+        fileName: String,
+        expectedMetadata: WireCellsDraft.Metadata?
+    ) async throws {
+        // Given
+        let fileURL = try #require(Bundle.module.url(forResource: fileName, withExtension: nil))
+        metadataRepository.imageMetadataFileURL_MockValue = .image(width: 5, height: 5)
+        metadataRepository.audioMetadataFileURL_MockValue = .audio(duration: 15)
+        metadataRepository.videoMetadataFileURL_MockValue = .video(width: 10, height: 10, duration: 10)
+
+        // The following mocked values are not important.
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
+        uploadManager
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
+            (
+                .fixture(),
+                AsyncStream.make([])
+            )
+        nodesAPI.getNodeNodeID_MockValue = .fixture()
+        draftsRepository.addDraftFor_MockMethod = { _, _ in }
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
+
+        // When
+        try await sut.invoke(fileURL: fileURL)
+
+        // Then
+        let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
+        #expect(arguments.draft.metadata == expectedMetadata)
+    }
+
+    @Test
+    func invokeWithFileURL_doesNotFailIfGeneratingMetadataFails() async throws {
+        // Given
+        let fileURL = try #require(Bundle.module.url(forResource: "animated", withExtension: "gif"))
+        metadataRepository.imageMetadataFileURL_MockError = NSError(domain: "something", code: 10)
+
+        // The following mocked values are not important.
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
+        uploadManager
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
+            (
+                .fixture(),
+                AsyncStream.make([])
+            )
+        nodesAPI.getNodeNodeID_MockValue = .fixture()
+        draftsRepository.addDraftFor_MockMethod = { _, _ in }
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
+
+        // When
+        try await sut.invoke(fileURL: fileURL)
+
+        // Then
+        #expect(draftsRepository.addDraftFor_Invocations.count == 1)
+    }
+
 }
