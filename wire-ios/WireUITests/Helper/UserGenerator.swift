@@ -73,4 +73,19 @@ enum UserGenerator {
         return "hello! \(timestamp)_\(random)"
     }
 
+    static func generateAppPasscode(length: Int = 8) -> String {
+        let sets = [
+            "abcdefghijklmnopqrstuvwxyz",
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "0123456789",
+            "!@#$%^&*()-_=+{}[]|:;,.<>?/`~"
+        ]
+        var password = sets.compactMap { $0.randomElement() }
+        let all = sets.joined()
+        while password.count < length {
+            password.append(all.randomElement()!)
+        }
+        return String(password.shuffled())
+    }
+
 }
