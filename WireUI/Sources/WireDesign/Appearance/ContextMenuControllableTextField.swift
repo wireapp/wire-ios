@@ -88,7 +88,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
     }
 
     public func makeUIView(context: Context) -> UITextField {
-        let textField = ContextMenuControllableUITextField(
+        let textField: UITextField = ContextMenuControllableUITextField(
             frame: .zero,
             isContextMenuAllowed: isContextMenuAllowed
         )
@@ -97,6 +97,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         textField.text = text
         textField.autocorrectionType = .no
         textField.adjustsFontForContentSizeCategory = true
+        textField.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
         if isSecureTextEntry {
             textField.isSecureTextEntry = true
             textField.textContentType = .oneTimeCode
