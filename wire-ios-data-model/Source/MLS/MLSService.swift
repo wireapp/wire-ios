@@ -135,7 +135,8 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         userID: UUID,
         featureRepository: LegacyFeatureRepositoryInterface,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository(),
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
+            SubconversationGroupIDRepository(),
         localDomain: String?
     ) {
         self.context = context
@@ -1951,7 +1952,10 @@ public final class MLSService: MLSServiceInterface {
         for conversation in groupConversations {
 
             let (qualifiedID, members) = await context.perform {
-                (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0, localDomain: self.localDomain) })
+                (
+                    conversation.qualifiedID,
+                    conversation.localParticipants.map { MLSUser(from: $0, localDomain: self.localDomain) }
+                )
             }
 
             guard let qualifiedID else {

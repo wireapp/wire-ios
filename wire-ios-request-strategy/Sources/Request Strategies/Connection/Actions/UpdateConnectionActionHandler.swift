@@ -29,7 +29,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
         context: NSManagedObjectContext,
         isFederationEnabled: Bool
     ) {
-        processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 

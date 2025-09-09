@@ -38,7 +38,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         applicationStatus: ApplicationStatus,
         localDomain: String?
     ) {
-        requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = .allowsRequestsWhileOnline

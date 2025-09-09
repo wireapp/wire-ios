@@ -54,8 +54,14 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     ) {
         self.syncProgress = syncProgress
         self.oneOnOneResolver = oneOnOneResolver
-        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
-        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
+        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
 
         self.userProfileByID = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -66,7 +72,10 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             transcoder: userProfileByQualifiedIDTranscoder
         )
 
-        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext, isFederationEnabled: isFederationEnabled)])
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )])
         self.apiVersion = apiVersion
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
@@ -292,7 +301,7 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         isFederationEnabled: Bool
     ) {
         self.context = context
-        processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -360,7 +369,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         isFederationEnabled: Bool
     ) {
         self.context = context
-        processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

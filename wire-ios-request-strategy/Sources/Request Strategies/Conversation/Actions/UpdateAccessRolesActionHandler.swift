@@ -43,7 +43,7 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        eventProcessor = ConversationEventProcessor(
+        self.eventProcessor = ConversationEventProcessor(
             context: context,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled

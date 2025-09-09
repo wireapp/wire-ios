@@ -316,7 +316,10 @@ extension ZMUserSession: UserSession {
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
         guard let selfUserClient,
-              let selfMLSClientID = MLSClientID(userClient: selfUserClient, localDomain: resolvedBackendMetadata.domain),
+              let selfMLSClientID = MLSClientID(
+                  userClient: selfUserClient,
+                  localDomain: resolvedBackendMetadata.domain
+              ),
               e2eiFeature.isEnabled
         else {
             return nil

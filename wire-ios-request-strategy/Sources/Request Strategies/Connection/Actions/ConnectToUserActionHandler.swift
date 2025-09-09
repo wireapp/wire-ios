@@ -32,7 +32,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         isFederationEnabled: Bool
     ) {
         self.localDomain = localDomain
-        processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 

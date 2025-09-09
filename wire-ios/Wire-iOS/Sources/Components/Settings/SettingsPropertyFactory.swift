@@ -150,7 +150,8 @@ final class SettingsPropertyFactory {
         case .handle:
             return getOnlyProperty(
                 propertyName: propertyName,
-                value: selfUser?.handleDisplayString(withDomain: userSession?.resolvedBackendMetadata.isFederationEnabled ?? false)
+                value: selfUser?
+                    .handleDisplayString(withDomain: userSession?.resolvedBackendMetadata.isFederationEnabled ?? false)
             )
 
         case .team:

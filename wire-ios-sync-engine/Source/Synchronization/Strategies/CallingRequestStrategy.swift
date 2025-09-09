@@ -333,7 +333,10 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         completionHandler: @escaping ((Int) -> Void)
     ) {
         let dataString = String(decoding: data, as: UTF8.self)
-        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId(localDomain: localDomain))
+        let callingContent = Calling(
+            content: dataString,
+            conversationId: conversationId.toQualifiedId(localDomain: localDomain)
+        )
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(

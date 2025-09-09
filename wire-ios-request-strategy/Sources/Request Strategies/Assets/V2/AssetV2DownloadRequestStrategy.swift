@@ -183,10 +183,11 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     self.managedObjectContext.enqueueDelayedSave()
                 }
 
-                if let request = ClientMessageRequestFactory(localDomain: localDomain).downstreamRequestForEcryptedOriginalFileMessage(
-                    assetClientMessage,
-                    apiVersion: apiVersion
-                ) {
+                if let request = ClientMessageRequestFactory(localDomain: localDomain)
+                    .downstreamRequestForEcryptedOriginalFileMessage(
+                        assetClientMessage,
+                        apiVersion: apiVersion
+                    ) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)

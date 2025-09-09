@@ -316,7 +316,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
 
         let mlsUsers = await context.perform {
             users.compactMap {
-                MLSUser(from: $0, localDomain: self.localDomain)
+                MLSUser(from: $0, localDomain: localDomain)
             }
         }
 

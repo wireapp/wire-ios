@@ -344,17 +344,22 @@ public final class SharingSession {
             managedObjectContext: coreDataStack.syncContext
         )
 
+        let legacyAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
-            apiVersion: .init(rawValue: Int32(apiVersion.rawValue)),
+            apiVersion: legacyAPIVersion,
             localDomain: localDomain
         )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: legacyAPIVersion
+        )
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,

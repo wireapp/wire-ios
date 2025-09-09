@@ -36,7 +36,13 @@ public extension ZMConversation {
         isFederationEnabled: Bool
     ) -> ZMConversation {
         var created = false
-        return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created, isFederationEnabled: isFederationEnabled)
+        return fetchOrCreate(
+            with: remoteIdentifier,
+            domain: domain,
+            in: context,
+            created: &created,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.

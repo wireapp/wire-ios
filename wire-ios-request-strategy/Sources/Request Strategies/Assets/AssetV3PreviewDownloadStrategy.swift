@@ -35,7 +35,7 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
         applicationStatus: ApplicationStatus,
         localDomain: String?
     ) {
-        requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in

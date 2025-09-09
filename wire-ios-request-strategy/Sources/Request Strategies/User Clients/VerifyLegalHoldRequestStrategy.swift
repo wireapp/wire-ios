@@ -37,7 +37,7 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus,
         localDomain: String?
     ) {
-        requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
+        self.requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [

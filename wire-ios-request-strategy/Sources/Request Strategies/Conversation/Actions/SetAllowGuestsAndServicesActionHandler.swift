@@ -28,7 +28,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        eventProcessor = ConversationEventProcessor(
+        self.eventProcessor = ConversationEventProcessor(
             context: context,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled

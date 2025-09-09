@@ -98,7 +98,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         isFederationEnabled: Bool
     ) {
         self.removeLocalConversationUseCase = removeLocalConversationUseCase
-        processor = ConversationEventPayloadProcessor(
+        self.processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
             removeLocalConversation: removeLocalConversationUseCase,
             isFederationEnabled: isFederationEnabled

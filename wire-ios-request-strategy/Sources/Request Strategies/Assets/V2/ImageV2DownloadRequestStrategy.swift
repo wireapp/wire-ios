@@ -29,7 +29,7 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus,
         localDomain: String?
     ) {
-        requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
+        self.requestFactory = ClientMessageRequestFactory(localDomain: localDomain)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let downloadPredicate = NSPredicate { object, _ -> Bool in

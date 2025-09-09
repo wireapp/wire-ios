@@ -28,7 +28,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        processor = ConversationEventPayloadProcessor(
+        self.processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
             removeLocalConversation: RemoveLocalConversationUseCase(),
             isFederationEnabled: isFederationEnabled

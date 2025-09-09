@@ -40,7 +40,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        eventProcessor = ConversationEventProcessor(
+        self.eventProcessor = ConversationEventProcessor(
             context: context,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled

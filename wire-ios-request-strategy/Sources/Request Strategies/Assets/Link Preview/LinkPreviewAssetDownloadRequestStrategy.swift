@@ -31,7 +31,7 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
         applicationStatus: ApplicationStatus,
         localDomain: String?
     ) {
-        requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
+        self.requestFactory = AssetDownloadRequestFactory(localDomain: localDomain)
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus

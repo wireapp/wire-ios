@@ -71,12 +71,18 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 context: managedObjectContext
             )
 
-        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
+        self.connectionByIDTranscoder = ConnectionByIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.connectionByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByIDTranscoder
         )
-        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
+        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.connectionByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByQualifiedIDTranscoder
@@ -84,8 +90,15 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConnection.entityName(), \.needsToBeUpdatedFromBackend)
 
-        self.connectToUserActionHandler = ConnectToUserActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
-        self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext, isFederationEnabled: isFederationEnabled)
+        self.connectToUserActionHandler = ConnectToUserActionHandler(
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.updateConnectionActionHandler = UpdateConnectionActionHandler(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
         self.actionSync = EntityActionSync(actionHandlers: [
             connectToUserActionHandler,
             updateConnectionActionHandler
@@ -313,7 +326,7 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
         isFederationEnabled: Bool
     ) {
         self.context = context
-        processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {

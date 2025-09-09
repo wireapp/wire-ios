@@ -48,7 +48,11 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     ) {
         self.init(
             context: context,
-            eventProcessor: ConversationEventProcessor(context: context, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
+            eventProcessor: ConversationEventProcessor(
+                context: context,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         )
     }
 

@@ -28,7 +28,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        processor = ConversationEventPayloadProcessor(
+        self.processor = ConversationEventPayloadProcessor(
             mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
             removeLocalConversation: RemoveLocalConversationUseCase(),
             isFederationEnabled: isFederationEnabled

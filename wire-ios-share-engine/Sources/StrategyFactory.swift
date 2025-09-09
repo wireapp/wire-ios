@@ -97,11 +97,20 @@ final class StrategyFactory {
     }
 
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
-        VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus, localDomain: localDomain)
+        VerifyLegalHoldRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            localDomain: localDomain
+        )
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus, apiVersion: apiVersion, localDomain: localDomain)
+        FetchingClientRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            apiVersion: apiVersion,
+            localDomain: localDomain
+        )
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {

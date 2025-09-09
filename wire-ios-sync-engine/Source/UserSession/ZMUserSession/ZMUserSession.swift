@@ -493,7 +493,11 @@ public final class ZMUserSession: NSObject {
 
         super.init()
 
-        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext, localDomain: resolvedBackendMetadata.domain, isFederationEnabled: resolvedBackendMetadata.isFederationEnabled)
+        self.conversationEventProcessor = ConversationEventProcessor(
+            context: coreDataStack.syncContext,
+            localDomain: resolvedBackendMetadata.domain,
+            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
+        )
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {

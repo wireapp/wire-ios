@@ -28,7 +28,9 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
         payloadProcessor: UserProfilePayloadProcessing? = nil,
         isFederationEnabled: Bool
     ) {
-        self.payloadProcessor = payloadProcessor ?? UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
+        self
+            .payloadProcessor = payloadProcessor ??
+            UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 

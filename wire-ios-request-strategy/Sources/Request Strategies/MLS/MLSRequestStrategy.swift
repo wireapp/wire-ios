@@ -48,7 +48,11 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             FetchSupportedProtocolsActionHandler(context: managedObjectContext),
-            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext, localDomain: localDomain, isFederationEnabled: isFederationEnabled)
+            SyncMLSOneToOneConversationActionHandler(
+                context: managedObjectContext,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         ])
 
         super.init(

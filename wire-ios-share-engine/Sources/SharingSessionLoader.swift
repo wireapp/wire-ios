@@ -292,7 +292,10 @@ public struct SharingSessionLoader {
             apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
             localDomain: backendMetadata.domain
         )
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue))
+        )
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
