@@ -39,6 +39,16 @@ final class UploadDraftUseCaseTests {
         metadataRepository: metadataRepository
     )
 
+    init() {
+        // Set mock defaults
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
+        uploadManager.uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
+            (.fixture(), AsyncStream.make([]))
+        nodesAPI.getNodeNodeID_MockValue = .fixture()
+        draftsRepository.addDraftFor_MockMethod = { _, _ in }
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
+    }
+
     deinit {
         try? FileManager.default.removeItem(at: fileURL)
     }
@@ -160,18 +170,6 @@ final class UploadDraftUseCaseTests {
         let data = Data(fileContent.utf8)
         try data.write(to: fileURL)
 
-        // The following mocked values are not important.
-        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
-        uploadManager
-            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
-            (
-                .fixture(),
-                AsyncStream.make([])
-            )
-        nodesAPI.getNodeNodeID_MockValue = .fixture()
-        draftsRepository.addDraftFor_MockMethod = { _, _ in }
-        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
-
         // When
         try await sut.invoke(fileURL: fileURL)
 
@@ -203,18 +201,6 @@ final class UploadDraftUseCaseTests {
         metadataRepository.audioMetadataFileURL_MockValue = .audio(duration: 15)
         metadataRepository.videoMetadataFileURL_MockValue = .video(width: 10, height: 10, duration: 10)
 
-        // The following mocked values are not important.
-        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
-        uploadManager
-            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
-            (
-                .fixture(),
-                AsyncStream.make([])
-            )
-        nodesAPI.getNodeNodeID_MockValue = .fixture()
-        draftsRepository.addDraftFor_MockMethod = { _, _ in }
-        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
-
         // When
         try await sut.invoke(fileURL: fileURL)
 
@@ -228,18 +214,6 @@ final class UploadDraftUseCaseTests {
         // Given
         let fileURL = try #require(Bundle.module.url(forResource: "animated", withExtension: "gif"))
         metadataRepository.imageMetadataFileURL_MockError = NSError(domain: "something", code: 10)
-
-        // The following mocked values are not important.
-        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
-        uploadManager
-            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
-            (
-                .fixture(),
-                AsyncStream.make([])
-            )
-        nodesAPI.getNodeNodeID_MockValue = .fixture()
-        draftsRepository.addDraftFor_MockMethod = { _, _ in }
-        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(fileURL: fileURL)
