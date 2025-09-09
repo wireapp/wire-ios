@@ -164,6 +164,9 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// Boolean to check if isCellAlreadyAligned
     var isCellAlreadyAligned: Bool { get }
 
+    /// Boolean to check if isBubbleHasMaximumWidth
+    var isBubbleHasMaximumWidth: Bool { get }
+
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -209,6 +212,10 @@ extension ConversationMessageCellDescription {
     }
 
     var isCellAlreadyAligned: Bool {
+        false
+    }
+
+    var isBubbleHasMaximumWidth: Bool {
         false
     }
 
