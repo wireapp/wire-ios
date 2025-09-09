@@ -42,16 +42,16 @@ package struct WireCellsDraftMetadataRepository: WireCellsDraftMetadataRepositor
         guard let track = try await asset.loadTracks(withMediaType: .video).first else { return nil }
 
         let dimensions = try await track.load(.naturalSize)
-        let duration = try await asset.load(.duration).seconds
+        let milliseconds = try await asset.load(.duration).seconds * 1000
 
-        return .video(width: Int(dimensions.width), height: Int(dimensions.height), duration: Int(duration))
+        return .video(width: Int(dimensions.width), height: Int(dimensions.height), duration: Int(milliseconds))
     }
 
     package func audioMetadata(fileURL: URL) async throws -> WireCellsDraft.Metadata? {
         let asset = AVAsset(url: fileURL)
-        let duration = try await asset.load(.duration).seconds
+        let milliseconds = try await asset.load(.duration).seconds * 1000
 
-        return .audio(duration: Int(duration))
+        return .audio(duration: Int(milliseconds))
     }
 
 }
