@@ -96,7 +96,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             clientID: selfClientID
         )
         do {
-            try pushChannelState.markAsOpen()
+            try await pushChannelState.markAsOpen()
         } catch {
             throw Failure.pushChannelAlreadyOpened
         }
@@ -115,12 +115,12 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
                     "syncing events via websocket: \(String(describing: error))",
                     attributes: .syncAttributes(initialSync: false)
                 )
-                pushChannelState.markAsClosed()
+                await pushChannelState.markAsClosed()
             }
         }
         try await currentTask?.value
         WireLogger.sync.debug("closing push channel")
-        pushChannelState.markAsClosed()
+        await pushChannelState.markAsClosed()
 
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream

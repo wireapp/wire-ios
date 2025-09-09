@@ -20,7 +20,7 @@ import Foundation
 
 public enum DarwinNotification {
     public static let didRequestPushChannelAccess = "com.wire.didRequestPushChannelAccess"
-    public static let didReleasePushChannelAccess  = "com.wire.didReleasePushChannelAccess"
+    public static let didReleasePushChannelAccess = "com.wire.didReleasePushChannelAccess"
 }
 
 public class DarwinNotificationManager {
@@ -36,7 +36,6 @@ public class DarwinNotificationManager {
         let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
         CFNotificationCenterPostNotification(notificationCenter, CFNotificationName(name as CFString), nil, nil, true)
     }
-
 
     /// Observe inter-process Darwin notification.
     /// - Parameters:

@@ -86,7 +86,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         try await pullServerTimeSync.pull()
 
         do {
-            try pushChannelState.markAsOpen()
+            try await pushChannelState.markAsOpen()
         } catch {
             throw Failure.pushChannelAlreadyOpened
         }
@@ -97,7 +97,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         do {
             pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
         } catch {
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
             throw error
         }
 
@@ -108,7 +108,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         do {
             liveEventStream = try await pushChannel.open()
         } catch {
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
             throw error
         }
 
@@ -118,7 +118,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             try await processStoredEvents()
         } catch {
             await pushChannel.close()
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
             throw error
         }
 
@@ -132,7 +132,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
         })
     }
 

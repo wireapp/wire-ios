@@ -3482,9 +3482,9 @@ public class MockPushChannelStateProtocol: PushChannelStateProtocol {
 
     public var markAsOpen_Invocations: [Void] = []
     public var markAsOpen_MockError: Error?
-    public var markAsOpen_MockMethod: (() throws -> Void)?
+    public var markAsOpen_MockMethod: (() async throws -> Void)?
 
-    public func markAsOpen() throws {
+    public func markAsOpen() async throws {
         markAsOpen_Invocations.append(())
 
         if let error = markAsOpen_MockError {
@@ -3495,22 +3495,22 @@ public class MockPushChannelStateProtocol: PushChannelStateProtocol {
             fatalError("no mock for `markAsOpen`")
         }
 
-        try mock()
+        try await mock()
     }
 
     // MARK: - markAsClosed
 
     public var markAsClosed_Invocations: [Void] = []
-    public var markAsClosed_MockMethod: (() -> Void)?
+    public var markAsClosed_MockMethod: (() async -> Void)?
 
-    public func markAsClosed() {
+    public func markAsClosed() async {
         markAsClosed_Invocations.append(())
 
         guard let mock = markAsClosed_MockMethod else {
             fatalError("no mock for `markAsClosed`")
         }
 
-        mock()
+        await mock()
     }
 
 }

@@ -85,7 +85,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             // make sure no pushChannel is open
             let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
             do {
-                try pushChannelState.markAsOpen()
+                try await pushChannelState.markAsOpen()
             } catch {
                 throw Failure.pushChannelAlreadyOpened
             }
@@ -102,7 +102,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     attributes: .syncAttributes(initialSync: false)
                 )
             }
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
 
         } else {
             eventStream = try await pullEventsUseCase.invoke()

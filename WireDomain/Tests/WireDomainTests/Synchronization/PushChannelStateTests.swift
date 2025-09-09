@@ -31,24 +31,26 @@ final class PushChannelStateTests: XCTestCase {
         sut = PushChannelState(sharedContainerURL: tempDir, clientID: clientID)
     }
 
-    override func tearDownWithError() throws {
-        sut.markAsClosed()
+    override func tearDown() async throws {
+        await sut.markAsClosed()
         sut = nil
         try FileManager.default.removeItem(at: fileURL)
         fileURL = nil
     }
 
-    func test_markAsClosed() throws {
+    func test_markAsClosed() async throws {
 
-        sut.markAsClosed()
+        await sut.markAsClosed()
 
-        XCTAssertNoThrow(try sut.markAsOpen())
+        try await sut.markAsOpen()
     }
 
-    func test_markAsOpen_throwsWhenAlreadyOpened() throws {
-        XCTAssertNoThrow(try sut.markAsOpen())
+    func test_markAsOpen_throwsWhenAlreadyOpened() async throws {
+        try await sut.markAsOpen()
 
-        XCTAssertThrowsError(try sut.markAsOpen())
+        await XCTAssertThrowsErrorAsync(PushChannelState.Failure.alreadyLocked) {
+            try await self.sut.markAsOpen()
+        }
 
     }
 }

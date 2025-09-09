@@ -21,8 +21,8 @@ import WireLogging
 /// sourcery: AutoMockable
 public protocol PushChannelStateProtocol {
 
-    func markAsOpen() throws
-    func markAsClosed()
+    func markAsOpen() async throws
+    func markAsClosed() async
 }
 
 struct PushChannelState: PushChannelStateProtocol {
@@ -32,8 +32,7 @@ struct PushChannelState: PushChannelStateProtocol {
 
     /// The file context only prevents other processes to get the lock
     /// same process will succeed, so we need an extra state
-    private static var locked: Bool = false
-    private static let stateLock = NSLock()
+    private static let processLock = ProcessLock()
 
     let fileContext: SafeFileContext
     init(sharedContainerURL: URL, clientID: String) {
@@ -47,25 +46,32 @@ struct PushChannelState: PushChannelStateProtocol {
         self.fileContext = SafeFileContext(fileURL: url)
     }
 
-    func markAsOpen() throws {
-        Self.stateLock.lock()
-        defer { Self.stateLock.unlock() }
+    func markAsOpen() async throws {
 
-        if Self.locked {
+        if await Self.processLock.isLocked {
             throw Failure.alreadyLocked
         }
 
         if !fileContext.tryAcquireLock() {
             throw Failure.alreadyLocked
         }
-        Self.locked = true
+        await Self.processLock.lock()
     }
 
-    func markAsClosed() {
-        Self.stateLock.lock()
-        defer { Self.stateLock.unlock() }
-
+    func markAsClosed() async {
         fileContext.releaseDirectoryLock()
-        Self.locked = false
+        await Self.processLock.unlock()
+    }
+}
+
+private actor ProcessLock {
+    private(set) var isLocked: Bool = false
+
+    func lock() async {
+        isLocked = true
+    }
+
+    func unlock() async {
+        isLocked = false
     }
 }
