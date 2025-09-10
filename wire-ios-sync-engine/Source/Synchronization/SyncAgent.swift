@@ -293,6 +293,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func handlePushChannelAlreadyOpened() async {
+        WireLogger.sync.debug("wait until NSE push channel closed", attributes: .syncAttributes)
         await pushChannelMonitor.waitUntilPushChannelClosed()
         WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
         resume()
