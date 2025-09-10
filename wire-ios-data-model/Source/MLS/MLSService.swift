@@ -1622,8 +1622,7 @@ public final class MLSService: MLSServiceInterface {
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard DeveloperFlag.resetMLSConversations.isOn,
-                      feature.status == .enabled,
+                guard feature.status == .enabled,
                       feature.config.mlsConversationReset == true
                 else {
                     logger.info(

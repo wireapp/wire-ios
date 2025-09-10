@@ -121,6 +121,7 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
+        currentBuildNumber: String,
         localDomain: String?,
         isFederationEnabled: Bool
     ) async throws {
@@ -202,6 +203,7 @@ public final class SharingSession {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -243,6 +245,7 @@ public final class SharingSession {
             sharedContainerURL: URL("unused")!,
             legacyEnvironment: environment,
             proxyCredentials: credentials,
+            currentBuildNumber: currentBuildNumber,
             localDomain: localDomain
         )
     }
@@ -332,6 +335,7 @@ public final class SharingSession {
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
         proxyCredentials: WireTransport.ProxyCredentials?,
+        currentBuildNumber: String,
         localDomain: String?
     ) async throws {
 
@@ -451,10 +455,12 @@ public final class SharingSession {
         }
 
         let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: currentBuildNumber,
             selfUserID: accountIdentifier,
             cookieStorage: cookieStorage,
             restNetworkService: networkServices.rest,
             websocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetaData: metadata,
             isMLSEnabled: isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,

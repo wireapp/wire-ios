@@ -293,6 +293,7 @@ extension SyncEventsStep {
             BackendEnvironment(
                 url: legacyBackendEnvironment.backendURL,
                 webSocketURL: legacyBackendEnvironment.backendWSURL,
+                blacklistURL: legacyBackendEnvironment.blackListURL,
                 pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
                     PinnedKey(
                         key: trustData.certificateKey,

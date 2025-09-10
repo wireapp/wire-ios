@@ -139,6 +139,18 @@ struct ZMUserSessionBuilder {
         )
         webSocketNetworkService.configure(with: webSocketSession)
 
+        let blacklistNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.blacklistURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
+        let blacklistSession = URLSession(
+            configuration: blacklistConfig,
+            delegate: blacklistNetworkService,
+            delegateQueue: nil
+        )
+        blacklistNetworkService.configure(with: blacklistSession)
+
         let backendMetadata = ResolvedBackendMetadata(
             apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
             domain: BackendInfo.domain!,
@@ -149,6 +161,7 @@ struct ZMUserSessionBuilder {
             userId: userId,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,

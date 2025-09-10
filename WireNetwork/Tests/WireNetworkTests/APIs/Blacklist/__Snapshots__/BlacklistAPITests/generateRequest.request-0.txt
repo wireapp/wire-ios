@@ -1,0 +1,3 @@
+curl \
+	--header "Accept: application/json" \
+	"https://www.blacklist.com/ios"

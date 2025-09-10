@@ -229,6 +229,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 appLockConfig: legacyConfig,
                 sharedUserDefaults: .applicationGroup,
                 minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+                currentBuildNumber: buildNumber,
                 localDomain: BackendInfo.domain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
@@ -538,7 +539,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 title: L10n.ShareExtension.Error.UpdateRequired.title,
                 message: L10n.ShareExtension.Error.UpdateRequired.obsoleteBackend
             )
-        } catch NetworkStackError.clientAPIVersionObsolete {
+        } catch NetworkStackError.clientAPIVersionObsolete, SharingSessionLoader.Failure.buildIsBlacklisted {
             presentError(
                 title: L10n.ShareExtension.Error.UpdateRequired.title,
                 message: L10n.ShareExtension.Error.UpdateRequired.obsoleteClient

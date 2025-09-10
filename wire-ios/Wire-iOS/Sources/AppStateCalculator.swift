@@ -314,7 +314,9 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
-        if session.isLocked {
+        if session.isBuildBlacklisted {
+            transition(to: .blacklisted(reason: .appVersionBlacklisted))
+        } else if session.isLocked {
             transition(to: .locked(session))
         } else {
             transition(to: .authenticated(session))

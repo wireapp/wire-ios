@@ -23,10 +23,12 @@ import WireNetwork
 
 public final class UserSessionComponent {
 
+    private let currentBuildNumber: String
     private let selfUserID: UUID
 
     private let restNetworkService: NetworkService
     private let websocketNetworkService: NetworkService
+    private let blacklistNetworkService: NetworkService
     private let backendMetadata: ResolvedBackendMetadata
 
     private let isMLSEnabled: Bool
@@ -42,10 +44,12 @@ public final class UserSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public init(
+        currentBuildNumber: String,
         selfUserID: UUID,
         cookieStorage: any CookieStorageProtocol,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetaData: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
         sharedUserDefaults: UserDefaults,
@@ -57,10 +61,12 @@ public final class UserSessionComponent {
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
+        self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
         self.cookieStorage = cookieStorage
         self.restNetworkService = restNetworkService
         self.websocketNetworkService = websocketNetworkService
+        self.blacklistNetworkService = blacklistNetworkService
         self.backendMetadata = backendMetaData
         self.isMLSEnabled = isMLSEnabled
         self.sharedUserDefaults = sharedUserDefaults
@@ -114,6 +120,16 @@ public final class UserSessionComponent {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers
+        )
+    }
+
+    // MARK: - Factory
+
+    public func makeIsBuildBlacklistedUseCase() -> some IsBuildBlacklistedUseCase {
+        let api = BlacklistAPIBuilder(networkService: blacklistNetworkService).makeAPI()
+        return IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: currentBuildNumber,
+            api: api
         )
     }
 

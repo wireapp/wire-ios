@@ -27,12 +27,14 @@ public struct SharingSessionLoader {
 
     public enum Failure: Error {
 
+        case mainAppRequired(message: String)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case persistenceStoresNotFound
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
-        case mainAppRequired(message: String)
+        case failedToCheckBuildBlacklist(any Error)
+        case buildIsBlacklisted(buildNumber: String)
 
     }
 
@@ -105,6 +107,10 @@ public struct SharingSessionLoader {
         )
 
         // Return early if needed.
+        guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
+            throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
+        }
+
         guard !shouldEnableSyncV2(metadata: metadata) else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
@@ -125,6 +131,7 @@ public struct SharingSessionLoader {
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack
         )
@@ -226,6 +233,20 @@ public struct SharingSessionLoader {
         return coreDataStack
     }
 
+    private func isBuildBlacklisted(networkService: NetworkService) async throws -> Bool {
+        let api = BlacklistAPIBuilder(networkService: networkService).makeAPI()
+        let useCase = IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: buildNumber,
+            api: api
+        )
+
+        do {
+            return try await useCase.invoke()
+        } catch {
+            throw Failure.failedToCheckBuildBlacklist(error)
+        }
+    }
+
     // TODO: [WPB-17732] de-duplicate when implementing NSE
     private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
         let isAvailable = metadata.apiVersion >= .v8
@@ -239,6 +260,7 @@ public struct SharingSessionLoader {
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
@@ -352,10 +374,12 @@ public struct SharingSessionLoader {
             keychain: Keychain()
         )
         let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: buildNumber,
             selfUserID: accountID,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
             isMLSEnabled: journal[.isBackendMLSEnabled],
             sharedUserDefaults: sharedUserDefaults,
