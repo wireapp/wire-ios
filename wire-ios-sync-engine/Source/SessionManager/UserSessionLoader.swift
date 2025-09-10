@@ -152,6 +152,14 @@ final class UserSessionLoader {
             try await cookieStorage.storeCookies(cookies)
         }
 
+        // Check if this backend supports MLS.
+        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            networkService: networkServices.rest,
+            cookieStorage: cookieStorage,
+            apiVersion: metadata.apiVersion
+        )
+        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+
         // Create user session.
         let userSession = await createUserSession(
             environment: backendEnvironment,
@@ -163,10 +171,6 @@ final class UserSessionLoader {
             coreDataStack: coreDataStack,
             cookieStorage: cookieStorage
         )
-
-        // Check if this backend supports MLS.
-        let isBackendMLSEnabled = try await isBackendMLSEnabled(userSession: userSession)
-        userSession.journal[.isBackendMLSEnabled] = isBackendMLSEnabled
 
         // Perform pending migrations.
         try await performPendingMigrations(userSession: userSession)
@@ -526,9 +530,23 @@ final class UserSessionLoader {
         return userSession
     }
 
-    private func isBackendMLSEnabled(userSession: ZMUserSession) async throws -> Bool {
+    private func isBackendMLSEnabled(
+        networkService: NetworkService,
+        cookieStorage: CookieStorage,
+        apiVersion: WireNetwork.APIVersion
+    ) async throws -> Bool {
         do {
-            let api = userSession.userSessionComponent.mlsAPI
+            let authenticationManager = AuthenticationManager(
+                clientID: nil,
+                cookieStorage: cookieStorage,
+                networkService: networkService,
+                onAuthenticationFailure: {}
+            )
+            var apiService = APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+            let api = MLSAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
             let keys = try await api.getBackendMLSPublicKeys()
             return keys.removal.isValid
         } catch
