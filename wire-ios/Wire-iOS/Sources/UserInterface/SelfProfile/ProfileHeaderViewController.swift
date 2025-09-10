@@ -395,12 +395,27 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateColors() {
-        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .normal)
-        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.surfaceVariant, for: .normal)
-        qrCodeButton.setIconColor(ColorTheme.Buttons.Secondary.onEnabled, for: .normal)
+        qrCodeButton.setBorderColor(
+            ColorTheme.Strokes.outline.resolvedColor(with: traitCollection),
+            for: .normal
+        )
+        qrCodeButton.setBackgroundImageColor(
+            ColorTheme.Backgrounds.surfaceVariant.resolvedColor(with: traitCollection),
+            for: .normal
+        )
+        qrCodeButton.setIconColor(
+            ColorTheme.Buttons.Secondary.onEnabled.resolvedColor(with: traitCollection),
+            for: .normal
+        )
 
-        qrCodeButton.setBorderColor(ColorTheme.Strokes.outline, for: .highlighted)
-        qrCodeButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .highlighted)
+        qrCodeButton.setBorderColor(
+            ColorTheme.Strokes.outline.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
+        qrCodeButton.setBackgroundImageColor(
+            ColorTheme.Backgrounds.background.resolvedColor(with: traitCollection),
+            for: .highlighted
+        )
     }
 
     private func qrCodeButtonTapped() {
