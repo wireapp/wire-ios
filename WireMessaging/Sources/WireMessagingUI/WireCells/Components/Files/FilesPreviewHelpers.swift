@@ -56,6 +56,7 @@ extension FilesItemViewModel {
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
+            onDelete: { _ in }
         )
     }
 

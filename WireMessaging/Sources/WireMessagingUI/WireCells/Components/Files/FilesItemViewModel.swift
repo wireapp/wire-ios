@@ -31,6 +31,7 @@ final class FilesItemViewModel: ObservableObject {
     private let nodeID: UUID
     private let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
+    private let onDelete: (FilesViewItem) async -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
@@ -45,6 +46,7 @@ final class FilesItemViewModel: ObservableObject {
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
+        onDelete: @escaping (FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
@@ -52,6 +54,7 @@ final class FilesItemViewModel: ObservableObject {
         self.nodeID = item.id
         self.item = item
         self.onOpen = onOpen
+        self.onDelete = onDelete
         self.fileName = item.filename
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -111,6 +114,10 @@ final class FilesItemViewModel: ObservableObject {
 
     func showDeleteConfirmation() {
         isShowDeleteConfirmation = true
+    }
+
+    func confirmDelete() async {
+        await onDelete(item)
     }
 
     private static func subtitle(

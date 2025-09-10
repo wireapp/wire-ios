@@ -126,7 +126,7 @@ struct FilesViewItemView: View {
     }
 
     private func confirmDelete() {
-
+        Task { await viewModel.confirmDelete() }
     }
 
     private var progressColor: Color {

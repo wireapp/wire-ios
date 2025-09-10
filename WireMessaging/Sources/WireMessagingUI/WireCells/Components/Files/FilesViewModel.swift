@@ -140,6 +140,9 @@ package final class FilesViewModel: ObservableObject {
             localAssetRepository: localAssetRepository,
             onOpen: { [weak self] item in
                 await self?.viewAsset(item: item)
+            },
+            onDelete: { [weak self] item in
+                print("Delete action for item: \(item.filename) not implemented")
             }
         )
     }
