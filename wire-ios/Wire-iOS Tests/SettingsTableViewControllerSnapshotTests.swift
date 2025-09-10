@@ -66,7 +66,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
         )
 
         MockUserRight.isPermitted = true
@@ -179,7 +180,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
         )
 
         // then
@@ -194,7 +196,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
         )
 
         // then
