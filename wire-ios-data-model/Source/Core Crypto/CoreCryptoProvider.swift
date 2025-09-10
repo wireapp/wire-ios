@@ -57,6 +57,9 @@ public protocol CoreCryptoProviderProtocol {
     /// Update the CC database key
     func updateDatabaseKey() async throws
 
+    /// Migrate the CC database key from an unscoped storage to a storage scoped by account
+    func migrateToScopedDatabaseKey() async throws
+
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -148,7 +151,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     public func updateDatabaseKey() async throws {
-        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            userID: selfUserID
+        )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
         let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
@@ -158,6 +164,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
         reset()
+    }
+
+    public func migrateToScopedDatabaseKey() async throws {
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            userID: selfUserID
+        )
+        try coreCryptoKeyProvider.migrateToScopedDatabaseKey()
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
@@ -229,7 +243,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager, userID: selfUserID)
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
         let configuration = try await provider.createInitialConfiguration(

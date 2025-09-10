@@ -34,17 +34,17 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
         if isMigrationNeeded {
-            WireLogger.coreCrypto.info("Core crypto key migration is required")
+            WireLogger.coreCrypto.info("Core crypto key migration is required", attributes: .safePublic)
 
             try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
             journal[.isCoreCryptoKeyMigrationRequired] = false
 
-            WireLogger.coreCrypto.info("Core crypto key is migrated successfully")
+            WireLogger.coreCrypto.info("Core crypto key is migrated successfully", attributes: .safePublic)
         }
     }
 
     public func markMigrationAsSkipped() {
-        WireLogger.coreCrypto.info("Skip core crypto key migration")
+        WireLogger.coreCrypto.info("Skip core crypto key migration", attributes: .safePublic)
 
         journal[.isCoreCryptoKeyMigrationRequired] = false
     }

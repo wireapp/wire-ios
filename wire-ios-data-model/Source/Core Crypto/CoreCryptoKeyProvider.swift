@@ -23,9 +23,11 @@ import WireSystem
 public class CoreCryptoKeyProvider {
 
     private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
+    private let userID: UUID
 
-    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?) {
+    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?, userID: UUID) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
+        self.userID = userID
     }
 
     public func coreCryptoKey(
@@ -36,10 +38,10 @@ public class CoreCryptoKeyProvider {
         try await migrateKeyIfNeeded(path: path)
 
         do {
-            return try fetchCoreCryptoKey()
+            return try fetchScopedCoreCryptoKey()
         } catch {
             if createIfNeeded {
-                return try createCoreCryptoKey()
+                return try createScopedCoreCryptoKey()
             } else {
                 throw error
             }
@@ -47,27 +49,56 @@ public class CoreCryptoKeyProvider {
     }
 
     public func updateDatabaseKey(path: String) async throws {
-        if let oldKey = try? fetchCoreCryptoKey() {
-            let item = CoreCryptoKeychainItem()
-            let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
-            try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
+        // We need to get the unscoped key because this is part of the migration to 4.3.0
+        // and scoped keys haven't been introduced before
+        if let oldKey = try? fetchUnscopedCoreCryptoKey() {
+            do {
+                WireLogger.coreCrypto.info("Updating core crypto key...", attributes: .safePublic)
 
-            try KeychainManager.deleteItem(item)
-            try KeychainManager.storeItem(item, value: newKey)
+                let item = ScopedCoreCryptoKeychainItem(userID: userID)
+                let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
+                try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
+
+                // In case another account needs to update it, we don't delete the old key because it's not scoped by account.
+                try KeychainManager.storeItem(item, value: newKey)
+            } catch {
+                WireLogger.coreCrypto.warn("Failed to update core crypto key: \(String(describing: error))", attributes: .safePublic)
+                throw error
+            }
+        }
+    }
+
+    public func migrateToScopedDatabaseKey() throws {
+        let scopedKeyExists = (try? fetchScopedCoreCryptoKey()) != nil
+
+        guard !scopedKeyExists else { return }
+
+        do {
+            WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
+            let unscopedKey = try fetchUnscopedCoreCryptoKey()
+            let item = ScopedCoreCryptoKeychainItem(userID: userID)
+            try KeychainManager.storeItem(item, value: unscopedKey)
+        } catch {
+            WireLogger.coreCrypto.warn("Failed to migrate to scoped core crypto key: \(String(describing: error))", attributes: .safePublic)
+            throw error
         }
     }
 
     private func migrateKeyIfNeeded(path: String) async throws {
-        WireLogger.coreCrypto.info("Migrating core crypto key...")
-
-        if let oldKey = try? fetchCoreCryptoKey() {
+        // Getting the unscoped key, because if the scoped key exists, it's already in the right format.
+        if let oldKey = try? fetchUnscopedCoreCryptoKey() {
             // Since version 6.x, CC has changed the key format and clients need to migrate the key.
             // We can reuse the same key, but the "new key" must be 'Data'.
-            try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
-                path: path,
-                oldKey: oldKey.base64EncodedString(),
-                newKey: oldKey
-            )
+            do {
+                try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
+                    path: path,
+                    oldKey: oldKey.base64EncodedString(),
+                    newKey: oldKey
+                )
+            } catch {
+                WireLogger.coreCrypto.warn("Failed to migrate core crypto key: \(String(describing: error))")
+                throw error
+            }
         } else {
             // If there is no key,
             // then this is a fresh install and we do not need to perform migration.
@@ -75,13 +106,18 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    private func fetchCoreCryptoKey() throws -> Data {
+    private func fetchScopedCoreCryptoKey() throws -> Data {
+        let item = ScopedCoreCryptoKeychainItem(userID: userID)
+        return try KeychainManager.fetchItem(item)
+    }
+
+    private func fetchUnscopedCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
         return try KeychainManager.fetchItem(item)
     }
 
-    private func createCoreCryptoKey() throws -> Data {
-        let item = CoreCryptoKeychainItem()
+    private func createScopedCoreCryptoKey() throws -> Data {
+        let item = ScopedCoreCryptoKeychainItem(userID: userID)
         let key = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: key)
         return key
@@ -100,6 +136,37 @@ public class CoreCryptoKeyProvider {
         } catch {
             // key was not found. no action needed
         }
+    }
+}
+
+struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
+
+    var userID: UUID
+
+    var id: String {
+        "com.wire.mls.key.\(userID.uuidString)"
+    }
+
+    var tag: Data {
+        id.data(using: .utf8)!
+    }
+
+    var getQuery: [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
     }
 }
 
