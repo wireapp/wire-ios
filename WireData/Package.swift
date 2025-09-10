@@ -8,6 +8,7 @@ let package = Package(
     products: [
         .library(
             name: "WireData",
+            type: .dynamic,
             targets: ["WireData"]
         ),
     ],
