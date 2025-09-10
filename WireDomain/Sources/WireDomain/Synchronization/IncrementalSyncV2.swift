@@ -26,9 +26,10 @@ import WireNetwork
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
-    enum Failure: Error {
+    public enum Failure: Error {
         /// Contains all envelopes that were successfully processed
         case incompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
+        case pushChannelAlreadyOpened
     }
 
     private let selfClientID: String
@@ -60,7 +61,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
-
         pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -81,21 +81,34 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
+        try Task.checkCancellation()
 
         try await pullServerTimeSync.pull()
 
-        let syncMarker = syncMarkerGenerator()
-        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
+        do {
+            try await pushChannelState.markAsOpen()
+        } catch {
+            throw Failure.pushChannelAlreadyOpened
+        }
 
-        logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
+        let syncMarker = syncMarkerGenerator()
+
+        let pushChannel: PushChannelV2Protocol
+        do {
+            pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
+        } catch {
+            await pushChannelState.markAsClosed()
+            throw error
+        }
+
+        logger.debug("creating push channel with marker \(syncMarker)", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
         let liveEventStream: PushChannelV2.Stream
         do {
             liveEventStream = try await pushChannel.open()
-            pushChannelState.markAsOpen()
         } catch {
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
             throw error
         }
 
@@ -105,11 +118,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             try await processStoredEvents()
         } catch {
             await pushChannel.close()
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
             throw error
         }
 
-        let task = Task { @Sendable [self, pushChannel] in
+        let task = Task { @Sendable [self] in
             await processLiveStream(
                 liveEventStream,
                 pushChannel: pushChannel,
@@ -119,7 +132,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
-            pushChannelState.markAsClosed()
+            await pushChannelState.markAsClosed()
         })
     }
 
@@ -194,6 +207,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
+                    logger.debug(
+                        "marker \(id) - deliveryTag \(deliveryTag)",
+                        attributes: .syncAttributes(initialSync: false)
+                    )
                     try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
 
                     if id == syncMarker {
@@ -217,7 +234,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             envelopes: envelopes,
                             pushChannel: pushChannel
                         )
-
+                    } catch let error as CancellationError {
+                        // we cancelled processing Events, as a safety,
+                        // reopen the websocket to get the events
+                        throw error
                     } catch {
                         WireLogger.sync.error("event processing failed: \(error)", attributes: .syncAttributes)
                         assertionFailure("event processing failed: \(error)")
@@ -258,9 +278,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 
+                try Task.checkCancellation()
+
                 // store
                 let index = try await storeEnvelope(envelope)
                 storedEnvelopes.append((envelope, index))
+                try Task.checkCancellation()
             }
         }
 
@@ -268,6 +291,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         if let lastEnvelope = storedEnvelopes.last?.0 {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
+        try Task.checkCancellation()
 
         // process
         var envelopeIdsToDelete = [Int64]()
@@ -284,12 +308,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         }
 
-        // only delete successful processed envelopes
-        await deleteEnvelopes(at: envelopeIdsToDelete)
-        // TODO: [WPB-10458] save the message db and then event db
-
+        // save message db first then
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
+
+        // only delete successful processed envelopes
+        await deleteEnvelopes(at: envelopeIdsToDelete)
     }
 
     private func decryptEnvelope(
