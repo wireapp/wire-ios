@@ -24,7 +24,8 @@ public protocol MLSClientManagerProtocol {
     func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool
     ) async
 
 }
@@ -51,10 +52,10 @@ public final class MLSClientManager: MLSClientManagerProtocol {
     public func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool
     ) async {
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        guard BackendInfo.isMLSEnabled, mlsFeature.isEnabled else {
+        guard isBackendMLSEnabled, mlsFeature.isEnabled else {
             WireLogger.mls.info("MLS feature in not enabled.")
             return
         }

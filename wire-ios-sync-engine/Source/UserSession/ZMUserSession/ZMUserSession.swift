@@ -1267,7 +1267,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature
+                    mlsFeature: mlsFeature,
+                    isBackendMLSEnabled: isBackendMLSEnabled
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")

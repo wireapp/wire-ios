@@ -355,7 +355,8 @@ struct FeatureConfigsPayloadProcessor {
         await mlsClientManager.initializeMLSClientIfNeeded(
             for: qualifiedSelfClientID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
     }
 
