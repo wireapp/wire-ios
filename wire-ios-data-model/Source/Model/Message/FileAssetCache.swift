@@ -942,7 +942,7 @@ private struct FileCache: Cache {
     func storeAssetFromURL(
         _ fromUrl: URL,
         key: String,
-        movingOriginal: Bool = true,
+        movingOriginal: Bool,
         createdAt creationDate: Date = Date()
     ) {
 
