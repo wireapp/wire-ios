@@ -155,6 +155,7 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack,
             cookieStorage: cookieStorage
@@ -340,6 +341,7 @@ final class UserSessionLoader {
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
         cookieStorage: CookieStorage
@@ -463,6 +465,7 @@ final class UserSessionLoader {
             userId: accountID,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,

@@ -33,6 +33,7 @@ final class NSEFlow: BootstrapComponent {
         case accountNotFound(UUID)
     }
 
+    public let currentBuildNumber: String
     public let appContainerURL: URL
     public let accountDataURL: URL
     public let accountManager: AccountManager
@@ -48,6 +49,7 @@ final class NSEFlow: BootstrapComponent {
 
     init(
         currentAppVersion: String,
+        currentBuildNumber: String,
         appContainerURL: URL,
         sharedUserDefaults: UserDefaults,
         cookieEncryptionKey: Data,
@@ -55,6 +57,7 @@ final class NSEFlow: BootstrapComponent {
         preferredAPIVersion: UInt?
     ) throws {
         self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appContainerURL = appContainerURL
         self.sharedUserDefaults = sharedUserDefaults
         self.cookieEncryptionKey = cookieEncryptionKey

@@ -263,6 +263,7 @@ private extension BackendEnvironment {
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
         webSocketURL: URL(string: backendURL)!,
+        blacklistURL: URL(string: backendURL)!,
         pinnedKeys: [],
         proxySettings: nil
     )
