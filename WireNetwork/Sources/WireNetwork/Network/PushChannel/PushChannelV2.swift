@@ -73,6 +73,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
+        // We don't want to proceed if not necessary (in case we've
+        // gone to the background)
+        try Task.checkCancellation()
+
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
@@ -87,7 +91,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     do {
                         result = try receiveMessage(message)
                     } catch PushChannelError.receivedInvalidMessage {
-                        WireLogger.pushChannel.warn("ignore invalid message, continue", attributes: .pushChannelV2)
+                        WireLogger.pushChannel.warn(
+                            "ignore invalid message, continue",
+                            attributes: .pushChannelV2
+                        )
                         continue
                     } catch {
                         throw error
@@ -104,7 +111,9 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             let drained = await batchBuffer.drain()
                             continuation.yield(.events(drained))
                             WireLogger.pushChannel
-                                .debug("reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'")
+                                .debug(
+                                    "reached batch of size '\(drained.count)' yield, batchSize '\(batchSize)'"
+                                )
                         }
 
                     case .missedEvents:
@@ -115,9 +124,11 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         let drained = await batchBuffer.drain()
                         if !drained.isEmpty {
                             continuation.yield(.events(drained))
-                            WireLogger.pushChannel.debug("syncMarker reached batch of size '\(drained.count)' yield")
+                            WireLogger.pushChannel
+                                .debug(
+                                    "syncMarker reached \(id) batch of size '\(drained.count)' yield"
+                                )
                         }
-
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
                     }
 
@@ -153,8 +164,18 @@ public final class PushChannelV2: PushChannelV2Protocol {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
         await webSocket.close()
+
         tearDownKeepAliveTask()
         tearDownBatchTask()
+
+        if !(await batchBuffer.isEmpty()) {
+            let drained = await batchBuffer.drain()
+            WireLogger.pushChannel.debug(
+                "closing, drain batch '\(drained.count)'",
+                attributes: .pushChannelV2
+            )
+            continuation.yield(.events(drained))
+        }
     }
 
     public func disableBatching(_ disabled: Bool) async {
@@ -163,7 +184,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
             tearDownBatchTask()
             if !(await batchBuffer.isEmpty()) {
                 let drained = await batchBuffer.drain()
-                WireLogger.pushChannel.debug("drain batch '\(drained.count)'", attributes: .pushChannelV2)
+                WireLogger.pushChannel.debug(
+                    "drain batch '\(drained.count)'",
+                    attributes: .pushChannelV2
+                )
                 continuation.yield(.events(drained))
             }
         } else {
@@ -176,7 +200,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private func setUpBatchTask() {
         WireLogger.pushChannel.debug("batchTask setup", attributes: .pushChannelV2)
         tearDownBatchTask()
-        batchTask = Task { [batchInterval] in
+        batchTask = Task { [weak self] in
+            guard let self else { return }
             do {
                 while batchSize > 1 {
                     try await Task.sleep(for: .seconds(batchInterval))
@@ -207,16 +232,17 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private func setUpKeepAliveTask() {
         tearDownKeepAliveTask()
-        keepAliveTask = Task { [keepAliveInterval] in
+        keepAliveTask = Task {  [weak self] in
+            guard let self else { return }
             do {
                 while true {
+                    try Task.checkCancellation()
                     try await Task.sleep(for: .seconds(keepAliveInterval))
                     WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV2)
                     await webSocket.sendPing()
                 }
             } catch {
                 WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV2)
-                tearDownKeepAliveTask()
             }
         }
     }
@@ -281,11 +307,17 @@ public final class PushChannelV2: PushChannelV2Protocol {
             }
 
         case .string:
-            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug(
+                "received web socket string, ignoring...",
+                attributes: .pushChannelV2
+            )
             throw PushChannelError.receivedInvalidMessage
 
         @unknown default:
-            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug(
+                "received web socket message, ignoring...",
+                attributes: .pushChannelV2
+            )
             throw PushChannelError.receivedInvalidMessage
         }
     }

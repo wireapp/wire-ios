@@ -82,16 +82,10 @@ public class SystemLogger: LoggerProtocol {
         }
 
         var finalMessage = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
-        #if !DEBUG
-            if !tags.isEmpty {
-                let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
-                finalMessage += extraInfo
-            }
-        #endif
-        if mergedAttributes[.public] as? Bool == true {
+        #if DEBUG
             os_log(osLogType, log: logger, "%{public}@", finalMessage)
-        } else {
+        #else
             os_log(osLogType, log: logger, "\(finalMessage)")
-        }
+        #endif
     }
 }

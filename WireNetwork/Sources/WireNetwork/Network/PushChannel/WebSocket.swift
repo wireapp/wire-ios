@@ -52,6 +52,7 @@ public actor WebSocket: WebSocketProtocol {
                             let message = try await connection.receive()
                             WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
+                            try Task.checkCancellation()
                         } catch {
                             continuation.finish(throwing: error)
                             isAlive = false
