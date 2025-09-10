@@ -77,18 +77,12 @@ final class RestAPI: Sendable {
         return (nodes: nodes, nextOffset: nextOffset)
     }
 
-    func delete(uuid: UUID) async throws {
-        let parameters = RestActionParameters(nodes: [RestNodeLocator(uuid: uuid.uuidString)])
-        _ = try await NodeServiceAPI.performAction(
-            name: .delete,
-            parameters: parameters,
-            apiConfiguration: makeConfiguration()
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
+        let parameters = RestActionParameters(
+            deleteOptions: RestActionOptionsDelete(permanentDelete: permanently),
+            nodes: nodes
         )
-    }
-
-    func delete(paths: [String]) async throws {
-        let nodes = paths.map { RestNodeLocator(path: $0) }
-        let parameters = RestActionParameters(nodes: nodes)
         _ = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,

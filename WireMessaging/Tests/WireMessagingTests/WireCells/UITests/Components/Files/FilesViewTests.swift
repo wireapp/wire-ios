@@ -33,8 +33,10 @@ final class FilesViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
@@ -43,9 +45,15 @@ final class FilesViewTests: XCTestCase {
             configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
+        deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
     }
 
-    override func tearDown() {
+    @MainActor
+    override func tearDown() async throws {
         snapshotHelper = nil
         nodesRepository = nil
         fetchNodesUseCase = nil
@@ -220,6 +228,7 @@ final class FilesViewTests: XCTestCase {
     ) -> some View {
         let filesViewModel = FilesViewModel(
             fetchNodesUseCase: fetchNodesUseCase,
+            deleteNodesUseCase: deleteNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache()
@@ -250,6 +259,7 @@ private extension FilesItemViewModel {
             item: item,
             localAssetRepository: localAssetRepository,
             onOpen: { _ in },
+            onDelete: { _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

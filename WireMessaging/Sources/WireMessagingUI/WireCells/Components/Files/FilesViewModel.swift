@@ -71,6 +71,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
@@ -84,11 +85,13 @@ package final class FilesViewModel: ObservableObject {
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        deleteNodesUseCase: WireCellsDeleteNodesUseCase,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.deleteNodesUseCase = deleteNodesUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
@@ -142,7 +145,7 @@ package final class FilesViewModel: ObservableObject {
                 await self?.viewAsset(item: item)
             },
             onDelete: { [weak self] item in
-                print("Delete action for item: \(item.filename) not implemented")
+                await self?.deleteItem(item)
             }
         )
     }
@@ -246,6 +249,15 @@ package final class FilesViewModel: ObservableObject {
             default:
                 break
             }
+        }
+    }
+
+    private func deleteItem(_ asset: FilesViewItem) async {
+        // TODO: Remove item from list
+        do {
+            try await deleteNodesUseCase.invoke(nodeIDs: [asset.id])
+        } catch {
+            // TODO: Reinsert item
         }
     }
 

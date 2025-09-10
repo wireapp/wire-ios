@@ -29,6 +29,7 @@ final class FilesViewModelTests {
 
     private let nodesRepository = MockWireCellsNodesRepositoryProtocol()
     private let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+    private let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
     private let fileCache = MockFileCache()
     private let sut: FilesViewModel
     private var itemsUpdates: [[FilesViewItem]] = []
@@ -39,6 +40,11 @@ final class FilesViewModelTests {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
+            ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: nodesRepository,
+                fileCache: fileCache,
+                localAssetStore: localAssetStore
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
@@ -291,6 +297,11 @@ final class FilesViewModelTests {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("some-cell")),
                 repository: nodesRepository
+            ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: nodesRepository,
+                fileCache: fileCache,
+                localAssetStore: localAssetStore
             ),
             isCellsStatePending: state == .pending,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),

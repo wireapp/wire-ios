@@ -63,12 +63,8 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
-    package func deleteFile(nodeID: UUID) async throws {
-        try await restAPI.delete(uuid: nodeID)
-    }
-
-    package func deleteFiles(paths: [String]) async throws {
-        try await restAPI.delete(paths: paths)
+    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws {
+        try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {

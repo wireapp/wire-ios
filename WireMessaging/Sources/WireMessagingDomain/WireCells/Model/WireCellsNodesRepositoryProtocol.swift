@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import Foundation
+
 // sourcery: AutoMockable
 /// A repository of `WireCellNode` objects.
 package protocol WireCellsNodesRepositoryProtocol: Sendable {
@@ -25,6 +27,13 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Parameter request: The request containing the scope, filter, limit, and offset for fetching nodes.
     /// - Returns: A tuple containing an array of `WireCellsNode` objects and an optional next offset for pagination.
     func getNodes(_ request: WireCellsGetNodesRequest) async throws -> (nodes: [WireCellsNode], nextOffset: Int?)
+
+    /// Deletes nodes with the specified IDs.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to delete.
+    ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws
 
 }
 
