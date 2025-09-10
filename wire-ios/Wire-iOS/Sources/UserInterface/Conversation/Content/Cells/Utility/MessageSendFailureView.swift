@@ -80,7 +80,6 @@ final class MessageSendFailureView: UIView {
             stackView.spacing = 15
             [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
         }
-        stackView.spacing = 8
 
         retryButton.translatesAutoresizingMaskIntoConstraints = false
         retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
