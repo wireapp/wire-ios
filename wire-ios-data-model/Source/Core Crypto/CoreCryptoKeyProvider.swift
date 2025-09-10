@@ -95,7 +95,7 @@ public class CoreCryptoKeyProvider {
                     newKey: oldKey
                 )
             } catch {
-                WireLogger.coreCrypto.warn("Failed to migrate core crypto key: \(String(describing: error))")
+                WireLogger.coreCrypto.warn("Failed to migrate core crypto key: \(String(describing: error))", attributes: .safePublic)
                 throw error
             }
         } else {
