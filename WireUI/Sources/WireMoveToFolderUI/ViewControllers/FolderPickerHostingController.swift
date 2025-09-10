@@ -35,7 +35,6 @@ public final class FolderPickerHostingController: UIHostingController<FolderPick
         self.conversationName = conversationName
         super.init(rootView: FolderPicker(
             viewModel: viewModel,
-            createFolderUseCase: createFolderUseCase,
             isContextMenuAllowed: isContextMenuAllowed,
             conversationName: conversationName
         ))
