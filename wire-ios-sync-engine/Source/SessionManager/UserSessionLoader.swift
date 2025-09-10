@@ -532,11 +532,10 @@ final class UserSessionLoader {
             let keys = try await api.getBackendMLSPublicKeys()
             return keys.removal.isValid
         } catch
-            URLError.notConnectedToInternet,
+        URLError.notConnectedToInternet,
             URLError.networkConnectionLost,
             MLSAPIError.unsupportedEndpointForAPIVersion,
-            MLSAPIError.mlsNotEnabled
-        {
+            MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
             return false
         }

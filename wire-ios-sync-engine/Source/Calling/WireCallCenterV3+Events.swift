@@ -406,7 +406,10 @@ extension WireCallCenterV3 {
                 let change = try self.decoder.decode(AVSParticipantsChange.self, from: data)
                 let members = change.members.map(AVSCallMember.init)
                 self.callParticipantsChanged(
-                    conversationId: AVSIdentifier.from(string: change.convid, isFederationEnabled: self.isFederationEnabled),
+                    conversationId: AVSIdentifier.from(
+                        string: change.convid,
+                        isFederationEnabled: self.isFederationEnabled
+                    ),
                     participants: members
                 )
             } catch {
@@ -507,7 +510,7 @@ extension WireCallCenterV3 {
         handleEventInContext("request-clients") { [weak self, encoder] _ in
             guard
                 let self,
-                self.conversationType(from: conversationId) != .mlsConference
+                conversationType(from: conversationId) != .mlsConference
             else {
                 return
             }
@@ -516,9 +519,9 @@ extension WireCallCenterV3 {
             // added or removed from the conversation during this time. Therefore
             // we store the completion so that it can be re-invoked with an updated
             // client list.
-            self.clientsRequestCompletionsByConversationId[conversationId] = completion
+            clientsRequestCompletionsByConversationId[conversationId] = completion
 
-            self.transport?.requestClientsList(conversationId: conversationId) { clients in
+            transport?.requestClientsList(conversationId: conversationId) { clients in
                 guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
                     Self.logger.error("Could not encode client list to JSON")
                     return

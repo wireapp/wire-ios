@@ -192,7 +192,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             let apiVersion = APIVersion(rawValue: response.apiVersion)!
             decoder.userInfo = [
                 ClientDiscoveryResponsePayload.apiVersionKey: apiVersion,
-                ClientDiscoveryResponsePayload.isFederationEnabledKey: isFederationEnabled,
+                ClientDiscoveryResponsePayload.isFederationEnabledKey: isFederationEnabled
             ]
 
             do {
@@ -481,7 +481,11 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
                         let avsClients = qualifiedClientIDs.map {
                             AVSClient(
-                                userId: AVSIdentifier(identifier: $0.userID, domain: $0.domain, isFederationEnabled: self.isFederationEnabled),
+                                userId: AVSIdentifier(
+                                    identifier: $0.userID,
+                                    domain: $0.domain,
+                                    isFederationEnabled: self.isFederationEnabled
+                                ),
                                 clientId: $0.clientID
                             )
                         }
@@ -541,7 +545,8 @@ extension CallingRequestStrategy {
 
     struct ClientDiscoveryResponsePayload: Decodable {
         static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsAPIVersion")!
-        static let isFederationEnabledKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsIsFederationEnabled")!
+        static let isFederationEnabledKey =
+            CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsIsFederationEnabled")!
 
         let clients: [AVSClient]
 

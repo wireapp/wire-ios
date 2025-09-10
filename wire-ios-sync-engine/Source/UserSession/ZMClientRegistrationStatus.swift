@@ -275,7 +275,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var needsToRegisterMLSClient: Bool {
-        return needsToRegisterMLSClient(in: managedObjectContext)
+        needsToRegisterMLSClient(in: managedObjectContext)
     }
 
     @objc(needsToRegisterClientInContext:)
