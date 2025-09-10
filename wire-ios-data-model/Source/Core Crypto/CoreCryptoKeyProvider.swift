@@ -34,7 +34,6 @@ public class CoreCryptoKeyProvider {
         createIfNeeded: Bool,
         path: String
     ) async throws -> Data {
-        removeLegacyKeyIfNeeded()
         try await migrateKeyIfNeeded(path: path)
 
         do {
@@ -123,20 +122,6 @@ public class CoreCryptoKeyProvider {
         return key
     }
 
-    private func removeLegacyKeyIfNeeded() {
-        let legacyItem = LegacyCoreCryptoKeychainItem()
-
-        do {
-            _ = try KeychainManager.fetchItem(legacyItem) as Data
-            WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
-            try KeychainManager.deleteItem(legacyItem)
-            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
-        } catch let KeychainManager.Error.failedToDeleteItemFromKeychain(error) {
-            WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
-        } catch {
-            // key was not found. no action needed
-        }
-    }
 }
 
 struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
