@@ -41,9 +41,16 @@ final class MessageSendFailureView: UIView {
         insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     )
 
+    private var isChatBubbleSimpleEnabled: Bool
+    private var buttonContainer = UIView()
+
     // MARK: - initialization
 
-    override init(frame: CGRect) {
+    init(
+        frame: CGRect = .zero,
+        ischatBubbleSimpleEnabled: Bool = false
+    ) {
+        self.isChatBubbleSimpleEnabled = ischatBubbleSimpleEnabled
         super.init(frame: CGRect.zero)
 
         setupViews()
@@ -58,19 +65,35 @@ final class MessageSendFailureView: UIView {
 
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
+        if isChatBubbleSimpleEnabled {
+            titleLabel.textAlignment = .right
+        }
     }
 
     private func setupViews() {
         addSubview(stackView)
 
-        stackView.alignment = .leading
-        stackView.spacing = 15
-        [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
+        if isChatBubbleSimpleEnabled {
+            setupViewsWithChatBubble()
+        } else {
+            stackView.alignment = .leading
+            stackView.spacing = 15
+            [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
+        }
+
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
         retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
 
         setupConstraints()
         setupAccessibility()
+    }
+
+    private func setupViewsWithChatBubble() {
+        stackView.spacing = 8
+        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
+        buttonContainer.addSubview(retryButton)
+        [titleLabel, buttonContainer].forEach(stackView.addArrangedSubview)
     }
 
     private func setupAccessibility() {
@@ -80,12 +103,27 @@ final class MessageSendFailureView: UIView {
 
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+
+        if isChatBubbleSimpleEnabled {
+            NSLayoutConstraint.activate([
+                stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
+                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
+                stackView.topAnchor.constraint(equalTo: topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0),
+
+                retryButton.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
+                retryButton.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
+                retryButton.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
+                retryButton.leadingAnchor.constraint(greaterThanOrEqualTo: buttonContainer.leadingAnchor)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                stackView.topAnchor.constraint(equalTo: topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
+        }
     }
 
     // MARK: - Methods
