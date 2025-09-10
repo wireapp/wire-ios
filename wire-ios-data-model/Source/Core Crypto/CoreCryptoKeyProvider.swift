@@ -74,9 +74,12 @@ public class CoreCryptoKeyProvider {
 
         do {
             WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
+
+            // Should we generate a new key and rotate it for extra safety ?
             let unscopedKey = try fetchUnscopedCoreCryptoKey()
             let item = ScopedCoreCryptoKeychainItem(userID: userID)
             try KeychainManager.storeItem(item, value: unscopedKey)
+            // We don't delete the unscoped key because it may be needed by another account to migrate.
         } catch {
             WireLogger.coreCrypto.warn("Failed to migrate to scoped core crypto key: \(String(describing: error))", attributes: .safePublic)
             throw error
