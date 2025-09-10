@@ -313,7 +313,10 @@ private extension PushChannelMonitorProtocol {
                     try await Task.sleep(for: .seconds(5))
                     guard !resumed else { return }
                     resumed = true
-                    WireLogger.sync.debug("timed out waiting for push channel to be closed", attributes: .syncAttributes)
+                    WireLogger.sync.debug(
+                        "timed out waiting for push channel to be closed",
+                        attributes: .syncAttributes
+                    )
                     continuation.resume()
                 } catch {
                     // sleep is cancelled
