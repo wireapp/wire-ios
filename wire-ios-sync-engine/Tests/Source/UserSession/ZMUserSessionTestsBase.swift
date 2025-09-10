@@ -86,6 +86,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
+            blacklistURL: backendEnvironment.blackListURL,
             pinnedKeys: [],
             proxySettings: nil
         )

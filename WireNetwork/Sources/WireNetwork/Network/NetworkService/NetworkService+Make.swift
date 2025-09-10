@@ -26,7 +26,8 @@ extension NetworkService {
         proxyCredentials: ProxyCredentials? = nil
     ) throws(InitializationError) -> (
         rest: NetworkService,
-        webSocket: NetworkService
+        webSocket: NetworkService,
+        blacklist: NetworkService
     ) {
         let proxySettings: ProxySettings?
         if let proxyConfig = backendConfig.proxyConfig {
@@ -87,9 +88,26 @@ extension NetworkService {
 
         webSocketService.configure(with: webSocketSession)
 
+        let blacklistService = NetworkService(
+            baseURL: backendConfig.endpoints.blacklistURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: backendConfig.pinnedKeys,
+                currentDateProvider: .system
+            )
+        )
+
+        let blacklistSession = URLSession(
+            configuration: configFactory.makeBlacklistSessionConfiguration(),
+            delegate: blacklistService,
+            delegateQueue: nil
+        )
+
+        blacklistService.configure(with: blacklistSession)
+
         return (
             rest: restService,
-            webSocket: webSocketService
+            webSocket: webSocketService,
+            blacklist: blacklistService
         )
     }
 
