@@ -602,10 +602,6 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_thenInitiatesReset() async throws {
         // given
-        DeveloperFlag.resetMLSConversations.enable(true, storage: .temporary())
-        defer {
-            DeveloperFlag.resetMLSConversations.enable(false, storage: .standard)
-        }
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
