@@ -413,6 +413,10 @@ public final class ClientSessionComponent {
         fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
     }
 
+    public lazy var mainAppPushChannelCoordinator = MainAppPushChannelCoordinator(
+        clientID: selfClientID
+    )
+
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
