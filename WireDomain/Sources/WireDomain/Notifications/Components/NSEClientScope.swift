@@ -45,7 +45,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     enum Failure: Error {
 
-        case mainAppPushChannelOpened
+        case pushChannelAlreadyOpened
 
     }
 
@@ -54,6 +54,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let webSocketNetworkService: NetworkService
     private let apiVersion: WireNetwork.APIVersion
     private let coreDataStack: CoreDataStack
+
+    private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
+    private var currentTask: Task<Void, any Error>?
 
     init(
         parent: any Scope,
@@ -68,6 +71,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
         self.coreDataStack = coreDataStack
+        self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
+
         super.init(parent: parent)
     }
 
@@ -79,28 +84,45 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let eventStream: AsyncStream<[UpdateEvent]>
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
-            guard !PushChannelState(
-                sharedContainerURL: dependency.appContainerURL,
-                clientID: clientID
-            ).isOpen() else {
-                throw Failure.mainAppPushChannelOpened
-            }
-
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
 
+            // make sure no pushChannel is open
+            let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
             do {
-                try await useCase.invoke()
+                try await pushChannelState.markAsOpen()
             } catch {
-                // either we timeout during decrypting/storing events OR an issue
-                // with the sync. In both cases, we end up with a stream of
-                // notifications that has not been shown, so we need to continue
-                // to show them.
-                WireLogger.sync.warn(
-                    "syncing events via websocket: \(error.localizedDescription)",
-                    attributes: .syncAttributes(initialSync: false)
-                )
+                throw Failure.pushChannelAlreadyOpened
             }
+
+            Task { [weak self] in
+                var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+                WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
+                await self?.currentTask?.cancel()
+                request?.acknowledge()
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
+            }
+
+            currentTask = Task {
+                do {
+                    try Task.checkCancellation()
+                    try await useCase.invoke()
+                } catch {
+                    // either we timeout during decrypting/storing events OR an issue
+                    // with the sync. In both cases, we end up with a stream of
+                    // notifications that has not been shown, so we need to continue
+                    // to show them.
+                    WireLogger.sync.warn(
+                        "syncing events via websocket: \(String(describing: error))",
+                        attributes: .syncAttributes(initialSync: false)
+                    )
+                    await pushChannelState.markAsClosed()
+                }
+            }
+            try await currentTask?.value
+            WireLogger.sync.debug("closing push channel")
+            await pushChannelState.markAsClosed()
+
         } else {
             eventStream = try await pullEventsUseCase.invoke()
         }

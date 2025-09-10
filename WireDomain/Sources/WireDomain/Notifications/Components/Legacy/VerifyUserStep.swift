@@ -68,13 +68,6 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         super.init(parent: parent)
     }
 
-    func verifyMainPushChannelClosed(clientID: String) throws {
-        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: clientID)
-        if pushChannelState.isOpen() {
-            throw Failure.mainAppPushChannelOpened
-        }
-    }
-
     func verifyUserSession() async throws {
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             journal: journal,
@@ -91,8 +84,6 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         }
 
         if journal[.isConsumableNotificationsEnabled] {
-
-            try verifyMainPushChannelClosed(clientID: selfClientID)
 
             try await syncEventsStep(
                 selfClientID: selfClientID
