@@ -112,7 +112,7 @@ public class CoreCryptoKeyProvider {
     }
 
     private func fetchUnscopedCoreCryptoKey() throws -> Data {
-        let item = CoreCryptoKeychainItem()
+        let item = UnscopedCoreCryptoKeychainItem()
         return try KeychainManager.fetchItem(item)
     }
 
@@ -170,7 +170,7 @@ struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
     }
 }
 
-struct CoreCryptoKeychainItem: KeychainItemProtocol {
+struct UnscopedCoreCryptoKeychainItem: KeychainItemProtocol {
 
     var id: String {
         "com.wire.mls.key"

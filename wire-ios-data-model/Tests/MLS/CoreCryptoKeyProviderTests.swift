@@ -25,7 +25,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
-        try? KeychainManager.deleteItem(CoreCryptoKeychainItem())
+        try? KeychainManager.deleteItem(UnscopedCoreCryptoKeychainItem())
     }
 
     // MARK: Fetching & creating key
@@ -36,7 +36,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
         mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
 
-        let item = CoreCryptoKeychainItem()
+        let item = UnscopedCoreCryptoKeychainItem()
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: expectedKey)
 
@@ -60,7 +60,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         }
 
         // THEN
-        XCTAssertNil(try? KeychainManager.fetchItem(CoreCryptoKeychainItem()))
+        XCTAssertNil(try? KeychainManager.fetchItem(UnscopedCoreCryptoKeychainItem()))
     }
 
     func test_itCreatesCoreCryptoKey_WhenNeeded() async throws {
@@ -76,7 +76,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertNotNil(key)
 
-        let storedKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItem())
+        let storedKey: Data? = try? KeychainManager.fetchItem(UnscopedCoreCryptoKeychainItem())
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
     }
@@ -104,7 +104,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
         mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
 
-        let item = CoreCryptoKeychainItem()
+        let item = UnscopedCoreCryptoKeychainItem()
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: expectedKey)
 
@@ -124,7 +124,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
         mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_MockMethod = {}
 
-        let item = CoreCryptoKeychainItem()
+        let item = UnscopedCoreCryptoKeychainItem()
         let oldKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: oldKey)
 
