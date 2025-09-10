@@ -57,7 +57,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.backgroundTaskTimeout = 2
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
-        mainAppPushChannelCoordinator = MockMainCoordinatorProtocol()
+        mainAppPushChannelCoordinator = MockAppPushChannelCoordinatorProtocol()
 
         sut = SyncAgent(
             journal: journal,

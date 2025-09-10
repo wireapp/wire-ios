@@ -56,6 +56,32 @@ import Combine
 
 
 
+class MockAppExtensionPushChannelCoordinatorProtocol: AppExtensionPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - listenForYieldRequests
+
+    var listenForYieldRequests_Invocations: [Void] = []
+    var listenForYieldRequests_MockMethod: (() async -> YieldRequest)?
+    var listenForYieldRequests_MockValue: YieldRequest?
+
+    func listenForYieldRequests() async -> YieldRequest {
+        listenForYieldRequests_Invocations.append(())
+
+        if let mock = listenForYieldRequests_MockMethod {
+            return await mock()
+        } else if let mock = listenForYieldRequests_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `listenForYieldRequests`")
+        }
+    }
+
+}
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -2413,6 +2439,30 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         }
 
         try await mock(eventData, context)
+    }
+
+}
+
+public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - signalToExtensionsToYieldPushChannel
+
+    public var signalToExtensionsToYieldPushChannel_Invocations: [Void] = []
+    public var signalToExtensionsToYieldPushChannel_MockMethod: (() async -> Void)?
+
+    public func signalToExtensionsToYieldPushChannel() async {
+        signalToExtensionsToYieldPushChannel_Invocations.append(())
+
+        guard let mock = signalToExtensionsToYieldPushChannel_MockMethod else {
+            fatalError("no mock for `signalToExtensionsToYieldPushChannel`")
+        }
+
+        await mock()
     }
 
 }
