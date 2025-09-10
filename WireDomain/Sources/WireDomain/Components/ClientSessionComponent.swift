@@ -413,12 +413,8 @@ public final class ClientSessionComponent {
         fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
     }
 
-    public lazy var pushChannelMonitor: PushChannelMonitor = .init(
-        clientID: selfClientID,
-        postingNotificationName: DarwinNotification
-            .didRequestPushChannelAccess,
-        observingNotificationName: DarwinNotification
-            .didReleasePushChannelAccess
+    public lazy var mainAppPushChannelCoordinator = MainAppPushChannelCoordinator(
+        clientID: selfClientID
     )
 
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {

@@ -54,33 +54,20 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 
     private var selfClientID: String
 
-    private let pushChannelMonitor: PushChannelMonitor
+    private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
 
     init(
         parent: any Scope,
         selfClientID: String
     ) {
         self.selfClientID = selfClientID
-        self.pushChannelMonitor = PushChannelMonitor(
-            clientID: selfClientID,
-            postingNotificationName: DarwinNotification
-                .didReleasePushChannelAccess,
-            observingNotificationName: DarwinNotification
-                .didRequestPushChannelAccess
-        )
+        self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: selfClientID)
         super.init(parent: parent)
     }
 
     private var currentTask: Task<Void, any Error>?
 
     func pullEvents() async throws {
-        pushChannelMonitor.startMonitoring { [weak self] in
-            WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
-            self?.currentTask?.cancel()
-            self?.pushChannelMonitor.notify()
-            WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
-        }
-
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -100,11 +87,20 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         } catch {
             throw Failure.pushChannelAlreadyOpened
         }
+
+        Task { [weak self] in
+            var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+            WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
+            self?.currentTask?.cancel()
+            request?.acknowledge()
+            WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
+        }
+
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
 
         currentTask = Task {
-            try Task.checkCancellation()
             do {
+                try Task.checkCancellation()
                 try await useCase.invoke()
             } catch {
                 // either we timeout during decrypting/storing events OR an issue with the sync

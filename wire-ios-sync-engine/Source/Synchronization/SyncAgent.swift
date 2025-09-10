@@ -62,7 +62,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let legacySyncStatus: any SyncStatusProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
-    private let pushChannelMonitor: PushChannelMonitorProtocol
+    private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -88,7 +88,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         legacySyncStatus: any SyncStatusProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        pushChannelMonitor: PushChannelMonitorProtocol
+        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -98,7 +98,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.legacySyncStatus = legacySyncStatus
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
-        self.pushChannelMonitor = pushChannelMonitor
+        self.pushChannelCoordinator = pushChannelCoordinator
         super.init()
 
         setupBindings()
@@ -294,47 +294,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private func handlePushChannelAlreadyOpened() async {
         WireLogger.sync.debug("push channel opened, waiting until closed", attributes: .syncAttributes)
-        await pushChannelMonitor.waitUntilPushChannelClosed()
+        await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
         WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
         resume()
-    }
-}
-
-private extension PushChannelMonitorProtocol {
-
-    func waitUntilPushChannelClosed() async {
-        await withCheckedContinuation { continuation in
-            var resumed = false
-
-            Task {
-                // in case the other process is killed we resume anyway
-                // so we're not stuck
-                do {
-                    try await Task.sleep(for: .seconds(5))
-                    guard !resumed else { return }
-                    resumed = true
-                    WireLogger.sync.debug(
-                        "timed out waiting for push channel to be closed",
-                        attributes: .syncAttributes
-                    )
-                    continuation.resume()
-                } catch {
-                    // sleep is cancelled
-                    guard !resumed else { return }
-                    resumed = true
-                    continuation.resume()
-                }
-            }
-
-            startMonitoring {
-                guard !resumed else { return }
-                resumed = true
-                stopMonitoring()
-                continuation.resume()
-            }
-            WireLogger.sync.debug("push channel already opened, request NSE release", attributes: .syncAttributes)
-            notify()
-        }
     }
 }
 

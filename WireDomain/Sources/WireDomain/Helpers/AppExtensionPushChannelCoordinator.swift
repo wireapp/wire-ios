@@ -16,44 +16,64 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol PushChannelMonitorProtocol {
-    func startMonitoring(onNotification: @escaping () -> Void)
-    func stopMonitoring()
-    func notify()
+import WireLogging
+
+public struct YieldRequest {
+    var action: () -> Void
+    public func acknowledge() {
+        action()
+    }
 }
 
-/// Object to communicate intent between NSE and main App about PushChannel
-public final class PushChannelMonitor: PushChannelMonitorProtocol {
+// sourcery: AutoMockable
+protocol AppExtensionPushChannelCoordinatorProtocol {
+    // Listens for notifications from main app, when one arrives it produces a `YieldRequest`
+    // which can be retained while push channel is closed and `acknowledged()` to send // a notification back.
+    func listenForYieldRequests() async -> YieldRequest
+}
+
+public final class AppExtensionPushChannelCoordinator {
     let darwinNotificationManager: DarwinNotificationManager = .init()
 
     private var observingNotificationName: String
     private var postingNotificationName: String
 
     public init(
-        clientID: String,
-        postingNotificationName: String,
-        observingNotificationName: String
+        clientID: String
     ) {
-        self.postingNotificationName = postingNotificationName + "_" + clientID
-        self.observingNotificationName = observingNotificationName + "_" + clientID
+        self.postingNotificationName = DarwinNotification.didReleasePushChannelAccess + "_" + clientID
+        self.observingNotificationName = DarwinNotification.didRequestPushChannelAccess + "_" + clientID
     }
 
     deinit {
         darwinNotificationManager.stopObserving(name: observingNotificationName)
     }
 
-    public func startMonitoring(onNotification action: @escaping () -> Void) {
+    public func listenForYieldRequests() async -> YieldRequest {
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            startMonitoring {
+                guard !resumed else { return }
+                resumed = true
+                continuation.resume()
+            }
+        }
+        return YieldRequest {
+            self.notify()
+        }
+    }
+
+    private func startMonitoring(onNotification action: @escaping () -> Void) {
         darwinNotificationManager.startObserving(name: observingNotificationName) {
             action()
         }
     }
 
-    public func stopMonitoring() {
+    private func stopMonitoring() {
         darwinNotificationManager.stopObserving(name: observingNotificationName)
     }
 
-    public func notify() {
+    private func notify() {
         darwinNotificationManager.postNotification(name: postingNotificationName)
     }
 }

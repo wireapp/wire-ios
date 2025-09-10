@@ -55,7 +55,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let apiVersion: WireNetwork.APIVersion
     private let coreDataStack: CoreDataStack
 
-    private let pushChannelMonitor: PushChannelMonitor
+    private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
 
     init(
@@ -71,13 +71,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
         self.coreDataStack = coreDataStack
-        self.pushChannelMonitor = PushChannelMonitor(
-            clientID: clientID,
-            postingNotificationName: DarwinNotification
-                .didReleasePushChannelAccess,
-            observingNotificationName: DarwinNotification
-                .didRequestPushChannelAccess
-        )
+        self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
 
         super.init(parent: parent)
     }
@@ -93,13 +87,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             let (useCase, stream) = syncEventsUseCase()
             eventStream = stream
 
-            pushChannelMonitor.startMonitoring { [weak self] in
-                WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
-                self?.currentTask?.cancel()
-                self?.pushChannelMonitor.notify()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
-            }
-
             // make sure no pushChannel is open
             let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
             do {
@@ -107,9 +94,18 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             } catch {
                 throw Failure.pushChannelAlreadyOpened
             }
+
+            Task { [weak self] in
+                var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+                WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
+                await self?.currentTask?.cancel()
+                request?.acknowledge()
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
+            }
+
             currentTask = Task {
-                try Task.checkCancellation()
                 do {
+                    try Task.checkCancellation()
                     try await useCase.invoke()
                 } catch {
                     // either we timeout during decrypting/storing events OR an issue
