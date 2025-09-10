@@ -655,6 +655,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func configureBlacklistDownload() {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         if configuration.blacklistDownloadInterval > 0 {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
@@ -2007,4 +2010,14 @@ public extension SessionManager {
     static func stopAVSLogging() {
         avsLogObserver = nil
     }
+}
+
+// MARK: - User session delegate
+
+extension SessionManager: UserSessionDelegate {
+
+    func userSessionDidDiscoverBuildIsBlacklisted() {
+        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+    }
+
 }

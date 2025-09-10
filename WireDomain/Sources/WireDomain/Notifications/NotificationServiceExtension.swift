@@ -38,6 +38,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private var onGoingtask: Task<Void, Never>?
 
     private let currentAppVersion: String
+    private let currentBuildNumber: String
     private let appContainerURL: URL
     private let sharedUserDefaults: UserDefaults
     private let cookieEncryptionKey: Data
@@ -46,6 +47,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     public init(
         currentAppVersion: String,
+        currentBuildNumber: String,
         appContainerURL: URL,
         sharedUserDefaults: UserDefaults,
         cookieEncryptionKey: Data,
@@ -53,6 +55,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         preferredAPIVersion: UInt?
     ) {
         self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appContainerURL = appContainerURL
         self.sharedUserDefaults = sharedUserDefaults
         self.cookieEncryptionKey = cookieEncryptionKey
@@ -94,6 +97,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 do {
                     let nseFlow = try NSEFlow(
                         currentAppVersion: currentAppVersion,
+                        currentBuildNumber: currentBuildNumber,
                         appContainerURL: appContainerURL,
                         sharedUserDefaults: sharedUserDefaults,
                         cookieEncryptionKey: cookieEncryptionKey,
