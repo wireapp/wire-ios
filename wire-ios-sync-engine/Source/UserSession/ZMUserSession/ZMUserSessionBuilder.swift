@@ -230,7 +230,8 @@ struct ZMUserSessionBuilder {
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
-            localDomain: BackendInfo.domain
+            localDomain: BackendInfo.domain,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,

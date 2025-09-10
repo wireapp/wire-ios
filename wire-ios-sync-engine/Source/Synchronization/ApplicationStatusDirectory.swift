@@ -46,7 +46,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         lastEventIDRepository: LastEventIDRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         isSyncV2Enabled: Bool,
-        localDomain: String?
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
@@ -63,7 +64,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
             context: managedObjectContext,
             cookieProvider: cookieStorage,
             coreCryptoProvider: coreCryptoProvider,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
         )
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,

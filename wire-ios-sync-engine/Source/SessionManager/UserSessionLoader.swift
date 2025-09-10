@@ -411,7 +411,8 @@ final class UserSessionLoader {
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            isBackendMLSEnabled: journal[.isBackendMLSEnabled]
         )
 
         let e2eiActivationDateRepository = E2EIActivationDateRepository(

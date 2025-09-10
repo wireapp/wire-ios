@@ -379,7 +379,8 @@ extension ZMUserSession: UserSession {
         SearchUsersUseCase(
             context: syncContext,
             searchDirectory: SearchDirectory(userSession: self),
-            isFederationUsageAllowed: isFederationUsageAllowed
+            isFederationUsageAllowed: isFederationUsageAllowed,
+            isMLSEnabled: isBackendMLSEnabled
         )
     }
 

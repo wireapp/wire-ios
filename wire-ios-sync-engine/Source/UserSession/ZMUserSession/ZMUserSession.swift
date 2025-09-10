@@ -413,7 +413,7 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
-    let userSessionComponent: UserSessionComponent
+    private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
@@ -447,8 +447,7 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol,
-        isMLSEnabled: Bool
+        cookieStorage: any CookieStorageProtocol
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -480,13 +479,18 @@ public final class ZMUserSession: NSObject {
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
         self.analyiticsLogger = .analytics
+        self.journal = journal
+        self.logFilesProvider = logFilesProvider
+
+        super.init()
+
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
             backendMetaData: backendMetadata,
-            isMLSEnabled: isMLSEnabled,
+            isMLSEnabled: isBackendMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
@@ -496,10 +500,6 @@ public final class ZMUserSession: NSObject {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider
         )
-        self.journal = journal
-        self.logFilesProvider = logFilesProvider
-
-        super.init()
 
         self.conversationEventProcessor = ConversationEventProcessor(
             context: coreDataStack.syncContext,
@@ -1384,11 +1384,13 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func fetchBackendMLSPublicKeys() async {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         do {
             var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
             let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
             let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-            // TODO: [WPB-19987] remove dependency on BackendInfo
             BackendInfo.isMLSEnabled = hasValidKeys
         } catch {
             WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")

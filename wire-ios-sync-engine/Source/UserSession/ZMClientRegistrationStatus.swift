@@ -126,17 +126,20 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var clientUpdateObserverToken: Any?
 
     private let localDomain: String?
+    private let isBackendMLSEnabled: Bool
 
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
         self.coreCryptoProvider = coreCryptoProvider
         self.localDomain = localDomain
+        self.isBackendMLSEnabled = isBackendMLSEnabled
 
         super.init()
 
@@ -272,7 +275,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var needsToRegisterMLSClient: Bool {
-        Self.needsToRegisterMLSClient(in: managedObjectContext)
+        return needsToRegisterMLSClient(in: managedObjectContext)
     }
 
     @objc(needsToRegisterClientInContext:)
@@ -475,7 +478,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             switch result {
             case let .success(backendPublicKeys):
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-                // TODO: [WPB-19987] remove dependency on BackendInfo
                 BackendInfo.isMLSEnabled = hasValidKeys
             case .failure:
                 WireLogger.authentication.info("Backend doesn't have MLS public keys")
@@ -688,17 +690,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         LegacyFeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
     }
 
-    @objc(needsToRegisterMLSClientInContext:)
-    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
-        guard !needsToRegisterClient(in: context) else {
+    public func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+        guard !Self.needsToRegisterClient(in: context) else {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        // TODO: [WPB-19987] remove dependency on BackendInfo
-        let canRegisterMLSCLient = BackendInfo.isMLSEnabled
+        let canRegisterMLSCLient = DeveloperFlag.multibackend.isOn ? isBackendMLSEnabled : BackendInfo.isMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
