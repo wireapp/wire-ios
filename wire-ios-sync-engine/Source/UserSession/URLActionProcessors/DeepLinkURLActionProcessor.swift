@@ -25,13 +25,13 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     var contextProvider: ContextProvider
     var transportSession: TransportSessionType
     var eventProcessor: LegacyConversationEventProcessorProtocol
-    let metadata: LegacyResovedBackendMetadata
+    let metadata: BackendMetadataProvider
 
     init(
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession

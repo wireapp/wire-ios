@@ -60,7 +60,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         searchUsersCache: SearchUsersCache?,
         initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
             .InitiateResetMLSConversationUseCaseProtocol,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -118,7 +118,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -396,7 +396,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(

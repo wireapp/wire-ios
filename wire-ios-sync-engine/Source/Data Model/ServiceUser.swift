@@ -216,7 +216,7 @@ public extension ServiceUser {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
-        metadata: LegacyResovedBackendMetadata,
+        metadata: BackendMetadataProvider,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         guard transportSession.reachability.mayBeReachable else {
@@ -331,7 +331,7 @@ public extension ZMConversation {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
-        metadata: LegacyResovedBackendMetadata,
+        metadata: BackendMetadataProvider,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {
 

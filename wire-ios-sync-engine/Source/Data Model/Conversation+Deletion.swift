@@ -53,7 +53,7 @@ extension ZMConversation {
     func delete(
         in contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        metadata: LegacyResovedBackendMetadata,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         let removeLocalConversation = RemoveLocalConversationUseCase()
@@ -122,7 +122,7 @@ enum ConversationDeletionRequestFactory {
 
     static func requestForDeletingTeamConversation(
         _ conversation: ZMConversation,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) -> ZMTransportRequest? {
         guard
             let apiVersion = metadata.apiVersion,

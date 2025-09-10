@@ -384,9 +384,18 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public var resolvedBackendMetadata: LegacyResovedBackendMetadata {
-        // TODO: check multibackend flag and inject
-        LegacyResovedBackendMetadata()
+    public var resolvedBackendMetadata: BackendMetadataProvider {
+        if DeveloperFlag.multibackend.isOn {
+            BackendMetadataProvider(
+                journal: journal,
+                newBackendMetadata: userSessionComponent.backendMetadata
+            )
+        } else {
+            BackendMetadataProvider(
+                journal: nil,
+                newBackendMetadata: nil
+            )
+        }
     }
 
 }

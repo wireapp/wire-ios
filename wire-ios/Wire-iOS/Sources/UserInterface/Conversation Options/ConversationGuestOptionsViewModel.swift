@@ -122,13 +122,13 @@ final class ConversationGuestOptionsViewModel {
     }
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
-    private let metadata: LegacyResovedBackendMetadata
+    private let metadata: BackendMetadataProvider
 
     init(
         configuration: ConversationGuestOptionsViewModelConfiguration,
         conversation: ZMConversation,
         createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         self.configuration = configuration
         self.conversation = conversation

@@ -76,7 +76,7 @@ extension ZMConversation {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
-        metadata: LegacyResovedBackendMetadata,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
 
@@ -150,7 +150,7 @@ extension ZMConversation {
         code: String,
         transportSession: TransportSessionType,
         contextProvider: ContextProvider,
-        metadata: LegacyResovedBackendMetadata,
+        metadata: BackendMetadataProvider,
         completion: @escaping (Result<
             (conversationId: UUID, conversationName: String, hasPassword: Bool),
             Error
@@ -201,7 +201,7 @@ enum ConversationJoinRequestFactory {
         key: String,
         code: String,
         password: String? = nil,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) -> ZMTransportRequest? {
         guard let apiVersion = metadata.apiVersion else { return nil }
 
@@ -227,7 +227,7 @@ enum ConversationJoinRequestFactory {
     static func requestForGetConversation(
         key: String,
         code: String,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) -> ZMTransportRequest? {
         guard let apiVersion = metadata.apiVersion else { return nil }
 

@@ -30,7 +30,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
     let sessionEstablisher: SessionEstablisherInterface
-    let metadata: LegacyResovedBackendMetadata
+    let metadata: BackendMetadataProvider
 
     // MARK: - Initialization
 
@@ -38,7 +38,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
@@ -62,7 +62,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         proteusProvider: ProteusProviding,
         sessionEstablisher: SessionEstablisherInterface,
         managedObjectContext: NSManagedObjectContext,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         self.proteusProvider = proteusProvider
         self.context = managedObjectContext

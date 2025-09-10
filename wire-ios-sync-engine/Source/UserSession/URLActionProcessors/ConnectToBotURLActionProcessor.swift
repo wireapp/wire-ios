@@ -24,14 +24,14 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     var eventProcessor: LegacyConversationEventProcessorProtocol
     var contextProvider: ContextProvider
     var searchUsersCache: SearchUsersCache?
-    let metadata: LegacyResovedBackendMetadata
+    let metadata: BackendMetadataProvider
 
     init(
         contextprovider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         searchUsersCache: SearchUsersCache?,
-        metadata: LegacyResovedBackendMetadata
+        metadata: BackendMetadataProvider
     ) {
         self.contextProvider = contextprovider
         self.transportSession = transportSession
