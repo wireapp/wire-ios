@@ -65,7 +65,7 @@ jobs:
       - name: 'Generate changelog'
         run: |
           echo "{}" > ./package.json
-          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
+          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG..$CURRENT_TAG" --file --repo-url https://github.com/wireapp/wire-ios - | grep -v 🍒 > CHANGELOG.md
 
       - name: 'Set date variable'
         id: date
