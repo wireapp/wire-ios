@@ -35,6 +35,7 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     @Published private var asset: WireCellsLocalAsset?
+    @Published var isShowDeleteConfirmation = false
 
     let fileName: String
     let subtitle: String?
@@ -106,6 +107,10 @@ final class FilesItemViewModel: ObservableObject {
     func download() async {
         // Ignore errors as these will be reported via the `asset` publisher.
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
+    }
+
+    func showDeleteConfirmation() {
+        isShowDeleteConfirmation = true
     }
 
     private static func subtitle(
