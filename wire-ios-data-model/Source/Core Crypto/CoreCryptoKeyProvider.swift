@@ -184,32 +184,3 @@ struct UnscopedCoreCryptoKeychainItem: KeychainItemProtocol {
     }
 
 }
-
-struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
-
-    var id: String {
-        "com.wire.mls.key"
-    }
-
-    var tag: Data {
-        id.data(using: .utf8)!
-    }
-
-    var getQuery: [CFString: Any] {
-        [
-            kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecReturnData: true,
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
-        ]
-    }
-
-    func setQuery(value: some Any) -> [CFString: Any] {
-        [
-            kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecValueData: value,
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
-        ]
-    }
-}
