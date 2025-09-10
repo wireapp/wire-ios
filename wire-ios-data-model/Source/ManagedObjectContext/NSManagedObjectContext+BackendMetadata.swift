@@ -20,15 +20,15 @@ import Foundation
 
 extension NSManagedObjectContext {
 
-    private static let isFederationenabledKey = "isFederationEnabled"
+    private static let isFederationEnabledKey = "isFederationEnabled"
     private static let localDomainKey = "localDomain"
 
     public var isFederationEnabled: Bool {
         get {
-            userInfo[Self.isFederationenabledKey] as? Bool ?? false
+            userInfo[Self.isFederationEnabledKey] as? Bool ?? false
         }
         set {
-            userInfo[Self.isFederationenabledKey] = newValue
+            userInfo[Self.isFederationEnabledKey] = newValue
         }
     }
 
