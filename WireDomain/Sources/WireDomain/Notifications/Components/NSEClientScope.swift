@@ -57,7 +57,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     private let pushChannelMonitor: PushChannelMonitor
     private var currentTask: Task<Void, any Error>?
-    
+
     init(
         parent: any Scope,
         clientID: String,

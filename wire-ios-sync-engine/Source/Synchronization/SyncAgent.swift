@@ -309,13 +309,20 @@ private extension PushChannelMonitorProtocol {
             Task {
                 // in case the other process is killed we resume anyway
                 // so we're not stuck
-                try await Task.sleep(for: .seconds(5))
-                guard !resumed else { return }
-                resumed = true
-                WireLogger.sync.debug("timed out waiting for push channel to be closed", attributes: .syncAttributes)
-                continuation.resume()
+                do {
+                    try await Task.sleep(for: .seconds(5))
+                    guard !resumed else { return }
+                    resumed = true
+                    WireLogger.sync.debug("timed out waiting for push channel to be closed", attributes: .syncAttributes)
+                    continuation.resume()
+                } catch {
+                    // sleep is cancelled
+                    guard !resumed else { return }
+                    resumed = true
+                    continuation.resume()
+                }
             }
-            
+
             startMonitoring {
                 guard !resumed else { return }
                 resumed = true
