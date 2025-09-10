@@ -444,14 +444,19 @@ public final class SharingSession {
             keychain: Keychain()
         )
 
+        let isMLSEnabled = if DeveloperFlag.multibackend.isOn {
+            journal[.isBackendMLSEnabled]
+        } else {
+            BackendInfo.isMLSEnabled
+        }
+
         let userSessionComponent = UserSessionComponent(
             selfUserID: accountIdentifier,
             cookieStorage: cookieStorage,
             restNetworkService: networkServices.rest,
             websocketNetworkService: networkServices.webSocket,
             backendMetaData: metadata,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
