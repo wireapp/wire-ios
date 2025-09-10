@@ -20,11 +20,10 @@ import WireTransport
 
 public extension UserType {
 
-    var qualifiedID: QualifiedID? {
+    func qualifiedID(localDomain: String?) -> QualifiedID? {
         guard
             let uuid = remoteIdentifier,
-            // TODO: [WPB-19987] remove dependency on BackendInfo
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? localDomain
         else {
             return nil
         }
