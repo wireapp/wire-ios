@@ -29,6 +29,7 @@ final class MessageSendFailureView: UIView {
         didSet {
             titleLabel.isHidden = isHidden
             retryButton.isHidden = isHidden
+            bottomConstraint?.isActive = !isHidden
         }
     }
 
@@ -42,6 +43,7 @@ final class MessageSendFailureView: UIView {
     )
 
     private var isChatBubbleSimpleEnabled: Bool
+    private var bottomConstraint: NSLayoutConstraint?
 
     // MARK: - initialization
 
@@ -101,17 +103,18 @@ final class MessageSendFailureView: UIView {
             NSLayoutConstraint.activate([
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
                 stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+                stackView.topAnchor.constraint(equalTo: topAnchor)
             ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
         } else {
             NSLayoutConstraint.activate([
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
                 stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+                stackView.topAnchor.constraint(equalTo: topAnchor)
             ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         }
+        bottomConstraint?.isActive = true
     }
 
     // MARK: - Methods
