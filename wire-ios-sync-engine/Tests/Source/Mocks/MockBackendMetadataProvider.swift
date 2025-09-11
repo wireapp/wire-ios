@@ -17,3 +17,31 @@
 //
 
 import Foundation
+@testable import WireDomain
+@testable import WireNetwork
+@testable import WireSyncEngine
+
+extension BackendMetadataProvider {
+
+    static func mock(
+        apiVersion: WireNetwork.APIVersion = .v0,
+        domain: String = "wire.com",
+        isFederationEnabled: Bool = false,
+        isBackendMLSEnabled: Bool = false
+    ) -> BackendMetadataProvider {
+        var journal = Journal(
+            userID: UUID(),
+            storage: UserDefaults.temporary()
+        )
+        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        return BackendMetadataProvider(
+            journal: journal,
+            newBackendMetadata: ResolvedBackendMetadata(
+                apiVersion: apiVersion,
+                domain: domain,
+                isFederationEnabled: isFederationEnabled
+            )
+        )
+    }
+
+}

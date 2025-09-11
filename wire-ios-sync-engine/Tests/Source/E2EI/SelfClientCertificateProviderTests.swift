@@ -35,7 +35,8 @@ class SelfClientCertificateProviderTests: MessagingTest {
         mockGetE2eIdentityCertificatesUseCase = MockGetE2eIdentityCertificatesUseCaseProtocol()
         sut = SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: mockGetE2eIdentityCertificatesUseCase,
-            context: context
+            context: context,
+            localDomain: "wire.com"
         )
     }
 

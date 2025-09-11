@@ -58,7 +58,8 @@ final class EventProcessorTests: MessagingTest {
             earService: earService,
             lastEventIDRepository: lastEventIDRepository,
             strategyDirectory: mockStrategyDirectory,
-            additionalEventConsumers: []
+            additionalEventConsumers: [],
+            isFederationEnabled: false
         )
     }
 

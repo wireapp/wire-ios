@@ -172,6 +172,7 @@
 		342189D32DA7C278000FA6A1 /* UpdateEventMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */; };
 		342DDD882E66B41300A94CCF /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 342DDD872E66B41300A94CCF /* WireNetwork */; };
 		3450BB122E719141007DE8F3 /* BackendMetadataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3450BB112E719141007DE8F3 /* BackendMetadataProvider.swift */; };
+		3450BB142E72CDF8007DE8F3 /* MockBackendMetadataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3450BB132E72CDF8007DE8F3 /* MockBackendMetadataProvider.swift */; };
 		34B448382E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B448372E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift */; };
 		34BBF76A2E57220C00491987 /* NewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BBF7692E57220C00491987 /* NewEnvironment.swift */; };
 		34BD6E002DB26C4100DFA11A /* UpdateEventMigratorDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD6DFF2DB26C4100DFA11A /* UpdateEventMigratorDAO.swift */; };
@@ -758,6 +759,7 @@
 		3416A5972DC0E4A200827BCB /* IncrementalSyncObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncrementalSyncObserverTests.swift; sourceTree = "<group>"; };
 		342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventMigrator.swift; sourceTree = "<group>"; };
 		3450BB112E719141007DE8F3 /* BackendMetadataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendMetadataProvider.swift; sourceTree = "<group>"; };
+		3450BB132E72CDF8007DE8F3 /* MockBackendMetadataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBackendMetadataProvider.swift; sourceTree = "<group>"; };
 		34B448372E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_1_1.swift; sourceTree = "<group>"; };
 		34BBF7692E57220C00491987 /* NewEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEnvironment.swift; sourceTree = "<group>"; };
 		34BD6DFF2DB26C4100DFA11A /* UpdateEventMigratorDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventMigratorDAO.swift; sourceTree = "<group>"; };
@@ -1422,6 +1424,7 @@
 				015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */,
 				169BA24B25EF753100374343 /* MockReachability.swift */,
 				EECE27C5294362F100419A8B /* MockPushTokenService.swift */,
+				3450BB132E72CDF8007DE8F3 /* MockBackendMetadataProvider.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -2848,6 +2851,7 @@
 				16849B2023EDB32B00C025A8 /* MockSessionManager.swift in Sources */,
 				06E097A02A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift in Sources */,
 				8766853C1F2A1AA00031081B /* UnauthenticatedSessionTests.swift in Sources */,
+				3450BB142E72CDF8007DE8F3 /* MockBackendMetadataProvider.swift in Sources */,
 				16D0A119234B999600A83F87 /* LabelUpstreamRequestStrategyTests.swift in Sources */,
 				169BA23D25EF6E2A00374343 /* MockRegistrationStatusDelegate.swift in Sources */,
 				7CE017152317D07E00144905 /* ZMAuthenticationStatusTests.swift in Sources */,

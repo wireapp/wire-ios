@@ -54,7 +54,8 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         mockEntityStorage.importsDirectory = fileManager
             .temporaryDirectory
             .appending(path: UUID().uuidString)
-        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
+
+        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod = { _, _, _, _, _ in
             // This closure is called after session tear down and the persistent store is replaced.
             // It is called to create a temporary stack and restore the user client backup.
             XCTAssertNil(self.coreDataStack)

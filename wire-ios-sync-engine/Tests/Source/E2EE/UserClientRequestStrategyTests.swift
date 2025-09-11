@@ -96,7 +96,9 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
                 cookieProvider: self.cookieStorage,
-                coreCryptoProvider: self.coreCryptoProvider
+                coreCryptoProvider: self.coreCryptoProvider,
+                localDomain: "wire.com",
+                isBackendMLSEnabled: false
             )
             self.clientRegistrationStatus.registrationStatusDelegate = self.mockClientRegistrationStatusDelegate
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)

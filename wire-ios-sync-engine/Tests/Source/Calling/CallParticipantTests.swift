@@ -65,7 +65,8 @@ final class CallParticipantTests: MessagingTest {
 
         let avsIdentifier = AVSIdentifier(
             identifier: user.remoteIdentifier,
-            domain: user.domain
+            domain: user.domain,
+            isFederationEnabled: false
         )
 
         let member = AVSCallMember(member: AVSParticipantsChange.Member(
