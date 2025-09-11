@@ -73,8 +73,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: lastReadMessage,
-                in: context,
-                isFederationEnabled: self.isFederationEnabled
+                in: context
             )
         }
     }
@@ -90,8 +89,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             ZMConversation.updateConversation(
                 withClearedFromSelfConversation: clearedMessage,
-                in: context,
-                isFederationEnabled: self.isFederationEnabled
+                in: context
             )
         }
     }
@@ -224,8 +222,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ZMConversation.fetchOrCreate(
                 with: id,
                 domain: domain,
-                in: context,
-                isFederationEnabled: self.isFederationEnabled
+                in: context
             )
         }
     }
@@ -552,8 +549,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: conversationDomain,
-                in: context,
-                isFederationEnabled: self.isFederationEnabled
+                in: context
             )
 
             conversation.remoteIdentifier = conversationID

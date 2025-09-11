@@ -73,8 +73,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
         return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: connection.qualifiedConversationID?.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
     }
 

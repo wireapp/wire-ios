@@ -466,24 +466,24 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
     // MARK: - createContextProvider
 
-    public var createContextProviderAccountApplicationContainerDispatchGroup_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?)] = []
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockError: Error?
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockMethod: ((Account, URL, ZMSDispatchGroup?) async throws -> ContextProvider)?
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockValue: ContextProvider?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?, localDomain: String?, isFederationEnabled: Bool)] = []
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockError: Error?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod: ((Account, URL, ZMSDispatchGroup?, String?, Bool) async throws -> ContextProvider)?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockValue: ContextProvider?
 
-    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?) async throws -> ContextProvider {
-        createContextProviderAccountApplicationContainerDispatchGroup_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?, localDomain: String?, isFederationEnabled: Bool) async throws -> ContextProvider {
+        createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup, localDomain: localDomain, isFederationEnabled: isFederationEnabled))
 
-        if let error = createContextProviderAccountApplicationContainerDispatchGroup_MockError {
+        if let error = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockError {
             throw error
         }
 
-        if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockMethod {
-            return try await mock(account, applicationContainer, dispatchGroup)
-        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockValue {
+        if let mock = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod {
+            return try await mock(account, applicationContainer, dispatchGroup, localDomain, isFederationEnabled)
+        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroup`")
+            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled`")
         }
     }
 

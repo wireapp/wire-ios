@@ -252,6 +252,11 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 public class MockUserSession: UserSession {
 
     public var isBuildBlacklisted = false
+    public var resolvedBackendMetadata = BackendMetadataProvider(
+        journal: nil,
+        newBackendMetadata: nil
+    )
+    public var isBackendMLSEnabled: Bool = false
 
     // MARK: - Life cycle
 

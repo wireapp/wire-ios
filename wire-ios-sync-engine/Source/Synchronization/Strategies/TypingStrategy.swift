@@ -290,8 +290,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: event.conversationDomain,
-            in: managedObjectContext,
-            isFederationEnabled: isFederationEnabled
+            in: managedObjectContext
         )
 
         if event.type == .conversationTyping {
