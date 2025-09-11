@@ -71,7 +71,7 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    public func migrateToScopedDatabaseKey() throws {
+    public func migrateToScopedDatabaseKey(inactiveAccounts: Set<Account>) throws {
         let scopedKeyExists = (try? fetchScopedCoreCryptoKey()) != nil
 
         guard !scopedKeyExists else { return }
@@ -83,7 +83,10 @@ public class CoreCryptoKeyProvider {
             let unscopedKey = try fetchUnscopedCoreCryptoKey()
             let item = ScopedCoreCryptoKeychainItem(userID: userID)
             try KeychainManager.storeItem(item, value: unscopedKey)
-            // We don't delete the unscoped key because it may be needed by another account to migrate.
+
+            if allInactiveAccountsMigrated(inactiveAccounts: inactiveAccounts) {
+                try KeychainManager.deleteItem(UnscopedCoreCryptoKeychainItem())
+            }
         } catch {
             WireLogger.coreCrypto.warn(
                 "Failed to migrate to scoped core crypto key: \(String(describing: error))",
@@ -91,6 +94,16 @@ public class CoreCryptoKeyProvider {
             )
             throw error
         }
+    }
+
+    private func allInactiveAccountsMigrated(inactiveAccounts: Set<Account>) -> Bool {
+        let nonMigratedAccounts = inactiveAccounts.filter { account in
+            let item = ScopedCoreCryptoKeychainItem(userID: account.userIdentifier)
+            let key = try? KeychainManager.fetchItem(item) as Data
+            return key == nil
+        }
+
+        return nonMigratedAccounts.isEmpty
     }
 
     private func migrateKeyIfNeeded(path: String) async throws {

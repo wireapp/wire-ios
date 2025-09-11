@@ -24,10 +24,19 @@ import WireDomain
 struct AppVersionMigration_4_5_0: AppVersionMigration {
 
     var version: SemanticVersion = "4.5.0"
+    let sharedContainerURL: URL
+    let currentAppVersion: String
     let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {
-        try await coreCryptoProvider.migrateToScopedDatabaseKey()
+        let accountURLs = AccountURLs(root: sharedContainerURL)
+        let accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            directory: accountURLs.accounts
+        )
+        try await coreCryptoProvider.migrateToScopedDatabaseKey(
+            inactiveAccounts: accountManager.inactiveAccounts
+        )
     }
 
 }

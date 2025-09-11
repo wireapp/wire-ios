@@ -58,7 +58,7 @@ public protocol CoreCryptoProviderProtocol {
     func updateDatabaseKey() async throws
 
     /// Migrate the CC database key from an unscoped storage to a storage scoped by account
-    func migrateToScopedDatabaseKey() async throws
+    func migrateToScopedDatabaseKey(inactiveAccounts: Set<Account>) async throws
 
 }
 
@@ -166,12 +166,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         reset()
     }
 
-    public func migrateToScopedDatabaseKey() async throws {
+    public func migrateToScopedDatabaseKey(inactiveAccounts: Set<Account>) async throws {
         let coreCryptoKeyProvider = CoreCryptoKeyProvider(
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             userID: selfUserID
         )
-        try coreCryptoKeyProvider.migrateToScopedDatabaseKey()
+        try coreCryptoKeyProvider.migrateToScopedDatabaseKey(inactiveAccounts: inactiveAccounts)
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
