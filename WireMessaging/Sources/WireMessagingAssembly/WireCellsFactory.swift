@@ -33,9 +33,13 @@ public struct WireCellsFactory {
     public init(serverURL: URL, accessToken: any AccessTokenProvider) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
-        case "nginz-https.fulu.wire.link":
+        case "prod-nginz-https.wire.com": // Production
+            URL(string: "https://cells-beta.wire.com")!
+        case "staging-nginz-https.zinfra.io": // Staging
+            URL(string: "https://cells.staging.zinfra.io")!
+        case "nginz-https.fulu.wire.link": // Fulu
             URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link":
+        case "nginz-https.imai.wire.link": // Imai
             URL(string: "https://cells.imai.wire.link")!
         default:
             serverURL
@@ -56,7 +60,8 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository()
         )
     }
 
@@ -86,7 +91,8 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository()
         )
     }
 
