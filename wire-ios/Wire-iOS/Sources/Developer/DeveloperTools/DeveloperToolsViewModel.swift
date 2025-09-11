@@ -164,6 +164,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                 Section(
                     header: "Self user",
                     items: [
+                        .destination(DestinationItem(title: "Journal", makeView: {
+                            AnyView(JournalView(viewModel: JournalViewModel(userId: selfUser.remoteIdentifier!)))
+                        })),
                         .text(TextItem(
                             title: "Handle",
                             value: selfUser.handleDisplayString(withDomain: true) ?? "None"

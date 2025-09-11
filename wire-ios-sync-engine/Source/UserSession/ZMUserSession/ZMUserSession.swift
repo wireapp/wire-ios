@@ -679,6 +679,7 @@ public final class ZMUserSession: NSObject {
         } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow,
             ConsumableNotificationsMigrator.Failure.featureConfigNotEnabled {
             // ignore error
+            WireLogger.session.info("skipping migration to consumable-notifications")
         } catch {
             WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
         }
