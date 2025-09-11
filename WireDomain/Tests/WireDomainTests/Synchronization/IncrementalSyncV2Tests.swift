@@ -73,7 +73,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
-            pushChannelState: pushChannelState,
+            createPushChannelState: {
+                self.pushChannelState
+            },
             syncMarkerGenerator: { Scaffolding.markerID }
         )
         sut.delegate = liveDelegate

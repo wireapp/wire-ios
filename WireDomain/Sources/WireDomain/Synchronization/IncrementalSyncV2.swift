@@ -23,6 +23,8 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
+public typealias CreatePushChannelStateClosure = () -> PushChannelStateProtocol
+
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
@@ -45,7 +47,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
-    private let pushChannelState: PushChannelStateProtocol
+    private let createPushChannelState: CreatePushChannelStateClosure
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -61,7 +63,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
-        pushChannelState: PushChannelStateProtocol,
+        createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
@@ -76,7 +78,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.syncMarkerGenerator = syncMarkerGenerator
-        self.pushChannelState = pushChannelState
+        self.createPushChannelState = createPushChannelState
     }
 
     public func perform() async throws -> IncrementalSync.Token {
@@ -84,7 +86,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         try Task.checkCancellation()
 
         try await pullServerTimeSync.pull()
-
+        
+        // makes sure that the file descriptor within pushChannelState is released when in background
+        // so we're not killed by OS
+        let pushChannelState = createPushChannelState()
         do {
             try await pushChannelState.markAsOpen()
         } catch {
