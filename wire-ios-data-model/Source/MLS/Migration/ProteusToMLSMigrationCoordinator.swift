@@ -65,7 +65,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
-    private let apiVersion: WireTransport.APIVersion?
+    var apiVersion: WireTransport.APIVersion?
 
     private let logger = WireLogger.mls
 

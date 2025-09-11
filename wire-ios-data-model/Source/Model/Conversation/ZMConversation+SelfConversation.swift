@@ -142,8 +142,7 @@ public extension ZMConversation {
 
     static func updateConversation(
         withLastReadFromSelfConversation lastRead: LastRead,
-        in context: NSManagedObjectContext,
-        isFederationEnabled: Bool
+        in context: NSManagedObjectContext
     ) {
         guard let conversationID = UUID(uuidString: lastRead.conversationID) else {
             return
@@ -152,8 +151,7 @@ public extension ZMConversation {
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: lastRead.qualifiedConversationID.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
 
         conversation.updateLastRead(
@@ -165,7 +163,6 @@ public extension ZMConversation {
     static func updateConversation(
         withClearedFromSelfConversation cleared: Cleared,
         in context: NSManagedObjectContext,
-        isFederationEnabled: Bool
     ) {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return
@@ -174,8 +171,7 @@ public extension ZMConversation {
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: cleared.qualifiedConversationID.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
 
         conversation.updateCleared(

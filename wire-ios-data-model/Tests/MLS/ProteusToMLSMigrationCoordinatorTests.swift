@@ -45,7 +45,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             context: syncMOC,
             storage: mockStorage,
             featureRepository: mockLegacyFeatureRepository,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            apiVersion: .v5
         )
 
         syncMOC.performAndWait {
@@ -478,7 +479,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         startTime: Date?
     ) {
         // Set APIVersion
-        BackendInfo.apiVersion = isAPIV5Supported ? .v5 : .v0
+        sut.apiVersion = isAPIV5Supported ? .v5 : .v0
 
         // Set backend support for MLS
         if isBackendSupportingMLS {

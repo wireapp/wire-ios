@@ -26,8 +26,7 @@ extension ZMOTRMessage {
     static func createOrUpdate(
         fromUpdateEvent updateEvent: ZMUpdateEvent,
         inManagedObjectContext moc: NSManagedObjectContext,
-        prefetchResult: ZMFetchRequestBatchResult,
-        isFederationEnabled: Bool
+        prefetchResult: ZMFetchRequestBatchResult
     ) -> ZMOTRMessage? {
 
         let selfUser = ZMUser.selfUser(in: moc)
@@ -90,15 +89,13 @@ extension ZMOTRMessage {
         case .lastRead where conversation.isSelfConversation:
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: message.lastRead,
-                in: moc,
-                isFederationEnabled: isFederationEnabled
+                in: moc
             )
 
         case .cleared where conversation.isSelfConversation:
             ZMConversation.updateConversation(
                 withClearedFromSelfConversation: message.cleared,
-                in: moc,
-                isFederationEnabled: isFederationEnabled
+                in: moc
             )
 
         case .hidden where conversation.isSelfConversation:
