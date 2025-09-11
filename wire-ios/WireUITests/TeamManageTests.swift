@@ -212,7 +212,7 @@ final class TeamManageTests: WireUITestCase {
             .openOptionsMenu()
             .enableLockWithPasscode()
             .SetPasscode(passcode)
-            .backgroundAndResume(app: app, forDelay: 60)
+            .backgroundAndResume(app: app, forDelay: 2)
 
         XCTAssertFalse(
             page.conversationsPageLabel.exists,
