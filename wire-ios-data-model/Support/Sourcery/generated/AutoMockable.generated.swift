@@ -1992,6 +1992,26 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         try await mock()
     }
 
+    // MARK: - migrateToScopedDatabaseKey
+
+    public var migrateToScopedDatabaseKey_Invocations: [Void] = []
+    public var migrateToScopedDatabaseKey_MockError: Error?
+    public var migrateToScopedDatabaseKey_MockMethod: (() async throws -> Void)?
+
+    public func migrateToScopedDatabaseKey() async throws {
+        migrateToScopedDatabaseKey_Invocations.append(())
+
+        if let error = migrateToScopedDatabaseKey_MockError {
+            throw error
+        }
+
+        guard let mock = migrateToScopedDatabaseKey_MockMethod else {
+            fatalError("no mock for `migrateToScopedDatabaseKey`")
+        }
+
+        try await mock()
+    }
+
 }
 
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
