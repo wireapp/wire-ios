@@ -50,7 +50,8 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isSimpleChatBubbleEnabled: SessionManager.shared?.activeUserSession?.isChatBubbleSimpleEnabled ?? false
         )
     }
 
