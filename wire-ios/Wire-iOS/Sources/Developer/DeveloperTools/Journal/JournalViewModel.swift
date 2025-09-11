@@ -17,6 +17,7 @@
 //
 import SwiftUI
 import WireDomain
+import WireSyncEngine
 
 final class JournalViewModel: ObservableObject {
     var sections: [DeveloperToolsViewModel.Section]
@@ -36,15 +37,28 @@ final class JournalViewModel: ObservableObject {
                  JournalKey.isSyncV2Enabled].map {
                      DeveloperToolsViewModel.Item.text(.init(title: $0.name, value: journal[$0] == true ? "Yes" : "No"))
                  }
-            ),
-            .init(header: "Broken MLS groups (\(journal[.brokenMLSGroupIDs].count))", items:
-                journal[.brokenMLSGroupIDs].map({ groupID in
-                    DeveloperToolsViewModel.Item.text(.init(title: groupID, value: "name"))
-                })
-            )
+            )//,
+//            .init(header: "Broken MLS groups (\(journal[.brokenMLSGroupIDs].count))", items:
+//                groupNames(groupIDs: journal[.brokenMLSGroupIDs]).map({ groupID in
+//                    DeveloperToolsViewModel.Item.text(.init(title: groupID, value: "name"))
+//                })
+//            )
         ]
+        
+    
     }
 
+//    func groupNames(groupIDs: Set<String>) -> [(name: String, groupID: String)] {
+//        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+//            return []
+//        }
+//        
+//        for groupID in groupIDs {
+//            ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: <#T##MLSGroupStatus#>, in: <#T##NSManagedObjectContext#>)
+//        }
+//        
+//        
+//    }
     // MARK: - Events
 
     func handleEvent(_ event: DeveloperToolsViewModel.Event) {
