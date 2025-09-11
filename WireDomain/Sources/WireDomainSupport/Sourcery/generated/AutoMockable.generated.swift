@@ -56,6 +56,32 @@ import Combine
 
 
 
+class MockAppExtensionPushChannelCoordinatorProtocol: AppExtensionPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - listenForYieldRequests
+
+    var listenForYieldRequests_Invocations: [Void] = []
+    var listenForYieldRequests_MockMethod: (() async -> YieldRequest)?
+    var listenForYieldRequests_MockValue: YieldRequest?
+
+    func listenForYieldRequests() async -> YieldRequest {
+        listenForYieldRequests_Invocations.append(())
+
+        if let mock = listenForYieldRequests_MockMethod {
+            return await mock()
+        } else if let mock = listenForYieldRequests_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `listenForYieldRequests`")
+        }
+    }
+
+}
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -2417,6 +2443,30 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
 }
 
+public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - signalToExtensionsToYieldPushChannel
+
+    public var signalToExtensionsToYieldPushChannel_Invocations: [Void] = []
+    public var signalToExtensionsToYieldPushChannel_MockMethod: (() async -> Void)?
+
+    public func signalToExtensionsToYieldPushChannel() async {
+        signalToExtensionsToYieldPushChannel_Invocations.append(())
+
+        guard let mock = signalToExtensionsToYieldPushChannel_MockMethod else {
+            fatalError("no mock for `signalToExtensionsToYieldPushChannel`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -3424,52 +3474,39 @@ public class MockPushChannelStateProtocol: PushChannelStateProtocol {
     public init() {}
 
 
-    // MARK: - isOpen
-
-    public var isOpen_Invocations: [Void] = []
-    public var isOpen_MockMethod: (() -> Bool)?
-    public var isOpen_MockValue: Bool?
-
-    public func isOpen() -> Bool {
-        isOpen_Invocations.append(())
-
-        if let mock = isOpen_MockMethod {
-            return mock()
-        } else if let mock = isOpen_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isOpen`")
-        }
-    }
-
     // MARK: - markAsOpen
 
     public var markAsOpen_Invocations: [Void] = []
-    public var markAsOpen_MockMethod: (() -> Void)?
+    public var markAsOpen_MockError: Error?
+    public var markAsOpen_MockMethod: (() async throws -> Void)?
 
-    public func markAsOpen() {
+    public func markAsOpen() async throws {
         markAsOpen_Invocations.append(())
+
+        if let error = markAsOpen_MockError {
+            throw error
+        }
 
         guard let mock = markAsOpen_MockMethod else {
             fatalError("no mock for `markAsOpen`")
         }
 
-        mock()
+        try await mock()
     }
 
     // MARK: - markAsClosed
 
     public var markAsClosed_Invocations: [Void] = []
-    public var markAsClosed_MockMethod: (() -> Void)?
+    public var markAsClosed_MockMethod: (() async -> Void)?
 
-    public func markAsClosed() {
+    public func markAsClosed() async {
         markAsClosed_Invocations.append(())
 
         guard let mock = markAsClosed_MockMethod else {
             fatalError("no mock for `markAsClosed`")
         }
 
-        mock()
+        await mock()
     }
 
 }

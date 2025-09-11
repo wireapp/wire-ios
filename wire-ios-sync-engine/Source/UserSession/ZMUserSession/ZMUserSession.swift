@@ -631,7 +631,8 @@ public final class ZMUserSession: NSObject {
             incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
-            syncStateSubject: clientSessionComponent.syncStateSubject
+            syncStateSubject: clientSessionComponent.syncStateSubject,
+            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent

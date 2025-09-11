@@ -75,6 +75,9 @@ let package = Package(
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
+            ],
+            resources: [
+                .process("Resources/TestFiles/")
             ]
         ),
     ]

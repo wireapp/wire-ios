@@ -17,6 +17,7 @@
 //
 
 package import Foundation
+import UniformTypeIdentifiers
 import WireLogging
 
 enum UploadDraftUseCaseError: Error {
@@ -33,17 +34,20 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     private let draftRepository: any DraftsRepositoryProtocol
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
+    private let metadataRepository: any WireCellsDraftMetadataRepositoryProtocol
 
     package init(
         cellName: String,
         draftRepository: any DraftsRepositoryProtocol,
         uploadManager: any WireCellsNodeUploadManagerProtocol,
-        nodesAPI: any NodesAPIProtocol
+        nodesAPI: any NodesAPIProtocol,
+        metadataRepository: any WireCellsDraftMetadataRepositoryProtocol
     ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
+        self.metadataRepository = metadataRepository
     }
 
     package func invoke(fileURL: URL) async throws {
@@ -61,7 +65,8 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
             name: fileURL.lastPathComponent,
             bytes: fileSize,
             mimeType: nil,
-            deleteAfterUpload: false
+            deleteAfterUpload: false,
+            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType)
         )
 
         await draftRepository.addDraft(draft, for: cellName)
@@ -116,6 +121,22 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     package func invoke(imageData: Data) async throws {
         // TODO: [WPB-17767] Implement
         WireLogger.wireCells.info("Uploading file from image data")
+    }
+
+    // MARK: - Private Methods
+
+    private func metadata(for fileURL: URL, fileType: UTType?) async throws -> WireCellsDraft.Metadata? {
+        guard let fileType else { return nil }
+
+        if fileType.conforms(to: .image) {
+            return try await metadataRepository.imageMetadata(fileURL: fileURL)
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            return try await metadataRepository.audioMetadata(fileURL: fileURL)
+        } else if fileType.conforms(to: .audiovisualContent) {
+            return try await metadataRepository.videoMetadata(fileURL: fileURL)
+        } else {
+            return nil
+        }
     }
 
 }

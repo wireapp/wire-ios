@@ -38,6 +38,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var backgroundActivity: BackgroundActivityFactory!
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
+    var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -56,6 +57,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.backgroundTaskTimeout = 2
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
+        mainAppPushChannelCoordinator = MockMainAppPushChannelCoordinatorProtocol()
 
         sut = SyncAgent(
             journal: journal,
@@ -65,7 +67,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             incrementalSyncProvider: self,
             legacySyncStatus: legacySyncStatus,
             featureConfigRepository: featureConfigRepository,
-            syncStateSubject: syncStateSubject
+            syncStateSubject: syncStateSubject,
+            pushChannelCoordinator: mainAppPushChannelCoordinator
         )
     }
 
@@ -82,6 +85,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivityManager = nil
         backgroundActivity = nil
         featureConfigRepository = nil
+        mainAppPushChannelCoordinator = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {

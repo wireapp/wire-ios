@@ -150,7 +150,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         in context: CoreCryptoContextProtocol
     ) async -> [UpdateEvent] {
         logger.debug(
-            "decrypting live event envelope  v3",
+            "decrypting live event envelope v3",
             attributes: [.eventEnvelopeID: envelope.id]
         )
         let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
