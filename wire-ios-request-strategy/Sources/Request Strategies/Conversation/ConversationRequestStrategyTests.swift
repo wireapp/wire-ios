@@ -214,7 +214,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
         fetchConversationListDuringSlowSync(apiVersion: apiVersion)
 
@@ -239,7 +239,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
         fetchConversationListDuringSlowSync(apiVersion: apiVersion)
 
@@ -255,7 +255,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenThereIsNoConversationsToFetch() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
 
         // when
@@ -270,7 +270,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConversationsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
 
         // when
@@ -285,7 +285,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatConversationMembershipStatusIsQueried_WhenNotFoundDuringSlowSyncPhase() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
         fetchConversationListDuringSlowSync(apiVersion: apiVersion)
 
@@ -301,7 +301,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
         // given
         let apiVersion = APIVersion.v4
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         startSlowSync()
         fetchConversationListDuringSlowSync(apiVersion: apiVersion)
 
@@ -317,7 +317,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         let conversationID = QualifiedID(uuid: UUID(), domain: owningDomain)
         startSlowSync()
         fetchConversationListDuringSlowSync(apiVersion: apiVersion)
@@ -341,7 +341,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
@@ -358,7 +358,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatLocalConversationRemovalUseCaseIsExecuted_WhenResponseIs_404() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
         // when
@@ -374,7 +374,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
@@ -446,7 +446,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                 return XCTFail("List payload is invalid")
             }
 
-            request.complete(with: self.successfulResponse(request: listPayload, conversations: [], apiVersion: apiVersion))
+            request.complete(with: self.successfulResponse(
+                request: listPayload,
+                conversations: [],
+                apiVersion: apiVersion
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -473,7 +477,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                 return XCTFail("Payload is invalid")
             }
 
-            request.complete(with: self.successfulResponse(request: payload, notFound: notFound, failed: failed, apiVersion: apiVersion))
+            request.complete(with: self.successfulResponse(
+                request: payload,
+                notFound: notFound,
+                failed: failed,
+                apiVersion: apiVersion
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

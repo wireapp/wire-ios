@@ -26,10 +26,6 @@ class AVSIdentifierTests: XCTestCase {
     let uuid = UUID()
     let domain = "wire.com"
 
-    override func setUp() {
-        super.setUp()
-    }
-
     func testProperties_WhenCreatedFromSerializedString_WithUUIDAndDomain() {
         // Given
         let serializedString = "\(uuid.transportString())@\(domain)"

@@ -165,7 +165,11 @@ class VoiceChannelV3Tests: MessagingTest {
         caller.domain = "wire.com"
 
         wireCallCenterMock?.setMockCallInitiator(
-            callerId: AVSIdentifier(identifier: caller.remoteIdentifier, domain: caller.domain, isFederationEnabled: false),
+            callerId: AVSIdentifier(
+                identifier: caller.remoteIdentifier,
+                domain: caller.domain,
+                isFederationEnabled: false
+            ),
             conversationId: conversation!.avsIdentifier!
         )
 

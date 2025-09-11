@@ -122,7 +122,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchConnectedUsersIsGenerated_WhenSlowSyncIsRestarted() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion)
+        sut = createSUT(apiVersion: apiVersion)
 
         syncMOC.performGroupedAndWait {
             self.mockSyncProgress.currentSyncPhase = .fetchingUsers

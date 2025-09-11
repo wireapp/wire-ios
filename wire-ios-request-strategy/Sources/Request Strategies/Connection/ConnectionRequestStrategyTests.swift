@@ -164,7 +164,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
 
         startSlowSync()
 
@@ -178,7 +178,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenThereIsNoConnectionsToFetch() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
 
         startSlowSync()
 
@@ -192,7 +192,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatFetchingConnectionsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
 
         startSlowSync()
 
@@ -208,7 +208,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_Federated() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
 
         // when
         fetchConnection(
@@ -225,7 +225,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_NonFederated() {
         // when
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: false)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: false)
 
         fetchConnection(
             oneToOneConnection,
@@ -241,7 +241,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_Federated() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
 
         var payload: Payload.Connection!
         syncMOC.performGroupedAndWait {
@@ -260,7 +260,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_NonFederated() {
         // given
         let apiVersion = APIVersion.v1
-        self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: false)
+        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: false)
 
         var payload: Payload.Connection!
         syncMOC.performGroupedAndWait {
@@ -297,7 +297,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testOneOnOneResolverInvocationTiming() throws {
         // GIVEN
-        self.sut = createSUT(apiVersion: .v0, isFederationEnabled: false)
+        sut = createSUT(apiVersion: .v0, isFederationEnabled: false)
         let expectation1 =
             XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
         let expectation2 =
@@ -378,7 +378,11 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
                 return XCTFail("Invalid Payload")
             }
 
-            request.complete(with: self.successfulResponse(request: payload, connections: connections, apiVersion: apiVersion))
+            request.complete(with: self.successfulResponse(
+                request: payload,
+                connections: connections,
+                apiVersion: apiVersion
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

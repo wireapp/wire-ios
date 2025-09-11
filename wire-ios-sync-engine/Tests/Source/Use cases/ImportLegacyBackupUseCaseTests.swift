@@ -55,21 +55,23 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
             .temporaryDirectory
             .appending(path: UUID().uuidString)
 
-        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod = { _, _, _, _, _ in
-            // This closure is called after session tear down and the persistent store is replaced.
-            // It is called to create a temporary stack and restore the user client backup.
-            XCTAssertNil(self.coreDataStack)
-            let stack = try await CoreDataStackHelper()
-                .createStack(inMemoryStore: true)
-            try await stack.viewContext.perform {
-                let user = ZMUser.selfUser(in: stack.viewContext)
-                user.remoteIdentifier = selfUserQualifiedID.uuid
-                user.domain = selfUserQualifiedID.domain
-                try stack.viewContext.save()
+        mockEntityStorage
+            .createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod =
+            { _, _, _, _, _ in
+                // This closure is called after session tear down and the persistent store is replaced.
+                // It is called to create a temporary stack and restore the user client backup.
+                XCTAssertNil(self.coreDataStack)
+                let stack = try await CoreDataStackHelper()
+                    .createStack(inMemoryStore: true)
+                try await stack.viewContext.perform {
+                    let user = ZMUser.selfUser(in: stack.viewContext)
+                    user.remoteIdentifier = selfUserQualifiedID.uuid
+                    user.domain = selfUserQualifiedID.domain
+                    try stack.viewContext.save()
+                }
+                self.coreDataStack = stack
+                return stack
             }
-            self.coreDataStack = stack
-            return stack
-        }
         mockEntityStorage
             .replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod = { _, _, _ in
                 URL(filePath: "/accountDataFolder/")

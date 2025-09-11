@@ -100,7 +100,12 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         clientID = "foo"
         flowManager = FlowManagerMock()
-        mockAVSWrapper = MockAVSWrapper(userId: selfUserID, clientId: clientID, observer: nil, isFederationEnabled: false)
+        mockAVSWrapper = MockAVSWrapper(
+            userId: selfUserID,
+            clientId: clientID,
+            observer: nil,
+            isFederationEnabled: false
+        )
         mockTransport = WireCallCenterTransportMock()
         sut = WireCallCenterV3(
             userId: selfUserID,

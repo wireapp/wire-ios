@@ -23,9 +23,7 @@ import WireUtilities
 import XCTest
 @testable import WireRequestStrategy
 
-class ClientMessageRequestFactoryTests: MessagingTestBase {
-
-}
+class ClientMessageRequestFactoryTests: MessagingTestBase {}
 
 // MARK: - Client discovery
 

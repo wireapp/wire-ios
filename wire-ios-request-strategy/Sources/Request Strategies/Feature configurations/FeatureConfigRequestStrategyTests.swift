@@ -60,7 +60,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_AppLock() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -105,7 +107,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_FileSharing() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -139,7 +143,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_SelfDeletingMessages() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -183,7 +189,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_ConferenceCalling() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -217,7 +225,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_ConversationGuestLinks() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -251,7 +261,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_DigitalSignature() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -285,7 +297,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_ClassifiedDomains() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         syncMOC.performGroupedAndWait {
             // Given
@@ -325,7 +339,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_MLS() throws {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         // Given
         try syncMOC.performAndWait {
@@ -367,7 +383,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_MLS_defaultProtocolIsMLS() throws {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         // Given
         try syncMOC.performAndWait {
@@ -409,7 +427,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_MLSMigration() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         // Given
         let startTime = "2023-10-27T12:43:48.000Z"
@@ -456,7 +476,9 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     func test_ItProcessesEvent_Channels() {
         // Mock
-        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod = { _, _, _, _ in }
+        mockMLSClientManager
+            .initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod =
+            { _, _, _, _ in }
 
         // Given
         syncMOC.performAndWait {
