@@ -156,13 +156,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             userID: selfUserID
         )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
-        let configuration = try await provider.createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
+        let path = try provider.coreCryptoDirectoryPath(
             userID: selfUserID,
-            createKeyIfNeeded: allowCreation
+            sharedContainerURL: sharedContainerURL
         )
 
-        try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
+        try await coreCryptoKeyProvider.updateDatabaseKey(path: path)
         reset()
     }
 
