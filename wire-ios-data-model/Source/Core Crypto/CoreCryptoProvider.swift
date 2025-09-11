@@ -243,7 +243,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager, userID: selfUserID)
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            userID: selfUserID
+        )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
         let configuration = try await provider.createInitialConfiguration(

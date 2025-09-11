@@ -58,10 +58,14 @@ public class CoreCryptoKeyProvider {
                 let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
                 try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
 
-                // In case another account needs to update it, we don't delete the old key because it's not scoped by account.
+                // In case another account needs to update it, we don't delete the old key because it's not scoped by
+                // account.
                 try KeychainManager.storeItem(item, value: newKey)
             } catch {
-                WireLogger.coreCrypto.warn("Failed to update core crypto key: \(String(describing: error))", attributes: .safePublic)
+                WireLogger.coreCrypto.warn(
+                    "Failed to update core crypto key: \(String(describing: error))",
+                    attributes: .safePublic
+                )
                 throw error
             }
         }
@@ -81,7 +85,10 @@ public class CoreCryptoKeyProvider {
             try KeychainManager.storeItem(item, value: unscopedKey)
             // We don't delete the unscoped key because it may be needed by another account to migrate.
         } catch {
-            WireLogger.coreCrypto.warn("Failed to migrate to scoped core crypto key: \(String(describing: error))", attributes: .safePublic)
+            WireLogger.coreCrypto.warn(
+                "Failed to migrate to scoped core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
             throw error
         }
     }
@@ -98,7 +105,10 @@ public class CoreCryptoKeyProvider {
                     newKey: oldKey
                 )
             } catch {
-                WireLogger.coreCrypto.warn("Failed to migrate core crypto key: \(String(describing: error))", attributes: .safePublic)
+                WireLogger.coreCrypto.warn(
+                    "Failed to migrate core crypto key: \(String(describing: error))",
+                    attributes: .safePublic
+                )
                 throw error
             }
         } else {
@@ -132,7 +142,7 @@ struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
     var userID: UUID
 
     var id: String {
-        "com.wire.mls.key.\(userID.uuidString)"
+        "com.wire.cc.key.\(userID.uuidString)"
     }
 
     var tag: Data {
