@@ -16,25 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomain
-import WireNetwork
 import WireTransport
 
 public class BackendMetadataProvider {
 
-    let journal: Journal?
-    let newBackendMetadata: WireNetwork.ResolvedBackendMetadata?
+    private let apiVersionOverride: WireTransport.APIVersion?
+    private let domainOverride: String?
+    private let isFederationEnabledOverride: Bool?
+    private let isBackendMLSEnabledOverride: Bool?
 
-    init(
-        journal: Journal?,
-        newBackendMetadata: WireNetwork.ResolvedBackendMetadata?
+    public init(
+        apiVersionOverride: WireTransport.APIVersion?,
+        domainOverride: String?,
+        isFederationEnabledOverride: Bool?,
+        isBackendMLSEnabledOverride: Bool?
     ) {
-        self.journal = journal
-        self.newBackendMetadata = newBackendMetadata
+        self.apiVersionOverride = apiVersionOverride
+        self.domainOverride = domainOverride
+        self.isFederationEnabledOverride = isFederationEnabledOverride
+        self.isBackendMLSEnabledOverride = isBackendMLSEnabledOverride
     }
 
     public var apiVersion: WireTransport.APIVersion? {
-        if let apiVersion = newBackendMetadata?.apiVersion {
+        if let apiVersion = apiVersionOverride {
             .init(rawValue: Int32(apiVersion.rawValue))
         } else {
             BackendInfo.apiVersion
@@ -42,7 +46,7 @@ public class BackendMetadataProvider {
     }
 
     public var domain: String? {
-        if let domain = newBackendMetadata?.domain {
+        if let domain = domainOverride {
             domain
         } else {
             BackendInfo.domain
@@ -50,7 +54,7 @@ public class BackendMetadataProvider {
     }
 
     public var isFederationEnabled: Bool {
-        if let isFederationEnabled = newBackendMetadata?.isFederationEnabled {
+        if let isFederationEnabled = isFederationEnabledOverride {
             isFederationEnabled
         } else {
             BackendInfo.isFederationEnabled
@@ -58,7 +62,7 @@ public class BackendMetadataProvider {
     }
 
     public var isMLSEnabled: Bool {
-        if let isBackendMLSEnabled = journal?[.isBackendMLSEnabled] {
+        if let isBackendMLSEnabled = isBackendMLSEnabledOverride {
             isBackendMLSEnabled
         } else {
             BackendInfo.isMLSEnabled

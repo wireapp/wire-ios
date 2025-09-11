@@ -68,7 +68,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
         let identifier = AVSIdentifier(
             identifier: MockUser.mockSelf().remoteIdentifier,
-            domain: nil
+            domain: nil,
+            isFederationEnabled: false
         )
 
         selfAVSClient = AVSClient(
@@ -99,7 +100,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut = CallGridViewController(
             voiceChannel: mockVoiceChannel,
             configuration: configuration,
-            mediaManager: mediaManager
+            mediaManager: mediaManager,
+            isFederationEnabled: false
         )
 
         sut.isCovered = false

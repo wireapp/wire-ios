@@ -253,8 +253,10 @@ public class MockUserSession: UserSession {
 
     public var isBuildBlacklisted = false
     public var resolvedBackendMetadata = BackendMetadataProvider(
-        journal: nil,
-        newBackendMetadata: nil
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
     )
     public var isBackendMLSEnabled: Bool = false
 

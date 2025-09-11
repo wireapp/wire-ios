@@ -31,6 +31,15 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var resolvedBackendMetadata = BackendMetadataProvider(
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
+    )
+
+    var isBackendMLSEnabled = false
+
     var isBuildBlacklisted = false
 
     var isTornDown = false

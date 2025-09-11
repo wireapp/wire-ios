@@ -101,7 +101,13 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
         ConversationGuestOptionsViewModel(
             configuration: config,
             conversation: mockConversation.convertToRegularConversation(),
-            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase
+            createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase,
+            metadata: BackendMetadataProvider(
+                apiVersionOverride: .v0,
+                domainOverride: "wire.com",
+                isFederationEnabledOverride: false,
+                isBackendMLSEnabledOverride: false
+            )
         )
     }
 

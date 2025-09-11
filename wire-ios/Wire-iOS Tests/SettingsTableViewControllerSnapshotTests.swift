@@ -66,7 +66,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         MockUserRight.isPermitted = true
@@ -179,7 +181,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
@@ -194,7 +198,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         settingsCellDescriptorFactory = .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
