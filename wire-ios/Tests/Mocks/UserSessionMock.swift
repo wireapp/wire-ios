@@ -31,12 +31,18 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
-    var resolvedBackendMetadata = BackendMetadataProvider(
-        apiVersionOverride: .v0,
-        domainOverride: "wire.com",
-        isFederationEnabledOverride: false,
-        isBackendMLSEnabledOverride: false
-    )
+    var apiVersion: APIVersion = .v0
+    var localDomain = "wire.com"
+    var isFederationEnabled = false
+
+    var resolvedBackendMetadata: BackendMetadataProvider {
+        BackendMetadataProvider(
+            apiVersionOverride: apiVersion,
+            domainOverride: localDomain,
+            isFederationEnabledOverride: isFederationEnabled,
+            isBackendMLSEnabledOverride: isBackendMLSEnabled
+        )
+    }
 
     var isBackendMLSEnabled = false
 

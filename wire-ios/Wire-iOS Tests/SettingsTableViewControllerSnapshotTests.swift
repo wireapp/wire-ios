@@ -111,7 +111,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) throws {
-        BackendInfo.isFederationEnabled = federated
+        userSession.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
         let group = settingsCellDescriptorFactory.accountGroup(

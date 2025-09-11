@@ -97,13 +97,16 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     // MARK: - Helper methods
 
-    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
+    private func makeViewModel(
+        config: MockOptionsViewModelConfiguration,
+        apiVersion: APIVersion = .v0
+    ) -> ConversationGuestOptionsViewModel {
         ConversationGuestOptionsViewModel(
             configuration: config,
             conversation: mockConversation.convertToRegularConversation(),
             createSecureGuestLinkUseCase: mockCreateSecuredGuestLinkUseCase,
             metadata: BackendMetadataProvider(
-                apiVersionOverride: .v0,
+                apiVersionOverride: apiVersion,
                 domainOverride: "wire.com",
                 isFederationEnabledOverride: false,
                 isBackendMLSEnabledOverride: false
@@ -470,9 +473,8 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
         // GIVEN
-        BackendInfo.apiVersion = .v4
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = makeViewModel(config: config)
+        let viewModel = makeViewModel(config: config, apiVersion: .v4)
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.conversationGuestOptionsViewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
         mock.conversationGuestOptionsViewModelDidUpdateState_MockMethod = { _, _ in }

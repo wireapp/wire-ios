@@ -114,7 +114,7 @@ extension SettingsCellDescriptorFactory {
             }
         }
 
-        if isFederationEnabled {
+        if userSession.resolvedBackendMetadata.isFederationEnabled {
             cellDescriptors.append(domainElement())
         }
 
