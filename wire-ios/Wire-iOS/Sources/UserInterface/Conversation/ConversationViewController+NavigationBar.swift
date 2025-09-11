@@ -36,7 +36,7 @@ extension ConversationViewController {
     private var videoCallButton: UIButton {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .videoCall), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
+        button.tintColor = IconColors.foregroundDefault.resolvedColor(with: traitCollection)
 
         button.accessibilityIdentifier = "videoCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
@@ -47,9 +47,9 @@ extension ConversationViewController {
         }
         button.addAction(videoCallAction, for: .touchUpInside)
 
-        button.backgroundColor = ButtonColors.backgroundBarItem
+        button.backgroundColor = ButtonColors.backgroundBarItem.resolvedColor(with: traitCollection)
         button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
+        button.layer.borderColor = ButtonColors.borderBarItem.resolvedColor(with: traitCollection).cgColor
         button.layer.cornerRadius = 12
 
         // Enable large content viewer
