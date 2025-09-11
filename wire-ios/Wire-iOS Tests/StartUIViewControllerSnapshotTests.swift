@@ -124,8 +124,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         }
     }
 
-    func testStartUIViewControllerShowNewChannelOptionForPersonalUser() {
+    func testStartUIViewControllerDoesNotShowNewChannelOptionForPersonalUser() {
         // Given, channels are supported and user is a personal user
+        // Note this has been changed for WPB-20233
         BackendInfo.apiVersion = .v8
         BackendInfo.isMLSEnabled = true
 
