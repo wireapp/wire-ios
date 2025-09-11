@@ -185,11 +185,15 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         try KeychainManager.storeItem(item, value: unscopedKey)
 
         // WHEN
-        try sut.migrateToScopedDatabaseKey()
+        try sut.migrateToScopedDatabaseKey(inactiveAccounts: Set())
 
         // THEN
+        // the key has been moved to a scoped item
         let scopedKey: Data? = try? KeychainManager.fetchItem(ScopedCoreCryptoKeychainItem(userID: userID))
         XCTAssertEqual(unscopedKey, scopedKey)
+
+        // the unscoped item has been deleted
+        XCTAssertNil(try? KeychainManager.fetchItem(UnscopedCoreCryptoKeychainItem()))
     }
 
     func test_itMigratesToScopedDatabaseKey_MultipleAccounts() throws {
@@ -204,18 +208,28 @@ class CoreCryptoKeyProviderTests: XCTestCase {
             userID: userID2
         )
 
+        let account1 = Account(userName: "Alice", userIdentifier: userID)
+        let account2 = Account(userName: "Bob", userIdentifier: userID2)
+
         let item = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: unscopedKey)
 
         // WHEN
-        try providerAccount1.migrateToScopedDatabaseKey()
-        try providerAccount2.migrateToScopedDatabaseKey()
+        try providerAccount1.migrateToScopedDatabaseKey(inactiveAccounts: Set([account2]))
+        XCTAssertNotNil(try? KeychainManager.fetchItem(item))
+        try providerAccount2.migrateToScopedDatabaseKey(inactiveAccounts: Set([account1]))
 
         // THEN
+        // the unscoped key has been copied to a scoped item for the first user
         let scopedKey1: Data? = try? KeychainManager.fetchItem(ScopedCoreCryptoKeychainItem(userID: userID))
         XCTAssertEqual(unscopedKey, scopedKey1)
+
+        // the unscoped key has been copied to a scoped item for the second user
         let scopedKey2: Data? = try? KeychainManager.fetchItem(ScopedCoreCryptoKeychainItem(userID: userID2))
         XCTAssertEqual(unscopedKey, scopedKey2)
+
+        // the unscoped key has been removed
+        XCTAssertNil(try? KeychainManager.fetchItem(item))
     }
 }
