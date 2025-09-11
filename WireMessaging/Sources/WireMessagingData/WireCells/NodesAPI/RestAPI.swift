@@ -67,6 +67,7 @@ final class RestAPI: Sendable {
                 recursive: request.scope.isRecursive,
                 root: request.scope.root.map { RestNodeLocator($0) }
             ),
+            sortDirDesc: true,
             sortField: Constants.sortedBy
         )
 
