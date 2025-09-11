@@ -20,11 +20,12 @@ import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
+import WireLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
 
 /// An item in the `FilesView`.
-struct FilesViewItem: Identifiable, Equatable {
+struct FilesViewItem: Identifiable, Hashable {
 
     /// Identifier of this item on the wire cells backend.
     let id: UUID
@@ -66,6 +67,15 @@ package final class FilesViewModel: ObservableObject {
                 items
             default:
                 []
+            }
+        }
+
+        var isLoaded: Bool {
+            switch self {
+            case .loading, .pending:
+                false
+            case .received, .noData:
+                true
             }
         }
     }
@@ -253,12 +263,32 @@ package final class FilesViewModel: ObservableObject {
     }
 
     private func deleteItem(_ asset: FilesViewItem) async {
-        // TODO: Remove item from list
+        guard state.isLoaded else {
+            WireLogger.wireCells.error("Attempt to delete asset while not visible")
+            return
+        }
+
+        var currentItems = state.items
+        currentItems.removeAll { $0.id == asset.id }
+        setItems(currentItems)
+
         do {
             try await deleteNodesUseCase.invoke(nodeIDs: [asset.id])
         } catch {
-            // TODO: Reinsert item
+            guard state.isLoaded else { return }
+
+            var currentItems = state.items
+            currentItems.append(asset)
+            setItems(currentItems)
         }
+    }
+
+    /// Set's the state based on the given items. If items is empty, state is set to `.noData`, otherwise `.received`.
+    ///
+    /// This method removes duplicates and sorts the items by modified date descending before setting the state.
+    private func setItems(_ items: [FilesViewItem]) {
+        let items = Set(items).sorted { $0.modifiedAt ?? Date.distantPast > $1.modifiedAt ?? Date.distantPast }
+        state = items.isEmpty ? .noData : .received(items: items)
     }
 
 }
