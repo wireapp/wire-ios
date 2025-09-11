@@ -63,7 +63,13 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
-    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws {
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
         try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 

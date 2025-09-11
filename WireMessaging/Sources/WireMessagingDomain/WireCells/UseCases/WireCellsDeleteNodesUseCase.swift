@@ -18,6 +18,10 @@
 
 package import Foundation
 
+package enum WireCellsDeleteNodesError: Error {
+    case serverFailedToDeleteNodes
+}
+
 /// Deletes `WireCellNodes`s from both the server and locally cached data.
 package struct WireCellsDeleteNodesUseCase: Sendable {
 
@@ -51,7 +55,9 @@ package struct WireCellsDeleteNodesUseCase: Sendable {
         try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
 
         // Then delete nodes from server.
-        try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: true)
+        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: true) == false {
+            throw WireCellsDeleteNodesError.serverFailedToDeleteNodes
+        }
     }
 
 }

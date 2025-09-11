@@ -77,17 +77,31 @@ final class RestAPI: Sendable {
         return (nodes: nodes, nextOffset: nextOffset)
     }
 
-    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws {
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
         let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
         let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
             deleteOptions: RestActionOptionsDelete(permanentDelete: permanently),
             nodes: nodes
         )
-        _ = try await NodeServiceAPI.performAction(
+        let response = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
+        guard
+            let backgroundActions = response.backgroundActions,
+            let backgroundAction = backgroundActions.first(where: { $0.name == "delete" }) else {
+                return false
+        }
+        return backgroundAction.status == .finished
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
