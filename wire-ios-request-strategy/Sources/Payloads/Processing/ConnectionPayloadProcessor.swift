@@ -60,8 +60,7 @@ final class ConnectionPayloadProcessor {
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: payload.qualifiedConversationID?.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
 
         conversation.needsToBeUpdatedFromBackend = true

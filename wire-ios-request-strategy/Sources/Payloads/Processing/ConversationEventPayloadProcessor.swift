@@ -559,8 +559,7 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                isFederationEnabled: isFederationEnabled
+                in: context
             )
 
             isInitialFetch = conversation.isPendingInitialFetch
@@ -664,8 +663,7 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                isFederationEnabled: isFederationEnabled
+                in: context
             )
 
             conversation.conversationType = .`self`
@@ -739,8 +737,7 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                isFederationEnabled: isFederationEnabled
+                in: context
             )
             conversation.conversationType = .connection
 
@@ -777,8 +774,7 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                isFederationEnabled: isFederationEnabled
+                in: context
             )
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
@@ -1055,8 +1051,7 @@ struct ConversationEventPayloadProcessor {
         return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: payload.qualifiedID?.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
     }
 

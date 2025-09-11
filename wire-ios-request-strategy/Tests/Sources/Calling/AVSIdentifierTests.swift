@@ -28,16 +28,14 @@ class AVSIdentifierTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.isFederationEnabled = false
     }
 
     func testProperties_WhenCreatedFromSerializedString_WithUUIDAndDomain() {
         // Given
-        BackendInfo.isFederationEnabled = true
         let serializedString = "\(uuid.transportString())@\(domain)"
 
         // When
-        let sut = AVSIdentifier(string: serializedString)
+        let sut = AVSIdentifier(string: serializedString, isFederationEnabled: true)
 
         // Then
         XCTAssertNotNil(sut)
@@ -49,7 +47,7 @@ class AVSIdentifierTests: XCTestCase {
     func testProperties_WhenCreatedFromSerializedString_WithUUID() {
         // When
         let serializedString = uuid.transportString()
-        let sut = AVSIdentifier(string: serializedString)
+        let sut = AVSIdentifier(string: serializedString, isFederationEnabled: false)
 
         // Then
         XCTAssertNotNil(sut)
@@ -62,7 +60,7 @@ class AVSIdentifierTests: XCTestCase {
         // When
         let lowercaseUUIDString = "aaab81b1-674d-445d-b609-e11781d4aebf"
         let uuid = UUID(uuidString: lowercaseUUIDString)!
-        let sut = AVSIdentifier(identifier: uuid, domain: nil)
+        let sut = AVSIdentifier(identifier: uuid, domain: nil, isFederationEnabled: false)
 
         // Then
         XCTAssertEqual(sut.serialized, lowercaseUUIDString)
@@ -70,18 +68,17 @@ class AVSIdentifierTests: XCTestCase {
 
     func testThatCreationFromInvalidStringReturnsNil() {
         // When / Then
-        XCTAssertNil(AVSIdentifier(string: "invalidUUID@domain.com"))
-        XCTAssertNil(AVSIdentifier(string: "UUID@domain.com@something"))
-        XCTAssertNil(AVSIdentifier(string: ""))
+        XCTAssertNil(AVSIdentifier(string: "invalidUUID@domain.com", isFederationEnabled: false))
+        XCTAssertNil(AVSIdentifier(string: "UUID@domain.com@something", isFederationEnabled: false))
+        XCTAssertNil(AVSIdentifier(string: "", isFederationEnabled: false))
     }
 
     func testThatItIgnoresDomain_WhenFederationIsDisabled() {
         // Given
-        BackendInfo.isFederationEnabled = false
         let uuid = UUID()
 
         // When
-        let sut = AVSIdentifier(identifier: uuid, domain: "example.domain.com")
+        let sut = AVSIdentifier(identifier: uuid, domain: "example.domain.com", isFederationEnabled: false)
 
         // Then
         XCTAssertNil(sut.domain)
@@ -90,12 +87,11 @@ class AVSIdentifierTests: XCTestCase {
 
     func testThatItDoesntIgnoreDomain_WhenFederationIsEnabled() {
         // Given
-        BackendInfo.isFederationEnabled = true
         let uuid = UUID()
         let domain = "example.domain.com"
 
         // When
-        let sut = AVSIdentifier(identifier: uuid, domain: domain)
+        let sut = AVSIdentifier(identifier: uuid, domain: domain, isFederationEnabled: true)
 
         // Then
         XCTAssertEqual(sut.domain, domain)

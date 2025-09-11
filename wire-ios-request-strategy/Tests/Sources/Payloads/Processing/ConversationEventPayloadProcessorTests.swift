@@ -40,13 +40,13 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         sut = ConversationEventPayloadProcessor(
             mlsEventProcessor: mockMLSEventProcessor,
-            removeLocalConversation: mockRemoveLocalConversation
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: false
         )
 
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
-        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -63,7 +63,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
         // Given
         let qualifiedID = QualifiedID.random()
-        let conversationPayload = Payload.Conversation.stub(
+        let conversationPayload = Payload.CreatedConversation.stub(
             qualifiedID: qualifiedID,
             type: .group
         )
@@ -87,9 +87,14 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() async throws {
         // Given
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = await syncMOC.perform {
-            BackendInfo.isFederationEnabled = true
-            return self.groupConversation.qualifiedID!
+            self.groupConversation.qualifiedID!
         }
         let payload = Payload.Conversation.stub(
             qualifiedID: qualifiedID,
@@ -706,7 +711,12 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
-        BackendInfo.isFederationEnabled = true
+        sut = ConversationEventPayloadProcessor(
+            mlsEventProcessor: mockMLSEventProcessor,
+            removeLocalConversation: mockRemoveLocalConversation,
+            isFederationEnabled: true
+        )
+
         let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in

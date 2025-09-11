@@ -356,8 +356,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: qualifiedID?.domain,
-            in: context,
-            isFederationEnabled: isFederationEnabled
+            in: context
         )
     }
 }

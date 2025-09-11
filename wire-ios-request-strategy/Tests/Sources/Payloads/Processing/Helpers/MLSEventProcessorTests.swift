@@ -66,7 +66,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         sut = MLSEventProcessor(
             conversationService: conversationServiceMock,
-            staleKeyMaterialDetector: staleKeyMaterialDetectorMock
+            staleKeyMaterialDetector: staleKeyMaterialDetectorMock,
+            localDomain: "wire.com"
         )
     }
 

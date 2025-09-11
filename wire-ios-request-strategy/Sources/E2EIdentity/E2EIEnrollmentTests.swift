@@ -50,9 +50,9 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             apiProvider: mockApiProvider,
             e2eiService: mockE2eiService,
             acmeDirectory: acmeDirectory,
-            keyRotator: mockKeyRotator
+            keyRotator: mockKeyRotator,
+            apiVersion: .v0
         )
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {

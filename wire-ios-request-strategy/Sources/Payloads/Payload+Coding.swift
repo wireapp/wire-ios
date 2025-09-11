@@ -72,8 +72,15 @@ extension Decodable {
     ///
     /// - parameter payloadData: JSON data as raw bytes
 
-    init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
+    init?(
+        _ payloadData: Data,
+        decoder: JSONDecoder = .defaultDecoder,
+        apiVersion: APIVersion? = nil
+    ) {
         do {
+            if let apiVersion {
+                decoder.setAPIVersion(apiVersion)
+            }
             self = try decoder.decode(Self.self, from: payloadData)
         } catch {
             WireLogger.network.warn("Failed to decode \(Self.self) from payload: \(error)")
@@ -140,7 +147,13 @@ extension Encodable {
         }
     }
 
-    func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
+    func encodeToJSONString(
+        encoder: JSONEncoder = .defaultEncoder,
+        apiVersion: APIVersion? = nil
+    ) throws -> String {
+        if let apiVersion {
+            encoder.setAPIVersion(apiVersion)
+        }
         let data = try encodeToJSON(encoder: encoder)
         return String(decoding: data, as: UTF8.self)
     }

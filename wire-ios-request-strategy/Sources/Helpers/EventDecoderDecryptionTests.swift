@@ -31,7 +31,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
     func testThatItCanDecryptOTRMessageAddEvent() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
+        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository, isFederationEnabled: false)
         let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
         let generic = GenericMessage(content: Text(content: text))
 
@@ -61,7 +61,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
     func testThatItCanDecryptOTRAssetAddEvent() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
+        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository, isFederationEnabled: false)
         let image = verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
@@ -96,7 +96,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
     func testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
+        let sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository, isFederationEnabled: false)
         var event: ZMUpdateEvent!
 
         await syncMOC.perform {

@@ -30,12 +30,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var oneToOneconversationOnSync: ZMConversation!
 
-    var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
-
     override func setUp() {
         super.setUp()
 
@@ -47,10 +41,10 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
             self.sut = LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: self.mockApplicationStatus
+                applicationStatus: self.mockApplicationStatus,
+                localDomain: "wire.com"
             )
         }
-        apiVersion = .v0
     }
 
     override func tearDown() {
@@ -126,6 +120,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
     func testThatItGeneratesAnExpectedV3RequestForAWhitelistedMessageWithNoImageInCache() {
         // GIVEN
+        let apiVersion: APIVersion = .v0
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreview(assetID)
         let nonce = UUID.create()
@@ -142,15 +137,16 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, .get)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItGeneratesAnExpectedV3RequestForAWhitelistedEphemeralMessageWithNoImageInCache() {
+        let apiVersion: APIVersion = .v0
         let assetID = UUID.create().transportString()
 
         syncMOC.performGroupedAndWait {
@@ -168,17 +164,17 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, .get)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItGeneratesAnExpectedV4RequestForAWhitelistedMessageWithNoImageInCache() {
         // GIVEN
-        apiVersion = .v1
+        let apiVersion: APIVersion = .v1
         let assetID = UUID.create().transportString()
         let assetDomain = UUID().create().transportString()
         let linkPreview = createLinkPreview(assetID, assetDomain)
@@ -196,16 +192,16 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, .get)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItGeneratesAnExpectedV4RequestForAWhitelistedEphemeralMessageWithNoImageInCache() {
-        apiVersion = .v1
+        let apiVersion: APIVersion = .v1
         let assetID = UUID.create().transportString()
         let assetDomain = UUID().create().transportString()
         syncMOC.performGroupedAndWait {
@@ -224,15 +220,16 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, .get)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItDoesNotGenerateARequestForAMessageWithoutALinkPreview() {
+        let apiVersion: APIVersion = .v0
         let message = syncMOC.performGroupedAndWait { () -> ZMMessage in
             let genericMessage = GenericMessage(content: Text(content: self.name))
             return try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
@@ -253,11 +250,12 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         // THEN
         syncMOC.performGroupedAndWait {
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItDoesNotGenerateARequestForAMessageWithImageInCache() {
+        let apiVersion: APIVersion = .v0
         syncMOC.performGroupedAndWait {
             // GIVEN
             let assetID = UUID.create().transportString()
@@ -275,11 +273,12 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     func testThatItDoesNotGenerateARequestForAMessageWithoutArticleLinkPreview() {
+        let apiVersion: APIVersion = .v0
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreview(assetID, article: false)
         let nonce = UUID.create()
@@ -299,14 +298,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
         }
     }
 
     // MARK: - Response Handling
 
     func testThatItStoresTheEncryptedImageDataInTheRequestResponse() throws {
-
+        let apiVersion: APIVersion = .v0
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
@@ -331,14 +330,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(
                 imageData: encrypted,
                 httpStatus: 200,
                 transportSessionError: nil,
                 headers: nil,
-                apiVersion: self.apiVersion.rawValue
+                apiVersion: apiVersion.rawValue
             )
 
             // WHEN
@@ -358,6 +357,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     }
 
     func testThatItDoesNotDecyptTheImageDataInTheRequestResponseWhenTheResponseIsNotSuccessful() {
+        let apiVersion: APIVersion = .v0
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreview(assetID)
         let nonce = UUID.create()
@@ -376,14 +376,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            guard let request = self.sut.nextRequest(for: apiVersion)
             else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(
                 imageData: .secureRandomData(length: 256),
                 httpStatus: 400,
                 transportSessionError: nil,
                 headers: nil,
-                apiVersion: self.apiVersion.rawValue
+                apiVersion: apiVersion.rawValue
             )
             // WHEN
             request.complete(with: response)
