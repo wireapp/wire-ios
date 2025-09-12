@@ -87,7 +87,10 @@ extension ZMUserSession {
 
     func close(deleteCookie: Bool) async {
         await withCheckedContinuation { continuation in
+            var resumed = false
             close(deleteCookie: deleteCookie) {
+                guard !resumed else { return }
+                resumed = true
                 continuation.resume()
             }
         }
