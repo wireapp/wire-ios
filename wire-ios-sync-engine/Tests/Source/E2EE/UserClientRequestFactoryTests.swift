@@ -74,7 +74,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             }
         }
         DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
-        
+
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
             usingProteusService: true,
