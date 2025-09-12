@@ -73,7 +73,8 @@ final class UserClientRequestFactoryTests: MessagingTest {
                 $0.status = .enabled
             }
         }
-
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
             usingProteusService: true,
@@ -184,7 +185,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         let isConsumableNotificationsEnabled = syncMOC.performAndWait {
             Feature.fetch(name: .consumableNotifications, context: syncMOC)?.status == .enabled
-        }
+        } && DeveloperFlag.consumableNotifications.isOn
 
         if apiVersion >= .v9, isConsumableNotificationsEnabled {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
