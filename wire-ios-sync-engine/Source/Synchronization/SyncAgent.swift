@@ -147,6 +147,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    func restart() async{
+        await suspend()
+        resume()
+    }
+    
     private func suspend() async {
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
