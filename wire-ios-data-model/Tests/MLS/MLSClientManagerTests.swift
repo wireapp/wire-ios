@@ -64,7 +64,6 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         mockMLService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
         // Given
-        BackendInfo.isMLSEnabled = true
         let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
@@ -96,7 +95,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: true
         )
 
         // Then
@@ -115,7 +115,6 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         mockMLService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
         // Given
-        BackendInfo.isMLSEnabled = true
         let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
@@ -147,7 +146,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: true
         )
 
         // Then
@@ -166,7 +166,6 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         mockMLService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
         // Given
-        BackendInfo.isMLSEnabled = true
         let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
@@ -200,7 +199,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: true
         )
 
         // Then
@@ -219,7 +219,6 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         mockMLService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
         // Given
-        BackendInfo.isMLSEnabled = false
         let mlsFeature = mockLegacyFeatureRepository.fetchMLS()
         let domain = "example.domain.com"
 
@@ -251,7 +250,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
         await sut.initializeMLSClientIfNeeded(
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: false
         )
 
         // Then

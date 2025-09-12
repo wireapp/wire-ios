@@ -36,7 +36,9 @@ extension ZMTBaseTest {
             account: account,
             applicationContainer: sharedContainerURL,
             inMemoryStore: inMemoryStore,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await stack.load()

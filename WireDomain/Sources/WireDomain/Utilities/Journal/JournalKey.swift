@@ -74,6 +74,13 @@ public extension JournalKey where Value == Bool {
         defaultValue: true
     )
 
+    /// Whether MLS is enabled on the backend.
+
+    static let isBackendMLSEnabled = Self(
+        "isBackendMLSEnabled",
+        defaultValue: false
+    )
+
 }
 
 public extension JournalKey where Value == Set<String> {

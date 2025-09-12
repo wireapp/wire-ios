@@ -266,7 +266,7 @@ extension Array where Element: UserClientType {
         }
         var updatedUserClients = [UserClientType]()
         let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-            if let mlsClientId = MLSClientID(userClient: $0) {
+            if let mlsClientId = MLSClientID(userClient: $0, localDomain: userSession.resolvedBackendMetadata.domain) {
                 ($0.clientId.hashValue, mlsClientId)
             } else {
                 nil

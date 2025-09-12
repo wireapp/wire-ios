@@ -67,7 +67,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         MockUserRight.isPermitted = true
@@ -110,7 +112,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) throws {
-        BackendInfo.isFederationEnabled = federated
+        userSession.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
         let group = settingsCellDescriptorFactory.accountGroup(
@@ -181,7 +183,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
@@ -197,7 +201,9 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then

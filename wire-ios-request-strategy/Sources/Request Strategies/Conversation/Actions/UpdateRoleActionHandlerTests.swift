@@ -49,7 +49,10 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             self.role = role
         }
 
-        sut = UpdateRoleActionHandler(context: syncMOC)
+        sut = UpdateRoleActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {

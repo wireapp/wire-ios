@@ -33,7 +33,11 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         applicationStatus = MockApplicationStatus()
         applicationStatus.mockSynchronizationState = .online
-        sut = ImageV2DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
+        sut = ImageV2DownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: applicationStatus,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {

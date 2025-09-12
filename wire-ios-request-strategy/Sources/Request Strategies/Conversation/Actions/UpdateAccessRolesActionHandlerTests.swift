@@ -40,7 +40,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             self.accessRoles = [.teamMember, .nonTeamMember, .guest]
         }
 
-        sut = UpdateAccessRolesActionHandler(context: syncMOC)
+        sut = UpdateAccessRolesActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {

@@ -34,7 +34,11 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
         super.setUp()
         mockProcessor = MockUserProfilePayloadProcessing()
         action = SyncUsersAction(qualifiedIDs: [qualifiedIDs])
-        handler = SyncUsersActionHandler(context: syncMOC, payloadProcessor: mockProcessor)
+        handler = SyncUsersActionHandler(
+            context: syncMOC,
+            payloadProcessor: mockProcessor,
+            isFederationEnabled: false
+        )
     }
 
     // MARK: - tearDown

@@ -37,7 +37,7 @@ public struct MLSAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A `MLSAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any MLSAPI {
+    public func makeAPI(for version: APIVersion) -> some MLSAPI {
         switch version {
         case .v0:
             MLSAPIV0(apiService: apiService)

@@ -150,7 +150,9 @@ extension SyncEventsStep {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: dependency.messageLocalStore,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }
 
@@ -186,7 +188,8 @@ extension SyncEventsStep {
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: BackendInfo.domain
         )
     }
 

@@ -149,7 +149,7 @@ public extension ServiceUser {
             fatal("Not a service user")
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(nil)
         }
 
@@ -176,7 +176,7 @@ public extension ServiceUser {
             fatal("Not a service user")
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(nil)
         }
 
@@ -207,6 +207,7 @@ public extension ServiceUser {
             transportSession: userSession.transportSession,
             eventProcessor: userSession.conversationEventProcessor,
             contextProvider: userSession,
+            metadata: userSession.resolvedBackendMetadata,
             completionHandler: completionHandler
         )
     }
@@ -215,6 +216,7 @@ public extension ServiceUser {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
+        metadata: BackendMetadataProvider,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         guard transportSession.reachability.mayBeReachable else {
@@ -228,7 +230,7 @@ public extension ServiceUser {
         }
 
         let context = contextProvider.viewContext
-        let conversationService = ConversationService(context: context)
+        let conversationService = ConversationService(context: context, localDomain: metadata.domain)
         conversationService.createGroupConversation(
             name: nil,
             users: [],
@@ -243,7 +245,8 @@ public extension ServiceUser {
                     serviceUser: serviceUserData,
                     transportSession: transportSession,
                     eventProcessor: eventProcessor,
-                    contextProvider: contextProvider
+                    contextProvider: contextProvider,
+                    metadata: metadata
                 ) { addServiceResult in
                     switch addServiceResult {
                     case .success:
@@ -318,6 +321,7 @@ public extension ZMConversation {
             transportSession: userSession.transportSession,
             eventProcessor: userSession.conversationEventProcessor,
             contextProvider: userSession.coreDataStack,
+            metadata: userSession.resolvedBackendMetadata,
             completionHandler: completionHandler
         )
     }
@@ -327,6 +331,7 @@ public extension ZMConversation {
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
+        metadata: BackendMetadataProvider,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {
 
@@ -335,7 +340,7 @@ public extension ZMConversation {
             return
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = metadata.apiVersion else {
             return completionHandler(.failure(AddBotError.missingAPIVersion))
         }
 

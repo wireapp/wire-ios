@@ -121,14 +121,18 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
-        currentBuildNumber: String
+        currentBuildNumber: String,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
         let coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: accountIdentifier),
-            applicationContainer: sharedContainerURL
+            applicationContainer: sharedContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -241,7 +245,8 @@ public final class SharingSession {
             sharedContainerURL: URL("unused")!,
             legacyEnvironment: environment,
             proxyCredentials: credentials,
-            currentBuildNumber: currentBuildNumber
+            currentBuildNumber: currentBuildNumber,
+            localDomain: localDomain
         )
     }
 
@@ -330,7 +335,8 @@ public final class SharingSession {
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
         proxyCredentials: WireTransport.ProxyCredentials?,
-        currentBuildNumber: String
+        currentBuildNumber: String,
+        localDomain: String?
     ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
@@ -342,15 +348,22 @@ public final class SharingSession {
             managedObjectContext: coreDataStack.syncContext
         )
 
+        let legacyAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: legacyAPIVersion,
+            localDomain: localDomain
         )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: legacyAPIVersion
+        )
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
@@ -375,7 +388,8 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: localDomain
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -404,7 +418,8 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: localDomain
         )
 
         let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
@@ -433,6 +448,12 @@ public final class SharingSession {
             keychain: Keychain()
         )
 
+        let isMLSEnabled = if DeveloperFlag.multibackend.isOn {
+            journal[.isBackendMLSEnabled]
+        } else {
+            BackendInfo.isMLSEnabled
+        }
+
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,
             selfUserID: accountIdentifier,
@@ -441,7 +462,7 @@ public final class SharingSession {
             websocketNetworkService: networkServices.webSocket,
             blacklistNetworkService: networkServices.blacklist,
             backendMetaData: metadata,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,

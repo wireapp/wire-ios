@@ -45,7 +45,9 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        isSyncV2Enabled: Bool
+        isSyncV2Enabled: Bool,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
@@ -61,7 +63,9 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.clientRegistrationStatus = ZMClientRegistrationStatus(
             context: managedObjectContext,
             cookieProvider: cookieStorage,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
         )
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,

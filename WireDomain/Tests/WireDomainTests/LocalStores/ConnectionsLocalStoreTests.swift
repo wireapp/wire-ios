@@ -33,12 +33,10 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        BackendInfo.isFederationEnabled = false
-
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        sut = ConnectionsLocalStore(context: context)
+        sut = ConnectionsLocalStore(context: context, isFederationEnabled: false)
     }
 
     override func tearDown() async throws {
@@ -58,7 +56,9 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     func testPullConnections_GivenConnectionDoesNotExist_FederationEnabled() async throws {
-        BackendInfo.isFederationEnabled = true
+        await context.perform {
+            self.context.isFederationEnabled = true
+        }
         try await internalTestPullConnections_GivenConnectionDoesNotExist(
             federationEnabled: true
         )

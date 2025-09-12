@@ -161,7 +161,7 @@ extension ZMUser: UserType {
         }
 
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
-        return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
+        return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
 }
@@ -566,7 +566,7 @@ extension ZMUser: UserConnections {
         guard
             let connection,
             let userID = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? managedObjectContext?.localDomain
         else {
             completion(AcceptConnectionError.invalidState)
             return

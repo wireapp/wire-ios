@@ -17,27 +17,22 @@
 //
 
 import Foundation
+@testable import WireSyncEngine
 
-// sourcery: AutoMockable
-public protocol ImportBackupEntityStorageProtocol: Sendable {
+extension BackendMetadataProvider {
 
-    var importsDirectory: URL { get }
-
-    /// Replace all the data of the storage.
-    /// - Returns: The directory where all data was written to.
-    @discardableResult
-    func replacePersistentStore(
-        accountIdentifier: UUID,
-        from backupDirectory: URL,
-        applicationContainer: URL,
-    ) async throws -> URL
-
-    func createContextProvider(
-        account: Account,
-        applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?,
-        localDomain: String?,
-        isFederationEnabled: Bool
-    ) async throws -> ContextProvider
+    static func mock(
+        apiVersion: WireTransport.APIVersion = .v0,
+        domain: String = "wire.com",
+        isFederationEnabled: Bool = false,
+        isBackendMLSEnabled: Bool = false
+    ) -> BackendMetadataProvider {
+        BackendMetadataProvider(
+            apiVersionOverride: apiVersion,
+            domainOverride: domain,
+            isFederationEnabledOverride: isFederationEnabled,
+            isBackendMLSEnabledOverride: isBackendMLSEnabled
+        )
+    }
 
 }

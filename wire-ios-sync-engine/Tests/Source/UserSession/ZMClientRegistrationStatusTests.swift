@@ -54,7 +54,9 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         sut = ZMClientRegistrationStatus(
             context: syncMOC,
             cookieProvider: mockCookieStorage,
-            coreCryptoProvider: mockCoreCryptoProvider
+            coreCryptoProvider: mockCoreCryptoProvider,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: false
         )
         sut.registrationStatusDelegate = mockClientRegistationDelegate
     }

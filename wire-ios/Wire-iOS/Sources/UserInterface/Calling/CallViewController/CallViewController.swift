@@ -112,7 +112,8 @@ final class CallViewController: UIViewController {
 
         self.callGridViewController = CallGridViewController(
             voiceChannel: voiceChannel,
-            configuration: callGridConfiguration
+            configuration: callGridConfiguration,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
         super.init(nibName: nil, bundle: nil)

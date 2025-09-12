@@ -114,7 +114,8 @@ open class AuthenticatedSessionFactory {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: BackendInfo.domain
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()

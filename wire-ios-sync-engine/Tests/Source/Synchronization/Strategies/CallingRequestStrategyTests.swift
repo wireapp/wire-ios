@@ -47,23 +47,7 @@ class CallingRequestStrategyTests: MessagingTest {
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
         mockMessageSender = MockMessageSenderInterface()
 
-        syncMOC.performAndWait {
-            sut = CallingRequestStrategy(
-                managedObjectContext: syncMOC,
-                applicationStatus: mockApplicationStatus,
-                flowManager: FlowManagerMock(),
-                fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
-            )
-            sut.callCenter = WireCallCenterV3Mock(
-                userId: .stub,
-                clientId: UUID().transportString(),
-                uiMOC: uiMOC,
-                flowManager: FlowManagerMock(),
-                transport: WireCallCenterTransportMock(),
-                notificationCenter: .init()
-            )
-        }
+        createSUT(localDomain: "wire.com", isFederationEnabled: false)
         setupMockMessageSyncForMLSSuccessfully()
     }
 
@@ -73,6 +57,33 @@ class CallingRequestStrategyTests: MessagingTest {
         mockFetchUserClientsUseCase = nil
 
         super.tearDown()
+    }
+
+    func createSUT(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) {
+        syncMOC.performAndWait {
+            sut = CallingRequestStrategy(
+                managedObjectContext: syncMOC,
+                applicationStatus: mockApplicationStatus,
+                flowManager: FlowManagerMock(),
+                fetchUserClientsUseCase: mockFetchUserClientsUseCase,
+                messageSender: mockMessageSender,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
+            sut.callCenter = WireCallCenterV3Mock(
+                userId: .stub,
+                clientId: UUID().transportString(),
+                uiMOC: uiMOC,
+                flowManager: FlowManagerMock(),
+                transport: WireCallCenterTransportMock(),
+                notificationCenter: .init(),
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
+        }
     }
 
     // MARK: - Call Config
@@ -270,9 +281,10 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.isFederationEnabled = true
+        createSUT(localDomain: "foo.com", isFederationEnabled: true)
 
         let (conversation, payload) = try syncMOC.performAndWait {
+            syncMOC.isFederationEnabled = true
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "foo.com"
@@ -411,22 +423,22 @@ class CallingRequestStrategyTests: MessagingTest {
             // Mock
             mockFetchUserClientsUseCase.mockReturnValueForFetchUserClients = Set([
                 QualifiedClientID(
-                    userID: avsClient1.avsIdentifier.identifier,
+                    userID: avsClient1.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient1.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient2.avsIdentifier.identifier,
+                    userID: avsClient2.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "foo.com",
                     clientID: avsClient2.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient3.avsIdentifier.identifier,
+                    userID: avsClient3.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient3.clientId
                 ),
                 QualifiedClientID(
-                    userID: avsClient4.avsIdentifier.identifier,
+                    userID: avsClient4.avsIdentifier(isFederationEnabled: false).identifier,
                     domain: "bar.com",
                     clientID: avsClient4.clientId
                 )
@@ -498,7 +510,9 @@ class CallingRequestStrategyTests: MessagingTest {
                 applicationStatus: mockApplicationStatus,
                 flowManager: FlowManagerMock(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                localDomain: "wire.com",
+                isFederationEnabled: false
             )
             // Given
             let selfClient = createSelfClient()

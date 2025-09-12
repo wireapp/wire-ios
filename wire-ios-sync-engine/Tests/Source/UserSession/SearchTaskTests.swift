@@ -47,7 +47,6 @@ final class SearchTaskTests: DatabaseTest {
             _ = Member.getOrUpdateMember(for: selfUser, in: team, context: uiMOC)
             uiMOC.saveOrRollback()
         }
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
@@ -882,9 +881,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsASearchRequest() {
         // given
-        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
         task.performRemoteSearch()
@@ -925,9 +923,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
-        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
         task.performRemoteSearch()
@@ -947,9 +944,8 @@ final class SearchTaskTests: DatabaseTest {
         // "The characters slash ("/") and question mark ("?") may represent data within the query component."
 
         // given
-        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
         task.performRemoteSearch()
@@ -964,10 +960,9 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForDirectorySearch() {
         // given
-        BackendInfo.apiVersion = .v2
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "User A")
@@ -988,9 +983,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItMakesRequestToFetchTeamMembershipMetadata() {
         // given
-        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
@@ -1015,9 +1009,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() {
         // given
-        BackendInfo.apiVersion = .v2
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
@@ -1037,10 +1030,9 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
         // given
-        BackendInfo.apiVersion = .v2
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
@@ -1163,10 +1155,9 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() {
         // given
-        BackendInfo.apiVersion = .v2
         let userId = UUID()
         let domain = "wire.com"
-        let task = makeSearchTask(lookupUserId: userId, domain: domain)
+        let task = makeSearchTask(lookupUserId: userId, domain: domain, apiVersion: .v2)
 
         // when
         task.performUserLookup()
@@ -1205,9 +1196,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotSendAFederatedUserSearchRequest__WhenLocalSearchOnly() throws {
         // given
-        BackendInfo.apiVersion = .v3
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: [.federated, .localResultsOnly])
-        let task = makeSearchTask(request: searchRequest)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
         task.performRemoteSearch()
@@ -1219,9 +1209,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAFederatedUserSearchRequest() throws {
         // given
-        BackendInfo.apiVersion = .v3
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
-        let task = makeSearchTask(request: searchRequest)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
         task.performRemoteSearch()
@@ -1235,7 +1224,6 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() {
         // given
-        BackendInfo.apiVersion = .v3
         let federatedDomain = "example.com"
         let resultArrived = customExpectation(description: "received result")
 
@@ -1247,7 +1235,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
-        let task = makeSearchTask(request: searchRequest)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // expect
         task.addResultHandler { result, _ in
@@ -1262,12 +1250,11 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() {
         // given
-        BackendInfo.apiVersion = .v3
         let resultArrived = customExpectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
 
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
-        let task = makeSearchTask(request: searchRequest)
+        let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // expect
         task.addResultHandler { result, _ in
@@ -1284,7 +1271,6 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatRemoteResultsIncludePreviousLocalResults() {
         // given
-        BackendInfo.apiVersion = .v2
         let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
 
@@ -1293,7 +1279,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // expect
         task.addResultHandler { result, _ in
@@ -1321,7 +1307,6 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatLocalResultsIncludePreviousRemoteResults() {
         // given
-        BackendInfo.apiVersion = .v2
         let remoteResultArrived = customExpectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
 
@@ -1330,7 +1315,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // expect
         task.addResultHandler { result, _ in
@@ -1377,14 +1362,13 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterRemoteResults() {
         // given
-        BackendInfo.apiVersion = .v2
         let remoteResultArrived = customExpectation(description: "received remote result")
         mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
         }
 
         let request = SearchRequest(query: "user", searchOptions: [.directory])
-        let task = makeSearchTask(request: request)
+        let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // expect
         task.addResultHandler { result, completed in
@@ -1427,23 +1411,32 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: - Helpers
 
-    private func makeSearchTask(request: SearchRequest) -> SearchTask {
+    private func makeSearchTask(
+        request: SearchRequest,
+        apiVersion: APIVersion = .v0
+    ) -> SearchTask {
         SearchTask(
             request: request,
             searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
-            searchUsersCache: mockCache
+            searchUsersCache: mockCache,
+            apiVersion: apiVersion
         )
     }
 
-    private func makeSearchTask(lookupUserId: UUID, domain: String = "wire.com") -> SearchTask {
+    private func makeSearchTask(
+        lookupUserId: UUID,
+        domain: String = "wire.com",
+        apiVersion: APIVersion = .v0
+    ) -> SearchTask {
         SearchTask(
             qualifiedID: QualifiedID(uuid: lookupUserId, domain: domain),
             searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
-            searchUsersCache: mockCache
+            searchUsersCache: mockCache,
+            apiVersion: apiVersion
         )
     }
 }

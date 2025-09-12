@@ -74,7 +74,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        uiMOC.localDomain = domain
 
         let user1 = createUser()
         let user2 = createUser()
