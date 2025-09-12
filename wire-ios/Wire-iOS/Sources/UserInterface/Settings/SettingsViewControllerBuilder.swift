@@ -42,7 +42,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
         )
     }
 

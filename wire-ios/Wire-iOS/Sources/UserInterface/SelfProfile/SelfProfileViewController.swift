@@ -95,7 +95,8 @@ final class SelfProfileViewController: UIViewController {
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
-            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
