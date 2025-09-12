@@ -172,6 +172,9 @@ final class UserSessionLoader {
             cookieStorage: cookieStorage
         )
 
+        // Check if this build is blacklisted.
+        let isBuildBlacklisted = try await isBuildBlacklisted(userSession: userSession)
+
         // Perform pending migrations.
         try await performPendingMigrations(userSession: userSession)
 
@@ -542,7 +545,7 @@ final class UserSessionLoader {
                 networkService: networkService,
                 onAuthenticationFailure: {}
             )
-            var apiService = APIService(
+            let apiService = APIService(
                 networkService: networkService,
                 authenticationManager: authenticationManager
             )
@@ -555,6 +558,15 @@ final class UserSessionLoader {
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
+            return false
+        }
+    }
+
+    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
+        do {
+            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+            return try await useCase.invoke()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             return false
         }
     }
