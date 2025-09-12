@@ -174,11 +174,17 @@ final class UserSessionLoader {
 
         // Check if this build is blacklisted.
         if try await isBuildBlacklisted(userSession: userSession) {
+            await userSession.close(deleteCookie: false)
             throw Failure.buildisBlacklisted
         }
 
         // Perform pending migrations.
-        try await performPendingMigrations(userSession: userSession)
+        do {
+            try await performPendingMigrations(userSession: userSession)
+        } catch {
+            await userSession.close(deleteCookie: false)
+            throw error
+        }
 
         return userSession
     }
