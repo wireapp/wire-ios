@@ -114,9 +114,6 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        if self == .multibackend {
-            return true
-        }
         guard let bundleKey else {
             return false
         }
