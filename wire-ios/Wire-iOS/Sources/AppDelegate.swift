@@ -24,6 +24,7 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
@@ -232,6 +233,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         self.launchOptions = launchOptions ?? [:]
 
         _ = NSAttributedString.paragraphStyle
+
+        DeveloperOverrides.storage = .shared()
 
         setupWindowAndRootViewController()
 

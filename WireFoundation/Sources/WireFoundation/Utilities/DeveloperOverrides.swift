@@ -16,33 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public enum DeveloperOverrides {
 
-    nonisolated(unsafe) private static let storage = UserDefaults(suiteName: "developerOverrides")!
+    public nonisolated(unsafe) static var storage: UserDefaults?
 
+    private static let buildNumberKey = "buildNumberOverride"
     public static var buildNumber: String? {
         get {
-            storage.string(forKey: "buildNumber")
+            storage?.string(forKey: Self.buildNumberKey)
         } set {
-            storage.setValue(newValue, forKey: "buildNumber")
+            storage?.setValue(newValue, forKey: Self.buildNumberKey)
         }
     }
 
+    private static let obsoleteBackendEnvKey = "obsoleteBackendEnvOverride"
     public static var obsoleteBackendEnv: String? {
         get {
-            storage.string(forKey: "obsoleteBackendEnv")
+            storage?.string(forKey: Self.obsoleteBackendEnvKey)
         } set {
-            storage.setValue(newValue, forKey: "obsoleteBackendEnv")
+            storage?.setValue(newValue, forKey: Self.obsoleteBackendEnvKey)
         }
     }
 
+    private static let obsoleteClientEnvKey = "obsoleteClientEnvOverride"
     public static var obsoleteClientEnv: String? {
         get {
-            storage.string(forKey: "obsoleteClientEnv")
+            storage?.string(forKey: Self.obsoleteClientEnvKey)
         } set {
-            storage.setValue(newValue, forKey: "obsoleteClientEnv")
+            storage?.setValue(newValue, forKey: Self.obsoleteClientEnvKey)
         }
     }
 
