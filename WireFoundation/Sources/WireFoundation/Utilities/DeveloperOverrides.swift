@@ -25,27 +25,27 @@ public enum DeveloperOverrides {
     private static let buildNumberKey = "buildNumberOverride"
     public static var buildNumber: String? {
         get {
-            storage?.string(forKey: Self.buildNumberKey)
+            storage?.string(forKey: buildNumberKey)
         } set {
-            storage?.setValue(newValue, forKey: Self.buildNumberKey)
+            storage?.setValue(newValue, forKey: buildNumberKey)
         }
     }
 
     private static let obsoleteBackendEnvKey = "obsoleteBackendEnvOverride"
     public static var obsoleteBackendEnv: String? {
         get {
-            storage?.string(forKey: Self.obsoleteBackendEnvKey)
+            storage?.string(forKey: obsoleteBackendEnvKey)
         } set {
-            storage?.setValue(newValue, forKey: Self.obsoleteBackendEnvKey)
+            storage?.setValue(newValue, forKey: obsoleteBackendEnvKey)
         }
     }
 
     private static let obsoleteClientEnvKey = "obsoleteClientEnvOverride"
     public static var obsoleteClientEnv: String? {
         get {
-            storage?.string(forKey: Self.obsoleteClientEnvKey)
+            storage?.string(forKey: obsoleteClientEnvKey)
         } set {
-            storage?.setValue(newValue, forKey: Self.obsoleteClientEnvKey)
+            storage?.setValue(newValue, forKey: obsoleteClientEnvKey)
         }
     }
 
