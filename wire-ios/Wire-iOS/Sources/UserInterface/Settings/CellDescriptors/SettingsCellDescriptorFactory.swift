@@ -30,6 +30,7 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCoordinator: AnySettingsCoordinator
+    let isSimpleChatBubbleEnabled: Bool
     let localDomain: String?
     let isFederationEnabled: Bool
 

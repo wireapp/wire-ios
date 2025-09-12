@@ -67,6 +67,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: "wire.com",
             isFederationEnabled: false
         )
@@ -182,6 +183,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: "wire.com",
             isFederationEnabled: false
         )
@@ -199,6 +201,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: "wire.com",
             isFederationEnabled: false
         )

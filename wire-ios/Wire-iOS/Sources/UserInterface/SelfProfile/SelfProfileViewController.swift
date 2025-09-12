@@ -96,6 +96,7 @@ final class SelfProfileViewController: UIViewController {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: userSession.resolvedBackendMetadata.domain,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
