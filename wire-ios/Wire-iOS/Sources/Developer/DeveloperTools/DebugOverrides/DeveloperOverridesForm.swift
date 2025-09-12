@@ -28,6 +28,8 @@ struct DeveloperOverridesForm: View {
     @State private var obsoleteBackendEnv = DeveloperOverrides.obsoleteBackendEnv ?? ""
     @State private var obsoleteClientEnv = DeveloperOverrides.obsoleteClientEnv ?? ""
 
+    @State private var isExitAlertPresented = false
+
     var body: some View {
         Form {
             Section("build number") {
@@ -47,22 +49,26 @@ struct DeveloperOverridesForm: View {
                 Text("If an envirnoment name is specified, when resolving the api version then it will throw a 'obsolete client' error.")
                     .foregroundStyle(.secondary)
             }
-
-            Section {
+        }
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .toolbar {
+            ToolbarItem {
                 Button {
                     DeveloperOverrides.buildNumber = buildNumber.nonEmptyValue
                     DeveloperOverrides.obsoleteBackendEnv = obsoleteBackendEnv.nonEmptyValue
                     DeveloperOverrides.obsoleteClientEnv = obsoleteClientEnv.nonEmptyValue
-                    dismiss()
+                    isExitAlertPresented = true
                 } label: {
                     Text("Submit")
                 }
-                Text("You may need to restart the app for changes to take effect.")
-                    .foregroundStyle(.secondary)
             }
         }
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
+        .alert(
+            "Relaunch app for changes to take effect",
+            isPresented: $isExitAlertPresented,
+            actions: { Button("OK", action: { exit(0) }) }
+        )
         .padding()
     }
 
