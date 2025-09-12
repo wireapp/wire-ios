@@ -648,6 +648,14 @@ public final class ZMUserSession: NSObject {
             throw ZMUserSessionError.selfClientNotReady
         }
 
+<<<<<<< HEAD
+=======
+        let featureConfigRepository = clientSessionComponent.featureConfigRepository
+        guard await featureConfigRepository.isFeatureEnabled(
+            .consumableNotifications
+        ), DeveloperFlag.consumableNotifications.isOn else { return }
+
+>>>>>>> 0bdd005079 (chore: disable consumable-notifications - WPB-19761 (#3576))
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
