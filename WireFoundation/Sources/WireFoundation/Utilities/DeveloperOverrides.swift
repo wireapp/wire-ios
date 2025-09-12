@@ -20,7 +20,7 @@ import Foundation
 
 public enum DeveloperOverrides {
 
-    private static let storage = UserDefaults(suiteName: "developerOverrides")!
+    nonisolated(unsafe) private static let storage = UserDefaults(suiteName: "developerOverrides")!
 
     public static var buildNumber: String? {
         get {

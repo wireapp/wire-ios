@@ -19,7 +19,6 @@
 import Foundation
 import WireFoundation
 import WireLogging
-import WireUtilities
 
 /// High level access to a specific backend with automatic api
 /// version resolution.
