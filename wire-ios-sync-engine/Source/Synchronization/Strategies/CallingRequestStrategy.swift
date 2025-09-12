@@ -187,9 +187,13 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            guard let jsonData = response.rawData else { return }
+            guard
+                let jsonData = response.rawData,
+                let apiVersion = APIVersion(rawValue: response.apiVersion)
+            else {
+                return
+            }
 
-            let apiVersion = APIVersion(rawValue: response.apiVersion)!
             decoder.userInfo = [
                 ClientDiscoveryResponsePayload.apiVersionKey: apiVersion,
                 ClientDiscoveryResponsePayload.isFederationEnabledKey: isFederationEnabled
