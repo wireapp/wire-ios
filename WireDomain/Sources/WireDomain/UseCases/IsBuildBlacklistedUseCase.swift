@@ -60,7 +60,7 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
             )
         }
 
-        return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(currentBuildNumber)
+        return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(String(currentVersion))
     }
 
 }
