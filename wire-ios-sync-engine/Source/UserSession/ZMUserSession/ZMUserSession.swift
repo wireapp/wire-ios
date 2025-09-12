@@ -1397,6 +1397,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
     private func fetchBackendMLSPublicKeys() async {
         guard !DeveloperFlag.multibackend.isOn else {
+            // fetching done on UserSessionLoader
             return
         }
         do {
