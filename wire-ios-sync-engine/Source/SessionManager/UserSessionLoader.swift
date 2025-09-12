@@ -175,7 +175,7 @@ final class UserSessionLoader {
         // Check if this build is blacklisted.
         if try await isBuildBlacklisted(userSession: userSession) {
             await userSession.close(deleteCookie: false)
-            throw Failure.buildisBlacklisted
+            throw Failure.buildIsBlacklisted
         }
 
         // Perform pending migrations.
@@ -623,7 +623,7 @@ final class UserSessionLoader {
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
-        case buildisBlacklisted
+        case buildIsBlacklisted
         case failedToPerformMigration(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
 

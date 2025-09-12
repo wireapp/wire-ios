@@ -1057,7 +1057,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return userSession
 
-            } catch UserSessionLoader.Failure.buildisBlacklisted {
+            } catch UserSessionLoader.Failure.buildIsBlacklisted {
                 delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
                 return nil
             }
