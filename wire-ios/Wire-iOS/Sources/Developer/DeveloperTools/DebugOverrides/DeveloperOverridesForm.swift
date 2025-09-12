@@ -21,8 +21,7 @@ import WireFoundation
 
 struct DeveloperOverridesForm: View {
 
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
 
     @State private var buildNumber = DeveloperOverrides.buildNumber ?? ""
     @State private var obsoleteBackendEnv = DeveloperOverrides.obsoleteBackendEnv ?? ""
@@ -40,14 +39,18 @@ struct DeveloperOverridesForm: View {
 
             Section("Obselete backend") {
                 TextField("e.g. staging", text: $obsoleteBackendEnv)
-                Text("If an envirnoment name is specified, when resolving the api version then it will throw a 'obsolete backend' error.")
-                    .foregroundStyle(.secondary)
+                Text(
+                    "If an envirnoment name is specified, when resolving the api version then it will throw a 'obsolete backend' error."
+                )
+                .foregroundStyle(.secondary)
             }
 
             Section("Obsolete client") {
                 TextField("e.g. anta.wire.link", text: $obsoleteClientEnv)
-                Text("If an envirnoment name is specified, when resolving the api version then it will throw a 'obsolete client' error.")
-                    .foregroundStyle(.secondary)
+                Text(
+                    "If an envirnoment name is specified, when resolving the api version then it will throw a 'obsolete client' error."
+                )
+                .foregroundStyle(.secondary)
             }
         }
         .textInputAutocapitalization(.never)

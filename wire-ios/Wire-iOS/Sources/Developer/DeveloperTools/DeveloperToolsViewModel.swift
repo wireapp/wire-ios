@@ -295,8 +295,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                     })),
                     .destination(
                         DestinationItem(title: "Overrides", makeView: {
-                                AnyView(DeveloperOverridesForm())
-                            })
+                            AnyView(DeveloperOverridesForm())
+                        })
                     )
                 ]
             )

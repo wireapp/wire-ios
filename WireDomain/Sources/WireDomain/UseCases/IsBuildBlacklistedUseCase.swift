@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireFoundation
+import WireNetwork
 
 public protocol IsBuildBlacklistedUseCase {
 
