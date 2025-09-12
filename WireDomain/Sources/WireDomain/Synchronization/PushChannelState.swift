@@ -43,7 +43,7 @@ struct PushChannelState: PushChannelStateProtocol {
                 fatal("could not create file")
             }
         }
-        self.fileContext = SafeFileContext(fileURL: url)
+        self.fileContext = SafeFileContext(fileURL: url, debug: "PushChannelState")
     }
 
     func markAsOpen() async throws {

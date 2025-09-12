@@ -18,21 +18,29 @@
 
 import Foundation
 import WireSystem
+import WireLogging
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
+    static var instanceCount: Int = 0
 
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
 
-    public init(fileURL: URL) {
+    var debug = ""
+    
+    public init(fileURL: URL, debug: String = "") {
         self.fileURL = fileURL
+        self.debug = debug
         super.init()
 
         self.fileDescriptor = open(self.fileURL.path, 0)
         if fileDescriptor <= 0 {
             fatal("Can't obtain FileDescriptor for \(self.fileURL)")
         }
+        Self.instanceCount += 1
+        WireLogger.pushChannel.debug("init SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
+
     }
 
     deinit {
@@ -40,6 +48,9 @@ public final class SafeFileContext: NSObject {
         self.releaseDirectoryLock()
         // close
         close(self.fileDescriptor)
+        Self.instanceCount -= 1
+        WireLogger.pushChannel.debug("deinit SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
+
     }
 
 }
