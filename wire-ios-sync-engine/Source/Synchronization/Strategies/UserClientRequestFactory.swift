@@ -56,7 +56,7 @@ extension UserClientRequestFactory {
 
         let isConsumableNotificationsEnabled = featureConfigRepository
             .fetchConsumableNotifications()
-            .status == .enabled
+            .status == .enabled && DeveloperFlag.consumableNotifications.isEnabled
 
         if isConsumableNotificationsEnabled, apiVersion >= .v9 {
             capabilities.append("consumable-notifications")
@@ -193,7 +193,7 @@ extension UserClientRequestFactory {
 
         let isConsumableNotificationsEnabled = featureConfigRepository
             .fetchConsumableNotifications()
-            .status == .enabled
+            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
 
         var capabilities = ["legalhold-implicit-consent"]
         if isConsumableNotificationsEnabled {
