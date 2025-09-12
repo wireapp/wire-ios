@@ -640,7 +640,7 @@ public final class ZMUserSession: NSObject {
         let featureConfigRepository = clientSessionComponent.featureConfigRepository
         guard await featureConfigRepository.isFeatureEnabled(
             .consumableNotifications
-        ) else { return }
+        ), DeveloperFlag.consumableNotifications.isOn else { return }
 
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
