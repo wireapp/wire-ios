@@ -279,9 +279,11 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    /// Removes duplicates and sorts the items by modified date descending.
+    /// Sorts items first by modified date descending, then by filename ascending.
+    /// If multiple items have the same `nodeID`, only the first is kept.
     private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
-        Set(items).sorted { left, right in
+        // sort
+        let sorted = items.sorted { left, right in
             if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt{
                 if leftModified == rightModified {
                     return left.filename < right.filename
@@ -296,6 +298,17 @@ package final class FilesViewModel: ObservableObject {
                 return left.filename < right.filename
             }
         }
+
+        var nodeIDs = Set<UUID>()
+        var results: [FilesViewItem] = []
+        for item in sorted {
+            if !nodeIDs.contains(item.id) {
+                nodeIDs.insert(item.id)
+                results.append(item)
+            }
+        }
+
+        return results
     }
 
 }

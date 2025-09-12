@@ -278,59 +278,38 @@ final class FilesViewModelTests {
         #expect(sut.isLoading == false)
     }
 
-    @Test(arguments: [
-        FilesViewModel.State.received(items: (0 ..< 10).map { i in
-            FilesViewItem(
-                id: UUID(),
-                filename: "\(i).jpg",
-                ownedBy: "Person \(i)",
-                modifiedAt: Date(timeIntervalSince1970: 1_600_000_000),
-                icon: .image
-            )
-        }),
-        .pending
-    ])
-    func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
-        // given
-        let sut = FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("some-cell")),
-                repository: nodesRepository
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesRepository,
-                fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            isCellsStatePending: state == .pending,
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
-        )
+    @Test
+    func itemsAreOrderedAndFilteredCorrectly() async throws {
+        // This is not a real scenario but tests that the logic for ordering and removing duplicates is correct.
+        // It _is_ possible for different versions of the same node to appear across different pages. We need to ensure
+        // that there is only ever one version of a node in the list.
 
-        nodesRepository.getNodes_MockValue = switch state {
-        case .initial:
-            fatalError("Not tested")
-        case .pending:
-            ([], nil)
-        case let .received(items):
-            (items.map { element in
-                WireCellsNode.fixture(
-                    uuid: element.id,
-                    path: element.filename,
-                    modified: element.modifiedAt,
-                    mimeType: "image/jpeg",
-                    ownerUserName: element.ownedBy
-                )
-            }, nil)
-        case .loading:
-            fatalError("Not tested")
-        }
+        // given
+        let now = Date()
+        let nodeA = WireCellsNode.fixture(path: "foo/aa.xyz", modified: now - 60)
+        let nodeB = WireCellsNode.fixture(path: "foo/bb.xyz", modified: now - 60)
+        let nodeC = WireCellsNode.fixture(path: "foo/cc.xyz", modified: now - 120)
+        let nodeD = WireCellsNode.fixture(path: "foo/dd.xyz", modified: nil)
+        let nodeE = WireCellsNode.fixture(path: "foo/ee.xyz", modified: nil)
+        let nodeA_V2 = WireCellsNode.fixture(uuid: nodeA.id, path: "foo/aa.xyz", modified: now)
+        let nodeD_V2 = WireCellsNode.fixture(uuid: nodeD.id, path: "foo/cd.xyz", modified: nil)
+
+        nodesRepository.getNodes_MockValue = (
+            nodes: [nodeA, nodeB, nodeC, nodeD, nodeE, nodeA_V2, nodeD_V2].shuffled(),
+            nextOffset: nil
+        )
 
         // when
         await sut.reload()
 
         // then
-        #expect(state == sut.state)
+        #expect(sut.state.items == [
+            FilesViewItem(id: nodeA.id, filename: "aa.xyz", ownedBy: nil, modifiedAt: now, icon: .other), // V2 node
+            FilesViewItem(id: nodeB.id, filename: "bb.xyz", ownedBy: nil, modifiedAt: now - 60, icon: .other),
+            FilesViewItem(id: nodeC.id, filename: "cc.xyz", ownedBy: nil, modifiedAt: now - 120, icon: .other),
+            FilesViewItem(id: nodeD.id, filename: "cd.xyz", ownedBy: nil, modifiedAt: nil, icon: .other), // V2 node
+            FilesViewItem(id: nodeE.id, filename: "ee.xyz", ownedBy: nil, modifiedAt: nil, icon: .other)
+        ])
     }
 
     // MARK: - viewAsset
