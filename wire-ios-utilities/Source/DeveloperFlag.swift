@@ -33,7 +33,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
     case wireCells
-    case wireCellsManualAuthentication
     case disablePushChannelBatching
     case multibackend
     case newRegistration
@@ -76,9 +75,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCells:
             "Use the wire cells feature"
-
-        case .wireCellsManualAuthentication:
-            "Use manual authentication for the wire cells feature"
 
         case .disablePushChannelBatching:
             "Turn on to disable batching while app is live"
