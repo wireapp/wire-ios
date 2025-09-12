@@ -270,30 +270,37 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupActions() {
-        sections.append(Section(
-            header: "Actions",
-            items: [
-                .destination(DestinationItem(title: "E2E Identity", makeView: {
-                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
-                })),
-                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
-                        selfClient: self?
-                            .selfClient,
-                        onDismiss: { self?.onDismiss {} }
-                    )))
-                })),
-                .destination(DestinationItem(title: "Configure feature flags", makeView: {
-                    AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
-                })),
-                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
-                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
-                        router: self?.router,
-                        onDismiss: self?.onDismiss ?? { $0() }
-                    )))
-                }))
-            ]
-        ))
+        sections.append(
+            Section(
+                header: "Actions",
+                items: [
+                    .destination(DestinationItem(title: "E2E Identity", makeView: {
+                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                    })),
+                    .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                        AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
+                            selfClient: self?
+                                .selfClient,
+                            onDismiss: { self?.onDismiss {} }
+                        )))
+                    })),
+                    .destination(DestinationItem(title: "Configure feature flags", makeView: {
+                        AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                    })),
+                    .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                        AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                            router: self?.router,
+                            onDismiss: self?.onDismiss ?? { $0() }
+                        )))
+                    })),
+                    .destination(
+                        DestinationItem(title: "Overrides", makeView: {
+                                AnyView(DeveloperOverridesForm())
+                            })
+                    )
+                ]
+            )
+        )
     }
 
     private lazy var backendInfoSection: Section = {

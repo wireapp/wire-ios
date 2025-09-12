@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import WireUtilities
 
 public protocol IsBuildBlacklistedUseCase {
 
@@ -40,14 +41,14 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         currentBuildNumber: String,
         api: any BlacklistAPI
     ) {
-        self.currentBuildNumber = currentBuildNumber
+        self.currentBuildNumber = DeveloperOverrides.buildNumber ?? currentBuildNumber
         self.api = api
     }
 
     public func invoke() async throws -> Bool {
         let blacklist = try await api.getBlacklist()
 
-        guard let currrentVersion = Int(currentBuildNumber) else {
+        guard let currentVersion = Int(currentBuildNumber) else {
             throw IsBuildBlacklistedUseCaseError.decodingFailed(
                 message: "current build number '\(currentBuildNumber)' must be an integer"
             )
@@ -59,7 +60,7 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
             )
         }
 
-        return currrentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(currentBuildNumber)
+        return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(currentBuildNumber)
     }
 
 }

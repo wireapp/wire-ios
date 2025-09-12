@@ -19,14 +19,12 @@
 import Foundation
 import WireFoundation
 import WireLogging
+import WireUtilities
 
 /// High level access to a specific backend with automatic api
 /// version resolution.
 
 public actor NetworkStack {
-
-    public static var envNameForObsoleteBackend: String?
-    public static var envNameForObsoleteClient: String?
 
     public typealias NetworkServices = (
         rest: NetworkService,
@@ -103,10 +101,10 @@ public actor NetworkStack {
             return backendMetadata
         }
 
-        // To simulate api version errors, set these static vars with the names of backend environments.
-        if Self.envNameForObsoleteBackend == backendEnvironment.title {
+        // Simulate errors for testing.
+        if DeveloperOverrides.obsoleteBackendEnv == backendEnvironment.title {
             throw NetworkStackError.backendAPIVersionObsolete
-        } else if Self.envNameForObsoleteClient == backendEnvironment.title {
+        } else if DeveloperOverrides.obsoleteClientEnv == backendEnvironment.title {
             throw NetworkStackError.clientAPIVersionObsolete
         }
 
