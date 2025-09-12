@@ -35,7 +35,11 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
             userID: qualifiedID.uuid,
             domain: qualifiedID.domain
         )
-        handler = SyncMLSOneToOneConversationActionHandler(context: syncMOC)
+        handler = SyncMLSOneToOneConversationActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {

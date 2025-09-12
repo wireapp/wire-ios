@@ -530,7 +530,10 @@ final class ClientListViewController: UIViewController,
             userClients
                 .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
-                    if let mlsClientId = MLSClientID(userClient: $0) {
+                    if let mlsClientId = MLSClientID(
+                        userClient: $0,
+                        localDomain: userSession.resolvedBackendMetadata.domain
+                    ) {
                         ($0, mlsClientId)
                     } else {
                         nil

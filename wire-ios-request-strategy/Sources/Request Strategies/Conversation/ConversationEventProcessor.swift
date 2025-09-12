@@ -30,28 +30,41 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: mlsEventProcessor,
-        removeLocalConversation: RemoveLocalConversationUseCase()
+        removeLocalConversation: RemoveLocalConversationUseCase(),
+        isFederationEnabled: isFederationEnabled
     )
     private let eventPayloadDecoder = EventPayloadDecoder()
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             context: context,
-            conversationService: ConversationService(context: context),
-            mlsEventProcessor: MLSEventProcessor(context: context)
+            conversationService: ConversationService(context: context, localDomain: localDomain),
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
     public init(
         context: NSManagedObjectContext,
         conversationService: ConversationServiceInterface,
-        mlsEventProcessor: MLSEventProcessing
+        mlsEventProcessor: MLSEventProcessing,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.conversationService = conversationService
         self.mlsEventProcessor = mlsEventProcessor
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init()
     }
 
@@ -170,7 +183,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.Conversation>.self,
+            Payload.ConversationEvent<Payload.CreatedConversation>.self,
             from: event.payload
         ) else { return }
 
@@ -305,7 +318,7 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
                 Payload.UpdateConversationMLSWelcome.self,
                 from: event.payload
             ),
-            let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+            let qualifiedID = payload.qualifiedID ?? localDomain.map({
                 QualifiedID(uuid: payload.id, domain: $0)
             })
         else { return }
@@ -340,6 +353,10 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
-        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
+        return ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context
+        )
     }
 }

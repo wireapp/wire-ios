@@ -189,9 +189,21 @@ final class AppStateCalculator {
             return
         }
 
-        if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            completion?()
-            return
+        if DeveloperFlag.multibackend.isOn {
+            // If app has been blacklisted due to api version, ignore new state.
+            switch self.appState {
+            case .blacklisted(reason: .backendAPIVersionObsolete), .blacklisted(reason: .clientAPIVersionObsolete):
+                completion?()
+                return
+            default:
+                break
+            }
+        } else {
+            // If app has been blacklisted due to api version, ignore new state.
+            if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
+                completion?()
+                return
+            }
         }
 
         self.appState = appState

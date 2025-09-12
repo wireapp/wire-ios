@@ -29,7 +29,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V0() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -47,7 +51,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V1() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -65,7 +73,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_RequestGeneration_V2() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncConversationAction(qualifiedID: id)
 
@@ -85,7 +97,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_InvalidPayload() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -113,7 +129,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_ConversationNotFound() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -144,8 +164,12 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
-        BackendInfo.apiVersion = .v2
-        let sut = SyncConversationActionHandler(context: syncMOC)
+        let apiVersion = APIVersion.v2
+        let sut = SyncConversationActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didSucceed = customExpectation(description: "did succeed")
@@ -166,7 +190,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         )
 
         let payload = ResponsePayload(found: [conversation], failed: [], not_found: [])
-        let payloadString = try XCTUnwrap(payload.payloadString())
+        let payloadString = try XCTUnwrap(payload.payloadString(apiVersion: apiVersion))
 
         let response = ZMTransportResponse(
             payload: payloadString as ZMTransportData,
@@ -191,7 +215,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_400_InvalidBody() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")
@@ -223,7 +251,11 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_UnknownError() throws {
         // Given
-        let sut = SyncConversationActionHandler(context: uiMOC)
+        let sut = SyncConversationActionHandler(
+            context: uiMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
         let didFail = customExpectation(description: "did fail")

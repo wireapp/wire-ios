@@ -77,7 +77,9 @@ final class AudioMessageViewTests: XCTestCase {
         coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: UUID()),
             applicationContainer: URL.documentsDirectory,
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 

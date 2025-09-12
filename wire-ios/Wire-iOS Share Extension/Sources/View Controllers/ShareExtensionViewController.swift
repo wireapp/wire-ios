@@ -229,7 +229,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 appLockConfig: legacyConfig,
                 sharedUserDefaults: .applicationGroup,
                 minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                currentBuildNumber: buildNumber
+                currentBuildNumber: buildNumber,
+                localDomain: BackendInfo.domain,
+                isFederationEnabled: BackendInfo.isFederationEnabled
             )
         }
     }

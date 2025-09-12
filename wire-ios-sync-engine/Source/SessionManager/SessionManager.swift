@@ -1109,7 +1109,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         if coreDataStack.needsMigration {

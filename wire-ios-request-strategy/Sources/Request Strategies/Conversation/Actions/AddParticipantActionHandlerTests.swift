@@ -60,7 +60,9 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
                 conversationService: mockConversationService,
-                mlsEventProcessor: MockMLSEventProcessing()
+                mlsEventProcessor: MockMLSEventProcessing(),
+                localDomain: "wire.com",
+                isFederationEnabled: false
             )
         )
     }

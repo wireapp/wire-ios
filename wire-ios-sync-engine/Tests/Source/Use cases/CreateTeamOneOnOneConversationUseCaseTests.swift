@@ -48,7 +48,8 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         sut = CreateTeamOneOnOneConversationUseCase(
             protocolSelector: protocolSelector,
             migrator: migrator,
-            service: service
+            service: service,
+            localDomain: "wire.com"
         )
     }
 

@@ -31,6 +31,8 @@ struct SettingsCellDescriptorFactory {
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCoordinator: AnySettingsCoordinator
     let isSimpleChatBubbleEnabled: Bool
+    let localDomain: String?
+    let isFederationEnabled: Bool
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {

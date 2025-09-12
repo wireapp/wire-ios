@@ -123,7 +123,8 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         let configuration = MockCallGridViewControllerInput()
         let viewController = CallGridViewController(
             voiceChannel: mockVoiceChannel,
-            configuration: configuration
+            configuration: configuration,
+            isFederationEnabled: false
         )
         let clients = [
             AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),

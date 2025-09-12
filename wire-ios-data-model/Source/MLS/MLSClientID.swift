@@ -38,16 +38,25 @@ public struct MLSClientID: Equatable, Hashable {
 
     // MARK: - Life cycle
 
-    public init?(user: ZMUser) {
+    public init?(
+        user: ZMUser,
+        localDomain: String?
+    ) {
         guard let selfClient = user.selfClient() else { return nil }
-        self.init(userClient: selfClient)
+        self.init(
+            userClient: selfClient,
+            localDomain: localDomain
+        )
     }
 
-    public init?(userClient: UserClientType) {
+    public init?(
+        userClient: UserClientType,
+        localDomain: String?
+    ) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
-            let domain = userClient.user?.domain ?? BackendInfo.domain
+            let domain = userClient.user?.domain ?? localDomain
         else {
             return nil
         }

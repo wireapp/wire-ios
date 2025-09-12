@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request generation
 
@@ -80,7 +90,8 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case 200:
             guard
                 let data = response.rawData,
-                let payload = ResponsePayload(data)
+                let apiVersion = WireTransport.APIVersion(rawValue: response.apiVersion),
+                let payload = ResponsePayload(data, apiVersion: apiVersion)
             else {
                 action.fail(with: .invalidResponsePayload)
                 return

@@ -48,12 +48,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     var sut: AssetV3DownloadRequestStrategy!
     var conversation: ZMConversation!
     var user: ZMUser!
-
-    var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
+    var apiVersion: APIVersion = .v0
 
     override func setUp() {
         super.setUp()
@@ -62,15 +57,14 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         sut = AssetV3DownloadRequestStrategy(
             withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com"
         )
 
         syncMOC.performGroupedAndWait {
             self.user = self.createUser(alsoCreateClient: true)
             self.conversation = self.createGroupConversation(with: self.user)
         }
-
-        apiVersion = .v0
     }
 
     override func tearDown() {

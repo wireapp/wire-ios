@@ -77,11 +77,12 @@ public final class ConversationService: ConversationServiceInterface {
     public init(
         context: NSManagedObjectContext,
         participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? =
-            nil
+            nil,
+        localDomain: String?
     ) {
         self.context = context
         self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
-            ConversationParticipantsService(context: syncContext)
+            ConversationParticipantsService(context: syncContext, localDomain: localDomain)
         }
     }
 

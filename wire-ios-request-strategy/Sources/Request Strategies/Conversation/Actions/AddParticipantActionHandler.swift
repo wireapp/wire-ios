@@ -41,10 +41,18 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: LegacyConversationEventProcessorProtocol
 
-    override convenience init(context: NSManagedObjectContext) {
+    convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             context: context,
-            eventProcessor: ConversationEventProcessor(context: context)
+            eventProcessor: ConversationEventProcessor(
+                context: context,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         )
     }
 

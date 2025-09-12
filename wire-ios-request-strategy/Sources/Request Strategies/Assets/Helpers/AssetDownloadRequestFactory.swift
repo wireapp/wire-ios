@@ -21,14 +21,19 @@ import WireTransport
 
 public final class AssetDownloadRequestFactory {
 
+    private let localDomain: String?
+
+    init(localDomain: String?) {
+        self.localDomain = localDomain
+    }
+
     public func requestToGetAsset(
         withKey key: String,
         token: String?,
         domain: String?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
-        let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain, !domain.isEmpty { domain } else { localDomain }
         let path: String
         switch apiVersion {
         case .v0:
