@@ -64,7 +64,7 @@ final class FilesViewModelTests {
             let page2 = (nodes: [WireCellsNode.fixture()], nextOffset: Int?.none)
             return request.offset == 0 ? page1 : page2
         }
-        #expect(sut.hasMore == false)
+        #expect(sut.hasMore == true)
 
         // when
         await sut.reload()
@@ -169,7 +169,7 @@ final class FilesViewModelTests {
         // given
         let now = Date()
         let node1 = WireCellsNode.fixture(path: "some-cell/a.jpg", modified: now, ownerUserName: "Emel")
-        let node2 = WireCellsNode.fixture(path: "some-cell/b.jpg", modified: nil, ownerUserName: nil)
+        let node2 = WireCellsNode.fixture(path: "some-cell/b.jpg", modified: now - 60, ownerUserName: nil)
         let node3 = WireCellsNode.fixture(path: "some-cell/c.jpg", modified: nil, ownerUserName: nil)
         nodesRepository.getNodes_MockMethod = { request in
             switch request.offset {
@@ -190,7 +190,7 @@ final class FilesViewModelTests {
         // then
         #expect(sut.state.items == [
             FilesViewItem(id: node1.id, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
-            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other),
+            FilesViewItem(id: node2.id, filename: "b.jpg", ownedBy: nil, modifiedAt: now - 60, icon: .other),
             FilesViewItem(id: node3.id, filename: "c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
     }
@@ -288,7 +288,6 @@ final class FilesViewModelTests {
                 icon: .image
             )
         }),
-        .noData,
         .pending
     ])
     func stateIsCorrectlySet(state: FilesViewModel.State) async throws {
@@ -309,7 +308,9 @@ final class FilesViewModelTests {
         )
 
         nodesRepository.getNodes_MockValue = switch state {
-        case .noData, .pending:
+        case .initial:
+            fatalError("Not tested")
+        case .pending:
             ([], nil)
         case let .received(items):
             (items.map { element in

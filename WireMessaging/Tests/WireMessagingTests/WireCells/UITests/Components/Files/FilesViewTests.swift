@@ -200,7 +200,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_NoDataState() async {
-        let view = makeFilesView(state: .noData)
+        let view = makeFilesView(state: .received(items: []))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
