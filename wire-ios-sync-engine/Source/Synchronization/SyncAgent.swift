@@ -66,7 +66,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
-    private var ongoingSyncTask: Task<Void, Never>?
+    private var ongoingSyncTask: Task<Void, Never>? {
+        willSet {
+            ongoingSyncTask?.cancel()
+        }
+    }
     private var subscription: AnyCancellable?
 
     var isLive: Bool {
