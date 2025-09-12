@@ -157,7 +157,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        privateDefaults.bool(forKey: .collapseOwnMessages)
+        privateDefaults.bool(forKey: .collapseOwnMessages) && !isChatBubbleSimpleEnabled
     }
 
     private func isCollapsedInitialValue() -> Bool {
