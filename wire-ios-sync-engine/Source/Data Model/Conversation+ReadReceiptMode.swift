@@ -55,7 +55,9 @@ public extension ZMConversation {
             if domain == nil {
                 WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
             }
-            let domain = domain ?? userSession.resolvedBackendMetadata.domain ?? "None"
+            guard let domain = domain ?? userSession.resolvedBackendMetadata.domain else {
+                return completion(.failure(ReadReceiptModeError.unknown))
+            }
             path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
         } else {
             path = "/conversations/\(conversationId)/receipt-mode"
