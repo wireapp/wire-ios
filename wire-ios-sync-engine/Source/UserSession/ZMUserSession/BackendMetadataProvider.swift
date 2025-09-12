@@ -20,6 +20,9 @@ import WireTransport
 
 public class BackendMetadataProvider {
 
+    // Set these values when multibackend is on with the metadata
+    // resolved during session loading. If no values are set, then
+    // the fallback legacy values from BackendInfo will be used.
     private let apiVersionOverride: WireTransport.APIVersion?
     private let domainOverride: String?
     private let isFederationEnabledOverride: Bool?
