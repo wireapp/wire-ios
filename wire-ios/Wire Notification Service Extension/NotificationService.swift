@@ -20,6 +20,7 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireTransport
 import WireUtilities
@@ -32,6 +33,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
+        DeveloperOverrides.storage = .shared()
         WireAnalytics.setup(for: .notificationServiceExtension)
     }
 

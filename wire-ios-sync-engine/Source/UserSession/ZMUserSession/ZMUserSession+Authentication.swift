@@ -85,6 +85,17 @@ extension ZMUserSession {
         completion()
     }
 
+    func close(deleteCookie: Bool) async {
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            close(deleteCookie: deleteCookie) {
+                guard !resumed else { return }
+                resumed = true
+                continuation.resume()
+            }
+        }
+    }
+
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
