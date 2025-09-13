@@ -1057,6 +1057,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return userSession
 
+            } catch UserSessionLoader.Failure.buildIsBlacklisted {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
                 delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
                 return nil

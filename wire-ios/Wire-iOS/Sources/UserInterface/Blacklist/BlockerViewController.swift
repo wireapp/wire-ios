@@ -381,6 +381,9 @@ extension BlockerViewController {
             sheet.prefersGrabberVisible = false
             sheet.preferredCornerRadius = 24
         }
+
+        // Present swipe to dismiss.
+        accountSwitcher.isModalInPresentation = true
         present(accountSwitcher, animated: true)
     }
 

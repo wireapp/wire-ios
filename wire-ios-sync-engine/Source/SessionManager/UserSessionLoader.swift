@@ -172,8 +172,19 @@ final class UserSessionLoader {
             cookieStorage: cookieStorage
         )
 
+        // Check if this build is blacklisted.
+        if try await isBuildBlacklisted(userSession: userSession) {
+            await userSession.close(deleteCookie: false)
+            throw Failure.buildIsBlacklisted
+        }
+
         // Perform pending migrations.
-        try await performPendingMigrations(userSession: userSession)
+        do {
+            try await performPendingMigrations(userSession: userSession)
+        } catch {
+            await userSession.close(deleteCookie: false)
+            throw error
+        }
 
         return userSession
     }
@@ -542,7 +553,7 @@ final class UserSessionLoader {
                 networkService: networkService,
                 onAuthenticationFailure: {}
             )
-            var apiService = APIService(
+            let apiService = APIService(
                 networkService: networkService,
                 authenticationManager: authenticationManager
             )
@@ -555,6 +566,15 @@ final class UserSessionLoader {
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
+            return false
+        }
+    }
+
+    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
+        do {
+            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+            return try await useCase.invoke()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             return false
         }
     }
@@ -603,6 +623,7 @@ final class UserSessionLoader {
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
+        case buildIsBlacklisted
         case failedToPerformMigration(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
 
