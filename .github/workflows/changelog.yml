@@ -62,14 +62,12 @@ jobs:
           echo -e "CURRENT_TAG = $CURRENT_TAG"
           echo -e "Node.js version = $(node --version)"
 
-      - name: 'Install changelog'
-        run: |
-          npm i generate-changelog -g
-          
       - name: 'Generate changelog'
         run: |
           echo "{}" > ./package.json
-          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG..$CURRENT_TAG" --file --repo-url https://github.com/wireapp/wire-ios - | grep -v 🍒 > CHANGELOG.md
+          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG..$CURRENT_TAG" --repo-url https://github.com/wireapp/wire-ios
+          cat CHANGELOG.md | grep -v '🍒' > CHANGELOG1.md
+          mv CHANGELOG1.md CHANGELOG.md
 
       - name: 'Set date variable'
         id: date
