@@ -62,6 +62,10 @@ jobs:
           echo -e "CURRENT_TAG = $CURRENT_TAG"
           echo -e "Node.js version = $(node --version)"
 
+      - name: 'Install changelog'
+        run: |
+          npm i generate-changelog -g
+          
       - name: 'Generate changelog'
         run: |
           echo "{}" > ./package.json
