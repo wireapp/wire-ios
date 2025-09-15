@@ -40,6 +40,7 @@ class WireUITestCase: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = launchArguments
         app.useWireAuthentication()
+        app.developerFlag(.multibackend, enabled: false)
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs

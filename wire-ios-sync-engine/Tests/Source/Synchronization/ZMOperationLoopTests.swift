@@ -24,6 +24,11 @@ extension ZMOperationLoopTests {
     // MARK: - BackendInfo Helpers
 
     @objc
+    func disableMultibackend() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+    }
+
+    @objc
     func setBackendInfoAPIVersionNil() {
         BackendInfo.apiVersion = nil
     }
