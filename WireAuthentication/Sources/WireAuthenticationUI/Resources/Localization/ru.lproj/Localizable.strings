@@ -22,12 +22,27 @@
 "authentication.identity.input.submit" = "Вперед";
 
 "cloud_user_login.title" = "Введите пароль для входа";
+"cloud_user_login.expiration_message" = "Ваш сеанс истек. Введите пароль, чтобы продолжить.";
 "cloud_user_login.input_email.title" = "Email";
 "cloud_user_login.input_email.placeholder" = "Введите email";
 "cloud_user_login.input_password.title" = "Пароль";
 "cloud_user_login.input_password.placeholder" = "Введите пароль";
 "cloud_user_login.submit" = "Вперед";
 "cloud_user_login.forgot_password" = "Забыли пароль?";
+
+"login.sso.title" = "Войти";
+"login.sso.expiration_message" = "Ваш сеанс истек. Войдите, используя свой корпоративный аккаунт.";
+"login.sso.input_code.title" = "Код доступа SSO";
+"login.sso.input_code.placeholder" = "Введите код доступа SSO";
+"login.sso.submit" = "Вход для организаций";
+
+"logout.button.title" = "Выйти";
+"logout.alert.title" = "Выйти";
+"logout.alert.message" = "Определитесь, хотите ли вы сохранить историю своих бесед или навсегда удалить ее с этого устройства.";
+"logout.alert.delete_data_button" = "Выйти и удалить историю";
+"logout.alert.keep_data_button" = "Выйти и сохранить историю";
+"logout.alert.cancel" = "Отмена";
+
 "create_account_or_team.title" = "У вас нет аккаунта Wire?";
 "create_account_or_team.button" = "Создать аккаунт или команду";
 "create_account.button" = "Создать аккаунт";
@@ -80,6 +95,8 @@
 
 "authentication.no_history.title" = "Вы впервые используете Wire на этом устройстве.";
 "authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
+"authentication.missing_history.title" = "Вы уже использовали Wire на этом устройстве.";
+"authentication.missing_history.message" = "Сообщения, отправленные пока устройствоне использовалось, отображаться не будут.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "Отсутствует подключение к интернету";

@@ -22,3 +22,7 @@
 // MARK: Conversation Files View
 "conversation.wireCells.files.close" = "Закрыть файлы";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
+"conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
+"conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе";
+"conversation.wireCells.files.pendingCells.title" = "Файлы подготавливаются";
+"conversation.wireCells.files.pendingCells.message" = "Мы обрабатываем файлы для этой беседы. Они появятся здесь, как только все будет готово.";
