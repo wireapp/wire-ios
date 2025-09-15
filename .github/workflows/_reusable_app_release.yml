@@ -82,6 +82,7 @@ jobs:
       is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
+    if: always()
     timeout-minutes: 60
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
