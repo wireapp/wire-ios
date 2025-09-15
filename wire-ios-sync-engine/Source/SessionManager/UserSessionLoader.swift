@@ -139,6 +139,7 @@ final class UserSessionLoader {
         )
 
         // Load network stack.
+        // TODO: [WPB-20310] require proxy credentials if missing
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
@@ -262,7 +263,6 @@ final class UserSessionLoader {
             let legacyAPIVersion = BackendInfo.apiVersion,
             let legacyDomain = BackendInfo.domain {
             // We're on the update path, use the legacy metadata.
-            // TODO: [WPB-19626] check... need isMLSEnabled too?
             prevMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
@@ -271,7 +271,17 @@ final class UserSessionLoader {
         }
 
         // Get new metadata.
-        let newMetadata = try await networkStack.resolvedBackendMetadata()
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            newMetadata = try await networkStack.resolvedBackendMetadata()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            // To allow offline browsing fallback to previous metadata if possible.
+            if let prevMetadata {
+                newMetadata = prevMetadata
+            } else {
+                throw Failure.noResolvedBackendMetadataAvailable
+            }
+        }
 
         if let prevMetadata {
             if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
@@ -615,17 +625,43 @@ final class UserSessionLoader {
         }
     }
 
-    enum Failure: Error {
+    enum Failure: Error, SafeForLoggingStringConvertible {
 
         case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
+        case noResolvedBackendMetadataAvailable
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
         case buildIsBlacklisted
         case failedToPerformMigration(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
+
+        var safeForLoggingDescription: String {
+            switch self {
+            case .failedToStoreNewEnvironment:
+                "failed to store new environment"
+            case .failedToFetchBackendEnvironment:
+                "failed to fetch backend environment"
+            case .failedToFetchProxyCredentials:
+                "failed to fetch proxy credentials"
+            case .noResolvedBackendMetadataAvailable:
+                "no resolved backend metadata available"
+            case .failedToStoreMetadata:
+                "failed to store metadata"
+            case .failedToLoadPersistenceStack:
+                "failed to load persistence stack"
+            case .failedToEnabledSyncV2:
+                "failed to enable sync v2"
+            case .buildIsBlacklisted:
+                "build is blacklisted"
+            case .failedToPerformMigration:
+                "failed to perform migration"
+            case .failedToMigrationToConsumableNotifications:
+                "failed to migrate to consumable notifications"
+            }
+        }
 
     }
 
