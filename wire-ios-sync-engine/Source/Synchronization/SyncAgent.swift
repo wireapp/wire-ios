@@ -297,7 +297,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             .sink { [weak self] _ in
                 // if live sync terminated and we're in foreground
                 // app will try to recover by performing an incremental sync again
-                self?.resume()
+                Task {
+                    await self?.restart()
+                }
             }
     }
 
@@ -305,7 +307,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug("push channel opened, waiting until closed", attributes: .syncAttributes)
         await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
         WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
-        resume()
+        await restart()
     }
 }
 

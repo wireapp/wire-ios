@@ -43,7 +43,7 @@ public final class SafeFileContext: NSObject {
             WireLogger.pushChannel.debug("init SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
         } else {
             Self.ccInstanceCount += 1
-            WireLogger.pushChannel.debug("SafeCoreCrypto deinit SafeFileContext \(Self.instanceCount)", attributes: .safePublic)
+            WireLogger.pushChannel.debug("SafeCoreCrypto init SafeFileContext \(Self.instanceCount)", attributes: .safePublic)
         }
 
     }
