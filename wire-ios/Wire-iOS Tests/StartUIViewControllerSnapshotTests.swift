@@ -127,8 +127,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     func testStartUIViewControllerDoesNotShowNewChannelOptionForPersonalUser() {
         // Given, channels are supported and user is a personal user
         // Note this has been changed for WPB-20233
-        BackendInfo.apiVersion = .v8
-        BackendInfo.isMLSEnabled = true
+        userSession.apiVersion = .v8
+        userSession.isBackendMLSEnabled = true
 
         nonTeamTest {
             let navigationController = setupNavigationController()
@@ -140,8 +140,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func testStartUIViewControllerShowNewChannelOptionForTeamUser() {
         // Given, channels are supported
-        BackendInfo.apiVersion = .v8
-        BackendInfo.isMLSEnabled = true
+        userSession.apiVersion = .v8
+        userSession.isBackendMLSEnabled = true
         // channels are enabled
         userSession.channelsFeature = Feature.Channels(
             status: .enabled,

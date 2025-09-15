@@ -24,10 +24,14 @@ extension ZClientViewController: StartUIDelegate {
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
         Task {
-            guard let userID = user.qualifiedID else { return }
-
             let userSession = viewController.userSession
             let conversation = user.oneToOneConversation
+
+            guard let userID = user.qualifiedID(
+                localDomain: userSession.resolvedBackendMetadata.domain
+            ) else {
+                return
+            }
 
             do {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)

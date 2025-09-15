@@ -42,6 +42,13 @@ public struct MLSPublicKeys: Equatable, Sendable {
 
     public let p512: String?
 
+    /// Whether at least one non-empty key exists.
+
+    public var isValid: Bool {
+        let allKeys = [ed25519, ed448, p256, p384, p512].compactMap(\.self)
+        return allKeys.contains { !$0.isEmpty }
+    }
+
     public init(
         ed25519: String? = nil,
         ed448: String? = nil,

@@ -4027,17 +4027,17 @@ public class MockMLSClientManagerProtocol: MLSClientManagerProtocol {
 
     // MARK: - initializeMLSClientIfNeeded
 
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS)] = []
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod: ((QualifiedClientID, Bool, Feature.MLS) async -> Void)?
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool)] = []
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod: ((QualifiedClientID, Bool, Feature.MLS, Bool) async -> Void)?
 
-    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS) async {
-        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature))
+    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool) async {
+        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature, isBackendMLSEnabled: isBackendMLSEnabled))
 
-        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod else {
-            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature`")
+        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod else {
+            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled`")
         }
 
-        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature)
+        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature, isBackendMLSEnabled)
     }
 
 }

@@ -32,7 +32,11 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
 
-        sut = TeamImageAssetUpdateStrategy(withManagedObjectContext: uiMOC, applicationStatus: mockApplicationStatus)
+        sut = TeamImageAssetUpdateStrategy(
+            withManagedObjectContext: uiMOC,
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com"
+        )
     }
 
     override func tearDown() {

@@ -100,15 +100,29 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
+        self.init(
+            context: managedObjectContext,
+            cookieProvider: nil,
+            coreCryptoProvider: nil,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: false
+        )
     }
 
     override init(
         context moc: NSManagedObjectContext!,
         cookieProvider: CookieProvider!,
-        coreCryptoProvider: CoreCryptoProviderProtocol!
+        coreCryptoProvider: CoreCryptoProviderProtocol!,
+        localDomain: String?,
+        isBackendMLSEnabled: Bool
     ) {
-        super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
+        super.init(
+            context: moc,
+            cookieProvider: cookieProvider,
+            coreCryptoProvider: coreCryptoProvider,
+            localDomain: localDomain,
+            isBackendMLSEnabled: isBackendMLSEnabled
+        )
         self.emailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
     }
 

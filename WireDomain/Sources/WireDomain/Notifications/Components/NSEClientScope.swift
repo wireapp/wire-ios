@@ -53,6 +53,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let restNetworkService: NetworkService
     private let webSocketNetworkService: NetworkService
     private let apiVersion: WireNetwork.APIVersion
+    private let localDomain: String
+    private let isFederationEnabled: Bool
     private let coreDataStack: CoreDataStack
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
@@ -64,12 +66,16 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
+        localDomain: String,
+        isFederationEnabled: Bool,
         coreDataStack: CoreDataStack
     ) {
         self.clientID = clientID
         self.restNetworkService = restNetworkService
         self.webSocketNetworkService = webSocketNetworkService
         self.apiVersion = apiVersion
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
 
@@ -233,7 +239,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 syncContext: coreDataStack.syncContext,
                 cryptoboxMigrationManager: dependency.cryptoboxMigrationManager,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
-                allowCreation: false
+                allowCreation: false,
+                localDomain: localDomain
             )
         }
     }
@@ -304,7 +311,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             ConversationLocalStore(
                 context: coreDataStack.syncContext,
                 mlsService: nil,
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
         }
     }

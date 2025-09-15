@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request
 

@@ -35,15 +35,18 @@ struct ConversationEventPayloadProcessor {
 
     private let mlsEventProcessor: MLSEventProcessing
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let isFederationEnabled: Bool
 
     // MARK: - Life cycle
 
     init(
         mlsEventProcessor: MLSEventProcessing,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
+        isFederationEnabled: Bool
     ) {
         self.mlsEventProcessor = mlsEventProcessor
         self.removeLocalConversation = removeLocalConversation
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Conversation creation
@@ -75,7 +78,7 @@ struct ConversationEventPayloadProcessor {
     }
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.Conversation>,
+        _ payload: Payload.ConversationEvent<Payload.CreatedConversation>,
         in context: NSManagedObjectContext
     ) async {
         guard let timestamp = payload.timestamp else {
@@ -83,8 +86,33 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
+        let conversation = Payload.Conversation(
+            qualifiedID: payload.data.qualifiedID,
+            id: payload.data.id,
+            type: payload.data.type,
+            creator: payload.data.creator,
+            cipherSuite: payload.data.cipherSuite,
+            access: payload.data.access,
+            legacyAccessRole: payload.data.legacyAccessRole,
+            accessRoles: payload.data.accessRoles,
+            name: payload.data.name,
+            members: payload.data.members,
+            lastEvent: payload.data.lastEvent,
+            lastEventTime: payload.data.lastEventTime,
+            teamID: payload.data.teamID,
+            messageTimer: payload.data.messageTimer,
+            readReceiptMode: payload.data.readReceiptMode,
+            messageProtocol: payload.data.messageProtocol,
+            mlsGroupID: payload.data.mlsGroupID,
+            epoch: payload.data.epoch,
+            epochTimestamp: payload.data.epochTimestamp,
+            groupType: payload.data.groupType,
+            addPermission: payload.data.addPermission,
+            cellState: payload.data.cellsState
+        )
+
         await updateOrCreateConversation(
-            from: payload.data,
+            from: conversation,
             serverTimestamp: timestamp,
             source: .eventStream,
             in: context
@@ -774,7 +802,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
+        conversation.domain = isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
         if let epoch = payload.epoch {

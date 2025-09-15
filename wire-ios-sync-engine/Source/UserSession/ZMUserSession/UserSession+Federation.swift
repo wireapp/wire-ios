@@ -31,7 +31,7 @@ public extension UserSession {
     }
 
     var isFederationUsageAllowed: Bool {
-        guard BackendInfo.isMLSEnabled else {
+        guard isBackendMLSEnabled else {
             // If there is no MLS removal key configured,federation search is allowed.
             return true
         }

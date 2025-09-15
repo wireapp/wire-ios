@@ -242,7 +242,9 @@ struct ZMUserSessionBuilder {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: BackendInfo.domain,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -269,11 +271,13 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: BackendInfo.domain
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: userId
+            userID: userId,
+            apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
             storage: sharedUserDefaults,

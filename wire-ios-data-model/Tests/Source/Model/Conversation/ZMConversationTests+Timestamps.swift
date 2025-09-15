@@ -393,7 +393,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        uiMOC.localDomain = domain
 
         let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage1.systemMessageType = .missedCall

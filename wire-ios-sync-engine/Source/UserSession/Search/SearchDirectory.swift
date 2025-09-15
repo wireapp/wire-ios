@@ -24,6 +24,7 @@ public class SearchDirectory: NSObject {
     let searchContext: NSManagedObjectContext
     let contextProvider: ContextProvider
     let transportSession: TransportSessionType
+    private let apiVersion: WireTransport.APIVersion?
 
     var isTornDown = false
 
@@ -43,7 +44,8 @@ public class SearchDirectory: NSObject {
             transportSession: userSession.transportSession,
             searchUsersCache: userSession.searchUsersCache,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
-            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
+            apiVersion: userSession.resolvedBackendMetadata.apiVersion
         )
     }
 
@@ -53,12 +55,14 @@ public class SearchDirectory: NSObject {
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
         refreshUsersMissingMetadataAction: RecurringAction,
-        refreshConversationsMissingMetadataAction: RecurringAction
+        refreshConversationsMissingMetadataAction: RecurringAction,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
+        self.apiVersion = apiVersion
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
@@ -73,7 +77,8 @@ public class SearchDirectory: NSObject {
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            apiVersion: apiVersion
         )
 
         task.addResultHandler { [weak self] result, _ in
@@ -94,7 +99,8 @@ public class SearchDirectory: NSObject {
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            apiVersion: apiVersion
         )
 
         task.addResultHandler { [weak self] result, _ in

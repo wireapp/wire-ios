@@ -58,7 +58,8 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         sut = MLSConversationParticipantsService(
             context: syncMOC,
             mlsService: mockMLSService,
-            clientIDsProvider: mockClientIDsProvider
+            clientIDsProvider: mockClientIDsProvider,
+            localDomain: "wire.com"
         )
     }
 
@@ -76,7 +77,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Succeeds() async throws {
         // GIVEN
         let expectedUsers = await syncMOC.perform { [self] in
-            [MLSUser(from: user)]
+            [MLSUser(from: user, localDomain: "wire.com")]
         }
 
         // WHEN
@@ -109,7 +110,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Throws_FailedToClaimKeyPackages() async {
         // GIVEN
         let mlsUser = await syncMOC.perform { [self] in
-            MLSUser(from: user)
+            MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
@@ -127,7 +128,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         // GIVEN
         let unreachableDomains = Set(["example.com"])
         await syncMOC.perform { [self] in
-            _ = MLSUser(from: user)
+            _ = MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
@@ -145,7 +146,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         // GIVEN
         let unreachableDomains = Set(["example"])
         await syncMOC.perform { [self] in
-            _ = MLSUser(from: user)
+            _ = MLSUser(from: user, localDomain: "wire.com")
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in

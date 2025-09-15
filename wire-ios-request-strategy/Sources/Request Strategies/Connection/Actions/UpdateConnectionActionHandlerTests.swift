@@ -26,7 +26,10 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        sut = UpdateConnectionActionHandler(context: syncMOC)
+        sut = UpdateConnectionActionHandler(
+            context: syncMOC,
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {

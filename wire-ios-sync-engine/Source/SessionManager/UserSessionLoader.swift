@@ -127,7 +127,10 @@ final class UserSessionLoader {
         }
 
         // Load persistence stack.
-        let coreDataStack = try await loadPersistenceStack()
+        let coreDataStack = try await loadPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
@@ -149,6 +152,14 @@ final class UserSessionLoader {
             try await cookieStorage.storeCookies(cookies)
         }
 
+        // Check if this backend supports MLS.
+        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            networkService: networkServices.rest,
+            cookieStorage: cookieStorage,
+            apiVersion: metadata.apiVersion
+        )
+        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+
         // Create user session.
         let userSession = await createUserSession(
             environment: backendEnvironment,
@@ -161,8 +172,19 @@ final class UserSessionLoader {
             cookieStorage: cookieStorage
         )
 
+        // Check if this build is blacklisted.
+        if try await isBuildBlacklisted(userSession: userSession) {
+            await userSession.close(deleteCookie: false)
+            throw Failure.buildIsBlacklisted
+        }
+
         // Perform pending migrations.
-        try await performPendingMigrations(userSession: userSession)
+        do {
+            try await performPendingMigrations(userSession: userSession)
+        } catch {
+            await userSession.close(deleteCookie: false)
+            throw error
+        }
 
         return userSession
     }
@@ -274,11 +296,16 @@ final class UserSessionLoader {
         return newMetadata
     }
 
-    private func loadPersistenceStack() async throws -> CoreDataStack {
+    private func loadPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         if coreDataStack.needsMigration {
@@ -373,7 +400,8 @@ final class UserSessionLoader {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: backendMetadata.domain
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -399,7 +427,9 @@ final class UserSessionLoader {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: backendMetadata.domain,
+            isBackendMLSEnabled: journal[.isBackendMLSEnabled]
         )
 
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
@@ -430,12 +460,14 @@ final class UserSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
 
         let proteusToMLSMigrationCoordinator = ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: accountID
+            userID: accountID,
+            apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
             storage: sharedUserDefaults,
@@ -509,6 +541,44 @@ final class UserSessionLoader {
         return userSession
     }
 
+    private func isBackendMLSEnabled(
+        networkService: NetworkService,
+        cookieStorage: CookieStorage,
+        apiVersion: WireNetwork.APIVersion
+    ) async throws -> Bool {
+        do {
+            let authenticationManager = AuthenticationManager(
+                clientID: nil,
+                cookieStorage: cookieStorage,
+                networkService: networkService,
+                onAuthenticationFailure: {}
+            )
+            let apiService = APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+            let api = MLSAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+            let keys = try await api.getBackendMLSPublicKeys()
+            return keys.removal.isValid
+        } catch
+        URLError.notConnectedToInternet,
+            URLError.networkConnectionLost,
+            MLSAPIError.unsupportedEndpointForAPIVersion,
+            MLSAPIError.mlsNotEnabled {
+            // Don't block session loading, we'll try again later.
+            return false
+        }
+    }
+
+    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
+        do {
+            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+            return try await useCase.invoke()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            return false
+        }
+    }
+
     private func performPendingMigrations(userSession: ZMUserSession) async throws {
         // TODO: [WPB-14630] perform metadata migrations
 
@@ -553,6 +623,7 @@ final class UserSessionLoader {
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
+        case buildIsBlacklisted
         case failedToPerformMigration(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
 

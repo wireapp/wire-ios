@@ -95,7 +95,7 @@ extension WireCallCenterV3 {
     func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
         guard
             let context = uiMOC,
-            let domain = callID.domain ?? BackendInfo.domain,
+            let domain = callID.domain ?? localDomain,
             let conversation = ZMConversation.fetch(
                 with: callID.identifier,
                 domain: domain,
@@ -141,7 +141,7 @@ extension WireCallCenterV3 {
         guard
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
-            let selfClientID = MLSClientID(userClient: selfClient),
+            let selfClientID = MLSClientID(userClient: selfClient, localDomain: localDomain),
             let parentIDs = mlsParentIDS(for: conversationID)
         else {
             return

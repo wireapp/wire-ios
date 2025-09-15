@@ -1057,6 +1057,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return userSession
 
+            } catch UserSessionLoader.Failure.buildIsBlacklisted {
+                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
                 delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
                 return nil
@@ -1109,7 +1112,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         if coreDataStack.needsMigration {

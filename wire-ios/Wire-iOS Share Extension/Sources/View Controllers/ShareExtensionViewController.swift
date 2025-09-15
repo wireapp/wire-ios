@@ -26,6 +26,7 @@ import WireCoreCrypto
 import WireDataModel
 import WireDesign
 import WireDomain
+import WireFoundation
 import WireLinkPreview
 import WireLogging
 import WireNetwork
@@ -135,6 +136,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setup() {
+        DeveloperOverrides.storage = .shared()
         setUpObserver()
         setUpDatadog()
     }
@@ -229,7 +231,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 appLockConfig: legacyConfig,
                 sharedUserDefaults: .applicationGroup,
                 minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                currentBuildNumber: buildNumber
+                currentBuildNumber: buildNumber,
+                localDomain: BackendInfo.domain,
+                isFederationEnabled: BackendInfo.isFederationEnabled
             )
         }
     }

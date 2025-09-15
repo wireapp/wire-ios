@@ -59,7 +59,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
         initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
-            .InitiateResetMLSConversationUseCaseProtocol
+            .InitiateResetMLSConversationUseCaseProtocol,
+        metadata: BackendMetadataProvider
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -75,7 +76,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            metadata: metadata
         )
         self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
@@ -115,7 +117,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        metadata: BackendMetadataProvider
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -147,11 +150,14 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain
             ),
             VerifyLegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             ProxiedRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -169,15 +175,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             AssetV3DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             UserPropertyRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -196,11 +205,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             PushTokenStrategy(
                 withManagedObjectContext: syncMOC,
@@ -208,7 +219,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC
+                managedObjectContext: syncMOC,
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
@@ -219,20 +232,29 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: oneOnOneResolver
+                oneOneOneResolver: oneOnOneResolver,
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
-                removeLocalConversation: RemoveLocalConversationUseCase()
+                removeLocalConversation: RemoveLocalConversationUseCase(),
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOnOneResolver: oneOnOneResolver
+                oneOnOneResolver: oneOnOneResolver,
+                apiVersion: metadata.apiVersion,
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
@@ -282,7 +304,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             AssetDeletionRequestStrategy(
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                identifierProvider: applicationStatusDirectory.assetDeletionStatus
+                identifierProvider: applicationStatusDirectory.assetDeletionStatus,
+                localDomain: metadata.domain
             ),
             UserRichProfileRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -290,7 +313,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TeamImageAssetUpdateStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             LabelDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -313,7 +337,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                mlsClientManager: mlsClientManager
+                mlsClientManager: mlsClientManager,
+                apiVersion: metadata.apiVersion
             ),
             FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -340,12 +365,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
-                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus
+                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus,
+                localDomain: metadata.domain
             ),
             localNotificationDispatcher,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
             ),
             SelfSupportedProtocolsRequestStrategy(
                 context: syncMOC,
@@ -367,7 +395,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        metadata: BackendMetadataProvider
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -388,7 +417,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
-                featureRepository: LegacyFeatureRepository(context: syncContext)
+                featureRepository: LegacyFeatureRepository(context: syncContext),
+                apiVersion: metadata.apiVersion
             )
 
             let strategies: [Any] = [
@@ -417,7 +447,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     managedObjectContext: syncContext,
                     applicationStatus: applicationStatusDirectory,
                     flowManager: flowManager,
-                    messageSender: messageSender
+                    messageSender: messageSender,
+                    localDomain: metadata.domain,
+                    isFederationEnabled: metadata.isFederationEnabled
                 ),
                 ResetSessionRequestStrategy(
                     managedObjectContext: syncContext,

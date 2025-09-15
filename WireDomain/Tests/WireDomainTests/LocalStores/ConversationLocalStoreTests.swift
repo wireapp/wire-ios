@@ -52,7 +52,9 @@ final class ConversationLocalStoreTests: XCTestCase {
         sut = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: messageLocalStore,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 

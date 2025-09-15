@@ -95,7 +95,10 @@ final class SelfProfileViewController: UIViewController {
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
-            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
@@ -125,7 +128,7 @@ final class SelfProfileViewController: UIViewController {
                 selfUser.refreshTeamData()
             }
         } else if
-            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
@@ -323,7 +326,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     func triggerCreateTeamFlow() {
-        if let backendInfoApiVersion = BackendInfo.apiVersion,
+        if let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
             onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
