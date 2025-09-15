@@ -48,9 +48,9 @@ public final class AppLockController: AppLockType {
 
     public var timeout: UInt {
         #if DEBUG
-            if let s = ProcessInfo.processInfo.environment["UITEST_APPLOCK_TIMEOUT"],
-               let v = UInt(s) {
-                return v
+            // override timeout for XCUITests
+            if let applockTimeInSeconds = UInt(ProcessInfo.processInfo.environment["UITEST_APPLOCK_TIMEOUT"]!) {
+                return applockTimeInSeconds
             }
         #endif
         return legacyConfig?.timeout ?? config.timeout
