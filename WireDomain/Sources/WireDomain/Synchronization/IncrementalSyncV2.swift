@@ -31,7 +31,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     public enum Failure: Error {
         /// Contains all envelopes that were successfully processed
         case incompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
-        case pushChannelAlreadyOpened
+        case nsePushChannelAlreadyOpened
+        case mainAppPushChannelAlreadyOpened
     }
 
     private let selfClientID: String
@@ -86,15 +87,23 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         try Task.checkCancellation()
 
         try await pullServerTimeSync.pull()
-        
+
         // makes sure that the file descriptor within pushChannelState is released when in background
         // so we're not killed by OS
         let pushChannelState = createPushChannelState()
         do {
             try await pushChannelState.markAsOpen()
-        } catch {
-            throw Failure.pushChannelAlreadyOpened
+        } catch let PushChannelState.Failure.alreadyLocked(sameProcess) {
+            if !sameProcess {
+                throw Failure.nsePushChannelAlreadyOpened
+            } else {
+                throw Failure.mainAppPushChannelAlreadyOpened
+            }
         }
+
+        // notify SyncAgent now to show sync bar,
+        // not before as it could result in an infinite sync bar
+        delegate?.didStart(sync: self)
 
         let syncMarker = syncMarkerGenerator()
 

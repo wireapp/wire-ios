@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireLogging
+import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
@@ -28,7 +28,7 @@ public final class SafeFileContext: NSObject {
     fileprivate var fileDescriptor: CInt!
 
     var debug = ""
-    
+
     public init(fileURL: URL, debug: String = "") {
         self.fileURL = fileURL
         self.debug = debug
@@ -41,10 +41,13 @@ public final class SafeFileContext: NSObject {
         if !debug.isEmpty {
             Self.instanceCount += 1
             WireLogger.pushChannel.debug("init SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
-//            assert(Self.instanceCount < 2, "more than one instance of SafeFileContext is not supported")
+            assert(Self.instanceCount < 3, "more than 2 instances of SafeFileContext is not supported")
         } else {
             Self.ccInstanceCount += 1
-            WireLogger.pushChannel.debug("SafeCoreCrypto init SafeFileContext \(Self.instanceCount)", attributes: .safePublic)
+            WireLogger.pushChannel.debug(
+                "SafeCoreCrypto init SafeFileContext \(Self.instanceCount)",
+                attributes: .safePublic
+            )
         }
 
     }
@@ -56,10 +59,16 @@ public final class SafeFileContext: NSObject {
         close(self.fileDescriptor)
         if !debug.isEmpty {
             Self.instanceCount -= 1
-            WireLogger.pushChannel.debug("deinit SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
+            WireLogger.pushChannel.debug(
+                "deinit SafeFileContext \(debug) \(Self.instanceCount)",
+                attributes: .safePublic
+            )
         } else {
             Self.ccInstanceCount -= 1
-            WireLogger.pushChannel.debug("SafeCoreCrypto deinit SafeFileContext \(Self.instanceCount)", attributes: .safePublic)
+            WireLogger.pushChannel.debug(
+                "SafeCoreCrypto deinit SafeFileContext \(Self.instanceCount)",
+                attributes: .safePublic
+            )
 
         }
     }

@@ -67,11 +67,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
-    private var ongoingSyncTask: Task<Void, Never>? {
-        willSet {
-            ongoingSyncTask?.cancel()
-        }
-    }
+    private var ongoingSyncTask: Task<Void, Never>?
+
     private var subscription: AnyCancellable?
 
     var isLive: Bool {
@@ -147,7 +144,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             await suspend()
         }
     }
-    
+
     private func suspend() async {
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
@@ -159,6 +156,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         )
 
         ongoingSyncTask?.cancel()
+        ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
@@ -220,37 +218,35 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
-    /// incrementalSyncTaskManager.performIfNeeded
-    ///    backoff
-    ///       sync
-    
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
 
         if isSyncV2Enabled {
-            
+
             try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                 guard let self else { return }
-                
+
                 let retrier = BackoffRetrier()
-                
+
                 try await retrier.retry { [weak self] in
                     guard let self else { return }
-                    
-                    delegate?.syncAgentDidStartIncrementalSync(self)
-                    
+
                     do {
                         if isConsumableNotificationsEnabled {
                             incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
                                 .perform()
                         } else {
+                            delegate?.syncAgentDidStartIncrementalSync(self)
                             incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                                 .perform()
                             delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                         }
-                        
-                    } catch IncrementalSyncV2.Failure.pushChannelAlreadyOpened {
+                    } catch IncrementalSyncV2.Failure.mainAppPushChannelAlreadyOpened {
+                        syncStateSubject.send(.suspended)
+                        // ignore error, don't retry
+                        // this can happen if receiving a call
+                    } catch IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened {
                         WireLogger.sync.debug("push channel opened, waiting until closed", attributes: .syncAttributes)
                         await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
                         WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
@@ -258,12 +254,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         syncStateSubject.send(.suspended)
                         // swallow error from retrier and start resume
                         resume()
-                        
+
                     } catch IncrementalSync.Failure.missedEvents {
                         WireLogger.sync.error(
                             "failed to perform new incremental sync (missed events): recovering with a full sync"
                         )
-                        
+
                         syncStateSubject.send(.suspended)
                         // swallow error from retrier and start resume
                         resume()
@@ -273,9 +269,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         throw error
                     }
                 }
-                
+
             }
-            
+
         } else {
             await legacySyncStatus.performQuickSync()
         }
@@ -345,6 +341,10 @@ extension SyncAgent: LiveSyncDelegate {
             self,
             error: error
         )
+    }
+
+    func didStart(sync: IncrementalSyncV2) {
+        delegate?.syncAgentDidStartIncrementalSync(self)
     }
 
 }

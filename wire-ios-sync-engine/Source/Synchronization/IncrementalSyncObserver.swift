@@ -34,7 +34,11 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
 
     private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
 
-    @Published private var decryptionState: DecryptionState = .notStarted
+    @Published private var decryptionState: DecryptionState = .notStarted {
+        didSet {
+            WireLogger.sync.debug("🍒 decrypted state changed to: \(decryptionState)")
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -54,6 +58,7 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 .syncStatePublisher
                 .receive(on: decryptionQueue)
                 .sink { [weak self] syncState in
+                    WireLogger.sync.debug("🍒 \(String(describing: syncState))")
                     switch syncState {
                     case .incrementalSyncing(.pullPendingEvents),
                          .incrementalSyncing(.receivingLiveEvents):
