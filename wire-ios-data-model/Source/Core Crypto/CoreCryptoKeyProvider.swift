@@ -168,6 +168,13 @@ public class CoreCryptoKeyProvider {
 
 }
 
+public extension CoreCryptoKeyProvider {
+    static func deleteScopedCoreCryptoKey(userID: UUID) throws {
+        let item = ScopedCoreCryptoKeychainItem(userID: userID)
+        try KeychainManager.deleteItem(item)
+    }
+}
+
 struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
 
     var userID: UUID
