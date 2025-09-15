@@ -625,7 +625,7 @@ final class UserSessionLoader {
         }
     }
 
-    enum Failure: Error {
+    enum Failure: Error, SafeForLoggingStringConvertible {
 
         case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
@@ -637,6 +637,31 @@ final class UserSessionLoader {
         case buildIsBlacklisted
         case failedToPerformMigration(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
+
+        var safeForLoggingDescription: String {
+            switch self {
+            case .failedToStoreNewEnvironment:
+                "failed to store new environment"
+            case .failedToFetchBackendEnvironment:
+                "failed to fetch backend environment"
+            case .failedToFetchProxyCredentials:
+                "failed to fetch proxy credentials"
+            case .noResolvedBackendMetadataAvailable:
+                "no resolved backend metadata available"
+            case .failedToStoreMetadata:
+                "failed to store metadata"
+            case .failedToLoadPersistenceStack:
+                "failed to load persistence stack"
+            case .failedToEnabledSyncV2:
+                "failed to enable sync v2"
+            case .buildIsBlacklisted:
+                "build is blacklisted"
+            case .failedToPerformMigration:
+                "failed to perform migration"
+            case .failedToMigrationToConsumableNotifications:
+                "failed to migrate to consumable notifications"
+            }
+        }
 
     }
 

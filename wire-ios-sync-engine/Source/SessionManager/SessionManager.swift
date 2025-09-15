@@ -1064,25 +1064,50 @@ public final class SessionManager: NSObject, SessionManagerType {
                 return userSession
 
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
+                WireLogger.sessionManager.warn(
+                    "build is blacklisted: \(currentBuildNumber)",
+                    attributes: .safePublic
+                )
                 delegate?.sessionManagerDidFailToLoadSession(
                     for: account,
                     error: .buildIsBlacklisted
                 )
                 return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
+                WireLogger.sessionManager.warn(
+                    "backend API version is obsolete",
+                    attributes: .safePublic
+                )
                 delegate?.sessionManagerDidFailToLoadSession(
                     for: account,
                     error: .backendIsObsolete
                 )
                 return nil
             } catch NetworkStackError.clientAPIVersionObsolete {
+                WireLogger.sessionManager.warn(
+                    "client API version is obsolete",
+                    attributes: .safePublic
+                )
                 delegate?.sessionManagerDidFailToLoadSession(
                     for: account,
                     error: .clientIsObsolete
                 )
                 return nil
+            } catch let error as SafeForLoggingStringConvertible {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
+                return nil
             } catch {
-                WireLogger.sessionManager.critical("failed to load user session: \(String(describing: error))")
+                WireLogger.sessionManager.error(
+                    "failed to load user session",
+                    attributes: .safePublic
+                )
                 delegate?.sessionManagerDidFailToLoadSession(
                     for: account,
                     error: .genericError
