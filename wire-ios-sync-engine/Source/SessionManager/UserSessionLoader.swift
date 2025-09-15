@@ -294,7 +294,11 @@ final class UserSessionLoader {
 
         if let prevMetadata {
             if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // TODO: [WPB-14630] mark federation migration needed
+                // Now that federation is enabled we'll start storing domains
+                // on entities in the database. We'll therefore need to add
+                // the local domain to all existing entities so they're
+                // fully qualified.
+                journal[.isFederationMigrationRequired] = true
             }
         }
 
