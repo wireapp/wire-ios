@@ -76,7 +76,7 @@ extension FilesItemViewModel {
 
 private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
     let repository = MockWireCellsNodesRepositoryProtocol()
-    let nodes = (0...150).map { index in
+    let nodes = (0 ... 150).map { index in
         WireCellsNode(
             uuid: UUID(),
             path: "root/foo-\(index).jpg",
@@ -89,7 +89,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
         let end = min(request.offset + request.limit, nodes.count)
-        let page = request.offset < nodes.count ? Array(nodes[request.offset..<end]) : []
+        let page = request.offset < nodes.count ? Array(nodes[request.offset ..< end]) : []
         let nextOffset = end < nodes.count ? end : nil
         return (page, nextOffset)
     }

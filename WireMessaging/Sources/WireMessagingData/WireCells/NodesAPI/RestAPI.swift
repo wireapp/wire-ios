@@ -100,7 +100,7 @@ final class RestAPI: Sendable {
         guard
             let backgroundActions = response.backgroundActions,
             let backgroundAction = backgroundActions.first(where: { $0.name == "delete" }) else {
-                return false
+            return false
         }
         return backgroundAction.status == .finished
     }

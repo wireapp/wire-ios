@@ -246,7 +246,7 @@ final class InputBar: UIView {
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
-        if isWireCellsEnabled  {
+        if isWireCellsEnabled {
             inputContainer.addArrangedSubview(attachmentsContainer)
         }
 

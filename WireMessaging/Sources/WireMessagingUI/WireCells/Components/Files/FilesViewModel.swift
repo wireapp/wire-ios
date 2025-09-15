@@ -284,28 +284,26 @@ package final class FilesViewModel: ObservableObject {
     private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
         // sort
         let sorted = items.sorted { left, right in
-            if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt{
+            if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt {
                 if leftModified == rightModified {
-                    return left.filename < right.filename
+                    left.filename < right.filename
                 } else {
-                    return leftModified > rightModified
+                    leftModified > rightModified
                 }
             } else if left.modifiedAt != nil {
-                return true
+                true
             } else if right.modifiedAt != nil {
-                return false
+                false
             } else {
-                return left.filename < right.filename
+                left.filename < right.filename
             }
         }
 
         var nodeIDs = Set<UUID>()
         var results: [FilesViewItem] = []
-        for item in sorted {
-            if !nodeIDs.contains(item.id) {
-                nodeIDs.insert(item.id)
-                results.append(item)
-            }
+        for item in sorted where !nodeIDs.contains(item.id) {
+            nodeIDs.insert(item.id)
+            results.append(item)
         }
 
         return results
