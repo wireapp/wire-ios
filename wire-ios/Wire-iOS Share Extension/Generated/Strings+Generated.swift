@@ -46,6 +46,12 @@ internal enum L10n {
         /// Please select a conversation for sharing
         internal static let message = L10n.tr("Localizable", "share_extension.error.conversation_does_not_exist.message", fallback: "Please select a conversation for sharing")
       }
+      internal enum OpenApp {
+        /// Open this account in the Wire app then try again.
+        internal static let message = L10n.tr("Localizable", "share_extension.error.open_app.message", fallback: "Open this account in the Wire app then try again.")
+        /// Open app
+        internal static let title = L10n.tr("Localizable", "share_extension.error.open_app.title", fallback: "Open app")
+      }
       internal enum UpdateRequired {
         /// Your Wire server needs to be updated. Please notify your system administrator.
         internal static let obsoleteBackend = L10n.tr("Localizable", "share_extension.error.update_required.obsolete_backend", fallback: "Your Wire server needs to be updated. Please notify your system administrator.")

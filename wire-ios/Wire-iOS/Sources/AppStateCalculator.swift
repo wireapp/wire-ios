@@ -259,6 +259,22 @@ extension AppStateCalculator: SessionManagerDelegate {
         )
     }
 
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    ) {
+        switch error {
+        case .buildIsBlacklisted:
+            transition(to: .blacklisted(reason: .appVersionBlacklisted))
+        case .backendIsObsolete:
+            transition(to: .blacklisted(reason: .backendAPIVersionObsolete))
+        case .clientIsObsolete:
+            transition(to: .blacklisted(reason: .clientAPIVersionObsolete))
+        case .genericError:
+            transition(to: .blacklisted(reason: .genericError))
+        }
+    }
+
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {
         transition(to: .blacklisted(reason: reason))
     }

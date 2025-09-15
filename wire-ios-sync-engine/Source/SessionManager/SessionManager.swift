@@ -81,6 +81,12 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         userSessionCanBeTornDown: @escaping () -> Void
     )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
+
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    )
+
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
@@ -1058,19 +1064,54 @@ public final class SessionManager: NSObject, SessionManagerType {
                 return userSession
 
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                WireLogger.sessionManager.warn(
+                    "build is blacklisted: \(currentBuildNumber)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .buildIsBlacklisted
+                )
                 return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+                WireLogger.sessionManager.warn(
+                    "backend API version is obsolete",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .backendIsObsolete
+                )
                 return nil
             } catch NetworkStackError.clientAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+                WireLogger.sessionManager.warn(
+                    "client API version is obsolete",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .clientIsObsolete
+                )
                 return nil
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                // TODO: [WPB-19625] handle
-                fatalError()
+            } catch let error as SafeForLoggingStringConvertible {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
+                return nil
             } catch {
-                // TODO: [WPB-19625] handle
+                WireLogger.sessionManager.error(
+                    "failed to load user session",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
                 return nil
             }
         } else {
@@ -2023,6 +2064,21 @@ extension SessionManager: UserSessionDelegate {
 
     func userSessionDidDiscoverBuildIsBlacklisted() {
         delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+    }
+
+}
+
+// MARK: - Failures
+
+public extension SessionManager {
+
+    enum SessionLoadingFailure: Error {
+
+        case buildIsBlacklisted
+        case backendIsObsolete
+        case clientIsObsolete
+        case genericError
+
     }
 
 }

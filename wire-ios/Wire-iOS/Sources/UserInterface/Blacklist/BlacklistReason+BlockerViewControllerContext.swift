@@ -28,6 +28,8 @@ extension BlacklistReason {
             .backendObsolete
         case .clientAPIVersionObsolete:
             .clientObsolete
+        case .genericError:
+            .genericError
         }
     }
 }

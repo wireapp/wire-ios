@@ -1197,6 +1197,22 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "about.website.title", fallback: "Wire Website")
       }
     }
+    internal enum AccountBlocked {
+      internal enum GenericError {
+        internal enum Alert {
+          /// Please contact support if the error persists.
+          internal static let message = L10n.tr("Localizable", "account_blocked.generic_error.alert.message", fallback: "Please contact support if the error persists.")
+          /// Retry
+          internal static let retry = L10n.tr("Localizable", "account_blocked.generic_error.alert.retry", fallback: "Retry")
+          /// Send debug logs
+          internal static let sendLogs = L10n.tr("Localizable", "account_blocked.generic_error.alert.send_logs", fallback: "Send debug logs")
+          /// Switch accounts
+          internal static let switchAccounts = L10n.tr("Localizable", "account_blocked.generic_error.alert.switch_accounts", fallback: "Switch accounts")
+          /// Something went wrong
+          internal static let title = L10n.tr("Localizable", "account_blocked.generic_error.alert.title", fallback: "Something went wrong")
+        }
+      }
+    }
     internal enum AccountDeletedMissingPasscodeAlert {
       /// In order to use Wire, please set a passcode in your device settings.
       internal static let message = L10n.tr("Localizable", "account_deleted_missing_passcode_alert.message", fallback: "In order to use Wire, please set a passcode in your device settings.")

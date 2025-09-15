@@ -874,6 +874,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(userSessionCanBeTornDown)
     }
 
+    // MARK: - sessionManagerDidFailToLoadSession
+
+    public var sessionManagerDidFailToLoadSessionForError_Invocations: [(account: Account, error: SessionManager.SessionLoadingFailure)] = []
+    public var sessionManagerDidFailToLoadSessionForError_MockMethod: ((Account, SessionManager.SessionLoadingFailure) -> Void)?
+
+    public func sessionManagerDidFailToLoadSession(for account: Account, error: SessionManager.SessionLoadingFailure) {
+        sessionManagerDidFailToLoadSessionForError_Invocations.append((account: account, error: error))
+
+        guard let mock = sessionManagerDidFailToLoadSessionForError_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailToLoadSessionForError`")
+        }
+
+        mock(account, error)
+    }
+
     // MARK: - sessionManagerDidFailToLoadDatabase
 
     public var sessionManagerDidFailToLoadDatabaseError_Invocations: [Error] = []
