@@ -41,6 +41,7 @@ public final class SafeFileContext: NSObject {
         if !debug.isEmpty {
             Self.instanceCount += 1
             WireLogger.pushChannel.debug("init SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
+//            assert(Self.instanceCount < 2, "more than one instance of SafeFileContext is not supported")
         } else {
             Self.ccInstanceCount += 1
             WireLogger.pushChannel.debug("SafeCoreCrypto init SafeFileContext \(Self.instanceCount)", attributes: .safePublic)

@@ -35,11 +35,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var onGoingTask: Task<Void, Never>? {
-        willSet {
-            onGoingTask?.cancel()
-        }
-    }
+    private var onGoingTask: Task<Void, Never>?
 
     private let currentAppVersion: String
     private let currentBuildNumber: String

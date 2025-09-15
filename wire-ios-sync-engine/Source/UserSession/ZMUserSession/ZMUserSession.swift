@@ -1419,7 +1419,7 @@ extension ZMUserSession: SyncAgentDelegate {
                 attributes: .syncAttributes
             )
 
-            await syncAgent?.restart()
+            syncAgent?.resume()
         } else {
             WireLogger.updateEvent.info("process pending call events")
             do {
