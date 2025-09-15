@@ -18,6 +18,10 @@ on:
       distribute_externals:
         type: boolean
         default: false
+      produce_changelog:
+        type: boolean
+        default: true
+      
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -72,11 +76,13 @@ permissions:
 
 jobs:
   changelog:
+    if: ${{ inputs.produce_changelog }}
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
+    if: always()
     timeout-minutes: 60
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
