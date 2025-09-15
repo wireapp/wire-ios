@@ -666,6 +666,11 @@ public final class ZMUserSession: NSObject {
             throw ZMUserSessionError.selfClientNotReady
         }
 
+        let featureConfigRepository = clientSessionComponent.featureConfigRepository
+        guard await featureConfigRepository.isFeatureEnabled(
+            .consumableNotifications
+        ), DeveloperFlag.consumableNotifications.isOn else { return }
+
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
