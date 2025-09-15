@@ -256,10 +256,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         resume()
 
                     } catch IncrementalSync.Failure.missedEvents {
+
                         WireLogger.sync.error(
                             "failed to perform new incremental sync (missed events): recovering with a full sync"
                         )
 
+                        journal[.isInitialSyncRequired] = true
                         syncStateSubject.send(.suspended)
                         // swallow error from retrier and start resume
                         resume()
