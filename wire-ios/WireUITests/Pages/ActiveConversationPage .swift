@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireFoundation
 
 class ActiveConversationPage: PageModel {
 
@@ -25,27 +26,27 @@ class ActiveConversationPage: PageModel {
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.TextViews.messageInput].firstMatch
     }
 
     var inputMessageField: XCUIElement {
-        app.textViews["inputField"]
+        app.textViews[Locators.TextViews.messageInput]
     }
 
     var sendButton: XCUIElement {
-        app.buttons["sendButton"]
+        app.buttons[Locators.Buttons.sendMessage]
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons["ConversationBackButton"]
+        app.buttons[Locators.Buttons.backToConversation]
     }
 
     var senderNameLabel: XCUIElement {
-        app.descendants(matching: .any)["author.name"].firstMatch
+        app.descendants(matching: .any)[Locators.TextViews.sender].firstMatch
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: "Message")
+        app.textViews.matching(identifier: Locators.TextViews.message)
     }
 
     func getSenderName() -> String? {
@@ -53,11 +54,11 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationTitleButton: XCUIElement {
-        app.buttons["conversation_title_button"]
+        app.buttons[Locators.Buttons.conversationHeader]
     }
 
     var conversationDetailsButton: XCUIElement {
-        app.buttons["Conversation Details"]
+        app.buttons[Locators.Buttons.conversationDetails]
     }
 
     func fetchMessages() -> [String] {

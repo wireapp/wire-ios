@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class SettingsPage: PageModel {
@@ -25,12 +26,11 @@ class SettingsPage: PageModel {
     }
 
     var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+        app.cells[Locators.Cells.account]
     }
 
     var conversationsTab: XCUIElement {
-        app.buttons["bottomBarRecentListButton"]
+        app.buttons[Locators.Buttons.conversations]
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {

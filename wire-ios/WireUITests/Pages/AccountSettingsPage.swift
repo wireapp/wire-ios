@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireFoundation
 
 class AccountSettingsPage: PageModel {
 
@@ -25,31 +26,31 @@ class AccountSettingsPage: PageModel {
     }
 
     var nameField: XCUIElement {
-        app.descendants(matching: .any)["NameField"].firstMatch
+        app.textFields[Locators.TextFields.nameFieldValue]
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .any)["UsernameField"].firstMatch
+        app.staticTexts[Locators.StaticTexts.usernameFieldValue]
     }
 
     var emailField: XCUIElement {
-        app.descendants(matching: .any)["EmailField"].firstMatch
+        app.staticTexts[Locators.StaticTexts.emailFieldValue]
     }
 
     var logoutButton: XCUIElement {
-        app.staticTexts["Log Out"]
+        app.descendants(matching: .any)[Locators.StaticTexts.logout].firstMatch
     }
 
     var deleteAccountButtonOnAccount: XCUIElement {
-        app.descendants(matching: .any)["Delete AccountField"].firstMatch
+        app.descendants(matching: .any)[Locators.StaticTexts.deleteAccount].firstMatch
     }
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.Buttons.ok]
     }
 
     var backupOrRestoreButton: XCUIElement {
-        app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
+        app.descendants(matching: .any)[Locators.StaticTexts.backUpOrRestore].firstMatch
     }
 
     func getAccountName() -> String? {
@@ -65,7 +66,7 @@ class AccountSettingsPage: PageModel {
     }
 
     var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
+        app.buttons[Locators.Buttons.settings]
     }
 
     @discardableResult

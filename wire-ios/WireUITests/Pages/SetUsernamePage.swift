@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class SetUsernamePage: PageModel {
@@ -25,8 +26,7 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
-        return elementsQuery.firstMatch
+        app.textFields[Locators.TextFields.usernameField]
     }
 
     var usernameConfirmButton: XCUIElement {

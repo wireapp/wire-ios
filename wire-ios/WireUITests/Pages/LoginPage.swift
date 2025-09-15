@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class LoginPage: PageModel {
@@ -25,21 +26,19 @@ class LoginPage: PageModel {
     }
 
     var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account"]
+        app.buttons[Locators.Buttons.createAccount]
     }
 
     var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"].firstMatch
+        app.buttons[Locators.Buttons.next]
     }
 
     var emailField: XCUIElement {
-        app.textFields["Enter email"]
+        app.textFields[Locators.TextFields.enterEmail]
     }
 
     var passwordField: XCUIElement {
-        app.secureTextFields["Enter password"]
+        app.secureTextFields[Locators.SecureTextFields.enterPassword]
     }
 
     func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
