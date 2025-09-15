@@ -493,7 +493,7 @@ extension Account {
             name: userName,
             handle: handle,
             teamName: teamName,
-            backendName: nil, // TODO: [WPB-18008] "Back END INFO" https://wearezeta.atlassian.net/browse/WPB-18008
+            backendName: backendName,
             action: action
         )
     }
