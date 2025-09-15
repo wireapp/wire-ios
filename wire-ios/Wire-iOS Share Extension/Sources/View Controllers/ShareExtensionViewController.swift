@@ -546,12 +546,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 title: L10n.ShareExtension.Error.UpdateRequired.title,
                 message: L10n.ShareExtension.Error.UpdateRequired.obsoleteClient
             )
-        } catch NetworkStackError.proxyCredentialsRequired {
-            // TODO: [WPB-19678] determine copy
-            presentError(message: "Proxy credentials required.")
         } catch let SharingSessionLoader.Failure.mainAppRequired(message) {
-            // TODO: [WPB-19678] determine copy
-            presentError(message: "Open main app: \(message)")
+            WireLogger.shareExtension.error(
+                "main app required: \(message)",
+                attributes: .safePublic
+            )
+            presentError(
+                title: L10n.ShareExtension.Error.OpenApp.title,
+                message: L10n.ShareExtension.Error.OpenApp.message
+            )
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
