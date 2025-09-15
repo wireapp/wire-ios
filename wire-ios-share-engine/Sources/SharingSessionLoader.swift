@@ -188,10 +188,6 @@ public struct SharingSessionLoader {
             // TODO: [WPB-14630] mark federation migration needed
         }
 
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
-        }
-
         // Store new metadata.
         do {
             try backendStore.storeBackendMetadata(

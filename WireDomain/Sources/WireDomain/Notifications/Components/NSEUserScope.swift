@@ -215,11 +215,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             // TODO: [WPB-14630] mark federation migration needed
         }
 
-        // TODO: [WPB-19777] deduplicate
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
-        }
-
         // Store new metadata.
         do {
             try dependency.backendStore.storeBackendMetadata(
