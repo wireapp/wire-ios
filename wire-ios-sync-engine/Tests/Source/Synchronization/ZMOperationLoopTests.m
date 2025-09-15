@@ -30,6 +30,7 @@
 - (void)setUp
 {
     [super setUp];
+    [self disableMultibackend];
     self.pushChannelNotifications = [NSMutableArray array];
     
     self.cookieStorage = [[FakeCookieStorage alloc] init];

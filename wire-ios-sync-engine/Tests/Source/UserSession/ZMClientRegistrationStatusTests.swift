@@ -45,6 +45,8 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+
         // be sure to call this before initializing sut
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         mockCookieStorage = MockCookieStorage()
@@ -59,6 +61,10 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             isBackendMLSEnabled: false
         )
         sut.registrationStatusDelegate = mockClientRegistationDelegate
+
+        syncMOC.performAndWait {
+            syncMOC.proteusService = MockProteusServiceInterface()
+        }
     }
 
     override func tearDown() {
