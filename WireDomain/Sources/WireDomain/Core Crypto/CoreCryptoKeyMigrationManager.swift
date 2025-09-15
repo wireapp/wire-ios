@@ -56,10 +56,14 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
     }
 
     public func markMigrationToScopedKeyDone() {
+        WireLogger.coreCrypto.info("Marking migration to scoped key as done")
+
         journal[.isCoreCryptoKeyMigrationToScopedKeyRequired] = false
     }
 
     public func markKeyRotationAsDone() {
+        WireLogger.coreCrypto.info("Marking key rotation as done")
+
         journal[.isCoreCryptoKeyRotationRequired] = false
     }
 

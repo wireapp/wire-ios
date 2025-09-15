@@ -55,10 +55,15 @@ public class CoreCryptoKeyProvider {
 
     private func migrateToScopedDatabaseKey(path: String) throws {
         let scopedKey = try? fetchScopedCoreCryptoKey()
+        let unscopedKey = try? fetchUnscopedCoreCryptoKey()
+
+        WireLogger.coreCrypto.info("Checking if migration to scoped core crypto key is needed: \(coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded)")
+        WireLogger.coreCrypto.info("scopedKey: \(String(describing: scopedKey?.hexString()))")
+        WireLogger.coreCrypto.info("unscopedKey: \(String(describing: unscopedKey?.hexString()))")
 
         guard
             coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try? fetchUnscopedCoreCryptoKey(),
+            let unscopedKey = unscopedKey,
             scopedKey == nil
         else { return }
 
@@ -82,6 +87,8 @@ public class CoreCryptoKeyProvider {
     }
 
     private func rotateKey(path: String) async throws {
+        WireLogger.coreCrypto.info("Checking if key rotation is needed: \(coreCryptoKeyMigrationManager.isKeyRotationNeeded)")
+
         guard coreCryptoKeyMigrationManager.isKeyRotationNeeded else {
             return
         }
@@ -92,6 +99,7 @@ public class CoreCryptoKeyProvider {
             // Generate a new key and update the database
             let oldKey = try fetchScopedCoreCryptoKey()
             let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
+            WireLogger.coreCrypto.info("replacing old key \(oldKey.hexString()) with \(newKey.hexString())")
             try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
 
             // Store the new key in place of the old one
@@ -112,6 +120,8 @@ public class CoreCryptoKeyProvider {
     }
 
     private func migrateDatabaseKeyToBytes(path: String) async throws {
+        WireLogger.coreCrypto.info("Checking if migration to bytes is needed: \(coreCryptoKeyMigrationManager.isMigrationToBytesNeeded)")
+
         guard coreCryptoKeyMigrationManager.isMigrationToBytesNeeded else { return }
 
         // Getting the unscoped key, because if the scoped key exists, it's already in the right format.
@@ -124,6 +134,7 @@ public class CoreCryptoKeyProvider {
                     oldKey: oldKey.base64EncodedString(),
                     newKey: oldKey
                 )
+                WireLogger.coreCrypto.info("Migrated database key to bytes")
             } catch {
                 WireLogger.coreCrypto.warn(
                     "Failed to migrate core crypto key: \(String(describing: error))",
