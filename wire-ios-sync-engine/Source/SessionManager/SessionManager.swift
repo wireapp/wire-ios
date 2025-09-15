@@ -2045,9 +2045,9 @@ extension SessionManager: UserSessionDelegate {
 
 // MARK: - Failures
 
-extension SessionManager {
+public extension SessionManager {
 
-    public enum SessionLoadingFailure: Error {
+    enum SessionLoadingFailure: Error {
 
         case buildIsBlacklisted
         case backendIsObsolete

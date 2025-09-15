@@ -94,11 +94,10 @@ final class BlockerViewController: LaunchImageViewController {
             alert.addAction(
                 UIAlertAction(
                     title: Strings.switchAccounts,
-                    style: .default,
-                    handler: {
-                        _ in switchAccountAction()
-                    }
-                )
+                    style: .default
+                ) { _ in
+                    switchAccountAction()
+                }
             )
         }
 
@@ -115,9 +114,9 @@ final class BlockerViewController: LaunchImageViewController {
                     shareWithAVS: false,
                     presentingViewController: self,
                     fallbackActivityPopoverConfiguration: .sourceView(
-                        sourceView: self.view,
+                        sourceView: view,
                         sourceRect: .init(
-                            origin: self.view.safeAreaLayoutGuide.layoutFrame.origin,
+                            origin: view.safeAreaLayoutGuide.layoutFrame.origin,
                             size: .zero
                         )
                     )
