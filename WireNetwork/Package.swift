@@ -43,23 +43,24 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
-                .process("APIs/AuthenticationAPI/Resources"),
-                .process("APIs/AccountsAPI/Resources"),
-                .process("APIs/BackendMetadataAPI/Resources"),
-                .process("APIs/ConnectionsAPI/Resources"),
-                .process("APIs/ConversationsAPI/Resources"),
-                .process("APIs/MLSAPI/Resources"),
-                .process("APIs/TeamsAPI/Resources"),
-                .process("APIs/UpdateEventsAPI/Resources"),
-                .process("APIs/UsersAPI/Resources"),
+                .process("APIs/Rest/AuthenticationAPI/Resources"),
+                .process("APIs/Rest/AccountsAPI/Resources"),
+                .process("APIs/Rest/BackendMetadataAPI/Resources"),
+                .process("APIs/Rest/ConnectionsAPI/Resources"),
+                .process("APIs/Rest/ConversationsAPI/Resources"),
+                .process("APIs/Rest/MLSAPI/Resources"),
+                .process("APIs/Rest/TeamsAPI/Resources"),
+                .process("APIs/Rest/UpdateEventsAPI/Resources"),
+                .process("APIs/Rest/UsersAPI/Resources"),
                 .process("UpdateEvent/Resources"),
-                .process("APIs/FeatureConfigsAPI/Resources"),
-                .process("APIs/UserPropertiesAPI/Resources"),
-                .process("APIs/SelfUserAPI/Resources"),
-                .process("APIs/UserClientsAPI/Resources"),
+                .process("APIs/Rest/FeatureConfigsAPI/Resources"),
+                .process("APIs/Rest/UserPropertiesAPI/Resources"),
+                .process("APIs/Rest/SelfUserAPI/Resources"),
+                .process("APIs/Rest/UserClientsAPI/Resources"),
                 .process("Network/PushChannel/Resources"),
                 .process("Authentication/Resources"),
-                .process("Backend/Resources")
+                .process("Backend/Resources"),
+                .process("APIs/Blacklist/Resources")
             ]
         )
     ]

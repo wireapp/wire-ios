@@ -47,7 +47,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             removalTimeout: 0.4
         )
 
-        selfUserID = AVSIdentifier(identifier: UUID(), domain: domain)
+        selfUserID = AVSIdentifier(identifier: UUID(), domain: domain, isFederationEnabled: false)
     }
 
     override func tearDown() {

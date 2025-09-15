@@ -316,7 +316,8 @@ extension ClientMessageRequestStrategyTests {
         let eventDecoder = EventDecoder(
             eventMOC: eventMOC,
             syncMOC: syncMOC,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isFederationEnabled: false
         )
         let text = "Everything"
         let event = try await decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)

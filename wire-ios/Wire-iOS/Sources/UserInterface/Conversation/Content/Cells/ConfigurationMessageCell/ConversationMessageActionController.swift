@@ -71,10 +71,6 @@ final class ConversationMessageActionController {
             .filter(canPerformAction)
     }
 
-    private var collapseOwnMessagesEnabled: Bool {
-        privateDefaults?.bool(forKey: .collapseOwnMessages) ?? false
-    }
-
     func allMessageMenuElements() -> [UIAction] {
         weak var responder = responder
         weak var message = message

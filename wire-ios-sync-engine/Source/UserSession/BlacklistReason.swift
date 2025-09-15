@@ -27,4 +27,8 @@ public enum BlacklistReason {
 
     /// The API versions supported by the backend are too old in comparison to the ones supported by the client
     case backendAPIVersionObsolete
+
+    /// Some reason that the session couldn't be loaded.
+    case genericError
+
 }

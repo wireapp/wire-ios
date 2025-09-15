@@ -58,16 +58,12 @@ public extension SafeFileContext {
         }
     }
 
-    /// Check if the file is already locked by another process
-    func isLocked() -> Bool {
-        // Try non-blocking exclusive lock
+    @discardableResult
+    /// Acquire lock but not blocking
+    func tryAcquireLock() -> Bool {
         if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 {
-            // We got the lock: unlock immediately and return false
-            flock(fileDescriptor, LOCK_UN)
-            return false
-        } else {
-            // If errno is EWOULDBLOCK, the file is already locked
-            return errno == EWOULDBLOCK
+            return true
         }
+        return false
     }
 }

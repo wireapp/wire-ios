@@ -285,7 +285,9 @@ extension XCTestCase {
         let stack = CoreDataStack(
             account: account,
             applicationContainer: applicationContainer,
-            inMemoryStore: false
+            inMemoryStore: false,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await stack.load()

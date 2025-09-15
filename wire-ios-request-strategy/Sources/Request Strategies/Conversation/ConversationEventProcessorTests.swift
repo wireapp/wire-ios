@@ -46,7 +46,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         sut = ConversationEventProcessor(
             context: syncMOC,
             conversationService: conversationService,
-            mlsEventProcessor: mockMLSEventProcessor
+            mlsEventProcessor: mockMLSEventProcessor,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         BackendInfo.apiVersion = .v0
     }
@@ -274,7 +276,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
 
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
-            let payload = Payload.Conversation.stub(
+            let payload = Payload.CreatedConversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 name: "Hello World",

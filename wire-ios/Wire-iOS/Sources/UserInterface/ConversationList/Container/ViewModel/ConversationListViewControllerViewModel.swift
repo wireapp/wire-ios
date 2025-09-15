@@ -127,7 +127,7 @@ extension ConversationListViewController {
             if userSession.selfUser.isTeamMember {
                 return true
             }
-            guard let apiVersion = BackendInfo.apiVersion,
+            guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion,
                   apiVersion >= .v7 else {
                 return true
             }

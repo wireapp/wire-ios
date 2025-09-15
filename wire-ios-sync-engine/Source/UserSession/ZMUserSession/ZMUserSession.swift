@@ -28,10 +28,12 @@ import WireNetwork
 import WireRequestStrategy
 import WireSystem
 
-typealias UserSessionDelegate = UserSessionAppLockDelegate
-    & UserSessionEncryptionAtRestDelegate
-    & UserSessionLogoutDelegate
-    & UserSessionSelfUserClientDelegate
+protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSessionEncryptionAtRestDelegate,
+    UserSessionLogoutDelegate, UserSessionSelfUserClientDelegate {
+
+    func userSessionDidDiscoverBuildIsBlacklisted()
+
+}
 
 enum ZMUserSessionError: Error {
     case selfClientNotReady
@@ -44,6 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
+    public internal(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -96,7 +99,7 @@ public final class ZMUserSession: NSObject {
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
+    var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
 
@@ -112,6 +115,14 @@ public final class ZMUserSession: NSObject {
     let journal: Journal
 
     // MARK: Computed Properties
+
+    public var isBackendMLSEnabled: Bool {
+        if DeveloperFlag.multibackend.isOn {
+            journal[.isBackendMLSEnabled]
+        } else {
+            BackendInfo.isMLSEnabled
+        }
+    }
 
     var isPerformingSync = true {
         willSet {
@@ -182,7 +193,8 @@ public final class ZMUserSession: NSObject {
     public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol =
         SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
-            context: syncContext
+            context: syncContext,
+            localDomain: resolvedBackendMetadata.domain
         )
 
     public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol =
@@ -278,7 +290,8 @@ public final class ZMUserSession: NSObject {
         GetUserClientFingerprintUseCase(
             syncContext: coreDataStack.syncContext,
             transportSession: transportSession,
-            proteusProvider: proteusProvider
+            proteusProvider: proteusProvider,
+            metadata: resolvedBackendMetadata
         )
     }
 
@@ -310,7 +323,9 @@ public final class ZMUserSession: NSObject {
             e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
             coreCryptoProvider: coreCryptoProvider,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            apiVersion: resolvedBackendMetadata.apiVersion,
+            localDomain: resolvedBackendMetadata.domain
         )
 
         assert(
@@ -357,7 +372,7 @@ public final class ZMUserSession: NSObject {
             queue: syncContext
         )
         let apiProvider = APIProvider(httpClient: httpClient)
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = resolvedBackendMetadata.apiVersion else {
             WireLogger.backend.warn("apiVersion not resolved")
 
             return nil
@@ -401,7 +416,7 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
-    private let userSessionComponent: UserSessionComponent
+    private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
@@ -410,6 +425,7 @@ public final class ZMUserSession: NSObject {
         userId: UUID,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
@@ -462,19 +478,25 @@ public final class ZMUserSession: NSObject {
         self.mlsService = mlsService
         self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
         self.analyiticsLogger = .analytics
+        self.journal = journal
+        self.logFilesProvider = logFilesProvider
+
+        super.init()
+
         self.userSessionComponent = UserSessionComponent(
+            currentBuildNumber: currentBuildNumber,
             selfUserID: userId,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: websocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: isBackendMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
@@ -484,11 +506,12 @@ public final class ZMUserSession: NSObject {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider
         )
-        self.journal = journal
-        self.logFilesProvider = logFilesProvider
 
-        super.init()
-
+        self.conversationEventProcessor = ConversationEventProcessor(
+            context: coreDataStack.syncContext,
+            localDomain: resolvedBackendMetadata.domain,
+            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
+        )
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -608,7 +631,8 @@ public final class ZMUserSession: NSObject {
             incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
-            syncStateSubject: clientSessionComponent.syncStateSubject
+            syncStateSubject: clientSessionComponent.syncStateSubject,
+            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -631,7 +655,8 @@ public final class ZMUserSession: NSObject {
                 transportSession: transportSession,
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
-                incrementalSyncObserver: incrementalSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver,
+                metadata: resolvedBackendMetadata
             )
         }
     }
@@ -640,6 +665,11 @@ public final class ZMUserSession: NSObject {
         guard let clientSessionComponent else {
             throw ZMUserSessionError.selfClientNotReady
         }
+
+        let featureConfigRepository = clientSessionComponent.featureConfigRepository
+        guard await featureConfigRepository.isFeatureEnabled(
+            .consumableNotifications
+        ), DeveloperFlag.consumableNotifications.isOn else { return }
 
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
@@ -737,7 +767,8 @@ public final class ZMUserSession: NSObject {
                     context: context,
                     conversationRepository: repo
                 )
-            }
+            },
+            metadata: resolvedBackendMetadata
         )
     }
 
@@ -748,7 +779,8 @@ public final class ZMUserSession: NSObject {
             earService: earService,
             lastEventIDRepository: lastEventIDRepository,
             strategyDirectory: strategyDirectory!,
-            additionalEventConsumers: [conversationEventProcessor]
+            additionalEventConsumers: [conversationEventProcessor],
+            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
         )
     }
 
@@ -760,13 +792,15 @@ public final class ZMUserSession: NSObject {
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: conversationEventProcessor
+                eventProcessor: conversationEventProcessor,
+                metadata: resolvedBackendMetadata
             ),
             ConnectToBotURLActionProcessor(
                 contextprovider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
-                searchUsersCache: dependencies.caches.searchUsers
+                searchUsersCache: dependencies.caches.searchUsers,
+                metadata: resolvedBackendMetadata
             )
         ]
     }
@@ -807,6 +841,10 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
+
+        if DeveloperFlag.multibackend.isOn {
+            recurringActionService.registerAction(checkBuildBlacklistAction)
+        }
     }
 
     func startRequestLoopTracker() {
@@ -967,7 +1005,7 @@ public final class ZMUserSession: NSObject {
 
     private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
         guard
-            let apiVersion = BackendInfo.apiVersion,
+            let apiVersion = resolvedBackendMetadata.apiVersion,
             apiVersion > .v2,
             let clientID = userClient.remoteIdentifier
         else { return }
@@ -1245,7 +1283,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
-                    mlsFeature: mlsFeature
+                    mlsFeature: mlsFeature,
+                    isBackendMLSEnabled: isBackendMLSEnabled
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
@@ -1362,6 +1401,10 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func fetchBackendMLSPublicKeys() async {
+        guard !DeveloperFlag.multibackend.isOn else {
+            // fetching done on UserSessionLoader
+            return
+        }
         do {
             var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
             let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
@@ -1631,12 +1674,14 @@ extension ZMUserSession {
 
             let conversationId = AVSIdentifier(
                 identifier: callEventInfo.conversationID,
-                domain: callEventInfo.conversationDomain
+                domain: callEventInfo.conversationDomain,
+                isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
 
             let userId = AVSIdentifier(
                 identifier: callEventInfo.userID,
-                domain: callEventInfo.userDomain
+                domain: callEventInfo.userDomain,
+                isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
 
             let callEvent = CallEvent(

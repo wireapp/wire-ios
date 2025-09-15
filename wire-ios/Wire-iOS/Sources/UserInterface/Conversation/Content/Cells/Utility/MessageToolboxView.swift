@@ -104,7 +104,14 @@ final class MessageToolboxView: UIView {
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorContainer = UIView()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
-    private let messageFailureView = MessageSendFailureView()
+
+    private lazy var messageFailureView: MessageSendFailureView = {
+        let view = MessageSendFailureView(ischatBubbleSimpleEnabled: isChatBubbleSimpleEnabled)
+        view.tapHandler = { [weak self] _ in
+            self?.resendMessage()
+        }
+        return view
+    }()
 
     private lazy var statusLabel: UILabel = {
         let label = UILabel()
@@ -193,10 +200,6 @@ final class MessageToolboxView: UIView {
         countdownContainer = UIView()
         countdownView.translatesAutoresizingMaskIntoConstraints = false
         countdownContainer.addSubview(countdownView)
-
-        messageFailureView.tapHandler = { [weak self] _ in
-            self?.resendMessage()
-        }
 
         [
             detailsLabel,

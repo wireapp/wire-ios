@@ -20,6 +20,7 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireTransport
 import WireUtilities
@@ -32,6 +33,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
+        DeveloperOverrides.storage = .shared()
         WireAnalytics.setup(for: .notificationServiceExtension)
     }
 
@@ -72,6 +74,14 @@ final class NotificationService: UNNotificationServiceExtension {
             return nil
         }
 
+        guard let currentBuildNumber = info?[kCFBundleVersionKey as String] as? String  else {
+            WireLogger.notifications.critical(
+                "no current build number, not loading service",
+                attributes: .safePublic
+            )
+            return nil
+        }
+
         guard let appGroupID = info?["WireGroupId"] as? String else {
             WireLogger.notifications.critical(
                 "no app group id, not loading service",
@@ -99,6 +109,7 @@ final class NotificationService: UNNotificationServiceExtension {
             )
             return NotificationServiceExtension(
                 currentAppVersion: currentAppVersion,
+                currentBuildNumber: currentBuildNumber,
                 appContainerURL: appContainerURL,
                 sharedUserDefaults: sharedUserDefaults,
                 cookieEncryptionKey: UserDefaults.cookiesKey(),
@@ -128,6 +139,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 )
                 return NotificationServiceExtension(
                     currentAppVersion: currentAppVersion,
+                    currentBuildNumber: currentBuildNumber,
                     appContainerURL: appContainerURL,
                     sharedUserDefaults: sharedUserDefaults,
                     cookieEncryptionKey: UserDefaults.cookiesKey(),

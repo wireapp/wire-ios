@@ -24,14 +24,19 @@ import XCTest
 extension ZMUserSessionTestsBase {
 
     @objc
-    func createCallCenter() -> WireCallCenterV3Mock {
+    func createCallCenter(
+        localDomain: String,
+        isFederationEnabled: Bool
+    ) -> WireCallCenterV3Mock {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         return WireCallCenterV3Factory.callCenter(
             withUserId: selfUser.avsIdentifier,
             clientId: selfUser.selfClient()!.remoteIdentifier!,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         ) as! WireCallCenterV3Mock
     }
 

@@ -57,6 +57,42 @@ final class NetworkServiceTests: XCTestCase {
         mockDateProvider = nil
     }
 
+    // MARK: - Init
+
+    func testInit_It_Adds_Slash_To_Path() async throws {
+        // Given
+        let baseURL = try XCTUnwrap(URL(string: "www.wire.com/staging"))
+
+        // When
+        let sut = NetworkService(
+            baseURL: baseURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [],
+                currentDateProvider: mockDateProvider
+            )
+        )
+
+        // Then
+        XCTAssertEqual(sut.baseURL.absoluteString, "www.wire.com/staging/")
+    }
+
+    func testInit_It_Does_Not_Add_Slash_To_Path_If_It_Has_One() async throws {
+        // Given
+        let baseURL = try XCTUnwrap(URL(string: "www.wire.com/staging/"))
+
+        // When
+        let sut = NetworkService(
+            baseURL: baseURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [],
+                currentDateProvider: mockDateProvider
+            )
+        )
+
+        // Then
+        XCTAssertEqual(sut.baseURL.absoluteString, "www.wire.com/staging/")
+    }
+
     // MARK: - Execute request
 
     func testExecuteRequest_It_Does_Not_Execute_An_Invalid_Request() async throws {

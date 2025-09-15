@@ -31,7 +31,7 @@
 "cloud_user_login.forgot_password" = "Forgot password?";
 
 "login.sso.title" = "Log in";
-"login.sso.expiration_message" = "Your session expired. Log in with yoour enterprise account to continue.";
+"login.sso.expiration_message" = "Your session expired. Log in with your enterprise account to continue.";
 "login.sso.input_code.title" = "SSO access code";
 "login.sso.input_code.placeholder" = "Enter SSO access code";
 "login.sso.submit" = "Enterprise log in";

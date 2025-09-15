@@ -29,6 +29,7 @@ enum BlockerViewControllerContext {
     case backendObsolete
     case clientObsolete
     case pendingCertificateEnroll
+    case genericError
 }
 
 final class BlockerViewController: LaunchImageViewController {
@@ -62,19 +63,80 @@ final class BlockerViewController: LaunchImageViewController {
 
     func showAlert() {
         switch context {
+        case .blacklist where DeveloperFlag.multibackend.isOn:
+            showClientObsoleteMessage()
+        case .backendObsolete:
+            showBackendObsoleteMessage()
+        case .clientObsolete:
+            showClientObsoleteMessage()
         case .blacklist:
             showBlacklistMessage()
         case .jailbroken:
             showJailbrokenMessage()
         case .databaseFailure:
             showDatabaseFailureMessage()
-        case .backendObsolete:
-            showBackendObsoleteMessage()
-        case .clientObsolete:
-            showClientObsoleteMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
+        case .genericError:
+            showGenericErrorMessage()
         }
+    }
+
+    private func showGenericErrorMessage() {
+        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
+        let alert = UIAlertController(
+            title: Strings.title,
+            message: Strings.message,
+            preferredStyle: .alert
+        )
+
+        if let switchAccountAction {
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.switchAccounts,
+                    style: .default
+                ) { _ in
+                    switchAccountAction()
+                }
+            )
+        }
+
+        alert.addAction(
+            UIAlertAction(
+                title: Strings.sendLogs,
+                style: .default
+            ) { [weak self] _ in
+                guard let self else {
+                    return
+                }
+                DebugLogSender.sendLogsByEmail(
+                    message: "My account failed to load.",
+                    shareWithAVS: false,
+                    presentingViewController: self,
+                    fallbackActivityPopoverConfiguration: .sourceView(
+                        sourceView: view,
+                        sourceRect: .init(
+                            origin: view.safeAreaLayoutGuide.layoutFrame.origin,
+                            size: .zero
+                        )
+                    )
+                )
+            }
+        )
+
+        if let sessionManager, let account = sessionManager.accountManager.selectedAccount {
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.retry,
+                    style: .cancel,
+                    handler: { _ in
+                        sessionManager.select(account)
+                    }
+                )
+            )
+        }
+
+        present(alert, animated: true)
     }
 
     private func showBackendObsoleteMessage() {
@@ -110,11 +172,21 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showBlacklistMessage() {
-        presentOKAlert(
-            title: L10n.Localizable.Force.Update.title,
-            message: L10n.Localizable.Force.Update.message
-        ) { _ in
-            UIApplication.shared.open(WireURLs.shared.appOnItunes)
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteClient(
+                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
+
+            present(alert, animated: true)
+        } else {
+            presentOKAlert(
+                title: L10n.Localizable.Force.Update.title,
+                message: L10n.Localizable.Force.Update.message
+            ) { _ in
+                UIApplication.shared.open(WireURLs.shared.appOnItunes)
+            }
         }
     }
 
@@ -369,6 +441,9 @@ extension BlockerViewController {
             sheet.prefersGrabberVisible = false
             sheet.preferredCornerRadius = 24
         }
+
+        // Present swipe to dismiss.
+        accountSwitcher.isModalInPresentation = true
         present(accountSwitcher, animated: true)
     }
 

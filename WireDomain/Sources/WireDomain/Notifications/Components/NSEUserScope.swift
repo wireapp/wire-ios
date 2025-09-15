@@ -24,6 +24,7 @@ import WireNetwork
 
 protocol NSEUserScopeDependency: Dependency {
 
+    var currentBuildNumber: String { get }
     var appContainerURL: URL { get }
     var accountDataURL: URL { get }
     var backendStore: BackendEnvironmentStore { get }
@@ -51,6 +52,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         case failedToLoadPersistenceStack(any Error)
         case failedToFetchCookies(any Error)
         case userNotAuthenticated
+        case failedToCheckBuildBlacklist(any Error)
+        case buildIsBlacklisted(buildNumber: String)
 
     }
 
@@ -117,9 +120,16 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         let networkServices = try await networkStack.networkServices
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
+        guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
+            throw Failure.buildIsBlacklisted(buildNumber: dependency.currentBuildNumber)
+        }
+
         guard journal[.isSyncV2Enabled] else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
@@ -147,6 +157,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             apiVersion: metadata.apiVersion,
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled,
             coreDataStack: coreDataStack
         )
 
@@ -221,11 +233,30 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         return newMetadata
     }
 
+    private func isBuildBlacklisted(networkService: NetworkService) async throws -> Bool {
+        let api = BlacklistAPIBuilder(networkService: networkService).makeAPI()
+        let useCase = IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: dependency.currentBuildNumber,
+            api: api
+        )
+
+        do {
+            return try await useCase.invoke()
+        } catch {
+            throw Failure.failedToCheckBuildBlacklist(error)
+        }
+    }
+
     // TODO: [WPB-19777] deduplicate
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool,
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: dependency.appContainerURL
+            applicationContainer: dependency.appContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -272,6 +303,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
+        localDomain: String,
+        isFederationEnabled: Bool,
         coreDataStack: CoreDataStack
     ) -> NSEClientScope {
         NSEClientScope(
@@ -280,6 +313,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: restNetworkService,
             webSocketNetworkService: webSocketNetworkService,
             apiVersion: apiVersion,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled,
             coreDataStack: coreDataStack
         )
     }

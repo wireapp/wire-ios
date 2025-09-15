@@ -23,7 +23,15 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        super.init(context: context)
+    }
 
     override func request(for action: UpdateConnectionAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {

@@ -37,7 +37,9 @@ final class MessageInfoExtractorTests: XCTestCase {
         coreDataStack = CoreDataStack(
             account: .init(userName: "F", userIdentifier: .create()),
             applicationContainer: URL(fileURLWithPath: "/dev/null"),
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

@@ -39,7 +39,9 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 application: mockApplication,
                 lastEventIDRepository: lastEventIDRepository,
                 coreCryptoProvider: MockCoreCryptoProviderProtocol(),
-                isSyncV2Enabled: false
+                isSyncV2Enabled: false,
+                localDomain: "wire.com",
+                isBackendMLSEnabled: false
             )
         }
     }

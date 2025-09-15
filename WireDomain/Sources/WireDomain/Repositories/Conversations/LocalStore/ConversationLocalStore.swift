@@ -35,17 +35,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
     let messageLocalStore: any MessageLocalStoreProtocol
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         mlsService: (any MLSServiceInterface)?,
-        messageLocalStore: any MessageLocalStoreProtocol
+        messageLocalStore: any MessageLocalStoreProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.mlsService = mlsService
         self.messageLocalStore = messageLocalStore
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -151,7 +157,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
-                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+                let otherUserDomain = otherUser.domain ?? self.localDomain
             else {
                 WireLogger.conversation.warn(
                     "failed to retrieve other user in 1:1 conversation"

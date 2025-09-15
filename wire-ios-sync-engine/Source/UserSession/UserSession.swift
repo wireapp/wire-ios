@@ -31,6 +31,8 @@ public protocol UserSession: AnyObject {
 
     var isTornDown: Bool { get }
 
+    var isBuildBlacklisted: Bool { get }
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
@@ -301,4 +303,11 @@ public protocol UserSession: AnyObject {
 
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: BackendMetadataProvider { get }
+
+    var isBackendMLSEnabled: Bool { get }
+
 }

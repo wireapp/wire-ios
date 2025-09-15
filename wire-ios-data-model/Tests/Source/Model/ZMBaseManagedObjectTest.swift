@@ -89,7 +89,9 @@ extension ZMBaseManagedObjectTest {
             account: account,
             applicationContainer: storageDirectory,
             inMemoryStore: shouldUseInMemoryStore,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await stack.load()

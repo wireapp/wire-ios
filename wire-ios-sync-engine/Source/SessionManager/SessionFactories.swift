@@ -71,6 +71,7 @@ open class AuthenticatedSessionFactory {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -113,7 +114,8 @@ open class AuthenticatedSessionFactory {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: BackendInfo.domain
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()

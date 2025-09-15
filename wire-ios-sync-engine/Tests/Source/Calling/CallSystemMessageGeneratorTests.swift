@@ -51,7 +51,9 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
     }
 

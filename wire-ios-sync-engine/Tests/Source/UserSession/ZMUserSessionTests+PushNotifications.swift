@@ -156,7 +156,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -178,7 +183,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -197,7 +207,12 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         let userInfo = userInfoWithConversation()
-        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
+        let callCenter = syncMOC.performAndWait {
+            self.createCallCenter(
+                localDomain: "wire.com",
+                isFederationEnabled: false
+            )
+        }
 
         // when
         handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
