@@ -139,6 +139,7 @@ final class UserSessionLoader {
         )
 
         // Load network stack.
+        // TODO: [WPB-20310] require proxy credentials if missing
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
@@ -262,7 +263,6 @@ final class UserSessionLoader {
             let legacyAPIVersion = BackendInfo.apiVersion,
             let legacyDomain = BackendInfo.domain {
             // We're on the update path, use the legacy metadata.
-            // TODO: [WPB-19626] check... need isMLSEnabled too?
             prevMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
