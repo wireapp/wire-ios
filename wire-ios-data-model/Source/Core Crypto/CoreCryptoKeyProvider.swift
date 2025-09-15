@@ -22,10 +22,10 @@ import WireSystem
 
 public class CoreCryptoKeyProvider {
 
-    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
+    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
     private let userID: UUID
 
-    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?, userID: UUID) {
+    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol, userID: UUID) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.userID = userID
     }
@@ -34,7 +34,7 @@ public class CoreCryptoKeyProvider {
         createIfNeeded: Bool,
         path: String
     ) async throws -> Data {
-        try await migrateKeyIfNeeded(path: path)
+        try await performKeyMigrationsIfNeeded(path: path)
 
         do {
             return try fetchScopedCoreCryptoKey()
@@ -47,46 +47,31 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    public func updateDatabaseKey(path: String) async throws {
-        // We need to get the unscoped key because this is part of the migration to 4.3.0
-        // and scoped keys haven't been introduced before
-        if let oldKey = try? fetchUnscopedCoreCryptoKey() {
-            do {
-                WireLogger.coreCrypto.info("Updating core crypto key...", attributes: .safePublic)
-
-                let item = ScopedCoreCryptoKeychainItem(userID: userID)
-                let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
-                try await coreCryptoKeyMigrationManager?.updateKey(path: path, oldKey: oldKey, newKey: newKey)
-
-                // In case another account needs to update it, we don't delete the old key because it's not scoped by
-                // account.
-                try KeychainManager.storeItem(item, value: newKey)
-            } catch {
-                WireLogger.coreCrypto.warn(
-                    "Failed to update core crypto key: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                throw error
-            }
-        }
+    private func performKeyMigrationsIfNeeded(path: String) async throws {
+        try await migrateDatabaseKeyToBytes(path: path)
+        try migrateToScopedDatabaseKey(path: path)
+        try? await rotateKey(path: path)
     }
 
-    public func migrateToScopedDatabaseKey(inactiveAccounts: Set<Account>) throws {
-        let scopedKeyExists = (try? fetchScopedCoreCryptoKey()) != nil
+    private func migrateToScopedDatabaseKey(path: String) throws {
+        let scopedKey = try? fetchScopedCoreCryptoKey()
 
-        guard !scopedKeyExists else { return }
+        guard
+            coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
+            let unscopedKey = try? fetchUnscopedCoreCryptoKey(),
+            scopedKey == nil
+        else { return }
 
         do {
             WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
 
-            // Should we generate a new key and rotate it for extra safety ?
-            let unscopedKey = try fetchUnscopedCoreCryptoKey()
+            // Store the unscoped key as scoped key
             let item = ScopedCoreCryptoKeychainItem(userID: userID)
             try KeychainManager.storeItem(item, value: unscopedKey)
 
-            if allInactiveAccountsMigrated(inactiveAccounts: inactiveAccounts) {
-                try KeychainManager.deleteItem(UnscopedCoreCryptoKeychainItem())
-            }
+            // Mark migration as done
+            coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+
         } catch {
             WireLogger.coreCrypto.warn(
                 "Failed to migrate to scoped core crypto key: \(String(describing: error))",
@@ -96,23 +81,45 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    private func allInactiveAccountsMigrated(inactiveAccounts: Set<Account>) -> Bool {
-        let nonMigratedAccounts = inactiveAccounts.filter { account in
-            let item = ScopedCoreCryptoKeychainItem(userID: account.userIdentifier)
-            let key = try? KeychainManager.fetchItem(item) as Data
-            return key == nil
+    private func rotateKey(path: String) async throws {
+        guard coreCryptoKeyMigrationManager.isKeyRotationNeeded else {
+            return
         }
 
-        return nonMigratedAccounts.isEmpty
+        do {
+            WireLogger.coreCrypto.info("Updating core crypto key...", attributes: .safePublic)
+
+            // Generate a new key and update the database
+            let oldKey = try fetchScopedCoreCryptoKey()
+            let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
+            try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
+
+            // Store the new key in place of the old one
+            let item = ScopedCoreCryptoKeychainItem(userID: userID)
+            try KeychainManager.deleteItem(item)
+            try KeychainManager.storeItem(item, value: newKey)
+
+            // Mark the rotation as done
+            coreCryptoKeyMigrationManager.markKeyRotationAsDone()
+
+        } catch {
+            WireLogger.coreCrypto.warn(
+                "Failed to update core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
+        }
     }
 
-    private func migrateKeyIfNeeded(path: String) async throws {
+    private func migrateDatabaseKeyToBytes(path: String) async throws {
+        guard coreCryptoKeyMigrationManager.isMigrationToBytesNeeded else { return }
+
         // Getting the unscoped key, because if the scoped key exists, it's already in the right format.
         if let oldKey = try? fetchUnscopedCoreCryptoKey() {
             // Since version 6.x, CC has changed the key format and clients need to migrate the key.
             // We can reuse the same key, but the "new key" must be 'Data'.
             do {
-                try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
+                try await coreCryptoKeyMigrationManager.migrateDatabaseKeyToBytes(
                     path: path,
                     oldKey: oldKey.base64EncodedString(),
                     newKey: oldKey
@@ -127,7 +134,7 @@ public class CoreCryptoKeyProvider {
         } else {
             // If there is no key,
             // then this is a fresh install and we do not need to perform migration.
-            coreCryptoKeyMigrationManager?.markMigrationAsSkipped()
+            coreCryptoKeyMigrationManager.markMigrationToBytesAsSkipped()
         }
     }
 

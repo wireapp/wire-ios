@@ -1710,12 +1710,7 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_5_0(
-                sharedContainerURL: sharedContainerURL,
-                currentAppVersion: currentAppVersion,
-                coreCryptoProvider: coreCryptoProvider
-            )
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 

@@ -27,7 +27,7 @@ struct AppVersionMigration_4_3_0: AppVersionMigration {
     let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {
-        try await coreCryptoProvider.updateDatabaseKey()
+        // try await coreCryptoProvider.updateDatabaseKey()
     }
 
 }

@@ -19,11 +19,19 @@
 // sourcery: AutoMockable
 public protocol CoreCryptoKeyMigrationManagerProtocol {
 
-    var isMigrationNeeded: Bool { get }
+    var isMigrationToBytesNeeded: Bool { get }
 
-    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws
+    var isMigrationToScopedKeyNeeded: Bool { get }
 
-    func markMigrationAsSkipped()
+    var isKeyRotationNeeded: Bool { get }
+
+    func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws
+
+    func markMigrationToBytesAsSkipped()
+
+    func markMigrationToScopedKeyDone()
+
+    func markKeyRotationAsDone()
 
     func updateKey(path: String, oldKey: Data, newKey: Data) async throws
 
