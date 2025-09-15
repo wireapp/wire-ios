@@ -382,6 +382,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingWireCellName: String!
 
+    // MARK: - isCellsEnabled
+
+    public var isCellsEnabled: Bool {
+        get { return underlyingIsCellsEnabled }
+        set(value) { underlyingIsCellsEnabled = value }
+    }
+
+    public var underlyingIsCellsEnabled: Bool!
+
 
     // MARK: - localParticipantsContain
 
