@@ -81,6 +81,12 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         userSessionCanBeTornDown: @escaping () -> Void
     )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
+
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    )
+
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
@@ -1058,16 +1064,29 @@ public final class SessionManager: NSObject, SessionManagerType {
                 return userSession
 
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .buildIsBlacklisted
+                )
                 return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .backendIsObsolete
+                )
                 return nil
             } catch NetworkStackError.clientAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .clientIsObsolete
+                )
                 return nil
             } catch {
                 WireLogger.sessionManager.critical("failed to load user session: \(String(describing: error))")
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
                 return nil
             }
         } else {
@@ -2020,6 +2039,21 @@ extension SessionManager: UserSessionDelegate {
 
     func userSessionDidDiscoverBuildIsBlacklisted() {
         delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+    }
+
+}
+
+// MARK: - Failures
+
+extension SessionManager {
+
+    public enum SessionLoadingFailure: Error {
+
+        case buildIsBlacklisted
+        case backendIsObsolete
+        case clientIsObsolete
+        case genericError
+
     }
 
 }

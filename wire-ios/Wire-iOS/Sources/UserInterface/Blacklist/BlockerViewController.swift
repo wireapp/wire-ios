@@ -29,6 +29,7 @@ enum BlockerViewControllerContext {
     case backendObsolete
     case clientObsolete
     case pendingCertificateEnroll
+    case genericError
 }
 
 final class BlockerViewController: LaunchImageViewController {
@@ -76,7 +77,67 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
+        case .genericError:
+            showGenericErrorMessage()
         }
+    }
+
+    private func showGenericErrorMessage() {
+        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
+        let alert = UIAlertController(
+            title: Strings.title,
+            message: Strings.message,
+            preferredStyle: .alert
+        )
+
+        if let switchAccountAction {
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.switchAccounts,
+                    style: .default,
+                    handler: {
+                        _ in switchAccountAction()
+                    }
+                )
+            )
+        }
+
+        alert.addAction(
+            UIAlertAction(
+                title: Strings.sendLogs,
+                style: .default
+            ) { [weak self] _ in
+                guard let self else {
+                    return
+                }
+                DebugLogSender.sendLogsByEmail(
+                    message: "My account failed to load.",
+                    shareWithAVS: false,
+                    presentingViewController: self,
+                    fallbackActivityPopoverConfiguration: .sourceView(
+                        sourceView: self.view,
+                        sourceRect: .init(
+                            origin: self.view.safeAreaLayoutGuide.layoutFrame.origin,
+                            size: .zero
+                        )
+                    )
+                )
+            }
+        )
+
+        if let sessionManager, let account = sessionManager.accountManager.selectedAccount {
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.retry,
+                    style: .cancel,
+                    handler: { _ in
+                        sessionManager.select(account)
+                    }
+                )
+            )
+        }
+
+        present(alert, animated: true)
     }
 
     private func showBackendObsoleteMessage() {
