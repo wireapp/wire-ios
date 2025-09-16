@@ -31,6 +31,7 @@ protocol UserSessionLoaderDelegate: AnyObject {
 final class UserSessionLoader {
 
     private let account: Account
+    private let accountManager: AccountManager
     private let sharedContainerURL: URL
     private let legacyEnvironment: WireTransport.BackendEnvironment
     private let minTLSVersion: String?
@@ -52,6 +53,7 @@ final class UserSessionLoader {
 
     init(
         account: Account,
+        accountManager: AccountManager,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
         minTLSVersion: String?,
@@ -66,6 +68,7 @@ final class UserSessionLoader {
         isDeveloperModeEnabled: Bool
     ) throws {
         self.account = account
+        self.accountManager = accountManager
         self.sharedContainerURL = sharedContainerURL
         self.legacyEnvironment = legacyEnvironment
         self.minTLSVersion = minTLSVersion
@@ -100,6 +103,12 @@ final class UserSessionLoader {
             environment
         } else {
             try fetchBackendEnvironment()
+        }
+
+        // Update account metadata.
+        if backendEnvironment.environmentType != .default {
+            account.backendName = backendEnvironment.title
+            accountManager.addOrUpdate(account)
         }
 
         // Retrieve proxy credentials if needed.
