@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireLogging
 import WireSyncEngine
 import WireSystem
+import WireDomain
 import ZIPFoundation
 
 /// Generates log files archives.
@@ -137,6 +138,9 @@ struct LogFilesProvider: LogFilesProviding {
         Device: \(UIDevice.current.zm_model())
         iOS version: \(UIDevice.current.systemVersion)
         Date: \(date.transportString())
+        
+        Journal: 
+        \(journalInfos())
         """
 
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
@@ -146,6 +150,19 @@ struct LogFilesProvider: LogFilesProviding {
         return body
     }
 
+    private func journalInfos() -> String {
+        guard let selfUserID = ZMUserSession.shared()?.selfUser.remoteIdentifier else {
+            return "Not Available"
+        }
+        
+        let journal = Journal(
+            userID: selfUserID,
+            storage: UserDefaults.shared()
+        )
+        
+        return journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
+    }
+    
     private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
