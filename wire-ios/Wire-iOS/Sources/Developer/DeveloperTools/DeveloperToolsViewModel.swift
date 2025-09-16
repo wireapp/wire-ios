@@ -287,17 +287,17 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .destination(DestinationItem(title: "Configure feature flags", makeView: {
                         AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                     })),
+                    .destination(
+                        DestinationItem(title: "Overrides", makeView: {
+                            AnyView(DeveloperOverridesForm())
+                        })
+                    ),
                     .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
                         AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
                             router: self?.router,
                             onDismiss: self?.onDismiss ?? { $0() }
                         )))
-                    })),
-                    .destination(
-                        DestinationItem(title: "Overrides", makeView: {
-                            AnyView(DeveloperOverridesForm())
-                        })
-                    )
+                    }))
                 ]
             )
         )
