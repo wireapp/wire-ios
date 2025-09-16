@@ -179,6 +179,27 @@ extension NSAttributedString {
         markdownText.removeTrailingWhitespace()
         markdownText.changeFontSizeIfMessageContainsOnlyEmoticons()
 
+        // Append wire cells multipart info.
+        // FIXME: [WPB-16311] Remove. This is only a temporary solution until we can preview cells in conversations.
+        if DeveloperFlag.wireCells.isOn {
+            let fileAttachments = message.multipartMessageData?.attachments ?? []
+            if !fileAttachments.isEmpty {
+                let linkText = L10n.Localizable.Conversation.Message.MultipartAttachments.link(fileAttachments.count)
+                let link = NSMutableAttributedString.markdown(from: linkText, style: style)
+                link.addAttribute(
+                    .link,
+                    value: "cells://open-files-list",
+                    range: NSRange(location: 0, length: link.length)
+                )
+
+                if !markdownText.string.isEmpty {
+                    markdownText.append(NSAttributedString(string: "\n"))
+                }
+
+                markdownText.append(link)
+            }
+        }
+
         return markdownText
     }
 

@@ -219,7 +219,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isSystem {
             addSystemMessageCell()
         } else if message.isMultipart, DeveloperFlag.wireCells.isOn {
-            addMultipartMessageCell()
+            addTextMessageCells()
         } else {
             addUnknownMessageCell()
         }
