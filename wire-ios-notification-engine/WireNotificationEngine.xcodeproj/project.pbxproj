@@ -15,7 +15,7 @@
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
 		06DE7AB72DE4D8A100D79D99 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DE7AB62DE4D8A100D79D99 /* WireDomain.framework */; };
 		06DE7ABF2DE4E39200D79D99 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 06DE7ABE2DE4E39200D79D99 /* WireFoundation */; };
-		3431F0872E795487007BA692 /* NotificationSessionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3431F0862E795487007BA692 /* NotificationSessionLoader.swift */; };
+		3431F0872E795487007BA692 /* LegacyNotificationSessionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */; };
 		3431F0892E795B90007BA692 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3431F0882E795B90007BA692 /* WireNetwork */; };
 		591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
 		591B6E2C2C8B0983009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B170E52BCE70E200575995 /* WireDataModelSupport.framework */; };
@@ -74,7 +74,7 @@
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		06DE7AB62DE4D8A100D79D99 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3431F0862E795487007BA692 /* NotificationSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionLoader.swift; sourceTree = "<group>"; };
+		3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationSessionLoader.swift; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionTests.swift; sourceTree = "<group>"; };
@@ -193,7 +193,7 @@
 				EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */,
 				EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */,
 				069712952497C1BC00C32169 /* NotificationSession.swift */,
-				3431F0862E795487007BA692 /* NotificationSessionLoader.swift */,
+				3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */,
 				066042A0247FE76C00A5F161 /* Assets.xcassets */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
 			);
@@ -432,7 +432,7 @@
 				EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */,
 				069712912497B96E00C32169 /* OperationLoop.swift in Sources */,
 				EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */,
-				3431F0872E795487007BA692 /* NotificationSessionLoader.swift in Sources */,
+				3431F0872E795487007BA692 /* LegacyNotificationSessionLoader.swift in Sources */,
 				0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */,
 				069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */,
 				069712972497C1BF00C32169 /* NotificationSession.swift in Sources */,

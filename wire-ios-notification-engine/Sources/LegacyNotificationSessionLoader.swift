@@ -22,7 +22,7 @@ import WireDomain
 import WireFoundation
 import WireNetwork
 
-public struct NotificationSessionLoader {
+public struct LegacyNotificationSessionLoader {
 
     public enum Failure: Error {
 

@@ -229,7 +229,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     @MainActor
     private func createSession(accountID: UUID) async throws -> NotificationSession {
         if DeveloperFlag.multibackend.isOn {
-            let loader = try NotificationSessionLoader(
+            let loader = try LegacyNotificationSessionLoader(
                 account: Account(userName: "", userIdentifier: accountID),
                 appContainerURL: appContainerURL,
                 appGroupID: appGroupID,
