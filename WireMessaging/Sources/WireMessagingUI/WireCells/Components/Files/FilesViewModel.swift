@@ -260,7 +260,7 @@ package final class FilesViewModel: ObservableObject {
 
     private func deleteItem(_ asset: FilesViewItem) async {
         guard state.isLoaded else {
-            WireLogger.wireCells.error("Attempt to delete asset while not visible")
+            WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
         }
 
