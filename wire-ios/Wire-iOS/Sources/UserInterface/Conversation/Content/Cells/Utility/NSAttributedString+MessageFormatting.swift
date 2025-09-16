@@ -188,7 +188,7 @@ extension NSAttributedString {
                 let link = NSMutableAttributedString.markdown(from: linkText, style: style)
                 link.addAttribute(
                     .link,
-                    value: "cells://open-files-list",
+                    value: URL.openFilesViewLink.absoluteString,
                     range: NSRange(location: 0, length: link.length)
                 )
 
