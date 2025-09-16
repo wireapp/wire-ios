@@ -48,12 +48,6 @@ final class CallEventHandler: CallEventHandlerProtocol {
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate,
     NotificationServiceProtocol {
 
-    enum Failure: Error {
-
-        case failedToCreateSession(message: String)
-
-    }
-
     // MARK: - Properties
 
     let appGroupID: String
