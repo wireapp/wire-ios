@@ -72,7 +72,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The scope of the request.
     package let scope: Scope
 
-    // FIXME: Remove Query once [WPB-16311] is implemented.
+    // FIXME: [WPB-16311] Remove Query once previewing cells files in conversations is implemented.
     /// The query to apply to the request.
     package let query: Query?
 

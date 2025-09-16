@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UniformTypeIdentifiers
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
 import WireLogging
 import WireSyncEngine
