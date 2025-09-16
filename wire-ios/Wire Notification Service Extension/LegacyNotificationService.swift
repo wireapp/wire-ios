@@ -48,7 +48,18 @@ final class CallEventHandler: CallEventHandlerProtocol {
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate,
     NotificationServiceProtocol {
 
+    enum Failure: Error {
+
+        case failedToCreateSession(message: String)
+
+    }
+
     // MARK: - Properties
+
+    let appGroupID: String
+    let appContainerURL: URL
+    let currentAppVersion: String
+    let currentBuildNumber: String
 
     var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
 
@@ -56,33 +67,26 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     private var contentHandler: ((UNNotificationContent) -> Void)?
 
     private lazy var accountManager: AccountManager? = {
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        let accountURLs = AccountURLs(root: sharedContainerURL)
+        let accountURLs = AccountURLs(root: appContainerURL)
         return try? AccountManager(
             currentAppVersion: currentAppVersion,
             directory: accountURLs.accounts
         )
     }()
 
-    private var currentAppVersion: String {
-        guard let currentAppVersion = Bundle.main.shortVersionString else {
-            fatalError("cannot get current app version identifier")
-        }
-        return currentAppVersion
-    }
-
-    private var appGroupID: String {
-        guard let groupID = Bundle.main.applicationGroupIdentifier else {
-            fatalError("cannot get app group identifier")
-        }
-
-        return groupID
-    }
-
     // MARK: - Life cycle
 
-    override init() {
+    init(
+        appGroupID: String,
+        appContainerURL: URL,
+        currentAppVersion: String,
+        currentBuildNumber: String
+    ) {
         WireLogger.notifications.info("initializing new legacy notification service", attributes: .legacyNSE)
+        self.appGroupID = appGroupID
+        self.appContainerURL = appContainerURL
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         super.init()
     }
 
@@ -230,17 +234,30 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     @MainActor
     private func createSession(accountID: UUID) async throws -> NotificationSession {
-        let session = try await NotificationSession(
-            currentAppVersion: currentAppVersion,
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: accountID,
-            environment: BackendEnvironment.shared,
-            sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-        )
-
-        session.delegate = self
-        return session
+        if DeveloperFlag.multibackend.isOn {
+            let loader = try NotificationSessionLoader(
+                account: Account(userName: "", userIdentifier: accountID),
+                appContainerURL: appContainerURL,
+                appGroupID: appGroupID,
+                buildNumber: currentBuildNumber,
+                sharedUserDefaults: .applicationGroup,
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            )
+            let session = try await loader.load()
+            session.delegate = self
+            return session
+        } else {
+            let session = try await NotificationSession(
+                currentAppVersion: currentAppVersion,
+                applicationGroupIdentifier: appGroupID,
+                accountIdentifier: accountID,
+                environment: BackendEnvironment.shared,
+                sharedUserDefaults: .applicationGroup,
+                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            )
+            session.delegate = self
+            return session
+        }
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
