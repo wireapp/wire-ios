@@ -25,9 +25,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     required init(
         context: NSManagedObjectContext,
-        payloadProcessor: UserProfilePayloadProcessing? = nil
+        payloadProcessor: UserProfilePayloadProcessing? = nil,
+        isFederationEnabled: Bool
     ) {
-        self.payloadProcessor = payloadProcessor ?? UserProfilePayloadProcessor()
+        self
+            .payloadProcessor = payloadProcessor ??
+            UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 

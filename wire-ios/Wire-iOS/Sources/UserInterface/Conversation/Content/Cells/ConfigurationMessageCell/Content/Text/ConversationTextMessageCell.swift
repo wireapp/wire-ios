@@ -145,7 +145,15 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         accessibilityLabel = messageTextView.attributedText.string
 
         container?.isBubble = isChatBubbleSimpleEnabled
+        updateContainerStyle()
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+    }
+
+    private func updateContainerStyle() {
+        guard let message, isChatBubbleSimpleEnabled else { return }
+        let isOwnMessage = message.isSentBySelfUser
+        let userColor = message.senderUser?.accentColor ?? .clear
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {

@@ -270,7 +270,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = false
+            self.syncMOC.isFederationEnabled = false
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
 
             // then
@@ -287,7 +287,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = true
+            self.syncMOC.isFederationEnabled = true
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
 
             // then
@@ -297,7 +297,7 @@ extension ZMConversationTests {
 
             // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a
             // swift enum
-            BackendInfo.isFederationEnabled = false
+            self.syncMOC.isFederationEnabled = false
         }
     }
 }

@@ -47,26 +47,32 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     fileprivate var observers: [Any] = []
 
+    private let localDomain: String?
+
     @objc
     public convenience init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        userProfileImageUpdateStatus: UserProfileImageUpdateStatus
+        userProfileImageUpdateStatus: UserProfileImageUpdateStatus,
+        localDomain: String?
     ) {
         self.init(
             managedObjectContext: managedObjectContext,
             applicationStatus: applicationStatusDirectory,
-            imageUploadStatus: userProfileImageUpdateStatus
+            imageUploadStatus: userProfileImageUpdateStatus,
+            localDomain: localDomain
         )
     }
 
     init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        imageUploadStatus: UserProfileImageUploadStatusProtocol
+        imageUploadStatus: UserProfileImageUploadStatusProtocol,
+        localDomain: String?
     ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
+        self.localDomain = localDomain
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
@@ -198,13 +204,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v3/\(assetId)"
 
         case .v1:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"

@@ -33,7 +33,20 @@ public extension ConversationRemoveParticipantError {
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    private let eventProcessor: ConversationEventProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.eventProcessor = ConversationEventProcessor(
+            context: context,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {

@@ -101,7 +101,10 @@ public struct SharingSessionLoader {
         let metadata = try await resolveBackendMetadata(with: networkStack)
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
         guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
@@ -202,10 +205,15 @@ public struct SharingSessionLoader {
         return newMetadata
     }
 
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: appContainerURL
+            applicationContainer: appContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -302,9 +310,14 @@ public struct SharingSessionLoader {
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
+            localDomain: backendMetadata.domain
         )
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue))
+        )
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
@@ -333,7 +346,8 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: backendMetadata.domain
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -351,7 +365,8 @@ public struct SharingSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
             userID: accountID,
@@ -366,7 +381,7 @@ public struct SharingSessionLoader {
             websocketNetworkService: webSocketNetworkService,
             blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: journal[.isBackendMLSEnabled],
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,

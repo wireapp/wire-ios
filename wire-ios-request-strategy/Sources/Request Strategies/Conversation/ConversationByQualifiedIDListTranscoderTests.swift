@@ -28,7 +28,9 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
         // Given
         let sut = ConversationByQualifiedIDListTranscoder(
             context: uiMOC,
-            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 
@@ -49,7 +51,9 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
         // Given
         let sut = ConversationByQualifiedIDListTranscoder(
             context: uiMOC,
-            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 

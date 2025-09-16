@@ -49,9 +49,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     let groupID = MLSGroupID(.init([1, 2, 3]))
     let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
-    override func setUp() {
-        BackendInfo.domain = "example.com"
+    let localDomain = "example.com"
 
+    override func setUp() {
         super.setUp()
 
         mockCoreCrypto = MockCoreCryptoProtocol()
@@ -109,7 +109,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             delegate: self,
             userID: userIdentifier,
             featureRepository: mockLegacyFeatureRepository,
-            subconversationGroupIDRepository: mockSubconversationGroupIDRepository
+            subconversationGroupIDRepository: mockSubconversationGroupIDRepository,
+            localDomain: localDomain
         )
         sut.setSyncDelegate(mockSyncDelegate)
         sut.setResetBrokenMLSConversationDelegate(resetMLSConversationDelegate)
@@ -575,7 +576,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
         let mlsSelfUser = await uiMOC.perform {
-            MLSUser(from: self.selfUser)
+            MLSUser(from: self.selfUser, localDomain: self.localDomain)
         }
         let users = [
             MLSUser(id: UUID(), domain: "example.com"),
@@ -2973,7 +2974,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [.init(
             client: "123",
-            domain: BackendInfo.domain!,
+            domain: localDomain,
             keyPackage: "",
             keyPackageRef: "",
             userID: UUID()
@@ -3015,7 +3016,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [.init(
             client: "123",
-            domain: BackendInfo.domain!,
+            domain: localDomain,
             keyPackage: "",
             keyPackageRef: "",
             userID: UUID()
@@ -3040,12 +3041,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let conversation = await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
-            selfUser.domain = BackendInfo.domain
+            selfUser.domain = localDomain
 
             let conversation = createConversation(in: uiMOC, with: [selfUser])
             conversation.mlsGroupID = mlsGroupID
             conversation.messageProtocol = .proteus
-            conversation.domain = BackendInfo.domain
+            conversation.domain = localDomain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
             return conversation
         }
@@ -3090,7 +3091,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider
             .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod =
             { [self] userID, domain, _, _, _ in
-                keyPackage = createKeyPackage(userID: userID, domain: domain ?? BackendInfo.domain!)
+                keyPackage = createKeyPackage(userID: userID, domain: domain ?? localDomain)
                 return [keyPackage]
             }
 
@@ -3127,12 +3128,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
-            selfUser.domain = BackendInfo.domain
+            selfUser.domain = localDomain
 
             let conversation = createConversation(in: uiMOC, with: [selfUser])
             conversation.mlsGroupID = mlsGroupID
             conversation.messageProtocol = .proteus
-            conversation.domain = BackendInfo.domain
+            conversation.domain = localDomain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
         }
 

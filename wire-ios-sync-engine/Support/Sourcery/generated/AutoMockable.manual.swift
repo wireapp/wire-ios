@@ -252,6 +252,13 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 public class MockUserSession: UserSession {
 
     public var isBuildBlacklisted = false
+    public var resolvedBackendMetadata = BackendMetadataProvider(
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
+    )
+    public var isBackendMLSEnabled: Bool = false
 
     // MARK: - Life cycle
 

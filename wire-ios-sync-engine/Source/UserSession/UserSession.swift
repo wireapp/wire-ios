@@ -306,4 +306,11 @@ public protocol UserSession: AnyObject {
 
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: BackendMetadataProvider { get }
+
+    var isBackendMLSEnabled: Bool { get }
+
 }

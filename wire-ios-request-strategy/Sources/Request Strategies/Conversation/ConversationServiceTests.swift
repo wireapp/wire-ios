@@ -32,9 +32,13 @@ final class ConversationServiceTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         mockConversationParticipantsService = MockConversationParticipantsServiceInterface()
-        sut = ConversationService(context: uiMOC, participantsServiceBuilder: { _ in
-            self.mockConversationParticipantsService
-        })
+        sut = ConversationService(
+            context: uiMOC,
+            participantsServiceBuilder: { _ in
+                self.mockConversationParticipantsService
+            },
+            localDomain: "wire.com"
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }

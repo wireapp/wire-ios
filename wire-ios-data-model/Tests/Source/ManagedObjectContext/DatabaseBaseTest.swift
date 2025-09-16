@@ -57,6 +57,8 @@ class DatabaseBaseTest: ZMTBaseTest {
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(
         userID: UUID = UUID(),
+        localDomain: String = "wire.com",
+        isFederationEnabled: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> CoreDataStack {
@@ -70,7 +72,9 @@ class DatabaseBaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: Self.applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         try await stack.load()

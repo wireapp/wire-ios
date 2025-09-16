@@ -826,7 +826,8 @@ final class ZClientViewController: UIViewController {
     }
 
     private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
-        !user.isTeamMember && BackendInfo.apiVersion.map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
+        !user.isTeamMember && userSession.resolvedBackendMetadata.apiVersion
+            .map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
     }
 
     private var hasSeenSelfProfile: Bool {

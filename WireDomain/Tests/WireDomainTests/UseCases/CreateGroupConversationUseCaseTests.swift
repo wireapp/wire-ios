@@ -55,6 +55,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: context,
+            localDomain: "wire.com",
             isFederationEnabled: true,
             isMLSEnabled: true
         )

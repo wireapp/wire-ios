@@ -44,7 +44,7 @@ extension MessageBackupModel {
         guard
             !message.isEphemeral,
             let id = message.nonce,
-            let senderUserID = message.senderUser?.qualifiedID,
+            let senderUserID = message.senderUser?.qualifiedID(localDomain: message.managedObjectContext?.localDomain),
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
             let content = genericMessage.content.flatMap(MessageBackupModel.Content.init)

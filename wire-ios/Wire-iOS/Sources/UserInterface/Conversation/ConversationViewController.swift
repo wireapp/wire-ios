@@ -895,7 +895,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let syncCellsStateUseCase = SyncCellsStateUseCase(
             repository: conversationRepository,
-            context: userSession.contextProvider.newBackgroundContext()
+            context: userSession.contextProvider.newBackgroundContext(),
+            localDomain: userSession.resolvedBackendMetadata.domain
         )
 
         Task {
