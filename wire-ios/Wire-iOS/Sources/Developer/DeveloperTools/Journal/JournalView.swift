@@ -21,7 +21,7 @@ import WireDomain
 
 struct JournalView: View {
     @StateObject var viewModel: JournalViewModel
-    
+
     // MARK: - Views
 
     var body: some View {

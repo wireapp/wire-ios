@@ -78,8 +78,8 @@ struct RequestLog: Codable {
     )
 }
 
-extension URL {
-    public var endpointRemoteLogDescription: String {
+public extension URL {
+    var endpointRemoteLogDescription: String {
         let visibleCharactersCount = 3
 
         var components = URLComponents(string: absoluteString)

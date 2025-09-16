@@ -105,39 +105,40 @@ public struct Journal: JournalProtocol {
 }
 
 public extension Journal {
-    
+
     func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.remove(value)
         self[key] = currentSet
     }
-    
+
     func addValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.insert(value)
         self[key] = currentSet
     }
-    
+
     func addValues(_ values: Set<String>, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.formUnion(values)
         self[key] = currentSet
     }
-    
-    
+
     func values() -> [String: String] {
         var result = [String: String]()
-        
-        [JournalKey.isConsumableNotificationsEnabled,
-         JournalKey.isConversationSyncRequired,
-         JournalKey.isCoreCryptoKeyMigrationRequired,
-         JournalKey.isInitialSyncRequired,
-         JournalKey.isSyncV2Enabled].forEach {
+
+        [
+            JournalKey.isConsumableNotificationsEnabled,
+            JournalKey.isConversationSyncRequired,
+            JournalKey.isCoreCryptoKeyMigrationRequired,
+            JournalKey.isInitialSyncRequired,
+            JournalKey.isSyncV2Enabled
+        ].forEach {
             result[$0.name] = "\(self[$0] == true ? "Yes" : "No")"
         }
         let groups = Array(self[JournalKey.brokenMLSGroupIDs])
         result[JournalKey.brokenMLSGroupIDs.name] = groups.isEmpty ? "None" : groups.joined(separator: "\n")
-        
+
         return result
     }
 }

@@ -21,57 +21,67 @@ import WireSyncEngine
 
 final class JournalViewModel: ObservableObject {
     var sections: [DeveloperToolsViewModel.Section]
-    
+
     init(userId: UUID) {
         let journal = Journal(
             userID: userId,
             storage: UserDefaults.shared()
         )
-        
-        sections = [
-            .init(header: "Main Keys", items:
-                [JournalKey.isConsumableNotificationsEnabled,
-                 JournalKey.isConversationSyncRequired,
-                 JournalKey.isCoreCryptoKeyMigrationRequired,
-                 JournalKey.isInitialSyncRequired,
-                 JournalKey.isSyncV2Enabled].map {
-                     DeveloperToolsViewModel.Item.text(.init(title: $0.name, value: journal[$0] == true ? "Yes" : "No"))
-                 }
-            )//,
-//            .init(header: "Broken MLS groups (\(journal[.brokenMLSGroupIDs].count))", items:
-//                groupNames(groupIDs: journal[.brokenMLSGroupIDs]).map({ groupID in
-//                    DeveloperToolsViewModel.Item.text(.init(title: groupID, value: "name"))
-//                })
-//            )
+
+        self.sections = [
+            .init(
+                header: "Main Keys",
+                items:
+                [
+                    JournalKey.isConsumableNotificationsEnabled,
+                    JournalKey.isConversationSyncRequired,
+                    JournalKey.isCoreCryptoKeyMigrationRequired,
+                    JournalKey.isInitialSyncRequired,
+                    JournalKey.isSyncV2Enabled
+                ].map {
+                    DeveloperToolsViewModel.Item.text(.init(title: $0.name, value: journal[$0] == true ? "Yes" : "No"))
+                }
+            )
         ]
-        
-    
+
+        sections.append(
+            .init(
+                header: "Broken MLS groups (\(journal[.brokenMLSGroupIDs].count))",
+                items:
+                groupNames(groupIDs: journal[.brokenMLSGroupIDs]).map { info in
+                    DeveloperToolsViewModel.Item.text(.init(title: info.name, value: info.groupID))
+                }
+            )
+        )
     }
 
-//    func groupNames(groupIDs: Set<String>) -> [(name: String, groupID: String)] {
-//        guard let context = ZMUserSession.shared()?.managedObjectContext else {
-//            return []
-//        }
-//        
-//        for groupID in groupIDs {
-//            ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: <#T##MLSGroupStatus#>, in: <#T##NSManagedObjectContext#>)
-//        }
-//        
-//        
-//    }
+    func groupNames(groupIDs: Set<String>) -> [(name: String, groupID: String)] {
+        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+            return []
+        }
+        let mlsConversations = ZMConversation.fetchMLSConversations(in: context).filter {
+            if let groupID = $0.mlsGroupID?.description {
+                return groupIDs.contains(groupID)
+            }
+            return false
+        }
+
+        return mlsConversations.map { (name: $0.displayName ?? "N/A", groupID: $0.mlsGroupID?.description ?? "N/A") }
+    }
+
     // MARK: - Events
 
     func handleEvent(_ event: DeveloperToolsViewModel.Event) {
         switch event {
         case .dismissButtonTapped:
             break
-            
+
         case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
-            
+
         case let .itemTapped(.button(buttonItem)):
             buttonItem.action()
-            
+
         default:
             break
         }
