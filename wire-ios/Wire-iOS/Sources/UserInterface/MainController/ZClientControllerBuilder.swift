@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireData
+@preconcurrency import WireDataModel
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
@@ -30,6 +31,7 @@ struct ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let environment: WireTransport.BackendEnvironment
 
+    @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
@@ -42,20 +44,26 @@ struct ZClientControllerBuilder {
         return viewController
     }
 
+    @MainActor
     func callAsFunction(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         build(router: router)
     }
 
+    @MainActor
     private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
         if DeveloperFlag.wireCellsManualAuthentication.isOn {
             WireCellsFactory(
                 serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-                accessToken: ManualTokenProvider()
+                accessToken: ManualTokenProvider(),
+                fileCache: userSession.fileAssetCache,
+                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
             )
         } else {
             WireCellsFactory(
                 serverURL: environment.backendURL,
-                accessToken: DefaultAccessTokenProvider(userSession: userSession)
+                accessToken: DefaultAccessTokenProvider(userSession: userSession),
+                fileCache: userSession.fileAssetCache,
+                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
             )
         }
     }
@@ -90,4 +98,20 @@ private struct ManualTokenProvider: AccessTokenProvider {
             expirationDate: Date.distantFuture
         )
     }
+}
+
+extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
+
+private struct DefaultContextProvider: ManagedObjectContextProvider {
+
+    let contextProvider: any ContextProvider
+
+    var viewContext: NSManagedObjectContext {
+        contextProvider.viewContext
+    }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
+
 }

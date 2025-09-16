@@ -16,13 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import WireMessagingDomain
 
-// sourcery: AutoMockable
-@MainActor
-public protocol WireCellsLocalAssetMetadataStore {
+extension WireCellsLocalAsset {
 
-    func assetMetadata(nodeID: UUID) throws -> WireCellsLocalAssetMetadata?
-    func upsertAssetMetadata(_ metadata: WireCellsLocalAssetMetadata) throws
+    static func cacheKey(nodeID: UUID, eTag: String, path: String) -> String {
+        var result = "\(nodeID.uuidString)-\(eTag)"
+        if let pathExtension = URL(string: path)?.pathExtension, !pathExtension.isEmpty {
+            result.append(".\(pathExtension)")
+        }
+        return result
+    }
 
 }

@@ -53,7 +53,7 @@ final class AuthenticatedRouter {
 
     private weak var _zClientViewController: ZClientViewController?
 
-    var zClientViewController: ZClientViewController {
+    @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
         _zClientViewController = zClientViewController
         return zClientViewController
