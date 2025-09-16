@@ -270,7 +270,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
-    let environmentStore: BackendEnvironmentStore
+    public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
     public internal(set) var activeUserSession: ZMUserSession? {
