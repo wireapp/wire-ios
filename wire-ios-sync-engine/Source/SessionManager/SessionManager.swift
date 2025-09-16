@@ -1041,6 +1041,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             do {
                 let loader = try UserSessionLoader(
                     account: account,
+                    accountManager: accountManager,
                     sharedContainerURL: sharedContainerURL,
                     legacyEnvironment: environment,
                     minTLSVersion: minTLSVersion,
