@@ -96,19 +96,3 @@ private struct DefaultContextProvider: ManagedObjectContextProvider {
     }
 
 }
-
-extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
-
-private struct DefaultContextProvider: ManagedObjectContextProvider {
-
-    let contextProvider: any ContextProvider
-
-    var viewContext: NSManagedObjectContext {
-        contextProvider.viewContext
-    }
-
-    func newBackgroundContext() -> NSManagedObjectContext {
-        contextProvider.newBackgroundContext()
-    }
-
-}
