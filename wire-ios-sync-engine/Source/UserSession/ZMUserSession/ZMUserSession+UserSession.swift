@@ -86,6 +86,10 @@ extension ZMUserSession: UserSession {
         dependencies.caches.searchUsers
     }
 
+    public var fileAssetCache: FileAssetCache {
+        dependencies.caches.fileAssets
+    }
+
     // MARK: Methods
 
     public func openAppLock() throws {

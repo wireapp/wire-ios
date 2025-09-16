@@ -98,7 +98,7 @@ private func fileCache() -> any FileCache {
     return cache
 }
 
-private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
+private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol, @unchecked Sendable {
 
     var failIndex = 0
     var publishers: [UUID: CurrentValueSubject<WireCellsLocalAsset?, Never>] = [:]
@@ -107,7 +107,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         publishers[nodeID]?.value
     }
 
-    func refreshMetadata(nodeID: UUID) async throws {}
+    func refreshAssetMetadata(nodeID: UUID) async throws {}
 
     func downloadAsset(nodeID: UUID) async throws {
         failIndex += 1
