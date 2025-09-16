@@ -45,7 +45,9 @@ public enum WireCallCenterV3Factory {
         clientId: String,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) -> WireCallCenterV3 {
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
@@ -56,7 +58,9 @@ public enum WireCallCenterV3Factory {
                 uiMOC: uiMOC,
                 flowManager: flowManager,
                 transport: transport,
-                notificationCenter: notificationCenter
+                notificationCenter: notificationCenter,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             )
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

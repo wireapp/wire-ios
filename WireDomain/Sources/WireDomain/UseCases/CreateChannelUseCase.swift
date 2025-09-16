@@ -55,6 +55,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private let store: any ConversationLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
+    private let localDomain: String?
     private let isFederationEnabled: Bool
     private let logger: WireLogger = .conversation
 
@@ -65,12 +66,14 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         store: any ConversationLocalStoreProtocol,
         mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
+        localDomain: String?,
         isFederationEnabled: Bool
     ) {
         self.api = api
         self.store = store
         self.mlsService = mlsService
         self.context = context
+        self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
     }
 
@@ -311,7 +314,11 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             throw Failure.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
 
         do {
 
@@ -326,7 +333,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
 
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
 
             try await handleNotClaimedKeyPackages(

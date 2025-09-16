@@ -135,7 +135,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    public lazy var mlsAPI = MLSAPIBuilder(
+    public lazy var mlsAPI: some MLSAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -190,7 +190,9 @@ public final class ClientSessionComponent {
     public lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
-        messageLocalStore: messageLocalStore
+        messageLocalStore: messageLocalStore,
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
     public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
@@ -218,7 +220,8 @@ public final class ClientSessionComponent {
     )
 
     private lazy var userConnectionsStore = ConnectionsLocalStore(
-        context: syncContext
+        context: syncContext,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
     private lazy var userLocalStore = UserLocalStore(
@@ -232,7 +235,7 @@ public final class ClientSessionComponent {
     public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled,
-        isMLSEnabled: BackendInfo.isMLSEnabled,
+        isMLSEnabled: isMLSEnabled,
         api: conversationsAPI,
         store: conversationLocalStore,
         journal: journal
@@ -262,8 +265,8 @@ public final class ClientSessionComponent {
     private lazy var pullMLSOneOnOneSync = PullMLSOneOnOneSync(
         api: conversationsAPI,
         store: conversationLocalStore,
-        isFederationEnabled: BackendInfo.isFederationEnabled,
-        isMLSEnabled: BackendInfo.isMLSEnabled
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled
     )
 
     private lazy var pullMLSStatusSync = PullMLSStatusSync(
@@ -446,11 +449,9 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore,
         teamRepository: teamRepository,
         messageRepository: messageRepository,
-        backendInfo: .init(
-            domain: backendMetadata.domain,
-            isFederationEnabled: backendMetadata.isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
-        ),
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled,
         mlsProvider: mlsProvider
     )
 
@@ -749,10 +750,10 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled,
             isMLSEnabled: isMLSEnabled
         )
-
     }
 
     public func createChannelUseCase() -> some CreateChannelUseCaseProtocol {
@@ -761,6 +762,7 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
         )
     }

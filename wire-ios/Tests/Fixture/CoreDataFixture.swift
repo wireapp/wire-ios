@@ -109,7 +109,9 @@ final class CoreDataFixture {
             account: account,
             applicationContainer: documentsDirectory!,
             inMemoryStore: true,
-            dispatchGroup: group
+            dispatchGroup: group,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

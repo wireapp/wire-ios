@@ -28,6 +28,8 @@ final class StrategyFactory {
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
     let messageSender: MessageSenderInterface
     private(set) var strategies = [AnyObject]()
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     private var tornDown = false
 
@@ -36,7 +38,9 @@ final class StrategyFactory {
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor,
         transportSession: TransportSessionType,
-        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
@@ -52,8 +56,11 @@ final class StrategyFactory {
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-            featureRepository: LegacyFeatureRepository(context: syncContext)
+            featureRepository: LegacyFeatureRepository(context: syncContext),
+            apiVersion: apiVersion
         )
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -90,11 +97,20 @@ final class StrategyFactory {
     }
 
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
-        VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        VerifyLegalHoldRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            localDomain: localDomain
+        )
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        FetchingClientRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            apiVersion: apiVersion,
+            localDomain: localDomain
+        )
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {

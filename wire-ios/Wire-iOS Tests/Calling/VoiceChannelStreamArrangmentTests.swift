@@ -98,8 +98,8 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(streams.count, 2)
-        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId1 }))
-        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier == avsId2 }))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier(isFederationEnabled: false) == avsId1 }))
+        XCTAssertTrue(streams.contains(where: { $0.streamId.avsIdentifier(isFederationEnabled: false) == avsId2 }))
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithVideo() {
@@ -219,7 +219,9 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         let sortedStreams = sut.sortByVideo(streamData: streams)
 
         // THEN
-        let userIds = sortedStreams.map(\.streamId.avsIdentifier)
+        let userIds = sortedStreams.map {
+            $0.streamId.avsIdentifier(isFederationEnabled: false)
+        }
         XCTAssertEqual(userIds.count, 3)
         XCTAssertEqual(userIds[0], avsId1)
         XCTAssertEqual(userIds[1], avsId3)

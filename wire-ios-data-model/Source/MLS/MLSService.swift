@@ -68,6 +68,7 @@ public final class MLSService: MLSServiceInterface {
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     private var brokenGroupIDs: Set<MLSGroupID> = []
+    private let localDomain: String?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -105,7 +106,8 @@ public final class MLSService: MLSServiceInterface {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         featureRepository: LegacyFeatureRepositoryInterface,
         userDefaults: UserDefaults,
-        userID: UUID
+        userID: UUID,
+        localDomain: String?
     ) {
         self.init(
             context: context,
@@ -115,7 +117,8 @@ public final class MLSService: MLSServiceInterface {
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
             userID: userID,
-            featureRepository: featureRepository
+            featureRepository: featureRepository,
+            localDomain: localDomain
         )
     }
 
@@ -132,7 +135,9 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         userID: UUID,
         featureRepository: LegacyFeatureRepositoryInterface,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
+            SubconversationGroupIDRepository(),
+        localDomain: String?
     ) {
         self.context = context
         self.notificationContext = notificationContext
@@ -158,6 +163,7 @@ public final class MLSService: MLSServiceInterface {
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
+        self.localDomain = localDomain
         schedulePeriodicKeyMaterialUpdateCheck()
         startObservingEpochs()
     }
@@ -363,7 +369,7 @@ public final class MLSService: MLSServiceInterface {
             let ciphersuite = try await createGroup(for: groupID, removalKeys: removalKeys)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser)
+                return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
 
             let usersWithSelfUser = users + [mlsSelfUser]
@@ -413,7 +419,7 @@ public final class MLSService: MLSServiceInterface {
             let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser)
+                return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
 
             do {
@@ -785,7 +791,7 @@ public final class MLSService: MLSServiceInterface {
 
         let mlsUser = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            return MLSUser(from: selfUser)
+            return MLSUser(from: selfUser, localDomain: self.localDomain)
         }
 
         try await joinGroup(with: groupID)
@@ -825,7 +831,9 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext
     ) async throws {
         let mlsUsers = await context.perform {
-            pendingGroup.localParticipants.map(MLSUser.init)
+            pendingGroup.localParticipants.map {
+                MLSUser(from: $0, localDomain: self.localDomain)
+            }
         }
 
         let ciphersuite = try await establishGroup(
@@ -1943,7 +1951,10 @@ public final class MLSService: MLSServiceInterface {
         for conversation in groupConversations {
 
             let (qualifiedID, members) = await context.perform {
-                (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0) })
+                (
+                    conversation.qualifiedID,
+                    conversation.localParticipants.map { MLSUser(from: $0, localDomain: self.localDomain) }
+                )
             }
 
             guard let qualifiedID else {
@@ -2029,9 +2040,12 @@ public struct MLSUser: Equatable {
         self.selfClientID = selfClientID
     }
 
-    public init(from user: ZMUser) {
+    public init(
+        from user: ZMUser,
+        localDomain: String?
+    ) {
         self.id = user.remoteIdentifier
-        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
+        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID

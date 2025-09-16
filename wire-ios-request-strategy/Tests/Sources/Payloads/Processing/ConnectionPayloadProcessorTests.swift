@@ -26,8 +26,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        sut = ConnectionPayloadProcessor()
-        BackendInfo.isFederationEnabled = false
+        sut = ConnectionPayloadProcessor(isFederationEnabled: false)
     }
 
     override func tearDown() {
@@ -93,8 +92,8 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     func testThatANonExistingConversationIsCreatedAndLinkedToTheConnection() {
         syncMOC.performGroupedAndWait {
             // given
-            BackendInfo.isFederationEnabled = true
-            let conversationID: QualifiedID = .randomID()
+            self.sut = ConnectionPayloadProcessor(isFederationEnabled: true)
+            let conversationID = QualifiedID(uuid: UUID(), domain: "wire.com")
 
             let payload = self.createConnectionPayload(
                 to: self.otherUser.qualifiedID!,

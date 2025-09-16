@@ -189,9 +189,12 @@ final class AppStateCalculator {
             return
         }
 
-        if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            completion?()
-            return
+        if !DeveloperFlag.multibackend.isOn {
+            // If app has been blacklisted due to api version, ignore new state.
+            if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
+                completion?()
+                return
+            }
         }
 
         self.appState = appState
@@ -254,6 +257,22 @@ extension AppStateCalculator: SessionManagerDelegate {
             to: .unauthenticated(environment: environment, error: error as NSError?),
             completion: userSessionCanBeTornDown
         )
+    }
+
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    ) {
+        switch error {
+        case .buildIsBlacklisted:
+            transition(to: .blacklisted(reason: .appVersionBlacklisted))
+        case .backendIsObsolete:
+            transition(to: .blacklisted(reason: .backendAPIVersionObsolete))
+        case .clientIsObsolete:
+            transition(to: .blacklisted(reason: .clientAPIVersionObsolete))
+        case .genericError:
+            transition(to: .blacklisted(reason: .genericError))
+        }
     }
 
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason) {

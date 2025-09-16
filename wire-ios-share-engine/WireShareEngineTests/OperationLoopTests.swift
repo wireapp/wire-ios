@@ -56,7 +56,9 @@ final class OperationLoopTests: ZMTBaseTest {
             account: account,
             applicationContainer: directoryURL,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

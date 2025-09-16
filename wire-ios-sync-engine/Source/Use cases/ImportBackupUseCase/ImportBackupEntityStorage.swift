@@ -41,13 +41,17 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
     func createContextProvider(
         account: Account,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?
+        dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws -> any ContextProvider {
 
         let stack = CoreDataStack(
             account: account,
             applicationContainer: applicationContainer,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         try await stack.load()

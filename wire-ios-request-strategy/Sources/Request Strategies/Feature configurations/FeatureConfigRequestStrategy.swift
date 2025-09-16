@@ -24,6 +24,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     // MARK: - Properties
 
     let mlsClientManager: MLSClientManagerProtocol
+    private let apiVersion: WireTransport.APIVersion?
 
     // Slow Sync
 
@@ -46,12 +47,14 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        mlsClientManager: MLSClientManagerProtocol
+        mlsClientManager: MLSClientManagerProtocol,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
         self.mlsClientManager = mlsClientManager
+        self.apiVersion = apiVersion
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -138,7 +141,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
             let repository = LegacyFeatureRepository(context: managedObjectContext)
 
-            let processor = FeatureConfigsPayloadProcessor()
+            let processor = FeatureConfigsPayloadProcessor(apiVersion: apiVersion)
             try processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,

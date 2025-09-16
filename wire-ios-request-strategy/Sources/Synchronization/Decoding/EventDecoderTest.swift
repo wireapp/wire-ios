@@ -41,7 +41,12 @@ class EventDecoderTest: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC, lastEventIDRepository: lastEventIDRepository)
+        sut = EventDecoder(
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
+            lastEventIDRepository: lastEventIDRepository,
+            isFederationEnabled: false
+        )
 
         lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
 

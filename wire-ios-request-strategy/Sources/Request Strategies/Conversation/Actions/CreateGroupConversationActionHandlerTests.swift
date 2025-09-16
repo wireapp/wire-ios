@@ -46,7 +46,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
         super.setUp()
         sut = CreateGroupConversationActionHandler(
             context: syncMOC,
-            removeLocalConversationUseCase: MockLocalConversationRemovalUseCase()
+            removeLocalConversationUseCase: MockLocalConversationRemovalUseCase(),
+            localDomain: "example.com",
+            isFederationEnabled: true
         )
 
         conversationID = .randomID()
@@ -105,9 +107,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
         successResponsePayloadMLS.messageProtocol = "mls"
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
-
-        BackendInfo.apiVersion = .v0
-        BackendInfo.domain = "example.com"
     }
 
     override func tearDown() {
@@ -157,7 +156,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
 
     func test_RequestGeneration_V0() throws {
         // Given
-        BackendInfo.apiVersion = .v0
         let action = createAction()
 
         // When
@@ -178,7 +176,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
 
     func test_RequestGeneration_V1() throws {
         // Given
-        BackendInfo.apiVersion = .v1
         let action = createAction()
 
         // When
@@ -199,7 +196,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
 
     func test_RequestGeneration_V2() throws {
         // Given
-        BackendInfo.apiVersion = .v2
         let action = createAction()
 
         // When
@@ -220,7 +216,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
 
     func test_RequestGeneration_V3() throws {
         // Given
-        BackendInfo.apiVersion = .v3
         let action = createAction()
 
         // When
@@ -241,7 +236,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
 
     func test_RequestGeneration_V4() throws {
         // Given
-        BackendInfo.apiVersion = .v4
         let action = createAction()
 
         // When
@@ -265,12 +259,11 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     func test_HandleResponse_200() throws {
         // Given
         let apiVersion = APIVersion.v2
-        BackendInfo.apiVersion = apiVersion
         action = createAction()
         handler = sut
 
         // When
-        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString(apiVersion: apiVersion))
         let result = try XCTUnwrap(test_itHandlesSuccess(
             status: 200,
             payload: payload as ZMTransportData,
@@ -287,12 +280,11 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     func test_HandleResponse_201() throws {
         // Given
         let apiVersion = APIVersion.v2
-        BackendInfo.apiVersion = apiVersion
         action = createAction()
         handler = sut
 
         // When
-        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString(apiVersion: apiVersion))
         let result = try XCTUnwrap(test_itHandlesSuccess(
             status: 201,
             payload: payload as ZMTransportData,
@@ -321,10 +313,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     func test_ItUpdatesMLSConversation() throws {
         // Given
         let apiVersion = APIVersion.v5
-        BackendInfo.apiVersion = apiVersion
         action = createAction(messageProtocol: .mls)
         handler = sut
-        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
+        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString(apiVersion: apiVersion))
 
         // When
         let result = try XCTUnwrap(test_itHandlesSuccess(
@@ -365,7 +356,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
         syncMOC.performGroupedAndWait { [self] in
             // Given
-            BackendInfo.apiVersion = .v4
             let unreachableDomain = "foma.wire.link"
             let unreachableUserID = QualifiedID(uuid: UUID(), domain: unreachableDomain)
 
@@ -417,7 +407,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
     func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
         syncMOC.performGroupedAndWait { [self] in
             // Given
-            BackendInfo.apiVersion = .v4
             let applesDomain = "apples@domain.com"
             let bananasDomain = "bananas@domain.com"
 
