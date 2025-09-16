@@ -148,7 +148,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         updateContainerStyle()
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
-    
+
     private func updateContainerStyle() {
         guard let message, isChatBubbleSimpleEnabled else { return }
         let isOwnMessage = message.isSentBySelfUser
