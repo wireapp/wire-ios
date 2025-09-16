@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireLogging
 import WireSystem
 
 /// Provides safe access to a file with lock mechanism
