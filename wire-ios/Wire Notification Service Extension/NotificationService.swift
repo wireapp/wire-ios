@@ -106,10 +106,6 @@ final class NotificationService: UNNotificationServiceExtension {
             for: request,
             appContainerURL: appContainerURL
         ) else {
-            WireLogger.notifications.critical(
-                "api version unknown, can't load service",
-                attributes: .safePublic
-            )
             return nil
         }
 
