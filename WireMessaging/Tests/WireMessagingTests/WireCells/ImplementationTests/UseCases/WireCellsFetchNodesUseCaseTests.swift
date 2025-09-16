@@ -82,7 +82,7 @@ struct WireCellsFetchNodesUseCaseTests {
         #expect(repository.getNodes_Invocations.last?.offset == 30)
     }
 
-//    @Test
+    @Test
     func testInvoke_searchTerm() async throws {
         // When
         let (_, _) = try await sut.invoke(searchTerm: nil, offset: 0)
