@@ -29,7 +29,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
-
+        static let deleteBackgroundActionName = "delete"
     }
 
     private let serverURL: URL
@@ -98,11 +98,11 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
         guard
-            let backgroundActions = response.backgroundActions,
-            let backgroundAction = backgroundActions.first(where: { $0.name == "delete" }) else {
+            let actions = response.backgroundActions,
+            let deleteAction = actions.first(where: { $0.name == Constants.deleteBackgroundActionName }) else {
             return false
         }
-        return backgroundAction.status == .finished
+        return deleteAction.status == .finished
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
