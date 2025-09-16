@@ -23,18 +23,22 @@ struct StoredAccount: Codable {
 
     var identifier: UUID
     var name: String
+    var handle: String?
     var image: Data?
     var team: String?
     var teamImage: Data?
+    var backendName: String?
     var loginCredentials: StoredLoginCredentials?
     var unreadConversationCount: Int
 
     init(_ account: Account) {
         self.identifier = account.userIdentifier
         self.name = account.userName
+        self.handle = account.handle
         self.image = account.imageData
         self.team = account.teamName
         self.teamImage = account.teamImageData
+        self.backendName = account.backendName
         self.loginCredentials = account.loginCredentials.map {
             StoredLoginCredentials($0)
         }
@@ -64,6 +68,8 @@ extension Account {
             userName: storedAccount.name,
             userIdentifier: storedAccount.identifier,
             teamName: storedAccount.team,
+            handle: storedAccount.handle,
+            backendName: storedAccount.backendName,
             imageData: storedAccount.image,
             teamImageData: storedAccount.teamImage,
             unreadConversationCount: storedAccount.unreadConversationCount,
