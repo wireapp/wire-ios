@@ -26,7 +26,7 @@ public protocol PushChannelStateProtocol {
 }
 
 struct PushChannelState: PushChannelStateProtocol {
-    enum Failure: Error {
+    enum Failure: Error, Equatable {
         case alreadyLocked(sameProcess: Bool)
     }
 
@@ -43,7 +43,7 @@ struct PushChannelState: PushChannelStateProtocol {
                 fatal("could not create file")
             }
         }
-        self.fileContext = SafeFileContext(fileURL: url, debug: "PushChannelState")
+        self.fileContext = SafeFileContext(fileURL: url)
     }
 
     func markAsOpen() async throws {

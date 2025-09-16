@@ -22,34 +22,17 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-    static var instanceCount: Int = 0
-    static var ccInstanceCount: Int = 0
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
 
-    var debug = ""
-
-    public init(fileURL: URL, debug: String = "") {
+    public init(fileURL: URL) {
         self.fileURL = fileURL
-        self.debug = debug
         super.init()
 
         self.fileDescriptor = open(self.fileURL.path, 0)
         if fileDescriptor <= 0 {
             fatal("Can't obtain FileDescriptor for \(self.fileURL)")
         }
-        if !debug.isEmpty {
-            Self.instanceCount += 1
-            WireLogger.pushChannel.debug("init SafeFileContext \(debug) \(Self.instanceCount)", attributes: .safePublic)
-            assert(Self.instanceCount < 3, "more than 2 instances of SafeFileContext is not supported")
-        } else {
-            Self.ccInstanceCount += 1
-            WireLogger.pushChannel.debug(
-                "SafeCoreCrypto init SafeFileContext \(Self.instanceCount)",
-                attributes: .safePublic
-            )
-        }
-
     }
 
     deinit {
@@ -57,20 +40,6 @@ public final class SafeFileContext: NSObject {
         self.releaseDirectoryLock()
         // close
         close(self.fileDescriptor)
-        if !debug.isEmpty {
-            Self.instanceCount -= 1
-            WireLogger.pushChannel.debug(
-                "deinit SafeFileContext \(debug) \(Self.instanceCount)",
-                attributes: .safePublic
-            )
-        } else {
-            Self.ccInstanceCount -= 1
-            WireLogger.pushChannel.debug(
-                "SafeCoreCrypto deinit SafeFileContext \(Self.instanceCount)",
-                attributes: .safePublic
-            )
-
-        }
     }
 
 }

@@ -28,7 +28,7 @@ public typealias CreatePushChannelStateClosure = () -> PushChannelStateProtocol
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
-    public enum Failure: Error {
+    public enum Failure: Error, Equatable {
         /// Contains all envelopes that were successfully processed
         case incompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
         case nsePushChannelAlreadyOpened

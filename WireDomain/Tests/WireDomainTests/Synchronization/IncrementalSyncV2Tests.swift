@@ -81,6 +81,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         sut.delegate = liveDelegate
         liveDelegate.isUpToDateSync_MockMethod = { _ in }
         liveDelegate.didMissedEventsSync_MockMethod = { _ in }
+        liveDelegate.didStartSync_MockMethod = { _ in }
         pullServerTimeSync.pull_MockMethod = {}
         pushChannelState.markAsOpen_MockMethod = {}
         pushChannelState.markAsClosed_MockMethod = {}
@@ -160,6 +161,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let numberOfInvocationInProcessEvents = 1
 
         XCTAssertEqual(pullServerTimeSync.pull_Invocations.count, 1)
+
+        // sync bar is shown
+        XCTAssertEqual(liveDelegate.didStartSync_Invocations.count, 1)
 
         // Then stored events were processed
         XCTAssertEqual(
@@ -283,6 +287,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let token = try await sut.perform()
         await token.task.value
 
+        // sync bar is shown
+        XCTAssertEqual(liveDelegate.didStartSync_Invocations.count, 1)
+
         try XCTAssertCount(
             pushChannelState.markAsOpen_Invocations, count: 1
         )
@@ -377,6 +384,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // When
         let token = try await sut.perform()
+
+        // sync bar is shown
+        XCTAssertEqual(liveDelegate.didStartSync_Invocations.count, 1)
 
         let numberOfInvocationInProcessEvents = 0
         // Then stored events were processed
@@ -762,6 +772,30 @@ final class IncrementalSyncV2Tests: XCTestCase {
         try XCTAssertCount(pushChannel.close_Invocations, count: 1)
         try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)
 
+    }
+
+    func testPerform_ThrowsIfNSEPushChannelAlreadyOpened() async throws {
+        let expectedError = IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened
+        // Mock
+        liveDelegate.didFailSyncError_MockMethod = { _, _ in }
+        pushChannelState.markAsOpen_MockError = .some(PushChannelState.Failure.alreadyLocked(sameProcess: false))
+
+        // When
+        await XCTAssertThrowsErrorAsync(expectedError) {
+            _ = try await self.sut.perform()
+        }
+    }
+
+    func testPerform_ThrowsIfMainPushChannelAlreadyOpened() async throws {
+        let expectedError = IncrementalSyncV2.Failure.mainAppPushChannelAlreadyOpened
+        // Mock
+        liveDelegate.didFailSyncError_MockMethod = { _, _ in }
+        pushChannelState.markAsOpen_MockError = .some(PushChannelState.Failure.alreadyLocked(sameProcess: true))
+
+        // When
+        await XCTAssertThrowsErrorAsync(expectedError) {
+            _ = try await self.sut.perform()
+        }
     }
 
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
