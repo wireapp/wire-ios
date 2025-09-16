@@ -308,13 +308,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         var items = [Item]()
 
         items.append(.text(TextItem(title: "Name", value: backendName)))
-
-        if canSwitchBackend {
-            items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
-                AnyView(SwitchBackendView(viewModel: SwitchBackendViewModel()))
-            })))
-        }
-
         items.append(.text(TextItem(title: "Domain", value: backendDomain)))
         items.append(.text(TextItem(title: "API version", value: apiVersion)))
         items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
@@ -349,11 +342,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: items
         )
     }()
-
-    private var canSwitchBackend: Bool {
-        guard let sessionManager = SessionManager.shared else { return false }
-        return sessionManager.canSwitchBackend() == nil
-    }
 
     private lazy var debugViewSection: Section = {
         let header = "Views"
