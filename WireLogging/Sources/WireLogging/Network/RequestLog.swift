@@ -167,22 +167,3 @@ public extension WireLogger {
         }
     }
 }
-
-//extension WireLoggerObjC {
-//    static func logRequest(_ request: NSURLRequest) {
-//        WireLogger.network.log(request: request)
-//    }
-//
-//    static func logHTTPResponse(_ response: HTTPURLResponse) {
-//        WireLogger.network.log(response: response)
-//    }
-//
-//    @objc(logRequestLoopAtPath:)
-//    static func logRequestLoop(at path: String) {
-//        if let endpointDescription = URL(string: path)?.endpointRemoteLogDescription {
-//            WireLogger.network.warn("Request loop detected for \(endpointDescription)", attributes: .safePublic)
-//        } else {
-//            WireLogger.network.warn("Request loop detected for \(path)")
-//        }
-//    }
-//}
