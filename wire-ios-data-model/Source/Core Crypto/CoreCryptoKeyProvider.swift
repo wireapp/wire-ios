@@ -60,7 +60,7 @@ public class CoreCryptoKeyProvider {
             let unscopedKey = try? fetchUnscopedCoreCryptoKey()
         else { return }
 
-        if try? fetchScopedCoreCryptoKey() != nil {
+        if (try? fetchScopedCoreCryptoKey()) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
         } else {
             do {
