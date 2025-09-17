@@ -2822,20 +2822,21 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
 }
 
-class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
+public class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - invoke
 
-    var invokeRequest_Invocations: [UNNotificationRequest] = []
-    var invokeRequest_MockError: Error?
-    var invokeRequest_MockMethod: ((UNNotificationRequest) async throws -> NotificationPayload)?
-    var invokeRequest_MockValue: NotificationPayload?
+    public var invokeRequest_Invocations: [UNNotificationRequest] = []
+    public var invokeRequest_MockError: Error?
+    public var invokeRequest_MockMethod: ((UNNotificationRequest) throws -> NotificationPayload)?
+    public var invokeRequest_MockValue: NotificationPayload?
 
-    func invoke(request: UNNotificationRequest) async throws -> NotificationPayload {
+    public func invoke(request: UNNotificationRequest) throws -> NotificationPayload {
         invokeRequest_Invocations.append(request)
 
         if let error = invokeRequest_MockError {
@@ -2843,7 +2844,7 @@ class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol
         }
 
         if let mock = invokeRequest_MockMethod {
-            return try await mock(request)
+            return try mock(request)
         } else if let mock = invokeRequest_MockValue {
             return mock
         } else {
