@@ -27,18 +27,12 @@ protocol KeychainItemProtocol {
 
 }
 
-public extension Data {
-    func hexString() -> String {
-        return self.map { String(format: "%02x", $0) }.joined(separator: "-")
-    }
-}
-
 public enum KeychainManager {
 
     // MARK: - Keychain access
 
     static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
-        WireLogger.keychain.info("storing item (\(item.id):\(String(describing:(value as? Data)?.hexString())))")
+        WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
         guard status == errSecSuccess else {
@@ -57,7 +51,6 @@ public enum KeychainManager {
             throw Error.failedToFetchItemFromKeychain(status)
         }
 
-        WireLogger.keychain.info("fetched item (\(item.id):\(String(describing:(value as? Data)?.hexString())))")
         return value as! T
     }
 
