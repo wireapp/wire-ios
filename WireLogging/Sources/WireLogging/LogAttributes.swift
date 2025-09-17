@@ -26,7 +26,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case eventId = "event_id"
     case eventEnvelopeID = "event_envelope_id"
     case ackMultipleEventsCount = "ack_events_count"
-    case multipleEvents = "ack_multiple_events"    
+    case multipleEvents = "ack_multiple_events"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
     case messageType = "message_type"
