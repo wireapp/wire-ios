@@ -954,7 +954,7 @@ public final class ZMUserSession: NSObject {
         } catch {
             WireLogger.sync.error(
                 "failed to perform initial sync: \(String(describing: error))",
-                attributes: .syncAttributes(initialSync: true)
+                attributes: .initialSync
             )
         }
     }
@@ -966,7 +966,7 @@ public final class ZMUserSession: NSObject {
         } catch {
             WireLogger.sync.error(
                 "failed to perform resource sync: \(String(describing: error))",
-                attributes: .syncAttributes
+                attributes: .initialSync
             )
         }
     }
@@ -979,7 +979,7 @@ public final class ZMUserSession: NSObject {
             } catch {
                 WireLogger.sync.error(
                     "failed to perform incremental sync: \(String(describing: error))",
-                    attributes: .syncAttributes(initialSync: false)
+                    attributes: .incrementalSync
                 )
             }
         }
@@ -1189,7 +1189,7 @@ extension ZMUserSession: SyncAgentDelegate {
             )
         }
 
-        WireLogger.sync.error("failed to perform sync: \(String(describing: error))", attributes: .syncAttributes)
+        WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = false
@@ -1447,7 +1447,7 @@ extension ZMUserSession: SyncAgentDelegate {
         if journal[.isSyncV2Enabled] {
             WireLogger.sync.debug(
                 "process pending call events",
-                attributes: .syncAttributes
+                attributes: .incrementalSync
             )
 
             syncAgent?.resume()
