@@ -48,7 +48,7 @@ final class PushChannelStateTests: XCTestCase {
     func test_markAsOpen_throwsWhenAlreadyOpened() async throws {
         try await sut.markAsOpen()
 
-        await XCTAssertThrowsErrorAsync(PushChannelState.Failure.alreadyLocked) {
+        await XCTAssertThrowsErrorAsync(PushChannelState.Failure.alreadyLocked(sameProcess: true)) {
             try await self.sut.markAsOpen()
         }
 
