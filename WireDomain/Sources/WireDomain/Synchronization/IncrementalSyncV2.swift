@@ -303,7 +303,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         // ack
         if let lastEnvelope = storedEnvelopes.last?.0 {
-            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
+            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel, batchSize: envelopes.count)
         }
         try Task.checkCancellation()
 
@@ -370,13 +370,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private func acknowledgeUntilEnvelope(
         _ envelope: UpdateEventEnvelope,
-        through pushChannel: PushChannelV2Protocol
+        through pushChannel: PushChannelV2Protocol,
+        batchSize: Int
     ) async {
         do {
             if let deliveryTag = envelope.deliveryTag {
                 logger.debug(
                     "ack event envelope",
-                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+                    attributes: [.eventEnvelopeID: envelope.id, .ackMultipleEventsCount: batchSize] +
+                        .syncAttributes(initialSync: false)
                 )
                 try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: true)
             }
