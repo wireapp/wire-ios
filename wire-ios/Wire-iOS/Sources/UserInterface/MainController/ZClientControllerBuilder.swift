@@ -51,21 +51,12 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
-        if DeveloperFlag.wireCellsManualAuthentication.isOn {
-            WireCellsFactory(
-                serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-                accessToken: ManualTokenProvider(),
-                fileCache: userSession.fileAssetCache,
-                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
-            )
-        } else {
-            WireCellsFactory(
-                serverURL: environment.backendURL,
-                accessToken: DefaultAccessTokenProvider(userSession: userSession),
-                fileCache: userSession.fileAssetCache,
-                contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
-            )
-        }
+        WireCellsFactory(
+            serverURL: environment.backendURL,
+            accessToken: DefaultAccessTokenProvider(userSession: userSession),
+            fileCache: userSession.fileAssetCache,
+            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
+        )
     }
 }
 
@@ -86,16 +77,6 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
         return WireCellsAccessToken(
             token: token.token,
             expirationDate: token.expirationDate
-        )
-    }
-}
-
-private struct ManualTokenProvider: AccessTokenProvider {
-
-    func accessToken() async throws -> WireCellsAccessToken {
-        WireCellsAccessToken(
-            token: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
-            expirationDate: Date.distantFuture
         )
     }
 }
