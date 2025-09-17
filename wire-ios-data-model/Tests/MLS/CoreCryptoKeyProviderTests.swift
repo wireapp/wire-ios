@@ -27,20 +27,20 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     var userID2: UUID = .init()
     var mockMigrationManager: MockCoreCryptoKeyMigrationManagerProtocol!
     var sut: CoreCryptoKeyProvider!
-    
+
     override func setUp() {
         super.setUp()
         mockMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, _, _ in }
-        mockMigrationManager.markKeyRotationAsDone_MockMethod = { }
-        mockMigrationManager.markMigrationToBytesAsSkipped_MockMethod = { }
-        mockMigrationManager.markMigrationToScopedKeyDone_MockMethod = { }
+        mockMigrationManager.markKeyRotationAsDone_MockMethod = {}
+        mockMigrationManager.markMigrationToBytesAsSkipped_MockMethod = {}
+        mockMigrationManager.markMigrationToScopedKeyDone_MockMethod = {}
         mockMigrationManager.isMigrationToBytesNeeded = false
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
         mockMigrationManager.isKeyRotationNeeded = false
         sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockMigrationManager, userID: userID)
     }
-    
+
     override func tearDown() {
         try? KeychainManager.deleteItem(UnscopedCoreCryptoKeychainItem())
         try? KeychainManager.deleteItem(ScopedCoreCryptoKeychainItem(userID: userID))
@@ -86,7 +86,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
     }
-    
+
     // MARK: Migrating key
 
     func test_itSkipsMigrationToBytes_WhenThereIsNoKey() async throws {
@@ -105,7 +105,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     func test_itPerformsMigrationToBytes() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToBytesNeeded = true
-        
+
         var receivedNewKey: Data?
         mockMigrationManager.migrateDatabaseKeyToBytesPathOldKeyNewKey_MockMethod = { _, _, newKey in
             receivedNewKey = newKey
@@ -124,7 +124,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     }
 
     // MARK:
-    
+
     func test_itMigratesToScopedKey_AndRotatesTheDatabaseKey() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
@@ -135,37 +135,37 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockMigrationManager.markMigrationToScopedKeyDone_MockMethod = { [mockMigrationManager] in
             mockMigrationManager?.isMigrationToScopedKeyNeeded = false
         }
-        
+
         // create unscoped key
         let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
-        
+
         // create scoped key item
         let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
-        
+
         // Set the mock for key rotation
         var expectedNewKey: Data?
         mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, oldKey, newKey in
             // verify it updates the unscoped key
             XCTAssertEqual(oldKey, unscopedKey)
-            
+
             // save value of new key
             expectedNewKey = newKey
         }
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
-        
+
         // THEN
         // verify it updated the key
         XCTAssertEqual(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
-        
+
         // verify the new key is saved as a scoped key
         let scopedKey: Data? = try? KeychainManager.fetchItem(scopedItem)
         XCTAssertNotNil(scopedKey)
         XCTAssertEqual(expectedNewKey, scopedKey)
-        
+
         // verify we marked migrations as done
         XCTAssertFalse(mockMigrationManager.isMigrationToScopedKeyNeeded)
         XCTAssertFalse(mockMigrationManager.isKeyRotationNeeded)
@@ -174,49 +174,49 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     func test_itSkipsScopedKeyMigration_WhenNotNeeded() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
-        
+
         // create unscoped key
         let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
-        
+
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 0)
     }
-    
+
     func test_itMarksScopedKeyMigrationAsDone_WhenScopedKeyAlreadyExists() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
-        
+
         // create unscoped key
         let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
-        
+
         // create scoped key
         let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
         let scopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(scopedItem, value: scopedKey)
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
 
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
     }
-    
+
     func test_itSkipsKeyRotation_WhenNotNeeded() async throws {
         // GIVEN
         mockMigrationManager.isKeyRotationNeeded = false
-        
+
         // create scoped key
         let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
         let scopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(scopedItem, value: scopedKey)
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
 
