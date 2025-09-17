@@ -124,6 +124,7 @@ public extension Journal {
         self[key] = currentSet
     }
 
+    /// - Note: This method is used to export values of journal to written logs
     func values() -> [String: String] {
         var result = [String: String]()
 
