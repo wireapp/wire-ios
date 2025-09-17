@@ -167,7 +167,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
             lowestValue: 0,
             highestValue: characters.count - 1
         )
-        return String((0..<length).map { _ in characters[random.nextInt()] })
+        return String((0 ..< length).map { _ in characters[random.nextInt()] })
     }
 
     private static func intermediaryFilesDirectory() -> URL {

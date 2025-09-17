@@ -31,7 +31,7 @@ package struct ClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCase
 
     public func invoke() async {
         let cleared = await draftRepository.clearPublishedDrafts(for: cellName)
-        let filesForDeletion = cleared.filter { $0.requiresCleanup }.map { $0.assetURL }
+        let filesForDeletion = cleared.filter(\.requiresCleanup).map(\.assetURL)
 
         for url in filesForDeletion {
             do {

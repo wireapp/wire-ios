@@ -44,9 +44,12 @@ final class UploadDraftUseCaseTests {
     )
 
     init() throws {
-        intermediaryFilesDirectory = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        self.intermediaryFilesDirectory = URL.temporaryDirectory.appendingPathComponent(
+            UUID().uuidString,
+            isDirectory: true
+        )
         try FileManager.default.createDirectory(at: intermediaryFilesDirectory, withIntermediateDirectories: true)
-        fileURL = intermediaryFilesDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        self.fileURL = intermediaryFilesDirectory.appendingPathComponent("\(UUID().uuidString).txt")
 
         // Set mock defaults
         draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
@@ -234,7 +237,7 @@ final class UploadDraftUseCaseTests {
 
     @Test(arguments: [
         (type: UTType.plainText, expectedFileName: "a3gAyu.txt"),
-        (type: UTType.data, expectedFileName: "a3gAyu"),
+        (type: UTType.data, expectedFileName: "a3gAyu")
     ])
     func invokeWithData_addsCorrectDraft(type: UTType, expectedFileName: String) async throws {
         // Given
