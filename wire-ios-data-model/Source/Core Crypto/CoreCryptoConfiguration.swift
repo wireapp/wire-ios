@@ -72,16 +72,6 @@ public class CoreCryptoConfigProvider {
         }
     }
 
-    public func coreCryptoDirectoryPath(userID: UUID, sharedContainerURL: URL) throws -> String {
-        let accountDirectory = CoreDataStack.accountDataFolder(
-            accountIdentifier: userID,
-            applicationContainer: sharedContainerURL
-        )
-
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
-        return coreCryptoDirectory.path
-    }
-
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
