@@ -21,12 +21,12 @@ import XCTest
 
 extension XCUIApplication {
 
-    func useWireAuthentication(_ enabled: Bool = true) {
-        developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
-    }
+    func setDeveloperFlags(_ flags: [DeveloperFlag: Bool]) {
+        let flagsString = flags.map {
+            "\($0.key.rawValue):\($0.value ? "true" : "false")"
+        }.joined(separator: " ")
 
-    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
-        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
+        launchArguments.append("--developer-flag=\(flagsString)")
     }
 
     func loginUser(email: String, password: String) throws -> FirstTimePage {
