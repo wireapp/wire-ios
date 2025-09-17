@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireLogging
 @testable import WireDataModel
 
 class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {

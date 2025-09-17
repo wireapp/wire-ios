@@ -83,7 +83,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     private var logAttributes: WireLogging.LogAttributes {
-        .incrementalSyncV3 + .newNSE
+        .incrementalSyncV3
     }
 
     public func perform() async throws -> IncrementalSync.Token {
