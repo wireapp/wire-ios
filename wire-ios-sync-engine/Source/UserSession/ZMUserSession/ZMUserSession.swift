@@ -676,7 +676,10 @@ public final class ZMUserSession: NSObject {
             // ignore error
             WireLogger.session.info("skipping migration to consumable-notifications")
         } catch {
-            WireLogger.session.error("failed to migrate to consumable-notifications: \(String(describing: error))", attributes: .safePublic)
+            WireLogger.session.error(
+                "failed to migrate to consumable-notifications: \(String(describing: error))",
+                attributes: .safePublic
+            )
         }
     }
 
