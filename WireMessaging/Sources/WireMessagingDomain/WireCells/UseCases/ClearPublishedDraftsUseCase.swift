@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 package struct ClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol {
 
@@ -29,6 +30,15 @@ package struct ClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCase
     }
 
     public func invoke() async {
-        await draftRepository.clearPublishedDrafts(for: cellName)
+        let cleared = await draftRepository.clearPublishedDrafts(for: cellName)
+        let filesForDeletion = cleared.filter { $0.requiresCleanup }.map { $0.assetURL }
+
+        for url in filesForDeletion {
+            do {
+                try FileManager.default.removeItem(at: url)
+            } catch {
+                WireLogger.wireCells.error("Failed to delete draft asset from disk", attributes: .safePublic)
+            }
+        }
     }
 }
