@@ -43,6 +43,7 @@ final class DeepLinksViewModel: ObservableObject {
         case diya
         case elna
         case foma
+        case lich
 
     }
 
@@ -85,18 +86,8 @@ final class DeepLinksViewModel: ObservableObject {
         switch backend {
         case .staging:
             config = "https://staging-nginz-https.zinfra.io/deeplink.json"
-        case .anta:
-            config = "https://nginz-https.anta.wire.link/deeplink.json"
-        case .bella:
-            config = "https://nginz-https.bella.wire.link/deeplink.json"
-        case .chala:
-            config = "https://nginz-https.chala.wire.link/deeplink.json"
-        case .diya:
-            config = "https://nginz-https.diya.wire.link/deeplink.json"
-        case .elna:
-            config = "https://nginz-https.elna.wire.link/deeplink.json"
-        case .foma:
-            config = "https://nginz-https.foma.wire.link/deeplink.json"
+        default:
+            config = "https://nginz-https.\(config.rawValue).wire.link/deeplink.json"
         }
 
         openLink(urlString: "wire://access/?config=\(config)")
