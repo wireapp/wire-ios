@@ -54,30 +54,32 @@ public class CoreCryptoKeyProvider {
     }
 
     private func migrateToScopedDatabaseKey(path: String) throws {
-        let scopedKey = try? fetchScopedCoreCryptoKey()
 
         guard
             coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try? fetchUnscopedCoreCryptoKey(),
-            scopedKey == nil
+            let unscopedKey = try? fetchUnscopedCoreCryptoKey()
         else { return }
 
-        do {
-            WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
-
-            // Store the unscoped key as scoped key
-            let item = ScopedCoreCryptoKeychainItem(userID: userID)
-            try KeychainManager.storeItem(item, value: unscopedKey)
-
-            // Mark migration as done
+        if try? fetchScopedCoreCryptoKey() != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+        } else {
+            do {
+                WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
 
-        } catch {
-            WireLogger.coreCrypto.warn(
-                "Failed to migrate to scoped core crypto key: \(String(describing: error))",
-                attributes: .safePublic
-            )
-            throw error
+                // Store the unscoped key as scoped key
+                let item = ScopedCoreCryptoKeychainItem(userID: userID)
+                try KeychainManager.storeItem(item, value: unscopedKey)
+
+                // Mark migration as done
+                coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+
+            } catch {
+                WireLogger.coreCrypto.warn(
+                    "Failed to migrate to scoped core crypto key: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                throw error
+            }
         }
     }
 
