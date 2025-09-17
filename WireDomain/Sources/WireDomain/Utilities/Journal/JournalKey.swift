@@ -81,6 +81,14 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether the local domain needs to be added to entities
+    /// in the database.
+
+    static let isFederationMigrationRequired = Self(
+        "isFederationMigrationRequired",
+        defaultValue: false
+    )
+
 }
 
 public extension JournalKey where Value == Set<String> {

@@ -51,7 +51,12 @@ final class LegacyNotificationServiceTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        sut = LegacyNotificationService()
+        sut = LegacyNotificationService(
+            appGroupID: "appGroupID",
+            appContainerURL: .temporaryDirectory,
+            currentAppVersion: "1.2.3",
+            currentBuildNumber: "12345"
+        )
         callEventHandlerMock = CallEventHandlerMock()
         currentUserIdentifier = UUID.create()
         notificationContent = createNotificationContent()
