@@ -27,6 +27,8 @@ import WireMessagingDomain
 final class ClearPublishedDraftsUseCaseTests {
 
     private let nodesAPI = MockNodesAPIProtocol()
+    private let assetAURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    private let assetBURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private lazy var uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
     private lazy var draftsRepository = DraftsRepository(
         uploadManager: uploadManager,
@@ -46,8 +48,8 @@ final class ClearPublishedDraftsUseCaseTests {
     )
 
     deinit {
-        try? FileManager.default.removeItem(at: Scaffolding.assetAURL)
-        try? FileManager.default.removeItem(at: Scaffolding.assetBURL)
+        try? FileManager.default.removeItem(at: assetAURL)
+        try? FileManager.default.removeItem(at: assetBURL)
     }
 
     @Test
@@ -80,16 +82,16 @@ final class ClearPublishedDraftsUseCaseTests {
     @Test
     func invoke_deletesFilesIfNeeded() async throws {
         // Given
-        try Data("Test data A".utf8).write(to: Scaffolding.assetAURL)
-        try Data("Test data B".utf8).write(to: Scaffolding.assetBURL)
+        try Data("Test data A".utf8).write(to: assetAURL)
+        try Data("Test data B".utf8).write(to: assetBURL)
 
         let draftA = WireCellsDraft.fixture(
-            assetURL: Scaffolding.assetAURL,
+            assetURL: assetAURL,
             status: .uploaded(isDraft: false),
             requiresCleanup: false
         )
         let draftB = WireCellsDraft.fixture(
-            assetURL: Scaffolding.assetBURL,
+            assetURL: assetBURL,
             status: .uploaded(isDraft: false),
             requiresCleanup: true
         )
@@ -107,17 +109,12 @@ final class ClearPublishedDraftsUseCaseTests {
         await sut.invoke()
 
         // Then
-        #expect(FileManager.default.fileExists(atPath: Scaffolding.assetAURL.path))
-        #expect(!FileManager.default.fileExists(atPath: Scaffolding.assetBURL.path))
+        #expect(FileManager.default.fileExists(atPath: assetAURL.path))
+        #expect(!FileManager.default.fileExists(atPath: assetBURL.path))
     }
 }
 
 private enum Scaffolding {
-    // Files
-    static let assetAURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-    static let assetBURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-
-    // Drafts
     static let cancelledDraft = WireCellsDraft.fixture(status: .cancelled)
     static let uploadingDraft = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
     static let uploadedDraft = WireCellsDraft.fixture(status: .uploaded(isDraft: true))

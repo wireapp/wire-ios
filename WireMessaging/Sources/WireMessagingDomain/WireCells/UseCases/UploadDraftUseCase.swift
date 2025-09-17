@@ -17,6 +17,7 @@
 //
 
 package import Foundation
+@preconcurrency package import GameplayKit
 package import UniformTypeIdentifiers
 import WireLogging
 
@@ -36,7 +37,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     private let nodesAPI: any NodesAPIProtocol
     private let metadataRepository: any WireCellsDraftMetadataRepositoryProtocol
     private let intermediaryFilesDirectory: URL
-    private let fileManager: @Sendable () -> FileManager // Closure to allow for non-sendable
+    private let randomSource: GKRandomSource
 
     package init(
         cellName: String,
@@ -44,9 +45,8 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         uploadManager: any WireCellsNodeUploadManagerProtocol,
         nodesAPI: any NodesAPIProtocol,
         metadataRepository: any WireCellsDraftMetadataRepositoryProtocol,
-        tempDirectory: URL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true),
         intermediaryFilesDirectory: URL = Self.intermediaryFilesDirectory(),
-        fileManager: @escaping @Sendable () -> FileManager = { .default }
+        randomSource: GKRandomSource = .sharedRandom()
     ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
@@ -54,7 +54,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         self.nodesAPI = nodesAPI
         self.metadataRepository = metadataRepository
         self.intermediaryFilesDirectory = intermediaryFilesDirectory
-        self.fileManager = fileManager
+        self.randomSource = randomSource
     }
 
     package func invoke(fileURL: URL) async throws {
@@ -115,8 +115,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
             url.appendPathExtension(fileExtension)
         }
 
-        let fileManager = fileManager()
-        try fileManager.createDirectory(at: container, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
 
         try data.write(to: url)
         try await invoke(fileURL: url, requiresCleanup: true)
@@ -161,9 +160,14 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         }
     }
 
-    private func randomString(length: Int) -> String {
-        let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((0..<length).compactMap { _ in characters.randomElement() })
+    func randomString(length: Int) -> String {
+        let characters = Array("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        let random = GKRandomDistribution(
+            randomSource: randomSource,
+            lowestValue: 0,
+            highestValue: characters.count - 1
+        )
+        return String((0..<length).map { _ in characters[random.nextInt()] })
     }
 
     private static func intermediaryFilesDirectory() -> URL {
