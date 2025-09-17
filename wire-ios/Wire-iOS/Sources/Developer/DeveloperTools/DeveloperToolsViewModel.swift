@@ -332,7 +332,10 @@ final class DeveloperToolsViewModel: ObservableObject {
             })))
         }
 
-        items.append(.text(TextItem(title: "Is federation enabled?", value: String(describing: metadata.isFederationEnabled))))
+        items.append(.text(TextItem(
+            title: "Is federation enabled?",
+            value: String(describing: metadata.isFederationEnabled)
+        )))
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
             self?.stopFederatingFoma()
         })))

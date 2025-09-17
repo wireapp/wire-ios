@@ -82,12 +82,11 @@ final class DeepLinksViewModel: ObservableObject {
     }
 
     func openSwitchBackendLink(for backend: Backend) {
-        let config: String
-        switch backend {
+        let config = switch backend {
         case .staging:
-            config = "https://staging-nginz-https.zinfra.io/deeplink.json"
+            "https://staging-nginz-https.zinfra.io/deeplink.json"
         default:
-            config = "https://nginz-https.\(config.rawValue).wire.link/deeplink.json"
+            "https://nginz-https.\(backend.rawValue).wire.link/deeplink.json"
         }
 
         openLink(urlString: "wire://access/?config=\(config)")
