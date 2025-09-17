@@ -666,11 +666,6 @@ public final class ZMUserSession: NSObject {
             throw ZMUserSessionError.selfClientNotReady
         }
 
-        let featureConfigRepository = clientSessionComponent.featureConfigRepository
-        guard await featureConfigRepository.isFeatureEnabled(
-            .consumableNotifications
-        ), DeveloperFlag.consumableNotifications.isOn else { return }
-
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
         let migrator = clientSessionComponent.consumableNotificationsMigrator()
@@ -681,7 +676,7 @@ public final class ZMUserSession: NSObject {
             // ignore error
             WireLogger.session.info("skipping migration to consumable-notifications")
         } catch {
-            WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
+            WireLogger.session.error("failed to migrate to consumable-notifications: \(String(describing: error))", attributes: .safePublic)
         }
     }
 
