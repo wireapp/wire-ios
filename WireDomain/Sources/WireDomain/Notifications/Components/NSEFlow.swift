@@ -80,7 +80,7 @@ final class NSEFlow: BootstrapComponent {
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
         // Get account.
-        let payload = try await ProcessNotificationRequestUseCase().invoke(request: request)
+        let payload = try ProcessNotificationRequestUseCase().invoke(request: request)
 
         guard let account = accountManager.account(with: payload.userID) else {
             throw Failure.accountNotFound(payload.userID)
