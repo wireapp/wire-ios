@@ -2334,6 +2334,21 @@ public class MockLiveSyncDelegate: LiveSyncDelegate {
         mock(sync, error)
     }
 
+    // MARK: - didStart
+
+    public var didStartSync_Invocations: [IncrementalSyncV2] = []
+    public var didStartSync_MockMethod: ((IncrementalSyncV2) -> Void)?
+
+    public func didStart(sync: IncrementalSyncV2) {
+        didStartSync_Invocations.append(sync)
+
+        guard let mock = didStartSync_MockMethod else {
+            fatalError("no mock for `didStartSync`")
+        }
+
+        mock(sync)
+    }
+
 }
 
 public class MockLiveSyncProtocol: LiveSyncProtocol {
