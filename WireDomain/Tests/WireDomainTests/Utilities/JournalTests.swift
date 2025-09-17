@@ -67,7 +67,6 @@ class JournalStoreTests {
         #expect(storage.object(forKey: "notAJournalKey") != nil)
     }
 
-
     @Test("Values contain all declared values")
     func values() {
         // Given
