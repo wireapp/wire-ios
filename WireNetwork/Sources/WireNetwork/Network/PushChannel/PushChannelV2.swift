@@ -260,8 +260,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     public func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
         WireLogger.pushChannel.debug(
-            "acknowledgeEvent \(deliveryTag), muliple: \(multiple)",
-            attributes: .pushChannelV2
+            "acknowledgeEvent \(deliveryTag)",
+            attributes: .pushChannelV2, [.multipleEvents: multiple]
         )
         let acknowledgement = EventAcknowledgment(
             deliveryTag: deliveryTag,
