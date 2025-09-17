@@ -52,6 +52,7 @@
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
+		3431F08B2E795BD0007BA692 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3431F08A2E795BD0007BA692 /* WireNetwork */; };
 		3438C5592E5C518900D6FB5C /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3438C5582E5C518900D6FB5C /* WireNetwork */; };
 		3438C55B2E5C51A700D6FB5C /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3438C55A2E5C51A700D6FB5C /* WireNetwork */; };
 		346C755F2E74726600800769 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 346C755E2E74726600800769 /* WireFoundation */; };
@@ -921,6 +922,7 @@
 			files = (
 				346C75612E74727000800769 /* WireFoundation in Frameworks */,
 				591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */,
+				3431F08B2E795BD0007BA692 /* WireNetwork in Frameworks */,
 				59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */,
 				EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */,
 			);
@@ -2843,6 +2845,10 @@
 		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCoreCryptoUniffi;
+		};
+		3431F08A2E795BD0007BA692 /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
 		};
 		3438C5582E5C518900D6FB5C /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
