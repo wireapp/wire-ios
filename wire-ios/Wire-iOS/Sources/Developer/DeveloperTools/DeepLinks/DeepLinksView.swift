@@ -26,34 +26,55 @@ struct DeepLinksView: View {
 
     @State private var urlString = ""
 
+    @State private var isQRScannerPresented: Bool = false
+
     // MARK: - Views
 
     var body: some View {
-        VStack(spacing: 0) {
-            List {
-                Section("Open deeplink") {
-                    TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
-                    Button("Go") {
-                        viewModel.openLink(urlString: urlString)
+        List {
+            Section("Open deeplink") {
+                TextField(
+                    "Link",
+                    text: $urlString,
+                    prompt: Text("Enter deeplink")
+                )
+                Button("Open") {
+                    viewModel.openLink(urlString: urlString)
+                }
+                .disabled(urlString.isEmpty)
+            }
+
+            Section("Switch backend") {
+                ForEach(DeepLinksViewModel.Backend.allCases, id: \.self) { backend in
+                    Text(backend.rawValue).onTapGesture {
+                        viewModel.openSwitchBackendLink(for: backend)
                     }
-                    .disabled(urlString.isEmpty)
                 }
             }
-            .listStyle(InsetGroupedListStyle())
-            .frame(height: 150)
-
-            QRCodeScannerView { scannedCode in
-                urlString = scannedCode
-                viewModel.openLink(urlString: scannedCode)
+        }
+        .listStyle(InsetGroupedListStyle())
+        .toolbar {
+            ToolbarItem {
+                Button("Scan", systemImage: "qrcode") {
+                    isQRScannerPresented = true
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
         }
         .alert(
             isPresented: $viewModel.isShowingAlert,
             error: viewModel.error,
             actions: {}
         )
+        .sheet(isPresented: $isQRScannerPresented) {
+            QRCodeScannerView { scannedCode in
+                urlString = scannedCode
+                viewModel.openLink(urlString: scannedCode)
+            }
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity
+            )
+        }
     }
 }
 
