@@ -172,7 +172,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons)
+        let inputBar = InputBar(buttons: inputBarButtons, isWireCellsEnabled: conversation.isCellsEnabled)
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -1215,7 +1215,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func useWireCells() -> Bool {
-        DeveloperFlag.wireCells.isOn
+        DeveloperFlag.wireCells.isOn && conversation.isCellsEnabled
     }
 
     private func observeDraftAttachments() {

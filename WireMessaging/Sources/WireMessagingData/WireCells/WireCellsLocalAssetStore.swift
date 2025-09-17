@@ -22,21 +22,6 @@ package import Foundation
 package import WireData
 package import WireMessagingDomain
 
-// sourcery: AutoMockable
-@MainActor
-package protocol WireCellsLocalAssetStoreProtocol: Sendable {
-
-    /// Returns the `WireCellsLocalAsset` for a given `nodeID` or `nil`.
-    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset?
-
-    /// Updates an existing `WireCellsLocalAsset` or creates a new one if none exists with its `nodeID`.
-    func upsertAsset(_ asset: WireMessagingDomain.WireCellsLocalAsset) throws
-
-    /// Returns a publish to monitor changes to an `WireCellsLocalAsset` for a given `nodeID`.
-    func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireCellsLocalAsset?, Never>
-
-}
-
 private typealias ManagedLocalAsset = WireData.WireCellsLocalAsset
 
 @MainActor
@@ -92,6 +77,25 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
             .map(\.1)
             .prepend([try? asset(nodeID: nodeID)])
             .eraseToAnyPublisher()
+    }
+
+    package func deleteAssets(nodeIDs: [UUID]) async throws {
+        for nodeID in nodeIDs {
+            assets[nodeID] = nil
+            updates.send((nodeID, nil))
+        }
+
+        let context = contextProvider.newBackgroundContext()
+        try await Task.detached {
+            try await context.perform {
+                for nodeID in nodeIDs {
+                    if let stored = try context.fetchLocalAsset(nodeID: nodeID) {
+                        context.delete(stored)
+                    }
+                }
+                try context.save()
+            }
+        }.value
     }
 
     // MARK: Helpers

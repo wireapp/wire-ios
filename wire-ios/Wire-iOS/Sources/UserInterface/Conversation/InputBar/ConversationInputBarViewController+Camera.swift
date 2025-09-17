@@ -172,7 +172,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         isFromCamera: isFromCamera
                     )
                     let dataToSend = editedImage?.pngData() ?? imageData
-                    if DeveloperFlag.wireCells.isOn {
+                    if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
                         Task.detached {
                             // We don't care about the result of the operation here as we will be observing changes.
                             do {

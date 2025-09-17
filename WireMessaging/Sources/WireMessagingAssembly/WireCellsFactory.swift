@@ -29,6 +29,7 @@ public struct WireCellsFactory {
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
     private let fileCache: any FileCache
+    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: WireCellsLocalAssetRepository
 
     @MainActor
@@ -56,10 +57,11 @@ public struct WireCellsFactory {
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
+        self.localAssetStore = WireCellsLocalAssetStore(contextProvider: contextProvider)
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
-            store: WireCellsLocalAssetStore(contextProvider: contextProvider)
+            store: localAssetStore
         )
     }
 
@@ -114,6 +116,11 @@ public extension WireCellsFactory {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path(cellName)),
                 repository: nodesAPI
+            ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: nodesAPI,
+                fileCache: fileCache,
+                localAssetStore: localAssetStore
             ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
