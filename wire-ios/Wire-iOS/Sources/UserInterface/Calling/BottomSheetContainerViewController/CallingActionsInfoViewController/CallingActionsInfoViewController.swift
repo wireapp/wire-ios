@@ -20,6 +20,10 @@ import UIKit
 import WireDataModel
 import WireDesign
 
+protocol CallingActionsInfoViewControllerDelegate: AnyObject {
+    func actionsViewHeightChanged(to height: CGFloat)
+}
+
 final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
@@ -35,8 +39,9 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         color: SemanticColors.Label.textSectionHeader
     )
     private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
-    var isIncomingCall: Bool = false
 
+    weak var delegate: CallingActionsInfoViewControllerDelegate?
+    var isIncomingCall: Bool = false
     let actionsView = CallingActionsView()
 
     var participants: CallParticipantsList {
@@ -69,6 +74,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateRows()
+        updateActionViewHeight()
     }
 
     func setCallingActionsViewDelegate(actionsDelegate: CallingActionsViewDelegate?) {
@@ -112,7 +118,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func createConstraints() {
-        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: 128.0)
+        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: calculateHeightConstant())
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -145,16 +151,29 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     func updateActionViewHeight() {
-        actionsViewHeightConstraint.constant = calculateHeightConstant()
+        let height = calculateHeightConstant()
+        actionsViewHeightConstraint.constant = height
+        delegate?.actionsViewHeightChanged(to: height)
         actionsView.verticalStackView.alignment = determineStackViewAlignment()
     }
 
     private func calculateHeightConstant() -> CGFloat {
+<<<<<<< HEAD
         if UIDevice.current.twoDimensionOrientation.isLandscape {
             128 + view.safeAreaInsets.bottom
+=======
+        var baseHeight: CGFloat = if UIDevice.current.twoDimensionOrientation.isLandscape {
+            128
+>>>>>>> fecb07dd19 (fix: calling actions view moves down - WPB-20193 (#3591))
         } else {
-            (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
+            isIncomingCall ? 250 : 128
         }
+
+        if !securityLevelView.isHidden {
+            baseHeight += SecurityLevelView.securityLevelViewHeight
+        }
+
+        return baseHeight + view.safeAreaInsets.bottom
     }
 
     private func determineStackViewAlignment() -> UIStackView.Alignment {
