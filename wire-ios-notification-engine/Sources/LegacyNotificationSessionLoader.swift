@@ -27,6 +27,7 @@ public struct LegacyNotificationSessionLoader {
     public enum Failure: Error {
 
         case mainAppRequired(message: String)
+        case shouldBeUsingNewNSE
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case persistenceStoresNotFound
@@ -110,9 +111,8 @@ public struct LegacyNotificationSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        // Return early if needed.
-        guard !shouldEnableSyncV2(metadata: metadata) else {
-            throw Failure.mainAppRequired(message: "sync v2 should be enabled")
+        guard !journal[.isSyncV2Enabled] else {
+            throw Failure.shouldBeUsingNewNSE
         }
 
         guard let selfClientID = await coreDataStack.syncContext.perform({
@@ -241,13 +241,6 @@ public struct LegacyNotificationSessionLoader {
         } catch {
             throw Failure.failedToCheckBuildBlacklist(error)
         }
-    }
-
-    private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        return false
-        let isAvailable = metadata.apiVersion >= .v8
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
     }
 
     private func makeNotificationSession(
