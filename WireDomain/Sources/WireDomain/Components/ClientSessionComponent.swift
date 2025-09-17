@@ -410,7 +410,9 @@ public final class ClientSessionComponent {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
-            pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            createPushChannelState: { [selfClientID] in
+                PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            }
         )
     } else {
         fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
