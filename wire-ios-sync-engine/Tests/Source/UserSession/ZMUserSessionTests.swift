@@ -482,6 +482,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // GIVEN
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+
         syncMOC.performAndWait {
             let mls = Feature.MLS(status: .enabled, config: .init())
             self.sut.featureRepository.storeMLS(mls)
@@ -535,6 +537,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
         // GIVEN
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+
         syncMOC.performAndWait {
             ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
         }

@@ -607,6 +607,15 @@ public class MockUserSession: UserSession {
 
     public var underlyingSearchUsersCache: SearchUsersCache!
 
+    // MARK: - fileAssetCache
+
+    public var fileAssetCache: FileAssetCache {
+        get { return underlyingFileAssetCache }
+        set(value) { underlyingFileAssetCache = value }
+    }
+
+    public var underlyingFileAssetCache: FileAssetCache!
+
     // MARK: - unlockDatabase
 
     public var unlockDatabase_Invocations: [Void] = []

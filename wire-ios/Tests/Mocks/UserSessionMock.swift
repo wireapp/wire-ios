@@ -104,6 +104,8 @@ final class UserSessionMock: UserSession {
 
     var searchUsersCache: SearchUsersCache
 
+    var fileAssetCache: FileAssetCache = .init(location: URL.temporaryDirectory)
+
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {

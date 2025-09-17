@@ -20,18 +20,21 @@ import UserNotifications
 import WireLogging
 
 // sourcery: AutoMockable
-protocol ProcessNotificationUseCaseProtocol {
+public protocol ProcessNotificationUseCaseProtocol {
     func invoke(
         request: UNNotificationRequest
-    ) async throws -> NotificationPayload
+    ) throws -> NotificationPayload
 }
 
-struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+public struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+
     private let logger = WireLogger.notifications
 
-    func invoke(
+    public init() {}
+
+    public func invoke(
         request: UNNotificationRequest
-    ) async throws -> NotificationPayload {
+    ) throws -> NotificationPayload {
         let userInfo = request.content.userInfo
 
         logger.info(

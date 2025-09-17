@@ -185,6 +185,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
     }
 
     func testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {

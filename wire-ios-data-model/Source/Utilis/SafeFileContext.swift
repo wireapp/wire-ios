@@ -21,7 +21,6 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
 

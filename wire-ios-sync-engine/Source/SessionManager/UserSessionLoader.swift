@@ -31,6 +31,7 @@ protocol UserSessionLoaderDelegate: AnyObject {
 final class UserSessionLoader {
 
     private let account: Account
+    private let accountManager: AccountManager
     private let sharedContainerURL: URL
     private let legacyEnvironment: WireTransport.BackendEnvironment
     private let minTLSVersion: String?
@@ -52,6 +53,7 @@ final class UserSessionLoader {
 
     init(
         account: Account,
+        accountManager: AccountManager,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
         minTLSVersion: String?,
@@ -66,6 +68,7 @@ final class UserSessionLoader {
         isDeveloperModeEnabled: Bool
     ) throws {
         self.account = account
+        self.accountManager = accountManager
         self.sharedContainerURL = sharedContainerURL
         self.legacyEnvironment = legacyEnvironment
         self.minTLSVersion = minTLSVersion
@@ -100,6 +103,12 @@ final class UserSessionLoader {
             environment
         } else {
             try fetchBackendEnvironment()
+        }
+
+        // Update account metadata.
+        if backendEnvironment.environmentType != .default {
+            account.backendName = backendEnvironment.title
+            accountManager.addOrUpdate(account)
         }
 
         // Retrieve proxy credentials if needed.
@@ -181,7 +190,10 @@ final class UserSessionLoader {
 
         // Perform pending migrations.
         do {
-            try await performPendingMigrations(userSession: userSession)
+            try await performPendingMigrations(
+                userSession: userSession,
+                localDomain: metadata.domain
+            )
         } catch {
             await userSession.close(deleteCookie: false)
             throw error
@@ -273,7 +285,12 @@ final class UserSessionLoader {
         // Get new metadata.
         let newMetadata: ResolvedBackendMetadata
         do {
-            newMetadata = try await networkStack.resolvedBackendMetadata()
+            let metadata = try await networkStack.resolvedBackendMetadata()
+            newMetadata = ResolvedBackendMetadata(
+                apiVersion: metadata.apiVersion,
+                domain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
+            )
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             // To allow offline browsing fallback to previous metadata if possible.
             if let prevMetadata {
@@ -285,11 +302,11 @@ final class UserSessionLoader {
 
         if let prevMetadata {
             if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // TODO: [WPB-14630] mark federation migration needed
-            }
-
-            if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-                // TODO: [WPB-14630] mark access token migration needed
+                // Now that federation is enabled we'll start storing domains
+                // on entities in the database. We'll therefore need to add
+                // the local domain to all existing entities so they're
+                // fully qualified.
+                journal[.isFederationMigrationRequired] = true
             }
         }
 
@@ -589,8 +606,31 @@ final class UserSessionLoader {
         }
     }
 
-    private func performPendingMigrations(userSession: ZMUserSession) async throws {
-        // TODO: [WPB-14630] perform metadata migrations
+    private func performPendingMigrations(
+        userSession: ZMUserSession,
+        localDomain: String
+    ) async throws {
+        if journal[.isFederationMigrationRequired] {
+            WireLogger.session.info(
+                "federation migration is required...",
+                attributes: .safePublic
+            )
+            do {
+                try await CoreDataStack.migrateLocalStorage(
+                    accountIdentifier: accountID,
+                    applicationContainer: sharedContainerURL,
+                    migration: {
+                        try $0.migrateToFederation(localDomain: localDomain)
+                    }
+                )
+                journal[.isFederationMigrationRequired] = false
+            } catch {
+                WireLogger.session.error(
+                    "failed to migrate to federation: \(String(describing: error))",
+                )
+                throw Failure.failedToMigrateToFederation(error)
+            }
+        }
 
         // Perform app version migrations.
         let migrationService = userSession.makeAppVersionMigrationService()
@@ -636,6 +676,7 @@ final class UserSessionLoader {
         case failedToEnabledSyncV2(any Error)
         case buildIsBlacklisted
         case failedToPerformMigration(any Error)
+        case failedToMigrateToFederation(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
 
         var safeForLoggingDescription: String {
@@ -658,6 +699,8 @@ final class UserSessionLoader {
                 "build is blacklisted"
             case .failedToPerformMigration:
                 "failed to perform migration"
+            case .failedToMigrateToFederation:
+                "failed to migrate to federation"
             case .failedToMigrationToConsumableNotifications:
                 "failed to migrate to consumable notifications"
             }

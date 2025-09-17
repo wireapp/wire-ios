@@ -77,3 +77,11 @@
 "share_extension.voiceover.conversation_under_legal_hold" = "Unterliegt der gesetzlichen Aufbewahrung.";
 "share_extension.voiceover.conversation_secure" = "Alle Geräte überprüft.";
 "share_extension.voiceover.conversation_secure_with_ignored" = "Nicht alle Geräte sind überprüft.";
+
+// Update required
+"share_extension.error.update_required.title" = "Aktualisierung erforderlich";
+"share_extension.error.update_required.obsolete_client" = "Sie verpassen neue Funktionen. Laden Sie die neueste Version von Wire herunter, um die App weiterhin mit diesem Benutzerkonto zu verwenden.";
+"share_extension.error.update_required.obsolete_backend" = "Ihr Wire-Server muss aktualisiert werden. Bitte informieren Sie Ihren Systemadministrator.";
+
+"share_extension.error.open_app.title" = "Open app";
+"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";
