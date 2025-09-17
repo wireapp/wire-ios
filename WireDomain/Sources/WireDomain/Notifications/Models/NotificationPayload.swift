@@ -19,7 +19,8 @@
 import Foundation
 
 /// Push notification payload
-struct NotificationPayload: Decodable {
+public struct NotificationPayload: Decodable {
+
     private let data: Payload
 
     private struct Payload: Decodable {
@@ -31,11 +32,11 @@ struct NotificationPayload: Decodable {
         }
     }
 
-    var userID: UUID {
+    public var userID: UUID {
         data.user
     }
 
-    var eventID: UUID {
+    public var eventID: UUID {
         data.data.id
     }
 }

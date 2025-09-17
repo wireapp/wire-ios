@@ -212,12 +212,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
         // TODO: [WPB-19777] deduplicate
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-            // TODO: [WPB-14630] mark federation migration needed
-        }
-
-        // TODO: [WPB-19777] deduplicate
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
+            // Now that federation is enabled we'll start storing domains
+            // on entities in the database. We'll therefore need to add
+            // the local domain to all existing entities so they're
+            // fully qualified.
+            journal[.isFederationMigrationRequired] = true
         }
 
         // Store new metadata.

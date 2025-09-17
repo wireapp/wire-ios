@@ -21,13 +21,13 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 import WireNetwork
-import WireRequestStrategy
 
-public struct SharingSessionLoader {
+public struct LegacyNotificationSessionLoader {
 
     public enum Failure: Error {
 
         case mainAppRequired(message: String)
+        case shouldBeUsingNewNSE
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case persistenceStoresNotFound
@@ -74,7 +74,7 @@ public struct SharingSessionLoader {
         )
     }
 
-    public func load() async throws -> SharingSession {
+    public func load() async throws -> NotificationSession {
         // Get the stored environment for this account.
         let backendEnvironment = try fetchBackendEnvironment()
 
@@ -111,11 +111,9 @@ public struct SharingSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        guard !shouldEnableSyncV2(metadata: metadata) else {
-            throw Failure.mainAppRequired(message: "sync v2 should be enabled")
+        guard !journal[.isSyncV2Enabled] else {
+            throw Failure.shouldBeUsingNewNSE
         }
-
-        // TODO: [WPB-19778] guard no app version migration needed.
 
         guard let selfClientID = await coreDataStack.syncContext.perform({
             let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
@@ -124,14 +122,12 @@ public struct SharingSessionLoader {
             throw Failure.mainAppRequired(message: "no self client id")
         }
 
-        // Create sharing session.
-        return try await makeSharingSession(
+        return try await makeNotificationSession(
             selfClientID: selfClientID,
             environment: backendEnvironment,
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
-            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack
         )
@@ -185,11 +181,11 @@ public struct SharingSessionLoader {
 
         // TODO: [WPB-17732] de-duplicate when implementing NSE
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-            // Now that federation is enabled we'll start storing domains
-            // on entities in the database. We'll therefore need to add
-            // the local domain to all existing entities so they're
-            // fully qualified.
-            journal[.isFederationMigrationRequired] = true
+            // TODO: [WPB-14630] mark federation migration needed
+        }
+
+        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
+            // TODO: [WPB-14630] mark access token migration needed
         }
 
         // Store new metadata.
@@ -247,23 +243,15 @@ public struct SharingSessionLoader {
         }
     }
 
-    // TODO: [WPB-17732] de-duplicate when implementing NSE
-    private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .v8
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
-    }
-
-    private func makeSharingSession(
+    private func makeNotificationSession(
         selfClientID: String,
         environment: BackendEnvironment2,
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
-        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack
-    ) async throws -> SharingSession {
+    ) async throws -> NotificationSession {
         let legacyEnvironment = BackendEnvironment(environment)
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
@@ -296,28 +284,22 @@ public struct SharingSessionLoader {
         let cachesDirectory = FileManager.default.cachesURLForAccount(with: accountID, in: appContainerURL)
         let userAccountDataURL = accountDataURL.appending(path: accountID.uuidString)
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: userAccountDataURL)
-        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: userAccountDataURL)
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: accountID,
+            sharedUserDefaults: sharedUserDefaults
+        )
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
-            transportSession: transportSession
+            transportSession: transportSession,
+            lastEventIDRepository: lastEventIDRepository
         )
-        let linkPreviewPreprocessor = LinkPreviewPreprocessor(
-            linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
-            managedObjectContext: coreDataStack.syncContext
-        )
-        let strategyFactory = StrategyFactory(
+        let pushNotificationStrategy = PushNotificationStrategy(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: linkPreviewPreprocessor,
-            transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
-            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
-            localDomain: backendMetadata.domain
+            pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
+            lastEventIDRepository: lastEventIDRepository
         )
-        let requestGeneratorStore = RequestGeneratorStore(
-            strategies: strategyFactory.strategies,
-            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue))
-        )
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
@@ -329,15 +311,10 @@ public struct SharingSessionLoader {
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
-        let contextStorage = LAContextStorage()
         let earService = EARService(
             accountID: accountID,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext
-            ],
             sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
         )
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountID,
@@ -359,67 +336,20 @@ public struct SharingSessionLoader {
             context: coreDataStack.syncContext,
             mlsActionExecutor: mlsActionExecutor
         )
-        let mlsService = MLSService(
-            context: coreDataStack.syncContext,
-            notificationContext: coreDataStack.syncContext.notificationContext,
-            coreCryptoProvider: coreCryptoProvider,
-            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
-            userDefaults: .standard,
-            userID: accountID,
-            localDomain: backendMetadata.domain
-        )
-        let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
-        )
-        let userSessionComponent = UserSessionComponent(
-            currentBuildNumber: buildNumber,
-            selfUserID: accountID,
-            cookieStorage: cookieStorage,
-            restNetworkService: restNetworkService,
-            websocketNetworkService: webSocketNetworkService,
-            blacklistNetworkService: blacklistNetworkService,
-            backendMetaData: backendMetadata,
-            isMLSEnabled: journal[.isBackendMLSEnabled],
-            sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: nil, // the container is not used in this case
-            syncContext: coreDataStack.syncContext,
-            eventContext: coreDataStack.eventContext,
-            mlsService: mlsService,
-            mlsDecryptionService: mlsService,
-            proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
-        )
-        let completionHandlers = ClientSessionComponent.CompletionHandlers(
-            onProcessedCallEvent: { _ in },
-            onSelfClientInvalidated: {},
-            onAuthenticationFailure: {},
-            onProcessedTypingUsers: { _ in }
-        )
-        let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
-            clientID: selfClientID,
-            completionHandlers: completionHandlers
-        )
-        coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
-        return try await SharingSession(
-            accountIdentifier: accountID,
+        return try NotificationSession(
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: cachesDirectory,
             saveNotificationPersistence: saveNotificationPersistence,
-            analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory,
-            appLockConfig: nil,
+            accountIdentifier: accountID,
+            pushNotificationStrategy: pushNotificationStrategy,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
-            contextStorage: contextStorage,
             proteusService: proteusService,
-            mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
-            sharedUserDefaults: sharedUserDefaults
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 }
