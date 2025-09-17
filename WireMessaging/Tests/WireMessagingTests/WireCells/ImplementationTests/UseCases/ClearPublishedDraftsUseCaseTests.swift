@@ -45,8 +45,13 @@ final class ClearPublishedDraftsUseCaseTests {
         ]
     )
 
+    deinit {
+        try? FileManager.default.removeItem(at: Scaffolding.assetAURL)
+        try? FileManager.default.removeItem(at: Scaffolding.assetBURL)
+    }
+
     @Test
-    func invoke() async throws {
+    func invoke_clearsTheCorrectDrafts() async throws {
         // Given
         let sut = ClearPublishedDraftsUseCase(cellName: "cell-A", draftRepository: draftsRepository)
 
@@ -71,9 +76,48 @@ final class ClearPublishedDraftsUseCaseTests {
             ])
         )
     }
+
+    @Test
+    func invoke_deletesFilesIfNeeded() async throws {
+        // Given
+        try Data("Test data A".utf8).write(to: Scaffolding.assetAURL)
+        try Data("Test data B".utf8).write(to: Scaffolding.assetBURL)
+
+        let draftA = WireCellsDraft.fixture(
+            assetURL: Scaffolding.assetAURL,
+            status: .uploaded(isDraft: false),
+            requiresCleanup: false
+        )
+        let draftB = WireCellsDraft.fixture(
+            assetURL: Scaffolding.assetBURL,
+            status: .uploaded(isDraft: false),
+            requiresCleanup: true
+        )
+
+        let sut = ClearPublishedDraftsUseCase(
+            cellName: "cell",
+            draftRepository: DraftsRepository(
+                uploadManager: uploadManager,
+                nodesAPI: nodesAPI,
+                drafts: ["cell": [draftA.nodeID: draftA, draftB.nodeID: draftB]]
+            )
+        )
+
+        // When
+        await sut.invoke()
+
+        // Then
+        #expect(FileManager.default.fileExists(atPath: Scaffolding.assetAURL.path))
+        #expect(!FileManager.default.fileExists(atPath: Scaffolding.assetBURL.path))
+    }
 }
 
 private enum Scaffolding {
+    // Files
+    static let assetAURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    static let assetBURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+    // Drafts
     static let cancelledDraft = WireCellsDraft.fixture(status: .cancelled)
     static let uploadingDraft = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
     static let uploadedDraft = WireCellsDraft.fixture(status: .uploaded(isDraft: true))
