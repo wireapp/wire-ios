@@ -65,7 +65,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
             name: fileURL.lastPathComponent,
             bytes: fileSize,
             mimeType: nil,
-            deleteAfterUpload: false,
+            requiresCleanup: false,
             metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType)
         )
 

@@ -182,7 +182,7 @@ final class UploadDraftUseCaseTests {
         #expect(arguments.draft.name == fileURL.lastPathComponent)
         #expect(arguments.draft.bytes == data.count)
         #expect(arguments.draft.mimeType == nil)
-        #expect(arguments.draft.deleteAfterUpload == false)
+        #expect(arguments.draft.requiresCleanup == false)
     }
 
     @Test(arguments: [(fileName: String, expectedMetadata: WireCellsDraft.Metadata?)]([
