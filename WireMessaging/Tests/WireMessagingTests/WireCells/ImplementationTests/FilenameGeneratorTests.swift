@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
 import Testing
+import UniformTypeIdentifiers
 
 @testable import WireMessagingDomain
 
@@ -26,7 +26,8 @@ struct FilenameGeneratorTests {
 
     let sut = FilenameGenerator(date: { try! Date("2023-10-01T12:10:05Z", strategy: .iso8601) })
 
-    @Test func generateFilenames() async {
+    @Test
+    func generateFilenames() async {
         #expect(await sut.generateFilename(type: .png) == "IMG_20231001_121005.png")
         #expect(await sut.generateFilename(type: .png) == "IMG_20231001_121005_1.png")
         #expect(await sut.generateFilename(type: .png) == "IMG_20231001_121005_2.png")
