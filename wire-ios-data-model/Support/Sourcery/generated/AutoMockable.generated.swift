@@ -1802,46 +1802,94 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
 
     public init() {}
 
-    // MARK: - isMigrationNeeded
+    // MARK: - isMigrationToBytesNeeded
 
-    public var isMigrationNeeded: Bool {
-        get { return underlyingIsMigrationNeeded }
-        set(value) { underlyingIsMigrationNeeded = value }
+    public var isMigrationToBytesNeeded: Bool {
+        get { return underlyingIsMigrationToBytesNeeded }
+        set(value) { underlyingIsMigrationToBytesNeeded = value }
     }
 
-    public var underlyingIsMigrationNeeded: Bool!
+    public var underlyingIsMigrationToBytesNeeded: Bool!
+
+    // MARK: - isMigrationToScopedKeyNeeded
+
+    public var isMigrationToScopedKeyNeeded: Bool {
+        get { return underlyingIsMigrationToScopedKeyNeeded }
+        set(value) { underlyingIsMigrationToScopedKeyNeeded = value }
+    }
+
+    public var underlyingIsMigrationToScopedKeyNeeded: Bool!
+
+    // MARK: - isKeyRotationNeeded
+
+    public var isKeyRotationNeeded: Bool {
+        get { return underlyingIsKeyRotationNeeded }
+        set(value) { underlyingIsKeyRotationNeeded = value }
+    }
+
+    public var underlyingIsKeyRotationNeeded: Bool!
 
 
-    // MARK: - performMigrationIfNeeded
+    // MARK: - migrateDatabaseKeyToBytes
 
-    public var performMigrationIfNeededPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
-    public var performMigrationIfNeededPathOldKeyNewKey_MockError: Error?
-    public var performMigrationIfNeededPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_MockError: Error?
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
 
-    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
-        performMigrationIfNeededPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
+        migrateDatabaseKeyToBytesPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
 
-        if let error = performMigrationIfNeededPathOldKeyNewKey_MockError {
+        if let error = migrateDatabaseKeyToBytesPathOldKeyNewKey_MockError {
             throw error
         }
 
-        guard let mock = performMigrationIfNeededPathOldKeyNewKey_MockMethod else {
-            fatalError("no mock for `performMigrationIfNeededPathOldKeyNewKey`")
+        guard let mock = migrateDatabaseKeyToBytesPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `migrateDatabaseKeyToBytesPathOldKeyNewKey`")
         }
 
         try await mock(path, oldKey, newKey)
     }
 
-    // MARK: - markMigrationAsSkipped
+    // MARK: - markMigrationToBytesAsSkipped
 
-    public var markMigrationAsSkipped_Invocations: [Void] = []
-    public var markMigrationAsSkipped_MockMethod: (() -> Void)?
+    public var markMigrationToBytesAsSkipped_Invocations: [Void] = []
+    public var markMigrationToBytesAsSkipped_MockMethod: (() -> Void)?
 
-    public func markMigrationAsSkipped() {
-        markMigrationAsSkipped_Invocations.append(())
+    public func markMigrationToBytesAsSkipped() {
+        markMigrationToBytesAsSkipped_Invocations.append(())
 
-        guard let mock = markMigrationAsSkipped_MockMethod else {
-            fatalError("no mock for `markMigrationAsSkipped`")
+        guard let mock = markMigrationToBytesAsSkipped_MockMethod else {
+            fatalError("no mock for `markMigrationToBytesAsSkipped`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markMigrationToScopedKeyDone
+
+    public var markMigrationToScopedKeyDone_Invocations: [Void] = []
+    public var markMigrationToScopedKeyDone_MockMethod: (() -> Void)?
+
+    public func markMigrationToScopedKeyDone() {
+        markMigrationToScopedKeyDone_Invocations.append(())
+
+        guard let mock = markMigrationToScopedKeyDone_MockMethod else {
+            fatalError("no mock for `markMigrationToScopedKeyDone`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markKeyRotationAsDone
+
+    public var markKeyRotationAsDone_Invocations: [Void] = []
+    public var markKeyRotationAsDone_MockMethod: (() -> Void)?
+
+    public func markKeyRotationAsDone() {
+        markKeyRotationAsDone_Invocations.append(())
+
+        guard let mock = markKeyRotationAsDone_MockMethod else {
+            fatalError("no mock for `markKeyRotationAsDone`")
         }
 
         mock()
@@ -1970,26 +2018,6 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         }
 
         await mock(epochObserver)
-    }
-
-    // MARK: - updateDatabaseKey
-
-    public var updateDatabaseKey_Invocations: [Void] = []
-    public var updateDatabaseKey_MockError: Error?
-    public var updateDatabaseKey_MockMethod: (() async throws -> Void)?
-
-    public func updateDatabaseKey() async throws {
-        updateDatabaseKey_Invocations.append(())
-
-        if let error = updateDatabaseKey_MockError {
-            throw error
-        }
-
-        guard let mock = updateDatabaseKey_MockMethod else {
-            fatalError("no mock for `updateDatabaseKey`")
-        }
-
-        try await mock()
     }
 
 }
