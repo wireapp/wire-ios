@@ -131,9 +131,14 @@ public extension Journal {
         [
             JournalKey.isConsumableNotificationsEnabled,
             JournalKey.isConversationSyncRequired,
-            JournalKey.isCoreCryptoKeyMigrationRequired,
+            JournalKey.isCoreCryptoKeyMigrationToBytesRequired,
+            JournalKey.isCoreCryptoKeyMigrationToScopedKeyRequired,
+            JournalKey.isCoreCryptoKeyRotationRequired,
             JournalKey.isInitialSyncRequired,
-            JournalKey.isSyncV2Enabled
+            JournalKey.isSyncV2Enabled,
+            JournalKey.isBackendMLSEnabled,
+            JournalKey.isFederationMigrationRequired
+
         ].forEach {
             result[$0.name] = "\(self[$0] == true ? "Yes" : "No")"
         }

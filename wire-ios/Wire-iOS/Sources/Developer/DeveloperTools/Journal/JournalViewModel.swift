@@ -22,10 +22,10 @@ import WireSyncEngine
 final class JournalViewModel: ObservableObject {
     var sections: [DeveloperToolsViewModel.Section]
 
-    init(userId: UUID) {
+    init(userId: UUID, storage: UserDefaults = .shared()) {
         let journal = Journal(
             userID: userId,
-            storage: UserDefaults.shared()
+            storage: storage
         )
 
         self.sections = [
@@ -35,9 +35,13 @@ final class JournalViewModel: ObservableObject {
                 [
                     JournalKey.isConsumableNotificationsEnabled,
                     JournalKey.isConversationSyncRequired,
-                    JournalKey.isCoreCryptoKeyMigrationRequired,
+                    JournalKey.isCoreCryptoKeyMigrationToBytesRequired,
+                    JournalKey.isCoreCryptoKeyMigrationToScopedKeyRequired,
+                    JournalKey.isCoreCryptoKeyRotationRequired,
                     JournalKey.isInitialSyncRequired,
-                    JournalKey.isSyncV2Enabled
+                    JournalKey.isSyncV2Enabled,
+                    JournalKey.isBackendMLSEnabled,
+                    JournalKey.isFederationMigrationRequired
                 ].map {
                     DeveloperToolsViewModel.Item.text(.init(title: $0.name, value: journal[$0] == true ? "Yes" : "No"))
                 }
