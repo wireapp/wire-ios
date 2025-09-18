@@ -39,15 +39,24 @@ package struct FilesView: View {
         NavigationStack {
             Group {
                 switch viewModel.state {
+                case .initial:
+                    Button(action: reloadTask) {
+                        Image(systemName: "arrow.trianglehead.clockwise")
+                            .wireTextStyle(.body3)
+                            .foregroundStyle(SemanticColors.Label.textDefault.color)
+
+                    }
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case .received:
-                    filesList
-                        .listStyle(.plain)
-                        .refreshable { reloadTask() }
-                case .noData:
-                    InfoView(info: .noFilesFound)
+                case let .received(items):
+                    if items.isEmpty {
+                        InfoView(info: .noFilesFound)
+                    } else {
+                        filesList
+                            .listStyle(.plain)
+                            .refreshable { reloadTask() }
+                    }
                 case .pending:
                     InfoView(info: .preparingFiles)
                 }
@@ -79,10 +88,11 @@ private extension FilesView {
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
         }
+        .animation(.default, value: viewModel.state)
     }
 
     @ViewBuilder var itemsSection: some View {
-        ForEach(Array(viewModel.state.items.enumerated()), id: \.offset) { index, item in
+        ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
                 .onTapGesture { Task { await viewModel.viewAsset(item: item) } }
