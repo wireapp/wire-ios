@@ -29,7 +29,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
-
+        static let deleteBackgroundActionName = "delete"
     }
 
     private let serverURL: URL
@@ -67,6 +67,7 @@ final class RestAPI: Sendable {
                 recursive: request.scope.isRecursive,
                 root: request.scope.root.map { RestNodeLocator($0) }
             ),
+            sortDirDesc: true,
             sortField: Constants.sortedBy
         )
 
@@ -77,23 +78,31 @@ final class RestAPI: Sendable {
         return (nodes: nodes, nextOffset: nextOffset)
     }
 
-    func delete(uuid: UUID) async throws {
-        let parameters = RestActionParameters(nodes: [RestNodeLocator(uuid: uuid.uuidString)])
-        _ = try await NodeServiceAPI.performAction(
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            deleteOptions: RestActionOptionsDelete(permanentDelete: permanently),
+            nodes: nodes
+        )
+        let response = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
-    }
-
-    func delete(paths: [String]) async throws {
-        let nodes = paths.map { RestNodeLocator(path: $0) }
-        let parameters = RestActionParameters(nodes: nodes)
-        _ = try await NodeServiceAPI.performAction(
-            name: .delete,
-            parameters: parameters,
-            apiConfiguration: makeConfiguration()
-        )
+        guard
+            let actions = response.backgroundActions,
+            let deleteAction = actions.first(where: { $0.name == Constants.deleteBackgroundActionName }) else {
+            return false
+        }
+        return deleteAction.status == .finished
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {

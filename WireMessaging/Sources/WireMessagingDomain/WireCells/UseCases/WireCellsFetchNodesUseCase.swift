@@ -71,9 +71,8 @@ package struct WireCellsFetchNodesUseCase: Sendable {
     /// `nil`, there are no more pages to fetch.
     package func invoke(
         searchTerm: String?,
-        token: WireCellsPageToken?
-    ) async throws -> (nodes: [WireCellsNode], nextPage: WireCellsPageToken?) {
-        let offset = token?.offset ?? 0
+        offset: Int
+    ) async throws -> (nodes: [WireCellsNode], isLastPage: Bool) {
         let request = WireCellsGetNodesRequest(
             scope: WireCellsGetNodesRequest.Scope(
                 root: configuration.root,
@@ -89,7 +88,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         )
         let (nodes, nextOffset) = try await repository.getNodes(request)
 
-        return (nodes, nextOffset.map { WireCellsPageToken(offset: $0) })
+        return (nodes, nextOffset == nil)
     }
 
 }

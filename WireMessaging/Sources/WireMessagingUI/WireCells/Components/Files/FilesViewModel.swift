@@ -20,11 +20,12 @@ import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
+import WireLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
 
 /// An item in the `FilesView`.
-struct FilesViewItem: Identifiable, Equatable {
+struct FilesViewItem: Identifiable, Hashable {
 
     /// Identifier of this item on the wire cells backend.
     let id: UUID
@@ -46,7 +47,7 @@ struct FilesViewItem: Identifiable, Equatable {
 /// View model for the `FilesView`.
 package final class FilesViewModel: ObservableObject {
 
-    private typealias LoadItemsTask = Task<(items: [FilesViewItem], nextPage: WireCellsPageToken?), any Error>
+    private typealias LoadItemsTask = Task<(items: [FilesViewItem], isLastPage: Bool), any Error>
 
     private enum Constants {
 
@@ -55,9 +56,10 @@ package final class FilesViewModel: ObservableObject {
     }
 
     enum State: Equatable {
+
+        case initial
         case loading
         case received(items: [FilesViewItem])
-        case noData
         case pending // cells are not ready yet
 
         var items: [FilesViewItem] {
@@ -68,15 +70,24 @@ package final class FilesViewModel: ObservableObject {
                 []
             }
         }
+
+        var isLoaded: Bool {
+            switch self {
+            case .loading, .pending, .initial:
+                false
+            case .received:
+                true
+            }
+        }
     }
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
 
-    @Published private(set) var items: [FilesViewItem] = []
-    @Published private var nextPageToken: WireCellsPageToken?
+    @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
@@ -84,19 +95,16 @@ package final class FilesViewModel: ObservableObject {
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        deleteNodesUseCase: WireCellsDeleteNodesUseCase,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.deleteNodesUseCase = deleteNodesUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
-    }
-
-    /// Whether there are more items to load.
-    var hasMore: Bool {
-        nextPageToken != nil
     }
 
     /// Whether the view model is currently loading items.
@@ -114,9 +122,9 @@ package final class FilesViewModel: ObservableObject {
 
         cancelLoad()
         state = .loading
-        nextPageToken = nil
+        hasMore = true
 
-        await loadMore(initialFetch: true)
+        await loadMore()
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -128,8 +136,8 @@ package final class FilesViewModel: ObservableObject {
     /// - Parameter index: The index of the item which requested load more.
     func loadMoreIfNeeded(index: Int) async {
         let remaining = state.items.count - index - 1
-        if remaining < Constants.loadMoreThreshold, nextPageToken != nil {
-            await loadMore(initialFetch: false)
+        if remaining < Constants.loadMoreThreshold, hasMore {
+            await loadMore()
         }
     }
 
@@ -140,6 +148,9 @@ package final class FilesViewModel: ObservableObject {
             localAssetRepository: localAssetRepository,
             onOpen: { [weak self] item in
                 await self?.viewAsset(item: item)
+            },
+            onDelete: { [weak self] item in
+                await self?.deleteItem(item)
             }
         )
     }
@@ -186,32 +197,33 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore(initialFetch: Bool) async {
+    private func loadMore() async {
         guard loadMoreTask == nil else { return }
 
-        let task = Task { try await fetchItems(token: nextPageToken) }
+        let offset = state.items.count
+        let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
-            let (newItems, nextPage) = try await task.value
-            var items = state.items
-            items.append(contentsOf: newItems)
-            state = initialFetch && items.isEmpty ? .noData : .received(items: items)
-            nextPageToken = nextPage
+            let (newItems, isLastPage) = try await task.value
+            state = .received(items: Self.processItems(state.items + newItems))
+            hasMore = !isLastPage
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
-            state = .noData
+            state = state.items.isEmpty ? .initial : state
+            hasMore = state.items.isEmpty ? true : hasMore
         } catch {
             alert = .unknownError
-            state = .noData
+            state = state.items.isEmpty ? .initial : state
+            hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
     }
 
     private nonisolated func fetchItems(
-        token: WireCellsPageToken?
-    ) async throws -> (items: [FilesViewItem], nextPage: WireCellsPageToken?) {
-        let (nodes, nextPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, token: token)
+        offset: Int
+    ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
+        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, offset: offset)
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
@@ -228,7 +240,7 @@ package final class FilesViewModel: ObservableObject {
         }
 
         try Task.checkCancellation()
-        return (items, nextPage)
+        return (items, isLastPage)
     }
 
     private func awaitDownload(item: FilesViewItem) async throws {
@@ -244,6 +256,57 @@ package final class FilesViewModel: ObservableObject {
                 break
             }
         }
+    }
+
+    private func deleteItem(_ asset: FilesViewItem) async {
+        guard state.isLoaded else {
+            WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        var currentItems = state.items
+        currentItems.removeAll { $0.id == asset.id }
+        state = .received(items: Self.processItems(currentItems))
+
+        do {
+            try await deleteNodesUseCase.invoke(nodeIDs: [asset.id])
+        } catch {
+            guard state.isLoaded else { return }
+
+            var currentItems = state.items
+            currentItems.append(asset)
+            state = .received(items: Self.processItems(currentItems))
+        }
+    }
+
+    /// Sorts items first by modified date descending, then by filename ascending.
+    /// If multiple items have the same `nodeID`, only the first is kept.
+    private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
+        // sort
+        let sorted = items.sorted { left, right in
+            if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt {
+                if leftModified == rightModified {
+                    left.filename < right.filename
+                } else {
+                    leftModified > rightModified
+                }
+            } else if left.modifiedAt != nil {
+                true
+            } else if right.modifiedAt != nil {
+                false
+            } else {
+                left.filename < right.filename
+            }
+        }
+
+        var nodeIDs = Set<UUID>()
+        var results: [FilesViewItem] = []
+        for item in sorted where !nodeIDs.contains(item.id) {
+            nodeIDs.insert(item.id)
+            results.append(item)
+        }
+
+        return results
     }
 
 }
