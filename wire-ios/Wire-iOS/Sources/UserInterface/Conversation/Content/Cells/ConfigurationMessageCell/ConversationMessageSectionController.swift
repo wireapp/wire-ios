@@ -218,8 +218,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addFileMessageCell()
         } else if message.isSystem {
             addSystemMessageCell()
-        } else if message.isMultipart, DeveloperFlag.wireCells.isOn {
-            addMultipartMessageCell()
         } else {
             addUnknownMessageCell()
         }
@@ -355,13 +353,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor.uiColor,
             userSession: userSession
         )
-    }
-
-    private func addMultipartMessageCell() -> [AnyConversationMessageCellDescription] {
-        guard let data = message.multipartMessageData else { return [] }
-
-        let cellDescription = MultipartMessageCellDescription(data: data)
-        return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
     private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
