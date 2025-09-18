@@ -36,8 +36,8 @@ extension BackendEnvironmentProvider {
         return ZMReachability(serverNames: serverNames, group: group)
     }
 
-    func reachabilityWrapper() -> ReachabilityWrapper {
-        ReachabilityWrapper(enabled: false, reachabilityClosure: {
+    func reachabilityWrapper(enabled: Bool = false) -> ReachabilityWrapper {
+        ReachabilityWrapper(enabled: enabled, reachabilityClosure: {
             self.reachability
         })
     }
