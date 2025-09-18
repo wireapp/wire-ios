@@ -52,7 +52,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
         package let type: WireCellsNodeType
     }
 
-    /// The query to apply to the scope. `Query` is deprecated but is is necessary until we implement [WPB-16311].
+    /// The query to apply to the scope. `Query` is deprecated but it is necessary until we implement [WPB-16311].
     package struct Query: Equatable, Sendable {
 
         /// The IDs of the nodes to fetch. If provided, only nodes with these IDs will be returned.

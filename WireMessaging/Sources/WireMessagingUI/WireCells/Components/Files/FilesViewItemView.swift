@@ -69,9 +69,10 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    Button(action: rename) {
-                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                    }
+                    // FIXME: [WPB-19393] Enable
+//                    Button(action: rename) {
+//                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+//                    }
 
                     Button(role: .destructive, action: delete) {
                         Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")

@@ -203,7 +203,7 @@ final class CameraController {
 
     /// Asynchronously attempts to capture a photo within the currently
     /// configured session. The result is passed into the given handler
-    /// callback.
+    /// callback. The format is hardcoded to `jpeg` with 90% quality.
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
 
         // For iPad split/slide over mode, the session is not running.
