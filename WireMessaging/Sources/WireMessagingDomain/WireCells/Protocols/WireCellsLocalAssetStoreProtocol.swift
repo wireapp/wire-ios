@@ -29,7 +29,7 @@ package protocol WireCellsLocalAssetStoreProtocol: Sendable {
     /// Updates an existing `WireCellsLocalAsset` or creates a new one if none exists with its `nodeID`.
     func upsertAsset(_ asset: WireCellsLocalAsset) throws
 
-    /// Returns a publish to monitor changes to an `WireCellsLocalAsset` for a given `nodeID`.
+    /// Returns a publisher to monitor changes to an `WireCellsLocalAsset` for a given `nodeID`.
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never>
 
     /// Deletes all existing `WireCellsLocalAsset` for the given `nodeIDs`.

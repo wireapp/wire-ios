@@ -52,6 +52,13 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
         package let type: WireCellsNodeType
     }
 
+    /// The query to apply to the scope. `Query` is deprecated but is is necessary until we implement [WPB-16311].
+    package struct Query: Equatable, Sendable {
+
+        /// The IDs of the nodes to fetch. If provided, only nodes with these IDs will be returned.
+        package let nodeIDs: [UUID]?
+    }
+
     /// The scope of the request.
     package struct Scope: Equatable, Sendable {
 
@@ -65,6 +72,10 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The scope of the request.
     package let scope: Scope
 
+    // FIXME: [WPB-16311] Remove Query once previewing cells files in conversations is implemented.
+    /// The query to apply to the request.
+    package let query: Query?
+
     /// The filter to apply to the results.
     package let filter: Filter
 
@@ -74,8 +85,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The pagination offset to start the results from.
     package let offset: Int
 
-    package init(scope: Scope, filter: Filter, limit: Int, offset: Int) {
+    package init(scope: Scope, query: Query? = nil, filter: Filter, limit: Int, offset: Int) {
         self.scope = scope
+        self.query = query
         self.filter = filter
         self.limit = limit
         self.offset = offset
