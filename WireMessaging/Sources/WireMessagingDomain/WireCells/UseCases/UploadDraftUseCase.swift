@@ -17,7 +17,6 @@
 //
 
 package import Foundation
-@preconcurrency package import GameplayKit
 package import UniformTypeIdentifiers
 import WireLogging
 
@@ -37,7 +36,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     private let nodesAPI: any NodesAPIProtocol
     private let metadataRepository: any WireCellsDraftMetadataRepositoryProtocol
     private let intermediaryFilesDirectory: URL
-    private let randomSource: GKRandomSource
+    private let filenameGenerator: FilenameGenerator
 
     package init(
         cellName: String,
@@ -46,7 +45,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         nodesAPI: any NodesAPIProtocol,
         metadataRepository: any WireCellsDraftMetadataRepositoryProtocol,
         intermediaryFilesDirectory: URL = Self.intermediaryFilesDirectory(),
-        randomSource: GKRandomSource = .sharedRandom()
+        filenameGenerator: FilenameGenerator
     ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
@@ -54,7 +53,7 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         self.nodesAPI = nodesAPI
         self.metadataRepository = metadataRepository
         self.intermediaryFilesDirectory = intermediaryFilesDirectory
-        self.randomSource = randomSource
+        self.filenameGenerator = filenameGenerator
     }
 
     package func invoke(fileURL: URL) async throws {
@@ -107,13 +106,10 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     }
 
     package func invoke(data: Data, type: UTType) async throws {
-        let fileName = randomString(length: 6)
-        let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let filename = await filenameGenerator.generateFilename(type: type)
 
-        var url = container.appendingPathComponent(fileName)
-        if let fileExtension = type.preferredFilenameExtension {
-            url.appendPathExtension(fileExtension)
-        }
+        let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let url = container.appendingPathComponent(filename)
 
         try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
 
@@ -158,16 +154,6 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         } else {
             return nil
         }
-    }
-
-    func randomString(length: Int) -> String {
-        let characters = Array("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-        let random = GKRandomDistribution(
-            randomSource: randomSource,
-            lowestValue: 0,
-            highestValue: characters.count - 1
-        )
-        return String((0 ..< length).map { _ in characters[random.nextInt()] })
     }
 
     private static func intermediaryFilesDirectory() -> URL {

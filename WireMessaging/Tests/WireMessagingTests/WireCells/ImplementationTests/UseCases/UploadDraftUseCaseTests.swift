@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import GameKit
 import Testing
 import UniformTypeIdentifiers
 
@@ -40,7 +39,7 @@ final class UploadDraftUseCaseTests {
         nodesAPI: nodesAPI,
         metadataRepository: metadataRepository,
         intermediaryFilesDirectory: intermediaryFilesDirectory,
-        randomSource: GKLinearCongruentialRandomSource(seed: 0)
+        filenameGenerator: FilenameGenerator(date: { try! Date("2023-10-01T12:10:05Z", strategy: .iso8601) })
     )
 
     init() throws {
@@ -236,8 +235,8 @@ final class UploadDraftUseCaseTests {
     // MARK: - UploadDraftUseCase.invoke(data:type:)
 
     @Test(arguments: [
-        (type: UTType.plainText, expectedFileName: "a3gAyu.txt"),
-        (type: UTType.data, expectedFileName: "a3gAyu")
+        (type: UTType.plainText, expectedFileName: "FILE_20231001_121005.txt"),
+        (type: UTType.data, expectedFileName: "FILE_20231001_121005")
     ])
     func invokeWithData_addsCorrectDraft(type: UTType, expectedFileName: String) async throws {
         // Given
