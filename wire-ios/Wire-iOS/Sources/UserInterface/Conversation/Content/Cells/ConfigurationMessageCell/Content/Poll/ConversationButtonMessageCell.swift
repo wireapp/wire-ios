@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
@@ -26,6 +27,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var errorMessage: String? {
         didSet {
@@ -92,6 +94,17 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         config = object
+        guard let userSession = config?.userSession else {
+            return
+        }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [unowned self] color in
+                updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        button.updateAlarmButtonColor(color: color)
     }
 
     struct Configuration {
@@ -99,6 +112,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         let state: ButtonMessageState
         let buttonAction: Completion
         let hasError: Bool
+        let userSession: UserSession
     }
 
     override init(frame: CGRect) {
@@ -108,6 +122,11 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         createConstraints()
 
         button.addTarget(self, action: #selector(buttonTouched(sender:)), for: .touchUpInside)
+
+    }
+
+    deinit {
+        accentColorChangeHandler = nil
     }
 
     @objc
@@ -171,13 +190,15 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
         text: String?,
         state: ButtonMessageState,
         hasError: Bool,
+        userSession: UserSession,
         buttonAction: @escaping Completion
     ) {
         self.configuration = View.Configuration(
             text: text,
             state: state,
             buttonAction: buttonAction,
-            hasError: hasError
+            hasError: hasError,
+            userSession: userSession
         )
     }
 }

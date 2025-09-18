@@ -391,6 +391,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     text: data.title,
                     state: data.state,
                     hasError: data.isExpired,
+                    userSession: userSession,
                     buttonAction: {
                         data.touchAction()
                     }
