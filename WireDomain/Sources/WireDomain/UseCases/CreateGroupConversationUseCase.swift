@@ -55,6 +55,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
     private let store: any ConversationLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
+    private let localDomain: String?
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
     private let logger: WireLogger = .conversation
@@ -66,6 +67,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         store: ConversationLocalStoreProtocol,
         mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
+        localDomain: String?,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool
     ) {
@@ -73,6 +75,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         self.store = store
         self.mlsService = mlsService
         self.context = context
+        self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
     }
@@ -323,7 +326,11 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             throw Failure.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+        let mlsUsers = await context.perform {
+            users.compactMap {
+                MLSUser(from: $0, localDomain: localDomain)
+            }
+        }
 
         do {
 
@@ -338,7 +345,9 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
-                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+                users.filter {
+                    failedMLSUsers.contains(MLSUser(from: $0, localDomain: self.localDomain))
+                }
             }
 
             try await handleNotClaimedKeyPackages(

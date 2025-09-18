@@ -87,7 +87,9 @@ class BaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: cachesDirectory,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()
@@ -98,7 +100,7 @@ class BaseTest: ZMTBaseTest {
         saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: cachesDirectory)
         analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: cachesDirectory)
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [], apiVersion: .v0)
         let registrationStatus = ClientRegistrationStatus(context: coreDataStack.syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
 
@@ -125,7 +127,9 @@ class BaseTest: ZMTBaseTest {
                 managedObjectContext: coreDataStack.syncContext
             ),
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: .v0,
+            localDomain: "wire.com"
         )
 
         let context = coreDataStack.syncContext
@@ -133,7 +137,7 @@ class BaseTest: ZMTBaseTest {
         await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             selfUser.remoteIdentifier = self.accountIdentifier
-            selfUser.domain = "example.com"
+            selfUser.domain = "wire.com"
 
             let selfClient = UserClient.insertNewObject(in: context)
             selfClient.remoteIdentifier = "selfClient"

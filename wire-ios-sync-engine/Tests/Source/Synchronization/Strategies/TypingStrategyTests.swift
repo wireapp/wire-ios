@@ -87,7 +87,9 @@ final class TypingStrategyTests: MessagingTest {
             applicationStatus: mockApplicationStatus,
             syncContext: syncMOC,
             uiContext: uiMOC,
-            typing: typing
+            typing: typing,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         syncMOC.performGroupedAndWait {
@@ -194,14 +196,11 @@ final class TypingStrategyTests: MessagingTest {
 
     func testTypingEndpointV3UsesTheRightPath() {
         let conversation = insertUIConversation()
-        let previousValue = BackendInfo.domain
-        BackendInfo.domain = "example.com"
         internalTestTypingEndpointUsesTheRightPath(
             with: .v3,
             conversation: conversation,
-            expectedPath: "/v3/conversations/\(BackendInfo.domain!)/\(conversation.remoteIdentifier!.uuidString)/typing"
+            expectedPath: "/v3/conversations/wire.com/\(conversation.remoteIdentifier!.uuidString)/typing"
         )
-        BackendInfo.domain = previousValue
     }
 
     func testTypingEndpointV3PathUsesDomainFromConversation() {

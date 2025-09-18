@@ -301,6 +301,16 @@ public protocol UserSession: AnyObject {
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
 
+    /// Cache for file assets.
+    var fileAssetCache: FileAssetCache { get }
+
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: BackendMetadataProvider { get }
+
+    var isBackendMLSEnabled: Bool { get }
+
 }

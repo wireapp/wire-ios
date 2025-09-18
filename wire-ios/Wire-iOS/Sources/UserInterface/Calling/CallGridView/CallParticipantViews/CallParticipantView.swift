@@ -43,16 +43,19 @@ final class CallParticipantView: BaseCallParticipantView {
         color: .white
     )
     private var snapshotView: UIView?
+    private let isFederationEnabled: Bool
 
     // MARK: - Initialization
 
-    override init(
+    init(
         stream: Stream,
         isCovered: Bool,
         shouldShowActiveSpeakerFrame: Bool,
         shouldShowBorderWhenVideoIsStopped: Bool,
-        pinchToZoomRule: PinchToZoomRule
+        pinchToZoomRule: PinchToZoomRule,
+        isFederationEnabled: Bool
     ) {
+        self.isFederationEnabled = isFederationEnabled
         super.init(
             stream: stream,
             isCovered: isCovered,
@@ -175,7 +178,7 @@ final class CallParticipantView: BaseCallParticipantView {
     private func makeVideoView() -> AVSVideoView {
         let videoView = AVSVideoView()
         videoView.backgroundColor = .clear
-        videoView.userid = stream.streamId.avsIdentifier.serialized
+        videoView.userid = stream.streamId.avsIdentifier(isFederationEnabled: isFederationEnabled).serialized
         videoView.clientid = stream.streamId.clientId
         videoView.shouldFill = shouldFill
 

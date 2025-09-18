@@ -85,7 +85,8 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         sut = VerifyLegalHoldRequestStrategy(
             withManagedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com"
         )
     }
 

@@ -320,8 +320,9 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatItDoesntTransitionAwayFromBlacklisted_IfThereIsNoCurrentAPIVersion() {
-
         // GIVEN
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
         BackendInfo.apiVersion = nil

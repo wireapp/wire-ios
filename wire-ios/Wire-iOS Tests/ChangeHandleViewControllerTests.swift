@@ -93,8 +93,8 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         let sut = ChangeHandleViewController(
             state: state,
             useTypeIntrinsicSizeTableView: true,
-            federationEnabled: federationEnabled,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isFederationEnabled: federationEnabled
         )
         sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)

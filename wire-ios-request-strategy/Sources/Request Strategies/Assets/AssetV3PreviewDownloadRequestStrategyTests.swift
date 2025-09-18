@@ -35,11 +35,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     var sut: AssetV3PreviewDownloadRequestStrategy!
     var conversation: ZMConversation!
 
-    var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
+    var apiVersion: APIVersion = .v0
 
     typealias PreviewMeta = (otr: Data, sha: Data, assetId: String, token: String, domain: String)
 
@@ -50,12 +46,11 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             self.sut = AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: self.syncMOC,
-                applicationStatus: self.mockApplicationStatus
+                applicationStatus: self.mockApplicationStatus,
+                localDomain: "wire.com"
             )
             self.conversation = self.createConversation()
         }
-
-        apiVersion = .v0
     }
 
     override func tearDown() {

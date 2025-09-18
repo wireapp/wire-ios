@@ -119,14 +119,13 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
-        self.isFederationEnabled = isFederationEnabled
+        self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
@@ -329,10 +328,10 @@ final class StartUIViewController: UIViewController {
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
     private var areChannelsSupported: Bool {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
+        guard let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return false
         }
-        guard BackendInfo.isMLSEnabled else {
+        guard userSession.isBackendMLSEnabled else {
             return false
         }
         guard backendInfoApiVersion >= .v8 else {

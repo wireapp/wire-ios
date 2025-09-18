@@ -29,6 +29,7 @@ final class MessageSendFailureView: UIView {
         didSet {
             titleLabel.isHidden = isHidden
             retryButton.isHidden = isHidden
+            bottomConstraint?.isActive = !isHidden
         }
     }
 
@@ -42,7 +43,7 @@ final class MessageSendFailureView: UIView {
     )
 
     private var isChatBubbleSimpleEnabled: Bool
-    private var buttonContainer = UIView()
+    private var bottomConstraint: NSLayoutConstraint?
 
     // MARK: - initialization
 
@@ -74,26 +75,20 @@ final class MessageSendFailureView: UIView {
         addSubview(stackView)
 
         if isChatBubbleSimpleEnabled {
-            setupViewsWithChatBubble()
+            stackView.spacing = 8
+            stackView.alignment = .trailing
         } else {
-            stackView.alignment = .leading
             stackView.spacing = 15
-            [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
+            stackView.alignment = .leading
         }
 
         retryButton.translatesAutoresizingMaskIntoConstraints = false
+        [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
         retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
 
         setupConstraints()
         setupAccessibility()
-    }
-
-    private func setupViewsWithChatBubble() {
-        stackView.spacing = 8
-        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
-        buttonContainer.addSubview(retryButton)
-        [titleLabel, buttonContainer].forEach(stackView.addArrangedSubview)
     }
 
     private func setupAccessibility() {
@@ -108,22 +103,18 @@ final class MessageSendFailureView: UIView {
             NSLayoutConstraint.activate([
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
                 stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0),
-
-                retryButton.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-                retryButton.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
-                retryButton.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
-                retryButton.leadingAnchor.constraint(greaterThanOrEqualTo: buttonContainer.leadingAnchor)
+                stackView.topAnchor.constraint(equalTo: topAnchor)
             ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
         } else {
             NSLayoutConstraint.activate([
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
                 stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+                stackView.topAnchor.constraint(equalTo: topAnchor)
             ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         }
+        bottomConstraint?.isActive = true
     }
 
     // MARK: - Methods

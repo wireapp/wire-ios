@@ -30,9 +30,16 @@ public struct CoreDataStackHelper {
     }
 
     var uniquePath: String
+    let localDomain: String?
+    let isFederationEnabled: Bool
 
-    public init() {
+    public init(
+        localDomain: String? = "wire.com",
+        isFederationEnabled: Bool = false
+    ) {
         self.uniquePath = UUID().uuidString
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     public func createStack(inMemoryStore: Bool = true) async throws -> CoreDataStack {
@@ -46,7 +53,9 @@ public struct CoreDataStackHelper {
         let stack = CoreDataStack(
             account: account,
             applicationContainer: directory,
-            inMemoryStore: inMemoryStore
+            inMemoryStore: inMemoryStore,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         try await stack.load()

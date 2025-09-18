@@ -18,6 +18,7 @@
 
 public import Foundation
 public import UIKit
+public import WireData
 public import WireMessagingDomain
 import WireMessagingData
 import WireMessagingUI
@@ -27,10 +28,17 @@ public struct WireCellsFactory {
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
-    private let fileCache = FakeFileCache()
+    private let fileCache: any FileCache
+    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: WireCellsLocalAssetRepository
 
-    public init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    @MainActor
+    public init(
+        serverURL: URL,
+        accessToken: any AccessTokenProvider,
+        fileCache: any FileCache,
+        contextProvider: any ManagedObjectContextProvider
+    ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
         case "prod-nginz-https.wire.com": // Production
@@ -48,10 +56,12 @@ public struct WireCellsFactory {
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
+        self.fileCache = fileCache
+        self.localAssetStore = WireCellsLocalAssetStore(contextProvider: contextProvider)
         self.localAssetRepository = WireCellsLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
-            store: FakeWireCellsLocalAssetMetadataStore()
+            store: localAssetStore
         )
     }
 
@@ -107,6 +117,11 @@ public extension WireCellsFactory {
                 configuration: .conversationFileView(root: .path(cellName)),
                 repository: nodesAPI
             ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: nodesAPI,
+                fileCache: fileCache,
+                localAssetStore: localAssetStore
+            ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache
@@ -116,46 +131,4 @@ public extension WireCellsFactory {
             viewModel: viewModel
         )
     }
-}
-
-// MARK: - Temporary
-
-// FIXME: [WPB-19785] Implement real
-final class FakeFileCache: FileCache {
-
-    private let directory = URL.temporaryDirectory.appending(component: UUID().uuidString, directoryHint: .isDirectory)
-
-    init() {
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    }
-
-    func saveFile(at url: URL, key: String) async throws {
-        let destination = directory.appending(component: key, directoryHint: .notDirectory)
-        try FileManager.default.moveItem(at: url, to: destination)
-    }
-
-    func deleteFile(forKey key: String) async throws {
-        let fileURL = directory.appending(component: key, directoryHint: .notDirectory)
-        try FileManager.default.removeItem(at: fileURL)
-    }
-
-    func fileURL(forKey key: String) -> URL? {
-        directory.appending(component: key, directoryHint: .notDirectory)
-    }
-
-}
-
-// FIXME: [WPB-19785] Implement real
-final class FakeWireCellsLocalAssetMetadataStore: WireCellsLocalAssetMetadataStore {
-
-    private var storage: [UUID: WireMessagingDomain.WireCellsLocalAssetMetadata] = [:]
-
-    func assetMetadata(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAssetMetadata? {
-        storage[nodeID]
-    }
-
-    func upsertAssetMetadata(_ metadata: WireMessagingDomain.WireCellsLocalAssetMetadata) throws {
-        storage[metadata.nodeID] = metadata
-    }
-
 }

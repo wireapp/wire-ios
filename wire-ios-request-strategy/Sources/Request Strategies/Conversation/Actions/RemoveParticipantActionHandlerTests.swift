@@ -53,7 +53,11 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
-        sut = RemoveParticipantActionHandler(context: syncMOC)
+        sut = RemoveParticipantActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {

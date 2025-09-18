@@ -39,7 +39,9 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             account: account,
             applicationContainer: applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
@@ -60,7 +62,9 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             account: account,
             applicationContainer: applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
@@ -88,7 +92,9 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             account: account,
             applicationContainer: applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then
@@ -108,7 +114,9 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             account: account,
             applicationContainer: applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         // then

@@ -32,15 +32,18 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
     private let getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol
     private let context: NSManagedObjectContext
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
     init(
         getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        localDomain: String?
     ) {
         self.getE2eIdentityCertificatesUseCase = getE2eIdentityCertificatesUseCase
         self.context = context
+        self.localDomain = localDomain
     }
 
     public var hasCertificate: Bool {
@@ -61,7 +64,7 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
             }
 
             guard let selfClient = ZMUser.selfUser(in: self.context).selfClient(),
-                  let mlsSelfClient = MLSClientID(userClient: selfClient)
+                  let mlsSelfClient = MLSClientID(userClient: selfClient, localDomain: self.localDomain)
             else {
                 throw Error.failedToGetSelfClientID
             }

@@ -96,13 +96,17 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
                     logger.debug("opening a temporary context")
 
+                    let metadata = userSession()?.resolvedBackendMetadata
+
                     // import the self client from the backup and set the correct self user relation
                     // TODO: [WPB-15714] causes warning: we should try to initialize the model only once
                     let temporaryStack = try await entityStorage
                         .createContextProvider(
                             account: account,
                             applicationContainer: sharedContainerURL,
-                            dispatchGroup: dispatchGroup
+                            dispatchGroup: dispatchGroup,
+                            localDomain: metadata?.domain,
+                            isFederationEnabled: metadata?.isFederationEnabled ?? false
                         )
 
                     logger.debug("restoring backup of userclient")

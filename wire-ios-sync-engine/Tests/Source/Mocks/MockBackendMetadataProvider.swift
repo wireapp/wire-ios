@@ -16,10 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An opaque token used for fetching the next page in Wire Cells APIs.
-package struct WireCellsPageToken: Sendable, Equatable {
+import Foundation
+@testable import WireSyncEngine
 
-    /// The offset of the next page.
-    let offset: Int
+extension BackendMetadataProvider {
+
+    static func mock(
+        apiVersion: WireTransport.APIVersion = .v0,
+        domain: String = "wire.com",
+        isFederationEnabled: Bool = false,
+        isBackendMLSEnabled: Bool = false
+    ) -> BackendMetadataProvider {
+        BackendMetadataProvider(
+            apiVersionOverride: apiVersion,
+            domainOverride: domain,
+            isFederationEnabledOverride: isFederationEnabled,
+            isBackendMLSEnabledOverride: isBackendMLSEnabled
+        )
+    }
 
 }

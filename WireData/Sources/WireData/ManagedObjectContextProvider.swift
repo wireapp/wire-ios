@@ -20,7 +20,7 @@ import CoreData
 
 /// Provides `NSManagedObjectContext` instances
 
-protocol ManagedObjectContextProvider: Sendable {
+public protocol ManagedObjectContextProvider: Sendable {
 
     /// The main queue’s managed object context.
 

@@ -30,13 +30,16 @@ public protocol SyncCellsStateUseCaseProtocol {
 public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
     private let repository: any ConversationRepositoryProtocol
     private let context: NSManagedObjectContext
+    private let localDomain: String?
 
     public init(
         repository: any ConversationRepositoryProtocol,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        localDomain: String?
     ) {
         self.repository = repository
         self.context = context
+        self.localDomain = localDomain
     }
 
     public func invoke(
@@ -57,7 +60,7 @@ public struct SyncCellsStateUseCase: SyncCellsStateUseCaseProtocol {
             return (
                 conversation,
                 conversation?.remoteIdentifier,
-                conversation?.domain ?? BackendInfo.domain
+                conversation?.domain ?? localDomain
             )
         }
 

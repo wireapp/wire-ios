@@ -21,7 +21,7 @@ package import Combine
 
 // sourcery: AutoMockable
 /// Repository for accessing & updating `WireCellsLocalAsset`s.
-package protocol WireCellsLocalAssetRepositoryProtocol {
+package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
 
     /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been
     /// fetched.
@@ -34,7 +34,7 @@ package protocol WireCellsLocalAssetRepositoryProtocol {
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
     @MainActor
-    func refreshMetadata(nodeID: UUID) async throws
+    func refreshAssetMetadata(nodeID: UUID) async throws
 
     /// Downloads the asset for the given `nodeID`.
     ///

@@ -86,6 +86,10 @@ extension ZMUserSession: UserSession {
         dependencies.caches.searchUsers
     }
 
+    public var fileAssetCache: FileAssetCache {
+        dependencies.caches.fileAssets
+    }
+
     // MARK: Methods
 
     public func openAppLock() throws {
@@ -316,7 +320,10 @@ extension ZMUserSession: UserSession {
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
         guard let selfUserClient,
-              let selfMLSClientID = MLSClientID(userClient: selfUserClient),
+              let selfMLSClientID = MLSClientID(
+                  userClient: selfUserClient,
+                  localDomain: resolvedBackendMetadata.domain
+              ),
               e2eiFeature.isEnabled
         else {
             return nil
@@ -376,9 +383,30 @@ extension ZMUserSession: UserSession {
         SearchUsersUseCase(
             context: syncContext,
             searchDirectory: SearchDirectory(userSession: self),
-            isFederationUsageAllowed: isFederationUsageAllowed
+            isFederationUsageAllowed: isFederationUsageAllowed,
+            isMLSEnabled: isBackendMLSEnabled
         )
     }
+
+    public var resolvedBackendMetadata: BackendMetadataProvider {
+        if DeveloperFlag.multibackend.isOn {
+            let metadata = userSessionComponent.backendMetadata
+            return BackendMetadataProvider(
+                apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
+                domainOverride: metadata.domain,
+                isFederationEnabledOverride: metadata.isFederationEnabled,
+                isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
+            )
+        } else {
+            return BackendMetadataProvider(
+                apiVersionOverride: nil,
+                domainOverride: nil,
+                isFederationEnabledOverride: nil,
+                isBackendMLSEnabledOverride: nil
+            )
+        }
+    }
+
 }
 
 extension UInt64 {

@@ -68,7 +68,8 @@ public class ZMConversationAccessModeTests: MessagingTest {
             allowGuests: true,
             allowServices: false,
             for: conversation,
-            apiVersion: .v3
+            apiVersion: .v3,
+            localDomain: "wire.com"
         )
 
         // then
@@ -103,7 +104,8 @@ public class ZMConversationAccessModeTests: MessagingTest {
             allowGuests: true,
             allowServices: false,
             for: conversation,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            localDomain: "wire.com"
         )
 
         // then

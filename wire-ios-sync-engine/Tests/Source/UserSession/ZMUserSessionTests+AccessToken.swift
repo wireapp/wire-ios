@@ -25,6 +25,8 @@ import WireTransport
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+
         syncMOC.performAndWait {
             let selfClient = createSelfClient()
 

@@ -40,7 +40,8 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         sut = WireSyncEngine.DeepLinkURLActionProcessor(
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
-            eventProcessor: mockEventProcessor
+            eventProcessor: mockEventProcessor,
+            metadata: .mock()
         )
     }
 

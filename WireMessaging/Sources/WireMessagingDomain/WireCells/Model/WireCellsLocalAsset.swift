@@ -66,27 +66,27 @@ public struct WireCellsLocalAsset: Equatable, Sendable {
     ///
     /// If this changes the file represented by `nodeID` has changed and should be re-downloaded.
 
-    public let eTag: String
+    public var eTag: String
 
     /// The path representing the asset in the Wire Cells file system.
     ///
     /// This is **not** the path on the local file system. It encodes information such as file name and extension.
 
-    public let path: String
+    public var path: String
 
     /// The content type of the asset as defined by the backend.
     ///
     /// This is a MIME type (e.g. "image/png", "application/pdf").
 
-    public let contentType: String?
+    public var contentType: String?
 
     /// The size of the asset in bytes.
 
-    public let size: UInt64?
+    public var size: UInt64?
 
     /// The download state of the asset.
 
-    public let downloadState: DownloadState
+    public var downloadState: DownloadState
 
     package init(
         nodeID: UUID,

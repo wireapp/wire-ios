@@ -16,13 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Combine
+package import Foundation
 
 // sourcery: AutoMockable
 @MainActor
-public protocol WireCellsLocalAssetMetadataStore {
+package protocol WireCellsLocalAssetStoreProtocol: Sendable {
 
-    func assetMetadata(nodeID: UUID) throws -> WireCellsLocalAssetMetadata?
-    func upsertAssetMetadata(_ metadata: WireCellsLocalAssetMetadata) throws
+    /// Returns the `WireCellsLocalAsset` for a given `nodeID` or `nil`.
+    func asset(nodeID: UUID) throws -> WireCellsLocalAsset?
+
+    /// Updates an existing `WireCellsLocalAsset` or creates a new one if none exists with its `nodeID`.
+    func upsertAsset(_ asset: WireCellsLocalAsset) throws
+
+    /// Returns a publish to monitor changes to an `WireCellsLocalAsset` for a given `nodeID`.
+    func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never>
+
+    /// Deletes all existing `WireCellsLocalAsset` for the given `nodeIDs`.
+    func deleteAssets(nodeIDs: [UUID]) async throws
 
 }

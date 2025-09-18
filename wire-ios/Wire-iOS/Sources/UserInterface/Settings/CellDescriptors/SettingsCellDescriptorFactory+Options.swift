@@ -42,7 +42,7 @@ extension SettingsCellDescriptorFactory {
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
             SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
-            collapseSelfMessageSection
+            !isSimpleChatBubbleEnabled ? collapseSelfMessageSection : nil
         ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(

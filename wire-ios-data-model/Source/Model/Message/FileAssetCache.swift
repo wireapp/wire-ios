@@ -842,6 +842,20 @@ public final class FileAssetCache: NSObject {
             .zmHexEncodedString()
     }
 
+    // MARK: - General file caching
+
+    public func saveFile(at url: URL, key: String) async throws {
+        cache.storeAssetFromURL(url, key: key, movingOriginal: true, createdAt: Date())
+    }
+
+    public func deleteFile(forKey key: String) async throws {
+        cache.deleteAssetData(key)
+    }
+
+    public func fileURL(forKey key: String) -> URL? {
+        cache.assetURL(key)
+    }
+
 }
 
 // MARK: - Testing
@@ -855,12 +869,6 @@ public extension FileAssetCache {
         try tempCache.wipeCaches()
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-    guard let input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
 
 /// A file cache
@@ -931,7 +939,12 @@ private struct FileCache: Cache {
         }
     }
 
-    func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
+    func storeAssetFromURL(
+        _ fromUrl: URL,
+        key: String,
+        movingOriginal: Bool,
+        createdAt creationDate: Date = Date()
+    ) {
 
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
@@ -941,7 +954,12 @@ private struct FileCache: Cache {
         var error: NSError?
         coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
             do {
-                try FileManager.default.copyItem(at: fromUrl, to: url)
+                if movingOriginal {
+                    try FileManager.default.moveItem(at: fromUrl, to: url)
+                } else {
+                    try FileManager.default.copyItem(at: fromUrl, to: url)
+                }
+
                 try FileManager.default.setAttributes(
                     [
                         .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
@@ -950,7 +968,7 @@ private struct FileCache: Cache {
                     ofItemAtPath: url.path
                 )
             } catch {
-                fatal("Failed to copy from \(url) to \(url), \(error)")
+                WireLogger.assets.error("Failed to copy from \(fromUrl) to \(url), \(error)")
             }
         }
 

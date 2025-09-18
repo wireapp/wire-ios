@@ -36,6 +36,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     private let searchDirectory: SearchDirectory
     private let isFederationUsageAllowed: Bool
     private var activeSearchTask: SearchTask?
+    private let isMLSEnabled: Bool
 
     deinit {
         searchDirectory.tearDown()
@@ -46,11 +47,13 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     init(
         context: NSManagedObjectContext,
         searchDirectory: SearchDirectory,
-        isFederationUsageAllowed: Bool
+        isFederationUsageAllowed: Bool,
+        isMLSEnabled: Bool
     ) {
         self.context = context
         self.searchDirectory = searchDirectory
         self.isFederationUsageAllowed = isFederationUsageAllowed
+        self.isMLSEnabled = isMLSEnabled
     }
 
     // MARK: - Public Interface
@@ -103,7 +106,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         guard let messageProtocol else {
             return isFederationUsageAllowed
         }
-        return BackendInfo.isMLSEnabled ? messageProtocol != .proteus : true
+        return isMLSEnabled ? messageProtocol != .proteus : true
     }
 
 }

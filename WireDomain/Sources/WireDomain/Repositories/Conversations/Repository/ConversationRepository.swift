@@ -23,12 +23,6 @@ import WireNetwork
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
 
-    public struct BackendInfo {
-        let domain: String
-        let isFederationEnabled: Bool
-        let isMLSEnabled: Bool
-    }
-
     // MARK: - Properties
 
     private let conversationsAPI: any ConversationsAPI
@@ -36,7 +30,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let userLocalStore: any UserLocalStoreProtocol
     private let teamRepository: any TeamRepositoryProtocol
     private let messageRepository: any MessageRepositoryProtocol
-    private let backendInfo: BackendInfo
+    private let localDomain: String
+    private let isFederationEnabled: Bool
+    private let isMLSEnabled: Bool
     private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
@@ -47,7 +43,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         userLocalStore: any UserLocalStoreProtocol,
         teamRepository: any TeamRepositoryProtocol,
         messageRepository: any MessageRepositoryProtocol,
-        backendInfo: BackendInfo,
+        localDomain: String,
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool,
         mlsProvider: MLSProvider
     ) {
         self.conversationsAPI = conversationsAPI
@@ -55,7 +53,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.userLocalStore = userLocalStore
         self.teamRepository = teamRepository
         self.messageRepository = messageRepository
-        self.backendInfo = backendInfo
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
+        self.isMLSEnabled = isMLSEnabled
         self.mlsProvider = mlsProvider
     }
 
@@ -89,8 +89,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation.toDomainModel(),
             timestamp: .now,
-            isFederationEnabled: backendInfo.isFederationEnabled,
-            isMLSEnabled: backendInfo.isMLSEnabled
+            isFederationEnabled: isFederationEnabled,
+            isMLSEnabled: isMLSEnabled
         )
     }
 
@@ -121,8 +121,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation,
             timestamp: timestamp,
-            isFederationEnabled: backendInfo.isFederationEnabled,
-            isMLSEnabled: backendInfo.isMLSEnabled
+            isFederationEnabled: isFederationEnabled,
+            isMLSEnabled: isMLSEnabled
         )
     }
 
@@ -143,8 +143,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             mlsConversation.toDomainModel(),
             timestamp: .now,
-            isFederationEnabled: backendInfo.isFederationEnabled,
-            isMLSEnabled: backendInfo.isMLSEnabled
+            isFederationEnabled: isFederationEnabled,
+            isMLSEnabled: isMLSEnabled
         )
 
         return mlsGroupID

@@ -29,7 +29,7 @@ public final class UserSessionComponent {
     private let restNetworkService: NetworkService
     private let websocketNetworkService: NetworkService
     private let blacklistNetworkService: NetworkService
-    private let backendMetadata: ResolvedBackendMetadata
+    public let backendMetadata: ResolvedBackendMetadata
 
     private let isMLSEnabled: Bool
 

@@ -74,7 +74,8 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: self.syncMOC,
                 applicationStatus: mockApplicationStatus,
-                imageUploadStatus: updateStatus
+                imageUploadStatus: updateStatus,
+                localDomain: "wire.com"
             )
         }
 
@@ -316,8 +317,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) throws {
         // GIVEN
-        let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        let domain = "wire.com"
         let assetId = "foo-bar"
 
         let userObjectId = try syncMOC.performAndWait {

@@ -120,7 +120,10 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         let networkServices = try await networkStack.networkServices
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
         guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
@@ -154,6 +157,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             apiVersion: metadata.apiVersion,
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled,
             coreDataStack: coreDataStack
         )
 
@@ -207,12 +212,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
         // TODO: [WPB-19777] deduplicate
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-            // TODO: [WPB-14630] mark federation migration needed
-        }
-
-        // TODO: [WPB-19777] deduplicate
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
+            // Now that federation is enabled we'll start storing domains
+            // on entities in the database. We'll therefore need to add
+            // the local domain to all existing entities so they're
+            // fully qualified.
+            journal[.isFederationMigrationRequired] = true
         }
 
         // Store new metadata.
@@ -243,10 +247,15 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     }
 
     // TODO: [WPB-19777] deduplicate
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool,
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: dependency.appContainerURL
+            applicationContainer: dependency.appContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -293,6 +302,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         apiVersion: WireNetwork.APIVersion,
+        localDomain: String,
+        isFederationEnabled: Bool,
         coreDataStack: CoreDataStack
     ) -> NSEClientScope {
         NSEClientScope(
@@ -301,6 +312,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             restNetworkService: restNetworkService,
             webSocketNetworkService: webSocketNetworkService,
             apiVersion: apiVersion,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled,
             coreDataStack: coreDataStack
         )
     }

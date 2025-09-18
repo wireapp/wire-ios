@@ -30,12 +30,6 @@ final class ConversationRepositoryTests: XCTestCase {
     private var conversationsAPI: MockConversationsAPI!
     private var conversationsLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
-    private let backendInfo: ConversationRepository.BackendInfo = .init(
-        domain: "example.com",
-        isFederationEnabled: false,
-        isMLSEnabled: true
-    )
-
     private var teamRepository: MockTeamRepositoryProtocol!
     private var messageRepository: MockMessageRepositoryProtocol!
     private var mlsService: MockMLSServiceInterface!
@@ -68,7 +62,9 @@ final class ConversationRepositoryTests: XCTestCase {
             userLocalStore: userLocalStore,
             teamRepository: teamRepository,
             messageRepository: messageRepository,
-            backendInfo: backendInfo,
+            localDomain: "example.com",
+            isFederationEnabled: false,
+            isMLSEnabled: true,
             mlsProvider: mlsProvider
         )
     }

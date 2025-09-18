@@ -42,7 +42,10 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         .init(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
     }
 
