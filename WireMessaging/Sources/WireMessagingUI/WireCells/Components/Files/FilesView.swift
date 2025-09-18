@@ -135,6 +135,7 @@ private extension FilesView {
             label: {
                 Image(.close)
                     .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+                    .frame(width: 44, height: 44, alignment: .trailing)
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
