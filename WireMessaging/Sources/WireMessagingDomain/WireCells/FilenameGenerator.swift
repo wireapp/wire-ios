@@ -22,6 +22,12 @@ import UniformTypeIdentifiers
 /// Generates filenames based on the current `Date` & a files `UTType`, ensuring uniqueness for the same date.
 package actor FilenameGenerator {
 
+    private struct Filename: Hashable {
+        let prefix: String
+        let dateComponent: String
+        let fileExtension: String?
+    }
+
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmss"
@@ -30,7 +36,7 @@ package actor FilenameGenerator {
         return formatter
     }()
 
-    private var existing: [String: Int] = [:]
+    private var previouslyGeneratedFilenames: [Filename: Int] = [:]
     private let date: () -> Date
 
     package init(date: @escaping () -> Date = { Date() }) {
@@ -39,31 +45,24 @@ package actor FilenameGenerator {
 
     /// Generates a filename such as "IMG_20231005_153045_1.jpg" or "FILE_20231005_153045.pdf".
     func generateFilename(type: UTType) -> String {
-        var filename = ""
+        let filename = Filename(
+            prefix: type.conforms(to: .image) ? "IMG" : "FILE",
+            dateComponent: dateFormatter.string(from: date()),
+            fileExtension: type.preferredFilenameExtension
+        )
 
-        // Prefix
-        if type.conforms(to: .image) {
-            filename += "IMG"
-        } else {
-            filename += "FILE"
-        }
+        let count = (previouslyGeneratedFilenames[filename] ?? 0) + 1
+        previouslyGeneratedFilenames[filename] = count
 
-        // Date
-        let dateComponent = dateFormatter.string(from: date())
-        filename += "_\(dateComponent)"
-
-        // Suffix in case of date collision
-        let count = (existing[dateComponent] ?? 0) + 1
-        existing[dateComponent] = count
+        var result = "\(filename.prefix)_\(filename.dateComponent)"
         if count > 1 {
-            filename += "_\(count - 1)"
+            result += "_\(count - 1)"
         }
 
-        // Extension
-        if let fileExtension = type.preferredFilenameExtension {
-            filename += ".\(fileExtension)"
+        if let fileExtension = filename.fileExtension {
+            result += ".\(fileExtension)"
         }
 
-        return filename
+        return result
     }
 }
