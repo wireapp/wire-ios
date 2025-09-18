@@ -153,7 +153,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
             WireLogger.sync.debug(
                 "deleting \(objectIDs.count) stored envelopes",
-                attributes: .syncAttributes(initialSync: false)
+                attributes: .incrementalSync
             )
 
             let deletedObjects: [AnyHashable: Any] = [
@@ -185,7 +185,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
             WireLogger.sync.debug(
                 "deleting \(indices.count) stored envelopes",
-                attributes: .syncAttributes(initialSync: false)
+                attributes: .incrementalSync
             )
 
             let deletedObjects: [AnyHashable: Any] = [
@@ -207,7 +207,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
             guard let envelope = try eventContext.fetch(request).first else { return }
             WireLogger.sync.debug(
                 "deleting stored envelope at index \(index)",
-                attributes: .syncAttributes(initialSync: false)
+                attributes: .incrementalSync
             )
             eventContext.delete(envelope)
             try eventContext.save()

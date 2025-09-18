@@ -102,10 +102,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     switch result {
                     case let .event(event):
-                        WireLogger.pushChannel.debug(
-                            "push channel received events: \(event.events.map(\.name))",
-                            attributes: .pushChannelV2
-                        )
+                        WireLogger.pushChannel.debug("event notification received", attributes: .pushChannelV2)
                         await batchBuffer.append(event)
                         if await batchBuffer.count() >= batchSize {
                             let drained = await batchBuffer.drain()
@@ -117,9 +114,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         }
 
                     case .missedEvents:
+                        WireLogger.pushChannel.debug("missedEvents notification received", attributes: .pushChannelV2)
                         continuation.yield(.missedEvents)
 
                     case let .syncMarker(id, deliveryTag):
+                        WireLogger.pushChannel.debug(
+                            "synchronization notification received",
+                            attributes: .pushChannelV2
+                        )
                         // we're uptodate, let's give any remaining batch if any
                         let drained = await batchBuffer.drain()
                         if !drained.isEmpty {
@@ -257,7 +259,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
     // MARK: - Acknowledgement
 
     public func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
-        WireLogger.pushChannel.debug("acknowledgeEvent \(deliveryTag)", attributes: .pushChannelV2)
+        WireLogger.pushChannel.debug(
+            "acknowledgeEvent \(deliveryTag)",
+            attributes: .pushChannelV2, [.multipleEvents: multiple]
+        )
         let acknowledgement = EventAcknowledgment(
             deliveryTag: deliveryTag,
             multiple: multiple

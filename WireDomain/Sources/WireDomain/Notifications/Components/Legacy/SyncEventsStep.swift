@@ -90,10 +90,10 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 
         Task { [weak self] in
             var request = await self?.pushChannelCoordinator.listenForYieldRequests()
-            WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
+            WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSyncV3, .newNSE)
             self?.currentTask?.cancel()
             request?.acknowledge()
-            WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
+            WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSyncV3, .newNSE)
         }
 
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
@@ -108,7 +108,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
                 // continue to show them
                 WireLogger.sync.warn(
                     "syncing events via websocket: \(String(describing: error))",
-                    attributes: .syncAttributes(initialSync: false)
+                    attributes: .incrementalSyncV3, .newNSE
                 )
                 await pushChannelState.markAsClosed()
             }
