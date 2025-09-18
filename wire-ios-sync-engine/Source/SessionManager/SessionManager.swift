@@ -330,7 +330,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
-            guard !DeveloperFlag.multibackend.isOn else { return }
             apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
