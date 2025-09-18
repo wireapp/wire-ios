@@ -159,9 +159,9 @@ final class CameraCell: UICollectionViewCell {
     @objc
     func shutterButtonPressed(_ sender: AnyObject) {
         cameraController?.capturePhoto { data, error in
-            if error == nil {
+            if error == nil, let data {
                 // The capture photo method always returns jpeg data
-                self.delegate?.cameraCell(self, didPickImageData: data!, type: .jpeg)
+                self.delegate?.cameraCell(self, didPickImageData: data, type: .jpeg)
             }
         }
     }
