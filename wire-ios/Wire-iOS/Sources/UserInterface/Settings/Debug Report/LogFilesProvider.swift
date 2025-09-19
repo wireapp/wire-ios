@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireSyncEngine
 import WireSystem
@@ -137,6 +138,9 @@ struct LogFilesProvider: LogFilesProviding {
         Device: \(UIDevice.current.zm_model())
         iOS version: \(UIDevice.current.systemVersion)
         Date: \(date.transportString())
+
+        Journal:
+        \(journalInfos())
         """
 
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
@@ -144,6 +148,19 @@ struct LogFilesProvider: LogFilesProviding {
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
         return body
+    }
+
+    private func journalInfos() -> String {
+        guard let selfUserID = ZMUserSession.shared()?.selfUser.remoteIdentifier else {
+            return "Not Available"
+        }
+
+        let journal = Journal(
+            userID: selfUserID,
+            storage: UserDefaults.shared()
+        )
+
+        return journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
     }
 
     private func createInfoFile(at url: URL) throws -> URL {
