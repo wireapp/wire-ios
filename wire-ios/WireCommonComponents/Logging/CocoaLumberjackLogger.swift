@@ -27,7 +27,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
-    
+
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
     /// provided URL.
     init(logsDirectory: URL?) {
@@ -37,12 +37,12 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
-        
+
         setupObservers()
     }
-    
+
     deinit {
-           NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -145,12 +145,14 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             object: nil
         )
     }
-    
-    @objc private func appDidEnterBackground() {
+
+    @objc
+    private func appDidEnterBackground() {
         flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
     }
-    
-    @objc private func appWillTerminate() {
+
+    @objc
+    private func appWillTerminate() {
         flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
     }
 
@@ -159,13 +161,13 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         // if we're being cut short. Keep work minimal and non-blocking.
         ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
             guard let self else { return }
-            
+
             if expired {
-                self.warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
+                warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
                 return
             }
             self.info("Flushing logs early due to \(reason)", attributes: .safePublic)
-            self.fileLogger.flush()
+            fileLogger.flush()
         }
     }
 
