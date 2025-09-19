@@ -157,8 +157,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func flushWithExpiringWindow(reason: String) {
-        // iOS/extensions: asks the system for a short grace period; the block gets `expired = true`
-        // if we're being cut short. Keep work minimal and non-blocking.
         ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
             guard let self else { return }
 
