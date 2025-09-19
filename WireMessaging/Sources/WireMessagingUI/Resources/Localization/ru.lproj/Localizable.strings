@@ -108,6 +108,8 @@
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
 "conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе";
 "conversation.wireCells.files.pendingCells.title" = "Файлы подготавливаются";
