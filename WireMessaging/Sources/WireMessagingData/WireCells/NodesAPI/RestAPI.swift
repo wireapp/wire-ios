@@ -18,6 +18,7 @@
 
 import CellsSDK
 import Foundation
+import WireLogging
 import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
@@ -203,6 +204,7 @@ final class RestAPI: Sendable {
         let config = CellsSDKAPIConfiguration()
         config.basePath = serverURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
+        config.interceptor = LoggingIntercepter()
 
         return config
     }
@@ -248,5 +250,51 @@ private extension TreeNodeType {
         case .any:
             self = .unknown
         }
+    }
+}
+
+private struct LoggingIntercepter: OpenAPIInterceptor {
+
+    let interceptor = DefaultOpenAPIInterceptor()
+
+    func intercept(
+        urlRequest: URLRequest,
+        urlSession: any URLSessionProtocol,
+        requestBuilder: RequestBuilder<some Any>,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
+        WireLogger.wireCells.log(urlRequest)
+
+        interceptor.intercept(
+            urlRequest: urlRequest,
+            urlSession: urlSession,
+            requestBuilder: requestBuilder,
+            completion: completion
+        )
+    }
+
+    func retry(
+        urlRequest: URLRequest,
+        urlSession: any URLSessionProtocol,
+        requestBuilder: RequestBuilder<some Any>,
+        data: Data?,
+        response: URLResponse?,
+        error: any Error,
+        completion: @escaping (OpenAPIInterceptorRetry) -> Void
+    ) {
+        WireLogger.wireCells.warn("Wire cells node API request failed: \(error)")
+        if let response = response as? HTTPURLResponse {
+            WireLogger.wireCells.log(response: response)
+        }
+
+        interceptor.retry(
+            urlRequest: urlRequest,
+            urlSession: urlSession,
+            requestBuilder: requestBuilder,
+            data: data,
+            response: response,
+            error: error,
+            completion: completion
+        )
     }
 }
