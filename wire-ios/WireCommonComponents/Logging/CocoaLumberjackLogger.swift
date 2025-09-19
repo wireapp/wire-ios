@@ -28,6 +28,9 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
+    // Keep track of an active background task so we can end it.
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
     /// provided URL.
     init(logsDirectory: URL?) {
@@ -37,6 +40,12 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
+        
+        setupObservers()
+    }
+    
+    deinit {
+           NotificationCenter.default.removeObserver(self)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -120,6 +129,46 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             } else {
                 self?.tags.removeValue(forKey: key)
             }
+        }
+    }
+
+    private func setupObservers() {
+        // Observe backgrounding to flush logs under a BG task.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        // Optional: also flush on terminate (not always delivered).
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillTerminate),
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func appDidEnterBackground() {
+        flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+    }
+    
+    @objc private func appWillTerminate() {
+        flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+    }
+
+    private func flushWithExpiringWindow(reason: String) {
+        // iOS/extensions: asks the system for a short grace period; the block gets `expired = true`
+        // if we're being cut short. Keep work minimal and non-blocking.
+        ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
+            guard let self else { return }
+            
+            if expired {
+                self.warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
+                return
+            }
+            self.info("Flushing logs early due to \(reason)", attributes: .safePublic)
+            self.fileLogger.flush()
         }
     }
 
