@@ -67,10 +67,24 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
-    /// Whether a core crypto key migration needs to be performed.
+    /// Whether the core crypto key needs to be migrated from string to bytes.
 
-    static let isCoreCryptoKeyMigrationRequired = Self(
-        "isCoreCryptoKeyMigrationRequired",
+    static let isCoreCryptoKeyMigrationToBytesRequired = Self(
+        "isCoreCryptoKeyMigrationRequired", // keeping old name for backwards compatibility
+        defaultValue: true
+    )
+
+    /// Whether the core crypto key needs to be migrated from unscoped storage to a storage scoped by user.
+
+    static let isCoreCryptoKeyMigrationToScopedKeyRequired = Self(
+        "isCoreCryptoKeyMigrationToScopedKeyRequired",
+        defaultValue: true
+    )
+
+    /// Whether the core crypto key needs to be rotated from an old key to a new key.
+
+    static let isCoreCryptoKeyRotationRequired = Self(
+        "isCoreCryptoKeyRotationRequired",
         defaultValue: true
     )
 
