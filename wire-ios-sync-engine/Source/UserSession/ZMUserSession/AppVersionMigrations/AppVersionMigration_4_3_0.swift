@@ -27,13 +27,7 @@ struct AppVersionMigration_4_3_0: AppVersionMigration {
     let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {
-        // Skipping this migration for versions > 4.3.x because it created issues when
-        // multiple accounts were logged in due to the database key not being scoped by user.
-        //
-        // We now use the `Journal` to verify if the migration is needed,
-        // and we make sure to migrate the database key to a scoped key.
-        //
-        // See `CoreCryptoKeyProvider` and [WPB-20068]
+        try await coreCryptoProvider.updateDatabaseKey()
     }
 
 }
