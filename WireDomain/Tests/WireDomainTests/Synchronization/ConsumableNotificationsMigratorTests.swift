@@ -19,6 +19,7 @@
 import WireDomainSupport
 import WireNetworkSupport
 import WireSystem
+import WireUtilities
 import XCTest
 @testable import WireDomain
 
@@ -44,7 +45,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         mockFeatureConfigRepository.isFeatureEnabled_MockValue = true
 
         journal = Journal(userID: Scaffolding.userID, storage: UserDefaults.temporary())
-
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
         sut = ConsumableNotificationsMigrator(
             sync: mockSync,
             featureConfigRepository: mockFeatureConfigRepository,

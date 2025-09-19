@@ -86,11 +86,13 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
             relativeTo: baseURL
         )
 
+        WireLogger.network.log(request)
         let (data, response) = try await urlSession.data(for: request)
 
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw NetworkServiceError.notAHTTPURLResponse
         }
+        WireLogger.network.log(response: httpURLResponse)
 
         return (data, httpURLResponse)
     }
@@ -126,6 +128,9 @@ extension NetworkService: URLSessionWebSocketDelegate {
         didOpenWithProtocol protocol: String?
     ) {
         WireLogger.network.debug("web socket task did open")
+        if let request = webSocketTask.currentRequest {
+            WireLogger.network.log(request)
+        }
     }
 
     public func urlSession(

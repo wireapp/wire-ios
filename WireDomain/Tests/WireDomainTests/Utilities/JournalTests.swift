@@ -67,4 +67,17 @@ class JournalStoreTests {
         #expect(storage.object(forKey: "notAJournalKey") != nil)
     }
 
+    @Test("Values contain all declared values")
+    func values() {
+        // Given
+        let exhaustiveKeysCount = 10
+        sut[.isSyncV2Enabled] = true
+
+        // When
+        let result = sut.values()
+
+        // Then
+        #expect(result.keys.count == exhaustiveKeysCount)
+    }
+
 }
