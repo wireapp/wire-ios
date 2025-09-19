@@ -111,7 +111,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         // This is necessary because the backend doesn't filter out recycled nodes when we have requested specific
         // nodes. Once we implement showing previews in a conversation this check should move there, if there is no
         // backend fix.
-        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, nodeIDs.count > 0 {
+        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, !nodeIDs.isEmpty {
             nodes = nodes.filter { !$0.isRecycled }
         }
 
