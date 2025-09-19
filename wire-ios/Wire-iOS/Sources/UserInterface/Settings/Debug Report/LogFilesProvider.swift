@@ -141,7 +141,7 @@ struct LogFilesProvider: LogFilesProviding {
         """
 
         if includingJournal {
-            body += "Journal:\n\(journalInfos())"
+            body += "\n\nJournal:\n\(journalInfos())"
         }
 
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
