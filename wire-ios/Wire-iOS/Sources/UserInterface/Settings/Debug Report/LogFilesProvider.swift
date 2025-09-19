@@ -129,7 +129,7 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Helpers
 
-    var info: String {
+    func info(includingJournal: Bool = false) -> String {
         let date = Date()
 
         var body = """
@@ -138,10 +138,11 @@ struct LogFilesProvider: LogFilesProviding {
         Device: \(UIDevice.current.zm_model())
         iOS version: \(UIDevice.current.systemVersion)
         Date: \(date.transportString())
-
-        Journal:
-        \(journalInfos())
         """
+
+        if includingJournal {
+            body += "\n\nJournal:\n\(journalInfos())"
+        }
 
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             // display only when enabled
@@ -166,6 +167,7 @@ struct LogFilesProvider: LogFilesProviding {
     private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
+        let info = self.info(includingJournal: true)
         try info.write(
             to: infoFileURL,
             atomically: true,
