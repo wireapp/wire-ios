@@ -63,6 +63,10 @@ final class RestAPI: Sendable {
             flags: [.withPreSignedURLs],
             limit: "\(request.limit)",
             offset: "\(request.offset)",
+            query: request.query.map { query in
+                let nodeIDs = query.nodeIDs?.compactMap { $0.uuidString.lowercased() }
+                return TreeQuery(uUIDs: nodeIDs)
+            },
             scope: RestLookupScope(
                 recursive: request.scope.isRecursive,
                 root: request.scope.root.map { RestNodeLocator($0) }

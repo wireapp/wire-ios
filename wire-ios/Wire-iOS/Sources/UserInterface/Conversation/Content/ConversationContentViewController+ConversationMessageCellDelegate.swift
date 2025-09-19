@@ -90,6 +90,10 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         delegate?.didTap(onUserAvatar: user, view: sourceView, frame: frame)
     }
 
+    func conversationMessageWantsToOpenFilesView(_ cell: UIView, nodeIDs: [UUID]) {
+        delegate?.conversationContentViewController(self, presentFilesViewForNodes: nodeIDs)
+    }
+
     func conversationMessageWantsToOpenMessageDetails(
         _ cell: UIView,
         for message: ZMConversationMessage,

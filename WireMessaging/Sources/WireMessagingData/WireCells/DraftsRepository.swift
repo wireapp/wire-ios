@@ -125,8 +125,19 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
     }
 
-    package func clearPublishedDrafts(for cellName: String) {
-        drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
+    /// Clears all published drafts for the specified cell name.
+    ///
+    /// - parameter cellName: The name of the cell for which to clear published drafts.
+    /// - returns: The list of cleared published drafts.
+
+    package func clearPublishedDrafts(for cellName: String) -> [WireCellsDraft] {
+        guard let drafts = drafts.value[cellName] else { return [] }
+
+        let publishedDrafts = drafts.values.filter { $0.status == .uploaded(isDraft: false) }
+        for draft in publishedDrafts {
+            deleteDraft(nodeID: draft.nodeID, cellName: cellName)
+        }
+        return publishedDrafts
     }
 
     /// Adds a draft for the given cell name.

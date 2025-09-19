@@ -21,7 +21,7 @@ import Foundation
 
 protocol CameraCellDelegate: AnyObject {
     func cameraCellWantsToOpenFullCamera(_ cameraCell: CameraCell)
-    func cameraCell(_ cameraCell: CameraCell, didPickImageData: Data)
+    func cameraCell(_ cameraCell: CameraCell, didPickImageData imageData: Data, type: UTType)
 }
 
 final class CameraCell: UICollectionViewCell {
@@ -159,8 +159,9 @@ final class CameraCell: UICollectionViewCell {
     @objc
     func shutterButtonPressed(_ sender: AnyObject) {
         cameraController?.capturePhoto { data, error in
-            if error == nil {
-                self.delegate?.cameraCell(self, didPickImageData: data!)
+            if error == nil, let data {
+                // The capture photo method always returns jpeg data
+                self.delegate?.cameraCell(self, didPickImageData: data, type: .jpeg)
             }
         }
     }
