@@ -108,6 +108,9 @@ package struct RootView: View {
     private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
         case let .authFlow(environment):
+            // The navigation stack needs to wrap the view otherwise we may
+            // run into issues finding the right navigation path.
+            // See [WPB-20414]
             NavigationStack(path: $viewModel.path) {
                 DetermineAuthMethodView(
                     factory: viewModel.factory.determineAuthMethodFactory(
