@@ -105,7 +105,15 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             limit: configuration.pageSize,
             offset: offset
         )
-        let (nodes, nextOffset) = try await repository.getNodes(request)
+        var (nodes, nextOffset) = try await repository.getNodes(request)
+
+        // FIXME: [WPB-16311] Temporary fix to filter out recycled nodes.
+        // This is necessary because the backend doesn't filter out recycled nodes when we have requested specific
+        // nodes. Once we implement showing previews in a conversation this check should move there, if there is no
+        // backend fix.
+        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, nodeIDs.count > 0 {
+            nodes = nodes.filter { !$0.isRecycled }
+        }
 
         return (nodes, nextOffset == nil)
     }
