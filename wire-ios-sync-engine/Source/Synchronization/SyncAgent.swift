@@ -120,8 +120,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
-                "resuming sync",
-                attributes: .syncAttributes
+                "resuming sync"
             )
 
             do {
@@ -151,8 +150,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         )
 
         WireLogger.sync.debug(
-            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
-            attributes: .syncAttributes
+            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
 
         ongoingSyncTask?.cancel()
@@ -247,9 +245,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                         // ignore error, don't retry
                         // this can happen if receiving a call
                     } catch IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened {
-                        WireLogger.sync.debug("push channel opened, waiting until closed", attributes: .syncAttributes)
+                        WireLogger.sync.debug(
+                            "push channel opened, waiting until closed",
+                            attributes: .incrementalSyncV3
+                        )
                         await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
-                        WireLogger.sync.debug("retry sync after NSE push channel closed", attributes: .syncAttributes)
+                        WireLogger.sync.debug(
+                            "retry sync after NSE push channel closed",
+                            attributes: .incrementalSyncV3
+                        )
 
                         syncStateSubject.send(.suspended)
                         // swallow error from retrier and start resume

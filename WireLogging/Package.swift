@@ -18,6 +18,10 @@ let package = Package(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+        .testTarget(
+            name: "WireLoggingTests",
+            dependencies: ["WireLogging"]
         )
     ]
 )
