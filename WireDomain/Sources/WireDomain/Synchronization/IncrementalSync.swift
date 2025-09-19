@@ -69,30 +69,30 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     public func perform() async throws -> Token {
         try await logger.measureTime(
             label: "new incremental sync",
-            attributes: .syncAttributes(initialSync: false)
+            attributes: .incrementalSyncV2
         ) {
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
-            logger.debug("opening push channel", attributes: .syncAttributes(initialSync: false))
+            logger.debug("opening push channel", attributes: .incrementalSyncV2)
             syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
             let liveEventStream = try await pushChannel.open()
 
             let processedEnvelopeIDs: Set<UUID>
             do {
-                logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
+                logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+                logger.debug("processing stored update events", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
                 func tearDown() async {
                     logger.debug(
                         "incremental sync interrupted, tearing down...",
-                        attributes: .syncAttributes(initialSync: false)
+                        attributes: .incrementalSyncV2
                     )
                     await pushChannel.close()
                 }
@@ -120,7 +120,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             await mlsGroupRepairAgent.repairConversations()
 
             let liveEventTask = Task { @Sendable [self] in
-                logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
+                logger.debug("handling live event stream", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
                 await processLiveEvents(
@@ -128,7 +128,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     processedEnvelopeIDs: processedEnvelopeIDs
                 )
 
-                logger.debug("live event stream did finish", attributes: .syncAttributes(initialSync: false))
+                logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.finished))
             }
 
@@ -146,13 +146,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             for try await var envelope in liveEventStream {
                 logger.debug(
                     "received live event envelope",
-                    attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                 )
 
                 if processedEnvelopeIDs.contains(envelope.id) {
                     logger.debug(
                         "live event already processed, skipping...",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     continue
                 }
@@ -160,7 +160,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 // Decrypt.
                 logger.debug(
                     "decrypting live event envelope",
-                    attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                 )
 
                 let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: nil)
@@ -177,14 +177,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     // Store.
                     logger.debug(
                         "storing live event envelope",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
                     try await updateEventsStore.persistEventEnvelope(envelope, index: index)
                 } catch {
                     logger.error(
                         "failed to store live event envelope: \(String(describing: error))",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     continue
                 }
@@ -193,7 +193,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 if !envelope.isTransient {
                     logger.debug(
                         "updating last event id",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     updateEventsStore.storeLastEventID(id: envelope.id)
                 }
@@ -203,13 +203,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     do {
                         logger.debug(
                             "processing live event: \(event.name)",
-                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                         )
                         try await processor.processEvent(event)
                     } catch {
                         logger.error(
                             "failed to process live event: \(String(describing: error))",
-                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                         )
                     }
                 }
@@ -218,13 +218,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     // Delete.
                     logger.debug(
                         "deleting live event envelope",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     try await updateEventsStore.deleteEventEnvelope(atIndex: index)
                 } catch {
                     logger.error(
                         "failed to delete live event envelope: \(String(describing: error))",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                 }
 
@@ -262,7 +262,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             logger.debug(
                 "fetched \(envelopes.count) stored envelopes for processing",
-                attributes: .syncAttributes(initialSync: false)
+                attributes: .incrementalSyncV2
             )
 
             for envelope in envelopes {
@@ -270,13 +270,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     do {
                         logger.debug(
                             "processing pending event: \(event.name)",
-                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                         )
                         try await processor.processEvent(event)
                     } catch {
                         logger.error(
                             "failed to process stored event, dropping: \(error)",
-                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                         )
                     }
                 }
@@ -291,7 +291,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             } catch {
                 logger.error(
                     "failed to save database: \(String(describing: error))",
-                    attributes: .syncAttributes(initialSync: false)
+                    attributes: .incrementalSyncV2
                 )
             }
         }
@@ -328,11 +328,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {
-        logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
+        logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull()
 
-        logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+        logger.debug("processing stored update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         _ = try await processStoredEvents()
     }
