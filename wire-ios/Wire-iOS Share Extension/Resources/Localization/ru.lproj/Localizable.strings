@@ -83,5 +83,5 @@
 "share_extension.error.update_required.obsolete_client" = "Вы упускаете новые возможности. Получите последнюю версию Wire, чтобы продолжить работу с этим аккаунтом.";
 "share_extension.error.update_required.obsolete_backend" = "Ваш сервер Wire нуждается в обновлении. Пожалуйста, сообщите об этом вашему системному администратору.";
 
-"share_extension.error.open_app.title" = "Open app";
-"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";
+"share_extension.error.open_app.title" = "Открыть приложение";
+"share_extension.error.open_app.message" = "Откройте этот аккаунт в приложении Wire, а затем повторите попытку.";
