@@ -50,6 +50,12 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
         let message = createMessage(isFromSelfUser: true, color: .purple)
         verify(message: message, record: record)
     }
+    
+    func testSelfMessageNumberedList() {
+        let textWithNumberedList = "1. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\n2. Aenean commodo ligula eget dolor.\n3. Aenean massa."
+        let message = createMessage(withText: textWithNumberedList, isFromSelfUser: true)
+        verify(message: message, record: record)
+    }
 
     func testSelfMessageCollapsed() {
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
