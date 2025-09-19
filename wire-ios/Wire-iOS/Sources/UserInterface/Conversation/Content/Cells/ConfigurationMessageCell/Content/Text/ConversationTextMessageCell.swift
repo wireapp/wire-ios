@@ -138,6 +138,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         if isChatBubbleSimpleEnabled {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.lineSpacing = 3
 
             let attributes: [NSAttributedString.Key: AnyObject] = [
                 .paragraphStyle: paragraphStyle
