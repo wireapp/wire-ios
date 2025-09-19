@@ -130,14 +130,13 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func setupObservers() {
-        // Observe backgrounding to flush logs under a BG task.
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(appDidEnterBackground),
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
-        // Optional: also flush on terminate (not always delivered).
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(appWillTerminate),
