@@ -57,7 +57,7 @@ final class RestAPI: Sendable {
                     deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
                     isDraft: false
                 ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: "*"),
+                text: LookupFilterTextSearch(searchIn: .baseName, term: request.filter.text ?? "*"),
                 type: TreeNodeType(request.filter.type)
             ),
             flags: [.withPreSignedURLs],
