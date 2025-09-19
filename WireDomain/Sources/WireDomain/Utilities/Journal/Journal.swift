@@ -131,6 +131,7 @@ public extension Journal {
         [
             JournalKey.isConsumableNotificationsEnabled,
             JournalKey.isConversationSyncRequired,
+            JournalKey.isCoreCryptoKeyMigrationRequired,
             JournalKey.isInitialSyncRequired,
             JournalKey.isSyncV2Enabled,
             JournalKey.isBackendMLSEnabled,
