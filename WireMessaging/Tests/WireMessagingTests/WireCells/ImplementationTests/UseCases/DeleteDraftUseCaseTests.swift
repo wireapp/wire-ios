@@ -175,14 +175,14 @@ final class DeleteDraftUseCaseTests {
         ],
         [true, false]
     )
-    func invoke_deletesFileIfNeeded(status: WireCellsUploadStatus, deleteAfterUpload: Bool) async throws {
+    func invoke_deletesFileIfNeeded(status: WireCellsUploadStatus, requiresCleanup: Bool) async throws {
         // Given
         let nodeID = UUID()
         draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             assetURL: fileURL,
             status: status,
-            deleteAfterUpload: deleteAfterUpload
+            requiresCleanup: requiresCleanup
         )
         draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
         uploadManager.cancelUploadNodeID_MockMethod = { _ in }
@@ -192,7 +192,7 @@ final class DeleteDraftUseCaseTests {
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(FileManager.default.fileExists(atPath: fileURL.path) != deleteAfterUpload)
+        #expect(FileManager.default.fileExists(atPath: fileURL.path) != requiresCleanup)
     }
 }
 

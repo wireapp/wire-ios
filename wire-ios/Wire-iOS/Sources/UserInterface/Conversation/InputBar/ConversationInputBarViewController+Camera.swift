@@ -164,7 +164,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
-            onConfirm: { [weak self, uploadDraftUseCase] (editedImage: UIImage?) in
+            onConfirm: { [weak self] (editedImage: UIImage?) in
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
@@ -173,14 +173,14 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     )
                     let dataToSend = editedImage?.pngData() ?? imageData
                     if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
-                        Task.detached {
-                            // We don't care about the result of the operation here as we will be observing changes.
-                            do {
-                                try await uploadDraftUseCase.invoke(imageData: dataToSend)
-                            } catch {
-                                WireLogger.conversation.error("Failed to upload file: \(error)")
-                            }
+                        let type: UTType = if editedImage != nil {
+                            .png
+                        } else if let uti, let utType = UTType(uti) {
+                            utType
+                        } else {
+                            .image
                         }
+                        self.uploadDraft(data: dataToSend, type: type)
                     } else {
                         self.sendController.sendMessage(
                             withImageData: dataToSend,
@@ -296,12 +296,26 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                    if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
+                        self.uploadDraft(data: imageData, type: .png)
+                    } else {
+                        self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                    }
                 }
             }
         }
     }
 
+    private func uploadDraft(data: Data, type: UTType) {
+        Task.detached { [uploadDraftUseCase] in
+            // We don't care about the result of the operation here as we will be observing changes.
+            do {
+                try await uploadDraftUseCase.invoke(data: data, type: type)
+            } catch {
+                WireLogger.conversation.error("Failed to upload file: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - CameraViewController
