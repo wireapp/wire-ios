@@ -35,9 +35,6 @@ final class JournalViewModel: ObservableObject {
                 [
                     JournalKey.isConsumableNotificationsEnabled,
                     JournalKey.isConversationSyncRequired,
-                    JournalKey.isCoreCryptoKeyMigrationToBytesRequired,
-                    JournalKey.isCoreCryptoKeyMigrationToScopedKeyRequired,
-                    JournalKey.isCoreCryptoKeyRotationRequired,
                     JournalKey.isInitialSyncRequired,
                     JournalKey.isSyncV2Enabled,
                     JournalKey.isBackendMLSEnabled,
