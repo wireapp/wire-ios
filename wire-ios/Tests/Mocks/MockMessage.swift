@@ -33,6 +33,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var linkPreviewHasImage: Bool = false
     var linkPreviewImageCacheKey: String?
     var mentions = [Mention]()
+    var multipartMessageData: WireDataModel.MultipartMessageData?
 
     var quote: ZMMessage? {
         get {

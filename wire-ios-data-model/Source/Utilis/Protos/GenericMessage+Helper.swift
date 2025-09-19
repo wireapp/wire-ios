@@ -229,6 +229,8 @@ public extension GenericMessage {
             if case let .text(data)? = ephemeral.content {
                 return data
             }
+        case let .multipart(data) where DeveloperFlag.wireCells.isOn:
+            return data.text
         default:
             return nil
         }

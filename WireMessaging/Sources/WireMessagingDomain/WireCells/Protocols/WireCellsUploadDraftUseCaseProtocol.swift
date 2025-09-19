@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import UniformTypeIdentifiers
 
 /// Uploads file as a draft to the cells server.
 
@@ -28,7 +29,7 @@ public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {
 
     /// Creates a file using `imageData` and uploads it to the cells server.
 
-    func invoke(imageData: Data) async throws
+    func invoke(data: Data, type: UTType) async throws
 }
 
 public enum WireCellsUploadDraftUseCaseError: Error, Sendable {

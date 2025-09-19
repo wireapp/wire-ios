@@ -53,7 +53,7 @@ package struct DeleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol {
         }
         await draftRepository.deleteDraft(nodeID: nodeID, cellName: cellName)
 
-        if draft.deleteAfterUpload {
+        if draft.requiresCleanup {
             try fileManager.removeItem(at: draft.assetURL)
         }
     }
