@@ -23,21 +23,8 @@ public typealias Reachability = ReachabilityProvider & TearDownCapable
 
 extension BackendEnvironmentProvider {
 
-    public var reachability: ZMReachability {
-
-        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
-
-        let serverNames: [String] = if let proxy {
-            [proxy.host]
-        } else {
-            [backendURL, backendWSURL].compactMap(\.host)
-        }
-
-        return ZMReachability(serverNames: serverNames, group: group)
-    }
-
-    func reachabilityWrapper() -> ReachabilityWrapper {
-        ReachabilityWrapper(enabled: false, reachabilityClosure: {
+    func reachabilityWrapper(enabled: Bool = false) -> ReachabilityWrapper {
+        ReachabilityWrapper(enabled: enabled, reachabilityClosure: {
             self.reachability
         })
     }

@@ -275,15 +275,12 @@ public struct SharingSessionLoader {
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
         }
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [legacyEnvironment.backendURL, legacyEnvironment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
         let transportSession = ZMTransportSession(
             environment: legacyEnvironment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             cookieStorage: legacyCookieStorage,
-            reachability: reachability,
+            reachability: legacyEnvironment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: appGroupID,
             applicationVersion: buildNumber,
