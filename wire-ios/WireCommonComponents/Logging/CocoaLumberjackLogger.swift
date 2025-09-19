@@ -27,9 +27,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
-
-    // Keep track of an active background task so we can end it.
-    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
     /// provided URL.
