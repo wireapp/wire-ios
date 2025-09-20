@@ -33,7 +33,6 @@ public class CoreCryptoConfigProvider {
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
-    private let coreCryptoPathComponent = "corecrypto"
 
     // MARK: - Life cycle
 
@@ -55,7 +54,7 @@ public class CoreCryptoConfigProvider {
         )
 
         try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(

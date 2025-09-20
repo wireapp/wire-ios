@@ -70,7 +70,7 @@ class JournalStoreTests {
     @Test("Values contain all declared values")
     func values() {
         // Given
-        let exhaustiveKeysCount = 10
+        let exhaustiveKeysCount = 8
         sut[.isSyncV2Enabled] = true
 
         // When
