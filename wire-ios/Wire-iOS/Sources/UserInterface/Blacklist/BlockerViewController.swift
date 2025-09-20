@@ -127,6 +127,16 @@ final class BlockerViewController: LaunchImageViewController {
         if let sessionManager, let account = sessionManager.accountManager.selectedAccount {
             alert.addAction(
                 UIAlertAction(
+                    title: L10n.Localizable.Self.signOut,
+                    style: .default,
+                    handler: { _ in
+                        sessionManager.logout(account: account)
+                    }
+                )
+            )
+
+            alert.addAction(
+                UIAlertAction(
                     title: Strings.retry,
                     style: .cancel,
                     handler: { _ in
