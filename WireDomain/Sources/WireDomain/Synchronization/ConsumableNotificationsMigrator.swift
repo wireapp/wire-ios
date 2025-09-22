@@ -54,8 +54,9 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
     }
 
     public func migrate() async throws {
-        // 0)
-        guard await featureConfigRepository.isFeatureEnabled(.consumableNotifications) else {
+        // 0) check feature config
+        guard await featureConfigRepository.isFeatureEnabled(.consumableNotifications),
+              DeveloperFlag.consumableNotifications.isOn else {
             throw Failure.featureConfigNotEnabled
         }
 

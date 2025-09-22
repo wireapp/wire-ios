@@ -25,6 +25,8 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case recipientID = "recipient_id"
     case eventId = "event_id"
     case eventEnvelopeID = "event_envelope_id"
+    case ackMultipleEventsCount = "ack_events_count"
+    case multipleEvents = "ack_multiple_events"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
     case messageType = "message_type"
@@ -52,10 +54,10 @@ public enum LogAttributesKey: String, Comparable, Sendable {
 
 public extension LogAttributes {
     static let safePublic = [LogAttributesKey.public: true]
+    /// PushChannelV2 (consumable notications sync)
     static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
+    /// PushChannel V1 (regular sync)
+    static let pushChannelV1 = [LogAttributesKey.pushChannelVersion: "v1"]
+    /// legacy pushChannel (Starscream)
     static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
-}
-
-public extension LogAttributes {
-    nonisolated(unsafe) static var consumableNotificationsEnabled: Bool = false
 }

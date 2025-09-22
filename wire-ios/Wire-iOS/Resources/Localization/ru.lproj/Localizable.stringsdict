@@ -508,9 +508,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 attached file</string>
+        <string>1 прикрепленный файл</string>
+        <key>few</key>
+        <string>%d прикрепленных файла</string>
+        <key>many</key>
+        <string>%d прикрепленных файлов</string>
         <key>other</key>
-        <string>%d attached files</string>
+        <string>%d прикрепленных файла</string>
       </dict>
     </dict>
   </dict>

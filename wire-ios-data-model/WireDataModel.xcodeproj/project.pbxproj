@@ -27,6 +27,7 @@
 		0158DF212C594B3600C7BFFD /* ZMEventModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0158DF1A2C594B1600C7BFFD /* ZMEventModel.xcdatamodeld */; };
 		0158DF232C5A3C6700C7BFFD /* event_4.0.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 0158DF222C5A3C6600C7BFFD /* event_4.0.sqlite */; };
 		016D293A2C10FB2F00DB969A /* ZMMessageTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 016D29392C10FB2F00DB969A /* ZMMessageTimer.swift */; };
+		0176B8812E7AE25B005D448B /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 0176B8802E7AE25B005D448B /* WireLogging */; };
 		0176BDD12D515764002C33DE /* store2-122-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0176BDD02D515764002C33DE /* store2-122-0.wiredatabase */; };
 		017962982B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962952B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift */; };
 		017962992B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017962962B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift */; };
@@ -1891,6 +1892,7 @@
 				59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */,
 				5902AC752DA92365000A8F7F /* WireFoundationSupport in Frameworks */,
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
+				0176B8812E7AE25B005D448B /* WireLogging in Frameworks */,
 				5950B0372E2EA1220051B07A /* GenericMessageProtocol in Frameworks */,
 				5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */,
 			);
@@ -5174,6 +5176,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0176B8802E7AE25B005D448B /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		01D2B7A22D64A8F50030D28D /* WireCoreCrypto */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCoreCrypto;
