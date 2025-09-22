@@ -771,7 +771,11 @@ extension ConversationTableViewDataSource {
         let previousMessage = messageBeforeMessage(at: index, messages: messages)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
-            isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+            if isChatBubbleSimpleEnabled {
+                isTimestampInSameMinuteAsPreviousMessage = currentMessage.isWithin(minutes: 5, fromDate: prevMessage)
+            } else {
+                isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+            }
         } else {
             isTimestampInSameMinuteAsPreviousMessage = false
         }
@@ -984,6 +988,10 @@ extension Date {
         let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
         let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
         return components == otherComponents
+    }
+
+    func isWithin(minutes: Double, fromDate date: Date) -> Bool {
+        date.addingTimeInterval(minutes * 60) > self
     }
 
 }
