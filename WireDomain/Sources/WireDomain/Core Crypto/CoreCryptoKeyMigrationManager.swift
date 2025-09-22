@@ -28,43 +28,25 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         self.journal = journal
     }
 
-    public var isMigrationToBytesNeeded: Bool {
-        journal[.isCoreCryptoKeyMigrationToBytesRequired]
+    public var isMigrationNeeded: Bool {
+        journal[.isCoreCryptoKeyMigrationRequired]
     }
 
-    public var isMigrationToScopedKeyNeeded: Bool {
-        journal[.isCoreCryptoKeyMigrationToScopedKeyRequired]
+    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
+        if isMigrationNeeded {
+            WireLogger.coreCrypto.info("Core crypto key migration is required")
+
+            try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
+            journal[.isCoreCryptoKeyMigrationRequired] = false
+
+            WireLogger.coreCrypto.info("Core crypto key is migrated successfully")
+        }
     }
 
-    public var isKeyRotationNeeded: Bool {
-        journal[.isCoreCryptoKeyRotationRequired]
-    }
+    public func markMigrationAsSkipped() {
+        WireLogger.coreCrypto.info("Skip core crypto key migration")
 
-    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
-        WireLogger.coreCrypto.info("Core crypto key migration is required", attributes: .safePublic)
-
-        try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
-        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
-
-        WireLogger.coreCrypto.info("Core crypto key is migrated successfully", attributes: .safePublic)
-    }
-
-    public func markMigrationToBytesAsSkipped() {
-        WireLogger.coreCrypto.info("Skip core crypto key migration", attributes: .safePublic)
-
-        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
-    }
-
-    public func markMigrationToScopedKeyDone() {
-        WireLogger.coreCrypto.info("Marking migration to scoped key as done")
-
-        journal[.isCoreCryptoKeyMigrationToScopedKeyRequired] = false
-    }
-
-    public func markKeyRotationAsDone() {
-        WireLogger.coreCrypto.info("Marking key rotation as done")
-
-        journal[.isCoreCryptoKeyRotationRequired] = false
+        journal[.isCoreCryptoKeyMigrationRequired] = false
     }
 
     public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
