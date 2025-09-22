@@ -54,9 +54,7 @@ extension UserClientRequestFactory {
             context: client.managedObjectContext!
         )
 
-        let isConsumableNotificationsEnabled = featureConfigRepository
-            .fetchConsumableNotifications()
-            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+        let isConsumableNotificationsEnabled = true
 
         if isConsumableNotificationsEnabled, apiVersion >= .v9 {
             capabilities.append("consumable-notifications")
