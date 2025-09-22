@@ -409,7 +409,7 @@ final class UserSessionLoader {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             cookieStorage: legacyEnvironment.cookieStorage(for: account),
-            reachability: legacyEnvironment.reachabilityWrapper(),
+            reachability: legacyEnvironment.reachabilityWrapper(enabled: true),
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: buildNumber,
