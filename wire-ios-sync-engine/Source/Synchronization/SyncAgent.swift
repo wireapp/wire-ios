@@ -71,6 +71,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private var subscription: AnyCancellable?
 
+    var syncRunning: Bool {
+        ongoingSyncTask != nil || incrementalSyncToken != nil
+    }
+
     var isLive: Bool {
         if isSyncV2Enabled {
             syncStateSubject.value == .liveSyncing(.ongoing)
@@ -138,13 +142,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     /// Suspend any ongoing sync tasks.
 
-    func suspend() {
-        Task {
-            await suspend()
-        }
-    }
-
-    private func suspend() async {
+    func suspend() async {
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
         )
