@@ -125,10 +125,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     }
 
-    deinit {
-        accentColorChangeHandler = nil
-    }
-
     @objc
     private func buttonTouched(sender: Any) {
         buttonAction?()
