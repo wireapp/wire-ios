@@ -152,9 +152,6 @@ public final class SharingSession {
             userIdentifier: accountIdentifier,
             useCache: false
         )
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
@@ -167,7 +164,7 @@ public final class SharingSession {
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
-            reachability: reachability,
+            reachability: environment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
