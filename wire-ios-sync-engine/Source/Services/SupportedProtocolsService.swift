@@ -56,7 +56,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     // MARK: - Methods
 
     public func calculateSupportedProtocols() -> Set<MessageProtocol> {
-        logger.debug("calculating supported protocols...")
+        logger.debug("calculating supported protocols... - legacy")
 
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()
@@ -65,7 +65,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
         logger
             .debug(
-                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
+                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady) - legacy"
             )
 
         var result = Set<MessageProtocol>()
@@ -105,7 +105,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
             result = [.proteus]
         }
 
-        logger.debug("calculated supported protocols: \(result)")
+        logger.debug("calculated supported protocols: \(result) - legacy")
 
         return result
     }
