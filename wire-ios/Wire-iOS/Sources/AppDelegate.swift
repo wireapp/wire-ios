@@ -211,6 +211,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
+        let isHeadlessBackgroundLaunch =
+            application.applicationState == .background &&
+            UIApplication.shared.connectedScenes.allSatisfy {
+                $0.activationState == .background || $0.activationState == .unattached
+            }
+
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -235,12 +241,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
+        if !isHeadlessBackgroundLaunch {
+            setupWindowAndRootViewController()
 
-        setupWindowAndRootViewController()
+            if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
+                .hasAccessibleAuthenticationCookieData() {
+                createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
+            }
 
-        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
-            .hasAccessibleAuthenticationCookieData() {
-            createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
+        } else {
+            WireLogger.appDelegate.info("running in headless mode", attributes: .safePublic)
         }
 
         WireLogger.appDelegate
@@ -351,7 +361,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler(.noData)
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
         }
     }
@@ -366,7 +382,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler()
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(
                 application,
                 handleEventsForBackgroundURLSession: identifier,
