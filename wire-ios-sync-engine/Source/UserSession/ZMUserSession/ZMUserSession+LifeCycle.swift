@@ -34,7 +34,13 @@ public extension ZMUserSession {
     ) {
         // TODO: [WPB-17583] re-enable background fetch for new sync.
         guard !journal[.isSyncV2Enabled] else {
-            completionHandler(.noData)
+            WireLogger.sync.debug("background fetch is triggered")
+            Task {
+                WireLogger.sync.debug("Sync already running: \(syncAgent?.syncRunning ?? false)", )
+                await self.syncAgent?.suspend()
+                WireLogger.sync.debug("Sync suspended")
+                completionHandler(.noData)
+            }
             return
         }
 
@@ -56,7 +62,9 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
-        syncAgent?.suspend()
+        Task {
+            await syncAgent?.suspend()
+        }
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
