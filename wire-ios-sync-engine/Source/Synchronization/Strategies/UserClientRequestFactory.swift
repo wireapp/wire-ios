@@ -191,9 +191,10 @@ extension UserClientRequestFactory {
             context: client.managedObjectContext!
         )
 
-        let isConsumableNotificationsEnabled = featureConfigRepository
-            .fetchConsumableNotifications()
-            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
+        let isConsumableNotificationsEnabled = true
+//        featureConfigRepository
+//            .fetchConsumableNotifications()
+//            .status == .enabled && DeveloperFlag.consumableNotifications.isOn
 
         var capabilities = ["legalhold-implicit-consent"]
         if isConsumableNotificationsEnabled {
