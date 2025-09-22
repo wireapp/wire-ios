@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol PushSupportedProtocolsSyncProtocol {
@@ -45,7 +46,14 @@ public struct PushSupportedProtocolsSync: PushSupportedProtocolsSyncProtocol {
     /// Update the supported protocols remotely then update locally.
 
     public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
-        try await api.pushSupportedProtocols(supportedProtocols)
+        do {
+            try await api.pushSupportedProtocols(supportedProtocols)
+        } catch SelfUserAPIError.mlsProtocolError(let errorMessage) {
+            WireLogger.supportedProtocols.warn("Failed to push supported protocols: \(errorMessage), fallback to adding mls")
+            var newSupportedProtocols = supportedProtocols
+            newSupportedProtocols.insert(.mls)
+            try await api.pushSupportedProtocols(newSupportedProtocols)
+        }
         await store.updateSelfUserSupportedProtocols(supportedProtocols: supportedProtocols.toDomainModel())
     }
 
