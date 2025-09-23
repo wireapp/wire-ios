@@ -38,6 +38,7 @@ class WireUITestCase: XCTestCase {
         ]
 
         app = XCUIApplication()
+        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
             .useWireAuthentication: true,
