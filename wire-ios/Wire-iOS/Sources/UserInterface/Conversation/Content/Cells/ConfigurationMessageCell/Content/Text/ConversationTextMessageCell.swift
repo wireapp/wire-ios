@@ -135,7 +135,22 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        messageTextView.attributedText = object.attributedText
+        if isChatBubbleSimpleEnabled {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.lineSpacing = 3
+
+            let attributes: [NSAttributedString.Key: AnyObject] = [
+                .paragraphStyle: paragraphStyle
+            ]
+
+            messageTextView.attributedText = object.attributedText.addAttributes(
+                attributes,
+                toSubstring: object.attributedText.string
+            )
+        } else {
+            messageTextView.attributedText = object.attributedText
+        }
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
