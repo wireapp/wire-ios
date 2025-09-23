@@ -31,7 +31,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var mockSelfUserProvider: MockSelfUserProviderProtocol!
 
-    private var sut: SupportedProtocolsService!
+    private var sut: LegacySupportedProtocolsService!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -46,7 +46,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
         mockSelfUserProvider = MockSelfUserProviderProtocol()
 
-        sut = SupportedProtocolsService(
+        sut = LegacySupportedProtocolsService(
             featureRepository: mockLegacyFeatureRepository,
             selfUserProvider: mockSelfUserProvider
         )
