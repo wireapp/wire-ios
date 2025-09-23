@@ -73,7 +73,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
-        let service = SupportedProtocolsService(
+        let service = LegacySupportedProtocolsService(
             featureRepository: LegacyFeatureRepository(context: managedObjectContext),
             selfUserProvider: selfUserProvider
         )
@@ -110,7 +110,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return
         }
 
-        let service = SupportedProtocolsService(
+        let service = LegacySupportedProtocolsService(
             featureRepository: LegacyFeatureRepository(context: managedObjectContext),
             selfUserProvider: selfUserProvider
         )
