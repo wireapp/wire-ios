@@ -1314,7 +1314,7 @@ extension ZMUserSession: SyncAgentDelegate {
     /// This could be removed once MLS is enabled.
     private func calculateSelfSupportedProtocolsIfNeeded() async {
         await syncContext.perform { [syncContext] in
-            let service = SupportedProtocolsService(context: syncContext)
+            let service = LegacySupportedProtocolsService(context: syncContext)
             let selfUser = ZMUser.selfUser(in: syncContext)
             if selfUser.supportedProtocols.isEmpty {
                 WireLogger.supportedProtocols.warn("no supported protocols found")
@@ -1324,16 +1324,17 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
+    /// Note: this method is used only for legacy sync
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
-        -> any ResolveOneOnOneConversationsUseCaseProtocol {
-        let supportedProtocolService = SupportedProtocolsService(context: context)
+        -> any LegacyResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = LegacySupportedProtocolsService(context: context)
 
         let resolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
 
-        return ResolveOneOnOneConversationsUseCase(
+        return LegacyResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
             resolver: resolver,
