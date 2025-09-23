@@ -27,12 +27,12 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
+    var resolveOneOnOneConversations: MockLegacyResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
-        resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
+        resolveOneOnOneConversations = MockLegacyResolveOneOnOneConversationsUseCaseProtocol()
         resolveOneOnOneConversations.invoke_MockMethod = { true }
 
         syncMOC.performGroupedAndWait {
