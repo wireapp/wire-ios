@@ -31,6 +31,23 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var apiVersion: APIVersion = .v0
+    var localDomain = "wire.com"
+    var isFederationEnabled = false
+
+    var resolvedBackendMetadata: BackendMetadataProvider {
+        BackendMetadataProvider(
+            apiVersionOverride: apiVersion,
+            domainOverride: localDomain,
+            isFederationEnabledOverride: isFederationEnabled,
+            isBackendMLSEnabledOverride: isBackendMLSEnabled
+        )
+    }
+
+    var isBackendMLSEnabled = false
+
+    var isBuildBlacklisted = false
+
     var isTornDown = false
 
     var userProfile: UserProfile
@@ -86,6 +103,8 @@ final class UserSessionMock: UserSession {
     var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
+
+    var fileAssetCache: FileAssetCache = .init(location: URL.temporaryDirectory)
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 

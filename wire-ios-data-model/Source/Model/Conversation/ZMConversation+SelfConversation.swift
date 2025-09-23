@@ -162,7 +162,7 @@ public extension ZMConversation {
 
     static func updateConversation(
         withClearedFromSelfConversation cleared: Cleared,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
     ) {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return

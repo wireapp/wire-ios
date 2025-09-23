@@ -70,7 +70,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -103,7 +103,7 @@ public extension ZMConversation {
 
     /// Checks if a guest link can be generated or not
     func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -141,7 +141,7 @@ public extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = userSession.resolvedBackendMetadata.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
@@ -204,7 +204,8 @@ enum WirelessRequestFactory {
         allowGuests: Bool,
         allowServices: Bool,
         for conversation: ZMConversation,
-        apiVersion: APIVersion
+        apiVersion: APIVersion,
+        localDomain: String?
     ) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
@@ -234,7 +235,7 @@ enum WirelessRequestFactory {
         switch apiVersion {
 
         case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }

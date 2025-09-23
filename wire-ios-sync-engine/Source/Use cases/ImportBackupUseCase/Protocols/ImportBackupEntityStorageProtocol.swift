@@ -35,7 +35,9 @@ public protocol ImportBackupEntityStorageProtocol: Sendable {
     func createContextProvider(
         account: Account,
         applicationContainer: URL,
-        dispatchGroup: ZMSDispatchGroup?
+        dispatchGroup: ZMSDispatchGroup?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) async throws -> ContextProvider
 
 }

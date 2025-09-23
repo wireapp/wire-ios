@@ -33,8 +33,8 @@ final class ConversationViewController: UIViewController {
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
-    private let wireCellsFactory: WireCellsFactoryProtocol
-    private var wireCellsState: CellsState = .disabled
+    let wireCellsFactory: WireCellsFactoryProtocol
+    private(set) var wireCellsState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -444,7 +444,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if DeveloperFlag.wireCells.isOn /* , wireCellsState != .disabled */ {
+        if DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -723,6 +723,10 @@ extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateLeftNavigationBarItems()
         if changeInfo.deletedObjects.contains(conversation) {
+            if conversation.mlsStatus == .pendingJoin {
+                // don't pop if mls reset happened
+                return
+            }
             ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
         }
     }
@@ -872,7 +876,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         let filesView = wireCellsFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending
+                isCellsStatePending: wireCellsState == .pending,
+                nodeIDs: []
             )
 
         filesView.presentOverAll(animated: true)
@@ -891,7 +896,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let syncCellsStateUseCase = SyncCellsStateUseCase(
             repository: conversationRepository,
-            context: userSession.contextProvider.newBackgroundContext()
+            context: userSession.contextProvider.newBackgroundContext(),
+            localDomain: userSession.resolvedBackendMetadata.domain
         )
 
         Task {

@@ -22,15 +22,10 @@ import XCTest
 
 final class ZMConversationTests_MLS: ZMConversationTestsBase {
 
-    override func tearDown() {
-        BackendInfo.isFederationEnabled = false
-        super.tearDown()
-    }
-
     func testThatItFetchesConversationWithGroupID() throws {
         syncMOC.performGroupedAndWait {
             // Given
-            BackendInfo.isFederationEnabled = false
+            syncMOC.isFederationEnabled = false
             let groupID = MLSGroupID(.init([1, 2, 3]))
             let conversation = groupID.createConversation(in: syncMOC)
 
@@ -45,7 +40,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     func testThatItFetchesConversationWithGroupID_FederationEnabled() throws {
         syncMOC.performGroupedAndWait {
             // Given
-            BackendInfo.isFederationEnabled = true
+            syncMOC.isFederationEnabled = true
             let groupID = MLSGroupID(.init([1, 2, 3]))
             let conversation = groupID.createConversation(in: syncMOC)
 
@@ -60,7 +55,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     func testThatItFetchesConversationWithMLSGroupStatus() throws {
         try syncMOC.performAndWait { [self] in
             // Given
-            BackendInfo.isFederationEnabled = false
+            syncMOC.isFederationEnabled = false
             let groupID = MLSGroupID(.init([1, 2, 3]))
             let pendingConversation = groupID.createConversation(in: syncMOC)
             pendingConversation.mlsStatus = .pendingJoin

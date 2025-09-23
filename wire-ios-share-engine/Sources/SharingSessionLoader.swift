@@ -27,12 +27,14 @@ public struct SharingSessionLoader {
 
     public enum Failure: Error {
 
+        case mainAppRequired(message: String)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case persistenceStoresNotFound
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
-        case mainAppRequired(message: String)
+        case failedToCheckBuildBlacklist(any Error)
+        case buildIsBlacklisted(buildNumber: String)
 
     }
 
@@ -99,9 +101,16 @@ public struct SharingSessionLoader {
         let metadata = try await resolveBackendMetadata(with: networkStack)
 
         // Set up persistence stack.
-        let coreDataStack = try await setupPersistenceStack()
+        let coreDataStack = try await setupPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Return early if needed.
+        guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
+            throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
+        }
+
         guard !shouldEnableSyncV2(metadata: metadata) else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
@@ -122,6 +131,7 @@ public struct SharingSessionLoader {
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack
         )
@@ -175,11 +185,11 @@ public struct SharingSessionLoader {
 
         // TODO: [WPB-17732] de-duplicate when implementing NSE
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-            // TODO: [WPB-14630] mark federation migration needed
-        }
-
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
+            // Now that federation is enabled we'll start storing domains
+            // on entities in the database. We'll therefore need to add
+            // the local domain to all existing entities so they're
+            // fully qualified.
+            journal[.isFederationMigrationRequired] = true
         }
 
         // Store new metadata.
@@ -195,10 +205,15 @@ public struct SharingSessionLoader {
         return newMetadata
     }
 
-    private func setupPersistenceStack() async throws -> CoreDataStack {
+    private func setupPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: appContainerURL
+            applicationContainer: appContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -218,6 +233,20 @@ public struct SharingSessionLoader {
         return coreDataStack
     }
 
+    private func isBuildBlacklisted(networkService: NetworkService) async throws -> Bool {
+        let api = BlacklistAPIBuilder(networkService: networkService).makeAPI()
+        let useCase = IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: buildNumber,
+            api: api
+        )
+
+        do {
+            return try await useCase.invoke()
+        } catch {
+            throw Failure.failedToCheckBuildBlacklist(error)
+        }
+    }
+
     // TODO: [WPB-17732] de-duplicate when implementing NSE
     private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
         let isAvailable = metadata.apiVersion >= .v8
@@ -231,6 +260,7 @@ public struct SharingSessionLoader {
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
@@ -245,15 +275,12 @@ public struct SharingSessionLoader {
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
         }
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [legacyEnvironment.backendURL, legacyEnvironment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
         let transportSession = ZMTransportSession(
             environment: legacyEnvironment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             cookieStorage: legacyCookieStorage,
-            reachability: reachability,
+            reachability: legacyEnvironment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: appGroupID,
             applicationVersion: buildNumber,
@@ -280,9 +307,14 @@ public struct SharingSessionLoader {
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
+            localDomain: backendMetadata.domain
         )
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue))
+        )
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
@@ -311,7 +343,8 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: backendMetadata.domain
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -329,7 +362,8 @@ public struct SharingSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
             userID: accountID,
@@ -337,12 +371,14 @@ public struct SharingSessionLoader {
             keychain: Keychain()
         )
         let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: buildNumber,
             selfUserID: accountID,
             cookieStorage: cookieStorage,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetaData: backendMetadata,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            isMLSEnabled: journal[.isBackendMLSEnabled],
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,

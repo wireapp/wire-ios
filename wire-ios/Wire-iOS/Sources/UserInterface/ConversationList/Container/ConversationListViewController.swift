@@ -290,7 +290,9 @@ final class ConversationListViewController: UIViewController {
         userDefaultsObservation = UserDefaults.standard
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update navigation bar to reflect filter visibility changes
-                self?.updateNavigationItem()
+                DispatchQueue.main.async {
+                    self?.updateNavigationItem()
+                }
             }
     }
 

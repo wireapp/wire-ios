@@ -149,7 +149,9 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
     ///
     /// - Returns: array of availble actions
     func makeActionsList(completion: @escaping ([ProfileAction]) -> Void) {
-        guard let userID = user.qualifiedID else {
+        guard let userID = user.qualifiedID(
+            localDomain: userSession.resolvedBackendMetadata.domain
+        ) else {
             return completion([])
         }
 

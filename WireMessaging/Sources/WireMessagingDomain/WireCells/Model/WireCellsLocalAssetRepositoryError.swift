@@ -32,4 +32,12 @@ public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
 
     case downloadAlreadyInProgress
 
+    /// The requested asset is unknown to the repository.
+
+    case unknownAsset
+
+    /// The asset has changed on the server compared to the in progress / downloaded asset.
+
+    case assetHasChanged
+
 }

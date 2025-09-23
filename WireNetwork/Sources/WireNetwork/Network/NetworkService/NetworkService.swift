@@ -28,7 +28,7 @@ public protocol NetworkServiceProtocol {
 
 public final class NetworkService: NSObject, NetworkServiceProtocol {
 
-    private let baseURL: URL
+    let baseURL: URL
     private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
@@ -37,7 +37,24 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         baseURL: URL,
         serverTrustValidator: ServerTrustValidator
     ) {
-        self.baseURL = baseURL
+        // Make sure the base url is a directory path,
+        // i.e www.wire.com -> www.wire.com/ and
+        // www.wire.com/staging -> www.wire.com/staging/
+        // This is important when we resolve relative paths on top
+        // of this base url because if the base is not considered a
+        // directory then the path will be replaced by the relative path
+        // (e.g www.wire.com/staging + foo -> www.wire.com/foo) rather than
+        // concatenated (e.g www.wire.com/staging/foo).
+        if !baseURL.path().isEmpty, !baseURL.hasDirectoryPath {
+            let lastComponent = baseURL.lastPathComponent
+            self.baseURL = baseURL.deletingLastPathComponent().appending(
+                path: lastComponent,
+                directoryHint: .isDirectory
+            )
+        } else {
+            self.baseURL = baseURL
+        }
+
         self.serverTrustValidator = serverTrustValidator
     }
 
@@ -58,17 +75,24 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
             throw NetworkServiceError.invalidRequest
         }
 
+        // To properly concatenate this URL to the base (which should be
+        // a directory), we must remove the leading slash.
+        var urlString = url.absoluteString
+        urlString = String(urlString.drop(while: { $0 == "/" }))
+
         var request = request
         request.url = URL(
-            string: url.absoluteString,
+            string: urlString,
             relativeTo: baseURL
         )
 
+        WireLogger.network.log(request)
         let (data, response) = try await urlSession.data(for: request)
 
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw NetworkServiceError.notAHTTPURLResponse
         }
+        WireLogger.network.log(response: httpURLResponse)
 
         return (data, httpURLResponse)
     }
@@ -104,6 +128,9 @@ extension NetworkService: URLSessionWebSocketDelegate {
         didOpenWithProtocol protocol: String?
     ) {
         WireLogger.network.debug("web socket task did open")
+        if let request = webSocketTask.currentRequest {
+            WireLogger.network.log(request)
+        }
     }
 
     public func urlSession(

@@ -317,7 +317,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -352,7 +354,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -387,7 +391,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(

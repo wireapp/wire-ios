@@ -31,9 +31,12 @@ final class RequestSnapshotter {
     private let apiService: APIService
     private var receivedRequests = [URLRequest]()
 
-    init(currentDateProvider: any CurrentDateProviding) {
+    init(
+        baseURL: URL = URL(string: "https://www.wire.com")!,
+        currentDateProvider: any CurrentDateProviding
+    ) {
         self.networkService = NetworkService(
-            baseURL: URL(string: "https://www.wire.com")!,
+            baseURL: baseURL,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [],
                 currentDateProvider: currentDateProvider

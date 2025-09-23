@@ -60,18 +60,19 @@ struct FilesViewItemView: View {
 
                 Menu {
                     Button(action: open) {
-                        Label(Strings.Files.Item.Menu.open, systemImage: "document")
+                        Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
 
                     if !viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
-                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down.fill")
+                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    Button(action: rename) {
-                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                    }
+                    // FIXME: [WPB-19393] Enable
+//                    Button(action: rename) {
+//                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+//                    }
 
                     Button(role: .destructive, action: delete) {
                         Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
@@ -82,7 +83,20 @@ struct FilesViewItemView: View {
                         .frame(minHeight: 24)
                         .padding(.horizontal, 8)
                 }
+                .tint(nil)
                 .menuOrder(.fixed)
+                .confirmationDialog(
+                    Strings.Files.Item.DeleteConfirmation.title(viewModel.fileName),
+                    isPresented: $viewModel.isShowDeleteConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        Strings.Files.Item.DeleteConfirmation.deletePermanently,
+                        role: .destructive,
+                        action: confirmDelete
+                    )
+                }
+                .tint(.black)
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
@@ -109,7 +123,11 @@ struct FilesViewItemView: View {
     }
 
     private func delete() {
-        // FIXME: [WPB-19392] Implement
+        viewModel.showDeleteConfirmation()
+    }
+
+    private func confirmDelete() {
+        Task { await viewModel.confirmDelete() }
     }
 
     private var progressColor: Color {

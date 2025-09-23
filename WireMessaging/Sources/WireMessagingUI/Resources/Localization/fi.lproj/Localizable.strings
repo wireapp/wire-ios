@@ -104,6 +104,13 @@
 "conversation.wireCells.files.navigationTitle" = "Tiedostot";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.item.menu.open" = "Avaa";
 "conversation.wireCells.files.item.menu.download" = "Lataa";
 "conversation.wireCells.files.item.menu.rename" = "Nimeä uudelleen";
-"conversation.wireCells.files.item.menu.delete" = "Delete permanently";
+"conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
+"conversation.wireCells.files.noData.title" = "There are no files or folders yet";
+"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
+"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
+"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";

@@ -108,6 +108,7 @@ final class InputBar: UIView {
     typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
 
     private let inputBarVerticalInset: CGFloat = 34
+    private let isWireCellsEnabled: Bool
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
 
@@ -225,12 +226,13 @@ final class InputBar: UIView {
         textView.isScrollEnabled = true
     }
 
-    required init(buttons: [UIButton]) {
+    required init(buttons: [UIButton], isWireCellsEnabled: Bool) {
         self.buttonsView = InputBarButtonsView(buttons: buttons)
         self.secondaryButtonsView = InputBarSecondaryButtonsView(
             editBarView: editingView,
             markdownBarView: markdownView
         )
+        self.isWireCellsEnabled = isWireCellsEnabled
 
         super.init(frame: CGRect.zero)
 
@@ -244,7 +246,7 @@ final class InputBar: UIView {
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
-        if DeveloperFlag.wireCells.isOn {
+        if isWireCellsEnabled {
             inputContainer.addArrangedSubview(attachmentsContainer)
         }
 
@@ -360,7 +362,7 @@ final class InputBar: UIView {
             buttonInnerContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        if DeveloperFlag.wireCells.isOn {
+        if isWireCellsEnabled {
             NSLayoutConstraint.activate([
                 attachmentsContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
                 attachmentsContainer.heightAnchor.constraint(equalToConstant: 82)

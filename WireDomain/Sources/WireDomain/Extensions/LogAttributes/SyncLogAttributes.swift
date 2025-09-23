@@ -26,8 +26,11 @@ public extension LogAttributes {
     private enum Constants {
         static let initial = "initial"
         static let incremental = "incremental"
+        /// legacy sync
         static let v1 = "v1"
+        /// new sync
         static let v2 = "v2"
+        /// consumable-notifications sync
         static let v3 = "v3"
     }
 
@@ -93,7 +96,8 @@ public extension LogAttributes {
 
     static var incrementalSync: Self {
         [
-            .syncType: Constants.incremental
+            .syncType: Constants.incremental,
+            .public: true
         ]
     }
 
@@ -105,38 +109,32 @@ public extension LogAttributes {
 
     // MARK: - New sync (V2, V3)
 
-    static func syncAttributes(
-        initialSync: Bool
-    ) -> Self {
+    static var incrementalSyncV3: Self {
         [
-            .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncType: Constants.incremental,
+            .syncVersion: Constants.v3,
             .public: true
         ]
     }
 
-    static var syncAttributes: Self {
+    static var incrementalSyncV2: Self {
         [
-            .syncVersion: syncVersion,
+            .syncType: Constants.incremental,
+            .syncVersion: Constants.v2,
             .public: true
         ]
     }
 
-    static func syncPhaseAttributes(
-        _ phase: String,
-        initialSync: Bool
+    static func initialSyncAttributes(
+        _ phase: String
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: syncVersion,
+            .syncType: Constants.initial,
             .syncPhase: phase,
             .public: true
         ]
     }
 
-    static var syncVersion: String {
-        consumableNotificationsEnabled ? Constants.v3 : Constants.v2
-    }
 }
 
 extension LogAttributes {

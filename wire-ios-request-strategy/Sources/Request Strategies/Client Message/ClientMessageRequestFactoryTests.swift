@@ -23,19 +23,7 @@ import WireUtilities
 import XCTest
 @testable import WireRequestStrategy
 
-class ClientMessageRequestFactoryTests: MessagingTestBase {
-
-    private var apiVersion: APIVersion! {
-        didSet {
-            BackendInfo.apiVersion = apiVersion
-        }
-    }
-
-    override func setUp() {
-        super.setUp()
-        apiVersion = .v0
-    }
-}
+class ClientMessageRequestFactoryTests: MessagingTestBase {}
 
 // MARK: - Client discovery
 
@@ -53,11 +41,11 @@ extension ClientMessageRequestFactoryTests {
             )
 
             // WHEN
-            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+            let request = ClientMessageRequestFactory(localDomain: "wire.com").upstreamRequestForFetchingClients(
                 conversationId: conversationID,
                 domain: nil,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: .v0
             )
 
             guard let data = request?.binaryData else {
@@ -75,7 +63,7 @@ extension ClientMessageRequestFactoryTests {
     }
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
-        apiVersion = .v1
+        let apiVersion = APIVersion.v1
         syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
@@ -88,11 +76,11 @@ extension ClientMessageRequestFactoryTests {
             )
 
             // WHEN
-            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+            let request = ClientMessageRequestFactory(localDomain: "wire.com").upstreamRequestForFetchingClients(
                 conversationId: conversationID,
                 domain: domain,
                 selfClient: self.selfClient,
-                apiVersion: self.apiVersion
+                apiVersion: apiVersion
             )
 
             guard let data = request?.binaryData else {

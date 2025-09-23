@@ -77,13 +77,13 @@ extension SessionManager: APIVersionResolverDelegate {
         delegate?.sessionManagerDidBlacklistCurrentVersion(reason: reason)
     }
 
-    func apiVersionResolverDetectedFederationHasBeenEnabled() {
+    func apiVersionResolverDetectedFederationHasBeenEnabled(localDomain: String) {
         delegate?.sessionManagerWillMigrateAccount { [weak self] in
-            self?.migrateAllAccountsForFederation()
+            self?.migrateAllAccountsForFederation(localDomain: localDomain)
         }
     }
 
-    private func migrateAllAccountsForFederation() {
+    private func migrateAllAccountsForFederation(localDomain: String) {
         let dispatchGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Accounts Migration Group")
         let dispatchQueue = DispatchQueue(label: "Accounts Migration Queue", qos: .userInitiated)
 
@@ -104,7 +104,7 @@ extension SessionManager: APIVersionResolverDelegate {
                                     accountIdentifier: account.userIdentifier,
                                     applicationContainer: self.sharedContainerURL,
                                     migration: {
-                                        try $0.migrateToFederation()
+                                        try $0.migrateToFederation(localDomain: localDomain)
                                     }
                                 )
                             } catch {

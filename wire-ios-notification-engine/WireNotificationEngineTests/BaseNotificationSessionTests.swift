@@ -74,7 +74,9 @@ class BaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: cachesDirectory,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

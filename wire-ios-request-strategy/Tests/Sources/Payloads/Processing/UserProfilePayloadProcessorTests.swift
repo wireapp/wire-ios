@@ -28,13 +28,12 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        sut = UserProfilePayloadProcessor()
+        sut = UserProfilePayloadProcessor(isFederationEnabled: false)
 
         syncMOC.performGroupedAndWait {
             self.otherUser.remoteIdentifier = nil
             self.otherUser.domain = nil
         }
-        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -62,7 +61,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     func testUpdateUserProfile_UpdatesQualifiedUserID() throws {
         syncMOC.performGroupedAndWait {
             // given
-            BackendInfo.isFederationEnabled = true
+            self.sut = UserProfilePayloadProcessor(isFederationEnabled: true)
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 

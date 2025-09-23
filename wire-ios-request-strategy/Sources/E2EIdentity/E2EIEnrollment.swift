@@ -107,6 +107,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     private let apiProvider: APIProviderInterface
     private let e2eiService: E2EIServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
+    private let apiVersion: WireTransport.APIVersion?
 
     private let logger = WireLogger.e2ei
 
@@ -115,13 +116,15 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         apiProvider: APIProviderInterface,
         e2eiService: E2EIServiceInterface,
         acmeDirectory: AcmeDirectory,
-        keyRotator: E2EIKeyPackageRotating
+        keyRotator: E2EIKeyPackageRotating,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
         self.e2eiService = e2eiService
         self.acmeDirectory = acmeDirectory
         self.keyRotator = keyRotator
+        self.apiVersion = apiVersion
     }
 
     public func getACMENonce() async throws -> String {
@@ -234,8 +237,9 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
 
-        guard let apiVersion = BackendInfo.apiVersion,
-              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        guard
+            let apiVersion,
+            let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {
             throw MessageSendError.unresolvedApiVersion
         }
@@ -264,8 +268,9 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         logger.info("get Wire access token")
 
-        guard let apiVersion = BackendInfo.apiVersion,
-              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        guard
+            let apiVersion,
+            let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
         else {
             throw MessageSendError.unresolvedApiVersion
         }

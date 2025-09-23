@@ -20,7 +20,9 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireTransport
 import WireUtilities
 
@@ -32,6 +34,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
+        DeveloperOverrides.storage = .shared()
         WireAnalytics.setup(for: .notificationServiceExtension)
     }
 
@@ -44,7 +47,7 @@ final class NotificationService: UNNotificationServiceExtension {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if notificationService == nil {
-            notificationService = loadNotificationService()
+            notificationService = loadNotificationService(for: request)
         }
 
         if let notificationService {
@@ -61,12 +64,20 @@ final class NotificationService: UNNotificationServiceExtension {
         notificationService?.serviceExtensionTimeWillExpire()
     }
 
-    private func loadNotificationService() -> NotificationServiceProtocol? {
+    private func loadNotificationService(for request: UNNotificationRequest) -> NotificationServiceProtocol? {
         let info = Bundle.appMainBundle.infoDictionary
 
         guard let currentAppVersion = info?["CFBundleShortVersionString"] as? String else {
             WireLogger.notifications.critical(
                 "no current app version, not loading service",
+                attributes: .safePublic
+            )
+            return nil
+        }
+
+        guard let currentBuildNumber = info?[kCFBundleVersionKey as String] as? String  else {
+            WireLogger.notifications.critical(
+                "no current build number, not loading service",
                 attributes: .safePublic
             )
             return nil
@@ -91,14 +102,21 @@ final class NotificationService: UNNotificationServiceExtension {
             return nil
         }
 
-        if DeveloperFlag.multibackend.isOn {
-            // Only new extension is supported in multibackend mode.
+        guard let apiVersion = fetchLastKnownAPIVersion(
+            for: request,
+            appContainerURL: appContainerURL
+        ) else {
+            return nil
+        }
+
+        if apiVersion >= .v8 {
             WireLogger.notifications.info(
                 "loading new notification service",
                 attributes: .safePublic
             )
             return NotificationServiceExtension(
                 currentAppVersion: currentAppVersion,
+                currentBuildNumber: currentBuildNumber,
                 appContainerURL: appContainerURL,
                 sharedUserDefaults: sharedUserDefaults,
                 cookieEncryptionKey: UserDefaults.cookiesKey(),
@@ -108,41 +126,35 @@ final class NotificationService: UNNotificationServiceExtension {
                 }
             )
         } else {
-            // API version decides which service to use, if we don't have it
-            // yet then we simply supress the notification request.
-            guard let apiVersion = BackendInfo.apiVersion else {
-                WireLogger.notifications.warn(
-                    "no resolved api version, not loading service",
-                    attributes: .safePublic
-                )
-                return nil
-            }
+            WireLogger.notifications.info(
+                "loading legacy notification service",
+                attributes: .safePublic
+            )
+            return LegacyNotificationService(
+                appGroupID: appID,
+                appContainerURL: appContainerURL,
+                currentAppVersion: currentAppVersion,
+                currentBuildNumber: currentBuildNumber
+            )
+        }
+    }
 
-            /// With v8, the new extension is available, but not necessarily
-            /// turned on yet. Regardless, we will use it and later check
-            /// if the new sync is enabled.
-            if apiVersion >= .v8 {
-                WireLogger.notifications.info(
-                    "loading new notification service",
-                    attributes: .safePublic
-                )
-                return NotificationServiceExtension(
-                    currentAppVersion: currentAppVersion,
-                    appContainerURL: appContainerURL,
-                    sharedUserDefaults: sharedUserDefaults,
-                    cookieEncryptionKey: UserDefaults.cookiesKey(),
-                    minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                    preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
-                        UInt($0.rawValue)
-                    }
-                )
-            } else {
-                WireLogger.notifications.info(
-                    "loading legacy notification service",
-                    attributes: .safePublic
-                )
-                return LegacyNotificationService()
-            }
+    private func fetchLastKnownAPIVersion(
+        for request: UNNotificationRequest,
+        appContainerURL: URL
+    ) -> WireNetwork.APIVersion? {
+        do {
+            let payload = try ProcessNotificationRequestUseCase().invoke(request: request)
+            let accountURLs = AccountURLs(root: appContainerURL)
+            let environmentStore = try BackendEnvironmentStore(directory: accountURLs.accountData)
+            let metadata = try environmentStore.fetchBackendMetadata(accountID: payload.userID)
+            return metadata?.apiVersion
+        } catch {
+            WireLogger.notifications.error(
+                "failed to fetch last known api version",
+                attributes: .safePublic
+            )
+            return nil
         }
     }
 

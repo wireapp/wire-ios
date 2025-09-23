@@ -16,13 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-// sourcery: AutoMockable
-@MainActor
-public protocol WireCellsLocalAssetMetadataStore {
+public extension BackendEnvironmentProvider {
 
-    func assetMetadata(nodeID: UUID) throws -> WireCellsLocalAssetMetadata?
-    func upsertAssetMetadata(_ metadata: WireCellsLocalAssetMetadata) throws
+    var reachability: ZMReachability {
+        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
+
+        let serverNames: [String] = if let proxy {
+            [proxy.host]
+        } else {
+            [backendURL, backendWSURL].compactMap(\.host)
+        }
+
+        return ZMReachability(serverNames: serverNames, group: group)
+    }
 
 }

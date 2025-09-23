@@ -20,7 +20,8 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireData")
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
         .target(
             name: "WireMessagingData",
             dependencies: [
+                "WireData",
                 "WireMessagingDomain",
                 "WireLogging",
                 .product(name: "AWSS3", package: "aws-sdk-swift"),
@@ -71,10 +73,14 @@ let package = Package(
         .testTarget(
             name: "WireMessagingTests",
             dependencies: [
+                "WireMessagingData",
                 "WireMessagingUI",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
+            ],
+            resources: [
+                .process("Resources/TestFiles/")
             ]
         ),
     ]

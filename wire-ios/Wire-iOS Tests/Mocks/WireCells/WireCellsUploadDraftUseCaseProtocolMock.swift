@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireMessagingDomain
 
 final class WireCellsUploadDraftUseCaseProtocolMock: WireCellsUploadDraftUseCaseProtocol {
@@ -25,7 +26,7 @@ final class WireCellsUploadDraftUseCaseProtocolMock: WireCellsUploadDraftUseCase
         fatalError("Implement")
     }
 
-    func invoke(imageData: Data) async throws {
+    func invoke(data: Data, type: UTType) async throws {
         fatalError("Implement")
     }
 

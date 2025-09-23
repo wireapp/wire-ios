@@ -30,7 +30,8 @@ extension WireCellsDraft {
         name: String = "Draft",
         bytes: Int = 1024,
         mimeType: String? = nil,
-        deleteAfterUpload: Bool = false
+        requiresCleanup: Bool = false,
+        metadata: WireCellsDraft.Metadata? = nil
     ) -> WireCellsDraft {
         WireCellsDraft(
             nodeID: nodeID,
@@ -41,7 +42,8 @@ extension WireCellsDraft {
             name: name,
             bytes: bytes,
             mimeType: mimeType,
-            deleteAfterUpload: deleteAfterUpload
+            requiresCleanup: requiresCleanup,
+            metadata: metadata
         )
     }
 }

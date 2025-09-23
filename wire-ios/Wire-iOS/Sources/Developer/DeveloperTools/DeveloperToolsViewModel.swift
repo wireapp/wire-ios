@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDomain
+import WireNetwork
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
@@ -121,26 +122,17 @@ final class DeveloperToolsViewModel: ObservableObject {
         self.router = router
         self.onDismiss = onDismiss
         self.sections = []
-
         setupSections()
     }
 
     private func setupSections() {
-
         setupContextualItems()
-
         setupActions()
-
         setupAppInfo()
-
-        sections.append(backendInfoSection)
-
+        setupBackenInfo()
         setupSelfUser()
-
         setupPushToken()
-
         setupDatadog()
-
         sections.append(debugViewSection)
     }
 
@@ -164,6 +156,9 @@ final class DeveloperToolsViewModel: ObservableObject {
                 Section(
                     header: "Self user",
                     items: [
+                        .destination(DestinationItem(title: "Journal", makeView: {
+                            AnyView(JournalView(viewModel: JournalViewModel(userId: selfUser.remoteIdentifier!)))
+                        })),
                         .text(TextItem(
                             title: "Handle",
                             value: selfUser.handleDisplayString(withDomain: true) ?? "None"
@@ -270,46 +265,59 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupActions() {
-        sections.append(Section(
-            header: "Actions",
-            items: [
-                .destination(DestinationItem(title: "E2E Identity", makeView: {
-                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
-                })),
-                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
-                        selfClient: self?
-                            .selfClient,
-                        onDismiss: { self?.onDismiss {} }
-                    )))
-                })),
-                .destination(DestinationItem(title: "Configure feature flags", makeView: {
-                    AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
-                })),
-                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
-                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
-                        router: self?.router,
-                        onDismiss: self?.onDismiss ?? { $0() }
-                    )))
-                }))
-            ]
-        ))
+        sections.append(
+            Section(
+                header: "Actions",
+                items: [
+                    .destination(DestinationItem(title: "E2E Identity", makeView: {
+                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                    })),
+                    .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                        AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
+                            selfClient: self?
+                                .selfClient,
+                            onDismiss: { self?.onDismiss {} }
+                        )))
+                    })),
+                    .destination(DestinationItem(title: "Configure feature flags", makeView: {
+                        AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                    })),
+                    .destination(
+                        DestinationItem(title: "Overrides", makeView: {
+                            AnyView(DeveloperOverridesForm())
+                        })
+                    ),
+                    .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                        AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                            router: self?.router,
+                            onDismiss: self?.onDismiss ?? { $0() }
+                        )))
+                    }))
+                ]
+            )
+        )
     }
 
-    private lazy var backendInfoSection: Section = {
+    private func setupBackenInfo() {
         let header = "Backend info"
         var items = [Item]()
 
-        items.append(.text(TextItem(title: "Name", value: backendName)))
-
-        if canSwitchBackend {
-            items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
-                AnyView(SwitchBackendView(viewModel: SwitchBackendViewModel()))
-            })))
+        guard
+            let sessionManager = SessionManager.shared,
+            let accountID = selfUser?.remoteIdentifier,
+            let environment = try? sessionManager.environmentStore.fetchBackendEnvironment(
+                accountID: accountID
+            ),
+            let metadata = try? sessionManager.environmentStore.fetchBackendMetadata(
+                accountID: accountID
+            )
+        else {
+            return
         }
 
-        items.append(.text(TextItem(title: "Domain", value: backendDomain)))
-        items.append(.text(TextItem(title: "API version", value: apiVersion)))
+        items.append(.text(TextItem(title: "Name", value: environment.title)))
+        items.append(.text(TextItem(title: "Domain", value: metadata.domain)))
+        items.append(.text(TextItem(title: "API version", value: String(describing: metadata.apiVersion))))
         items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
@@ -327,7 +335,10 @@ final class DeveloperToolsViewModel: ObservableObject {
             })))
         }
 
-        items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.text(TextItem(
+            title: "Is federation enabled?",
+            value: String(describing: metadata.isFederationEnabled)
+        )))
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: { [weak self] in
             self?.stopFederatingFoma()
         })))
@@ -337,15 +348,13 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
             self?.stopBellaFomaFederating()
         })))
-        return Section(
-            header: header,
-            items: items
-        )
-    }()
 
-    private var canSwitchBackend: Bool {
-        guard let sessionManager = SessionManager.shared else { return false }
-        return sessionManager.canSwitchBackend() == nil
+        sections.append(
+            Section(
+                header: header,
+                items: items
+            )
+        )
     }
 
     private lazy var debugViewSection: Section = {
@@ -433,23 +442,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             userID: selfUser.remoteIdentifier,
             storage: UserDefaults.shared()
         ).lastCompletedAppVersionMigration?.string
-    }
-
-    private var backendName: String {
-        BackendEnvironment.shared.title
-    }
-
-    private var backendDomain: String {
-        BackendInfo.domain ?? "None"
-    }
-
-    private var apiVersion: String {
-        guard let version = BackendInfo.apiVersion else { return "None" }
-        return String(describing: version.rawValue)
-    }
-
-    private var isFederationEnabled: String {
-        String(describing: BackendInfo.isFederationEnabled)
     }
 
     private var selfUser: ZMUser? {

@@ -50,4 +50,7 @@ public protocol TextMessageData: NSObjectProtocol {
 
     /// Edit the text content
     func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool)
+
+    /// The multipart message data associated with this message for use with the Wire Cells feature.
+    var multipartMessageData: MultipartMessageData? { get }
 }

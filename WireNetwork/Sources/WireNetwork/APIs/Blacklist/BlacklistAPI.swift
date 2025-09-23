@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An opaque token used for fetching the next page in Wire Cells APIs.
-package struct WireCellsPageToken: Sendable, Equatable {
+import Foundation
 
-    /// The offset of the next page.
-    let offset: Int
+// sourcery: AutoMockable
+// An API access object for fetching the build number blacklist.
+public protocol BlacklistAPI {
+
+    /// Get the build number blacklist from the server.
+
+    func getBlacklist() async throws -> BuildNumberBlacklist
 
 }

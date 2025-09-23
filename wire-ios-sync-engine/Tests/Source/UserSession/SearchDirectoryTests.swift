@@ -44,7 +44,7 @@ final class SearchDirectoryTests: DatabaseTest {
     func testThatItEmptiesTheSearchUserCacheOnTeardown() {
         // given
         let uuid = UUID()
-        let sut = makeSearchDirectory()
+        let sut = makeSearchDirectory(apiVersion: .v0)
         insertSearchUser(remoteIdentifier: uuid)
 
         XCTAssertNotNil(mockCache.object(forKey: uuid as NSUUID))
@@ -59,14 +59,15 @@ final class SearchDirectoryTests: DatabaseTest {
 
     // MARK: - Helpers
 
-    private func makeSearchDirectory() -> SearchDirectory {
+    private func makeSearchDirectory(apiVersion: APIVersion) -> SearchDirectory {
         SearchDirectory(
             searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransport,
             searchUsersCache: mockCache,
             refreshUsersMissingMetadataAction: .dummy,
-            refreshConversationsMissingMetadataAction: .dummy
+            refreshConversationsMissingMetadataAction: .dummy,
+            apiVersion: apiVersion
         )
     }
 

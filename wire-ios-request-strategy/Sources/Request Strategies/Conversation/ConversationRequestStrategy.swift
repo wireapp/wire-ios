@@ -66,13 +66,18 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationEventProcessor: ConversationEventProcessor
 
     let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
         mlsService: MLSServiceInterface,
-        removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.removeLocalConversation = removeLocalConversation
 
@@ -91,7 +96,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         )
 
         self.conversationByIDListTranscoder = ConversationByIDListTranscoder(
-            context: managedObjectContext
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByIDListSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -100,7 +107,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByQualifiedIDListTranscoder = ConversationByQualifiedIDListTranscoder(
             context: managedObjectContext,
-            removeLocalConversationUseCase: removeLocalConversation
+            removeLocalConversationUseCase: removeLocalConversation,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByQualifiedIDListSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -109,7 +118,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByIDTranscoder = ConversationByIDTranscoder(
             context: managedObjectContext,
-            removeLocalConversationUseCase: removeLocalConversation
+            removeLocalConversationUseCase: removeLocalConversation,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -118,7 +129,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.conversationByQualifiedIDTranscoder = ConversationByQualifiedIDTranscoder(
             context: managedObjectContext,
-            removeLocalConversationUseCase: removeLocalConversation
+            removeLocalConversationUseCase: removeLocalConversation,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
         self.conversationByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -130,30 +143,55 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             \.needsToBeUpdatedFromBackend
         )
 
-        self.conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
+        self.conversationEventProcessor = ConversationEventProcessor(
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
         self.addParticipantActionHandler = AddParticipantActionHandler(
             context: managedObjectContext,
             eventProcessor: conversationEventProcessor
         )
-        self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
-        self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext)
+        self.removeParticipantActionHandler = RemoveParticipantActionHandler(
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(
+            context: managedObjectContext,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
 
-        self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext)
+        self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext, localDomain: localDomain)
 
         self.actionSync = EntityActionSync(actionHandlers: [
             addParticipantActionHandler,
             removeParticipantActionHandler,
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
-            SyncConversationActionHandler(context: managedObjectContext),
+            SyncConversationActionHandler(
+                context: managedObjectContext,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            ),
             CreateGroupConversationActionHandler(
                 context: managedObjectContext,
-                removeLocalConversationUseCase: removeLocalConversation
+                removeLocalConversationUseCase: removeLocalConversation,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
             CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext)
+            SetAllowGuestsAndServicesActionHandler(
+                context: managedObjectContext,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         ])
+
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -188,8 +226,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
-            } else if let domain = BackendInfo.domain {
-                let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: domain)
+            } else if let localDomain {
+                let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: localDomain)
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             }
         }
@@ -262,7 +300,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         switch apiVersion {
         case .v0:
@@ -272,8 +310,8 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
         case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
-            } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
-                let qualifiedID = QualifiedID(uuid: identifier, domain: domain)
+            } else if let identifier = object.remoteIdentifier, let localDomain {
+                let qualifiedID = QualifiedID(uuid: identifier, domain: localDomain)
                 synchronize(qualifiedID: qualifiedID)
             }
         }
@@ -441,7 +479,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
                 request = ZMTransportRequest(
@@ -483,7 +521,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 )
 
             case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
                 request = ZMTransportRequest(
@@ -527,18 +565,22 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversation
-    )
+    private let processor: ConversationEventPayloadProcessor
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     init(
         context: NSManagedObjectContext,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -650,18 +692,22 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversation
-    )
+    private let processor: ConversationEventPayloadProcessor
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     init(
         context: NSManagedObjectContext,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -794,13 +840,19 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -858,18 +910,25 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversation
-    )
+    private let processor: ConversationEventPayloadProcessor
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+
+    private let isFederationEnabled: Bool
 
     init(
         context: NSManagedObjectContext,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.removeLocalConversation = removeLocalConversationUseCase
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: removeLocalConversation,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.isFederationEnabled = isFederationEnabled
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {

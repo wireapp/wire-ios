@@ -45,6 +45,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     enum Failure: Error {
         case missingProxyCredentials
         case apiVersionNotFound
+        case pushChannelAlreadyOpened
     }
 
     private var selfUserID: UUID {
@@ -53,16 +54,20 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 
     private var selfClientID: String
 
+    private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
+
     init(
         parent: any Scope,
         selfClientID: String
     ) {
         self.selfClientID = selfClientID
+        self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: selfClientID)
         super.init(parent: parent)
     }
 
-    func pullEvents() async throws {
+    private var currentTask: Task<Void, any Error>?
 
+    func pullEvents() async throws {
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -72,19 +77,45 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             coreCryptoProvider: coreCryptoProvider
         )
 
+        // make sure no pushChannel is open
+        let pushChannelState = PushChannelState(
+            sharedContainerURL: dependency.applicationContainer,
+            clientID: selfClientID
+        )
+        do {
+            try await pushChannelState.markAsOpen()
+        } catch {
+            throw Failure.pushChannelAlreadyOpened
+        }
+
+        Task { [weak self] in
+            var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+            WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSyncV3, .newNSE)
+            self?.currentTask?.cancel()
+            request?.acknowledge()
+            WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSyncV3, .newNSE)
+        }
+
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
 
-        do {
-            try await useCase.invoke()
-        } catch {
-            // either we timeout during decrypting/storing events OR an issue with the sync
-            // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
-            // to show them
-            WireLogger.sync.warn(
-                "syncing events via websocket: \(error.localizedDescription)",
-                attributes: .syncAttributes(initialSync: false)
-            )
+        currentTask = Task {
+            do {
+                try Task.checkCancellation()
+                try await useCase.invoke()
+            } catch {
+                // either we timeout during decrypting/storing events OR an issue with the sync
+                // In both cases, we end up with a stream of notifications that has not been shown, so we need to
+                // continue to show them
+                WireLogger.sync.warn(
+                    "syncing events via websocket: \(String(describing: error))",
+                    attributes: .incrementalSyncV3, .newNSE
+                )
+                await pushChannelState.markAsClosed()
+            }
         }
+        try await currentTask?.value
+        WireLogger.sync.debug("closing push channel")
+        await pushChannelState.markAsClosed()
 
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream
@@ -119,7 +150,9 @@ extension SyncEventsStep {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: dependency.messageLocalStore,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }
 
@@ -155,7 +188,8 @@ extension SyncEventsStep {
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: BackendInfo.domain
         )
     }
 
@@ -290,6 +324,7 @@ extension SyncEventsStep {
             BackendEnvironment(
                 url: legacyBackendEnvironment.backendURL,
                 webSocketURL: legacyBackendEnvironment.backendWSURL,
+                blacklistURL: legacyBackendEnvironment.blackListURL,
                 pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
                     PinnedKey(
                         key: trustData.certificateKey,

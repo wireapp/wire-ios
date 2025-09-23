@@ -20,6 +20,16 @@ import Foundation
 
 class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
+
     // MARK: - Methods
 
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -30,7 +40,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        guard let domain = action.domain?.nilIfEmpty ?? BackendInfo.domain else {
+        guard let domain = action.domain?.nilIfEmpty ?? localDomain else {
             action.fail(with: .missingDomain)
             return nil
         }

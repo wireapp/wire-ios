@@ -34,6 +34,19 @@ final class DeepLinksViewModel: ObservableObject {
 
     }
 
+    enum Backend: String, CaseIterable {
+
+        case staging
+        case anta
+        case bella
+        case chala
+        case diya
+        case elna
+        case foma
+        case lich
+
+    }
+
     let router: AppRootRouter?
     let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
@@ -67,4 +80,16 @@ final class DeepLinksViewModel: ObservableObject {
             _ = self.router?.openDeepLinkURL(url)
         }
     }
+
+    func openSwitchBackendLink(for backend: Backend) {
+        let config = switch backend {
+        case .staging:
+            "https://staging-nginz-https.zinfra.io/deeplink.json"
+        default:
+            "https://nginz-https.\(backend.rawValue).wire.link/deeplink.json"
+        }
+
+        openLink(urlString: "wire://access/?config=\(config)")
+    }
+
 }

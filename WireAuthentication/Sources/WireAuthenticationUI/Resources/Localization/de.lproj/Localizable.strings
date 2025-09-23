@@ -22,12 +22,27 @@
 "authentication.identity.input.submit" = "Weiter";
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
+"cloud_user_login.expiration_message" = "Die Session ist abgelaufen. Zum Fortfahren bitte Passwort eingeben.";
 "cloud_user_login.input_email.title" = "E-Mail";
 "cloud_user_login.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "cloud_user_login.input_password.title" = "Passwort";
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
 "cloud_user_login.submit" = "Weiter";
 "cloud_user_login.forgot_password" = "Passwort vergessen?";
+
+"login.sso.title" = "Anmelden";
+"login.sso.expiration_message" = "Ihre Session ist abgelaufen. Melden Sie sich mit Ihrem Unternehmenskonto an, um fortzufahren.";
+"login.sso.input_code.title" = "SSO Zugangscode";
+"login.sso.input_code.placeholder" = "SSO Zugangscode eingeben";
+"login.sso.submit" = "Anmeldung für Unternehmen";
+
+"logout.button.title" = "Abmelden";
+"logout.alert.title" = "Abmelden";
+"logout.alert.message" = "Entscheiden Sie, ob Sie Ihre Gesprächshistorie behalten oder unwiderruflich von diesem Gerät löschen wollen.";
+"logout.alert.delete_data_button" = "Abmelden und Historie löschen";
+"logout.alert.keep_data_button" = "Abmelden und Historie behalten";
+"logout.alert.cancel" = "Abbrechen";
+
 "create_account_or_team.title" = "Sie haben kein Benutzerkonto? ";
 "create_account_or_team.button" = "Konto oder Team erstellen";
 "create_account.button" = "Konto erstellen";
@@ -80,6 +95,8 @@
 
 "authentication.no_history.title" = "Sie nutzen Wire zum ersten Mal auf diesem Gerät.";
 "authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
+"authentication.missing_history.title" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
+"authentication.missing_history.message" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "Keine Internetverbindung";

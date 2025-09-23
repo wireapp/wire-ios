@@ -145,10 +145,25 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         accessibilityLabel = messageTextView.attributedText.string
 
         container?.isBubble = isChatBubbleSimpleEnabled
+        updateContainerStyle()
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
     }
 
+    private func updateContainerStyle() {
+        guard let message, isChatBubbleSimpleEnabled else { return }
+        let isOwnMessage = message.isSentBySelfUser
+        let userColor = message.senderUser?.accentColor ?? .clear
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+    }
+
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
+        // FIXME: [WPB-16311] Remove this temporary solution once file previews are working in conversations.
+        if DeveloperFlag.wireCells.isOn, url == URL.openFilesViewLink {
+            let nodeIDs = message?.multipartMessageData?.attachments.compactMap(\.nodeID) ?? []
+            openFilesView(nodeIDs: nodeIDs)
+            return true
+        }
+
         // Open mention link
         if url.isMention {
             if let message,
@@ -171,6 +186,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             frame: selectionRect
         )
         return true
+    }
+
+    func openFilesView(nodeIDs: [UUID]) {
+        delegate?.conversationMessageWantsToOpenFilesView(self, nodeIDs: nodeIDs)
     }
 
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
@@ -324,4 +343,11 @@ extension ConversationTextMessageCellDescription {
         return cells
     }
 
+}
+
+extension URL {
+
+    // FIXME: [WPB-16311]: Remove once file previews are working in conversations.
+    /// A temporary means to open the Files View from a message cell link for Beta testing.
+    static let openFilesViewLink: URL = .init(string: "cells://open-files-view")!
 }

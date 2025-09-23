@@ -29,6 +29,7 @@ final class MessageSendFailureView: UIView {
         didSet {
             titleLabel.isHidden = isHidden
             retryButton.isHidden = isHidden
+            bottomConstraint?.isActive = !isHidden
         }
     }
 
@@ -41,9 +42,16 @@ final class MessageSendFailureView: UIView {
         insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     )
 
+    private var isChatBubbleSimpleEnabled: Bool
+    private var bottomConstraint: NSLayoutConstraint?
+
     // MARK: - initialization
 
-    override init(frame: CGRect) {
+    init(
+        frame: CGRect = .zero,
+        ischatBubbleSimpleEnabled: Bool = false
+    ) {
+        self.isChatBubbleSimpleEnabled = ischatBubbleSimpleEnabled
         super.init(frame: CGRect.zero)
 
         setupViews()
@@ -58,13 +66,23 @@ final class MessageSendFailureView: UIView {
 
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
+        if isChatBubbleSimpleEnabled {
+            titleLabel.textAlignment = .right
+        }
     }
 
     private func setupViews() {
         addSubview(stackView)
 
-        stackView.alignment = .leading
-        stackView.spacing = 15
+        if isChatBubbleSimpleEnabled {
+            stackView.spacing = 8
+            stackView.alignment = .trailing
+        } else {
+            stackView.spacing = 15
+            stackView.alignment = .leading
+        }
+
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
         [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
         retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
@@ -80,12 +98,23 @@ final class MessageSendFailureView: UIView {
 
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+
+        if isChatBubbleSimpleEnabled {
+            NSLayoutConstraint.activate([
+                stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
+                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
+                stackView.topAnchor.constraint(equalTo: topAnchor)
+            ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+        } else {
+            NSLayoutConstraint.activate([
+                stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                stackView.topAnchor.constraint(equalTo: topAnchor)
+            ])
+            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        }
+        bottomConstraint?.isActive = true
     }
 
     // MARK: - Methods

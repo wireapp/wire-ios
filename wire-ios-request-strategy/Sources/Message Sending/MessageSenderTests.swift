@@ -602,10 +602,6 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_thenInitiatesReset() async throws {
         // given
-        DeveloperFlag.resetMLSConversations.enable(true, storage: .temporary())
-        defer {
-            DeveloperFlag.resetMLSConversations.enable(false, storage: .standard)
-        }
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
@@ -744,7 +740,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
     }
 
-    struct Arrangement {
+    class Arrangement {
 
         enum Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
@@ -786,6 +782,7 @@ final class MessageSenderTests: MessagingTestBase {
         let initiateResetMLSConversationUseCase = WireRequestStrategySupport
             .MockInitiateResetMLSConversationUseCaseProtocol()
         let featureRepository = MockLegacyFeatureRepositoryInterface()
+        var apiVersion: APIVersion?
 
         init(coreDataStack: CoreDataStack) {
             self.coreDataStack = coreDataStack
@@ -802,7 +799,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
-            BackendInfo.apiVersion = apiVersion
+            self.apiVersion = apiVersion
             return self
         }
 
@@ -936,7 +933,8 @@ final class MessageSenderTests: MessagingTestBase {
                     context: coreDataStack.syncContext,
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-                    featureRepository: featureRepository
+                    featureRepository: featureRepository,
+                    apiVersion: apiVersion
                 )
             )
         }

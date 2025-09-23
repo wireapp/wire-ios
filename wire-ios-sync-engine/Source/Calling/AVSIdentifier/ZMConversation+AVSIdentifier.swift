@@ -24,6 +24,10 @@ public extension ZMConversation {
             return nil
         }
 
-        return .init(identifier: identifier, domain: domain)
+        return .init(
+            identifier: identifier,
+            domain: domain,
+            isFederationEnabled: managedObjectContext?.isFederationEnabled ?? false
+        )
     }
 }

@@ -59,16 +59,20 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
     unowned let eventMOC: NSManagedObjectContext
     unowned let syncMOC: NSManagedObjectContext
 
+    let isFederationEnabled: Bool
+
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
     public init(
         eventMOC: NSManagedObjectContext,
         syncMOC: NSManagedObjectContext,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        isFederationEnabled: Bool
     ) {
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
         self.lastEventIDRepository = lastEventIDRepository
+        self.isFederationEnabled = isFederationEnabled
         super.init()
     }
 

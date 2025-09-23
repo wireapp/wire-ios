@@ -55,7 +55,8 @@ public final class MessageSender: MessageSenderInterface {
         context: NSManagedObjectContext,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
-        featureRepository: LegacyFeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -65,6 +66,7 @@ public final class MessageSender: MessageSenderInterface {
         self.incrementalSyncObserver = incrementalSyncObserver
         self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
         self.featureRepository = featureRepository
+        self.apiVersion = apiVersion
     }
 
     private let featureRepository: LegacyFeatureRepositoryInterface
@@ -79,6 +81,7 @@ public final class MessageSender: MessageSenderInterface {
     private let logAttributesBuilder: MessageLogAttributesBuilder
     private let maxRetryAttempts = 3
     private var retryCount = 0
+    private let apiVersion: WireTransport.APIVersion?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -87,7 +90,7 @@ public final class MessageSender: MessageSenderInterface {
         await incrementalSyncObserver.waitUntilCanSendMessage()
 
         do {
-            guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+            guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
@@ -133,7 +136,7 @@ public final class MessageSender: MessageSenderInterface {
     private func attemptToSend(message: any SendableMessage) async throws {
         let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
-        guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+        guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
             throw MessageSendError.missingMessageProtocol
         }
@@ -426,8 +429,7 @@ public final class MessageSender: MessageSenderInterface {
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard DeveloperFlag.resetMLSConversations.isOn,
-                      feature.status == .enabled,
+                guard feature.status == .enabled,
                       feature.config.mlsConversationReset == true
                 else {
                     WireLogger.messaging.debug(

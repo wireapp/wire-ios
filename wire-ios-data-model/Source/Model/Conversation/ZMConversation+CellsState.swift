@@ -40,7 +40,7 @@ public extension ZMConversation {
 
     /// Mapping `pending` state to enabled because the feature is considered ready to use on client side.
 
-    var isEnabled: Bool {
+    var isCellsEnabled: Bool {
         switch cellsState {
         case .ready, .pending:
             true

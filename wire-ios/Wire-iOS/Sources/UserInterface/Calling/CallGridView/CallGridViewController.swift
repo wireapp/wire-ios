@@ -66,6 +66,7 @@ final class CallGridViewController: UIViewController {
 
     private let mediaManager: AVSMediaManagerInterface
     private let voiceChannel: VoiceChannel
+    private let isFederationEnabled: Bool
 
     // MARK: - Public Properties
 
@@ -108,13 +109,15 @@ final class CallGridViewController: UIViewController {
     init(
         voiceChannel: VoiceChannel,
         configuration: CallGridViewControllerInput,
-        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
+        isFederationEnabled: Bool
     ) {
 
         self.configuration = configuration
         self.mediaManager = mediaManager
         self.voiceChannel = voiceChannel
         self.networkQuality = voiceChannel.networkQuality
+        self.isFederationEnabled = isFederationEnabled
 
         super.init(nibName: nil, bundle: nil)
 
@@ -552,7 +555,8 @@ extension CallGridViewController: UICollectionViewDataSource {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule,
+                isFederationEnabled: isFederationEnabled
             )
             viewCache[streamId] = view
             return view

@@ -80,7 +80,9 @@ public class DiskDatabaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: sharedContainerURL,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

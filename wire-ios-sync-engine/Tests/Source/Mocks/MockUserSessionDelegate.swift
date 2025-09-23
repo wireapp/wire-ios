@@ -48,4 +48,6 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     func clientDidFailSyncing(error: any Error, retryHandler: @escaping () -> Void) {}
 
+    func userSessionDidDiscoverBuildIsBlacklisted() {}
+
 }

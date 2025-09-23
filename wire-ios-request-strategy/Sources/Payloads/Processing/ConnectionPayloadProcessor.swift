@@ -21,6 +21,12 @@ import WireLogging
 
 final class ConnectionPayloadProcessor {
 
+    private let isFederationEnabled: Bool
+
+    init(isFederationEnabled: Bool) {
+        self.isFederationEnabled = isFederationEnabled
+    }
+
     func processPayload(
         _ payload: Payload.UserConnectionEvent,
         in context: NSManagedObjectContext

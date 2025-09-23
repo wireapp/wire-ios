@@ -77,6 +77,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
     private nonisolated(unsafe) var mlsTransport: MlsTransport?
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
+    private let localDomain: String?
 
     public init(
         selfUserID: UUID,
@@ -85,7 +86,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?,
-        allowCreation: Bool = true
+        allowCreation: Bool = true,
+        localDomain: String?
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -95,6 +97,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
+        self.localDomain = localDomain
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
@@ -265,7 +268,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             else {
                 return nil
             }
-            return MLSClientID(userClient: selfClient)
+            return MLSClientID(
+                userClient: selfClient,
+                localDomain: self.localDomain
+            )
         }
 
         // Initialise MLS if we have previously registered an MLS client

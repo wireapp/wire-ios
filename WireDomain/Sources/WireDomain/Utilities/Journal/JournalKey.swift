@@ -74,6 +74,21 @@ public extension JournalKey where Value == Bool {
         defaultValue: true
     )
 
+    /// Whether MLS is enabled on the backend.
+
+    static let isBackendMLSEnabled = Self(
+        "isBackendMLSEnabled",
+        defaultValue: false
+    )
+
+    /// Whether the local domain needs to be added to entities
+    /// in the database.
+
+    static let isFederationMigrationRequired = Self(
+        "isFederationMigrationRequired",
+        defaultValue: false
+    )
+
 }
 
 public extension JournalKey where Value == Set<String> {
