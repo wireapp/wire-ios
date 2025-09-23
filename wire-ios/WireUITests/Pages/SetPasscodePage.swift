@@ -18,38 +18,24 @@
 
 import XCTest
 
-class SettingsPage: PageModel {
+class SetPasscodePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        accountSettingsMenu
+        passwordField
     }
 
-    var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+    var passwordField: XCUIElement {
+        app.secureTextFields["PasscodeField"]
     }
 
-    var optionsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Options"]
+    var setPasscodeButton: XCUIElement {
+        app.buttons["createPasscodeButton"]
     }
 
-    var conversationsTab: XCUIElement {
-        app.buttons["bottomBarRecentListButton"]
-    }
-
-    func openAccountSettings() throws -> AccountSettingsPage {
-        accountSettingsMenu.tap()
-        return try AccountSettingsPage()
-    }
-
-    func openOptionsMenu() throws -> OptionsOnSettingsPage {
-        optionsMenu.tap()
+    func SetPasscode(_ pass: String) throws -> OptionsOnSettingsPage {
+        try passwordField.tapIfKeyboardNotFocused().typeText(pass)
+        setPasscodeButton.tap()
         return try OptionsOnSettingsPage()
     }
 
-    func switchToConversationsTab() throws -> ConversationsPage {
-        conversationsTab.tap()
-        return try ConversationsPage()
-    }
 }
