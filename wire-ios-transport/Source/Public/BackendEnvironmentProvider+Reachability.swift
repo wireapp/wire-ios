@@ -16,23 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+public extension BackendEnvironmentProvider {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
+    var reachability: ZMReachability {
+        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
 
-        // when
-        // then
-        XCTAssertEqual(viewModel.debugItems.count, 15)
+        let serverNames: [String] = if let proxy {
+            [proxy.host]
+        } else {
+            [backendURL, backendWSURL].compactMap(\.host)
+        }
+
+        return ZMReachability(serverNames: serverNames, group: group)
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
-    }
 }
