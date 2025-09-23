@@ -15,7 +15,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import Foundation
 
 class SelfUserAPIV8: SelfUserAPIV7 {
     override var apiVersion: APIVersion { .v8 }
+
+    override func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws {
+        let encoder = JSONEncoder.defaultEncoder
+        let payload =
+            SupportedProtocolsPayloadV5(supportedProtocols: Set(supportedProtocols.map { $0.toNetworkModel() }))
+        let body = try encoder.encode(payload)
+        let path = resourcePath + "/supported-protocols"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        do {
+            try ResponseParser()
+                .success(code: .ok)
+                .failure(code: .conflict, decodableError: FailureResponseV0.self)
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let failureResponse = error as? FailureResponseV0,
+               failureResponse.label == "mls-protocol-error",
+               failureResponse.code == HTTPStatusCode.conflict.rawValue {
+                throw SelfUserAPIError.mlsProtocolError(failureResponse.message)
+            } else {
+                throw error
+            }
+        }
+    }
+
 }

@@ -21,7 +21,7 @@ import WireDomain
 import WireLogging
 
 // sourcery: AutoMockable
-public protocol ResolveOneOnOneConversationsUseCaseProtocol {
+public protocol LegacyResolveOneOnOneConversationsUseCaseProtocol {
 
     @discardableResult
     func invoke() async throws -> Bool
@@ -30,10 +30,10 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
 typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol
 
-struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
+struct LegacyResolveOneOnOneConversationsUseCase: LegacyResolveOneOnOneConversationsUseCaseProtocol {
 
     let context: NSManagedObjectContext
-    let supportedProtocolService: any SupportedProtocolsServiceInterface
+    let supportedProtocolService: any LegacySupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 
