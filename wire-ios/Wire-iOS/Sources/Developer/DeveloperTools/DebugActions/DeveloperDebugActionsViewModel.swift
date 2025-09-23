@@ -87,7 +87,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
-            .init(title: "Clear scoped core crypto key", action: clearScopedCoreCryptoKey)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -98,21 +97,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         ]
 
         debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
-    }
-
-    // MARK: - Core crypto scoped key
-
-    private func clearScopedCoreCryptoKey() {
-        guard let account = userSession?.account else {
-            return
-        }
-
-        do {
-            try CoreCryptoKeyProvider.deleteScopedCoreCryptoKey(userID: account.userIdentifier)
-            logger.debug("deleted scoped core crypto key for account \(account.userIdentifier)")
-        } catch {
-            logger.debug("failed to delete scoped core crypto key: \(error)")
-        }
     }
 
     // MARK: - App version migration
