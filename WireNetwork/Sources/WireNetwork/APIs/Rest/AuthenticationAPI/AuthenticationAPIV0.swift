@@ -266,6 +266,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+            .parse(code: response.statusCode, data: data)
     }
 
     func requestEmailVerificationCode(for email: String) async throws {
@@ -530,7 +531,7 @@ struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
     let locale: String
     let managedBy: ManagedByV0?
     let name: String
-    let picture: [String]?
+    // removed picture from parsing - WPB-20534
     let qualifiedID: QualifiedIDV0
     let status: String?
     let teamID: UUID?
@@ -541,7 +542,7 @@ struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
         case id
         case locale
         case managedBy = "managed_by"
-        case name, picture
+        case name
         case qualifiedID = "qualified_id"
         case status
         case teamID = "team"
@@ -556,7 +557,6 @@ struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
             accentID: accentID,
             managedBy: managedBy?.toAPIModel(),
             assets: assets?.map { $0.toAPIModel() },
-            picture: picture,
             email: email,
             status: status,
             supportedProtocols: [.proteus]
