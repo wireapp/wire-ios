@@ -46,20 +46,22 @@ public struct PushSupportedProtocolsSync: PushSupportedProtocolsSyncProtocol {
     /// Update the supported protocols remotely then update locally.
 
     public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
+        var supportedProtocols = supportedProtocols
+
         do {
             try await api.pushSupportedProtocols(supportedProtocols)
-            await store.updateSelfUserSupportedProtocols(supportedProtocols: supportedProtocols.toDomainModel())
-
         } catch let SelfUserAPIError.mlsProtocolError(errorMessage) {
             WireLogger.supportedProtocols
-                .warn("Failed to push supported protocols: \(errorMessage), fallback to adding mls")
+                .warn(
+                    "Failed to push supported protocols: \(errorMessage), fallback to adding mls",
+                    attributes: .safePublic
+                )
 
-            var newSupportedProtocols = supportedProtocols
-            newSupportedProtocols.insert(.mls)
-
-            try await api.pushSupportedProtocols(newSupportedProtocols)
-            await store.updateSelfUserSupportedProtocols(supportedProtocols: newSupportedProtocols.toDomainModel())
+            supportedProtocols.insert(.mls)
+            try await api.pushSupportedProtocols(supportedProtocols)
         }
+
+        await store.updateSelfUserSupportedProtocols(supportedProtocols: supportedProtocols.toDomainModel())
     }
 
 }
