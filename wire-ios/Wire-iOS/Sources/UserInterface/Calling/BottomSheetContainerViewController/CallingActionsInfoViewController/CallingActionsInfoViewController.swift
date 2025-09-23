@@ -158,13 +158,8 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func calculateHeightConstant() -> CGFloat {
-<<<<<<< HEAD
-        if UIDevice.current.twoDimensionOrientation.isLandscape {
-            128 + view.safeAreaInsets.bottom
-=======
         var baseHeight: CGFloat = if UIDevice.current.twoDimensionOrientation.isLandscape {
             128
->>>>>>> fecb07dd19 (fix: calling actions view moves down - WPB-20193 (#3591))
         } else {
             isIncomingCall ? 250 : 128
         }
