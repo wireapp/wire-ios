@@ -436,6 +436,7 @@
 		87E2CE312119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */; };
 		87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */; };
 		87EFA3AC210F52C6004DFA53 /* ZMConversation+LastMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */; };
+		882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
 		A90676EB238EB05F006417AC /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E9238EB05F006417AC /* Role.swift */; };
@@ -1326,6 +1327,7 @@
 		87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Cleared.swift"; sourceTree = "<group>"; };
 		87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+DeleteOlderMessages.swift"; sourceTree = "<group>"; };
 		87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+LastMessages.swift"; sourceTree = "<group>"; };
+		882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeyTracker.swift; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A90676E9238EB05F006417AC /* Role.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
@@ -2657,6 +2659,7 @@
 		EEC737B22D01ADAA003C0FC9 /* Core Crypto */ = {
 			isa = PBXGroup;
 			children = (
+				882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */,
 				06D0648D2DDFF2560089EB6D /* CoreCryptoKeyMigrationManagerProtocol.swift */,
 				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
 				63B1334629A503D000009D84 /* CoreCryptoKeyProvider.swift */,
@@ -4156,6 +4159,7 @@
 				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
 				5986A08D2C6B710E00299181 /* TextMessageData.swift in Sources */,
 				066328602428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift in Sources */,
+				882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */,
 				EE0DE5042A24D2A10029746C /* DeleteSubgroupAction.swift in Sources */,
 				EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */,
 				CB5212122D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift in Sources */,

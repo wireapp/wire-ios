@@ -123,41 +123,38 @@ public class CoreCryptoKeyProvider {
     }
     
     private func rotateKey(path: String) async throws {
-        func logInfo(_ message: String) {
-            WireLogger.coreCrypto.info("[key rotation] \(message)")
-        }
-        
+
         // Get the old key, to rotate with the new key
         guard let oldKey = try fetchCoreCryptoKey() else {
             throw Error.keyNotFound
         }
         let oldKeyId = uniqueKeyId
         let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId)
-        logInfo("fetched the old key")
+        logRotation("fetched the old key")
             
         // Generate a new key and save it with a new key ID
         let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
         let newKeyId = UUID()
         let newItem = CoreCryptoKeychainItem(uniqueKeyId: newKeyId)
         try KeychainManager.storeItem(newItem, value: newKey)
-        logInfo("generated and saved the new key")
+        logRotation("generated and saved the new key")
         
         do {
             // Update the database
             try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
-            logInfo("updated the database with the new key")
+            logRotation("updated the database with the new key")
             
             // Delete the old key
-            try KeychainManager.deleteItem(oldItem)
-            logInfo("deleted old key from keychain")
-    
+            deleteOrMarkAsStale(item: oldItem)
+            logRotation("deleted or marked old key as stale")
+            
             // Update the unique key identifier
             uniqueKeyId = newKeyId
-            logInfo("updated unique key identifier")
+            logRotation("updated unique key identifier")
             
             // Mark the rotation as done
             coreCryptoKeyMigrationManager.markKeyRotationAsDone()
-            logInfo("marked key rotation as done")
+            logRotation("marked key rotation as done")
 
         } catch {
             
@@ -166,25 +163,25 @@ public class CoreCryptoKeyProvider {
             case CoreCryptoKeyMigrationManagerError.failedToUpdateKey(let underlyingError):
                 
                 // We failed to rotate the key, rollback by deleting the new key
-                try KeychainManager.deleteItem(newItem)
-                logInfo("rollback: deleted new key from keychain because rotation failed")
+                deleteOrMarkAsStale(item: newItem)
+                logRotation("rollback: deleted or marked new key as stale")
                 throw underlyingError
-    
-            case KeychainManager.Error.failedToDeleteItemFromKeychain:
-                
-                // retry, or log and mark key as stale
-                break
+  
             default:
                 throw error
             }
         }
     }
     
-    private func deleteOrMarkForDeletion(item: CoreCryptoKeychainItem) {
+    private func logRotation(_ message: String) {
+        WireLogger.coreCrypto.info("[key rotation] \(message)")
+    }
+    
+    private func deleteOrMarkAsStale(item: CoreCryptoKeychainItem) {
         do {
             try KeychainManager.deleteItem(item)
         } catch {
-            
+            StaleCoreCryptoKeysTracker.addKey(id: item.uniqueKeyId)
         }
     }
 
