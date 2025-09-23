@@ -30,10 +30,10 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
 typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol
 
-struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
+struct §: ResolveOneOnOneConversationsUseCaseProtocol {
 
     let context: NSManagedObjectContext
-    let supportedProtocolService: any SupportedProtocolsServiceInterface
+    let supportedProtocolService: any LegacySupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface
     let pullSelfUserClientsFactory: PullSelfUserClientsFactory
 

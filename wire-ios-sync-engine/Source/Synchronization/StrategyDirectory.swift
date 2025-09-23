@@ -484,7 +484,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
         ResolveOneOnOneConversationsUseCase(
             context: context,
-            supportedProtocolService: SupportedProtocolsService(context: context),
+            supportedProtocolService: LegacySupportedProtocolsService(context: context),
             resolver: resolver,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory
         )

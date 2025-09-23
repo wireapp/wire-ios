@@ -1167,7 +1167,7 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
+public class MockLegacySupportedProtocolsServiceInterface: LegacySupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
 

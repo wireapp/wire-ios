@@ -28,7 +28,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ResolveOneOnOneConversationsUseCase!
-    private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
+    private var mockSupportedProtocolService: MockLegacySupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
     private var mockPullSelfUserClients: MockPullSelfUserClientsSyncProtocol!
     private var stack: CoreDataStack!
@@ -43,7 +43,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        mockSupportedProtocolService = MockSupportedProtocolsServiceInterface()
+        mockSupportedProtocolService = MockLegacySupportedProtocolsServiceInterface()
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
         mockPullSelfUserClients = MockPullSelfUserClientsSyncProtocol()
         mockPullSelfUserClients.pull_MockMethod = {}
