@@ -53,3 +53,7 @@ public protocol CoreCryptoKeyMigrationManagerProtocol {
     func updateKey(path: String, oldKey: Data, newKey: Data) async throws
 
 }
+
+public enum CoreCryptoKeyMigrationManagerError: Swift.Error {
+    case failedToUpdateKey(underlyingError: Swift.Error)
+}

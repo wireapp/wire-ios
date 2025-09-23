@@ -28,6 +28,8 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         self.journal = journal
     }
 
+    // MARK: Journal updates
+
     public var isMigrationToBytesNeeded: Bool {
         journal[.isCoreCryptoKeyMigrationToBytesRequired]
     }
@@ -38,15 +40,6 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     public var isKeyRotationNeeded: Bool {
         journal[.isCoreCryptoKeyRotationRequired]
-    }
-
-    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
-        WireLogger.coreCrypto.info("Core crypto key migration is required", attributes: .safePublic)
-
-        try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
-        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
-
-        WireLogger.coreCrypto.info("Core crypto key is migrated successfully", attributes: .safePublic)
     }
 
     public func markMigrationToBytesAsSkipped() {
@@ -66,9 +59,24 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
         journal[.isCoreCryptoKeyRotationRequired] = false
     }
+    
+    // MARK: Migrations
 
+    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
+        WireLogger.coreCrypto.info("Core crypto key migration from string to bytes is required", attributes: .safePublic)
+
+        try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
+        journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
+
+        WireLogger.coreCrypto.info("Core crypto key is migrated to bytes successfully", attributes: .safePublic)
+    }
+    
     public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
-        try await updateDatabaseKey(name: path, oldKey: oldKey, newKey: newKey)
+        do {
+            try await updateDatabaseKey(name: path, oldKey: oldKey, newKey: newKey)
+        } catch {
+            throw CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError: error)
+        }
     }
 
 }
