@@ -561,7 +561,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return true
         }
 
-        // This message is from the same sender and is visually grouped with the previous message.
+        // This message is from the same sender but is not visually grouped with the previous message.
         if !context.isGroupedWithPreviousMessage {
             return true
         }
