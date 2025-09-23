@@ -408,9 +408,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 attached file</string>
+        <string>1 angehängte Datei</string>
         <key>other</key>
-        <string>%d attached files</string>
+        <string>%d angehängte Dateien</string>
       </dict>
     </dict>
   </dict>
