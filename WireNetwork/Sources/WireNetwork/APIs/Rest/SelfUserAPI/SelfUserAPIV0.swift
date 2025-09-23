@@ -117,7 +117,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let managedBy: ManagedByV0?
     let name: String
     let phone: String?
-    // removing picture because it's not a wrong format
+    // removed picture from parsing because of wrong format - WPB-20534
     let qualifiedID: QualifiedIDV0
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
