@@ -270,7 +270,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
-    let environmentStore: BackendEnvironmentStore
+    public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
     public internal(set) var activeUserSession: ZMUserSession? {
@@ -849,7 +849,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func logout(account: Account, error: Error? = nil) {
+    public func logout(account: Account, error: Error? = nil) {
         WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 

@@ -16,10 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An opaque token used for fetching the next page in Wire Cells APIs.
-package struct WireCellsPageToken: Sendable, Equatable {
+import Foundation
 
-    /// The offset of the next page.
-    let offset: Int
+public extension BackendEnvironmentProvider {
+
+    var reachability: ZMReachability {
+        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
+
+        let serverNames: [String] = if let proxy {
+            [proxy.host]
+        } else {
+            [backendURL, backendWSURL].compactMap(\.host)
+        }
+
+        return ZMReachability(serverNames: serverNames, group: group)
+    }
 
 }

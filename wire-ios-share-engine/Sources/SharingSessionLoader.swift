@@ -185,11 +185,11 @@ public struct SharingSessionLoader {
 
         // TODO: [WPB-17732] de-duplicate when implementing NSE
         if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-            // TODO: [WPB-14630] mark federation migration needed
-        }
-
-        if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-            // TODO: [WPB-14630] mark access token migration needed
+            // Now that federation is enabled we'll start storing domains
+            // on entities in the database. We'll therefore need to add
+            // the local domain to all existing entities so they're
+            // fully qualified.
+            journal[.isFederationMigrationRequired] = true
         }
 
         // Store new metadata.
@@ -275,15 +275,12 @@ public struct SharingSessionLoader {
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
         }
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [legacyEnvironment.backendURL, legacyEnvironment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
         let transportSession = ZMTransportSession(
             environment: legacyEnvironment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             cookieStorage: legacyCookieStorage,
-            reachability: reachability,
+            reachability: legacyEnvironment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: appGroupID,
             applicationVersion: buildNumber,

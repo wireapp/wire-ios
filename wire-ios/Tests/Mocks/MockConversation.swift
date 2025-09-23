@@ -94,6 +94,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var hasMoreHistory: Bool = false
 
     var wireCellName: String = ""
+
+    var isCellsEnabled: Bool = false
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

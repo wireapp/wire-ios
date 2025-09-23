@@ -26,8 +26,8 @@ public protocol PushChannelStateProtocol {
 }
 
 struct PushChannelState: PushChannelStateProtocol {
-    enum Failure: Error {
-        case alreadyLocked
+    enum Failure: Error, Equatable {
+        case alreadyLocked(sameProcess: Bool)
     }
 
     /// The file context only prevents other processes to get the lock
@@ -49,11 +49,11 @@ struct PushChannelState: PushChannelStateProtocol {
     func markAsOpen() async throws {
 
         if await Self.processLock.isLocked {
-            throw Failure.alreadyLocked
+            throw Failure.alreadyLocked(sameProcess: true)
         }
 
         if !fileContext.tryAcquireLock() {
-            throw Failure.alreadyLocked
+            throw Failure.alreadyLocked(sameProcess: false)
         }
         await Self.processLock.lock()
     }

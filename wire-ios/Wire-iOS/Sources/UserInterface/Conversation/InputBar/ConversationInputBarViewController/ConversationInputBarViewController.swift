@@ -172,7 +172,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons)
+        let inputBar = InputBar(buttons: inputBarButtons, isWireCellsEnabled: conversation.isCellsEnabled)
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -936,8 +936,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ??
                 info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image,
-               let jpegData = image.jpegData(compressionQuality: 0.9) {
+            if let image, let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
                         UIImageWriteToSavedPhotosAlbum(
@@ -957,7 +956,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: mediaType)
+                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: UTType.jpeg.identifier)
                     }
                 }
 
@@ -1215,7 +1214,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func useWireCells() -> Bool {
-        DeveloperFlag.wireCells.isOn
+        DeveloperFlag.wireCells.isOn && conversation.isCellsEnabled
     }
 
     private func observeDraftAttachments() {

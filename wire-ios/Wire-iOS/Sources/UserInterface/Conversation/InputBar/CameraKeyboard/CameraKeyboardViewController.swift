@@ -629,8 +629,13 @@ extension CameraKeyboardViewController: CameraCellDelegate {
         delegate?.cameraKeyboardViewControllerWantsToOpenFullScreenCamera(self)
     }
 
-    func cameraCell(_ cameraCell: CameraCell, didPickImageData imageData: Data) {
-        delegate?.cameraKeyboardViewController(self, didSelectImageData: imageData, isFromCamera: true, uti: nil)
+    func cameraCell(_ cameraCell: CameraCell, didPickImageData imageData: Data, type: UTType) {
+        delegate?.cameraKeyboardViewController(
+            self,
+            didSelectImageData: imageData,
+            isFromCamera: true,
+            uti: type.identifier
+        )
     }
 }
 

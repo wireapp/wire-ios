@@ -29,14 +29,24 @@ extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview() -> FilesViewModel {
-        FilesViewModel(
+        let cache = fileCache()
+        let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
+        localAssetStore.assetNodeID_MockValue = nil
+        localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
+
+        return FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("root")),
                 repository: previewNodesRepository()
             ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: previewNodesRepository(),
+                fileCache: cache,
+                localAssetStore: localAssetStore
+            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
-            fileCache: fileCache()
+            fileCache: cache
         )
     }
 
@@ -56,6 +66,7 @@ extension FilesItemViewModel {
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
+            onDelete: { _ in }
         )
     }
 
@@ -65,24 +76,22 @@ extension FilesItemViewModel {
 
 private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
     let repository = MockWireCellsNodesRepositoryProtocol()
+    let nodes = (0 ... 150).map { index in
+        WireCellsNode(
+            uuid: UUID(),
+            path: "root/foo-\(index).jpg",
+            modified: Date().addingTimeInterval(Double(-index * 60)),
+            mimeType: "image/jpeg",
+            ownerUserName: "Person \(index)",
+        )
+    }
     repository.getNodes_MockMethod = { request in
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
-        if request.offset >= 120 {
-            throw URLError(.notConnectedToInternet)
-        }
-
-        let nodes = (request.offset ..< request.offset + 30).map { index in
-            WireCellsNode(
-                uuid: UUID(),
-                path: "root/foo-\(index).jpg",
-                modified: Date(),
-                mimeType: "image/jpeg",
-                ownerUserName: "Person \(index)",
-            )
-        }
-        let nextOffset = request.offset + 30
-        return (nodes, nextOffset)
+        let end = min(request.offset + request.limit, nodes.count)
+        let page = request.offset < nodes.count ? Array(nodes[request.offset ..< end]) : []
+        let nextOffset = end < nodes.count ? end : nil
+        return (page, nextOffset)
     }
     return repository
 }

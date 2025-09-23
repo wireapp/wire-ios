@@ -37,6 +37,12 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
+
+        setupObservers()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
@@ -120,6 +126,45 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             } else {
                 self?.tags.removeValue(forKey: key)
             }
+        }
+    }
+
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillTerminate),
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
+    }
+
+    @objc
+    private func appDidEnterBackground() {
+        flushWithExpiringWindow(reason: "flushLogsOnDidEnterBackground")
+    }
+
+    @objc
+    private func appWillTerminate() {
+        flushWithExpiringWindow(reason: "flushLogsOnWillTerminate")
+    }
+
+    private func flushWithExpiringWindow(reason: String) {
+        ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { [weak self] expired in
+            guard let self else { return }
+
+            if expired {
+                warn("Time's up for flush logs due to \(reason)", attributes: .safePublic)
+                return
+            }
+            self.info("Flushing logs early due to \(reason)", attributes: .safePublic)
+            fileLogger.flush()
         }
     }
 

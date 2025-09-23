@@ -124,4 +124,25 @@ public extension Journal {
         self[key] = currentSet
     }
 
+    /// - Note: This method is used to export values of journal to written logs
+    func values() -> [String: String] {
+        var result = [String: String]()
+
+        [
+            JournalKey.isConsumableNotificationsEnabled,
+            JournalKey.isConversationSyncRequired,
+            JournalKey.isCoreCryptoKeyMigrationRequired,
+            JournalKey.isInitialSyncRequired,
+            JournalKey.isSyncV2Enabled,
+            JournalKey.isBackendMLSEnabled,
+            JournalKey.isFederationMigrationRequired
+
+        ].forEach {
+            result[$0.name] = "\(self[$0] == true ? "Yes" : "No")"
+        }
+        let groups = Array(self[JournalKey.brokenMLSGroupIDs])
+        result[JournalKey.brokenMLSGroupIDs.name] = groups.isEmpty ? "None" : groups.joined(separator: "\n")
+
+        return result
+    }
 }

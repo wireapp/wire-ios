@@ -218,8 +218,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addFileMessageCell()
         } else if message.isSystem {
             addSystemMessageCell()
-        } else if message.isMultipart, DeveloperFlag.wireCells.isOn {
-            addMultipartMessageCell()
         } else {
             addUnknownMessageCell()
         }
@@ -357,13 +355,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         )
     }
 
-    private func addMultipartMessageCell() -> [AnyConversationMessageCellDescription] {
-        guard let data = message.multipartMessageData else { return [] }
-
-        let cellDescription = MultipartMessageCellDescription(data: data)
-        return [AnyConversationMessageCellDescription(cellDescription)]
-    }
-
     private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
         let cellDescription = UnknownMessageCellDescription()
         return [AnyConversationMessageCellDescription(cellDescription)]
@@ -391,6 +382,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     text: data.title,
                     state: data.state,
                     hasError: data.isExpired,
+                    userSession: userSession,
                     buttonAction: {
                         data.touchAction()
                     }

@@ -93,6 +93,10 @@ extension CompositeMessageItemContent: TextMessageData {
     func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         // no op
     }
+
+    var multipartMessageData: MultipartMessageData? {
+        nil
+    }
 }
 
 // MARK: - ButtonMessageData
