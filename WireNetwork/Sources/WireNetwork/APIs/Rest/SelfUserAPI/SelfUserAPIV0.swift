@@ -129,7 +129,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
         case expiresAt = "expires_at"
         case handle, id, locale
         case managedBy = "managed_by"
-        case name, phone, picture
+        case name, phone
         case qualifiedID = "qualified_id"
         case service
         case ssoID = "sso_id"
