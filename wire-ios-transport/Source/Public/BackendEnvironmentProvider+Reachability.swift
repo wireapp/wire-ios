@@ -16,8 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ProxyModeError: Error {
+import Foundation
 
-    case proxyCredentialsRequired
+public extension BackendEnvironmentProvider {
+
+    var reachability: ZMReachability {
+        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
+
+        let serverNames: [String] = if let proxy {
+            [proxy.host]
+        } else {
+            [backendURL, backendWSURL].compactMap(\.host)
+        }
+
+        return ZMReachability(serverNames: serverNames, group: group)
+    }
 
 }

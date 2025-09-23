@@ -936,8 +936,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ??
                 info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image,
-               let jpegData = image.jpegData(compressionQuality: 0.9) {
+            if let image, let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
                         UIImageWriteToSavedPhotosAlbum(
@@ -957,7 +956,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: mediaType)
+                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: UTType.jpeg.identifier)
                     }
                 }
 

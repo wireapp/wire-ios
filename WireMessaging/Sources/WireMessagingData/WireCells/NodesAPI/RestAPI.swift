@@ -57,12 +57,16 @@ final class RestAPI: Sendable {
                     deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
                     isDraft: false
                 ),
-                text: request.filter.text.map { LookupFilterTextSearch(searchIn: .baseName, term: $0) },
+                text: LookupFilterTextSearch(searchIn: .baseName, term: request.filter.text ?? "*"),
                 type: TreeNodeType(request.filter.type)
             ),
             flags: [.withPreSignedURLs],
             limit: "\(request.limit)",
             offset: "\(request.offset)",
+            query: request.query.map { query in
+                let nodeIDs = query.nodeIDs?.compactMap { $0.uuidString.lowercased() }
+                return TreeQuery(uUIDs: nodeIDs)
+            },
             scope: RestLookupScope(
                 recursive: request.scope.isRecursive,
                 root: request.scope.root.map { RestNodeLocator($0) }

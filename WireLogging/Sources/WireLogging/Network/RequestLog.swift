@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireLogging
+public import Foundation
 
 struct RequestLog: Codable {
     var method: String
@@ -79,7 +78,7 @@ struct RequestLog: Codable {
     )
 }
 
-extension URL {
+public extension URL {
     var endpointRemoteLogDescription: String {
         let visibleCharactersCount = 3
 
@@ -135,7 +134,11 @@ public extension String {
     }
 }
 
-extension WireLogger {
+public extension WireLogger {
+    func log(_ request: URLRequest) {
+        log(request: request as NSURLRequest)
+    }
+
     func log(request: NSURLRequest) {
         let info = RequestLog(request)
 
@@ -161,25 +164,6 @@ extension WireLogger {
         } catch {
             let message = "RESPONSE: \(response.description)"
             self.error(message, attributes: .safePublic)
-        }
-    }
-}
-
-extension WireLoggerObjC {
-    static func logRequest(_ request: NSURLRequest) {
-        WireLogger.network.log(request: request)
-    }
-
-    static func logHTTPResponse(_ response: HTTPURLResponse) {
-        WireLogger.network.log(response: response)
-    }
-
-    @objc(logRequestLoopAtPath:)
-    static func logRequestLoop(at path: String) {
-        if let endpointDescription = URL(string: path)?.endpointRemoteLogDescription {
-            WireLogger.network.warn("Request loop detected for \(endpointDescription)", attributes: .safePublic)
-        } else {
-            WireLogger.network.warn("Request loop detected for \(path)")
         }
     }
 }

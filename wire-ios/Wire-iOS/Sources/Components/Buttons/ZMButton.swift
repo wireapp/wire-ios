@@ -126,7 +126,7 @@ class LegacyButton: ButtonWithLargerHitArea {
         updateStyle(variant: variant)
     }
 
-    private func updateStyle(variant: ColorSchemeVariant) {
+    func updateStyle(variant: ColorSchemeVariant) {
         guard let style = legacyStyle else { return }
 
         switch style {

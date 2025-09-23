@@ -31,6 +31,7 @@ public struct WireCellsFactory {
     private let fileCache: any FileCache
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: WireCellsLocalAssetRepository
+    private let filenameGenerator = FilenameGenerator()
 
     @MainActor
     public init(
@@ -71,7 +72,8 @@ public struct WireCellsFactory {
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository()
+            metadataRepository: WireCellsDraftMetadataRepository(),
+            filenameGenerator: filenameGenerator
         )
     }
 
@@ -102,7 +104,8 @@ public struct WireCellsFactory {
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository()
+            metadataRepository: WireCellsDraftMetadataRepository(),
+            filenameGenerator: filenameGenerator
         )
     }
 
@@ -111,10 +114,13 @@ public struct WireCellsFactory {
 public extension WireCellsFactory {
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration =
+            nodeIDs.isEmpty ? .conversationFileView(root: .path(cellName)) : .nodesFileView(nodeIDs: nodeIDs)
+
         let viewModel = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path(cellName)),
+                configuration: configuration,
                 repository: nodesAPI
             ),
             deleteNodesUseCase: WireCellsDeleteNodesUseCase(

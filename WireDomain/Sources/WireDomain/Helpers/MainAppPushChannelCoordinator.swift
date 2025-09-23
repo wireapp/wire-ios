@@ -58,7 +58,7 @@ public final class MainAppPushChannelCoordinator: MainAppPushChannelCoordinatorP
                     resumed = true
                     WireLogger.sync.debug(
                         "timed out waiting for push channel to be closed",
-                        attributes: .syncAttributes
+                        attributes: .incrementalSyncV3
                     )
                     self.stopMonitoring()
                     continuation.resume()
@@ -77,7 +77,7 @@ public final class MainAppPushChannelCoordinator: MainAppPushChannelCoordinatorP
                 self.stopMonitoring()
                 continuation.resume()
             }
-            WireLogger.sync.debug("request app extension to release", attributes: .syncAttributes)
+            WireLogger.sync.debug("request app extension to release", attributes: .incrementalSyncV3)
             notify()
         }
     }

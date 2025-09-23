@@ -26,7 +26,8 @@ import UniformTypeIdentifiers
 
 final class UploadDraftUseCaseTests {
 
-    private let fileURL = URL.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+    private let intermediaryFilesDirectory: URL
+    private let fileURL: URL
     private let draftsRepository = MockDraftsRepositoryProtocol()
     private let uploadManager = MockWireCellsNodeUploadManagerProtocol()
     private let nodesAPI = MockNodesAPIProtocol()
@@ -36,10 +37,19 @@ final class UploadDraftUseCaseTests {
         draftRepository: draftsRepository,
         uploadManager: uploadManager,
         nodesAPI: nodesAPI,
-        metadataRepository: metadataRepository
+        metadataRepository: metadataRepository,
+        intermediaryFilesDirectory: intermediaryFilesDirectory,
+        filenameGenerator: FilenameGenerator(date: { try! Date("2023-10-01T12:10:05Z", strategy: .iso8601) })
     )
 
-    init() {
+    init() throws {
+        self.intermediaryFilesDirectory = URL.temporaryDirectory.appendingPathComponent(
+            UUID().uuidString,
+            isDirectory: true
+        )
+        try FileManager.default.createDirectory(at: intermediaryFilesDirectory, withIntermediateDirectories: true)
+        self.fileURL = intermediaryFilesDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+
         // Set mock defaults
         draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
         uploadManager.uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
@@ -50,7 +60,7 @@ final class UploadDraftUseCaseTests {
     }
 
     deinit {
-        try? FileManager.default.removeItem(at: fileURL)
+        try? FileManager.default.removeItem(at: intermediaryFilesDirectory)
     }
 
     // MARK: - invoke(nodeID:)
@@ -182,7 +192,7 @@ final class UploadDraftUseCaseTests {
         #expect(arguments.draft.name == fileURL.lastPathComponent)
         #expect(arguments.draft.bytes == data.count)
         #expect(arguments.draft.mimeType == nil)
-        #expect(arguments.draft.deleteAfterUpload == false)
+        #expect(arguments.draft.requiresCleanup == false)
     }
 
     @Test(arguments: [(fileName: String, expectedMetadata: WireCellsDraft.Metadata?)]([
@@ -220,6 +230,45 @@ final class UploadDraftUseCaseTests {
 
         // Then
         #expect(draftsRepository.addDraftFor_Invocations.count == 1)
+    }
+
+    // MARK: - UploadDraftUseCase.invoke(data:type:)
+
+    @Test(arguments: [
+        (type: UTType.plainText, expectedFileName: "FILE_20231001_121005.txt"),
+        (type: UTType.data, expectedFileName: "FILE_20231001_121005")
+    ])
+    func invokeWithData_addsCorrectDraft(type: UTType, expectedFileName: String) async throws {
+        // Given
+        let data = Data("This is a test file content.".utf8)
+
+        // When
+        try await sut.invoke(data: data, type: type)
+
+        // Then
+        let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
+        #expect(arguments.cellName == "cell-name")
+        #expect(arguments.draft.assetURL.lastPathComponent == expectedFileName)
+        #expect(arguments.draft.fileType == type)
+        #expect(arguments.draft.status == .uploading(progress: 0))
+        #expect(arguments.draft.name == expectedFileName)
+        #expect(arguments.draft.bytes == data.count)
+        #expect(arguments.draft.mimeType == nil)
+        #expect(arguments.draft.requiresCleanup == true)
+    }
+
+    @Test
+    func invokeWithData_writesDataToDisk() async throws {
+        // Given
+        let data = Data("This is a test file content.".utf8)
+
+        // When
+        try await sut.invoke(data: data, type: .plainText)
+
+        // Then
+        let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
+        let writtenData = try Data(contentsOf: arguments.draft.assetURL)
+        #expect(writtenData == data)
     }
 
 }

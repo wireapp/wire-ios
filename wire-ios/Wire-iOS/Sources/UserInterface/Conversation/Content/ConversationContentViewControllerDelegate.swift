@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
 
 protocol ConversationContentViewControllerDelegate: AnyObject {
@@ -56,6 +57,11 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
         _ controller: ConversationContentViewController,
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
+    )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentFilesViewForNodes: [UUID]
     )
 
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)

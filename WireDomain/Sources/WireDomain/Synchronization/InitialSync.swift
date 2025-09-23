@@ -47,7 +47,7 @@ public struct InitialSync: InitialSyncProtocol {
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
         try await logger.measureTime(
             label: "new initial sync",
-            attributes: .syncAttributes(initialSync: true)
+            attributes: .initialSync
         ) {
             if !skipPullingLastUpdateEventID {
                 try await pullLastUpdateEventID()
@@ -63,7 +63,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.pullLastEventID))
@@ -90,7 +90,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.pushSupportedProtocols))
@@ -106,7 +106,7 @@ public struct InitialSync: InitialSyncProtocol {
 
         try await logger.measureTime(
             label: "sync phase",
-            attributes: .syncPhaseAttributes(phase, initialSync: true)
+            attributes: .initialSyncAttributes(phase)
         ) {
             do {
                 syncStateSubject.send(.initialSyncing(.resolveOneOnOneConversations))

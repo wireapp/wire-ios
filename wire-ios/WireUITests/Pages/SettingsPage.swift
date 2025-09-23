@@ -29,6 +29,11 @@ class SettingsPage: PageModel {
         app.cells[Locators.Cells.account]
     }
 
+    var optionsMenu: XCUIElement {
+        let elementsQuery = app.cells
+        return elementsQuery["Options"]
+    }
+
     var conversationsTab: XCUIElement {
         app.buttons[Locators.Buttons.conversationsNavBar]
     }
@@ -36,6 +41,11 @@ class SettingsPage: PageModel {
     func openAccountSettings() throws -> AccountSettingsPage {
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
+    }
+
+    func openOptionsMenu() throws -> OptionsOnSettingsPage {
+        optionsMenu.tap()
+        return try OptionsOnSettingsPage()
     }
 
     func switchToConversationsTab() throws -> ConversationsPage {

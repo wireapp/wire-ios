@@ -103,10 +103,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
             Task { [weak self] in
                 var request = await self?.pushChannelCoordinator.listenForYieldRequests()
-                WireLogger.sync.debug("requested to cancel sync", attributes: .syncAttributes, .newNSE)
+                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 await self?.currentTask?.cancel()
                 request?.acknowledge()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .syncAttributes, .newNSE)
+                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
 
             currentTask = Task {
@@ -120,7 +120,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     // to show them.
                     WireLogger.sync.warn(
                         "syncing events via websocket: \(String(describing: error))",
-                        attributes: .syncAttributes(initialSync: false)
+                        attributes: .incrementalSyncV3, .newNSE
                     )
                     await pushChannelState.markAsClosed()
                 }

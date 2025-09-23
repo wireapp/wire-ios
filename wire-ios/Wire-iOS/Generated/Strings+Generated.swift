@@ -2786,6 +2786,14 @@ internal enum L10n {
         /// Spread the word!
         internal static let title = L10n.tr("Localizable", "conversation.invite_more_people.title", fallback: "Spread the word!")
       }
+      internal enum Message {
+        internal enum MultipartAttachments {
+          /// Plural format key: "%#@attachment_count@"
+          internal static func link(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.message.multipart_attachments.link", p1, fallback: "Plural format key: \"%#@attachment_count@\"")
+          }
+        }
+      }
       internal enum Ping {
         internal enum Action {
           /// Ping

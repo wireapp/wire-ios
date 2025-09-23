@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CellsSDK
+package import Foundation
+
 /// Fetches `WireCellNodes`s for the given parameters.
 package struct WireCellsFetchNodesUseCase: Sendable {
 
@@ -23,6 +26,9 @@ package struct WireCellsFetchNodesUseCase: Sendable {
 
         /// The root container for the nodes. If `nil`, nodes for all conversations will be returned.
         let root: WireCellsNodeLocator?
+
+        /// Specific nodes to fetch.
+        let nodeIDs: [UUID]?
 
         /// Whether to fetch nodes recursively from the root container.
         let isRecursive: Bool
@@ -40,6 +46,18 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         package static func conversationFileView(root: WireCellsNodeLocator) -> Configuration {
             Configuration(
                 root: root,
+                nodeIDs: nil,
+                isRecursive: true,
+                nodeType: .leaf,
+                deletionStatus: .notDeleted
+            )
+        }
+
+        /// A `Configuration` for showing only specific nodes in the file view.
+        package static func nodesFileView(nodeIDs: [UUID]) -> Configuration {
+            Configuration(
+                root: nil,
+                nodeIDs: nodeIDs,
                 isRecursive: true,
                 nodeType: .leaf,
                 deletionStatus: .notDeleted
@@ -78,6 +96,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
                 root: configuration.root,
                 isRecursive: configuration.isRecursive
             ),
+            query: configuration.nodeIDs.map { WireCellsGetNodesRequest.Query(nodeIDs: $0) },
             filter: WireCellsGetNodesRequest.Filter(
                 deletionStatus: configuration.deletionStatus,
                 text: searchTerm,
@@ -86,7 +105,15 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             limit: configuration.pageSize,
             offset: offset
         )
-        let (nodes, nextOffset) = try await repository.getNodes(request)
+        var (nodes, nextOffset) = try await repository.getNodes(request)
+
+        // FIXME: [WPB-16311] Temporary fix to filter out recycled nodes.
+        // This is necessary because the backend doesn't filter out recycled nodes when we have requested specific
+        // nodes. Once we implement showing previews in a conversation this check should move there, if there is no
+        // backend fix.
+        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, !nodeIDs.isEmpty {
+            nodes = nodes.filter { !$0.isRecycled }
+        }
 
         return (nodes, nextOffset == nil)
     }
