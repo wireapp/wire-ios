@@ -40,7 +40,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         userSession = UserSessionMock(mockUser: mockSelfUser)
         context = ConversationMessageContext(
             isSameSenderAsPrevious: false,
-            isTimestampInSameMinuteAsPreviousMessage: false,
+            isGroupedWithPreviousMessage: false,
             isFirstMessageOfTheDay: false,
             isFirstUnreadMessage: false,
             isLastMessage: false,
@@ -121,7 +121,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Welcome to Dub Dub")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: true
+            isGroupedWithPreviousMessage: true
         )
 
         // WHEN
@@ -161,7 +161,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Hello")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
+            isGroupedWithPreviousMessage: false
         )
         // WHEN
         let section = makeSUT(message: message, context: context)
@@ -181,7 +181,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Hello")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
+            isGroupedWithPreviousMessage: false
         )
         // WHEN
         let section = makeSUT(message: message, context: context)

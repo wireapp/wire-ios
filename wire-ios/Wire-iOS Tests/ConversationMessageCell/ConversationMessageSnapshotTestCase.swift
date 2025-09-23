@@ -24,7 +24,7 @@ import XCTest
 private extension ConversationMessageContext {
     static let defaultContext = ConversationMessageContext(
         isSameSenderAsPrevious: false,
-        isTimestampInSameMinuteAsPreviousMessage: false,
+        isGroupedWithPreviousMessage: false,
         isFirstMessageOfTheDay: false,
         isFirstUnreadMessage: false,
         isLastMessage: false,
