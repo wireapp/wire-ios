@@ -135,4 +135,9 @@ final class SpinnerButton: LegacyButton {
 
         return SpinnerButton(legacyStyle: .empty, cornerRadius: cornerRadius, fontSpec: .smallSemiboldFont)
     }
+
+    func updateAlarmButtonColor(color: ZMAccentColor?) {
+        let variant: ColorSchemeVariant = ColorScheme.default.variant
+        updateStyle(variant: variant)
+    }
 }
