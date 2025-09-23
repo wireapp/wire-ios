@@ -266,7 +266,6 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: data)
     }
 
     func requestEmailVerificationCode(for email: String) async throws {
