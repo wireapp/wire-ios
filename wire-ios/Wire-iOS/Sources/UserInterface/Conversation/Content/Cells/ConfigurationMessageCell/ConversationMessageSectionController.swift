@@ -22,7 +22,7 @@ import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious: Bool = false
-    var isTimestampInSameMinuteAsPreviousMessage: Bool = false
+    var isGroupedWithPreviousMessage: Bool = false
     var isFirstMessageOfTheDay: Bool = false
     var isFirstUnreadMessage: Bool = false
     var isLastMessage: Bool = false
@@ -561,8 +561,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return true
         }
 
-        // This message is from the same sender but in a different minute.
-        if !context.isTimestampInSameMinuteAsPreviousMessage {
+        // This message is from the same sender and is visually grouped with the previous message.
+        if !context.isGroupedWithPreviousMessage {
             return true
         }
 

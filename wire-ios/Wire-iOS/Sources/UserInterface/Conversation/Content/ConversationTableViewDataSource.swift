@@ -766,24 +766,24 @@ extension ConversationTableViewDataSource {
         messages: [ZMMessage]
     ) -> ConversationMessageContext {
 
-        let isTimestampInSameMinuteAsPreviousMessage: Bool
+        let isGroupedWithPreviousMessage: Bool
 
         let previousMessage = messageBeforeMessage(at: index, messages: messages)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
             if isChatBubbleSimpleEnabled {
-                isTimestampInSameMinuteAsPreviousMessage = currentMessage.isWithin(minutes: 5, fromDate: prevMessage)
+                isGroupedWithPreviousMessage = currentMessage.isWithin(minutes: 5, fromDate: prevMessage)
             } else {
-                isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+                isGroupedWithPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
             }
         } else {
-            isTimestampInSameMinuteAsPreviousMessage = false
+            isGroupedWithPreviousMessage = false
         }
 
         let isLastMessage = (index == 0) && !hasNewerMessagesToLoad
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index, messages: messages),
-            isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
+            isGroupedWithPreviousMessage: isGroupedWithPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index, messages: messages),
             isFirstUnreadMessage: message.nonce == firstUnreadMessageNonce,
             isLastMessage: isLastMessage,
