@@ -96,9 +96,9 @@
 "conversation.creationForm.channelHistory.sectionFootnote" = "Wählen Sie einen Zeitraum. Wenn Teilnehmer diesem Channel beitreten, können sie den Verlauf für diese Zeitspanne verfolgen.";
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
-"conversation.file.preview.open" = "Open preview";
+"conversation.file.preview.open" = "Vorschau öffnen";
 "conversation.draft.attachmentMenu.retry" = "Wiederholen";
-"conversation.draft.attachmentMenu.remove" = "Remove File";
+"conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
 // MARK: Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Dokumente";
@@ -108,6 +108,8 @@
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
 "conversation.wireCells.files.item.menu.rename" = "Umbenennen";
 "conversation.wireCells.files.item.menu.delete" = "Endgültig löschen";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
 "conversation.wireCells.files.pendingCells.title" = "Files are being prepared";

@@ -49,7 +49,8 @@ extension URLRequest {
 
     func mockErrorResponse(
         statusCode: HTTPStatusCode,
-        label: String = ""
+        label: String = "",
+        message: String = ""
     ) throws -> (Data, HTTPURLResponse) {
         guard let url else {
             throw "Unable to create mock response, request is missing url"
@@ -64,7 +65,7 @@ extension URLRequest {
             throw "Unable to create mock response"
         }
 
-        let jsonPayload = FailureResponseV0(code: statusCode.rawValue, label: label, message: "")
+        let jsonPayload = FailureResponseV0(code: statusCode.rawValue, label: label, message: message)
         let jsonData = try JSONEncoder().encode(jsonPayload)
 
         return (jsonData, response)

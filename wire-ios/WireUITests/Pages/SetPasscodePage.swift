@@ -17,22 +17,25 @@
 //
 
 import XCTest
-@testable import Wire
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+class SetPasscodePage: PageModel {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
-
-        // when
-        // then
-        XCTAssertEqual(viewModel.debugItems.count, 15)
+    override var pageMainElement: XCUIElement {
+        passwordField
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+    var passwordField: XCUIElement {
+        app.secureTextFields["PasscodeField"]
     }
+
+    var setPasscodeButton: XCUIElement {
+        app.buttons["createPasscodeButton"]
+    }
+
+    func SetPasscode(_ pass: String) throws -> OptionsOnSettingsPage {
+        try passwordField.tapIfKeyboardNotFocused().typeText(pass)
+        setPasscodeButton.tap()
+        return try OptionsOnSettingsPage()
+    }
+
 }

@@ -205,6 +205,23 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
+
+    func testPushSupportedProtocols_MLSProtocolErrorFailureResponse_V8() async throws {
+        // Given
+        let errorMessage = "MLS protocol cannot be removed"
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .conflict,
+            label: "mls-protocol-error",
+            message: errorMessage
+        )
+        let sut = SelfUserAPIV8(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(SelfUserAPIError.mlsProtocolError(errorMessage), when: {
+            // When
+            try await sut.pushSupportedProtocols([.mls])
+        })
+    }
 }
 
 extension SelfUserAPITests {
@@ -319,5 +336,21 @@ private extension APIVersion {
     func buildAPI(apiService: any APIServiceProtocol) -> any SelfUserAPI {
         let builder = SelfUserAPIBuilder(apiService: apiService)
         return builder.makeAPI(for: self)
+    }
+}
+
+extension SelfUserAPIError: Equatable {
+    public static func == (lhs: SelfUserAPIError, rhs: SelfUserAPIError) -> Bool {
+        switch (lhs, rhs) {
+        case (.selfUserNotFound, .selfUserNotFound):
+            true
+        case let (.mlsProtocolError(lhsMsg), .mlsProtocolError(rhsMsg)):
+            lhsMsg == rhsMsg
+        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
+            true
+        default:
+            false
+        }
+
     }
 }

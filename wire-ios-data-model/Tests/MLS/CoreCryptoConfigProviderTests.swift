@@ -47,7 +47,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     override func setUp() {
         super.setUp()
         mockCoreCryptoKeyProvider =
-            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager, userID: UUID())
+            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
         sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 
