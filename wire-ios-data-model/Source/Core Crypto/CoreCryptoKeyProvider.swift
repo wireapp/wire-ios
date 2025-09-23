@@ -19,15 +19,39 @@
 import Foundation
 import WireLogging
 import WireSystem
+import WireFoundation
+
+enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {
+    case uniqueKeyIdentifier
+}
 
 public class CoreCryptoKeyProvider {
 
     private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
-    private let userID: UUID
-
-    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol, userID: UUID) {
+    private let defaults: PrivateUserDefaults<CoreCryptoKeyProviderDefaults>
+    
+    /// We use the unique key id to scope the database key by user session.
+    /// Since the id is tied to the user defaults, it gets deleted on logout and app deletion
+    private var uniqueKeyId: UUID {
+        get {
+            if let id = defaults.getUUID(forKey: .uniqueKeyIdentifier) {
+                return id
+            } else {
+                let id = UUID()
+                defaults.setUUID(id, forKey: .uniqueKeyIdentifier)
+                return id
+            }
+        } set {
+            defaults.setUUID(newValue, forKey: .uniqueKeyIdentifier)
+        }
+    }
+    
+    public init(
+        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
+        userID: UUID
+    ) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
-        self.userID = userID
+        self.defaults = PrivateUserDefaults(userID: userID)
     }
 
     public func coreCryptoKey(
@@ -36,38 +60,36 @@ public class CoreCryptoKeyProvider {
     ) async throws -> Data {
         try await performKeyMigrationsIfNeeded(path: path)
 
-        do {
-            return try fetchScopedCoreCryptoKey()
-        } catch {
-            if createIfNeeded {
-                return try createScopedCoreCryptoKey()
-            } else {
-                throw error
-            }
+        if let key = try fetchCoreCryptoKey() {
+            return key
+        } else if createIfNeeded {
+            return try createCoreCryptoKey()
+        } else {
+            throw Error.keyNotFound
         }
     }
 
     private func performKeyMigrationsIfNeeded(path: String) async throws {
         try await migrateDatabaseKeyToBytes(path: path)
         try migrateToScopedDatabaseKey(path: path)
-        try? await rotateKey(path: path)
+        try? await rotateKeyIfNeeded(path: path)
     }
 
     private func migrateToScopedDatabaseKey(path: String) throws {
 
         guard
             coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try? fetchUnscopedCoreCryptoKey()
+            let unscopedKey = try fetchCoreCryptoKey(scoped: false)
         else { return }
 
-        if (try? fetchScopedCoreCryptoKey()) != nil {
+        if (try fetchCoreCryptoKey()) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
         } else {
             do {
                 WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
 
                 // Store the unscoped key as scoped key
-                let item = ScopedCoreCryptoKeychainItem(userID: userID)
+                let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId)
                 try KeychainManager.storeItem(item, value: unscopedKey)
 
                 // Mark migration as done
@@ -83,33 +105,86 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    private func rotateKey(path: String) async throws {
+    private func rotateKeyIfNeeded(path: String) async throws {
         guard coreCryptoKeyMigrationManager.isKeyRotationNeeded else {
             return
         }
-
+        
         do {
-            WireLogger.coreCrypto.info("Updating core crypto key...", attributes: .safePublic)
-
-            // Generate a new key and update the database
-            let oldKey = try fetchScopedCoreCryptoKey()
-            let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
-            try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
-
-            // Store the new key in place of the old one
-            let item = ScopedCoreCryptoKeychainItem(userID: userID)
-            try KeychainManager.deleteItem(item)
-            try KeychainManager.storeItem(item, value: newKey)
-
-            // Mark the rotation as done
-            coreCryptoKeyMigrationManager.markKeyRotationAsDone()
-
+            WireLogger.coreCrypto.info("Rotating core crypto key...", attributes: .safePublic)
+            try await rotateKey(path: path)
         } catch {
             WireLogger.coreCrypto.warn(
-                "Failed to update core crypto key: \(String(describing: error))",
+                "Failed to rotate core crypto key: \(String(describing: error))",
                 attributes: .safePublic
             )
             throw error
+        }
+    }
+    
+    private func rotateKey(path: String) async throws {
+        func logInfo(_ message: String) {
+            WireLogger.coreCrypto.info("[key rotation] \(message)")
+        }
+        
+        // Get the old key, to rotate with the new key
+        guard let oldKey = try fetchCoreCryptoKey() else {
+            throw Error.keyNotFound
+        }
+        let oldKeyId = uniqueKeyId
+        let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId)
+        logInfo("fetched the old key")
+            
+        // Generate a new key and save it with a new key ID
+        let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
+        let newKeyId = UUID()
+        let newItem = CoreCryptoKeychainItem(uniqueKeyId: newKeyId)
+        try KeychainManager.storeItem(newItem, value: newKey)
+        logInfo("generated and saved the new key")
+        
+        do {
+            // Update the database
+            try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
+            logInfo("updated the database with the new key")
+            
+            // Delete the old key
+            try KeychainManager.deleteItem(oldItem)
+            logInfo("deleted old key from keychain")
+    
+            // Update the unique key identifier
+            uniqueKeyId = newKeyId
+            logInfo("updated unique key identifier")
+            
+            // Mark the rotation as done
+            coreCryptoKeyMigrationManager.markKeyRotationAsDone()
+            logInfo("marked key rotation as done")
+
+        } catch {
+            
+            // Check if we need to clean up or rollback, otherwise throw the error
+            switch error {
+            case CoreCryptoKeyMigrationManagerError.failedToUpdateKey(let underlyingError):
+                
+                // We failed to rotate the key, rollback by deleting the new key
+                try KeychainManager.deleteItem(newItem)
+                logInfo("rollback: deleted new key from keychain because rotation failed")
+                throw underlyingError
+    
+            case KeychainManager.Error.failedToDeleteItemFromKeychain:
+                
+                // retry, or log and mark key as stale
+                break
+            default:
+                throw error
+            }
+        }
+    }
+    
+    private func deleteOrMarkForDeletion(item: CoreCryptoKeychainItem) {
+        do {
+            try KeychainManager.deleteItem(item)
+        } catch {
+            
         }
     }
 
@@ -117,7 +192,7 @@ public class CoreCryptoKeyProvider {
         guard coreCryptoKeyMigrationManager.isMigrationToBytesNeeded else { return }
 
         // Getting the unscoped key, because if the scoped key exists, it's already in the right format.
-        if let oldKey = try? fetchUnscopedCoreCryptoKey() {
+        if let oldKey = try? fetchCoreCryptoKey(scoped: false) {
             // Since version 6.x, CC has changed the key format and clients need to migrate the key.
             // We can reuse the same key, but the "new key" must be 'Data'.
             do {
@@ -140,18 +215,19 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    private func fetchScopedCoreCryptoKey() throws -> Data {
-        let item = ScopedCoreCryptoKeychainItem(userID: userID)
-        return try KeychainManager.fetchItem(item)
+    private func fetchCoreCryptoKey(scoped: Bool = true) throws -> Data? {
+        do {
+            let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, scoped: scoped)
+            return try KeychainManager.fetchItem(item)
+        } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
+            return nil
+        } catch {
+            throw error
+        }
     }
 
-    private func fetchUnscopedCoreCryptoKey() throws -> Data {
-        let item = UnscopedCoreCryptoKeychainItem()
-        return try KeychainManager.fetchItem(item)
-    }
-
-    private func createScopedCoreCryptoKey() throws -> Data {
-        let item = ScopedCoreCryptoKeychainItem(userID: userID)
+    private func createCoreCryptoKey() throws -> Data {
+        let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId)
         let key = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: key)
         return key
@@ -160,18 +236,23 @@ public class CoreCryptoKeyProvider {
 }
 
 public extension CoreCryptoKeyProvider {
-    static func deleteScopedCoreCryptoKey(userID: UUID) throws {
-        let item = ScopedCoreCryptoKeychainItem(userID: userID)
-        try KeychainManager.deleteItem(item)
+    
+    enum Error: Swift.Error {
+        case keyNotFound
     }
 }
 
-struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
+struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
-    var userID: UUID
+    let uniqueKeyId: UUID
+    var scoped: Bool = true
 
     var id: String {
-        "com.wire.cc.key.\(userID.uuidString)"
+        if scoped {
+            "com.wire.cc.key.\(uniqueKeyId.uuidString)"
+        } else {
+            "com.wire.mls.key"
+        }
     }
 
     var tag: Data {
@@ -197,32 +278,3 @@ struct ScopedCoreCryptoKeychainItem: KeychainItemProtocol {
     }
 }
 
-struct UnscopedCoreCryptoKeychainItem: KeychainItemProtocol {
-
-    var id: String {
-        "com.wire.mls.key"
-    }
-
-    var tag: Data {
-        id.data(using: .utf8)!
-    }
-
-    var getQuery: [CFString: Any] {
-        [
-            kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecReturnData: true,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
-        ]
-    }
-
-    func setQuery(value: some Any) -> [CFString: Any] {
-        [
-            kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecValueData: value,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
-        ]
-    }
-
-}
