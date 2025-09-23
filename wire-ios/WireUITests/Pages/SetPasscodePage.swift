@@ -16,8 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ProxyModeError: Error {
+import XCTest
 
-    case proxyCredentialsRequired
+class SetPasscodePage: PageModel {
+
+    override var pageMainElement: XCUIElement {
+        passwordField
+    }
+
+    var passwordField: XCUIElement {
+        app.secureTextFields["PasscodeField"]
+    }
+
+    var setPasscodeButton: XCUIElement {
+        app.buttons["createPasscodeButton"]
+    }
+
+    func SetPasscode(_ pass: String) throws -> OptionsOnSettingsPage {
+        try passwordField.tapIfKeyboardNotFocused().typeText(pass)
+        setPasscodeButton.tap()
+        return try OptionsOnSettingsPage()
+    }
 
 }
