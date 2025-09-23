@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 /// Some steps followed while setting up team i.e name, disclaimers etc
@@ -26,19 +27,19 @@ class TeamSetupStepsPage: PageModel {
     }
 
     var teamNameTextField: XCUIElement {
-        app.descendants(matching: .any)["Your Team"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.teamNameField].firstMatch
     }
 
     var continueButton: XCUIElement {
-        app.descendants(matching: .any)["Continue"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.continueButton].firstMatch
     }
 
     var checkbox: XCUIElement {
-        app.descendants(matching: .any)["square"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.checkbox].firstMatch
     }
 
     var backToWireButton: XCUIElement {
-        app.descendants(matching: .any)["Back To Wire"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.backToWire].firstMatch
     }
 
     func tapContinue() throws -> TeamSetupStepsPage {

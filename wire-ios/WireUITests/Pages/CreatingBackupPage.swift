@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class CreatingBackupPage: PageModel {
@@ -25,19 +26,19 @@ class CreatingBackupPage: PageModel {
     }
 
     var creatingBackupPageLabel: XCUIElement {
-        app.descendants(matching: .any)["Creating Backup"]
+        app.descendants(matching: .any)[Locators.StaticTexts.creatingBackup]
     }
 
     var backupSuccessfullyCreatedLabel: XCUIElement {
-        app.descendants(matching: .any)["Backup successfully created."]
+        app.descendants(matching: .any)[Locators.StaticTexts.backupSuccessfullyCreated]
     }
 
     var backupProgressLabel: XCUIElement {
-        app.descendants(matching: .any)["progressView"]
+        app.descendants(matching: .any)[Locators.StaticTexts.progressView]
     }
 
     var saveFileButton: XCUIElement {
-        app.buttons["exportButton"]
+        app.buttons[Locators.Buttons.export]
     }
 
     func getBackupProgressValue() -> String? {

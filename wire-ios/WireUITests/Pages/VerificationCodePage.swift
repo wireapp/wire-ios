@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class VerificationCodePage: PageModel {
@@ -25,12 +26,13 @@ class VerificationCodePage: PageModel {
     }
 
     var verificationCodeInput: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "VerificationCode")
+        let elementsQuery = app.descendants(matching: .any)
+            .matching(identifier: Locators.TextFields.verificationCodeInput)
         return elementsQuery.firstMatch
     }
 
     var verificationCodeConfirmButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["Confirm"]
+        let elementsQuery = app.descendants(matching: .any)[Locators.Buttons.confirmOnVerificationCode]
         return elementsQuery.firstMatch
     }
 

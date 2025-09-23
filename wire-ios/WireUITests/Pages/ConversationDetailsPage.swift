@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class ConversationDetailsPage: PageModel {
@@ -25,16 +26,16 @@ class ConversationDetailsPage: PageModel {
     }
 
     var addParticipantsButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "OtherUserMetaControllerLeftButton")
+        let elementsQuery = app.descendants(matching: .any).matching(identifier: Locators.Buttons.addParticipants)
         return elementsQuery.firstMatch
     }
 
     var closeConversationDetailsButton: XCUIElement {
-        app.buttons["close"]
+        app.buttons[Locators.Buttons.closeDetails]
     }
 
     var userCells: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "user_cell.name")
+        app.staticTexts.matching(identifier: Locators.StaticTexts.userCell)
     }
 
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {

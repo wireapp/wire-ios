@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class CreateGroupPage: PageModel {
@@ -25,11 +26,11 @@ class CreateGroupPage: PageModel {
     }
 
     var groupNameTextfield: XCUIElement {
-        app.descendants(matching: .any)["NameField"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.groupNameField].firstMatch
     }
 
     var nextButton: XCUIElement {
-        app.descendants(matching: .any)["button.newgroup.next"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.nextOnTopRight].firstMatch
     }
 
     func enterGroupName(_ groupName: String) throws -> SelectParticipantsPage {
@@ -37,5 +38,4 @@ class CreateGroupPage: PageModel {
         nextButton.tap()
         return try SelectParticipantsPage()
     }
-
 }

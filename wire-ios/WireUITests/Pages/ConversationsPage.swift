@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class ConversationsPage: PageModel {
@@ -24,35 +25,35 @@ class ConversationsPage: PageModel {
     }
 
     var conversationsPageLabel: XCUIElement {
-        app.staticTexts["Conversations"]
+        app.staticTexts[Locators.StaticTexts.conversations]
     }
 
     var settingsButton: XCUIElement {
-        app.buttons["bottomBarSettingsButton"]
+        app.buttons[Locators.Buttons.settingsNavBar]
     }
 
     var plusButtonToCreateGroup: XCUIElement {
-        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.plusIcon].firstMatch
     }
 
     var conversationCell: XCUIElement {
-        app.buttons["title"]
+        app.buttons[Locators.Buttons.conversationTitle]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
-        app.buttons["Block…"]
+        app.buttons[Locators.Buttons.blockOption]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons["Block"]
+        app.buttons[Locators.Buttons.blockOnBottomSheet]
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.videoCallIcon].firstMatch
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.Buttons.accept]
     }
 
     func openSettings() throws -> SettingsPage {

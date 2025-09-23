@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class NewConversationPage: PageModel {
@@ -25,7 +26,7 @@ class NewConversationPage: PageModel {
     }
 
     var newGroupButton: XCUIElement {
-        app.descendants(matching: .any)["New group"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.newGroup].firstMatch
     }
 
     func tapNewGroupButton() throws -> CreateGroupPage {
@@ -34,15 +35,15 @@ class NewConversationPage: PageModel {
     }
 
     var searchByNameOrUsernameSearchBox: XCUIElement {
-        app.descendants(matching: .any)["Search by name or username"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.searchBox].firstMatch
     }
 
     var cancelButtonOnSearchedUserPage: XCUIElement {
-        app.buttons["Cancel"]
+        app.buttons[Locators.TextFields.cancelOnSearchUserPage]
     }
 
     var cancelButtonOnNewConversation: XCUIElement {
-        app.buttons["cancel"]
+        app.buttons[Locators.TextFields.cancelOnNewConversationPage]
     }
 
     func tapSearchBox() -> NewConversationPage {
@@ -51,7 +52,7 @@ class NewConversationPage: PageModel {
     }
 
     var searchedUserCell: XCUIElement {
-        app.descendants(matching: .any)["user_cell.username"].firstMatch
+        app.descendants(matching: .any)[Locators.Cells.userCell].firstMatch
     }
 
     func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {

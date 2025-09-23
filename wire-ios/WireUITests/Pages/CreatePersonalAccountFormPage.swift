@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class CreatePersonalAccountFormPage: PageModel {
@@ -25,29 +26,29 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .any)["Enter your name"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.nameTextField].firstMatch
     }
 
     var showPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["eye.slash"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.eyeIcon].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .any)["Enter a password"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.passwordTextField].firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .any)["Confirm password"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.confirmPasswordTextField].firstMatch
     }
 
     var continueButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        return elementsQuery.buttons[Locators.Buttons.continueButton]
     }
 
     var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+        return elementsQuery.buttons[Locators.Buttons.acceptPopup]
     }
 
     func enterName(_ name: String) throws -> CreatePersonalAccountFormPage {

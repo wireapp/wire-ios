@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class UserDetailsPage: PageModel {
@@ -25,31 +26,31 @@ class UserDetailsPage: PageModel {
     }
 
     var nameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "name").firstMatch
+        app.descendants(matching: .any).matching(identifier: Locators.StaticTexts.name).firstMatch
     }
 
     var userNameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "username").firstMatch
+        app.descendants(matching: .any).matching(identifier: Locators.StaticTexts.username).firstMatch
     }
 
     var closeProfileButton: XCUIElement {
-        app.buttons["close"].firstMatch
+        app.buttons[Locators.Buttons.closeDetails].firstMatch
     }
 
     var connectButton: XCUIElement {
-        app.staticTexts["Connect"].firstMatch
+        app.staticTexts[Locators.StaticTexts.connectUser].firstMatch
     }
 
     var moreActionsButton: XCUIElement {
-        app.buttons["right_button"]
+        app.buttons[Locators.Buttons.moreAction]
     }
 
     var removeFromConversationButton: XCUIElement {
-        app.buttons["Remove From Conversation…"]
+        app.buttons[Locators.Buttons.removeFromConversations]
     }
 
     var confirmRemoveUserFromConversation: XCUIElement {
-        app.buttons["Remove From Conversation"]
+        app.buttons[Locators.Buttons.confirmRemoveFromConversations]
     }
 
     func getUserName() -> String? {

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class GroupConversationPage: PageModel {
@@ -25,23 +26,23 @@ class GroupConversationPage: PageModel {
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.videoCallIcon].firstMatch
     }
 
     var typeMessageField: XCUIElement {
-        app.descendants(matching: .any)["inputField"].firstMatch
+        app.descendants(matching: .any)[Locators.TextViews.messageInput].firstMatch
     }
 
     var sendButton: XCUIElement {
-        app.descendants(matching: .any)["sendButton"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.sendMessage].firstMatch
     }
 
     var senderNameLabel: XCUIElement {
-        app.descendants(matching: .any)["author.name"].firstMatch
+        app.descendants(matching: .any)[Locators.TextViews.sender].firstMatch
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: "Message")
+        app.textViews.matching(identifier: Locators.TextViews.message)
     }
 
     func sendMessage(input: String) throws -> GroupConversationPage {

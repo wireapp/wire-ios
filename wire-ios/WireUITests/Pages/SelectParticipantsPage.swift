@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class SelectParticipantsPage: PageModel {
@@ -25,15 +26,15 @@ class SelectParticipantsPage: PageModel {
     }
 
     var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+        app.descendants(matching: .any)[Locators.TextFields.searchParticipantBox].firstMatch
     }
 
     var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+        app.descendants(matching: .any)[Locators.Buttons.done].firstMatch
     }
 
     var addParticipantButton: XCUIElement {
-        app.buttons["Add Participants"]
+        app.buttons[Locators.Buttons.addParticipantsOnSelectParticipants]
     }
 
     func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {

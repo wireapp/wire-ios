@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class CreateAccountPage: PageModel {
@@ -26,12 +27,12 @@ class CreateAccountPage: PageModel {
 
     var confirmButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["ConfirmButton"]
+        return elementsQuery.buttons[Locators.Buttons.confirm]
     }
 
     var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+        return elementsQuery.buttons[Locators.Buttons.acceptPopup]
     }
 
     func tapConfirmCreateAccount() -> CreateAccountPage {

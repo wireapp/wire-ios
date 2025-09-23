@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 class OnMyiPhonePage: PageModel {
@@ -25,23 +26,19 @@ class OnMyiPhonePage: PageModel {
     }
 
     var onMyiPhonePageLabel: XCUIElement {
-        app.staticTexts["On My iPhone"]
+        app.staticTexts[Locators.StaticTexts.onMyiPhone]
     }
 
     var saveButton: XCUIElement {
-        app.buttons["Save"]
-    }
-
-    var searchField: XCUIElement {
-        app.searchFields["Search"]
+        app.buttons[Locators.Buttons.saveFile]
     }
 
     var moreButton: XCUIElement {
-        app.buttons["More"]
+        app.buttons[Locators.Buttons.moreOptions]
     }
 
     var sortByDateButton: XCUIElement {
-        app.buttons["Date"]
+        app.buttons[Locators.Buttons.sortByDate]
     }
 
     var backupFile: (String) -> XCUIElement {

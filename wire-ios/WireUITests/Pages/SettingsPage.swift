@@ -30,7 +30,7 @@ class SettingsPage: PageModel {
     }
 
     var conversationsTab: XCUIElement {
-        app.buttons[Locators.Buttons.conversations]
+        app.buttons[Locators.Buttons.conversationsNavBar]
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {
