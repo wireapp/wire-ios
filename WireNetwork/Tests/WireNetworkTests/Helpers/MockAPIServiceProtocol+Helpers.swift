@@ -55,7 +55,11 @@ extension MockAPIServiceProtocol {
         return apiService
     }
 
-    static func withError(statusCode: HTTPStatusCode, label: String = "", message: String = "") -> MockAPIServiceProtocol {
+    static func withError(
+        statusCode: HTTPStatusCode,
+        label: String = "",
+        message: String = ""
+    ) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockErrorResponse(

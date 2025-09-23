@@ -1324,8 +1324,9 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
+    /// Note: this method is used only for legacy sync
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
-        -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        -> any LegacyResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = LegacySupportedProtocolsService(context: context)
 
         let resolver = LegacyOneOnOneResolver(
@@ -1333,7 +1334,7 @@ extension ZMUserSession: SyncAgentDelegate {
             isMLSEnabled: mlsFeature.isEnabled
         )
 
-        return ResolveOneOnOneConversationsUseCase(
+        return LegacyResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
             resolver: resolver,

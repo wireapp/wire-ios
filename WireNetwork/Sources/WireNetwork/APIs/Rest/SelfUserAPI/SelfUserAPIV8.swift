@@ -19,7 +19,7 @@ import Foundation
 
 class SelfUserAPIV8: SelfUserAPIV7 {
     override var apiVersion: APIVersion { .v8 }
-    
+
     override func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws {
         let encoder = JSONEncoder.defaultEncoder
         let payload =
@@ -36,7 +36,7 @@ class SelfUserAPIV8: SelfUserAPIV7 {
             request,
             requiringAccessToken: true
         )
-        
+
         do {
             try ResponseParser()
                 .success(code: .ok)
@@ -44,7 +44,7 @@ class SelfUserAPIV8: SelfUserAPIV7 {
                 .parse(code: response.statusCode, data: data)
         } catch {
             if let failureResponse = error as? FailureResponseV0,
-               failureResponse.label ==  "mls-protocol-error",
+               failureResponse.label == "mls-protocol-error",
                failureResponse.code == HTTPStatusCode.conflict.rawValue {
                 throw SelfUserAPIError.mlsProtocolError(failureResponse.message)
             } else {

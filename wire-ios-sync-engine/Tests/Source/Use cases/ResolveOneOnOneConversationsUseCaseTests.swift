@@ -27,7 +27,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: ResolveOneOnOneConversationsUseCase!
+    private var sut: LegacyResolveOneOnOneConversationsUseCase!
     private var mockSupportedProtocolService: MockLegacySupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
     private var mockPullSelfUserClients: MockPullSelfUserClientsSyncProtocol!
@@ -48,7 +48,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         mockPullSelfUserClients = MockPullSelfUserClientsSyncProtocol()
         mockPullSelfUserClients.pull_MockMethod = {}
 
-        sut = ResolveOneOnOneConversationsUseCase(
+        sut = LegacyResolveOneOnOneConversationsUseCase(
             context: syncContext,
             supportedProtocolService: mockSupportedProtocolService,
             resolver: mockOneOnOneResolver,

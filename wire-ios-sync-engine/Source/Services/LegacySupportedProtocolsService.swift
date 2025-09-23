@@ -27,6 +27,7 @@ public protocol LegacySupportedProtocolsServiceInterface {
     func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol>
 
 }
+
 /// Service to calculate the supported protocols
 /// - Note: Only used within legacy sync with `ResolveOneOnOneConversationUseCase`
 public final class LegacySupportedProtocolsService: LegacySupportedProtocolsServiceInterface {

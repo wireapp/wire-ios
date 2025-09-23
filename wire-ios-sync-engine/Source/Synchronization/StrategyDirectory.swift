@@ -480,9 +480,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         context: NSManagedObjectContext,
         resolver: any OneOnOneResolverInterface,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory
-    ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+    ) -> any LegacyResolveOneOnOneConversationsUseCaseProtocol {
 
-        ResolveOneOnOneConversationsUseCase(
+        LegacyResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: LegacySupportedProtocolsService(context: context),
             resolver: resolver,

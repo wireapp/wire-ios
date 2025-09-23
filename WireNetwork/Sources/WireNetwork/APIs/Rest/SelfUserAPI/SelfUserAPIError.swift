@@ -25,7 +25,7 @@ public enum SelfUserAPIError: Error {
     /// MLS protocol cannot be removed
 
     case mlsProtocolError(String)
-    
+
     /// Self user was not found.
 
     case selfUserNotFound

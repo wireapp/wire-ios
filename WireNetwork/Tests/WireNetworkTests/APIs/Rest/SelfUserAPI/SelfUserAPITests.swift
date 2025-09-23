@@ -205,7 +205,7 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     func testPushSupportedProtocols_MLSProtocolErrorFailureResponse_V8() async throws {
         // Given
         let errorMessage = "MLS protocol cannot be removed"
@@ -343,14 +343,14 @@ extension SelfUserAPIError: Equatable {
     public static func == (lhs: SelfUserAPIError, rhs: SelfUserAPIError) -> Bool {
         switch (lhs, rhs) {
         case (.selfUserNotFound, .selfUserNotFound):
-            return true
-        case (.mlsProtocolError(let lhsMsg), .mlsProtocolError(let rhsMsg)):
-            return lhsMsg == rhsMsg
+            true
+        case let (.mlsProtocolError(lhsMsg), .mlsProtocolError(rhsMsg)):
+            lhsMsg == rhsMsg
         case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
-            return true
+            true
         default:
-            return false
+            false
         }
-    
+
     }
 }
