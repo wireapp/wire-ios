@@ -43,7 +43,7 @@ struct LegacyResolveOneOnOneConversationsUseCase: LegacyResolveOneOnOneConversat
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.supportedProtocols
         }
-
+        WireLogger.supportedProtocols.debug("old: \(oldProtocols)")
         let newProtocols = await calculateSupportedProtocols()
         if oldProtocols != newProtocols {
             var action = PushSupportedProtocolsAction(supportedProtocols: newProtocols)
@@ -52,6 +52,7 @@ struct LegacyResolveOneOnOneConversationsUseCase: LegacyResolveOneOnOneConversat
             await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.supportedProtocols = newProtocols
+                context.saveOrRollback()
             }
         }
 

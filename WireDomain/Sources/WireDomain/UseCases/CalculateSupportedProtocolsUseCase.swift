@@ -55,7 +55,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         let currentSelfUserSupportedProtocols = await userLocalStore.fetchSelfUserSupportedProtocols()
 
         logger.debug(
-            "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
+            "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady), currentSelfUserSupportedProtocols: \(currentSelfUserSupportedProtocols)"
         )
 
         var result = Set<WireNetwork.MessageProtocol>()
@@ -63,11 +63,6 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         /// All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
             result.insert(.proteus)
-        }
-
-        // SelfUser supports mls (other client) at the moment, so we should not remove it
-        if currentSelfUserSupportedProtocols.contains(.mls) {
-            result.insert(.mls)
         }
 
         /// We support mls if the backend does and all MLS clients are ready.
@@ -93,6 +88,11 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         /// Even if proteus isn't supported, migration is pending or still ongoing.
         if remoteProtocols == [.mls], !allClientsMLSReady, migrationState.isOne(of: .notStarted, .ongoing) {
             result = [.proteus]
+        }
+        
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
         }
 
         logger.debug("calculated supported protocols: \(result)")
