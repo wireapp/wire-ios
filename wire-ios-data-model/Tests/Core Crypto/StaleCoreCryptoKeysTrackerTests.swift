@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireFoundationSupport
+import XCTest
 @testable import WireDataModel
 
 final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
@@ -42,7 +42,7 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
     func test_itStoresId() {
         // GIVEN
         let id = UUID()
-        
+
         // WHEN
         sut.addKey(id: id)
 
@@ -54,7 +54,7 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
     func test_itDoesNotAddDuplicates() {
         // GIVEN
         let id = UUID()
-        
+
         // WHEN
         sut.addKey(id: id)
         sut.addKey(id: id)
@@ -65,11 +65,11 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
     }
 
     // MARK: getAll
-    
+
     func test_itReturnsEmptyArray_WhenNoKeys() {
         // WHEN
         let ids = sut.getAll()
-        
+
         // THEN
         XCTAssertTrue(ids.isEmpty)
     }
@@ -104,12 +104,12 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
     }
 
     // MARK: clear
-    
+
     func test_itRemovesAllKeys() {
         // GIVEN
         sut.addKey(id: UUID())
         sut.addKey(id: UUID())
-        
+
         // WHEN
         sut.clear()
 

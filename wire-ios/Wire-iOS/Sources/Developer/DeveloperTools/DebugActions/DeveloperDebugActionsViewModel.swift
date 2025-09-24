@@ -86,7 +86,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
-            .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
+            .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [

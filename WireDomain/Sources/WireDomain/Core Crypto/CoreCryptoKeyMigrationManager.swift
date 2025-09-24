@@ -59,18 +59,21 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
         journal[.isCoreCryptoKeyRotationRequired] = false
     }
-    
+
     // MARK: Migrations
 
     public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
-        WireLogger.coreCrypto.info("Core crypto key migration from string to bytes is required", attributes: .safePublic)
+        WireLogger.coreCrypto.info(
+            "Core crypto key migration from string to bytes is required",
+            attributes: .safePublic
+        )
 
         try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
         journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
 
         WireLogger.coreCrypto.info("Core crypto key is migrated to bytes successfully", attributes: .safePublic)
     }
-    
+
     public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
         do {
             try await updateDatabaseKey(name: path, oldKey: oldKey, newKey: newKey)

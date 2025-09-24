@@ -17,13 +17,13 @@
 //
 
 public class CoreCryptoKeyRemover {
-    
+
     public static func removeCoreCryptoKeys(for userID: UUID) throws {
         // Get all items of class key
         let items = try KeychainManager.fetchAllItems(secClass: kSecClassKey)
-        
+
         try items.filter { item in
-            
+
             // Filter by tag matching all CC keys of the user
             guard
                 let tagData = item[kSecAttrApplicationTag] as? Data,
@@ -33,18 +33,18 @@ public class CoreCryptoKeyRemover {
             }
             let partialTag = "\(CoreCryptoKeychainItem.scopedBaseId).\(userID.uuidString)"
             return tagString.contains(partialTag)
-            
+
         }.forEach { item in
-            
+
             // Remove the matching keys
             let query = [
                 kSecClass: kSecClassKey,
                 kSecAttrApplicationTag: item[kSecAttrApplicationTag]
             ]
-            
+
             try KeychainManager.delete(query: query as CFDictionary)
 
         }
     }
-    
+
 }

@@ -63,7 +63,7 @@ public enum KeychainManager {
             throw Error.failedToDeleteItemFromKeychain(status)
         }
     }
-    
+
     static func delete(query: CFDictionary) throws {
         WireLogger.keychain.info("deleting item (query: \(query))")
         let status = SecItemDelete(query)
@@ -81,10 +81,10 @@ public enum KeychainManager {
             kSecReturnAttributes: true,
             kSecReturnRef: true
         ]
-        
+
         var result: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
-        
+
         guard status == errSecSuccess, let items = result as? [[CFString: Any]] else {
             WireLogger.keychain.error("fetching items (class: \(secClass)) failed: osstatus \(status)")
             throw Error.failedToFetchItemBatch(status)
@@ -217,7 +217,7 @@ public extension KeychainManager {
 
             case .failedToCopyPublicKey:
                 "failed to copy public key"
-                
+
             case let .failedToFetchItemBatch(status):
                 "failed to fetch item batch, OSStatus: \(status)"
             }

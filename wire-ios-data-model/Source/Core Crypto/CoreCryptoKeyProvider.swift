@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireFoundation
 import WireLogging
 import WireSystem
-import WireFoundation
 
 enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {
     case uniqueKeyIdentifier
@@ -31,7 +31,7 @@ public class CoreCryptoKeyProvider {
     private let staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol
     private let defaults: PrivateUserDefaults<CoreCryptoKeyProviderDefaults>
     private let userID: UUID
-    
+
     /// We use the unique key id to scope the database key by user session.
     /// Since the id is tied to the user defaults, it gets deleted on logout and app deletion
     private var uniqueKeyId: UUID {
@@ -47,7 +47,7 @@ public class CoreCryptoKeyProvider {
             defaults.setUUID(newValue, forKey: .uniqueKeyIdentifier)
         }
     }
-    
+
     public init(
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         userID: UUID,
@@ -114,7 +114,7 @@ public class CoreCryptoKeyProvider {
         guard coreCryptoKeyMigrationManager.isKeyRotationNeeded else {
             return
         }
-        
+
         do {
             WireLogger.coreCrypto.info("Rotating core crypto key...", attributes: .safePublic)
             try await rotateKey(path: path)
@@ -126,7 +126,7 @@ public class CoreCryptoKeyProvider {
             throw error
         }
     }
-    
+
     private func rotateKey(path: String) async throws {
 
         // Get the old key, to rotate with the new key
@@ -136,52 +136,52 @@ public class CoreCryptoKeyProvider {
         let oldKeyId = uniqueKeyId
         let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId, userID: userID)
         logRotation("fetched the old key")
-            
+
         // Generate a new key and save it with a new key ID
         let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
         let newKeyId = UUID()
         let newItem = CoreCryptoKeychainItem(uniqueKeyId: newKeyId, userID: userID)
         try KeychainManager.storeItem(newItem, value: newKey)
         logRotation("generated and saved the new key")
-        
+
         do {
             // Update the database
             try await coreCryptoKeyMigrationManager.updateKey(path: path, oldKey: oldKey, newKey: newKey)
             logRotation("updated the database with the new key")
-            
+
             // Delete the old key
             deleteOrMarkAsStale(item: oldItem)
             logRotation("deleted or marked old key as stale")
-            
+
             // Update the unique key identifier
             uniqueKeyId = newKeyId
             logRotation("updated unique key identifier")
-            
+
             // Mark the rotation as done
             coreCryptoKeyMigrationManager.markKeyRotationAsDone()
             logRotation("marked key rotation as done")
 
         } catch {
-            
+
             // Check if we need to clean up or rollback, otherwise throw the error
             switch error {
-            case CoreCryptoKeyMigrationManagerError.failedToUpdateKey(let underlyingError):
-                
+            case let CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError):
+
                 // We failed to rotate the key, rollback by deleting the new key
                 deleteOrMarkAsStale(item: newItem)
                 logRotation("rollback: deleted or marked new key as stale")
                 throw underlyingError
-  
+
             default:
                 throw error
             }
         }
     }
-    
+
     private func logRotation(_ message: String) {
         WireLogger.coreCrypto.info("[key rotation] \(message)")
     }
-    
+
     private func deleteOrMarkAsStale(item: CoreCryptoKeychainItem) {
         do {
             try KeychainManager.deleteItem(item)
@@ -242,7 +242,7 @@ public class CoreCryptoKeyProvider {
 }
 
 public extension CoreCryptoKeyProvider {
-    
+
     enum Error: Swift.Error {
         case keyNotFound
     }
@@ -251,11 +251,11 @@ public extension CoreCryptoKeyProvider {
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
     static let scopedBaseId = "com.wire.cc.key"
     static let unscopedId = "com.wire.mls.key"
-    
+
     let uniqueKeyId: UUID
     let userID: UUID
     var scoped: Bool = true
-    
+
     var id: String {
         if scoped {
             "\(Self.scopedBaseId).\(userID.uuidString).\(uniqueKeyId.uuidString)"
@@ -286,4 +286,3 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 }
-

@@ -31,37 +31,37 @@ public struct StaleCoreCryptoKeysTracker: StaleCoreCryptoKeysTrackerProtocol {
     private let defaults: UserDefaultsProtocol
 
     let key = "staleCoreCryptoKeyIds"
-    
+
     public init(defaults: UserDefaultsProtocol = UserDefaults.standard) {
         self.defaults = defaults
     }
-    
+
     /// Add a stale key ID to the list
     public func addKey(id: UUID) {
         var ids = Set(getAll())
         ids.insert(id)
         save(ids: ids)
     }
-    
+
     /// Retrieve all stale key IDs
     public func getAll() -> [UUID] {
         let strings = defaults.stringArray(forKey: key) ?? []
-        return strings.compactMap { UUID(uuidString:$0) }
+        return strings.compactMap { UUID(uuidString: $0) }
     }
-    
+
     /// Clear all stale key IDs
     public func clear() {
         defaults.removeObject(forKey: key)
     }
-    
+
     /// Remove a specific key from the stale list
     public func removeKey(id: UUID) {
         var ids = Set(getAll())
         ids.remove(id)
         save(ids: ids)
     }
-    
+
     private func save(ids: Set<UUID>) {
-        defaults.set(ids.map { $0.uuidString }, forKey: key)
+        defaults.set(ids.map(\.uuidString), forKey: key)
     }
 }

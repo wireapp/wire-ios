@@ -25,7 +25,7 @@ public extension Account {
     func deleteKeychainItems() {
         let item = AppLockController.PasscodeKeychainItem(userId: userIdentifier)
         try? Keychain.deleteItem(item)
-        
+
         try? CoreCryptoKeyRemover.removeCoreCryptoKeys(for: userIdentifier)
     }
 
