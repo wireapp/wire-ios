@@ -32,8 +32,9 @@ class WireUITestCase: XCTestCase {
 
         let launchArguments = [
             "-resetData",
-            "--BackendEnvironmentTypeOverrideKey=staging",
-            "--persist-backend-type",
+//            "--BackendEnvironmentTypeOverrideKey=staging",
+//            "--persist-backend-type",
+            "--useEnvStaging",
             "--preferred-api-version=8"
         ]
 
@@ -42,7 +43,7 @@ class WireUITestCase: XCTestCase {
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
             .useWireAuthentication: true,
-            .multibackend: false
+            .multibackend: true
         ])
         app.launch()
 
@@ -55,7 +56,7 @@ class WireUITestCase: XCTestCase {
         await userHelper.deleteCreatedUsers()
     }
 
-    func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5) {
+    func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
         XCTContext.runActivity(named: "Set custom backend via deeplink") { _ in
             let deeplinkFullURL = "wire://access/?config=\(deeplink)"
             guard let url = URL(string: deeplinkFullURL) else {
@@ -79,11 +80,12 @@ class WireUITestCase: XCTestCase {
                 app.wait(for: .runningForeground, timeout: timeout),
                 "App did not return to foreground after opening deeplink"
             )
-//            XCTAssertTrue(app.staticTexts[deeplink].exists)
-            let proceedButton = app.buttons["Proceed"]
-            if proceedButton.waitForExistence(timeout: 2) {
-                proceedButton.tap()
-            }
+            app.buttons["Proceed"].tap()
+            let welcomeLabel = app.descendants(matching: .any)["onPremInfoButton"].label
+            XCTAssertTrue(
+                welcomeLabel.contains(domainInfo),
+                "Expected domain missing from \(welcomeLabel)"
+            )
         }
     }
 }

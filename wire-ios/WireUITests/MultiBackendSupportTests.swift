@@ -23,6 +23,9 @@ final class MultiBackendSupportTests: WireUITestCase {
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
 
+        let domainInfoStaging = "staging.zinfra.io"
+        let domainInfoAnta = "anta.wire.link"
+
         let user_Backend1 = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user_Backend1.email, password: user_Backend1.password)
@@ -38,7 +41,7 @@ final class MultiBackendSupportTests: WireUITestCase {
             "Username didn't contain \(user_Backend1.username)"
         )
         XCTAssertEqual(accountPage.getEmail(), user_Backend1.email, "Email didn't contain \(user_Backend1.email)")
-        XCTAssertEqual(domanInfo, "staging.zinfra.io", "Domain info \(domanInfo) mismatched on account page")
+        XCTAssertEqual(domanInfo, domainInfoStaging, "Domain info \(domanInfo) mismatched on account page")
 
         _ = try accountPage.backToSettings()
             .switchToConversationsTab()
@@ -46,10 +49,10 @@ final class MultiBackendSupportTests: WireUITestCase {
             .tapAddAccountOrTeamButton()
 
         let deeplink = try EnvironmentVariables().antaDeepLinkURL
-        setCustomBackend(byDeeplink: deeplink)
+        setCustomBackend(byDeeplink: deeplink, domainInfo: domainInfoAnta)
         BackendContext.current = .anta
 
-        // Register for backend2
+        // Register for backend2 - anta
         let user_Backend2 = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
@@ -83,8 +86,8 @@ final class MultiBackendSupportTests: WireUITestCase {
             "Username didn't contain \(user_Backend2.username)"
         )
         XCTAssertEqual(accountPage.getEmail(), user_Backend2.email, "Email didn't contain \(user_Backend2.email)")
-        XCTAssertEqual(domanInfo, "anta.wire.link", "Domain info \(domanInfo) mismatched on account page")
-        
+        XCTAssertEqual(domanInfo, domainInfoAnta, "Domain info \(domanInfo) mismatched on account page")
+
         BackendContext.current = .staging
     }
 }
