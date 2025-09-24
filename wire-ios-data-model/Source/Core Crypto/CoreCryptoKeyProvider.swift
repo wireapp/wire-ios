@@ -30,6 +30,7 @@ public class CoreCryptoKeyProvider {
     private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
     private let staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol
     private let defaults: PrivateUserDefaults<CoreCryptoKeyProviderDefaults>
+    private let userID: UUID
     
     /// We use the unique key id to scope the database key by user session.
     /// Since the id is tied to the user defaults, it gets deleted on logout and app deletion
@@ -54,6 +55,7 @@ public class CoreCryptoKeyProvider {
     ) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.defaults = PrivateUserDefaults(userID: userID)
+        self.userID = userID
         self.staleKeysTracker = staleKeysTracker
     }
 
@@ -92,7 +94,7 @@ public class CoreCryptoKeyProvider {
                 WireLogger.coreCrypto.info("Migrating to scoped core crypto key...", attributes: .safePublic)
 
                 // Store the unscoped key as scoped key
-                let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId)
+                let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, userID: userID)
                 try KeychainManager.storeItem(item, value: unscopedKey)
 
                 // Mark migration as done
@@ -132,13 +134,13 @@ public class CoreCryptoKeyProvider {
             throw Error.keyNotFound
         }
         let oldKeyId = uniqueKeyId
-        let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId)
+        let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId, userID: userID)
         logRotation("fetched the old key")
             
         // Generate a new key and save it with a new key ID
         let newKey = try KeychainManager.generateKey(numberOfBytes: 32)
         let newKeyId = UUID()
-        let newItem = CoreCryptoKeychainItem(uniqueKeyId: newKeyId)
+        let newItem = CoreCryptoKeychainItem(uniqueKeyId: newKeyId, userID: userID)
         try KeychainManager.storeItem(newItem, value: newKey)
         logRotation("generated and saved the new key")
         
@@ -217,7 +219,11 @@ public class CoreCryptoKeyProvider {
 
     private func fetchCoreCryptoKey(scoped: Bool = true) throws -> Data? {
         do {
-            let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, scoped: scoped)
+            let item = CoreCryptoKeychainItem(
+                uniqueKeyId: uniqueKeyId,
+                userID: userID,
+                scoped: scoped
+            )
             return try KeychainManager.fetchItem(item)
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
             return nil
@@ -227,7 +233,7 @@ public class CoreCryptoKeyProvider {
     }
 
     private func createCoreCryptoKey() throws -> Data {
-        let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId)
+        let item = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, userID: userID)
         let key = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: key)
         return key
@@ -243,15 +249,18 @@ public extension CoreCryptoKeyProvider {
 }
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
-
+    static let scopedBaseId = "com.wire.cc.key"
+    static let unscopedId = "com.wire.mls.key"
+    
     let uniqueKeyId: UUID
+    let userID: UUID
     var scoped: Bool = true
-
+    
     var id: String {
         if scoped {
-            "com.wire.cc.key.\(uniqueKeyId.uuidString)"
+            "\(Self.scopedBaseId).\(userID.uuidString).\(uniqueKeyId.uuidString)"
         } else {
-            "com.wire.mls.key"
+            Self.unscopedId
         }
     }
 
