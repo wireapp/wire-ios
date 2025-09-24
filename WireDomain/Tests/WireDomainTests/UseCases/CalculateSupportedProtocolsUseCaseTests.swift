@@ -219,7 +219,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
             XCTAssertEqual(testCase.supportedProtocols, supportedProtocols)
         }
     }
-    
+
     func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.mls])
@@ -231,7 +231,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
             (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
         ] =
             [
-                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
+                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls])
             ]
 
         for testCase in testCases {

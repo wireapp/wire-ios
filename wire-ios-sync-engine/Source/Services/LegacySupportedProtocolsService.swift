@@ -106,7 +106,7 @@ public final class LegacySupportedProtocolsService: LegacySupportedProtocolsServ
         if currentSelfUserSupportedProtocols.contains(.mls) {
             result.insert(.mls)
         }
-        
+
         logger.debug("calculated supported protocols: \(result) - legacy")
 
         return result

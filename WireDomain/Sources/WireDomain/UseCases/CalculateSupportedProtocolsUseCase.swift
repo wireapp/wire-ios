@@ -89,7 +89,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         if remoteProtocols == [.mls], !allClientsMLSReady, migrationState.isOne(of: .notStarted, .ongoing) {
             result = [.proteus]
         }
-        
+
         // SelfUser supports mls (other client) at the moment, so we should not remove it
         if currentSelfUserSupportedProtocols.contains(.mls) {
             result.insert(.mls)

@@ -307,19 +307,19 @@ final class LegacySupportedProtocolsServiceTests: XCTestCase {
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
         }
     }
-    
+
     func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
-        
+
         try syncContext.performAndWait {
             // Given
             try mock(allActiveMLSClients: false)
             mock(remoteSupportedProtocols: [.mls])
             ZMUser.selfUser(in: syncContext).supportedProtocols = [.proteus, .mls]
-            
+
             mock(migrationState: .notStarted)
-            
+
             // When / then
-            
+
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls, .proteus])
         }
     }
