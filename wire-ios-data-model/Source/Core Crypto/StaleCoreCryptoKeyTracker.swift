@@ -16,38 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct StaleCoreCryptoKeysTracker {
+import WireFoundation
 
-    // TODO: Make it mockable with UserDefaultsProtocol
-    private static let defaults = UserDefaults.standard
-    private static let key = "staleCoreCryptoKeyIds"
+// sourcery: AutoMockable
+public protocol StaleCoreCryptoKeysTrackerProtocol {
+    func addKey(id: UUID)
+    func getAll() -> [UUID]
+    func clear()
+    func removeKey(id: UUID)
+}
+
+public struct StaleCoreCryptoKeysTracker: StaleCoreCryptoKeysTrackerProtocol {
+
+    private let defaults: UserDefaultsProtocol
+
+    let key = "staleCoreCryptoKeyIds"
+    
+    public init(defaults: UserDefaultsProtocol = UserDefaults.standard) {
+        self.defaults = defaults
+    }
     
     /// Add a stale key ID to the list
-    static func addKey(id: UUID) {
+    public func addKey(id: UUID) {
         var ids = Set(getAll())
         ids.insert(id)
         save(ids: ids)
     }
     
     /// Retrieve all stale key IDs
-    static func getAll() -> [UUID] {
+    public func getAll() -> [UUID] {
         let strings = defaults.stringArray(forKey: key) ?? []
         return strings.compactMap { UUID(uuidString:$0) }
     }
     
     /// Clear all stale key IDs
-    static func clear() {
+    public func clear() {
         defaults.removeObject(forKey: key)
     }
     
     /// Remove a specific key from the stale list
-    static func removeKey(id: UUID) {
+    public func removeKey(id: UUID) {
         var ids = Set(getAll())
         ids.remove(id)
         save(ids: ids)
     }
     
-    private static func save(ids: Set<UUID>) {
+    private func save(ids: Set<UUID>) {
         defaults.set(ids.map { $0.uuidString }, forKey: key)
     }
 }

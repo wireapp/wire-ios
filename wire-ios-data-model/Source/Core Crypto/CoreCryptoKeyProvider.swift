@@ -28,6 +28,7 @@ enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {
 public class CoreCryptoKeyProvider {
 
     private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
+    private let staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol
     private let defaults: PrivateUserDefaults<CoreCryptoKeyProviderDefaults>
     
     /// We use the unique key id to scope the database key by user session.
@@ -48,10 +49,12 @@ public class CoreCryptoKeyProvider {
     
     public init(
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
-        userID: UUID
+        userID: UUID,
+        staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol = StaleCoreCryptoKeysTracker()
     ) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.defaults = PrivateUserDefaults(userID: userID)
+        self.staleKeysTracker = staleKeysTracker
     }
 
     public func coreCryptoKey(
@@ -181,7 +184,7 @@ public class CoreCryptoKeyProvider {
         do {
             try KeychainManager.deleteItem(item)
         } catch {
-            StaleCoreCryptoKeysTracker.addKey(id: item.uniqueKeyId)
+            staleKeysTracker.addKey(id: item.uniqueKeyId)
         }
     }
 
