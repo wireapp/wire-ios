@@ -121,14 +121,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         syncStateSubject.send(.idle)
-    
+        
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
                 "resuming sync"
             )
-
             do {
-                try await performSync()
+                try await withExpiringActivity(reason: "resuming sync") { [weak self] in
+                    try await self?.performSync()
+                }
             } catch is CancellationError {
                 // ignore error
             } catch {
@@ -137,6 +138,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     error: error
                 )
             }
+
         }
     }
 

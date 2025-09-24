@@ -241,17 +241,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
-        if !isHeadlessBackgroundLaunch {
-            setupWindowAndRootViewController()
+        setupWindowAndRootViewController()
 
+//        if !isHeadlessBackgroundLaunch {
             if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
                 .hasAccessibleAuthenticationCookieData() {
                 createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
             }
 
-        } else {
-            WireLogger.appDelegate.info("running in headless mode", attributes: .safePublic)
-        }
+//        } else {
+//            WireLogger.appDelegate.info("running in headless mode", attributes: .safePublic)
+//        }
 
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
