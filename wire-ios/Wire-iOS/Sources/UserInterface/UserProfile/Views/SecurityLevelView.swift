@@ -26,7 +26,7 @@ final class SecurityLevelView: UIView {
 
     // MARK: - Constants
 
-    private static let SecurityLevelViewHeight = 24.0
+    static let securityLevelViewHeight = 24.0
 
     // MARK: - Properties
 
@@ -120,7 +120,7 @@ final class SecurityLevelView: UIView {
             securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             securityLevelLabel.topAnchor.constraint(equalTo: topAnchor),
             securityLevelLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.SecurityLevelViewHeight),
+            securityLevelLabel.heightAnchor.constraint(equalToConstant: SecurityLevelView.securityLevelViewHeight),
             iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
             iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),

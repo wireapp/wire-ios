@@ -50,9 +50,7 @@ public struct RegisterUserResponse: Equatable, Sendable {
 
     public let assets: [UserAsset]?
 
-    /// The user's profile image assets
-
-    public let picture: [String]?
+    // Removed picture from parsing - WPB-20534
 
     /// The email associated with this user
 

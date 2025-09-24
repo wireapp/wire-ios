@@ -117,7 +117,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // It is probably worth restructuring the code to avoid this.
                 break
 
-            case ProxyModeError.proxyCredentialsRequired:
+            case NetworkStackError.proxyCredentialsRequired:
                 // Login via email is the only place we ask from proxy credentials.
                 router.navigate(
                     to: DetermineAuthMethodDestination.login(
@@ -264,7 +264,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             default:
                 router.presentAlert(for: error)
             }
-        } catch ProxyModeError.proxyCredentialsRequired {
+        } catch NetworkStackError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
                 to: DetermineAuthMethodDestination.login(

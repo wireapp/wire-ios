@@ -660,7 +660,7 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
 }
 
-public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
+public class MockLegacyResolveOneOnOneConversationsUseCaseProtocol: LegacyResolveOneOnOneConversationsUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -1167,7 +1167,7 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
+public class MockLegacySupportedProtocolsServiceInterface: LegacySupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
 
