@@ -117,7 +117,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let managedBy: ManagedByV0?
     let name: String
     let phone: String?
-    let picture: [String]?
+    // removed picture from parsing because of wrong format - WPB-20534
     let qualifiedID: QualifiedIDV0
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
@@ -129,7 +129,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
         case expiresAt = "expires_at"
         case handle, id, locale
         case managedBy = "managed_by"
-        case name, phone, picture
+        case name, phone
         case qualifiedID = "qualified_id"
         case service
         case ssoID = "sso_id"
