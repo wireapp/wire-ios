@@ -23,6 +23,7 @@ final class MultiBackendSupportTests: WireUITestCase {
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
 
+        defer { BackendContext.current = .staging }
         let domainInfoStaging = "staging.zinfra.io"
         let domainInfoAnta = "anta.wire.link"
 
@@ -33,6 +34,7 @@ final class MultiBackendSupportTests: WireUITestCase {
             .openSettings()
             .openAccountSettings()
 
+        // Verify backend1-staging details
         var accountName = try XCTUnwrap(accountPage.getAccountName())
         var domanInfo = try XCTUnwrap(accountPage.getDomainInfo())
         XCTAssertEqual(accountName, user_Backend1.name, "Account name didn't match \(user_Backend1.name)")
@@ -78,6 +80,7 @@ final class MultiBackendSupportTests: WireUITestCase {
             .openSettings()
             .openAccountSettings()
 
+        // Verify backend2-anta details
         accountName = try XCTUnwrap(accountPage.getAccountName())
         domanInfo = try XCTUnwrap(accountPage.getDomainInfo())
         XCTAssertEqual(accountName, user_Backend2.name, "Account name didn't match \(user_Backend2.name)")
@@ -88,6 +91,22 @@ final class MultiBackendSupportTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user_Backend2.email, "Email didn't contain \(user_Backend2.email)")
         XCTAssertEqual(domanInfo, domainInfoAnta, "Domain info \(domanInfo) mismatched on account page")
 
-        BackendContext.current = .staging
+        accountPage = try accountPage.backToSettings()
+            .switchToConversationsTab()
+            .openUserAccountPageForUser(with: user_Backend2.name)
+            .switchUserAccountForUser(withName: user_Backend1.name)
+            .openSettings()
+            .openAccountSettings()
+
+        // Verify backend1-staging details -  after switching account
+        accountName = try XCTUnwrap(accountPage.getAccountName())
+        domanInfo = try XCTUnwrap(accountPage.getDomainInfo())
+        XCTAssertEqual(accountName, user_Backend1.name, "Account name didn't match \(user_Backend1.name)")
+        XCTAssertTrue(
+            accountPage.getUsername().contains(user_Backend1.username),
+            "Username didn't contain \(user_Backend1.username)"
+        )
+        XCTAssertEqual(accountPage.getEmail(), user_Backend1.email, "Email didn't contain \(user_Backend1.email)")
+        XCTAssertEqual(domanInfo, domainInfoStaging, "Domain info \(domanInfo) mismatched on account page")
     }
 }
