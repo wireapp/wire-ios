@@ -16,9 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public class CoreCryptoKeyRemover {
+// sourcery: AutoMockable
+public protocol RemoveCoreCryptoKeysUseCaseProtocol {
 
-    public static func removeCoreCryptoKeys(for userID: UUID) throws {
+    /// Removes all the core crypto keys from the keychain for the user with the given user ID
+    func invoke(userID: UUID) throws
+    
+}
+
+public struct RemoveCoreCryptoKeysUseCase {
+
+    public func invoke(userID: UUID) throws {
         // Get all items of class key
         let items = try KeychainManager.fetchAllItems(secClass: kSecClassKey)
 
@@ -43,7 +51,6 @@ public class CoreCryptoKeyRemover {
             ]
 
             try KeychainManager.delete(query: query as CFDictionary)
-
         }
     }
 
