@@ -141,11 +141,19 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
 
         let task = Task { @Sendable [self] in
-            await processLiveStream(
-                liveEventStream,
-                pushChannel: pushChannel,
-                syncMarker: syncMarker
-            )
+            do {
+                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                    await processLiveStream(
+                        liveEventStream,
+                        pushChannel: pushChannel,
+                        syncMarker: syncMarker
+                    )
+                }
+            } catch {
+                // if we expire, close everything
+                await pushChannel.close()
+                await pushChannelState.markAsClosed()
+            }
         }
 
         return IncrementalSync.Token(task: task, closePushChannel: {
