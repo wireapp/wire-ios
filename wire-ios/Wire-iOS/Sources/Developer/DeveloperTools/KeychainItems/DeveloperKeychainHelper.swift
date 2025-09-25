@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Security
 import Foundation
+import Security
 
 class DeveloperKeychainHelper {
-    
+
     func fetchAll(matchingSecClass secClass: CFString) -> [KeychainItem] {
         let query: [CFString: Any] = [
             kSecClass: secClass,
@@ -28,9 +28,9 @@ class DeveloperKeychainHelper {
             kSecReturnAttributes: true,
             kSecReturnData: true
         ]
-        
+
         let items = fetchItems(query: query)
-        
+
         return items.map { item in
             KeychainItem(
                 account: item[kSecAttrAccount as String] as? String,
@@ -42,7 +42,7 @@ class DeveloperKeychainHelper {
             )
         }
     }
-        
+
     func delete(_ item: KeychainItem) {
         switch item.secClass {
         case kSecClassGenericPassword:
@@ -54,7 +54,7 @@ class DeveloperKeychainHelper {
             }
         case kSecClassKey:
             var attributes = [CFString: Data]()
-            
+
             if let tag = data(from: item.applicationTag) {
                 attributes[kSecAttrApplicationTag] = tag
             } else if let label = data(from: item.label) {
@@ -62,7 +62,7 @@ class DeveloperKeychainHelper {
             } else {
                 break
             }
-                        
+
             deleteItem(
                 secClass: kSecClassKey,
                 attributes: attributes
@@ -71,12 +71,12 @@ class DeveloperKeychainHelper {
             break
         }
     }
-    
+
     func deleteAll() {
         SecItemDelete([kSecClass: kSecClassGenericPassword] as CFDictionary)
         SecItemDelete([kSecClass: kSecClassKey] as CFDictionary)
     }
-    
+
     // MARK: Helpers
 
     private func fetchItems(query: [CFString: Any]) -> [[String: Any]] {
@@ -87,20 +87,20 @@ class DeveloperKeychainHelper {
         }
         return items
     }
-    
+
     private func deleteItem(secClass: CFString, attributes: [CFString: Any]) {
         var query: [CFString: Any] = [kSecClass: secClass]
         attributes.forEach { query[$0.key] = $0.value }
         SecItemDelete(query as CFDictionary)
     }
-    
+
     private func string(from data: Any?) -> String? {
         guard let data = data as? Data else { return nil }
         return String(data: data, encoding: .utf8) ?? "<binary data>"
     }
-    
+
     private func data(from string: String?) -> Data? {
-        guard let string = string else { return nil }
+        guard let string else { return nil }
         return string.data(using: .utf8)
     }
 }

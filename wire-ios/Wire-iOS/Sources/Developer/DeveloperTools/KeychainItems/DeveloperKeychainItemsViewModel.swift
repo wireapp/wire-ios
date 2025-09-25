@@ -19,16 +19,17 @@
 import SwiftUI
 
 // MARK: - Model
+
 struct KeychainItem: Identifiable, Hashable {
     let id = UUID()
-    
+
     // Password fields
     let account: String?
-    
+
     // Key fields
     let applicationTag: String?
     let label: String?
-    
+
     // Common
     let value: String?
     let accessGroup: String?
@@ -36,16 +37,17 @@ struct KeychainItem: Identifiable, Hashable {
 }
 
 // MARK: - ViewModel
+
 class DeveloperKeychainItemsViewModel: ObservableObject {
     @Published var passwordItems: [KeychainItem] = []
     @Published var keyItems: [KeychainItem] = []
-    
+
     private let keychainHelper = DeveloperKeychainHelper()
-    
+
     init() {
         fetchItems()
     }
-    
+
     func nameFor(_ item: KeychainItem) -> String? {
         switch item.secClass {
         case kSecClassGenericPassword:
@@ -55,17 +57,17 @@ class DeveloperKeychainItemsViewModel: ObservableObject {
         default: nil
         }
     }
-    
+
     func fetchItems() {
         passwordItems = keychainHelper.fetchAll(matchingSecClass: kSecClassGenericPassword)
         keyItems = keychainHelper.fetchAll(matchingSecClass: kSecClassKey)
     }
-    
+
     func delete(_ item: KeychainItem) {
         keychainHelper.delete(item)
         fetchItems()
     }
-    
+
     func deleteAll() {
         keychainHelper.deleteAll()
         fetchItems()

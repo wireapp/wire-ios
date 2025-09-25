@@ -24,7 +24,7 @@ struct DeveloperKeychainItemsView: View {
 
     var body: some View {
         VStack {
-            if viewModel.passwordItems.isEmpty && viewModel.keyItems.isEmpty {
+            if viewModel.passwordItems.isEmpty, viewModel.keyItems.isEmpty {
                 Text("No items in the keychain")
                     .foregroundColor(.secondary)
                     .padding()
@@ -36,7 +36,7 @@ struct DeveloperKeychainItemsView: View {
                             withItems: viewModel.passwordItems
                         )
                     }
-                    
+
                     if !viewModel.keyItems.isEmpty {
                         section(
                             named: "Keys",
@@ -49,7 +49,7 @@ struct DeveloperKeychainItemsView: View {
         }
         .navigationTitle("Keychain Items")
     }
-    
+
     var deleteAllButton: some View {
         Button(role: .destructive) {
             showDeleteAllAlert = true
@@ -59,9 +59,10 @@ struct DeveloperKeychainItemsView: View {
         }
         .buttonStyle(.borderedProminent)
         .padding()
-        .alert("Delete All Items?",
-               isPresented: $showDeleteAllAlert)
-        {
+        .alert(
+            "Delete All Items?",
+            isPresented: $showDeleteAllAlert
+        ) {
             Button("Cancel", role: .cancel) {}
             Button("Delete All", role: .destructive) {
                 viewModel.deleteAll()
@@ -70,14 +71,14 @@ struct DeveloperKeychainItemsView: View {
             Text("This will permanently remove all keychain items. This action cannot be undone.")
         }
     }
-    
+
     func section(named name: String, withItems items: [KeychainItem]) -> some View {
         Section(name) {
             ForEach(items) { item in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(viewModel.nameFor(item) ?? "<no name>")
                         .font(.headline)
-                    
+
                     if let value = item.value {
                         ExpandableText(text: value)
                     }
@@ -93,15 +94,16 @@ struct DeveloperKeychainItemsView: View {
             }
         }
     }
-    
+
 }
 
 // MARK: - Expandable Text
+
 struct ExpandableText: View {
     let text: String
     @State private var expanded = false
     @State private var truncated = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(text)
@@ -125,7 +127,7 @@ struct ExpandableText: View {
                         )
                         .hidden()
                 )
-            
+
             if truncated {
                 Button(expanded ? "Show less" : "Show more") {
                     withAnimation { expanded.toggle() }
