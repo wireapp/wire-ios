@@ -23,7 +23,7 @@ import XCTest
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
-    enum MockError: Error {
+    enum MockError: Swift.Error {
         case unmockedMethodCalled
         case coreCryptoKeyError
     }

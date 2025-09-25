@@ -18,18 +18,28 @@
 
 import Foundation
 import XCTest
+import WireFoundationSupport
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
 class CoreCryptoKeyProviderTests: XCTestCase {
 
-    var userID: UUID = .init()
-    var userID2: UUID = .init()
+    var userID = UUID()
+    var uniqueKeyId: UUID!
     var mockMigrationManager: MockCoreCryptoKeyMigrationManagerProtocol!
+    var mockStaleKeysTracker: MockStaleCoreCryptoKeysTrackerProtocol!
+    var mockUserDefaults: UserDefaultsProtocolMock!
     var sut: CoreCryptoKeyProvider!
+    var unscopedItem: CoreCryptoKeychainItem!
+    var scopedItem: CoreCryptoKeychainItem!
+    var storage: [String: Any]!
 
     override func setUp() {
         super.setUp()
+        
+        uniqueKeyId = UUID()
+        
+        // Set up migration manager mock
         mockMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, _, _ in }
         mockMigrationManager.markKeyRotationAsDone_MockMethod = {}
@@ -38,15 +48,61 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockMigrationManager.isMigrationToBytesNeeded = false
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
         mockMigrationManager.isKeyRotationNeeded = false
-        sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockMigrationManager, userID: userID)
+       
+        // Set up stale key tracker mocks
+        mockStaleKeysTracker = MockStaleCoreCryptoKeysTrackerProtocol()
+        
+        // Set up user defaults mock
+        storage = [:]
+        let uniqueKeyIdDefaultsKey = "\(userID.uuidString)_\(CoreCryptoKeyProviderDefaults.uniqueKeyIdentifier)"
+        mockUserDefaults = UserDefaultsProtocolMock()
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { value, key in
+            if
+                key == uniqueKeyIdDefaultsKey,
+                let stringValue = value as? String,
+                let uuidValue = UUID(uuidString: stringValue)
+            {
+                self.uniqueKeyId = uuidValue
+            } else {
+                self.storage[key] = value
+            }
+        }
+        mockUserDefaults.stringForKeyDefaultNameStringStringClosure = { key in
+            if key == uniqueKeyIdDefaultsKey {
+                return self.uniqueKeyId.uuidString
+            }
+            return self.storage[key] as? String
+        }
+        
+        // Set up sut
+        sut = CoreCryptoKeyProvider(
+            coreCryptoKeyMigrationManager: mockMigrationManager,
+            userID: userID,
+            staleKeysTracker: mockStaleKeysTracker,
+            storage: mockUserDefaults
+        )
+        
+        // Set up the keychain items
+        unscopedItem = CoreCryptoKeychainItem(
+            uniqueKeyId: UUID(),
+            userID: UUID(),
+            scoped: false
+        )
+        scopedItem = CoreCryptoKeychainItem(
+            uniqueKeyId: uniqueKeyId,
+            userID: userID
+        )
     }
 
     override func tearDown() {
-        try? KeychainManager.deleteItem(UnscopedCoreCryptoKeychainItem())
-        try? KeychainManager.deleteItem(ScopedCoreCryptoKeychainItem(userID: userID))
-        try? KeychainManager.deleteItem(ScopedCoreCryptoKeychainItem(userID: userID2))
+        try? KeychainManager.deleteItem(unscopedItem)
+        try? KeychainManager.deleteItem(scopedItem)
+        mockUserDefaults = nil
         mockMigrationManager = nil
+        mockStaleKeysTracker = nil
         sut = nil
+        unscopedItem = nil
+        scopedItem = nil
         super.tearDown()
     }
 
@@ -54,9 +110,8 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     func test_itFetchesCoreCryptoKey() async throws {
         // GIVEN
-        let item = ScopedCoreCryptoKeychainItem(userID: userID)
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
-        try KeychainManager.storeItem(item, value: expectedKey)
+        try KeychainManager.storeItem(scopedItem, value: expectedKey)
 
         // WHEN
         let key = try await sut.coreCryptoKey(createIfNeeded: false, path: "")
@@ -72,7 +127,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         }
 
         // THEN
-        XCTAssertNil(try? KeychainManager.fetchItem(ScopedCoreCryptoKeychainItem(userID: userID)))
+        XCTAssertNil(try? KeychainManager.fetchItem(scopedItem))
     }
 
     func test_itCreatesCoreCryptoKey_WhenNeeded() async throws {
@@ -82,7 +137,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertNotNil(key)
 
-        let storedKey: Data? = try? KeychainManager.fetchItem(ScopedCoreCryptoKeychainItem(userID: userID))
+        let storedKey: Data? = try? KeychainManager.fetchItem(scopedItem)
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
     }
@@ -111,9 +166,8 @@ class CoreCryptoKeyProviderTests: XCTestCase {
             receivedNewKey = newKey
         }
 
-        let item = UnscopedCoreCryptoKeychainItem()
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
-        try KeychainManager.storeItem(item, value: expectedKey)
+        try KeychainManager.storeItem(unscopedItem, value: expectedKey)
 
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
@@ -123,60 +177,33 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertEqual(receivedNewKey, expectedKey)
     }
 
-    // MARK:
+    // MARK: Scoping key
 
-    func test_itMigratesToScopedKey_AndRotatesTheDatabaseKey() async throws {
+    func test_itMigratesToScopedKey() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
-        mockMigrationManager.isKeyRotationNeeded = true
-        mockMigrationManager.markKeyRotationAsDone_MockMethod = { [mockMigrationManager] in
-            mockMigrationManager?.isKeyRotationNeeded = false
-        }
         mockMigrationManager.markMigrationToScopedKeyDone_MockMethod = { [mockMigrationManager] in
             mockMigrationManager?.isMigrationToScopedKeyNeeded = false
         }
-
+        
         // create unscoped key
-        let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
-
-        // create scoped key item
-        let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
-
-        // Set the mock for key rotation
-        var expectedNewKey: Data?
-        mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, oldKey, newKey in
-            // verify it updates the unscoped key
-            XCTAssertEqual(oldKey, unscopedKey)
-
-            // save value of new key
-            expectedNewKey = newKey
-        }
 
         // WHEN
         _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
 
         // THEN
-        // verify it updated the key
-        XCTAssertEqual(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
-
-        // verify the new key is saved as a scoped key
         let scopedKey: Data? = try? KeychainManager.fetchItem(scopedItem)
         XCTAssertNotNil(scopedKey)
-        XCTAssertEqual(expectedNewKey, scopedKey)
-
-        // verify we marked migrations as done
-        XCTAssertFalse(mockMigrationManager.isMigrationToScopedKeyNeeded)
-        XCTAssertFalse(mockMigrationManager.isKeyRotationNeeded)
+        XCTAssertEqual(unscopedKey, scopedKey)
     }
-
+    
     func test_itSkipsScopedKeyMigration_WhenNotNeeded() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
 
         // create unscoped key
-        let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
 
@@ -192,12 +219,10 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
 
         // create unscoped key
-        let unscopedItem = UnscopedCoreCryptoKeychainItem()
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
 
         // create scoped key
-        let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
         let scopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(scopedItem, value: scopedKey)
 
@@ -207,13 +232,62 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
     }
+    
+    // MARK: Rotating key
+    
+    func test_itRotatesTheDatabaseKey() async throws {
+        // GIVEN
+        mockMigrationManager.isKeyRotationNeeded = true
+        mockMigrationManager.markKeyRotationAsDone_MockMethod = { [mockMigrationManager] in
+            mockMigrationManager?.isKeyRotationNeeded = false
+        }
+
+        // create scoped key item as current key
+        let oldKeyId = uniqueKeyId
+        let oldKeyItem = scopedItem!
+        let oldKey = try KeychainManager.generateKey(numberOfBytes: 32)
+        try KeychainManager.storeItem(oldKeyItem, value: oldKey)
+
+        // set the mock for key rotation
+        var expectedNewKey: Data?
+        mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, _oldKey, _newKey in
+            // verify it updates the old key
+            XCTAssertEqual(oldKey, _oldKey)
+
+            // save value of new key
+            expectedNewKey = _newKey
+        }
+
+        // WHEN
+        _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
+
+        // THEN
+        // verify it updated the key
+        XCTAssertEqual(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
+        
+        // verify it created a new unique id and a new key, and saved it in keychain
+        XCTAssertNotEqual(oldKeyId, uniqueKeyId)
+        let newKeyItem = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, userID: userID)
+        let newKey: Data? = try? KeychainManager.fetchItem(newKeyItem)
+        XCTAssertNotNil(newKey)
+        XCTAssertEqual(newKey, expectedNewKey)
+        
+        // verify it deleted the old key
+        XCTAssertNil(try? KeychainManager.fetchItem(oldKeyItem))
+
+        // verify we marked migration as done
+        XCTAssertFalse(mockMigrationManager.isKeyRotationNeeded)
+        
+        // clean up
+        try? KeychainManager.deleteItem(oldKeyItem)
+        try? KeychainManager.deleteItem(newKeyItem)
+    }
 
     func test_itSkipsKeyRotation_WhenNotNeeded() async throws {
         // GIVEN
         mockMigrationManager.isKeyRotationNeeded = false
 
         // create scoped key
-        let scopedItem = ScopedCoreCryptoKeychainItem(userID: userID)
         let scopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(scopedItem, value: scopedKey)
 

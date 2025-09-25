@@ -24,10 +24,22 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
 
     private var mockDefaults: UserDefaultsProtocolMock!
     private var sut: StaleCoreCryptoKeysTracker!
+    private var storage: [String: Any]!
 
     override func setUp() {
         super.setUp()
+        storage = [:]
         mockDefaults = UserDefaultsProtocolMock()
+        mockDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { [weak self] value, key in
+            self?.storage[key] = value
+        }
+        mockDefaults.stringArrayForKeyDefaultNameStringStringClosure = { [weak self] key in
+            return self?.storage[key] as? [String]
+        }
+        mockDefaults.removeObjectForKeyDefaultNameStringVoidClosure = { [weak self] key in
+            self?.storage.removeValue(forKey: key)
+        }
+    
         sut = StaleCoreCryptoKeysTracker(defaults: mockDefaults)
     }
 

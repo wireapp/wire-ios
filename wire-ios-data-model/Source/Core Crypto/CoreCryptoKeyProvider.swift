@@ -51,10 +51,11 @@ public class CoreCryptoKeyProvider {
     public init(
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         userID: UUID,
-        staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol = StaleCoreCryptoKeysTracker()
+        staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol = StaleCoreCryptoKeysTracker(),
+        storage: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
-        self.defaults = PrivateUserDefaults(userID: userID)
+        self.defaults = PrivateUserDefaults(userID: userID, storage: storage)
         self.userID = userID
         self.staleKeysTracker = staleKeysTracker
     }

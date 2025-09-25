@@ -21,20 +21,29 @@ import XCTest
 
 final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
 
-    private let sut: RemoveCoreCryptoKeysUseCase!
     private let userID = UUID()
-    private let mockItem = MockKeychainItem()
-    private let ccItem1 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
-    private let ccItem2 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
+
+    private var sut: RemoveCoreCryptoKeysUseCase!
+    private var mockItem: MockKeychainItem!
+    private var ccItem1: CoreCryptoKeychainItem!
+    private var ccItem2: CoreCryptoKeychainItem!
 
     override func setUp() {
         super.setUp()
         sut = RemoveCoreCryptoKeysUseCase()
+        mockItem = MockKeychainItem()
+        ccItem1 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
+        ccItem2 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
     }
     
     override func tearDown() {
-        sut = nil
         deleteKeychainItems()
+
+        sut = nil
+        mockItem = nil
+        ccItem1 = nil
+        ccItem2 = nil
+
         super.tearDown()
     }
 
@@ -54,9 +63,9 @@ final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
         try sut.invoke(userID: userID)
         
         // Then
-        XCTAssertNotNil(try? KeychainManager.fetchItem(mockItem.id))
-        XCTAssertNil(try? KeychainManager.fetchItem(ccItem1.id))
-        XCTAssertNil(try? KeychainManager.fetchItem(ccItem2.id))
+        XCTAssertNotNil(try? KeychainManager.fetchItem(mockItem))
+        XCTAssertNil(try? KeychainManager.fetchItem(ccItem1))
+        XCTAssertNil(try? KeychainManager.fetchItem(ccItem2))
     }
 
 }
@@ -81,7 +90,7 @@ struct MockKeychainItem: KeychainItemProtocol {
         ]
     }
     
-    func setQuery(value: some Any) -> [CFString: Any] { {
+    func setQuery(value: some Any) -> [CFString: Any] {
         [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
