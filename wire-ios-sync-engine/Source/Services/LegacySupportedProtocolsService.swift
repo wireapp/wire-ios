@@ -67,7 +67,7 @@ public final class LegacySupportedProtocolsService: LegacySupportedProtocolsServ
 
         logger
             .debug(
-                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady) - legacy"
+                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady), currentSelfUserSupportedProtocols: \(currentSelfUserSupportedProtocols) - legacy"
             )
 
         var result = Set<MessageProtocol>()
@@ -75,11 +75,6 @@ public final class LegacySupportedProtocolsService: LegacySupportedProtocolsServ
         // All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
             result.insert(.proteus)
-        }
-
-        // SelfUser supports mls (other client) at the moment, so we should not remove it
-        if currentSelfUserSupportedProtocols.contains(.mls) {
-            result.insert(.mls)
         }
 
         // All clients are mls ready so we support it if the backend does.
@@ -105,6 +100,11 @@ public final class LegacySupportedProtocolsService: LegacySupportedProtocolsServ
         // Even if proteus isn't supported, migration is pending or still ongoing.
         if remoteProtocols == [.mls], !allClientsMLSReady, migrationState.isOne(of: .notStarted, .ongoing) {
             result = [.proteus]
+        }
+
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
         }
 
         logger.debug("calculated supported protocols: \(result) - legacy")
