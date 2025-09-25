@@ -378,7 +378,7 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    public lazy var incrementalSync = IncrementalSync(
+    public lazy var incrementalSync = IncrementalSync( // TODO: figure out where to fetch and process unknown messages
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
