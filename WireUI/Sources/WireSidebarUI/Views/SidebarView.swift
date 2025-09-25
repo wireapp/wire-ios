@@ -262,6 +262,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "archivebox"
             accessibilityLabel = Text(Strings.ConversationFilter.Archived.title)
 
+        case .meetings:
+            // TODO: update
+            text = Text(Strings.ConversationFilter.Archived.title)
+            icon = "archivebox"
+            accessibilityLabel = Text(Strings.ConversationFilter.Archived.title)
         case .settings:
             text = Text(Strings.Settings.title)
             icon = "gearshape"

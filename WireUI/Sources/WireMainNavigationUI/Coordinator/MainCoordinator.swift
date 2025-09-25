@@ -409,6 +409,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
 
+        case .meetings:
+            sidebar.selectedMenuItem = .init(.meetings)
+
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
         }

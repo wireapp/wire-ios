@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireUtilities
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -68,6 +69,7 @@ public final class MainTabBarController<
 
     private weak var conversationListNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
+    private weak var meetingsNavigationController: UINavigationController!
     private weak var settingsNavigationController: UINavigationController!
 
     private weak var _conversationListUI: ConversationListUI?
@@ -98,15 +100,24 @@ public final class MainTabBarController<
         archiveNavigationController.navigationBar.isTranslucent = false
         self.archiveNavigationController = archiveNavigationController
 
+        let meetingsNavigationController = UINavigationController()
+        meetingsNavigationController.navigationBar.isTranslucent = false
+        self.meetingsNavigationController = meetingsNavigationController
+
         let settingsNavigationController = UINavigationController()
         settingsNavigationController.navigationBar.isTranslucent = false
         self.settingsNavigationController = settingsNavigationController
 
-        viewControllers = [
+        var tabs: [UIViewController] = [
             conversationListNavigationController,
             archiveNavigationController,
             settingsNavigationController
         ]
+
+        if DeveloperFlag.wireMeetings.isOn {
+            tabs.insert(meetingsNavigationController, at: 2)
+        }
+        setViewControllers(tabs, animated: false)
 
         for content in MainTabBarControllerContent.allCases {
             switch content {
@@ -147,6 +158,26 @@ public final class MainTabBarController<
                     bundle: .module
                 )
                 archiveNavigationController.tabBarItem = tabBarItem
+
+            case .meetings:
+                let tabBarItem = UITabBarItem(
+                    title: String(localized: "tabBar.meetings.title", bundle: .module),
+                    image: .init(resource: .videoCall),
+                    selectedImage: .init(resource: .videoCallFilled)
+                )
+                tabBarItem.accessibilityIdentifier = "bottomBarMeetingsButton"
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.meetings.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.meetings.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                meetingsNavigationController.tabBarItem = tabBarItem
+
 
             case .settings:
                 let tabBarItem = UITabBarItem(
