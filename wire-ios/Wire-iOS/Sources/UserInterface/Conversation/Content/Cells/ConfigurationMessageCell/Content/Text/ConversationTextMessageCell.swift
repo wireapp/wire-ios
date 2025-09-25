@@ -83,7 +83,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
     private var accentColorChangeHandler: AccentColorChangeHandler?
-    private var addedObserver: Bool = false
 
     var selectionView: UIView? {
         messageTextView
@@ -182,12 +181,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func addAccentColorChangeObserver(userSession: UserSession?) {
-        guard !addedObserver, let userSession else { return }
+        guard accentColorChangeHandler == nil, let userSession else { return }
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(userSession: userSession) { [unowned self] _ in
                 configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
             }
-        addedObserver = true
     }
 
     private func updateContainerStyle() {
