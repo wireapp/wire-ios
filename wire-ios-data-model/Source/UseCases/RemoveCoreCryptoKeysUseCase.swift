@@ -21,7 +21,7 @@ public protocol RemoveCoreCryptoKeysUseCaseProtocol {
 
     /// Removes all the core crypto keys from the keychain for the user with the given user ID
     func invoke(userID: UUID) throws
-    
+
 }
 
 public struct RemoveCoreCryptoKeysUseCase {

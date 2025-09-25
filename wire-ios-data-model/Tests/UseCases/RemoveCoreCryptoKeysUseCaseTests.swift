@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
 
@@ -35,7 +35,7 @@ final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
         ccItem1 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
         ccItem2 = CoreCryptoKeychainItem(uniqueKeyId: UUID(), userID: userID)
     }
-    
+
     override func tearDown() {
         deleteKeychainItems()
 
@@ -52,16 +52,16 @@ final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
         try? KeychainManager.deleteItem(ccItem1)
         try? KeychainManager.deleteItem(ccItem2)
     }
-    
+
     func test_itRemovesMatchingKeysOnly() throws {
         // Given
         try KeychainManager.storeItem(mockItem, value: Data())
         try KeychainManager.storeItem(ccItem1, value: Data())
         try KeychainManager.storeItem(ccItem2, value: Data())
-        
+
         // When
         try sut.invoke(userID: userID)
-        
+
         // Then
         XCTAssertNotNil(try? KeychainManager.fetchItem(mockItem))
         XCTAssertNil(try? KeychainManager.fetchItem(ccItem1))
@@ -71,30 +71,30 @@ final class RemoveCoreCryptoKeysUseCaseTests: XCTestCase {
 }
 
 struct MockKeychainItem: KeychainItemProtocol {
-    
+
     private let uuid = UUID()
-    
+
     var id: String {
         "mock.keychain.key.\(uuid)"
     }
-    
+
     var tag: Data {
         id.data(using: .utf8)!
     }
-    
+
     var getQuery: [CFString: Any] {
         [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
-            kSecReturnData: true,
+            kSecReturnData: true
         ]
     }
-    
+
     func setQuery(value: some Any) -> [CFString: Any] {
         [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
-            kSecValueData: value,
+            kSecValueData: value
         ]
     }
 }

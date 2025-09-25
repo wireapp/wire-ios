@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 import WireFoundationSupport
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
@@ -36,9 +36,9 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+
         uniqueKeyId = UUID()
-        
+
         // Set up migration manager mock
         mockMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         mockMigrationManager.updateKeyPathOldKeyNewKey_MockMethod = { _, _, _ in }
@@ -48,10 +48,10 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockMigrationManager.isMigrationToBytesNeeded = false
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
         mockMigrationManager.isKeyRotationNeeded = false
-       
+
         // Set up stale key tracker mocks
         mockStaleKeysTracker = MockStaleCoreCryptoKeysTrackerProtocol()
-        
+
         // Set up user defaults mock
         storage = [:]
         let uniqueKeyIdDefaultsKey = "\(userID.uuidString)_\(CoreCryptoKeyProviderDefaults.uniqueKeyIdentifier)"
@@ -60,8 +60,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
             if
                 key == uniqueKeyIdDefaultsKey,
                 let stringValue = value as? String,
-                let uuidValue = UUID(uuidString: stringValue)
-            {
+                let uuidValue = UUID(uuidString: stringValue) {
                 self.uniqueKeyId = uuidValue
             } else {
                 self.storage[key] = value
@@ -73,7 +72,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
             }
             return self.storage[key] as? String
         }
-        
+
         // Set up sut
         sut = CoreCryptoKeyProvider(
             coreCryptoKeyMigrationManager: mockMigrationManager,
@@ -81,7 +80,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
             staleKeysTracker: mockStaleKeysTracker,
             storage: mockUserDefaults
         )
-        
+
         // Set up the keychain items
         unscopedItem = CoreCryptoKeychainItem(
             uniqueKeyId: UUID(),
@@ -185,7 +184,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         mockMigrationManager.markMigrationToScopedKeyDone_MockMethod = { [mockMigrationManager] in
             mockMigrationManager?.isMigrationToScopedKeyNeeded = false
         }
-        
+
         // create unscoped key
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
@@ -198,7 +197,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertNotNil(scopedKey)
         XCTAssertEqual(unscopedKey, scopedKey)
     }
-    
+
     func test_itSkipsScopedKeyMigration_WhenNotNeeded() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = false
@@ -232,9 +231,9 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
     }
-    
+
     // MARK: Rotating key
-    
+
     func test_itRotatesTheDatabaseKey() async throws {
         // GIVEN
         mockMigrationManager.isKeyRotationNeeded = true
@@ -264,20 +263,20 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         // verify it updated the key
         XCTAssertEqual(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 1)
-        
+
         // verify it created a new unique id and a new key, and saved it in keychain
         XCTAssertNotEqual(oldKeyId, uniqueKeyId)
         let newKeyItem = CoreCryptoKeychainItem(uniqueKeyId: uniqueKeyId, userID: userID)
         let newKey: Data? = try? KeychainManager.fetchItem(newKeyItem)
         XCTAssertNotNil(newKey)
         XCTAssertEqual(newKey, expectedNewKey)
-        
+
         // verify it deleted the old key
         XCTAssertNil(try? KeychainManager.fetchItem(oldKeyItem))
 
         // verify we marked migration as done
         XCTAssertFalse(mockMigrationManager.isKeyRotationNeeded)
-        
+
         // clean up
         try? KeychainManager.deleteItem(oldKeyItem)
         try? KeychainManager.deleteItem(newKeyItem)

@@ -39,7 +39,7 @@ final class StaleCoreCryptoKeysTrackerTests: XCTestCase {
         mockDefaults.removeObjectForKeyDefaultNameStringVoidClosure = { [weak self] key in
             self?.storage.removeValue(forKey: key)
         }
-    
+
         sut = StaleCoreCryptoKeysTracker(defaults: mockDefaults)
     }
 
