@@ -59,6 +59,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
+    private var monitoringTask: Task<Void, any Error>?
 
     init(
         parent: any Scope,
@@ -103,7 +104,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                     throw Failure.pushChannelAlreadyOpened
                 }
 
-                Task { [weak self] in
+                monitoringTask = Task { [weak self] in
                     var request = await self?.pushChannelCoordinator.listenForYieldRequests()
                     WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                     self?.currentTask?.cancel()
@@ -130,7 +131,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 try await currentTask?.value
                 WireLogger.sync.debug("closing push channel")
                 await pushChannelState.markAsClosed()
-
+                monitoringTask?.cancel()
+                monitoringTask = nil
             }
 
         } else {

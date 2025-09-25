@@ -91,6 +91,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     }
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: logAttributes)
+                    // TODO: ack here
                 case let .events(envelopes):
                     do {
                         try await processBatch(
