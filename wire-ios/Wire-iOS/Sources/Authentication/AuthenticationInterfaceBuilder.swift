@@ -141,7 +141,7 @@ final class AuthenticationInterfaceBuilder {
 
             let (rootView, bridge) = wireAuthenticationAssembly(
                 authenticationType: authenticationType,
-                environment: environment!,
+                environment: environment ?? BackendEnvironment2(BackendEnvironment.shared),
                 registrationAnalyticsTracker: registrationAnalyticsTracker
             )
 
