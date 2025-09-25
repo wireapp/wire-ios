@@ -125,6 +125,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
             selfUser.supportedProtocols = supportedProtocols
+            context.saveOrRollback()
         }
     }
 
