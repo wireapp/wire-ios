@@ -106,6 +106,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
                 monitoringTask = Task { [weak self] in
                     var request = await self?.pushChannelCoordinator.listenForYieldRequests()
+                    if Task.isCancelled {
+                        return
+                    }
                     WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                     self?.currentTask?.cancel()
                     request?.acknowledge()
@@ -131,8 +134,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 try await currentTask?.value
                 WireLogger.sync.debug("closing push channel")
                 await pushChannelState.markAsClosed()
+                
+                // no need to monitor anymore let's cancel
                 monitoringTask?.cancel()
-                monitoringTask = nil
             }
 
         } else {
