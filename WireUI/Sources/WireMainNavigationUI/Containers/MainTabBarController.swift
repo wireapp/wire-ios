@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireUtilities
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -114,9 +113,9 @@ public final class MainTabBarController<
             settingsNavigationController
         ]
 
-        if DeveloperFlag.wireMeetings.isOn {
+//        if DeveloperFlag.wireMeetings.isOn {
             tabs.insert(meetingsNavigationController, at: 2)
-        }
+//        }
         setViewControllers(tabs, animated: false)
 
         for content in MainTabBarControllerContent.allCases {
