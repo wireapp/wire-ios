@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireSyncEngine
 
-final class SupportedProtocolsServiceTests: XCTestCase {
+final class LegacySupportedProtocolsServiceTests: XCTestCase {
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
@@ -305,6 +305,22 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
             mock(migrationState: .finalised)
             XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls])
+        }
+    }
+
+    func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
+
+        try syncContext.performAndWait {
+            // Given
+            try mock(allActiveMLSClients: false)
+            mock(remoteSupportedProtocols: [.mls])
+            ZMUser.selfUser(in: syncContext).supportedProtocols = [.proteus, .mls]
+
+            mock(migrationState: .notStarted)
+
+            // When / then
+
+            XCTAssertEqual(sut.calculateSupportedProtocols(), [.mls, .proteus])
         }
     }
 }
