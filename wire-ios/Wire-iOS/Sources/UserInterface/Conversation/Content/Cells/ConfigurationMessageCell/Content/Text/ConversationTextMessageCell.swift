@@ -26,6 +26,21 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
+        let userSession: UserSession?
+
+        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil) {
+            self.attributedText = attributedText
+            self.isObfuscated = isObfuscated
+            self.userSession = userSession
+        }
+
+        static func == (
+            lhs: ConversationTextMessageCell.Configuration,
+            rhs: ConversationTextMessageCell.Configuration
+        ) -> Bool {
+            lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.attributedText.description == rhs.attributedText.description
+        }
     }
 
     private lazy var messageTextView: LinkInteractionTextView = {
@@ -67,6 +82,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
+    private var addedObserver: Bool = false
 
     var selectionView: UIView? {
         messageTextView
@@ -161,7 +178,16 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
-        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+        addAccentColorChangeObserver(userSession: object.userSession)
+    }
+
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard !addedObserver, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [unowned self] _ in
+                configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+            }
+        addedObserver = true
     }
 
     private func updateContainerStyle() {
@@ -250,10 +276,11 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool) {
+    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
-            isObfuscated: isObfuscated
+            isObfuscated: isObfuscated,
+            userSession: userSession
         )
     }
 }
@@ -334,7 +361,8 @@ extension ConversationTextMessageCellDescription {
         if !messageText.string.isEmpty {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
-                isObfuscated: message.isObfuscated
+                isObfuscated: message.isObfuscated,
+                userSession: userSession
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
