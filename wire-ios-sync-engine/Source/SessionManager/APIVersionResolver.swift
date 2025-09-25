@@ -120,7 +120,7 @@ final class APIVersionResolver {
         BackendInfo.isFederationEnabled = payload.federation
 
         if previousBackendDomain == payload.domain, !wasFederationEnabled, BackendInfo.isFederationEnabled {
-            delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
+            delegate?.apiVersionResolverDetectedFederationHasBeenEnabled(localDomain: payload.domain)
         }
 
         if let apiVersion = BackendInfo.apiVersion {
@@ -165,7 +165,7 @@ final class APIVersionResolver {
 
 protocol APIVersionResolverDelegate: AnyObject {
 
-    func apiVersionResolverDetectedFederationHasBeenEnabled()
+    func apiVersionResolverDetectedFederationHasBeenEnabled(localDomain: String)
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason)
     func apiVersionResolverDidResolve(apiVersion: APIVersion)
 
@@ -185,7 +185,7 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9]
+    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11]
 
     /// API versions currently under development and not suitable for production
     /// environments.

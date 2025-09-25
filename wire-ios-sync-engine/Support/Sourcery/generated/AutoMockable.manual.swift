@@ -251,6 +251,15 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
 public class MockUserSession: UserSession {
 
+    public var isBuildBlacklisted = false
+    public var resolvedBackendMetadata = BackendMetadataProvider(
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
+    )
+    public var isBackendMLSEnabled: Bool = false
+
     // MARK: - Life cycle
 
     public init() {}
@@ -496,6 +505,10 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
+    // MARK: - chatBubblesSimpleFeature
+    
+    public var isChatBubbleSimpleEnabled: Bool = false
+    
     // MARK: - mlsGroupVerification
 
     public var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
@@ -593,6 +606,15 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingSearchUsersCache: SearchUsersCache!
+
+    // MARK: - fileAssetCache
+
+    public var fileAssetCache: FileAssetCache {
+        get { return underlyingFileAssetCache }
+        set(value) { underlyingFileAssetCache = value }
+    }
+
+    public var underlyingFileAssetCache: FileAssetCache!
 
     // MARK: - unlockDatabase
 

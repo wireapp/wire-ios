@@ -22,14 +22,30 @@
 "authentication.identity.input.submit" = "Avanti";
 
 "cloud_user_login.title" = "Enter your password to log in";
+"cloud_user_login.expiration_message" = "Your session expired. Enter your password to continue.";
 "cloud_user_login.input_email.title" = "Email";
 "cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "Password";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Avanti";
 "cloud_user_login.forgot_password" = "Hai dimenticato la password?";
+
+"login.sso.title" = "Log in";
+"login.sso.expiration_message" = "La sessione è scaduta. Accedi con il tuo account aziendale per continuare.";
+"login.sso.input_code.title" = "Codice d'accesso SSO";
+"login.sso.input_code.placeholder" = "Enter SSO access code";
+"login.sso.submit" = "Accesso aziendale";
+
+"logout.button.title" = "Logout";
+"logout.alert.title" = "Logout";
+"logout.alert.message" = "Decide if you want to keep your conversation history or permanently delete it from this device.";
+"logout.alert.delete_data_button" = "Log Out and Delete History";
+"logout.alert.keep_data_button" = "Log Out and Keep History";
+"logout.alert.cancel" = "Annulla";
+
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
+"create_account.button" = "Create account";
 
 "account_type_selector.title" = "How will you use Wire?";
 "account_type_selector.option_team.title" = "For collaboration";
@@ -79,6 +95,8 @@
 
 "authentication.no_history.title" = "È la prima volta che utilizzi Wire questo dispositivo.";
 "authentication.no_history.message" = "Per motivi di privacy, la cronologia delle tue conversazioni non apparirà qui.";
+"authentication.missing_history.title" = "Hai utilizzato Wire su questo dispositivo prima.";
+"authentication.missing_history.message" = "I messaggi inviati nel frattempo non verranno visualizzato.";
 "authentication.no_history.confirm" = "OK";
 
 "authentication.error.title.no_internet" = "No internet connection";

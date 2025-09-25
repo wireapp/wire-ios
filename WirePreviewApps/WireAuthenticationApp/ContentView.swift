@@ -33,7 +33,7 @@ struct ContentView: View {
         WireAuthenticationAssembly()
             .assemble(
                 environmentType: configuration.defaultBackendEnvironment,
-                backendConfig: BackendConfig(
+                environment: BackendEnvironment2(
                     title: "Mock backend",
                     endpoints: Endpoints(
                         backendURL: URL(string: "https://prod-nginz-https.wire.com")!,

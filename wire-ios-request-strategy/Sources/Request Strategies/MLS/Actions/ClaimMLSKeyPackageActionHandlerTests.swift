@@ -40,7 +40,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
             userId: userId,
             ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         )
-        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
+        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC, localDomain: domain)
     }
 
     // MARK: - Request generation
@@ -71,7 +71,10 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<
         }
 
         // when the domain is missing
-        BackendInfo.domain = nil
+        handler = ClaimMLSKeyPackageActionHandler(
+            context: syncMOC,
+            localDomain: nil
+        )
 
         test_itDoesntGenerateARequest(
             action: ClaimMLSKeyPackageAction(

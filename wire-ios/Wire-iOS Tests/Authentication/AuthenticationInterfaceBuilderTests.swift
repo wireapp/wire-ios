@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireNetwork
 import WireTestingPackage
 import XCTest
 
@@ -25,13 +26,31 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
+    var defaultEnvironment: BackendEnvironment2!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         accentColor = .blue
+        defaultEnvironment = BackendEnvironment2(
+            title: "mock",
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "www.wire.com")!,
+                    websocketURL: URL(string: "www.wire.com")!,
+                    blacklistURL: URL(string: "www.wire.com")!,
+                    teamsURL: URL(string: "www.wire.com")!,
+                    accountsURL: URL(string: "www.wire.com")!,
+                    websiteURL: URL(string: "www.wire.com")!,
+                    countlyURL: URL(string: "www.wire.com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
+        )
 
         featureProvider = MockAuthenticationFeatureProvider()
         builder = AuthenticationInterfaceBuilder(
@@ -43,7 +62,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
                 backendEnvironmentProvider.proxy = proxy
                 backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
                 return backendEnvironmentProvider
-            }
+            },
+            defaultEnvironment: defaultEnvironment
         )
     }
 
@@ -51,6 +71,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         snapshotHelper = nil
         builder = nil
         featureProvider = nil
+        defaultEnvironment = nil
 
         coreDataFixture = nil
 
@@ -114,7 +135,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(
             for: .provideCredentials(nil),
@@ -133,7 +155,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(for: .provideCredentials(nil))
     }
@@ -154,7 +177,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
             accountSelector: MockAccountSelector(),
-            backendEnvironmentProvider: { backendEnvironmentProvider }
+            backendEnvironmentProvider: { backendEnvironmentProvider },
+            defaultEnvironment: defaultEnvironment
         )
         runSnapshotTest(for: .provideCredentials(nil))
     }
@@ -198,25 +222,49 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     @MainActor
     func testReauthenticate_Email_TokenExpired() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
+        runSnapshotTest(for: .reauthenticate(
+            credentials: credentials,
+            environment: nil,
+            numberOfAccounts: 1,
+            isSignedOut: true
+        ))
     }
 
     @MainActor
     func testReauthenticate_Email_DuringLogin() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
         let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
+        runSnapshotTest(for: .reauthenticate(
+            credentials: credentials,
+            environment: nil,
+            numberOfAccounts: 1,
+            isSignedOut: false
+        ))
     }
 
     @MainActor
     func testReauthenticate_CompanyLogin() {
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
         let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
+        runSnapshotTest(for: .reauthenticate(
+            credentials: credentials,
+            environment: nil,
+            numberOfAccounts: 1,
+            isSignedOut: true
+        ))
     }
 
     @MainActor
     func testReauthenticate_NoCredentials() {
-        runSnapshotTest(for: .reauthenticate(credentials: nil, numberOfAccounts: 1, isSignedOut: true))
+        DeveloperFlag.multibackend.enable(false, storage: .temporary())
+        runSnapshotTest(for: .reauthenticate(
+            credentials: nil,
+            environment: nil,
+            numberOfAccounts: 1,
+            isSignedOut: true
+        ))
     }
 
     // MARK: - Helpers

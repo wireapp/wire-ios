@@ -71,4 +71,72 @@ final class PersonalUsersTests: WireUITestCase {
             .logout()
             .enterPassword(user.password)
     }
+
+    @MainActor
+    func test_PersonalAccountLifecycle() async throws {
+        let userA = try await userHelper.createPersonalUser()
+        let userB = try await userHelper.createPersonalUser()
+        let messageFromUserB = "Hello from \(userB.name)"
+
+        let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapSearchBox()
+            .searchUserByUserHandle(userB.username)
+            .tapSearchedUserCell()
+
+        let userNameB = try XCTUnwrap(userDetailsPage.getUserName())
+        XCTAssertEqual(userNameB, "@\(userB.username)", "username didn't match @\(userB.username)")
+
+        _ = try userDetailsPage.sendConnectionRequest()
+            .closeProfilePage()
+            .closeNewConversationPage()
+            .openUserAccountPageForUser(with: userA.name)
+            .tapAddAccountOrTeamButton()
+        let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
+            .openPendingRequest()
+
+        let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
+        XCTAssertEqual(userNameA, "@\(userA.username)", "username didn't match @\(userA.username)")
+
+        var conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
+            .sendMessage(messageFromUserB)
+            .goBackToConversationPage()
+
+        let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
+        XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
+
+        conversationsPage = try conversationsPage.openUserAccountPageForUser(with: userB.name)
+            .switchUserAccountForUser(withName: userA.name)
+
+        let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())
+        XCTAssertEqual(nameUserB, userB.name, "name didn't match \(userB.name)")
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertTrue(
+            fetchMessages.contains(messageFromUserB),
+            "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"
+        )
+
+        var accountSettingsPage = try activeConversationPage.goBackToConversationPage()
+            .longPressForMoreOptionOnConversation()
+            .blockUser()
+            .openSettings()
+            .openAccountSettings()
+
+        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
+        accountSettingsPage = try accountSettingsPage.deleteAccount()
+            .openSettings()
+            .openAccountSettings()
+
+        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+
+        XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
+
+        try accountSettingsPage.logout()
+            .enterPassword(userB.password)
+    }
 }

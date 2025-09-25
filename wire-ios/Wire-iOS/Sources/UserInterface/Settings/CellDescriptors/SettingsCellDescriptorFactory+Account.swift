@@ -89,13 +89,11 @@ extension SettingsCellDescriptorFactory {
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
     ) -> SettingsSectionDescriptorType {
-        let federationEnabled = BackendInfo.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [
             nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
             handleElement(
                 enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
-                federationEnabled: federationEnabled,
                 useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             )
         ]
@@ -116,7 +114,7 @@ extension SettingsCellDescriptorFactory {
             }
         }
 
-        if federationEnabled {
+        if userSession.resolvedBackendMetadata.isFederationEnabled {
             cellDescriptors.append(domainElement())
         }
 
@@ -249,7 +247,6 @@ extension SettingsCellDescriptorFactory {
 
     func handleElement(
         enabled: Bool = true,
-        federationEnabled: Bool,
         useTypeIntrinsicSizeTableView: Bool
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
@@ -257,20 +254,21 @@ extension SettingsCellDescriptorFactory {
             let presentation = {
                 ChangeHandleViewController(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
-                    settingsCoordinator: settingsCoordinator
+                    settingsCoordinator: settingsCoordinator,
+                    isFederationEnabled: isFederationEnabled
                 )
             }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
 
                 let preview: PreviewGeneratorType = { _ in
-                    guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
+                    guard let handleDisplayString = selfUser.handleDisplayString(withDomain: isFederationEnabled) else {
                         return .none
                     }
                     return .text(handleDisplayString)
                 }
 
-                let copiableText = selfUser.handleDisplayString(withDomain: federationEnabled)
+                let copiableText = selfUser.handleDisplayString(withDomain: isFederationEnabled)
 
                 return SettingsExternalScreenCellDescriptor(
                     title: AccountSection.Handle.title,
@@ -397,7 +395,11 @@ extension SettingsCellDescriptorFactory {
         }
         let backupLocalStore = BackupLocalStore(
             context: context,
-            processor: ConversationProtobufMessageProcessor(context: context)
+            processor: ConversationProtobufMessageProcessor(
+                context: context,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         )
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
@@ -435,7 +437,8 @@ extension SettingsCellDescriptorFactory {
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: selfUser.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default,
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
     }
 
@@ -527,14 +530,20 @@ extension SettingsCellDescriptorFactory {
 
 private extension ConversationProtobufMessageProcessor {
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         let messageLocalStore = MessageLocalStore(context: context)
         self.init(
             messageLocalStore: messageLocalStore,
             conversationLocalStore: ConversationLocalStore(
                 context: context,
                 mlsService: context.performAndWait { context.mlsService },
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
             ),
             userLocalStore: UserLocalStore(
                 context: context,

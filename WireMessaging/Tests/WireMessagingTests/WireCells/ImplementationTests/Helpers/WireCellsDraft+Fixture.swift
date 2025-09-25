@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireMessagingDomain
 
 extension WireCellsDraft {
@@ -24,21 +25,25 @@ extension WireCellsDraft {
         nodeID: UUID = UUID(),
         versionID: UUID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
         assetURL: URL = URL(string: "https://example.com")!,
+        fileType: UTType? = nil,
         status: WireCellsUploadStatus = .uploaded(isDraft: true),
         name: String = "Draft",
+        bytes: Int = 1024,
         mimeType: String? = nil,
-        deleteAfterUpload: Bool = false
+        requiresCleanup: Bool = false,
+        metadata: WireCellsDraft.Metadata? = nil
     ) -> WireCellsDraft {
         WireCellsDraft(
             nodeID: nodeID,
             versionID: versionID,
             assetURL: assetURL,
-            fileType: nil,
+            fileType: fileType,
             status: status,
             name: name,
-            bytes: 1024,
+            bytes: bytes,
             mimeType: mimeType,
-            deleteAfterUpload: deleteAfterUpload
+            requiresCleanup: requiresCleanup,
+            metadata: metadata
         )
     }
 }

@@ -27,13 +27,13 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
+    var resolveOneOnOneConversations: MockLegacyResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
-        resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
-        resolveOneOnOneConversations.invoke_MockMethod = {}
+        resolveOneOnOneConversations = MockLegacyResolveOneOnOneConversationsUseCaseProtocol()
+        resolveOneOnOneConversations.invoke_MockMethod = { true }
 
         syncMOC.performGroupedAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
@@ -50,7 +50,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 context: self.syncMOC,
                 cookieProvider: self.cookieStorage,
-                coreCryptoProvider: self.coreCryptoProvider
+                coreCryptoProvider: self.coreCryptoProvider,
+                localDomain: "wire.com",
+                isBackendMLSEnabled: false
             )
 
             self.sut = UserClientEventConsumer(

@@ -37,8 +37,12 @@ final class OperationLoopTests: ZMTBaseTest {
         coreDataStack.syncContext
     }
 
-    override func setUp() {
-        super.setUp()
+    override var allDispatchGroups: [ZMSDispatchGroup] {
+        [dispatchGroup] + (uiMoc.dispatchGroupContext?.groups ?? []) + (syncMoc.dispatchGroupContext?.groups ?? [])
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
         let accountId = UUID()
         let directoryURL = try! FileManager.default.url(
             for: .cachesDirectory,
@@ -52,11 +56,12 @@ final class OperationLoopTests: ZMTBaseTest {
             account: account,
             applicationContainer: directoryURL,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
-        coreDataStack.loadStores { error in
-            XCTAssertNil(error)
-        }
+
+        try await coreDataStack.load()
 
         self.coreDataStack = coreDataStack
         sut = OperationLoop(

@@ -21,10 +21,20 @@ import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: RemoveLocalConversationUseCase()
-    )
+    private let processor: ConversationEventPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: RemoveLocalConversationUseCase(),
+            isFederationEnabled: isFederationEnabled
+        )
+        super.init(context: context)
+    }
 
     // MARK: - Request
 
@@ -92,7 +102,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     payload: payload
                 )
 
-            case .v6, .v7, .v8, .v9, .v10:
+            case .v6, .v7, .v8, .v9, .v10, .v11:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation

@@ -35,17 +35,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
     let messageLocalStore: any MessageLocalStoreProtocol
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         mlsService: (any MLSServiceInterface)?,
-        messageLocalStore: any MessageLocalStoreProtocol
+        messageLocalStore: any MessageLocalStoreProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.context = context
         self.mlsService = mlsService
         self.messageLocalStore = messageLocalStore
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public
@@ -151,7 +157,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
-                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+                let otherUserDomain = otherUser.domain ?? self.localDomain
             else {
                 WireLogger.conversation.warn(
                     "failed to retrieve other user in 1:1 conversation"
@@ -882,15 +888,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func localParticipantsExcludingSelfAsMLSUsers(
-        in conversation: ZMConversation
-    ) async -> [MLSUser] {
-        await context.perform {
-            conversation.localParticipantsExcludingSelf
-                .map { MLSUser(from: $0) }
-        }
-    }
-
     public func conversationName(
         conversation: ZMConversation
     ) async -> String? {
@@ -1075,6 +1072,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             localConversation.privateChannelPermission = conversation
                 .addPermission.map { PrivateChannelPermission($0) } ?? .unset
+
+            localConversation.cellsState = conversation.cellsState.map { cellsState in
+                switch cellsState {
+                case .ready:
+                    .ready
+                case .pending:
+                    .pending
+                case .disabled:
+                    .disabled
+                }
+            } ?? .disabled
 
             commonUpdate(
                 from: conversation,

@@ -31,6 +31,8 @@ public protocol UserSession: AnyObject {
 
     var isTornDown: Bool { get }
 
+    var isBuildBlacklisted: Bool { get }
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
@@ -222,6 +224,8 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
+    var isChatBubbleSimpleEnabled: Bool { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(
@@ -297,6 +301,16 @@ public protocol UserSession: AnyObject {
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
 
+    /// Cache for file assets.
+    var fileAssetCache: FileAssetCache { get }
+
     /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
+
+    // With multibackend we need to eliminate usage of `BackendInfo`. These
+    // properties are added here to help achieve this.
+    var resolvedBackendMetadata: BackendMetadataProvider { get }
+
+    var isBackendMLSEnabled: Bool { get }
+
 }

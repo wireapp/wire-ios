@@ -27,6 +27,24 @@ package import UniformTypeIdentifiers
 
 public struct WireCellsDraft: Hashable, Sendable {
 
+    /// Metadata for a draft
+
+    public enum Metadata: Hashable, Sendable {
+
+        /// Image metadata, containing width and height in pixels.
+
+        case image(width: Int, height: Int)
+
+        /// Video metadata, containing width and height in pixels, and duration in milliseconds.
+
+        case video(width: Int, height: Int, duration: Int)
+
+        /// Audio metadata, containing duration in milliseconds.
+
+        case audio(duration: Int)
+
+    }
+
     /// The ID of the node that represents the uploaded file.
 
     public let nodeID: UUID
@@ -60,9 +78,14 @@ public struct WireCellsDraft: Hashable, Sendable {
 
     public var mimeType: String?
 
-    /// Whether the file should be deleted after upload.
+    /// Whether the file should be deleted after it has been sent or cancelled etc.
 
-    public let deleteAfterUpload: Bool
+    public let requiresCleanup: Bool
+
+    /// Optional metadata for the draft, such as image dimensions or video duration. This allows recipients to display
+    /// placeholders before a preview has been downloaded.
+
+    public let metadata: Metadata?
 
     package init(
         nodeID: UUID,
@@ -73,7 +96,8 @@ public struct WireCellsDraft: Hashable, Sendable {
         name: String,
         bytes: Int,
         mimeType: String?,
-        deleteAfterUpload: Bool
+        requiresCleanup: Bool,
+        metadata: Metadata?
     ) {
         self.nodeID = nodeID
         self.versionID = versionID
@@ -83,6 +107,7 @@ public struct WireCellsDraft: Hashable, Sendable {
         self.name = name
         self.bytes = bytes
         self.mimeType = mimeType
-        self.deleteAfterUpload = deleteAfterUpload
+        self.requiresCleanup = requiresCleanup
+        self.metadata = metadata
     }
 }

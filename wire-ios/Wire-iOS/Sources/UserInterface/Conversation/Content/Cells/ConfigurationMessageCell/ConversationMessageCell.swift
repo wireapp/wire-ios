@@ -52,6 +52,11 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
         sourceView: UIView
     )
 
+    func conversationMessageWantsToOpenFilesView(
+        _ cell: UIView,
+        nodeIDs: [UUID]
+    )
+
     func conversationMessageShouldUpdate()
 
 }
@@ -158,6 +163,15 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
 
+    /// Boolean to check for aligning message content for Bubbles
+    var shouldAlignMessageContentForBubbles: Bool { get }
+
+    /// Boolean to check if isCellAlreadyAligned
+    var isCellAlreadyAligned: Bool { get }
+
+    /// Boolean to check if isBubbleHasMaximumWidth
+    var isBubbleHasMaximumWidth: Bool { get }
+
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -195,6 +209,18 @@ extension ConversationMessageCellDescription {
     }
 
     var supportsActions: Bool {
+        false
+    }
+
+    var shouldAlignMessageContentForBubbles: Bool {
+        false
+    }
+
+    var isCellAlreadyAligned: Bool {
+        false
+    }
+
+    var isBubbleHasMaximumWidth: Bool {
         false
     }
 

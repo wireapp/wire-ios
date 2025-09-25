@@ -23,14 +23,14 @@ import WireNetwork
 
 public final class UserSessionComponent {
 
+    private let currentBuildNumber: String
     private let selfUserID: UUID
 
-    private let backendEnvironment: WireNetwork.BackendEnvironment
-    private let minTLSVersion: WireNetwork.TLSVersion
-    private let apiVersion: WireNetwork.APIVersion
+    private let restNetworkService: NetworkService
+    private let websocketNetworkService: NetworkService
+    private let blacklistNetworkService: NetworkService
+    public let backendMetadata: ResolvedBackendMetadata
 
-    private let localDomain: String
-    private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
 
     private let sharedUserDefaults: UserDefaults
@@ -44,12 +44,13 @@ public final class UserSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public init(
+        currentBuildNumber: String,
         selfUserID: UUID,
-        backendEnvironment: WireNetwork.BackendEnvironment,
-        minTLSVersion: WireNetwork.TLSVersion,
-        apiVersion: WireNetwork.APIVersion,
-        localDomain: String,
-        isFederationEnabled: Bool,
+        cookieStorage: any CookieStorageProtocol,
+        restNetworkService: NetworkService,
+        websocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
+        backendMetaData: ResolvedBackendMetadata,
         isMLSEnabled: Bool,
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL?,
@@ -60,12 +61,13 @@ public final class UserSessionComponent {
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
+        self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
-        self.backendEnvironment = backendEnvironment
-        self.minTLSVersion = minTLSVersion
-        self.apiVersion = apiVersion
-        self.localDomain = localDomain
-        self.isFederationEnabled = isFederationEnabled
+        self.cookieStorage = cookieStorage
+        self.restNetworkService = restNetworkService
+        self.websocketNetworkService = websocketNetworkService
+        self.blacklistNetworkService = blacklistNetworkService
+        self.backendMetadata = backendMetaData
         self.isMLSEnabled = isMLSEnabled
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
@@ -77,53 +79,7 @@ public final class UserSessionComponent {
         self.sharedContainerURL = sharedContainerURL
     }
 
-    private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
-
-    private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(
-        userID: selfUserID,
-        cookieEncryptionKey: UserDefaults.cookiesKey(),
-        keychain: keychain
-    )
-
-    private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys,
-        currentDateProvider: .system
-    )
-
-    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
-        minTLSVersion: minTLSVersion,
-        proxySettings: backendEnvironment.proxySettings
-    )
-
-    private lazy var networkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.url,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
-
-    private lazy var pushChannelNetworkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
+    private let cookieStorage: any CookieStorageProtocol
 
     // MARK: - Children
 
@@ -134,11 +90,9 @@ public final class UserSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
             selfClientID: clientID,
-            networkService: networkService,
-            pushChannelNetworkService: pushChannelNetworkService,
-            apiVersion: apiVersion,
-            localDomain: localDomain,
-            isFederationEnabled: isFederationEnabled,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: websocketNetworkService,
+            backendMetadata: backendMetadata,
             isMLSEnabled: isMLSEnabled,
             cookieStorage: cookieStorage,
             sharedContainerURL: sharedContainerURL,
@@ -150,6 +104,16 @@ public final class UserSessionComponent {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers
+        )
+    }
+
+    // MARK: - Factory
+
+    public func makeIsBuildBlacklistedUseCase() -> some IsBuildBlacklistedUseCase {
+        let api = BlacklistAPIBuilder(networkService: blacklistNetworkService).makeAPI()
+        return IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: currentBuildNumber,
+            api: api
         )
     }
 

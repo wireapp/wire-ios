@@ -23,6 +23,11 @@ import WireLogging
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
+    private let apiVersion: WireTransport.APIVersion?
+
+    init(apiVersion: WireTransport.APIVersion?) {
+        self.apiVersion = apiVersion
+    }
 
     func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
@@ -221,6 +226,22 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+
+        if let consumableNotifications = payload.consumableNotifications {
+            repository.storeConsumableNotifications(
+                Feature.ConsumableNotifications(
+                    status: consumableNotifications.status
+                )
+            )
+        }
+
+        if let chatBubblesSimple = payload.chatBubbles {
+            repository.storeChatBubblesSimple(
+                Feature.ChatBubblesSimple(
+                    status: chatBubblesSimple.status
+                )
+            )
+        }
     }
 
     func processEventPayload(
@@ -232,8 +253,7 @@ struct FeatureConfigsPayloadProcessor {
     ) throws {
         switch featureName {
         case .conferenceCalling:
-            if let apiVersion = BackendInfo.apiVersion,
-               apiVersion >= .v6 {
+            if let apiVersion, apiVersion >= .v6 {
                 let response = try decoder.decode(
                     FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self,
                     from: data
@@ -307,6 +327,14 @@ struct FeatureConfigsPayloadProcessor {
         case .channels:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
             repository.storeChannels(.init(status: response.status, config: response.config))
+
+        case .consumableNotifications:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeConsumableNotifications(.init(status: response.status))
+
+        case .chatBubblesSimple:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeChatBubblesSimple(.init(status: response.status))
         }
     }
 
@@ -327,7 +355,8 @@ struct FeatureConfigsPayloadProcessor {
         await mlsClientManager.initializeMLSClientIfNeeded(
             for: qualifiedSelfClientID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
     }
 

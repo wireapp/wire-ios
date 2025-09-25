@@ -44,6 +44,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         journal[.isSyncV2Enabled]
     }
 
+    var isConsumableNotificationsEnabled: Bool {
+        journal[.isConsumableNotificationsEnabled]
+    }
+
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     var syncStatePublisher: AnyPublisher<SyncState, Never> {
         syncStateSubject.eraseToAnyPublisher()
@@ -57,10 +61,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
+    private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
+    private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
+
     private var subscription: AnyCancellable?
 
     var isLive: Bool {
@@ -80,7 +88,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol,
-        syncStateSubject: CurrentValueSubject<SyncState, Never>
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -88,7 +98,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
+        self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
+        self.pushChannelCoordinator = pushChannelCoordinator
         super.init()
 
         setupBindings()
@@ -108,16 +120,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
-                "resuming sync",
-                attributes: .syncAttributes
+                "resuming sync"
             )
 
-            let retrier = BackoffRetrier()
-
             do {
-                try await retrier.retry { [self] in
-                    try await performSync()
-                }
+                try await performSync()
+            } catch is CancellationError {
+                // ignore error
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
@@ -141,11 +150,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         )
 
         WireLogger.sync.debug(
-            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
-            attributes: .syncAttributes
+            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
 
         ongoingSyncTask?.cancel()
+        ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
@@ -187,11 +196,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     func performResourceSync() async throws {
         if isSyncV2Enabled {
             do {
-                delegate?.syncAgentDidStartInitialSync(self)
-                WireLogger.sync.debug("did start new resource sync")
-                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: true)
-                WireLogger.sync.debug("did finish new resource sync")
-                delegate?.syncAgentDidFinishInitialSync(self)
+                try await initialSyncTaskManager.performIfNeeded { [weak self] in
+                    guard let self else { return }
+                    delegate?.syncAgentDidStartInitialSync(self)
+                    WireLogger.sync.debug("did start new resource sync")
+                    try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: true)
+                    WireLogger.sync.debug("did finish new resource sync")
+                    delegate?.syncAgentDidFinishInitialSync(self)
+                }
             } catch {
                 WireLogger.sync.error("failed to perform new resource sync: \(String(describing: error))")
                 throw error
@@ -207,54 +219,88 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled] && DeveloperFlag
-            .consumableNotifications.isOn
 
         if isSyncV2Enabled {
 
-            do {
-                try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
-                    guard let self else { return }
-                    delegate?.syncAgentDidStartIncrementalSync(self)
+            try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+                guard let self else { return }
 
-                    if isConsumableNotificationsEnabled {
-                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
-                            .perform()
-                    } else {
-                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                            .perform()
-                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                let retrier = BackoffRetrier()
+
+                try await retrier.retry { [weak self] in
+                    guard let self else { return }
+
+                    do {
+                        if isConsumableNotificationsEnabled {
+                            incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
+                                .perform()
+                        } else {
+                            delegate?.syncAgentDidStartIncrementalSync(self)
+                            incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                                .perform()
+                            delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                        }
+                    } catch IncrementalSyncV2.Failure.mainAppPushChannelAlreadyOpened {
+                        syncStateSubject.send(.suspended)
+                        // ignore error, don't retry
+                        // this can happen if receiving a call
+                    } catch IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened {
+                        WireLogger.sync.debug(
+                            "push channel opened, waiting until closed",
+                            attributes: .incrementalSyncV3
+                        )
+                        await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
+                        WireLogger.sync.debug(
+                            "retry sync after NSE push channel closed",
+                            attributes: .incrementalSyncV3
+                        )
+
+                        syncStateSubject.send(.suspended)
+                        // swallow error from retrier and start resume
+                        resume()
+
+                    } catch IncrementalSync.Failure.missedEvents {
+
+                        WireLogger.sync.error(
+                            "failed to perform new incremental sync (missed events): recovering with a full sync"
+                        )
+
+                        journal[.isInitialSyncRequired] = true
+                        syncStateSubject.send(.suspended)
+                        // swallow error from retrier and start resume
+                        resume()
+                    } catch {
+                        WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                        syncStateSubject.send(.suspended)
+                        throw error
                     }
                 }
-            } catch IncrementalSync.Failure.missedEvents {
-                WireLogger.sync.error(
-                    "failed to perform new incremental sync (missed events): recovering with a full sync"
-                )
 
-                syncStateSubject.send(.suspended)
-                resume()
-            } catch {
-                WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
-                syncStateSubject.send(.suspended)
-                throw error
             }
+
         } else {
             await legacySyncStatus.performQuickSync()
         }
     }
 
     private func performInitialSyncV2() async throws {
-        do {
-            delegate?.syncAgentDidStartInitialSync(self)
-            WireLogger.sync.debug("did start new initial sync")
-            try await initialSyncProvider.provideInitialSync()
-                .perform(skipPullingLastUpdateEventID: skipPullingLastNotificationID)
-            WireLogger.sync.debug("did finish new initial sync")
-            journal[.isInitialSyncRequired] = false
-            delegate?.syncAgentDidFinishInitialSync(self)
-        } catch {
-            WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
-            throw error
+        try await initialSyncTaskManager.performIfNeeded {
+            let retrier = BackoffRetrier()
+
+            try await retrier.retry { [self] in
+                do {
+                    delegate?.syncAgentDidStartInitialSync(self)
+                    WireLogger.sync.debug("did start new initial sync")
+                    try await initialSyncProvider.provideInitialSync()
+                        .perform(skipPullingLastUpdateEventID: skipPullingLastNotificationID)
+                    WireLogger.sync.debug("did finish new initial sync")
+                    journal[.isInitialSyncRequired] = false
+                    delegate?.syncAgentDidFinishInitialSync(self)
+                } catch {
+                    WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
+                    throw error
+                }
+            }
         }
     }
 
@@ -296,11 +342,17 @@ extension SyncAgent: LiveSyncDelegate {
     }
 
     func didFail(sync: IncrementalSyncV2, error: any Error) {
+        guard !(error is CancellationError) else { return }
         delegate?.syncAgentDidFailSyncing(
             self,
             error: error
         )
     }
+
+    func didStart(sync: IncrementalSyncV2) {
+        delegate?.syncAgentDidStartIncrementalSync(self)
+    }
+
 }
 
 // MARK: - MLS sync delegate
@@ -317,10 +369,16 @@ extension SyncAgent: MLSSyncDelegate {
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
-                    delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                        .perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
+
+                    if isConsumableNotificationsEnabled {
+                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
+                            .perform()
+                    } else {
+                        delegate?.syncAgentDidStartIncrementalSync(self)
+                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                            .perform()
+                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                    }
                 }
             } catch {
                 WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")

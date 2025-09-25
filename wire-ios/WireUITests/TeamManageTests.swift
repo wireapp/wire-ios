@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 final class TeamManageTests: WireUITestCase {
@@ -26,7 +27,7 @@ final class TeamManageTests: WireUITestCase {
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
         var userAccountPage = try  firstTimePage.acceptPopup()
-            .openUserAccount()
+            .openUserAccountPageForUser(with: user.name)
 
         var conversationPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
@@ -35,7 +36,7 @@ final class TeamManageTests: WireUITestCase {
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        userAccountPage = try conversationPage.openUserAccount()
+        userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -72,7 +73,7 @@ final class TeamManageTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
-            .openUserAccount()
+            .openUserAccountPageForUser(with: memberUser.username)
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
@@ -90,45 +91,134 @@ final class TeamManageTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let teamOwner = try await userHelper.registerUserAsTeamOwner()
-        let teamMember1 = UserGenerator.generateUniqueUserInfo()
-        let teamMember2 = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let accessToken = try await userHelper.fetchAccessToken(
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember1
+        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamID,
         )
 
-        let teamMember2Id = try await userHelper.registerUsersAsTeamMember(
-            accessToken: accessToken,
-            teamID: teamOwner.teamID!,
-            member: teamMember2
+        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamID,
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
         let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
 
-        let groupConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
+        let activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
             .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
             .doneSelectingMembers()
-            .sendMessage(input: messageFromOwner)
+            .sendMessage(messageFromOwner)
 
-        let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
+        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = groupConversationPage.getSentMessages()
+        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
         )
+    }
+
+    @MainActor
+    func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 2
+
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
+            .openConversation()
+            .openConversationDetails()
+            .openUserDetailsPage(byName: teamMembers[0].name)
+            .removeParticipantFromConversation()
+
+        XCTAssertFalse(
+            conversationDetailsPage.userCells
+                .matching(NSPredicate(format: "label == %@", teamMembers[0].name))
+                .firstMatch
+                .exists,
+            "User \(teamMembers[0].name) is still present in group"
+        )
+
+        _ = try conversationDetailsPage.appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [teamMembers[0].name])
+            .addSelectedParticipant()
+
+        XCTAssertTrue(
+            conversationDetailsPage.userCells
+                .matching(NSPredicate(format: "label == %@", teamMembers[0].name))
+                .firstMatch
+                .exists,
+            "User \(teamMembers[0].name) is not present in group"
+        )
+    }
+
+    @MainActor
+    func test_Account_Management_Lock_With_Passcode() async throws {
+        let passcode = UserGenerator.generateAppPasscode()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+
+        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken,
+            teamID: teamID
+        )
+
+        let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamMember.username)
+            .openSettings()
+            .openOptionsMenu()
+            .enableLockWithPasscode()
+            .SetPasscode(passcode)
+            .backgroundAndResume(app: app, forDelay: 2)
+
+        XCTAssertFalse(
+            page.conversationsPageLabel.exists,
+            "App incorrectly showing conversations page without app passcode"
+        )
+
+        _ = try page.enterPasscode(passcode)
     }
 }

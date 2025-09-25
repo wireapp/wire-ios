@@ -23,7 +23,18 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.localDomain = localDomain
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        super.init(context: context)
+    }
 
     override func request(
         for action: ActionHandler<ConnectToUserAction>.Action,
@@ -32,7 +43,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         switch apiVersion {
         case .v0:
             nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -65,8 +76,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         for action: ActionHandler<ConnectToUserAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
-        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { localDomain }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
             return nil

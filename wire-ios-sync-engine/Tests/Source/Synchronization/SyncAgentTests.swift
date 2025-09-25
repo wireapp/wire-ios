@@ -37,6 +37,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var backgroundActivity: BackgroundActivityFactory!
     var backgroundActivityManager: MockBackgroundActivityManager!
+    var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
+    var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -54,6 +56,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity = BackgroundActivityFactory.shared
         backgroundActivity.backgroundTaskTimeout = 2
         backgroundActivity.activityManager = backgroundActivityManager
+        featureConfigRepository = MockFeatureConfigRepositoryProtocol()
+        mainAppPushChannelCoordinator = MockMainAppPushChannelCoordinatorProtocol()
 
         sut = SyncAgent(
             journal: journal,
@@ -62,7 +66,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             initialSyncProvider: self,
             incrementalSyncProvider: self,
             legacySyncStatus: legacySyncStatus,
-            syncStateSubject: syncStateSubject
+            featureConfigRepository: featureConfigRepository,
+            syncStateSubject: syncStateSubject,
+            pushChannelCoordinator: mainAppPushChannelCoordinator
         )
     }
 
@@ -78,6 +84,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivityManager.reset()
         backgroundActivityManager = nil
         backgroundActivity = nil
+        featureConfigRepository = nil
+        mainAppPushChannelCoordinator = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -103,6 +111,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             )
         }
         legacySyncStatus.performQuickSync_MockMethod = {}
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performSync()
@@ -124,6 +133,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performSync()
@@ -145,6 +155,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performInitialSync()
@@ -160,6 +171,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         // Mock
         legacySyncStatus.forceSlowSync_MockMethod = {}
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performInitialSync()
@@ -180,6 +192,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performResourceSync()
@@ -195,6 +208,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         // Mock
         legacySyncStatus.resyncResources_MockMethod = {}
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performResourceSync()
@@ -214,6 +228,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
         try await sut.performIncrementalSync()
@@ -235,6 +250,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync.perform_MockMethod = {
             throw Failure.failed
         }
+        featureConfigRepository.isFeatureEnabled_MockValue = false
 
         var cancellable: AnyCancellable?
 
@@ -301,7 +317,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformIncrementalSync_V3() async throws {
         // Given
-        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        featureConfigRepository.isFeatureEnabled_MockValue = true
         journal[.isConsumableNotificationsEnabled] = true
         journal[.isSyncV2Enabled] = true
 

@@ -33,7 +33,8 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         sut = AssetDeletionRequestStrategy(
             context: syncMOC,
             applicationStatus: mockApplicationStatus,
-            identifierProvider: mockIdentifierProvider
+            identifierProvider: mockIdentifierProvider,
+            localDomain: "wire.com"
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -117,7 +118,7 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
 extension AssetDeletionRequestStrategyTests {
     func testThatItCreatesARequestIfThereIsAnIdentifier(for apiVersion: APIVersion) {
         // Given
-        let domain = "example.domain.com"
+        let domain = "wire.com"
         BackendInfo.domain = domain
         let identifier = UUID.create().transportString()
         mockIdentifierProvider.nextIdentifier = identifier
@@ -131,7 +132,7 @@ extension AssetDeletionRequestStrategyTests {
             "/assets/v3/\(identifier)"
         case .v1:
             "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)

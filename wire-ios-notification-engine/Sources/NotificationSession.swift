@@ -126,7 +126,7 @@ public final class NotificationSession {
         environment: BackendEnvironmentProvider,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
-    ) throws {
+    ) async throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accounURLs = AccountURLs(root: sharedContainerURL)
         let accountManager = try AccountManager(
@@ -140,7 +140,9 @@ public final class NotificationSession {
 
         let coreDataStack = CoreDataStack(
             account: account,
-            applicationContainer: sharedContainerURL
+            applicationContainer: sharedContainerURL,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -151,15 +153,7 @@ public final class NotificationSession {
             throw InitializationError.coreDataMigrationRequired
         }
 
-        coreDataStack.loadStores { error in
-            // ⚠️ errors are not handled and `NotificationSession` will be created.
-            // Currently it is the given behavior, but should be refactored
-            // into a "setup" or "load" func that can be async and handle errors.
-
-            if let error {
-                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
-            }
-        }
+        try await coreDataStack.load()
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
@@ -168,9 +162,6 @@ public final class NotificationSession {
             userIdentifier: accountIdentifier,
             useCache: false
         )
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
@@ -183,7 +174,7 @@ public final class NotificationSession {
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
-            reachability: reachability,
+            reachability: environment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
@@ -255,7 +246,8 @@ public final class NotificationSession {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: BackendInfo.domain
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -318,7 +310,8 @@ public final class NotificationSession {
         self.eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
             syncMOC: coreDataStack.syncContext,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         pushNotificationStrategy.delegate = self
@@ -542,7 +535,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         // Should not handle a call if the caller is a self user and it's an incoming call or call end.
         // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
         let selfUser = ZMUser.selfUser(in: context)
-        if let callerID = callContent.callerID,
+        if let callerID = callContent.callerID(isFederationEnabled: BackendInfo.isFederationEnabled),
            callerID.identifier == selfUser.remoteIdentifier,
            callerID.domain == selfUser.domain,
            callContent.isIncomingCall || callContent.isEndCall {
@@ -633,7 +626,7 @@ extension NotificationSession {
             /// the age of the event is less than 30 seconds
             guard
                 let callState = callEventContent.callState,
-                let callerID = callEventContent.callerID,
+                let callerID = callEventContent.callerID(isFederationEnabled: BackendInfo.isFederationEnabled),
                 let caller = ZMUser.fetch(with: callerID.identifier, domain: callerID.domain, in: context),
                 caller != ZMUser.selfUser(in: context),
                 !isEventTimedOut(currentTimestamp: currentTimestamp, eventTimestamp: event.timestamp)

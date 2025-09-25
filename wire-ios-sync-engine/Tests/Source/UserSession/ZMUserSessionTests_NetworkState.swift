@@ -27,7 +27,8 @@ import XCTest
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
-    func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
+    @MainActor
+    func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() async throws {
         // given
         let userId = NSUUID.create()!
 
@@ -46,7 +47,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        let coreDataStack = createCoreDataStack()
+        let coreDataStack = try await createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
             self.setupSelfClient(inMoc: coreDataStack.syncContext)
         }
@@ -64,7 +65,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: "3.120.0",
@@ -91,6 +91,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         )
         let testSession = builder.build()
         testSession.setup(
+            apiVersion: nil,
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
@@ -98,7 +99,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             configuration: configuration,
             isDeveloperModeEnabled: false
         )
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)

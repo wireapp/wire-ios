@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireDomain
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -32,7 +33,8 @@ final class ConversationViewController: UIViewController {
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
-
+    let wireCellsFactory: WireCellsFactoryProtocol
+    private(set) var wireCellsState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -149,7 +151,13 @@ final class ConversationViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
-            ConversationMessagesViewController()
+            WireMessagingAssembly.makeConversationScreen(
+                loadMessagesRepo: LoadConversationMessagesRepository(
+                    conversationObjectID: conversation.objectID,
+                    syncContext: userSession.contextProvider.syncContext,
+                    backgroundContext: userSession.contextProvider.newBackgroundContext()
+                )
+            )
         } else {
             ConversationContentViewController(
                 conversation: conversation,
@@ -186,6 +194,11 @@ final class ConversationViewController: UIViewController {
             ),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
+
+        self.wireCellsFactory = wireCellsFactory
+        self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
+            conversation.cellsState
+        }
 
         super.init(nibName: nil, bundle: nil)
 
@@ -429,6 +442,20 @@ final class ConversationViewController: UIViewController {
     @objc
     private func setupTitleViewTap() {
         var actions = [UIAction]()
+
+        // uncomment code when feature prod ready
+        if DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
+            actions.append(
+                UIAction(
+                    title: L10n.Localizable.Conversation.Action.files,
+                    image: UIImage(resource: .files),
+                    handler: { [weak self] _ in
+                        self?.onFilesButtonPressed(nil)
+                    }
+                )
+            )
+        }
+
         if shouldShowCollectionsButton {
             actions.append(
                 UIAction(
@@ -696,6 +723,10 @@ extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateLeftNavigationBarItems()
         if changeInfo.deletedObjects.contains(conversation) {
+            if conversation.mlsStatus == .pendingJoin {
+                // don't pop if mls reset happened
+                return
+            }
             ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
         }
     }
@@ -838,6 +869,48 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             .wrapInNavigationController()
 
         navigationController.presentOverAll(animated: true)
+    }
+
+    @objc
+    private func onFilesButtonPressed(_ sender: AnyObject?) {
+        let filesView = wireCellsFactory
+            .makeFilesView(
+                cellName: conversation.wireCellName,
+                isCellsStatePending: wireCellsState == .pending,
+                nodeIDs: []
+            )
+
+        filesView.presentOverAll(animated: true)
+    }
+
+    /// If cells state is pending we need to sync it to ensure the value is up to date
+    /// as it might have been updated to a `ready` state.
+    func syncCellsStateIfPending() {
+        guard wireCellsState == .pending else {
+            return
+        }
+
+        guard let conversationRepository = userSession.clientSessionComponent?.conversationRepository else {
+            return
+        }
+
+        let syncCellsStateUseCase = SyncCellsStateUseCase(
+            repository: conversationRepository,
+            context: userSession.contextProvider.newBackgroundContext(),
+            localDomain: userSession.resolvedBackendMetadata.domain
+        )
+
+        Task {
+            do {
+                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                    conversationObjectID: conversation.objectID
+                )
+            } catch {
+                WireLogger.conversation
+                    .error("could not sync cells state for conversation")
+            }
+        }
+
     }
 
 }

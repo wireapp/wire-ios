@@ -58,7 +58,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             do {
                 let repository = LegacyFeatureRepository(context: context)
 
-                let processor = FeatureConfigsPayloadProcessor()
+                let processor = FeatureConfigsPayloadProcessor(apiVersion: apiVersion)
 
                 switch apiVersion {
                 case .v0, .v1, .v2, .v3, .v4, .v5:
@@ -67,7 +67,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                         repository: repository
                     )
 
-                case .v6, .v7, .v8, .v9, .v10:
+                case .v6, .v7, .v8, .v9, .v10, .v11:
                     try processor.processActionPayloadAPIV6(
                         data: data,
                         repository: repository

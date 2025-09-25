@@ -22,11 +22,13 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 
 protocol AccountSwitcherComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var accountsPublisher: CurrentValuePublisher<[AccountUIModel]> { get }
+    var environment: BackendEnvironment2 { get }
 
 }
 
@@ -39,7 +41,8 @@ extension AccountSwitcherComponent: AccountSwitcherFactory {
     @MainActor var viewModel: AccountSwitcherModalViewModel {
         AccountSwitcherModalViewModel(
             accountsPublisher: dependency.accountsPublisher,
-            router: dependency.router
+            router: dependency.router,
+            defaultEnvironment: dependency.environment
         )
     }
 }

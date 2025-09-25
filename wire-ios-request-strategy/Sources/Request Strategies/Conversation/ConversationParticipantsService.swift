@@ -68,11 +68,14 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
     // MARK: - Life cycle
 
-    public convenience init(context: NSManagedObjectContext) {
+    public convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
             context: context,
             proteusParticipantsService: ProteusConversationParticipantsService(context: context),
-            mlsParticipantsService: MLSConversationParticipantsService(context: context)
+            mlsParticipantsService: MLSConversationParticipantsService(context: context, localDomain: localDomain)
         )
     }
 
@@ -287,6 +290,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
             try await mlsParticipantsService.removeParticipant(user, from: conversation)
+        }
+
+        try await context.perform { [weak context] in
+            try context?.save()
         }
     }
 

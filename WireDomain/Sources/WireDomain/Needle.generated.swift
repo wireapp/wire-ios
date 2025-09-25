@@ -6,6 +6,7 @@ import UserNotifications
 import WireCrypto
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireNetwork
 
 // swiftlint:disable unused_declaration
@@ -37,6 +38,40 @@ private func parent5(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 
 #if !NEEDLE_DYNAMIC
 
+private class NSEUserScopeDependency2c7b3df7f8cb346a36faProvider: NSEUserScopeDependency {
+    var currentBuildNumber: String {
+        return nSEFlow.currentBuildNumber
+    }
+    var appContainerURL: URL {
+        return nSEFlow.appContainerURL
+    }
+    var accountDataURL: URL {
+        return nSEFlow.accountDataURL
+    }
+    var backendStore: BackendEnvironmentStore {
+        return nSEFlow.backendStore
+    }
+    var sharedUserDefaults: UserDefaults {
+        return nSEFlow.sharedUserDefaults
+    }
+    var cookieEncryptionKey: Data {
+        return nSEFlow.cookieEncryptionKey
+    }
+    var minTLSVersion: WireNetwork.TLSVersion {
+        return nSEFlow.minTLSVersion
+    }
+    var preferredAPIVersion: WireNetwork.APIVersion? {
+        return nSEFlow.preferredAPIVersion
+    }
+    private let nSEFlow: NSEFlow
+    init(nSEFlow: NSEFlow) {
+        self.nSEFlow = nSEFlow
+    }
+}
+/// ^->NSEFlow->NSEUserScope
+private func factorye08b4393f47288b9e50e5fbe4b399b025b29f502(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NSEUserScopeDependency2c7b3df7f8cb346a36faProvider(nSEFlow: parent1(component) as! NSEFlow)
+}
 private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotificationDependency {
     var contentHandler: (UNNotificationContent) -> Void {
         return notificationServiceExtensionFlow.contentHandler
@@ -259,8 +294,65 @@ private class SyncEventsDependencyac60bf06509cd2e7559bProvider: SyncEventsDepend
 private func factory69e893d5271726f7cf598be8429a6bc7b371557e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return SyncEventsDependencyac60bf06509cd2e7559bProvider(notificationServiceExtensionFlow: parent3(component) as! NotificationServiceExtensionFlow, verifyUserStep: parent1(component) as! VerifyUserStep)
 }
+private class NSEClientScopeDependencyfc368141c1425b82ae14Provider: NSEClientScopeDependency {
+    var account: Account {
+        return nSEUserScope.account
+    }
+    var accountID: UUID {
+        return nSEUserScope.accountID
+    }
+    var appContainerURL: URL {
+        return nSEFlow.appContainerURL
+    }
+    var userAccountDataURL: URL {
+        return nSEUserScope.userAccountDataURL
+    }
+    var accountManager: AccountManager {
+        return nSEFlow.accountManager
+    }
+    var journal: Journal {
+        return nSEUserScope.journal
+    }
+    var sharedUserDefaults: UserDefaults {
+        return nSEFlow.sharedUserDefaults
+    }
+    var cookieStorage: CookieStorage {
+        return nSEUserScope.cookieStorage
+    }
+    var cryptoboxMigrationManager: CryptoboxMigrationManager {
+        return nSEUserScope.cryptoboxMigrationManager
+    }
+    private let nSEFlow: NSEFlow
+    private let nSEUserScope: NSEUserScope
+    init(nSEFlow: NSEFlow, nSEUserScope: NSEUserScope) {
+        self.nSEFlow = nSEFlow
+        self.nSEUserScope = nSEUserScope
+    }
+}
+/// ^->NSEFlow->NSEUserScope->NSEClientScope
+private func factory757c2bbb6c9fac2078f23d42a6b301a1bd65d55f(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NSEClientScopeDependencyfc368141c1425b82ae14Provider(nSEFlow: parent2(component) as! NSEFlow, nSEUserScope: parent1(component) as! NSEUserScope)
+}
 
 #else
+extension NSEUserScope: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\NSEUserScopeDependency.currentBuildNumber] = "currentBuildNumber-String"
+        keyPathToName[\NSEUserScopeDependency.appContainerURL] = "appContainerURL-URL"
+        keyPathToName[\NSEUserScopeDependency.accountDataURL] = "accountDataURL-URL"
+        keyPathToName[\NSEUserScopeDependency.backendStore] = "backendStore-BackendEnvironmentStore"
+        keyPathToName[\NSEUserScopeDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
+        keyPathToName[\NSEUserScopeDependency.cookieEncryptionKey] = "cookieEncryptionKey-Data"
+        keyPathToName[\NSEUserScopeDependency.minTLSVersion] = "minTLSVersion-WireNetwork.TLSVersion"
+        keyPathToName[\NSEUserScopeDependency.preferredAPIVersion] = "preferredAPIVersion-WireNetwork.APIVersion?"
+        localTable["account-Account"] = { [unowned self] in self.account as Any }
+        localTable["accountID-UUID"] = { [unowned self] in self.accountID as Any }
+        localTable["userAccountDataURL-URL"] = { [unowned self] in self.userAccountDataURL as Any }
+        localTable["journal-Journal"] = { [unowned self] in self.journal as Any }
+        localTable["cookieStorage-CookieStorage"] = { [unowned self] in self.cookieStorage as Any }
+        localTable["cryptoboxMigrationManager-CryptoboxMigrationManager"] = { [unowned self] in self.cryptoboxMigrationManager as Any }
+    }
+}
 extension ShowNotificationStep: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ShowNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
@@ -341,6 +433,33 @@ extension SyncEventsStep: NeedleFoundation.Registration {
         localTable["databaseSaver-any DatabaseSaverProtocol"] = { [unowned self] in self.databaseSaver as Any }
     }
 }
+extension NSEClientScope: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\NSEClientScopeDependency.account] = "account-Account"
+        keyPathToName[\NSEClientScopeDependency.accountID] = "accountID-UUID"
+        keyPathToName[\NSEClientScopeDependency.appContainerURL] = "appContainerURL-URL"
+        keyPathToName[\NSEClientScopeDependency.userAccountDataURL] = "userAccountDataURL-URL"
+        keyPathToName[\NSEClientScopeDependency.accountManager] = "accountManager-AccountManager"
+        keyPathToName[\NSEClientScopeDependency.journal] = "journal-Journal"
+        keyPathToName[\NSEClientScopeDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
+        keyPathToName[\NSEClientScopeDependency.cookieStorage] = "cookieStorage-CookieStorage"
+        keyPathToName[\NSEClientScopeDependency.cryptoboxMigrationManager] = "cryptoboxMigrationManager-CryptoboxMigrationManager"
+    }
+}
+extension NSEFlow: NeedleFoundation.Registration {
+    public func registerItems() {
+
+        localTable["currentBuildNumber-String"] = { [unowned self] in self.currentBuildNumber as Any }
+        localTable["appContainerURL-URL"] = { [unowned self] in self.appContainerURL as Any }
+        localTable["accountDataURL-URL"] = { [unowned self] in self.accountDataURL as Any }
+        localTable["accountManager-AccountManager"] = { [unowned self] in self.accountManager as Any }
+        localTable["backendStore-BackendEnvironmentStore"] = { [unowned self] in self.backendStore as Any }
+        localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
+        localTable["cookieEncryptionKey-Data"] = { [unowned self] in self.cookieEncryptionKey as Any }
+        localTable["minTLSVersion-WireNetwork.TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
+        localTable["preferredAPIVersion-WireNetwork.APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
+    }
+}
 
 
 #endif
@@ -357,6 +476,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
+    registerProviderFactory("^->NSEFlow->NSEUserScope", factorye08b4393f47288b9e50e5fbe4b399b025b29f502)
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep->GenerateNotificationStep->ShowNotificationStep", factory7cf4b2b30a4398b50d11a9cc2ff26e57789f8e96)
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->SyncEventsStep->GenerateNotificationStep->ShowNotificationStep", factorydb9c02c13ed8a3b4c57b2078b7cb922213bab1d6)
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep", factory57c45e6a5f7157fd1d7682b820770cde9bb5e257)
@@ -366,6 +486,8 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->SyncEventsStep->GenerateNotificationStep", factory8bf9ed88aea0f8f2db04f61d9dbc793922f9b297)
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep", factoryf4ab58fd6d9a40f320668be8429a6bc7b371557e)
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->SyncEventsStep", factory69e893d5271726f7cf598be8429a6bc7b371557e)
+    registerProviderFactory("^->NSEFlow->NSEUserScope->NSEClientScope", factory757c2bbb6c9fac2078f23d42a6b301a1bd65d55f)
+    registerProviderFactory("^->NSEFlow", factoryEmptyDependencyProvider)
 }
 #endif
 

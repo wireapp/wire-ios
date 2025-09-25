@@ -19,149 +19,11 @@
 import Foundation
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy
 import WireTransport
-
-final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
-
-    func didFailToSend(_ message: ZMMessage) {
-        // nop
-    }
-}
-
-final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-
-    let context: NSManagedObjectContext
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-
-    var clientIsReadyForRequests: Bool {
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: move constant into shared framework
-        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
-            return !clientId.isEmpty
-        }
-
-        return false
-    }
-
-    func didDetectCurrentClientDeletion() {
-        // nop
-    }
-}
-
-final class AuthenticationStatus: AuthenticationStatusProvider {
-
-    let transportSession: ZMTransportSession
-
-    init(transportSession: ZMTransportSession) {
-        self.transportSession = transportSession
-    }
-
-    var state: AuthenticationState {
-        isLoggedIn ? .authenticated : .unauthenticated
-    }
-
-    private var isLoggedIn: Bool {
-        transportSession.cookieStorage.hasAuthenticationCookie
-    }
-
-}
-
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = backendURL.host!
-        return ZMPersistentCookieStorage(
-            forServerName: backendURL,
-            userIdentifier: account.userIdentifier,
-            useCache: false
-        )
-    }
-
-    public func isAuthenticated(_ account: Account) -> Bool {
-        cookieStorage(for: account).hasAuthenticationCookie
-    }
-}
-
-final class ApplicationStatusDirectory: ApplicationStatus {
-
-    let transportSession: ZMTransportSession
-
-    /// The authentication status used to verify a user is authenticated
-    public let authenticationStatus: AuthenticationStatusProvider
-
-    /// The client registration status used to lookup if a user has registered a self client
-    public let clientRegistrationStatus: ClientRegistrationDelegate
-
-    public let linkPreviewDetector: LinkPreviewDetectorType
-
-    public let syncStatus: SyncStatusProtocol
-
-    public init(
-        transportSession: ZMTransportSession,
-        authenticationStatus: AuthenticationStatusProvider,
-        clientRegistrationStatus: ClientRegistrationStatus,
-        linkPreviewDetector: LinkPreviewDetectorType,
-        syncStatus: SyncStatusProtocol = SyncStatus()
-    ) {
-        self.transportSession = transportSession
-        self.authenticationStatus = authenticationStatus
-        self.clientRegistrationStatus = clientRegistrationStatus
-        self.linkPreviewDetector = linkPreviewDetector
-        self.syncStatus = syncStatus
-    }
-
-    public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
-        let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
-        let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
-        let linkPreviewDetector = LinkPreviewDetector()
-        self.init(
-            transportSession: transportSession,
-            authenticationStatus: authenticationStatus,
-            clientRegistrationStatus: clientRegistrationStatus,
-            linkPreviewDetector: linkPreviewDetector
-        )
-    }
-
-    public var synchronizationState: SynchronizationState {
-        if clientRegistrationStatus.clientIsReadyForRequests {
-            .online
-        } else {
-            .unauthenticated
-        }
-    }
-
-    public var operationState: OperationState {
-        .foreground
-    }
-
-    public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        clientRegistrationStatus
-    }
-
-    public var requestCancellation: ZMRequestCancellation {
-        transportSession
-    }
-
-    func requestResyncResources() {
-        // we don't resync Resources in the share engine
-    }
-
-}
-
-/// Required by `MLSService` initializer.
-/// No need to fill in the methods as we don't sync resources in the share engine.
-struct SyncStatus: SyncStatusProtocol {
-    func performQuickSync() async {}
-    func resyncResources() {}
-    func forceSlowSync() {}
-    func recoverWithQuickSync() async {}
-    var isLive: Bool = false
-}
 
 /// A Wire session to share content from a share extension
 /// - note: this is the entry point of this framework. Users of
@@ -250,6 +112,7 @@ public final class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
 
+    @MainActor
     public convenience init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
@@ -257,14 +120,19 @@ public final class SharingSession {
         environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?
-    ) throws {
+        minTLSVersion: String?,
+        currentBuildNumber: String,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
         let coreDataStack = CoreDataStack(
             account: Account(userName: "", userIdentifier: accountIdentifier),
-            applicationContainer: sharedContainerURL
+            applicationContainer: sharedContainerURL,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         guard coreDataStack.storesExists else {
@@ -275,12 +143,7 @@ public final class SharingSession {
             throw InitializationError.needsMigration
         }
 
-        var storeError: Error?
-        coreDataStack.loadStores { _ in
-            storeError = storeError
-        }
-
-        guard storeError == nil else { throw InitializationError.missingSharedContainer }
+        try await coreDataStack.load()
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
@@ -289,9 +152,6 @@ public final class SharingSession {
             userIdentifier: accountIdentifier,
             useCache: false
         )
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
@@ -304,7 +164,7 @@ public final class SharingSession {
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
-            reachability: reachability,
+            reachability: environment.reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
@@ -340,6 +200,7 @@ public final class SharingSession {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -363,7 +224,7 @@ public final class SharingSession {
 
         }
 
-        try self.init(
+        try await self.init(
             accountIdentifier: accountIdentifier,
             selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
@@ -378,10 +239,15 @@ public final class SharingSession {
             minTLSVersion: .minVersionFrom(minTLSVersion),
             apiVersion: wireAPIVersion,
             sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: URL("unused")!
+            sharedContainerURL: URL("unused")!,
+            legacyEnvironment: environment,
+            proxyCredentials: credentials,
+            currentBuildNumber: currentBuildNumber,
+            localDomain: localDomain
         )
     }
 
+    @MainActor
     init(
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,
@@ -400,7 +266,7 @@ public final class SharingSession {
         mlsService: MLSServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
-    ) throws {
+    ) async throws {
 
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -450,6 +316,7 @@ public final class SharingSession {
         setupObservers()
     }
 
+    @MainActor
     public convenience init(
         accountIdentifier: UUID,
         selfClientID: String,
@@ -462,8 +329,12 @@ public final class SharingSession {
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
         sharedUserDefaults: UserDefaults,
-        sharedContainerURL: URL
-    ) throws {
+        sharedContainerURL: URL,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        proxyCredentials: WireTransport.ProxyCredentials?,
+        currentBuildNumber: String,
+        localDomain: String?
+    ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
@@ -474,15 +345,22 @@ public final class SharingSession {
             managedObjectContext: coreDataStack.syncContext
         )
 
+        let legacyAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
+            apiVersion: legacyAPIVersion,
+            localDomain: localDomain
         )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: strategyFactory.strategies,
+            apiVersion: legacyAPIVersion
+        )
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
@@ -507,7 +385,8 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false
+            allowCreation: false,
+            localDomain: localDomain
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -536,17 +415,51 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: localDomain
         )
 
-        let userSessionComponent = UserSessionComponent(
-            selfUserID: accountIdentifier,
-            backendEnvironment: wireAPIBackendEnvironment,
+        let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+            WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
+        }
+
+        let proxyCredentials = proxyCredentials.map {
+            WireNetwork.ProxyCredentials(
+                username: $0.username,
+                password: $0.password
+            )
+        }
+
+        let networkStack = NetworkStack(
+            backendEnvironment: BackendEnvironment2(legacyEnvironment),
             minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
-            localDomain: WireTransport.BackendInfo.domain!,
-            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
-            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: proxyCredentials
+        )
+
+        let networkServices = try await networkStack.networkServices
+        let metadata = try await networkStack.resolvedBackendMetadata()
+        let cookieStorage = CookieStorage(
+            userID: accountIdentifier,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
+
+        let isMLSEnabled = if DeveloperFlag.multibackend.isOn {
+            journal[.isBackendMLSEnabled]
+        } else {
+            BackendInfo.isMLSEnabled
+        }
+
+        let userSessionComponent = UserSessionComponent(
+            currentBuildNumber: currentBuildNumber,
+            selfUserID: accountIdentifier,
+            cookieStorage: cookieStorage,
+            restNetworkService: networkServices.rest,
+            websocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
+            backendMetaData: metadata,
+            isMLSEnabled: isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
@@ -572,7 +485,7 @@ public final class SharingSession {
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
-        try self.init(
+        try await self.init(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
             transportSession: transportSession,

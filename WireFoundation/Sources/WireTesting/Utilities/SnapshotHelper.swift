@@ -200,6 +200,7 @@ public struct SnapshotHelper {
                     traits: traits
                 ),
                 named: name,
+                record: recording,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,

@@ -71,6 +71,7 @@ open class AuthenticatedSessionFactory {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
+            blacklistURL: environment.blackListURL,
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
@@ -87,24 +88,6 @@ open class AuthenticatedSessionFactory {
             },
             proxySettings: proxySettings
         )
-
-        let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
-            let wireAssembly = WireNetwork.Assembly(
-                userID: userID,
-                clientID: clientID,
-                backendEnvironment: wireAPIBackendEnvironment,
-                minTLSVersion: WireNetwork.TLSVersion.minVersionFrom(minTLSVersion),
-                cookieEncryptionKey: UserDefaults.cookiesKey()
-            )
-
-            let authenticationManager = wireAssembly.authenticationManager
-            let networkService = wireAssembly.apiNetworkService
-
-            return APIService(
-                networkService: networkService,
-                authenticationManager: authenticationManager
-            )
-        }
 
         let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
 
@@ -131,12 +114,12 @@ open class AuthenticatedSessionFactory {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: BackendInfo.domain
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
-            apiServiceFactory: apiServiceFactory,
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,
@@ -164,6 +147,7 @@ open class AuthenticatedSessionFactory {
 
         let userSession = userSessionBuilder.build()
         userSession.setup(
+            apiVersion: nil,
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,

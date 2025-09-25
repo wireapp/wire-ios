@@ -24,7 +24,8 @@ public protocol MLSClientManagerProtocol {
     func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool
     ) async
 
 }
@@ -51,9 +52,10 @@ public final class MLSClientManager: MLSClientManagerProtocol {
     public func initializeMLSClientIfNeeded(
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
-        mlsFeature: Feature.MLS
+        mlsFeature: Feature.MLS,
+        isBackendMLSEnabled: Bool
     ) async {
-        guard BackendInfo.isMLSEnabled, mlsFeature.isEnabled else {
+        guard isBackendMLSEnabled, mlsFeature.isEnabled else {
             WireLogger.mls.info("MLS feature in not enabled.")
             return
         }
@@ -67,7 +69,13 @@ public final class MLSClientManager: MLSClientManagerProtocol {
 
     // MARK: - Private Implentation
 
+    private var didPerformMLSClientUpdate = false
+
     private func performsMLSClientUpdates() async {
+        guard !didPerformMLSClientUpdate else {
+            return
+        }
+
         do {
             try await mlsService.performPendingJoins()
         } catch {
@@ -75,6 +83,7 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         }
         await mlsService.uploadKeyPackagesIfNeeded()
         await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+        didPerformMLSClientUpdate = true
     }
 
     private func createMLSClient(mlsClientID: MLSClientID) async {

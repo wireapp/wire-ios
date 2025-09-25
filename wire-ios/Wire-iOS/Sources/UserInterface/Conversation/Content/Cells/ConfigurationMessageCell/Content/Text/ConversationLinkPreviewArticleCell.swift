@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
@@ -69,7 +70,9 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let insets: UIEdgeInsets = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+            ? .zero
+            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         articleView.fitIn(view: self, insets: insets)
     }
 
@@ -126,6 +129,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"

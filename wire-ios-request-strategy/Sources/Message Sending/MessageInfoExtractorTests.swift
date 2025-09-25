@@ -30,19 +30,19 @@ final class MessageInfoExtractorTests: XCTestCase {
     var modelHelper: ModelHelper!
     var mockProteusMessage: MockProteusMessage!
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
 
         coreDataStack = CoreDataStack(
             account: .init(userName: "F", userIdentifier: .create()),
             applicationContainer: URL(fileURLWithPath: "/dev/null"),
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        coreDataStack.loadStores { _ in
-
-        }
+        try await coreDataStack.load()
         sut = MessageInfoExtractor(context: coreDataStack.syncContext)
         modelHelper = ModelHelper()
 

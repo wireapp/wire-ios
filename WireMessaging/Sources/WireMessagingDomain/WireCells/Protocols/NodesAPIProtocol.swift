@@ -30,15 +30,6 @@ package protocol NodesAPIProtocol: Sendable {
 
     func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async -> AsyncThrowingStream<Int, any Error>
 
-    func getFiles(
-        path: String?,
-        query: String,
-        limit: Int,
-        offset: Int
-    ) async throws -> [WireCellsNode]
-
-    func deleteFile(nodeID: UUID) async throws
-
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 
     func publishDraft(nodeID: UUID, versionID: UUID) async throws
@@ -47,7 +38,7 @@ package protocol NodesAPIProtocol: Sendable {
 
     func getNode(nodeID: UUID) async throws -> WireCellsNode
 
-    func deleteFiles(paths: [String]) async throws
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
     func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink
 

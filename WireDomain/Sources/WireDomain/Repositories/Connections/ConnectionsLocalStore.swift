@@ -23,13 +23,16 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let isFederationEnabled: Bool
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
     ) {
         self.context = context
+        self.isFederationEnabled = isFederationEnabled
     }
 
     // MARK: - Public

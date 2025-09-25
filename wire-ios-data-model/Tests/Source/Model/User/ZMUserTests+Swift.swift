@@ -26,11 +26,6 @@ import GenericMessageProtocol
 
 final class ZMUserTests_Swift: ModelObjectsTests {
 
-    override func tearDown() {
-        BackendInfo.isFederationEnabled = false
-        super.tearDown()
-    }
-
     func testThatSettingUserProfileAssetIdentifiersDirectlyDoesNotMarkAsModified() {
         // GIVEN
         let user = ZMUser.selfUser(in: uiMOC)
@@ -1219,7 +1214,7 @@ extension ZMUserTests_Swift {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = false
+            syncMOC.isFederationEnabled = false
             let created = ZMUser.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
 
             // then
@@ -1236,7 +1231,7 @@ extension ZMUserTests_Swift {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = true
+            syncMOC.isFederationEnabled = true
             let created = ZMUser.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
 
             // then

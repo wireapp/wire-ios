@@ -85,7 +85,7 @@ extension ZMConversation: HasQualifiedID {
     public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
-            let domain = domain ?? BackendInfo.domain
+            let domain = domain ?? managedObjectContext?.localDomain
         else {
             return nil
         }

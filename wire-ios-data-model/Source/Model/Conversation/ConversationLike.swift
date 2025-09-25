@@ -58,9 +58,13 @@ public protocol ConversationLike: AnyObject {
     var isChannel: Bool { get }
     var privateChannelPermission: PrivateChannelPermission { get }
     var channelHistoryDepth: String? { get }
+    var hasMoreHistory: Bool { get }
 
     /// The name of the `cell` used for Wire Cells file management.
     var wireCellName: String { get }
+
+    /// Whether Wire Cells is enabled for this conversation.
+    var isCellsEnabled: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another

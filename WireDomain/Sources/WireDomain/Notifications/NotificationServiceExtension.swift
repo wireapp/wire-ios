@@ -35,9 +35,32 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var onGoingtask: Task<Void, Never>?
+    private var onGoingTask: Task<Void, Never>?
 
-    public init() {
+    private let currentAppVersion: String
+    private let currentBuildNumber: String
+    private let appContainerURL: URL
+    private let sharedUserDefaults: UserDefaults
+    private let cookieEncryptionKey: Data
+    private let minTLSVersion: String?
+    private let preferredAPIVersion: UInt?
+
+    public init(
+        currentAppVersion: String,
+        currentBuildNumber: String,
+        appContainerURL: URL,
+        sharedUserDefaults: UserDefaults,
+        cookieEncryptionKey: Data,
+        minTLSVersion: String?,
+        preferredAPIVersion: UInt?
+    ) {
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
+        self.appContainerURL = appContainerURL
+        self.sharedUserDefaults = sharedUserDefaults
+        self.cookieEncryptionKey = cookieEncryptionKey
+        self.minTLSVersion = minTLSVersion
+        self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE)
     }
@@ -49,7 +72,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
-        if onGoingtask != nil {
+        if onGoingTask != nil {
             logger.warn(
                 "onGoingtask not null: a notification is already being processed",
                 attributes: .newNSE
@@ -58,10 +81,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
             contentHandler($0) // Finishes current notification flow by calling system built-in handler.
-            self?.onGoingtask = nil // Current notification flow was completed, nil out the task.
+            self?.onGoingTask = nil // Current notification flow was completed, nil out the task.
         }
 
-        onGoingtask = Task {
+        onGoingTask = Task {
             do {
                 try Task.checkCancellation()
             } catch {
@@ -70,23 +93,46 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 return notificationContentHandler(.emptyNotification)
             }
 
-            do {
-                let rootComponent = try NotificationServiceExtensionFlow(
-                    contentHandler: notificationContentHandler
-                )
+            if DeveloperFlag.multibackend.isOn {
+                do {
+                    let nseFlow = try NSEFlow(
+                        currentAppVersion: currentAppVersion,
+                        currentBuildNumber: currentBuildNumber,
+                        appContainerURL: appContainerURL,
+                        sharedUserDefaults: sharedUserDefaults,
+                        cookieEncryptionKey: cookieEncryptionKey,
+                        minTLSVersion: minTLSVersion,
+                        preferredAPIVersion: preferredAPIVersion
+                    )
 
-                try await rootComponent.start(request: request)
+                    try await nseFlow.start(
+                        request: request,
+                        contentHandler: notificationContentHandler
+                    )
+                } catch {
+                    // TODO: [WPB-19762] show errors
+                    logError(error)
+                    notificationContentHandler(.emptyNotification)
+                }
+            } else {
+                do {
+                    let rootComponent = try NotificationServiceExtensionFlow(
+                        contentHandler: notificationContentHandler
+                    )
 
-            } catch {
-                logError(error)
-                notificationContentHandler(.emptyNotification)
+                    try await rootComponent.start(request: request)
+
+                } catch {
+                    logError(error)
+                    notificationContentHandler(.emptyNotification)
+                }
             }
         }
     }
 
     public func serviceExtensionTimeWillExpire() {
         logger.warn("new notification service will expire", attributes: .newNSE)
-        onGoingtask?.cancel()
+        onGoingTask?.cancel()
     }
 }
 
@@ -105,6 +151,8 @@ extension NotificationServiceExtension {
             logVerifyUserStepError(verifyUserStepError)
         case let pullEventsStepError as PullEventsStep.Failure:
             logPullEventsStepError(pullEventsStepError)
+        case let syncEventsStepError as SyncEventsStep.Failure:
+            logSyncEventsStepError(syncEventsStepError)
         default:
             logDefaultError(error)
         }
@@ -115,27 +163,27 @@ extension NotificationServiceExtension {
         case .syncV2IsNotEnabled:
             logger.error(
                 "Not displaying notification because sync v2 is not enabled yet",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .userUnauthenticated:
             logger.error(
                 "Not displaying notification because app is not authenticated",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .coreDataMissingSharedContainer:
             logger.error(
                 "Core data missing shared container",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .coreDataMigrationRequired:
             logger.error(
                 "Core data migration required",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case let .unableToLoadStores(loadStoresError):
             logger.error(
                 "Loading coreDataStack with error: \(loadStoresError.localizedDescription)",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -155,12 +203,12 @@ extension NotificationServiceExtension {
         case .missingCurrentAppVersion:
             logger.error(
                 "Missing current app version",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .missingAppGroupID:
             logger.error(
                 "Missing app group ID",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -170,12 +218,12 @@ extension NotificationServiceExtension {
         case .noAccountFound:
             logger.error(
                 "No selected account found",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .missingSelfClientID:
             logger.error(
                 "Self client ID is missing",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .mainAppPushChannelOpened:
             logger.error(
@@ -185,17 +233,37 @@ extension NotificationServiceExtension {
         }
     }
 
+    private func logSyncEventsStepError(_ error: SyncEventsStep.Failure) {
+        switch error {
+        case .pushChannelAlreadyOpened:
+            logger.error(
+                "Main app is running in foreground with push channel open",
+                attributes: .newNSE
+            )
+        case .missingProxyCredentials:
+            logger.error(
+                "Proxy needs authentication but credentials are missing",
+                attributes: .newNSE, .safePublic
+            )
+        case .apiVersionNotFound:
+            logger.error(
+                "API version not found",
+                attributes: .newNSE, .safePublic
+            )
+        }
+    }
+
     private func logPullEventsStepError(_ error: PullEventsStep.Failure) {
         switch error {
         case .missingProxyCredentials:
             logger.error(
                 "Proxy needs authentication but credentials are missing",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         case .apiVersionNotFound:
             logger.error(
                 "API version not found",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -203,7 +271,7 @@ extension NotificationServiceExtension {
     private func logDefaultError(_ error: any Error) {
         logger.error(
             "Unable to create a session: \(error.localizedDescription)",
-            attributes: .newNSE
+            attributes: .newNSE, .safePublic
         )
     }
 }

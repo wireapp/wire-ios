@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireLinkPreview
+import WireSyncEngine
 
 final class ArticleView: UIView {
 
@@ -72,7 +73,11 @@ final class ArticleView: UIView {
     private func setupViews() {
         accessibilityElements = [imageView, messageLabel, authorLabel]
         backgroundColor = containerColor
-        layer.cornerRadius = 4
+        layer.cornerRadius = if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
+            ConversationMessageContainerView.bubbleCornerRadius
+        } else {
+            4
+        }
         clipsToBounds = true
         accessibilityIdentifier = "linkPreview"
 

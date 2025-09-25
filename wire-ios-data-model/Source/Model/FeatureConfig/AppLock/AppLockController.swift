@@ -47,7 +47,14 @@ public final class AppLockController: AppLockType {
     }
 
     public var timeout: UInt {
-        legacyConfig?.timeout ?? config.timeout
+        #if DEBUG
+            // Override timeout for UI tests when explicitly provided via env var.
+            if let applockTimeInSeconds = ProcessInfo.processInfo.environment["UITEST_APPLOCK_TIMEOUT"],
+               let timeout = UInt(applockTimeInSeconds) {
+                return timeout
+            }
+        #endif
+        return legacyConfig?.timeout ?? config.timeout
     }
 
     public var isLocked: Bool {

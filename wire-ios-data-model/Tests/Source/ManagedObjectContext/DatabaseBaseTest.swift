@@ -33,8 +33,8 @@ class DatabaseBaseTest: ZMTBaseTest {
 
     // MARK: - Init
 
-    public override func setUp() {
-        super.setUp()
+    public override func setUp() async throws {
+        try await super.setUp()
         clearStorageFolder()
         try! FileManager.default.createDirectory(at: Self.applicationContainer, withIntermediateDirectories: true)
     }
@@ -57,9 +57,11 @@ class DatabaseBaseTest: ZMTBaseTest {
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(
         userID: UUID = UUID(),
+        localDomain: String = "wire.com",
+        isFederationEnabled: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> CoreDataStack {
+    ) async throws -> CoreDataStack {
 
         // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
@@ -70,20 +72,12 @@ class DatabaseBaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: Self.applicationContainer,
             inMemoryStore: false,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
-        let exp = customExpectation(description: "should wait for loadStores to finish")
-        stack.setup(onStartMigration: {
-            // do nothing
-        }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
-            exp.fulfill()
-        }, onCompletion: { _ in
-            exp.fulfill()
-        })
-
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0), file: file, line: line)
+        try await stack.load()
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)

@@ -574,7 +574,6 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -607,7 +606,6 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -642,7 +640,6 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -743,7 +740,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
     }
 
-    struct Arrangement {
+    class Arrangement {
 
         enum Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
@@ -785,6 +782,7 @@ final class MessageSenderTests: MessagingTestBase {
         let initiateResetMLSConversationUseCase = WireRequestStrategySupport
             .MockInitiateResetMLSConversationUseCaseProtocol()
         let featureRepository = MockLegacyFeatureRepositoryInterface()
+        var apiVersion: APIVersion?
 
         init(coreDataStack: CoreDataStack) {
             self.coreDataStack = coreDataStack
@@ -801,7 +799,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
-            BackendInfo.apiVersion = apiVersion
+            self.apiVersion = apiVersion
             return self
         }
 
@@ -935,7 +933,8 @@ final class MessageSenderTests: MessagingTestBase {
                     context: coreDataStack.syncContext,
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-                    featureRepository: featureRepository
+                    featureRepository: featureRepository,
+                    apiVersion: apiVersion
                 )
             )
         }

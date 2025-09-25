@@ -25,7 +25,6 @@ final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
     func testThatItMigratesUsersAndConversations() throws {
         // Given
         let domain = "example.domain.com"
-        BackendInfo.domain = domain
         let conversation = createConversation(in: uiMOC)
         let user = createUser(in: uiMOC)
         XCTAssertNil(conversation.domain)
@@ -33,7 +32,7 @@ final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
 
         try uiMOC.performGroupedAndWait {
             // When
-            XCTAssertNoThrow(try uiMOC.migrateToFederation())
+            XCTAssertNoThrow(try uiMOC.migrateToFederation(localDomain: domain))
 
             // Then
             XCTAssertEqual(conversation.domain, domain)

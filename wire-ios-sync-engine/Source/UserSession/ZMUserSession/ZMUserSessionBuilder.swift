@@ -29,7 +29,6 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
     private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
     private var currentAppVersion: String?
@@ -68,7 +67,6 @@ struct ZMUserSessionBuilder {
 
     func build() -> ZMUserSession {
         guard
-            let apiServiceFactory,
             let currentAppVersion,
             let currentBuildNumber,
             let appLock,
@@ -100,12 +98,74 @@ struct ZMUserSessionBuilder {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
+        let keychain = WireFoundation.Keychain()
+        let cookieStorage = CookieStorage(
+            userID: userId,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: keychain
+        )
+
+        let serverTrustValidator = ServerTrustValidator(
+            pinnedKeys: wireAPIBackendEnvironment.pinnedKeys,
+            currentDateProvider: .system
+        )
+
+        let urlSessionConfigurationFactory = URLSessionConfigurationFactory(
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            proxySettings: wireAPIBackendEnvironment.proxySettings
+        )
+
+        let restNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.url,
+            serverTrustValidator: serverTrustValidator
+        )
+        let restConfig = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        let restSession = URLSession(
+            configuration: restConfig,
+            delegate: restNetworkService,
+            delegateQueue: nil
+        )
+        restNetworkService.configure(with: restSession)
+
+        let webSocketNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.webSocketURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let webSocketConfig = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
+        let webSocketSession = URLSession(
+            configuration: webSocketConfig,
+            delegate: webSocketNetworkService,
+            delegateQueue: nil
+        )
+        webSocketNetworkService.configure(with: webSocketSession)
+
+        let blacklistNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.blacklistURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
+        let blacklistSession = URLSession(
+            configuration: blacklistConfig,
+            delegate: blacklistNetworkService,
+            delegateQueue: nil
+        )
+        blacklistNetworkService.configure(with: blacklistSession)
+
+        let backendMetadata = ResolvedBackendMetadata(
+            apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
+            domain: BackendInfo.domain!,
+            isFederationEnabled: BackendInfo.isFederationEnabled
+        )
+
         return ZMUserSession(
             userId: userId,
+            restNetworkService: restNetworkService,
+            websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
+            backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
-            apiServiceFactory: apiServiceFactory,
             application: application,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
@@ -125,18 +185,15 @@ struct ZMUserSessionBuilder {
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
             dependencies: dependencies,
-            backendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: apiVersion,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
     }
 
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
         wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
         currentAppVersion: String,
@@ -185,7 +242,9 @@ struct ZMUserSessionBuilder {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: BackendInfo.domain,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -212,11 +271,13 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: BackendInfo.domain
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: userId
+            userID: userId,
+            apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
             storage: sharedUserDefaults,
@@ -231,7 +292,6 @@ struct ZMUserSessionBuilder {
 
         // setup builder
 
-        self.apiServiceFactory = apiServiceFactory
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock

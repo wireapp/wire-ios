@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
@@ -49,9 +51,20 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return view
     }()
 
+    private var container: ConversationMessageContainerView?
+
     var isSelected = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            guard let message, isChatBubbleSimpleEnabled else { return }
+            let isOwnMessage = message.isSentBySelfUser
+            let userColor = message.senderUser?.accentColor ?? .clear
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            configureTextColor(forOwnMessage: isOwnMessage)
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -76,18 +89,68 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setup() {
         messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(messageTextView)
+
+        container = .init(content: messageTextView)
+        if let container {
+            container.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(container)
+        }
+
         configureConstraints()
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        let insets: UIEdgeInsets
+        if isChatBubbleSimpleEnabled {
+            insets = ConversationMessageContainerView.bubbleEdgeInsets
+        } else {
+            let margins = conversationHorizontalMargins
+            insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        }
         messageTextView.fitIn(view: self, insets: insets)
     }
 
+    private func configureTextColor(forOwnMessage ownMessage: Bool) {
+        guard isChatBubbleSimpleEnabled else { return }
+        let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
+        let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
+
+        let textForegroundColor: UIColor = ownMessage ? ownColor : otherColor
+        let linkForegroundColor: UIColor = ownMessage ? ownColor : UIColor.accent()
+
+        let linkTextAttributes: [NSAttributedString.Key: Any] = if ownMessage {
+            [
+                .foregroundColor: linkForegroundColor,
+                .underlineColor: linkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
+        } else {
+            [
+                .foregroundColor: linkForegroundColor
+            ]
+        }
+
+        messageTextView.textColor = textForegroundColor
+        messageTextView.linkTextAttributes = linkTextAttributes
+    }
+
     func configure(with object: Configuration, animated: Bool) {
-        messageTextView.attributedText = object.attributedText
+        if isChatBubbleSimpleEnabled {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.lineSpacing = 3
+
+            let attributes: [NSAttributedString.Key: AnyObject] = [
+                .paragraphStyle: paragraphStyle
+            ]
+
+            messageTextView.attributedText = object.attributedText.addAttributes(
+                attributes,
+                toSubstring: object.attributedText.string
+            )
+        } else {
+            messageTextView.attributedText = object.attributedText
+        }
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
@@ -95,9 +158,27 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             messageTextView.accessibilityIdentifier = "Message"
         }
         accessibilityLabel = messageTextView.attributedText.string
+
+        container?.isBubble = isChatBubbleSimpleEnabled
+        updateContainerStyle()
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+    }
+
+    private func updateContainerStyle() {
+        guard let message, isChatBubbleSimpleEnabled else { return }
+        let isOwnMessage = message.isSentBySelfUser
+        let userColor = message.senderUser?.accentColor ?? .clear
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
+        // FIXME: [WPB-16311] Remove this temporary solution once file previews are working in conversations.
+        if DeveloperFlag.wireCells.isOn, url == URL.openFilesViewLink {
+            let nodeIDs = message?.multipartMessageData?.attachments.compactMap(\.nodeID) ?? []
+            openFilesView(nodeIDs: nodeIDs)
+            return true
+        }
+
         // Open mention link
         if url.isMention {
             if let message,
@@ -122,6 +203,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return true
     }
 
+    func openFilesView(nodeIDs: [UUID]) {
+        delegate?.conversationMessageWantsToOpenFilesView(self, nodeIDs: nodeIDs)
+    }
+
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -134,10 +219,16 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
-        isAccessibilityElement = true
-        accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
+    private var isChatBubbleSimpleEnabled: Bool {
+        // the additional DeveloperFlag check is needed for the snapshot test
+        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
+    }
 }
 
 // MARK: - Description
@@ -154,11 +245,16 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
+
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+        self.configuration = View.Configuration(
+            attributedText: attributedString,
+            isObfuscated: isObfuscated
+        )
     }
 }
 
@@ -262,4 +358,11 @@ extension ConversationTextMessageCellDescription {
         return cells
     }
 
+}
+
+extension URL {
+
+    // FIXME: [WPB-16311]: Remove once file previews are working in conversations.
+    /// A temporary means to open the Files View from a message cell link for Beta testing.
+    static let openFilesViewLink: URL = .init(string: "cells://open-files-view")!
 }

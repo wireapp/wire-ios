@@ -72,19 +72,18 @@ public extension MessagingTest {
     }
 
     @objc
-    func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let stack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
             inMemoryStore: shouldUseInMemoryStore,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
-        stack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
-
+        try await stack.load()
         return stack
     }
 

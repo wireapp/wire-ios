@@ -38,8 +38,12 @@ class WireUITestCase: XCTestCase {
         ]
 
         app = XCUIApplication()
+        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments
-        app.useWireAuthentication()
+        app.setDeveloperFlags([
+            .useWireAuthentication: true,
+            .multibackend: false
+        ])
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
@@ -48,7 +52,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
-        try await userHelper.deleteCreatedUsers()
+        await userHelper.deleteCreatedUsers()
     }
 
 }

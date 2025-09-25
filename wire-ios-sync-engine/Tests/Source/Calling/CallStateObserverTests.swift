@@ -34,10 +34,11 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     var mockCallCenter: WireCallCenterV3Mock?
     var callNotificationStyle: CallNotificationStyle = .pushNotifications
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
 
-        syncMOC.performGroupedAndWait {
+        await syncMOC.perform {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.name = "Sender"
             sender.remoteIdentifier = UUID()
@@ -316,7 +317,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -351,7 +354,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(
@@ -386,7 +391,9 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         let avsIdentifier = syncMOC.performAndWait { conversation.avsIdentifier! }
         mockCallCenter?.setMockCallState(

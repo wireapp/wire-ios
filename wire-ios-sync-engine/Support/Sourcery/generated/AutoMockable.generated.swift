@@ -27,6 +27,7 @@
 import WireDataModel
 import WireDomain
 import Combine
+import WireNetwork
 
 @testable import WireSyncEngine
 
@@ -441,48 +442,48 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
     // MARK: - replacePersistentStore
 
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup)] = []
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError: Error?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod: ((UUID, URL, URL, ZMSDispatchGroup) async throws -> URL)?
-    public var replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue: URL?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations: [(accountIdentifier: UUID, backupDirectory: URL, applicationContainer: URL)] = []
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError: Error?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod: ((UUID, URL, URL) async throws -> URL)?
+    public var replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue: URL?
 
     @discardableResult
-    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup) async throws -> URL {
-        replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+    public func replacePersistentStore(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL) async throws -> URL {
+        replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.append((accountIdentifier: accountIdentifier, backupDirectory: backupDirectory, applicationContainer: applicationContainer))
 
-        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockError {
+        if let error = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockError {
             throw error
         }
 
-        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod {
-            return try await mock(accountIdentifier, backupDirectory, applicationContainer, dispatchGroup)
-        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockValue {
+        if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod {
+            return try await mock(accountIdentifier, backupDirectory, applicationContainer)
+        } else if let mock = replacePersistentStoreAccountIdentifierFromApplicationContainer_MockValue {
             return mock
         } else {
-            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup`")
+            fatalError("no mock for `replacePersistentStoreAccountIdentifierFromApplicationContainer`")
         }
     }
 
     // MARK: - createContextProvider
 
-    public var createContextProviderAccountApplicationContainerDispatchGroup_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?)] = []
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockError: Error?
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockMethod: ((Account, URL, ZMSDispatchGroup?) async throws -> ContextProvider)?
-    public var createContextProviderAccountApplicationContainerDispatchGroup_MockValue: ContextProvider?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_Invocations: [(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?, localDomain: String?, isFederationEnabled: Bool)] = []
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockError: Error?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod: ((Account, URL, ZMSDispatchGroup?, String?, Bool) async throws -> ContextProvider)?
+    public var createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockValue: ContextProvider?
 
-    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?) async throws -> ContextProvider {
-        createContextProviderAccountApplicationContainerDispatchGroup_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup))
+    public func createContextProvider(account: Account, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup?, localDomain: String?, isFederationEnabled: Bool) async throws -> ContextProvider {
+        createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_Invocations.append((account: account, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup, localDomain: localDomain, isFederationEnabled: isFederationEnabled))
 
-        if let error = createContextProviderAccountApplicationContainerDispatchGroup_MockError {
+        if let error = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockError {
             throw error
         }
 
-        if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockMethod {
-            return try await mock(account, applicationContainer, dispatchGroup)
-        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroup_MockValue {
+        if let mock = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod {
+            return try await mock(account, applicationContainer, dispatchGroup, localDomain, isFederationEnabled)
+        } else if let mock = createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroup`")
+            fatalError("no mock for `createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled`")
         }
     }
 
@@ -571,16 +572,16 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
     // MARK: - performActionsIfNeeded
 
     var performActionsIfNeeded_Invocations: [Void] = []
-    var performActionsIfNeeded_MockMethod: (() -> Void)?
+    var performActionsIfNeeded_MockMethod: (() async -> Void)?
 
-    func performActionsIfNeeded() {
+    func performActionsIfNeeded() async {
         performActionsIfNeeded_Invocations.append(())
 
         guard let mock = performActionsIfNeeded_MockMethod else {
             fatalError("no mock for `performActionsIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - registerAction
@@ -601,16 +602,16 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
     // MARK: - forcePerformAction
 
     var forcePerformActionId_Invocations: [String] = []
-    var forcePerformActionId_MockMethod: ((String) -> Void)?
+    var forcePerformActionId_MockMethod: ((String) async -> Void)?
 
-    func forcePerformAction(id: String) {
+    func forcePerformAction(id: String) async {
         forcePerformActionId_Invocations.append(id)
 
         guard let mock = forcePerformActionId_MockMethod else {
             fatalError("no mock for `forcePerformActionId`")
         }
 
-        mock(id)
+        await mock(id)
     }
 
     // MARK: - removeAction
@@ -659,7 +660,7 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
 }
 
-public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
+public class MockLegacyResolveOneOnOneConversationsUseCaseProtocol: LegacyResolveOneOnOneConversationsUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -670,20 +671,24 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
     public var invoke_Invocations: [Void] = []
     public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Void)?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
 
-    public func invoke() async throws {
+    @discardableResult
+    public func invoke() async throws -> Bool {
         invoke_Invocations.append(())
 
         if let error = invoke_MockError {
             throw error
         }
 
-        guard let mock = invoke_MockMethod else {
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invoke`")
         }
-
-        try await mock()
     }
 
 }
@@ -824,34 +829,19 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
     public var underlyingIsInUnathenticatedAppState: Bool!
 
 
-    // MARK: - sessionManagerDidFailToLogin
-
-    public var sessionManagerDidFailToLoginError_Invocations: [Error?] = []
-    public var sessionManagerDidFailToLoginError_MockMethod: ((Error?) -> Void)?
-
-    public func sessionManagerDidFailToLogin(error: Error?) {
-        sessionManagerDidFailToLoginError_Invocations.append(error)
-
-        guard let mock = sessionManagerDidFailToLoginError_MockMethod else {
-            fatalError("no mock for `sessionManagerDidFailToLoginError`")
-        }
-
-        mock(error)
-    }
-
     // MARK: - sessionManagerWillLogout
 
-    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations: [(error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
-    public var sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod: ((Error?, (() -> Void)?) -> Void)?
+    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations: [(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
+    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod: ((BackendEnvironment2?, Error?, (() -> Void)?) -> Void)?
 
-    public func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
-        sessionManagerWillLogoutErrorUserSessionCanBeTornDown_Invocations.append((error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
+    public func sessionManagerWillLogout(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
+        sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations.append((environment: environment, error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
 
-        guard let mock = sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod else {
-            fatalError("no mock for `sessionManagerWillLogoutErrorUserSessionCanBeTornDown`")
+        guard let mock = sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown`")
         }
 
-        mock(error, userSessionCanBeTornDown)
+        mock(environment, error, userSessionCanBeTornDown)
     }
 
     // MARK: - sessionManagerWillOpenAccount
@@ -882,6 +872,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         }
 
         mock(userSessionCanBeTornDown)
+    }
+
+    // MARK: - sessionManagerDidFailToLoadSession
+
+    public var sessionManagerDidFailToLoadSessionForError_Invocations: [(account: Account, error: SessionManager.SessionLoadingFailure)] = []
+    public var sessionManagerDidFailToLoadSessionForError_MockMethod: ((Account, SessionManager.SessionLoadingFailure) -> Void)?
+
+    public func sessionManagerDidFailToLoadSession(for account: Account, error: SessionManager.SessionLoadingFailure) {
+        sessionManagerDidFailToLoadSessionForError_Invocations.append((account: account, error: error))
+
+        guard let mock = sessionManagerDidFailToLoadSessionForError_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailToLoadSessionForError`")
+        }
+
+        mock(account, error)
     }
 
     // MARK: - sessionManagerDidFailToLoadDatabase
@@ -1162,7 +1167,7 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
+public class MockLegacySupportedProtocolsServiceInterface: LegacySupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
 

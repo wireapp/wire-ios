@@ -77,13 +77,13 @@ extension SessionManager: APIVersionResolverDelegate {
         delegate?.sessionManagerDidBlacklistCurrentVersion(reason: reason)
     }
 
-    func apiVersionResolverDetectedFederationHasBeenEnabled() {
+    func apiVersionResolverDetectedFederationHasBeenEnabled(localDomain: String) {
         delegate?.sessionManagerWillMigrateAccount { [weak self] in
-            self?.migrateAllAccountsForFederation()
+            self?.migrateAllAccountsForFederation(localDomain: localDomain)
         }
     }
 
-    private func migrateAllAccountsForFederation() {
+    private func migrateAllAccountsForFederation(localDomain: String) {
         let dispatchGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Accounts Migration Group")
         let dispatchQueue = DispatchQueue(label: "Accounts Migration Queue", qos: .userInitiated)
 
@@ -97,21 +97,22 @@ extension SessionManager: APIVersionResolverDelegate {
                 DispatchQueue.main.async {
                     dispatchGroup.enter()
                     self.tearDownBackgroundSession(for: account.userIdentifier) {
-                        // 2. Migrate users and conversations
-                        CoreDataStack.migrateLocalStorage(
-                            accountIdentifier: account.userIdentifier,
-                            applicationContainer: self.sharedContainerURL,
-                            dispatchGroup: dispatchGroup,
-                            migration: {
-                                try $0.migrateToFederation()
-                            },
-                            completion: { result in
-                                if case .failure = result {
-                                    log.error("Failed to migrate account for federation")
-                                }
+                        Task {
+                            do {
+                                // 2. Migrate users and conversations
+                                try await CoreDataStack.migrateLocalStorage(
+                                    accountIdentifier: account.userIdentifier,
+                                    applicationContainer: self.sharedContainerURL,
+                                    migration: {
+                                        try $0.migrateToFederation(localDomain: localDomain)
+                                    }
+                                )
+                            } catch {
+                                log.error("Failed to migrate account for federation: \(error)")
                             }
-                        )
-                        dispatchGroup.leave()
+
+                            dispatchGroup.leave()
+                        }
                     }
                 }
             }
@@ -125,11 +126,14 @@ extension SessionManager: APIVersionResolverDelegate {
 
                 if account == self.accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
-                    self.loadSession(for: account) { _ in
+                    Task {
+                        _ = await self.loadSession(for: account)
                         dispatchGroup.leave()
                     }
+
                 } else {
-                    self.withSession(for: account) { _ in
+                    Task {
+                        _ = await self.withSession(for: account)
                         dispatchGroup.leave()
                     }
                 }

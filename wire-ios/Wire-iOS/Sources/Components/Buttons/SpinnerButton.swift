@@ -19,6 +19,8 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSyncEngine
+import WireUtilities
 
 extension UIColor {
     enum AlarmButton {
@@ -35,7 +37,7 @@ final class SpinnerButton: LegacyButton {
         // the spinner covers the text with alpha BG
         spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
             .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
-        spinner.color = UIColor.AlarmButton.alarmRed
+        spinner.color = .accent()
         spinner.iconSize = CGFloat.SpinnerButton.iconSize
 
         addSubview(spinner)
@@ -93,8 +95,8 @@ final class SpinnerButton: LegacyButton {
 
     /// custom full style with accent color for disabled state.
     override func updateFullStyle() {
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .disabled)
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .normal)
+        setBackgroundImageColor(.accent(), for: .disabled)
+        setBackgroundImageColor(.accent(), for: .normal)
 
         setTitleColor(.white, for: .normal)
         setTitleColor(.white, for: .highlighted)
@@ -117,17 +119,25 @@ final class SpinnerButton: LegacyButton {
             case .dark:
                 .white
             case .light:
-                UIColor.AlarmButton.alarmRed
+                .accent()
             }
 
             setTitleColor(color, for: $0)
-            setBorderColor(UIColor.AlarmButton.alarmRed, for: $0)
+            setBorderColor(.accent(), for: $0)
         }
     }
 
     // MARK: - factory method
 
     static func alarmButton() -> SpinnerButton {
-        SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
+        let cornerRadius: CGFloat = ZMUserSession.isChatBubbleEnabled ?
+            ConversationMessageContainerView.bubbleCornerRadius : 6
+
+        return SpinnerButton(legacyStyle: .empty, cornerRadius: cornerRadius, fontSpec: .smallSemiboldFont)
+    }
+
+    func updateAlarmButtonColor(color: ZMAccentColor?) {
+        let variant: ColorSchemeVariant = ColorScheme.default.variant
+        updateStyle(variant: variant)
     }
 }

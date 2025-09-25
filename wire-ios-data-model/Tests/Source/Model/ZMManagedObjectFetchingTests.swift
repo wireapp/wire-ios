@@ -23,16 +23,13 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
     var mocs: CoreDataStack!
 
-    public override func setUp() {
-        super.setUp()
-        mocs = createStorageStackAndWaitForCompletion()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
-        BackendInfo.isFederationEnabled = true
+    public override func setUp() async throws {
+        try await super.setUp()
+        mocs = try await createStorageStackAndWaitForCompletion(isFederationEnabled: true)
     }
 
     public override func tearDown() {
         mocs = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 

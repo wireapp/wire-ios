@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 /// Identifies an alert and provides it's title and message.
 
@@ -107,6 +108,11 @@ extension Alert {
         message: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.message
     )
 
+    static let logoutConfirmation = Alert(
+        title: L10n.Localizable.Logout.Alert.title,
+        message: L10n.Localizable.Logout.Alert.message
+    )
+
 }
 
 extension Alert {
@@ -117,9 +123,9 @@ extension Alert {
         switch error {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
-        case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+        case NetworkStackError.clientAPIVersionObsolete:
             .obsoleteClient
-        case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+        case NetworkStackError.backendAPIVersionObsolete:
             .obsoleteBackend
         default:
             .unknownError

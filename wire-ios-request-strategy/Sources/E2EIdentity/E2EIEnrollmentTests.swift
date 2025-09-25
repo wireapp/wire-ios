@@ -50,9 +50,9 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             apiProvider: mockApiProvider,
             e2eiService: mockE2eiService,
             acmeDirectory: acmeDirectory,
-            keyRotator: mockKeyRotator
+            keyRotator: mockKeyRotator,
+            apiVersion: .v0
         )
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
@@ -291,7 +291,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
             expectedChallengeResponse
         }
-        mockE2eiService.getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod = { _, _, _ in
+        mockE2eiService.getNewOidcChallengeRequestIdTokenNonce_MockMethod = { _, _ in
             Data()
         }
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
@@ -305,7 +305,6 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         let result = try await sut.validateOIDCChallenge(
             idToken: "idToken",
-            refreshToken: "refreshToken",
             prevNonce: "Nonce",
             acmeChallenge: acmeChallenge
         )

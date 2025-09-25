@@ -104,7 +104,14 @@ final class MessageToolboxView: UIView {
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorContainer = UIView()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
-    private let messageFailureView = MessageSendFailureView()
+
+    private lazy var messageFailureView: MessageSendFailureView = {
+        let view = MessageSendFailureView(ischatBubbleSimpleEnabled: isChatBubbleSimpleEnabled)
+        view.tapHandler = { [weak self] _ in
+            self?.resendMessage()
+        }
+        return view
+    }()
 
     private lazy var statusLabel: UILabel = {
         let label = UILabel()
@@ -158,7 +165,6 @@ final class MessageToolboxView: UIView {
 
     fileprivate let separatorView = UIView()
     fileprivate var previousLayoutBounds: CGRect = .zero
-    private lazy var noHeightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
     // MARK: - Initialization
 
@@ -195,10 +201,6 @@ final class MessageToolboxView: UIView {
         countdownView.translatesAutoresizingMaskIntoConstraints = false
         countdownContainer.addSubview(countdownView)
 
-        messageFailureView.tapHandler = { [weak self] _ in
-            self?.resendMessage()
-        }
-
         [
             detailsLabel,
             timestampSeparatorContainer,
@@ -209,23 +211,54 @@ final class MessageToolboxView: UIView {
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        [separatorView, contentStack, messageFailureView].forEach(addSubview)
+        if isChatBubbleSimpleEnabled {
+            [
+                contentStack,
+                messageFailureView
+            ].forEach(addSubview)
+        } else {
+            [
+                separatorView,
+                contentStack,
+                messageFailureView
+            ].forEach(addSubview)
+        }
 
         statusImageView.constraintToSquare(sideLength: 13)
     }
 
     private func createConstraints() {
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-
+        let existingConstraints = [
             separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.topAnchor.constraint(equalTo: topAnchor),
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
+            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
+            contentStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
+            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            )
+        ]
+
+        let chatBubbleConstraints = [
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            messageFailureView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
+        ]
+
+        NSLayoutConstraint.activate([
             timestampSeparatorLabel.leadingAnchor.constraint(equalTo: timestampSeparatorContainer.leadingAnchor),
             timestampSeparatorLabel.centerYAnchor.constraint(equalTo: timestampSeparatorContainer.centerYAnchor),
             timestampSeparatorContainer.trailingAnchor.constraint(equalTo: timestampSeparatorLabel.trailingAnchor),
@@ -235,19 +268,9 @@ final class MessageToolboxView: UIView {
             statusSeparatorContainer.trailingAnchor.constraint(equalTo: statusSeparatorLabel.trailingAnchor),
 
             // statusTextView align vertically center
-            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 2),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            messageFailureView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
@@ -259,6 +282,13 @@ final class MessageToolboxView: UIView {
             countdownView.topAnchor.constraint(greaterThanOrEqualTo: countdownContainer.topAnchor),
             countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
+
+        if isChatBubbleSimpleEnabled {
+            NSLayoutConstraint.activate(chatBubbleConstraints)
+        } else {
+            separatorView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate(existingConstraints)
+        }
     }
 
     // MARK: - Lifecycle
@@ -292,8 +322,6 @@ final class MessageToolboxView: UIView {
         _ message: ZMConversationMessage,
         animated: Bool = false
     ) {
-        noHeightConstraint.isActive = false
-
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
@@ -304,7 +332,6 @@ final class MessageToolboxView: UIView {
 
     func setAllContentHidden() {
         contentStack.arrangedSubviews.forEach { $0.isHidden = true }
-        noHeightConstraint.isActive = true
     }
 
     private func hideAndCleanStatusLabel() {
@@ -339,13 +366,9 @@ final class MessageToolboxView: UIView {
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
-            statusSeparatorContainer.isHidden = true
-            countdownContainer.isHidden = true
-            countdownLabel.isHidden = true
-            timestampSeparatorContainer.isHidden = false
+            setAllContentHidden()
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString)
-            editedLabel.isHidden = true
 
         case let .details(timestamp, state, countdown):
             detailsLabel.text = timestamp
@@ -393,6 +416,10 @@ final class MessageToolboxView: UIView {
         case nil:
             statusContainerView.isHidden = true
         }
+    }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
 
     // MARK: - Timer

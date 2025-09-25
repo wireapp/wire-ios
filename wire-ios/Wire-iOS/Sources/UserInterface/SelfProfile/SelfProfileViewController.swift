@@ -95,7 +95,10 @@ final class SelfProfileViewController: UIViewController {
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
-            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
+            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
@@ -125,7 +128,7 @@ final class SelfProfileViewController: UIViewController {
                 selfUser.refreshTeamData()
             }
         } else if
-            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
@@ -315,7 +318,7 @@ final class SelfProfileViewController: UIViewController {
             let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
             guard let userName = user.normalizedName,
                   let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                  .createIndividualToTeamMigrationUseCase() else {
                 return
             }
             userDidTapCreateTeam(useCase: useCase, userName: userName)
@@ -323,7 +326,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     func triggerCreateTeamFlow() {
-        if let backendInfoApiVersion = BackendInfo.apiVersion,
+        if let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
             onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
@@ -490,7 +493,7 @@ extension Account {
             name: userName,
             handle: handle,
             teamName: teamName,
-            backendName: nil, // TODO: [WPB-18008] "Back END INFO" https://wearezeta.atlassian.net/browse/WPB-18008
+            backendName: backendName,
             action: action
         )
     }

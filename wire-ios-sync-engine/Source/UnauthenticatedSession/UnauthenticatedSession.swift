@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireUtilities
 
 @objc
@@ -157,7 +158,26 @@ extension UnauthenticatedSession: UserInfoParser {
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         cookieStorage.authenticationCookieData = userInfo.cookieData
         authenticationStatus.authenticationCookieData = userInfo.cookieData
-        delegate?.session(session: self, createdAccount: account)
+        delegate?.session(
+            session: self,
+            createdAccount: account,
+            newEnvironment: nil
+        )
+    }
+
+    public func upgradeToAuthenticatedSession(
+        with userInfo: UserInfo,
+        newEnvironment: NewEnvironment
+    ) {
+        let account = Account(userName: "", userIdentifier: userInfo.identifier)
+        let cookieStorage = transportSession.environment.cookieStorage(for: account)
+        cookieStorage.authenticationCookieData = userInfo.cookieData
+        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        delegate?.session(
+            session: self,
+            createdAccount: account,
+            newEnvironment: newEnvironment
+        )
     }
 
     public func reportBackupImportDidSucceed(_ didSucceed: Bool) {

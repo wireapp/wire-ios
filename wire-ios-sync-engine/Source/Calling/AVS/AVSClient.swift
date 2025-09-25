@@ -40,14 +40,18 @@ public struct AVSClient: Hashable {
         )
     }
 
-    public init?(member: MLSConferenceInfo.Member) {
+    public init?(
+        member: MLSConferenceInfo.Member,
+        isFederationEnabled: Bool
+    ) {
         guard let userID = UUID(uuidString: member.id.userID) else {
             return nil
         }
 
         let avsID = AVSIdentifier(
             identifier: userID,
-            domain: member.id.domain
+            domain: member.id.domain,
+            isFederationEnabled: isFederationEnabled
         )
 
         self.init(
@@ -90,8 +94,11 @@ extension AVSClient: Codable {
 
 public extension AVSClient {
 
-    var avsIdentifier: AVSIdentifier {
-        AVSIdentifier.from(string: userId)
+    func avsIdentifier(isFederationEnabled: Bool) -> AVSIdentifier {
+        AVSIdentifier.from(
+            string: userId,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
 }

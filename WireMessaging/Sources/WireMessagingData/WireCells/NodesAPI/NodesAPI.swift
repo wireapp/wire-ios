@@ -23,7 +23,7 @@ package enum NodesAPIError: Error {
     case failedToCreateWriteStream
 }
 
-package final actor NodesAPI: NodesAPIProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -63,26 +63,14 @@ package final actor NodesAPI: NodesAPIProtocol {
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
-    package func getFiles(
-        path: String?,
-        query: String,
-        limit: Int,
-        offset: Int
-    ) async throws -> [WireCellsNode] {
-        let response = try await (
-            path == nil
-                ? restAPI.getFiles(query: query, limit: limit, offset: offset)
-                : restAPI.getFilesForPath(path: path!, limit: limit, offset: offset)
-        )
-        return response.nodes.map { $0.toModel() }
-    }
-
-    package func deleteFile(nodeID: UUID) async throws {
-        try await restAPI.delete(uuid: nodeID)
-    }
-
-    package func deleteFiles(paths: [String]) async throws {
-        try await restAPI.delete(paths: paths)
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
+        try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
@@ -117,7 +105,14 @@ package final actor NodesAPI: NodesAPIProtocol {
 
     package func getNode(nodeID: UUID) async throws -> WireCellsNode {
         let dto = try await restAPI.getNode(uuid: nodeID)
-        return dto.toModel()
+        return dto.toDomainModel()
+    }
+
+    package func getNodes(
+        _ request: WireCellsGetNodesRequest
+    ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
+        let (nodes, nextOffset) = try await restAPI.getNodes(request)
+        return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {

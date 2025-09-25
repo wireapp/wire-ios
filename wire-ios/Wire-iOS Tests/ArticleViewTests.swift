@@ -76,6 +76,13 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
     ) {
         // no-op
     }
+
+    func conversationMessageWantsToOpenFilesView(
+        _ cell: UIView,
+        nodeIDs: [UUID]
+    ) {
+        // no-op
+    }
 }
 
 // MARK: - MockArticleViewDelegate

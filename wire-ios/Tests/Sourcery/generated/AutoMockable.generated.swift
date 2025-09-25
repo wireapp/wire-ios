@@ -1782,6 +1782,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeFilesView
+
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String, Bool, [UUID]) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, nodeIDs: nodeIDs))
+
+        if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod {
+            return mock(cellName, isCellsStatePending, nodeIDs)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name

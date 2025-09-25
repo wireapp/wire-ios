@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "4b7577af50585420dc8280b38296e84daf2a6696",
-          "version": "0.1.1-alpha10"
+          "revision": "78cdaa3756f7c97f70d7b7c14671f0c4c97d17a3",
+          "version": "0.1.1-alpha15"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
-          "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
-          "version": "3.8.5"
+          "revision": "a9ed4b6f9bdedce7d77046f43adfb8ce1fd54114",
+          "version": "3.9.0"
         }
       },
       {

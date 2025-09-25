@@ -21,6 +21,7 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
@@ -45,7 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .default
+        environment.environmentType != .default
     }
 
     // MARK: - Dependencies
@@ -53,8 +54,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package let factory: any Factory
     private let router: any Router
     private let bridge: WireAuthenticationBridge
-    package let backendInfo: BackendInfo
+    package let environment: BackendEnvironment2
     private var cancellable: AnyCancellable?
+    private let isMultibackendEnabled: Bool
 
     // MARK: - Life cycle
 
@@ -62,18 +64,20 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo,
+        environment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        isMultibackendEnabled: Bool
     ) {
         self.factory = factory
         self.router = router
         self.bridge = bridge
-        self.backendInfo = backendInfo
+        self.environment = environment
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
+        self.isMultibackendEnabled = isMultibackendEnabled
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -113,13 +117,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // It is probably worth restructuring the code to avoid this.
                 break
 
-            case ProxyModeError.proxyCredentialsRequired:
+            case NetworkStackError.proxyCredentialsRequired:
                 // Login via email is the only place we ask from proxy credentials.
                 router.navigate(
                     to: DetermineAuthMethodDestination.login(
                         email: nil,
                         didDetectDomainConflict: false,
-                        backendInfo: backendInfo
+                        environment: environment
                     )
                 )
 
@@ -147,19 +151,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodDestination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
+                environment: environment
             ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodDestination.loginOrRegister(
                 email: email,
                 didDetectDomainConflict: false,
-                backendInfo: backendInfo
+                environment: environment
             ))
 
         case let .loginViaSSO(code):
             do {
-                let authResult = try await loginViaSSO(code: code, backendInfo: nil)
+                let authResult = try await loginViaSSO(code: code, environment: nil)
                 router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
             } catch let error as LoginViaSSOUseCaseError {
                 switch error {
@@ -192,9 +196,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private func loginViaSSO(
         code: UUID?,
-        backendInfo: BackendInfo?
+        environment: BackendEnvironment2?
     ) async throws -> AuthenticationResult {
-        let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
+        let loginViaSSO = try await factory.loginViaSSOUseCase(environment: environment)
         return try await loginViaSSO.invoke(code: code)
     }
 
@@ -202,14 +206,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
-        guard !existsAnotherAccount else {
+        guard isMultibackendEnabled || !existsAnotherAccount else {
             alert = .switchBackendFailed
             return
         }
 
         do {
             let useCase = factory.fetchBackendConfigUseCase()
-            let backendConfig = try await Task.detached {
+            let environment = try await Task.detached {
                 try await useCase.invoke(at: backendConfigURL)
             }.value
 
@@ -217,10 +221,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
             modalDestination = .switchBackendConfirmation(
                 email: email,
-                backendInfo: BackendInfo(
-                    environmentType: .custom(url: backendConfigURL),
-                    backendConfig: backendConfig
-                )
+                environment: environment
             )
         } catch {
             WireLogger.authentication.error("Fetching backend config failed: \(error)")
@@ -230,7 +231,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     func switchBackend(
         email: String?,
-        backendInfo: BackendInfo
+        environment: BackendEnvironment2
     ) async {
         isLoading = true
         defer { isLoading = false }
@@ -238,7 +239,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         do {
             let authResult = try await loginViaSSO(
                 code: nil,
-                backendInfo: backendInfo
+                environment: environment
             )
             router.navigate(
                 to: DetermineAuthMethodDestination.noHistory(authResult)
@@ -254,7 +255,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 break
             case .noDefaultCodeAvailable:
                 router.popToRoot() // clear the navigation stack before replacing root
-                router.presentSheet(.authFlow(backendInfo: backendInfo))
+                router.presentSheet(.authFlow(environment: environment))
             case let .authenticationFailed(samlError):
                 WireLogger.authentication.error(
                     "sso authentication failed with SAML error: \(String(describing: samlError))"
@@ -263,13 +264,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             default:
                 router.presentAlert(for: error)
             }
-        } catch ProxyModeError.proxyCredentialsRequired {
+        } catch NetworkStackError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
                 to: DetermineAuthMethodDestination.login(
                     email: email,
                     didDetectDomainConflict: false,
-                    backendInfo: backendInfo
+                    environment: environment
                 )
             )
         } catch {

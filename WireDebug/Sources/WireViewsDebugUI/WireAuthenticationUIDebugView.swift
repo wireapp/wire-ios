@@ -20,6 +20,7 @@ public import SwiftUI
 
 import WireAuthenticationAPI
 import WireAuthenticationUI
+import WireNetwork
 
 public struct WireAuthenticationUIDebugView: View {
 
@@ -64,7 +65,7 @@ public struct WireAuthenticationUIDebugView: View {
                                 .overlay(
                                     ZStack {
                                         SwitchBackendConfirmation(
-                                            backendConfig: .preview,
+                                            environment: .preview,
                                             onConfirm: { _ in }
                                         ).padding()
                                     }
@@ -119,21 +120,24 @@ public struct WireAuthenticationUIDebugView: View {
     }
 }
 
-private extension BackendConfig {
+private extension BackendEnvironment2 {
 
-    static let preview = BackendConfig(
+    static let preview = BackendEnvironment2(
         title: "Example backend",
-        endpoints: Endpoints(
-            backendURL: URL(string: "example.com")!,
-            backendWSURL: URL(string: "example.com")!,
-            blackListURL: URL(string: "example.com")!,
-            teamsURL: URL(string: "example.com")!,
-            accountsURL: URL(string: "example.com")!,
-            websiteURL: URL(string: "example.com")!,
-            countlyURL: nil
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
+        environmentType: .default,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "example.com")!,
+                websocketURL: URL(string: "example.com")!,
+                blacklistURL: URL(string: "example.com")!,
+                teamsURL: URL(string: "example.com")!,
+                accountsURL: URL(string: "example.com")!,
+                websiteURL: URL(string: "example.com")!,
+                countlyURL: nil
+            ),
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
     )
 
 }

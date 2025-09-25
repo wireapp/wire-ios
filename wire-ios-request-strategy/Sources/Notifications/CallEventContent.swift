@@ -87,8 +87,13 @@ public struct CallEventContent: Codable {
 
     // MARK: - Methods
 
-    public var callerID: AVSIdentifier? {
-        callerUserID.flatMap(AVSIdentifier.init(string:))
+    public func callerID(isFederationEnabled: Bool) -> AVSIdentifier? {
+        callerUserID.flatMap {
+            AVSIdentifier(
+                string: $0,
+                isFederationEnabled: isFederationEnabled
+            )
+        }
     }
 
     public var callState: LocalNotificationType.CallState? {

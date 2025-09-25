@@ -54,6 +54,9 @@ public protocol CoreCryptoProviderProtocol {
     ///   - epochObserver: observer which will be informed on epoch changes
     func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async
 
+    /// Update the CC database key
+    func updateDatabaseKey() async throws
+
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -74,6 +77,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
     private nonisolated(unsafe) var mlsTransport: MlsTransport?
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
+    private let localDomain: String?
 
     public init(
         selfUserID: UUID,
@@ -82,7 +86,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?,
-        allowCreation: Bool = true
+        allowCreation: Bool = true,
+        localDomain: String?
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
@@ -92,6 +97,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
+        self.localDomain = localDomain
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
@@ -102,12 +108,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
-        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
+        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCrypto()
         _ = try await coreCrypto.perform { context in
             try await context.mlsInit(
-                clientId: Data(mlsClientID.rawValue.utf8),
-                ciphersuites: [UInt16(defaultCiphersuite.rawValue)],
+                clientId: .init(bytes: mlsClientID.data),
+                ciphersuites: [defaultCiphersuite],
                 nbKeyPackage: nil
             )
             try await self.generateClientPublicKeys(with: context, credentialType: .basic)
@@ -141,6 +147,19 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
+    public func updateDatabaseKey() async throws {
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
+        let configuration = try await provider.createInitialConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            userID: selfUserID,
+            createKeyIfNeeded: allowCreation
+        )
+
+        try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
+        reset()
+    }
+
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
         guard let epochObserver, !hasRegisteredEpochObserver else {
             return
@@ -153,6 +172,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
         mlsTransport = transport
+    }
+
+    private func reset() {
+        coreCrypto = nil
     }
 
     private func registerMlsTransportIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
@@ -245,14 +268,17 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             else {
                 return nil
             }
-            return MLSClientID(userClient: selfClient)
+            return MLSClientID(
+                userClient: selfClient,
+                localDomain: self.localDomain
+            )
         }
 
         // Initialise MLS if we have previously registered an MLS client
         if let mlsClientID {
-            let cipherSuite = UInt16(await featureRespository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let cipherSuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             try await coreCrypto.perform { try await $0.mlsInit(
-                clientId: Data(mlsClientID.rawValue.utf8),
+                clientId: .init(bytes: mlsClientID.data),
                 ciphersuites: [cipherSuite],
                 nbKeyPackage: nil
             ) }
@@ -319,7 +345,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
-            ciphersuite: UInt16(ciphersuite.rawValue),
+            ciphersuite: ciphersuite.coreCryptoCipherSuite,
             credentialType: credentialType
         )
         let keyData = Data(keyBytes)

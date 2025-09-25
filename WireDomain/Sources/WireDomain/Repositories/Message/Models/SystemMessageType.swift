@@ -120,5 +120,4 @@ public enum SystemMessageType: Sendable {
     case channelHistoryDepthModified(
         sender: QualifiedID
     )
-
 }

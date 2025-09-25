@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 
 /// The context that caused the user to not have a complete history.
@@ -38,7 +39,12 @@ indirect enum AuthenticationFlowStep: Equatable {
     case wireAuthenticationModule
     // Legacy authentication flow
     case landingScreen
-    case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
+    case reauthenticate(
+        credentials: LoginCredentials?,
+        environment: BackendEnvironment2?,
+        numberOfAccounts: Int,
+        isSignedOut: Bool
+    )
 
     // Sign-In
     case provideCredentials(AuthenticationPrefilledCredentials?)

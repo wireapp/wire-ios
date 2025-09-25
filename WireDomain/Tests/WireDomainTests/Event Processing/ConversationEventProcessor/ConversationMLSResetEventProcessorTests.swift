@@ -32,7 +32,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
-    private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
     private lazy var mockResetLockRepository = MockResetMLSConversationLockRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
@@ -45,11 +44,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        mockFeatureConfigRepository = .init()
-        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
-            status: .enabled,
-            config: .init(mlsConversationReset: true)
-        )
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -61,8 +55,10 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         zmConversation = conversation
 
         mlsService.wipeGroup_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = false
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
         mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
@@ -70,7 +66,6 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureConfigRepository: mockFeatureConfigRepository,
             lockRepository: mockResetLockRepository
         )
     }
@@ -117,12 +112,9 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             }
     }
 
-    func testProcessEvent_DoNothingWhenFFIsOff() async throws {
-
-        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
-            status: .disabled,
-            config: .init(mlsConversationReset: false)
-        )
+    func testProcessEvent_AlreadyReset() async throws {
+        // GIVEN
+        mlsService.conversationExistsGroupID_MockValue = true
 
         // When
 
@@ -130,12 +122,31 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        mlsService.wipeGroup_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0,
+                    MLSGroupID(Scaffolding.oldMLSGroupIDData)
+                )
+            }
 
         XCTAssertEqual(
             conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
             0
         )
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            1
+        )
+
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0.mlsGroupID,
+                    MLSGroupID(Scaffolding.newMLSGroupIDData)
+                )
+            }
     }
 
     func testProcessEvent_DoNothingWhenInitiatedFromSameDevice() async throws {

@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "ابحث";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "ملفّات";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -482,6 +483,9 @@
 "content.system.apps.warning" = "Apps have access to the content of this conversation";
 
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.message_more_history_available" = "Loading conversation history...";
+"content.system.message_no_more_history_available" = "You made it to the top 🥳\nYou see all available messages.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -2141,3 +2145,9 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.generic_error.alert.title" = "حدث خطأ";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send debug logs";
+"account_blocked.generic_error.alert.retry" = "Retry";

@@ -29,18 +29,15 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let lockRepository: ResetMLSConversationLockRepositoryProtocol
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        featureConfigRepository: any FeatureConfigRepositoryProtocol,
         lockRepository: ResetMLSConversationLockRepositoryProtocol
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
-        self.featureConfigRepository = featureConfigRepository
         self.lockRepository = lockRepository
     }
 
@@ -48,14 +45,6 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
         do {
             let attributes: LogAttributes = [.conversationId: event.conversationID.id.safeForLoggingDescription]
 
-            let feature = try await featureConfigRepository.fetchAllowedGlobalOperations()
-            guard feature.status == .enabled, feature.config?.mlsConversationReset == true else {
-                WireLogger.mls.debug(
-                    "No need to process reset broken MLS conversation, FF is OFF",
-                    attributes: attributes
-                )
-                return
-            }
             guard !lockRepository
                 .wasResetInitiated(conversationID: event.conversationID.toDomainModel()) else {
                 WireLogger.mls.info(
@@ -90,11 +79,20 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             }
 
             try await mlsService.wipeGroup(oldMLSGroupID)
+            let conversationExists = try await mlsService.conversationExists(groupID: newMLSGroupID)
 
-            await conversationLocalStore.storeMLSConversationPendingJoin(
-                newMLSGroupID: newMLSGroupID,
-                conversation: localConversation
-            )
+            if conversationExists {
+                // CoreCrypto group already exists, just make sure state is set in ZMConversation
+                await conversationLocalStore.storeMLSConversationEstablished(
+                    mlsGroupID: newMLSGroupID,
+                    conversation: localConversation
+                )
+            } else {
+                await conversationLocalStore.storeMLSConversationPendingJoin(
+                    newMLSGroupID: newMLSGroupID,
+                    conversation: localConversation
+                )
+            }
 
             WireLogger.mls.info(
                 "MLS event processor is finished processing reset broken MLS conversation",

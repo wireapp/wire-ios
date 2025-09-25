@@ -85,10 +85,7 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private lazy var processor = ConversationEventPayloadProcessor(
-        mlsEventProcessor: MLSEventProcessor(context: context),
-        removeLocalConversation: removeLocalConversationUseCase
-    )
+    private let processor: ConversationEventPayloadProcessor
 
     // This is only needed for the processor to be created but processor needs it only for
     // Conversation deletion
@@ -96,9 +93,16 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
     required init(
         context: NSManagedObjectContext,
-        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.removeLocalConversationUseCase = removeLocalConversationUseCase
+        self.processor = ConversationEventPayloadProcessor(
+            mlsEventProcessor: MLSEventProcessor(context: context, localDomain: localDomain),
+            removeLocalConversation: removeLocalConversationUseCase,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(context: context)
     }
 

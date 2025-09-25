@@ -60,7 +60,14 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
         let account = accountManager.account(with: accountId)
         guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidFailToLogin(error: error)
+
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: accountId)
+
+        delegate?.sessionManagerWillLogout(
+            environment: environment,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
     }
 
     public func clientCompletedInitialSync(accountId: UUID) {

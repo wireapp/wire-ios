@@ -52,6 +52,7 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
 
         let nextStep = AuthenticationFlowStep.reauthenticate(
             credentials: credentials,
+            environment: nil,
             numberOfAccounts: numberOfAccounts,
             isSignedOut: isSignedOut
         )

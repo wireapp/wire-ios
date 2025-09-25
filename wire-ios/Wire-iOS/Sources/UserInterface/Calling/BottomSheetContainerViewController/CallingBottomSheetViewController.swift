@@ -84,6 +84,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         callingActionsInfoViewController
             .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.actionsView.bottomSheetScrollingDelegate = self
+        callingActionsInfoViewController.delegate = self
+
         visibleVoiceChannelViewController.configurationObserver = self
         self.participantsObserverToken = voiceChannel.addParticipantObserver(self)
         visibleVoiceChannelViewController.delegate = self
@@ -315,6 +317,19 @@ extension CallingBottomSheetViewController: CallViewControllerDelegate {
     @objc
     func hideCallView() {
         delegate?.activeCallViewControllerDidDisappear(self, for: voiceChannel.conversation)
+    }
+}
+
+extension CallingBottomSheetViewController: CallingActionsInfoViewControllerDelegate {
+
+    func actionsViewHeightChanged(to height: CGFloat) {
+        updateMinimalOffset(height)
+    }
+
+    private func updateMinimalOffset(_ offset: CGFloat) {
+        guard configuration.initialOffset != offset else { return }
+        configuration = BottomSheetConfiguration(height: configuration.height, initialOffset: offset)
+        hideBottomSheet()
     }
 }
 

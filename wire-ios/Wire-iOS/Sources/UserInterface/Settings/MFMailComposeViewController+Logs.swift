@@ -27,7 +27,7 @@ extension MFMailComposeViewController {
     func prefilledBody(withMessage message: String = "") -> String {
         var body = """
         --DO NOT EDIT--
-        \(LogFilesProvider().info)
+        \(LogFilesProvider().info())
         ---------------\n
         """
 

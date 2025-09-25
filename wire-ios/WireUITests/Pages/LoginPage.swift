@@ -26,17 +26,16 @@ class LoginPage: PageModel {
 
     var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
-
-    var createPersonalAccountButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
+        return elementsQuery.buttons["Create account"]
     }
 
     var nextButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"].firstMatch
+    }
+
+    var emailField: XCUIElement {
+        app.textFields["Enter email"]
     }
 
     var passwordField: XCUIElement {
@@ -45,13 +44,11 @@ class LoginPage: PageModel {
 
     func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
         createPersonalAccountLink.tap()
-        createPersonalAccountButton.tap()
         return try CreatePersonalAccountFormPage()
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
-        passwordField.tap()
-        passwordField.typeText(password)
+        try passwordField.tapIfKeyboardNotFocused().typeText(password)
         nextButton.tap()
         return try FirstTimePage()
     }

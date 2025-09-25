@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 // MARK: - Reaction
 
@@ -49,10 +50,14 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var insets = UIEdgeInsets(
         top: 2,
-        left: conversationHorizontalMargins.left,
+        left: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.left,
         bottom: 0,
-        right: conversationHorizontalMargins.right
+        right: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.right
     )
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    }
 
     // MARK: - Life cycle
 
@@ -112,7 +117,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
         verticalFittingPriority: UILayoutPriority
     ) -> CGSize {
-        let insetsWidth = insets.left + insets.right
+        let insetsWidth = conversationHorizontalMargins.left + conversationHorizontalMargins
+            .right + (isChatBubbleSimpleEnabled ? 48 : 0)
         reactionsView.widthForCalculations = targetSize.width - insetsWidth
         reactionsView.setNeedsLayout()
         reactionsView.layoutIfNeeded()

@@ -56,6 +56,32 @@ import Combine
 
 
 
+class MockAppExtensionPushChannelCoordinatorProtocol: AppExtensionPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - listenForYieldRequests
+
+    var listenForYieldRequests_Invocations: [Void] = []
+    var listenForYieldRequests_MockMethod: (() async -> YieldRequest)?
+    var listenForYieldRequests_MockValue: YieldRequest?
+
+    func listenForYieldRequests() async -> YieldRequest {
+        listenForYieldRequests_Invocations.append(())
+
+        if let mock = listenForYieldRequests_MockMethod {
+            return await mock()
+        } else if let mock = listenForYieldRequests_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `listenForYieldRequests`")
+        }
+    }
+
+}
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -938,24 +964,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `localParticipantsIn`")
-        }
-    }
-
-    // MARK: - localParticipantsExcludingSelfAsMLSUsers
-
-    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
-    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
-
-    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
-        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
-
-        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
-            return await mock(conversation)
-        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
         }
     }
 
@@ -2010,19 +2018,20 @@ public class MockDatabaseSaverProtocol: DatabaseSaverProtocol {
 
 }
 
-class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
+public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - pullFeatureConfigs
 
-    var pullFeatureConfigs_Invocations: [Void] = []
-    var pullFeatureConfigs_MockError: Error?
-    var pullFeatureConfigs_MockMethod: (() async throws -> Void)?
+    public var pullFeatureConfigs_Invocations: [Void] = []
+    public var pullFeatureConfigs_MockError: Error?
+    public var pullFeatureConfigs_MockMethod: (() async throws -> Void)?
 
-    func pullFeatureConfigs() async throws {
+    public func pullFeatureConfigs() async throws {
         pullFeatureConfigs_Invocations.append(())
 
         if let error = pullFeatureConfigs_MockError {
@@ -2038,11 +2047,11 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - observeFeatureStates
 
-    var observeFeatureStates_Invocations: [Void] = []
-    var observeFeatureStates_MockMethod: (() -> AnyPublisher<FeatureState, Never>)?
-    var observeFeatureStates_MockValue: AnyPublisher<FeatureState, Never>?
+    public var observeFeatureStates_Invocations: [Void] = []
+    public var observeFeatureStates_MockMethod: (() -> AnyPublisher<FeatureState, Never>)?
+    public var observeFeatureStates_MockValue: AnyPublisher<FeatureState, Never>?
 
-    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+    public func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         observeFeatureStates_Invocations.append(())
 
         if let mock = observeFeatureStates_MockMethod {
@@ -2056,10 +2065,10 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - updateFeatureConfig
 
-    var updateFeatureConfig_Invocations: [FeatureConfig] = []
-    var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
+    public var updateFeatureConfig_Invocations: [FeatureConfig] = []
+    public var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
 
-    func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
+    public func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
         updateFeatureConfig_Invocations.append(featureConfig)
 
         guard let mock = updateFeatureConfig_MockMethod else {
@@ -2071,12 +2080,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchAllowedGlobalOperations
 
-    var fetchAllowedGlobalOperations_Invocations: [Void] = []
-    var fetchAllowedGlobalOperations_MockError: Error?
-    var fetchAllowedGlobalOperations_MockMethod: (() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>)?
-    var fetchAllowedGlobalOperations_MockValue: LocalFeature<Feature.AllowedGlobalOperations.Config>?
+    public var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowedGlobalOperations_MockError: Error?
+    public var fetchAllowedGlobalOperations_MockMethod: (() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>)?
+    public var fetchAllowedGlobalOperations_MockValue: LocalFeature<Feature.AllowedGlobalOperations.Config>?
 
-    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+    public func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
         fetchAllowedGlobalOperations_Invocations.append(())
 
         if let error = fetchAllowedGlobalOperations_MockError {
@@ -2094,12 +2103,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchMLSConfig
 
-    var fetchMLSConfig_Invocations: [Void] = []
-    var fetchMLSConfig_MockError: Error?
-    var fetchMLSConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLS.Config>)?
-    var fetchMLSConfig_MockValue: LocalFeature<Feature.MLS.Config>?
+    public var fetchMLSConfig_Invocations: [Void] = []
+    public var fetchMLSConfig_MockError: Error?
+    public var fetchMLSConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLS.Config>)?
+    public var fetchMLSConfig_MockValue: LocalFeature<Feature.MLS.Config>?
 
-    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+    public func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
         fetchMLSConfig_Invocations.append(())
 
         if let error = fetchMLSConfig_MockError {
@@ -2117,12 +2126,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchMLSMigrationConfig
 
-    var fetchMLSMigrationConfig_Invocations: [Void] = []
-    var fetchMLSMigrationConfig_MockError: Error?
-    var fetchMLSMigrationConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLSMigration.Config>)?
-    var fetchMLSMigrationConfig_MockValue: LocalFeature<Feature.MLSMigration.Config>?
+    public var fetchMLSMigrationConfig_Invocations: [Void] = []
+    public var fetchMLSMigrationConfig_MockError: Error?
+    public var fetchMLSMigrationConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLSMigration.Config>)?
+    public var fetchMLSMigrationConfig_MockValue: LocalFeature<Feature.MLSMigration.Config>?
 
-    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+    public func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
         fetchMLSMigrationConfig_Invocations.append(())
 
         if let error = fetchMLSMigrationConfig_MockError {
@@ -2140,12 +2149,12 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchAppLock
 
-    var fetchAppLock_Invocations: [Void] = []
-    var fetchAppLock_MockError: Error?
-    var fetchAppLock_MockMethod: (() async throws -> LocalFeature<Feature.AppLock.Config>)?
-    var fetchAppLock_MockValue: LocalFeature<Feature.AppLock.Config>?
+    public var fetchAppLock_Invocations: [Void] = []
+    public var fetchAppLock_MockError: Error?
+    public var fetchAppLock_MockMethod: (() async throws -> LocalFeature<Feature.AppLock.Config>)?
+    public var fetchAppLock_MockValue: LocalFeature<Feature.AppLock.Config>?
 
-    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+    public func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
         fetchAppLock_Invocations.append(())
 
         if let error = fetchAppLock_MockError {
@@ -2158,6 +2167,24 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchAppLock`")
+        }
+    }
+
+    // MARK: - isFeatureEnabled
+
+    public var isFeatureEnabled_Invocations: [Feature.Name] = []
+    public var isFeatureEnabled_MockMethod: ((Feature.Name) async -> Bool)?
+    public var isFeatureEnabled_MockValue: Bool?
+
+    public func isFeatureEnabled(_ feature: Feature.Name) async -> Bool {
+        isFeatureEnabled_Invocations.append(feature)
+
+        if let mock = isFeatureEnabled_MockMethod {
+            return await mock(feature)
+        } else if let mock = isFeatureEnabled_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isFeatureEnabled`")
         }
     }
 
@@ -2307,6 +2334,21 @@ public class MockLiveSyncDelegate: LiveSyncDelegate {
         mock(sync, error)
     }
 
+    // MARK: - didStart
+
+    public var didStartSync_Invocations: [IncrementalSyncV2] = []
+    public var didStartSync_MockMethod: ((IncrementalSyncV2) -> Void)?
+
+    public func didStart(sync: IncrementalSyncV2) {
+        didStartSync_Invocations.append(sync)
+
+        guard let mock = didStartSync_MockMethod else {
+            fatalError("no mock for `didStartSync`")
+        }
+
+        mock(sync)
+    }
+
 }
 
 public class MockLiveSyncProtocol: LiveSyncProtocol {
@@ -2412,6 +2454,30 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         }
 
         try await mock(eventData, context)
+    }
+
+}
+
+public class MockMainAppPushChannelCoordinatorProtocol: MainAppPushChannelCoordinatorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - signalToExtensionsToYieldPushChannel
+
+    public var signalToExtensionsToYieldPushChannel_Invocations: [Void] = []
+    public var signalToExtensionsToYieldPushChannel_MockMethod: (() async -> Void)?
+
+    public func signalToExtensionsToYieldPushChannel() async {
+        signalToExtensionsToYieldPushChannel_Invocations.append(())
+
+        guard let mock = signalToExtensionsToYieldPushChannel_MockMethod else {
+            fatalError("no mock for `signalToExtensionsToYieldPushChannel`")
+        }
+
+        await mock()
     }
 
 }
@@ -2786,20 +2852,21 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
 }
 
-class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
+public class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - invoke
 
-    var invokeRequest_Invocations: [UNNotificationRequest] = []
-    var invokeRequest_MockError: Error?
-    var invokeRequest_MockMethod: ((UNNotificationRequest) async throws -> NotificationPayload)?
-    var invokeRequest_MockValue: NotificationPayload?
+    public var invokeRequest_Invocations: [UNNotificationRequest] = []
+    public var invokeRequest_MockError: Error?
+    public var invokeRequest_MockMethod: ((UNNotificationRequest) throws -> NotificationPayload)?
+    public var invokeRequest_MockValue: NotificationPayload?
 
-    func invoke(request: UNNotificationRequest) async throws -> NotificationPayload {
+    public func invoke(request: UNNotificationRequest) throws -> NotificationPayload {
         invokeRequest_Invocations.append(request)
 
         if let error = invokeRequest_MockError {
@@ -2807,7 +2874,7 @@ class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol
         }
 
         if let mock = invokeRequest_MockMethod {
-            return try await mock(request)
+            return try mock(request)
         } else if let mock = invokeRequest_MockValue {
             return mock
         } else {
@@ -3438,52 +3505,39 @@ public class MockPushChannelStateProtocol: PushChannelStateProtocol {
     public init() {}
 
 
-    // MARK: - isOpen
-
-    public var isOpen_Invocations: [Void] = []
-    public var isOpen_MockMethod: (() -> Bool)?
-    public var isOpen_MockValue: Bool?
-
-    public func isOpen() -> Bool {
-        isOpen_Invocations.append(())
-
-        if let mock = isOpen_MockMethod {
-            return mock()
-        } else if let mock = isOpen_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isOpen`")
-        }
-    }
-
     // MARK: - markAsOpen
 
     public var markAsOpen_Invocations: [Void] = []
-    public var markAsOpen_MockMethod: (() -> Void)?
+    public var markAsOpen_MockError: Error?
+    public var markAsOpen_MockMethod: (() async throws -> Void)?
 
-    public func markAsOpen() {
+    public func markAsOpen() async throws {
         markAsOpen_Invocations.append(())
+
+        if let error = markAsOpen_MockError {
+            throw error
+        }
 
         guard let mock = markAsOpen_MockMethod else {
             fatalError("no mock for `markAsOpen`")
         }
 
-        mock()
+        try await mock()
     }
 
     // MARK: - markAsClosed
 
     public var markAsClosed_Invocations: [Void] = []
-    public var markAsClosed_MockMethod: (() -> Void)?
+    public var markAsClosed_MockMethod: (() async -> Void)?
 
-    public func markAsClosed() {
+    public func markAsClosed() async {
         markAsClosed_Invocations.append(())
 
         guard let mock = markAsClosed_MockMethod else {
             fatalError("no mock for `markAsClosed`")
         }
 
-        mock()
+        await mock()
     }
 
 }
@@ -3625,6 +3679,38 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfUser`")
+        }
+    }
+
+}
+
+public class MockSyncCellsStateUseCaseProtocol: SyncCellsStateUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationObjectID_Invocations: [NSManagedObjectID] = []
+    public var invokeConversationObjectID_MockError: Error?
+    public var invokeConversationObjectID_MockMethod: ((NSManagedObjectID) async throws -> CellsState)?
+    public var invokeConversationObjectID_MockValue: CellsState?
+
+    public func invoke(conversationObjectID: NSManagedObjectID) async throws -> CellsState {
+        invokeConversationObjectID_Invocations.append(conversationObjectID)
+
+        if let error = invokeConversationObjectID_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationObjectID_MockMethod {
+            return try await mock(conversationObjectID)
+        } else if let mock = invokeConversationObjectID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeConversationObjectID`")
         }
     }
 

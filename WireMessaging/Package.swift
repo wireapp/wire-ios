@@ -14,13 +14,14 @@ let package = Package(
         .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha10"),
+        .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha15"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireData")
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
         .target(
             name: "WireMessagingData",
             dependencies: [
+                "WireData",
                 "WireMessagingDomain",
                 "WireLogging",
                 .product(name: "AWSS3", package: "aws-sdk-swift"),
@@ -71,10 +73,14 @@ let package = Package(
         .testTarget(
             name: "WireMessagingTests",
             dependencies: [
+                "WireMessagingData",
                 "WireMessagingUI",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
+            ],
+            resources: [
+                .process("Resources/TestFiles/")
             ]
         ),
     ]

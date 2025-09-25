@@ -54,23 +54,26 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         mockEntityStorage.importsDirectory = fileManager
             .temporaryDirectory
             .appending(path: UUID().uuidString)
-        mockEntityStorage.createContextProviderAccountApplicationContainerDispatchGroup_MockMethod = { _, _, _ in
-            // This closure is called after session tear down and the persistent store is replaced.
-            // It is called to create a temporary stack and restore the user client backup.
-            XCTAssertNil(self.coreDataStack)
-            let stack = try await CoreDataStackHelper()
-                .createStack(inMemoryStore: true)
-            try await stack.viewContext.perform {
-                let user = ZMUser.selfUser(in: stack.viewContext)
-                user.remoteIdentifier = selfUserQualifiedID.uuid
-                user.domain = selfUserQualifiedID.domain
-                try stack.viewContext.save()
-            }
-            self.coreDataStack = stack
-            return stack
-        }
+
         mockEntityStorage
-            .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_MockMethod = { _, _, _, _ in
+            .createContextProviderAccountApplicationContainerDispatchGroupLocalDomainIsFederationEnabled_MockMethod =
+            { _, _, _, _, _ in
+                // This closure is called after session tear down and the persistent store is replaced.
+                // It is called to create a temporary stack and restore the user client backup.
+                XCTAssertNil(self.coreDataStack)
+                let stack = try await CoreDataStackHelper()
+                    .createStack(inMemoryStore: true)
+                try await stack.viewContext.perform {
+                    let user = ZMUser.selfUser(in: stack.viewContext)
+                    user.remoteIdentifier = selfUserQualifiedID.uuid
+                    user.domain = selfUserQualifiedID.domain
+                    try stack.viewContext.save()
+                }
+                self.coreDataStack = stack
+                return stack
+            }
+        mockEntityStorage
+            .replacePersistentStoreAccountIdentifierFromApplicationContainer_MockMethod = { _, _, _ in
                 URL(filePath: "/accountDataFolder/")
             }
 
@@ -158,7 +161,7 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
         XCTAssertFalse(
             mockEntityStorage
-                .replacePersistentStoreAccountIdentifierFromApplicationContainerDispatchGroup_Invocations.isEmpty
+                .replacePersistentStoreAccountIdentifierFromApplicationContainer_Invocations.isEmpty
         )
         XCTAssertFalse(mockAppStateUpdater.selectAccountAndTriggerSlowSync_Invocations.isEmpty)
         // ensure the user client was preserved

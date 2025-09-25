@@ -96,9 +96,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
                 throw Failure.noRefreshedConversationFound
             }
 
-            // re-create group and re-add all participants
-            let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: refreshedConversation)
-            _ = try await mlsService.establishGroup(for: newGroupID, with: users, removalKeys: nil)
+            try await mlsService.establishPendingGroup(groupID: newGroupID)
 
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case finished",
@@ -111,32 +109,5 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
                 attributes: attributes
             )
         }
-    }
-}
-
-public extension InitiateResetMLSConversationUseCase {
-    static func make(
-        apiService: APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
-        mlsService: MLSServiceInterface,
-        conversationRepository: ConversationRepositoryProtocol,
-        context: NSManagedObjectContext,
-        userID: UUID
-    ) -> InitiateResetMLSConversationUseCase {
-        let conversationLocalStore = ConversationLocalStore(
-            context: context,
-            mlsService: mlsService,
-            messageLocalStore: MessageLocalStore(context: context)
-        )
-        return InitiateResetMLSConversationUseCase(
-            api: MLSAPIBuilder(apiService: apiService)
-                .makeAPI(for: apiVersion),
-            mlsService: mlsService,
-            conversationLocalStore: conversationLocalStore,
-            conversationRepository: conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: userID
-            )
-        )
     }
 }

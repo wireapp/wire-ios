@@ -17,6 +17,7 @@
 //
 
 package import Foundation
+package import UniformTypeIdentifiers
 import WireLogging
 
 enum UploadDraftUseCaseError: Error {
@@ -33,39 +34,30 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     private let draftRepository: any DraftsRepositoryProtocol
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
+    private let metadataRepository: any WireCellsDraftMetadataRepositoryProtocol
+    private let intermediaryFilesDirectory: URL
+    private let filenameGenerator: FilenameGenerator
 
     package init(
         cellName: String,
         draftRepository: any DraftsRepositoryProtocol,
         uploadManager: any WireCellsNodeUploadManagerProtocol,
-        nodesAPI: any NodesAPIProtocol
+        nodesAPI: any NodesAPIProtocol,
+        metadataRepository: any WireCellsDraftMetadataRepositoryProtocol,
+        intermediaryFilesDirectory: URL = Self.intermediaryFilesDirectory(),
+        filenameGenerator: FilenameGenerator
     ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
+        self.metadataRepository = metadataRepository
+        self.intermediaryFilesDirectory = intermediaryFilesDirectory
+        self.filenameGenerator = filenameGenerator
     }
 
     package func invoke(fileURL: URL) async throws {
-        let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
-        guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
-            throw WireCellsUploadDraftUseCaseError.missingFileSize
-        }
-
-        let draft = WireCellsDraft(
-            nodeID: UUID(),
-            versionID: UUID(),
-            assetURL: fileURL,
-            fileType: resourceValues.contentType,
-            status: .uploading(progress: 0),
-            name: fileURL.lastPathComponent,
-            bytes: fileSize,
-            mimeType: nil,
-            deleteAfterUpload: false
-        )
-
-        await draftRepository.addDraft(draft, for: cellName)
-        try await invoke(nodeID: draft.nodeID)
+        try await invoke(fileURL: fileURL, requiresCleanup: false)
     }
 
     /// Uploads a file using an existing draft's nodeID.
@@ -113,9 +105,59 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
         }
     }
 
-    package func invoke(imageData: Data) async throws {
-        // TODO: [WPB-17767] Implement
-        WireLogger.wireCells.info("Uploading file from image data")
+    package func invoke(data: Data, type: UTType) async throws {
+        let filename = await filenameGenerator.generateFilename(type: type)
+
+        let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let url = container.appendingPathComponent(filename)
+
+        try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
+
+        try data.write(to: url)
+        try await invoke(fileURL: url, requiresCleanup: true)
+    }
+
+    // MARK: - Private Methods
+
+    private func invoke(fileURL: URL, requiresCleanup: Bool) async throws {
+        let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
+        guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
+            throw WireCellsUploadDraftUseCaseError.missingFileSize
+        }
+
+        let draft = WireCellsDraft(
+            nodeID: UUID(),
+            versionID: UUID(),
+            assetURL: fileURL,
+            fileType: resourceValues.contentType,
+            status: .uploading(progress: 0),
+            name: fileURL.lastPathComponent,
+            bytes: fileSize,
+            mimeType: nil,
+            requiresCleanup: requiresCleanup,
+            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType)
+        )
+
+        await draftRepository.addDraft(draft, for: cellName)
+        try await invoke(nodeID: draft.nodeID)
+    }
+
+    private func metadata(for fileURL: URL, fileType: UTType?) async throws -> WireCellsDraft.Metadata? {
+        guard let fileType else { return nil }
+
+        if fileType.conforms(to: .image) {
+            return try await metadataRepository.imageMetadata(fileURL: fileURL)
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            return try await metadataRepository.audioMetadata(fileURL: fileURL)
+        } else if fileType.conforms(to: .audiovisualContent) {
+            return try await metadataRepository.videoMetadata(fileURL: fileURL)
+        } else {
+            return nil
+        }
+    }
+
+    private static func intermediaryFilesDirectory() -> URL {
+        URL.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
     }
 
 }

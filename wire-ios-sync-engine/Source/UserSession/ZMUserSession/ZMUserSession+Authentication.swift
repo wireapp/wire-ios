@@ -44,7 +44,8 @@ extension ZMUserSession {
 
     public var isLoggedIn: Bool {
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
-        let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
+        let needsToRegisterMLSClient = applicationStatusDirectory.clientRegistrationStatus
+            .needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync
 
         return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient
@@ -84,11 +85,22 @@ extension ZMUserSession {
         completion()
     }
 
+    func close(deleteCookie: Bool) async {
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            close(deleteCookie: deleteCookie) {
+                guard !resumed else { return }
+                resumed = true
+                continuation.resume()
+            }
+        }
+    }
+
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
-            let apiVersion = BackendInfo.apiVersion
+            let apiVersion = resolvedBackendMetadata.apiVersion
         else {
             return
         }

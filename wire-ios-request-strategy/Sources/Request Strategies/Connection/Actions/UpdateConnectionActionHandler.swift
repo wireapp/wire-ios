@@ -23,14 +23,22 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = ConnectionPayloadProcessor()
+    private let processor: ConnectionPayloadProcessor
+
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
+        self.processor = ConnectionPayloadProcessor(isFederationEnabled: isFederationEnabled)
+        super.init(context: context)
+    }
 
     override func request(for action: UpdateConnectionAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
             v0Request(for: action)
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
             v1Request(for: action)
         }
     }

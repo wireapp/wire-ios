@@ -48,10 +48,10 @@ final class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Verifying if migration is needed
 
-    func test_itReturnsTrue_WhenMigrationIsNeeded() async {
+    func test_itReturnsTrue_WhenMigrationIsNeeded() async throws {
         // Given
-        let session1 = await setupSession(with: "clientID1")
-        let session2 = await setupSession(with: "clientID2")
+        let session1 = try await setupSession(with: "clientID1")
+        let session2 = try await setupSession(with: "clientID2")
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -72,10 +72,10 @@ final class APIMigrationManagerTests: MessagingTest {
         await tearDownSessions([session1, session2])
     }
 
-    func test_itReturnsFalse_WhenMigrationIsNotNeeded() async {
+    func test_itReturnsFalse_WhenMigrationIsNotNeeded() async throws {
         // Given
-        let session1 = await setupSession(with: "clientID1")
-        let session2 = await setupSession(with: "clientID2")
+        let session1 = try await setupSession(with: "clientID1")
+        let session2 = try await setupSession(with: "clientID2")
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -96,10 +96,10 @@ final class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Migrating sessions
 
-    func test_itPerformsMigrationsForVersionsHigherThanLastUsed() async {
+    func test_itPerformsMigrationsForVersionsHigherThanLastUsed() async throws {
         // Given
         let clientID = "123abcd"
-        let userSession = await setupSession(with: clientID)
+        let userSession = try await setupSession(with: clientID)
 
         let migrationV1 = APIMigrationMock(version: .v1)
         let migrationV2 = APIMigrationMock(version: .v2)
@@ -124,12 +124,12 @@ final class APIMigrationManagerTests: MessagingTest {
         await tearDownSession(userSession)
     }
 
-    func test_itPerformsMigrationsForMultipleSessions() async {
+    func test_itPerformsMigrationsForMultipleSessions() async throws {
         // Given
         let clientID1 = UUID().uuidString
         let clientID2 = UUID().uuidString
-        let userSession1 = await setupSession(with: clientID1)
-        let userSession2 = await setupSession(with: clientID2)
+        let userSession1 = try await setupSession(with: clientID1)
+        let userSession2 = try await setupSession(with: clientID2)
 
         let migration = APIMigrationMock(version: .v3)
         let sut = APIMigrationManager(migrations: [migration])
@@ -155,9 +155,9 @@ final class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Persisting last used API version
 
-    func test_itPersistsLastUsedAPIVersion_AfterMigrations() async {
+    func test_itPersistsLastUsedAPIVersion_AfterMigrations() async throws {
         // Given
-        let userSession = await stubUserSession()
+        let userSession = try await stubUserSession()
         let clientID = "1234abcd"
 
         setupClient(clientID, in: userSession)
@@ -174,14 +174,14 @@ final class APIMigrationManagerTests: MessagingTest {
         await tearDownSession(userSession)
     }
 
-    func test_itPersistsLastUsedAPIVersion_ForMultipleSessions() async {
+    func test_itPersistsLastUsedAPIVersion_ForMultipleSessions() async throws {
         // Given
         let sut = APIMigrationManager(migrations: [])
 
         let clientID1 = "client1"
         let clientID2 = "client2"
-        let userSession1 = await setupSession(with: clientID1)
-        let userSession2 = await setupSession(with: clientID2)
+        let userSession1 = try await setupSession(with: clientID1)
+        let userSession2 = try await setupSession(with: clientID2)
 
         sut.persistLastUsedAPIVersion(for: userSession1, apiVersion: .v1)
         sut.persistLastUsedAPIVersion(for: userSession2, apiVersion: .v1)
@@ -206,8 +206,8 @@ final class APIMigrationManagerTests: MessagingTest {
     // MARK: - Helpers
 
     @MainActor
-    private func setupSession(with clientID: String) -> ZMUserSession {
-        let session = stubUserSession()
+    private func setupSession(with clientID: String) async throws -> ZMUserSession {
+        let session = try await stubUserSession()
         setupClient(clientID, in: session)
         return session
     }
@@ -241,7 +241,7 @@ final class APIMigrationManagerTests: MessagingTest {
     }
 
     @MainActor
-    private func stubUserSession() -> ZMUserSession {
+    private func stubUserSession() async throws -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockCoreCrypto = MockCoreCryptoProtocol()
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -281,6 +281,7 @@ final class APIMigrationManagerTests: MessagingTest {
         let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
+            blacklistURL: backendEnvironment.blackListURL,
             pinnedKeys: [],
             proxySettings: nil
         )
@@ -302,18 +303,19 @@ final class APIMigrationManagerTests: MessagingTest {
             userID: userID,
             storage: UserDefaults.temporary()
         )
+
+        let coreDataStack = try await createCoreDataStack()
         let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: "3.120.0",
             currentBuildNumber: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            coreDataStack: createCoreDataStack(),
+            coreDataStack: coreDataStack,
             coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStorable,
@@ -334,6 +336,7 @@ final class APIMigrationManagerTests: MessagingTest {
 
         let userSession = builder.build()
         userSession.setup(
+            apiVersion: nil,
             eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,

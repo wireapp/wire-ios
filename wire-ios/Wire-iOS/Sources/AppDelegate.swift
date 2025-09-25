@@ -24,7 +24,9 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
 import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -232,6 +234,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = NSAttributedString.paragraphStyle
 
+        DeveloperOverrides.storage = .shared()
+
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
@@ -299,17 +303,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         WireLogger.appDelegate.info(
             "applicationWillTerminate: (applicationState = \(application.applicationState))",
             attributes: .safePublic
-        )
-    }
-
-    func application(
-        _ application: UIApplication,
-        performActionFor shortcutItem: UIApplicationShortcutItem,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        appRootRouter?.performQuickAction(
-            for: shortcutItem,
-            completionHandler: completionHandler
         )
     }
 
@@ -423,6 +416,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
+            defaultEnvironment: fetchDefaultEnvironment(),
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
@@ -509,6 +503,22 @@ private extension AppDelegate {
 
     private func startAppRouter(launchOptions: LaunchOptions) {
         appRootRouter?.start(launchOptions: launchOptions)
+    }
+
+    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        guard let path = Bundle.backendBundle.path(
+            forResource: "default",
+            ofType: "json"
+        ) else {
+            fatalError("default.json missing in Backend.bundle")
+        }
+
+        do {
+            let data = try Data(contentsOf: URL(filePath: path))
+            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
+        } catch {
+            fatalError("unabled to fetch default environment: \(error)")
+        }
     }
 
 }

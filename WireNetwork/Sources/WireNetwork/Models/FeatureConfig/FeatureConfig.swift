@@ -47,6 +47,13 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case conferenceCalling(ConferenceCallingFeatureConfig)
 
+    /// Config for the *Consumable Notifications* feature.`
+    ///
+    /// *Consumable Notifications* is the `new` synchronization mechanism (often referred to as `quick sync`) to ensure
+    /// the app is up to date.
+
+    case consumableNotifications(ConsumableNotificationsFeatureConfig)
+
     /// Config for the *Conversation Guest Links* feature.`
     ///
     /// *Conversation Guest Links* enable a group admin to create
@@ -108,6 +115,9 @@ public enum FeatureConfig: Equatable, Sendable {
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
 
     case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
+
+    /// Enable or Disable chat bubbles
+    case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
 
     /// An unknown feature.
 
