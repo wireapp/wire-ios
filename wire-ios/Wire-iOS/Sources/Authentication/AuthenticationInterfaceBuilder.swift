@@ -139,9 +139,12 @@ final class AuthenticationInterfaceBuilder {
                 authenticationType = .new
             }
 
+            // If there's no environment, then it probably means that the user
+            // hasn't yet migrated to multibackend support yet. Fallback to the
+            // legacy environment to allow them to reauthenticate.
             let (rootView, bridge) = wireAuthenticationAssembly(
                 authenticationType: authenticationType,
-                environment: environment!,
+                environment: environment ?? BackendEnvironment2(BackendEnvironment.shared),
                 registrationAnalyticsTracker: registrationAnalyticsTracker
             )
 
