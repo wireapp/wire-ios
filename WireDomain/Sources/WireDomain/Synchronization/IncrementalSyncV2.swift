@@ -49,6 +49,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let createPushChannelState: CreatePushChannelStateClosure
+    private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -64,6 +65,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -78,6 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.syncStateSubject = syncStateSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
+        self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -139,6 +142,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             await pushChannelState.markAsClosed()
             throw error
         }
+        
+        await mlsGroupRepairAgent.repairConversations()
 
         let task = Task { @Sendable [self] in
             do {
