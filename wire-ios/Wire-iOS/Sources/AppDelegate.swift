@@ -242,16 +242,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         DeveloperOverrides.storage = .shared()
         setupWindowAndRootViewController()
-
-//        if !isHeadlessBackgroundLaunch {
-            if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
-                .hasAccessibleAuthenticationCookieData() {
-                createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
-            }
-
-//        } else {
-//            WireLogger.appDelegate.info("running in headless mode", attributes: .safePublic)
-//        }
+        
+        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
+            .hasAccessibleAuthenticationCookieData() {
+            createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
+        }
 
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")

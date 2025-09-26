@@ -41,6 +41,8 @@ public extension ZMUserSession {
                 WireLogger.sync.debug("Sync suspended")
                 completionHandler(.noData)
             }
+            // disable background fetch
+            application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
             return
         }
 

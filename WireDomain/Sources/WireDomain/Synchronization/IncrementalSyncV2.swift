@@ -148,9 +148,14 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         pushChannel: pushChannel,
                         syncMarker: syncMarker
                     )
+                    
+                    WireLogger.sync.debug("Live stream ended, close push channel")
+                    await pushChannel.close()
+                    await pushChannelState.markAsClosed()
                 }
             } catch {
                 // if we expire, close everything
+                WireLogger.sync.debug("Error while processing live stream, close push channel")
                 await pushChannel.close()
                 await pushChannelState.markAsClosed()
             }
