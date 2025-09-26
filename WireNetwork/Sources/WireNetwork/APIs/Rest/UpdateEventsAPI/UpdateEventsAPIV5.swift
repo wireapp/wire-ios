@@ -59,16 +59,24 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
 
     override func getUpdateEvents(
         selfClientID: String?,
-        sinceEventID: UUID
+        sinceEventID: UUID?
     ) -> PayloadPager<UpdateEventBatch> {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
-        return PayloadPager(start: sinceEventID.transportString()) { nextSince in
-            var requestBuilder = try URLRequestBuilder(path: resourcePath)
-                .withMethod(.get)
-                .withQueryItem(name: "since", value: nextSince)
-                .withQueryItem(name: "size", value: "500")
+        return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
+            var requestBuilder: URLRequestBuilder
 
+            if let nextSince {
+                requestBuilder = try URLRequestBuilder(path: resourcePath)
+                    .withMethod(.get)
+                    .withQueryItem(name: "size", value: "500")
+                    .withQueryItem(name: "since", value: nextSince)
+            } else {
+                requestBuilder = try URLRequestBuilder(path: resourcePath)
+                    .withMethod(.get)
+                    .withQueryItem(name: "size", value: "500")
+            }
+            
             if let selfClientID {
                 requestBuilder = requestBuilder.withQueryItem(
                     name: "client",
