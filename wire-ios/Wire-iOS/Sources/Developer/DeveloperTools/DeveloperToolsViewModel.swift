@@ -292,6 +292,11 @@ final class DeveloperToolsViewModel: ObservableObject {
                             router: self?.router,
                             onDismiss: self?.onDismiss ?? { $0() }
                         )))
+                    })),
+                    .destination(DestinationItem(title: "Keychain items", makeView: {
+                        AnyView(DeveloperKeychainItemsView(
+                            viewModel: DeveloperKeychainItemsViewModel()
+                        ))
                     }))
                 ]
             )
