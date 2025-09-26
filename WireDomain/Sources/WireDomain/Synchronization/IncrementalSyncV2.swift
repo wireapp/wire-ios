@@ -142,7 +142,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             await pushChannelState.markAsClosed()
             throw error
         }
-        
+
         await mlsGroupRepairAgent.repairConversations()
 
         let task = Task { @Sendable [self] in
