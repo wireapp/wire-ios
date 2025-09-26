@@ -52,6 +52,7 @@ struct LegacyResolveOneOnOneConversationsUseCase: LegacyResolveOneOnOneConversat
             await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.supportedProtocols = newProtocols
+                context.saveOrRollback()
             }
         }
 
