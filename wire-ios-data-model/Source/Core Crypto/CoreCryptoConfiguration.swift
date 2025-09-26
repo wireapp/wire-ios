@@ -67,7 +67,10 @@ public class CoreCryptoConfigProvider {
                 key: key
             )
         } catch {
-            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
+            WireLogger.coreCrypto.error(
+                "Failed to get core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }

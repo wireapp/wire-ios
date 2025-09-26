@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireLogging
+import WireFoundation
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
@@ -60,6 +61,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let selfUserID: UUID
     private let sharedContainerURL: URL
     private let accountDirectory: URL
+    private let sharedUserDefaults: UserDefaultsProtocol
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
     private let featureRespository: LegacyFeatureRepositoryInterface
@@ -80,6 +82,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         selfUserID: UUID,
         sharedContainerURL: URL,
         accountDirectory: URL,
+        sharedUserDefaults: UserDefaultsProtocol,
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
@@ -89,6 +92,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
         self.accountDirectory = accountDirectory
+        self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
@@ -215,7 +219,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let coreCryptoKeyProvider = CoreCryptoKeyProvider(
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            userID: selfUserID
+            userID: selfUserID,
+            storage: sharedUserDefaults
         )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 

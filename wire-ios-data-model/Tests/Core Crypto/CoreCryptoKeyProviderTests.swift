@@ -77,8 +77,8 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         sut = CoreCryptoKeyProvider(
             coreCryptoKeyMigrationManager: mockMigrationManager,
             userID: userID,
-            staleKeysTracker: mockStaleKeysTracker,
-            storage: mockUserDefaults
+            storage: mockUserDefaults,
+            staleKeysTracker: mockStaleKeysTracker
         )
 
         // Set up the keychain items

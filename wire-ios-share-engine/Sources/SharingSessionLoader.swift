@@ -340,6 +340,7 @@ public struct SharingSessionLoader {
             selfUserID: accountID,
             sharedContainerURL: appContainerURL,
             accountDirectory: userAccountDataURL,
+            sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),

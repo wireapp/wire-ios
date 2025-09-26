@@ -48,11 +48,24 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    public init(
+    public convenience init(
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         userID: UUID,
-        staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol = StaleCoreCryptoKeysTracker(),
-        storage: UserDefaultsProtocol = UserDefaults.standard
+        storage: UserDefaultsProtocol,
+    ) {
+        self.init(
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            userID: userID,
+            storage: storage,
+            staleKeysTracker: StaleCoreCryptoKeysTracker(defaults: storage)
+        )
+    }
+    
+    init(
+        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
+        userID: UUID,
+        storage: UserDefaultsProtocol,
+        staleKeysTracker: StaleCoreCryptoKeysTrackerProtocol,
     ) {
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.defaults = PrivateUserDefaults(userID: userID, storage: storage)
@@ -71,14 +84,14 @@ public class CoreCryptoKeyProvider {
         } else if createIfNeeded {
             return try createCoreCryptoKey()
         } else {
-            throw Error.keyNotFound
+            throw Failure.keyNotFound
         }
     }
 
     private func performKeyMigrationsIfNeeded(path: String) async throws {
         try await migrateDatabaseKeyToBytes(path: path)
         try migrateToScopedDatabaseKey(path: path)
-        try? await rotateKeyIfNeeded(path: path)
+        try await rotateKeyIfNeeded(path: path)
     }
 
     private func migrateToScopedDatabaseKey(path: String) throws {
@@ -102,11 +115,7 @@ public class CoreCryptoKeyProvider {
                 coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
 
             } catch {
-                WireLogger.coreCrypto.warn(
-                    "Failed to migrate to scoped core crypto key: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                throw error
+                throw Failure.failedToScopeKey(error)
             }
         }
     }
@@ -120,11 +129,7 @@ public class CoreCryptoKeyProvider {
             WireLogger.coreCrypto.info("Rotating core crypto key...", attributes: .safePublic)
             try await rotateKey(path: path)
         } catch {
-            WireLogger.coreCrypto.warn(
-                "Failed to rotate core crypto key: \(String(describing: error))",
-                attributes: .safePublic
-            )
-            throw error
+            throw Failure.failedToRotateKey(error)
         }
     }
 
@@ -132,7 +137,7 @@ public class CoreCryptoKeyProvider {
 
         // Get the old key, to rotate with the new key
         guard let oldKey = try fetchCoreCryptoKey() else {
-            throw Error.keyNotFound
+            throw Failure.keyNotFound
         }
         let oldKeyId = uniqueKeyId
         let oldItem = CoreCryptoKeychainItem(uniqueKeyId: oldKeyId, userID: userID)
@@ -180,7 +185,7 @@ public class CoreCryptoKeyProvider {
     }
 
     private func logRotation(_ message: String) {
-        WireLogger.coreCrypto.info("[key rotation] \(message)")
+        WireLogger.coreCrypto.info("[key rotation] \(message)", attributes: .safePublic)
     }
 
     private func deleteOrMarkAsStale(item: CoreCryptoKeychainItem) {
@@ -205,11 +210,7 @@ public class CoreCryptoKeyProvider {
                     newKey: oldKey
                 )
             } catch {
-                WireLogger.coreCrypto.warn(
-                    "Failed to migrate core crypto key: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                throw error
+                throw Failure.failedToMigrateKeyToBytes(error)
             }
         } else {
             // If there is no key,
@@ -244,14 +245,33 @@ public class CoreCryptoKeyProvider {
 
 public extension CoreCryptoKeyProvider {
 
-    enum Error: Swift.Error {
+    enum Failure: LocalizedError {
         case keyNotFound
+        case failedToScopeKey(Error)
+        case failedToRotateKey(Error)
+        case failedToMigrateKeyToBytes(Error)
+        
+        var errorDecscription: String {
+            switch self{
+            case .keyNotFound:
+                "key not found"
+            case let .failedToScopeKey(error):
+                "failed to scope key (\(String(describing: error)))"
+            case let .failedToRotateKey(error):
+                "failed to rotate key (\(String(describing: error))"
+            case let .failedToMigrateKeyToBytes(error):
+                "failed to migrate key to bytes (\(String(describing: error)))"
+            }
+        }
     }
 }
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
-    static let scopedBaseId = "com.wire.cc.key"
+
+    /// deprecated key
     static let unscopedId = "com.wire.mls.key"
+
+    static let scopedBaseId = "com.wire.cc.key"
 
     let uniqueKeyId: UUID
     let userID: UUID

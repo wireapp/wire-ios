@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import WireFoundationSupport
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
@@ -47,7 +48,12 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     override func setUp() {
         super.setUp()
         mockCoreCryptoKeyProvider =
-            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager, userID: UUID())
+            MockCoreCryptoKeyProvider(
+                coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager,
+                userID: UUID(),
+                storage: UserDefaultsProtocolMock(),
+                staleKeysTracker: MockStaleCoreCryptoKeysTrackerProtocol()
+            )
         sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 
