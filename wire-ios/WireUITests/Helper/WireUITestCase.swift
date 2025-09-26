@@ -32,8 +32,6 @@ class WireUITestCase: XCTestCase {
 
         let launchArguments = [
             "-resetData",
-//            "--BackendEnvironmentTypeOverrideKey=staging",
-//            "--persist-backend-type",
             "--useEnvStaging",
             "--preferred-api-version=8"
         ]

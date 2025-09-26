@@ -26,10 +26,6 @@
             "value" : "$(INBUCKET_PASSWORD)"
           },
           {
-            "key" : "ANTA_BACKEND_URL",
-            "value" : "$(ANTA_BACKEND_URL)"
-          },
-          {
             "key" : "ANTA_DEEPLINK_URL",
             "value" : "$(ANTA_DEEPLINK_URL)"
           },
