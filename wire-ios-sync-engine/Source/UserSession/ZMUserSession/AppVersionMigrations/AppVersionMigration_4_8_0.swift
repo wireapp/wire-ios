@@ -24,7 +24,9 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.8.0"
     let contextProvider: ContextProvider
-    // let coreCryptoProvider: CoreCryptoProviderProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
+    let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
 
     func perform() async throws {
 
@@ -32,26 +34,47 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
         let unknownMessages = try await context.perform {
             let fetchRequest = UnknownMessage.fetchRequest()
             let unknownMessages = try context.fetch(fetchRequest)
-            return unknownMessages.map { ($0.nonce, $0.payload) }
+            return unknownMessages.map { ($0, $0.payload) }
         }
 
-        for (messageID, payload) in unknownMessages {
-            guard let messageID, let payload, let message = GenericMessage(from: payload, validate: false) else {
+        for (unknownMessage, payload) in unknownMessages {
+            guard let payload, let message = GenericMessage(from: payload, validate: false) else {
                 continue
             }
 
+            await context.perform {
+                context.delete(unknownMessage)
+            }
 
-            print(message)
+            // new sync
+// TODO: finish implementation
+            /*
+            await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
+                conversation: conversation,
+                genericMessage: genericMessage,
+                date: date
+            )
 
-            // TODO: delete/replace unknown message
+            await conversationLocalStore.addParticipantIfNeeded(
+                participantID: senderID.id,
+                participantDomain: senderID.domain,
+                in: conversation,
+                date: date.addingTimeInterval(-0.01)
+            )
+
+            try await protobufMessageProcessor.processProtobufMessage(
+                genericMessage,
+                conversation: conversation,
+                conversationID: conversationID,
+                senderID: senderID,
+                senderClientID: messageSenderClientID,
+                date: date,
+                eventMessage: "unknown-message"
+            )
+             */
+
+            // TODO: old sync?
         }
-
-
-        //throw SomeError.some // fatalError()
     }
 
-}
-
-enum SomeError: Error {
-    case some
 }

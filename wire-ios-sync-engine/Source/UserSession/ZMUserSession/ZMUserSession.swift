@@ -1711,7 +1711,12 @@ extension ZMUserSession {
                 sessionManager: sessionManager
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_8_0(contextProvider: coreDataStack)
+            AppVersionMigration_4_8_0(
+                contextProvider: coreDataStack,
+                conversationLocalStore: <#T##any ConversationLocalStoreProtocol#>,
+                messageLocalStore: <#T##any MessageLocalStoreProtocol#>,
+                protobufMessageProcessor: <#T##any ConversationProtobufMessageProcessorProtocol#>
+            )
         ]
     }
 
