@@ -16,16 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireDataModel
 import WireDomain
 
 struct AppVersionMigration_4_8_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.8.0"
+    let contextProvider: ContextProvider
     // let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {
-        // try await coreCryptoProvider.updateDatabaseKey()
-        fatalError()
+
+        let context = contextProvider.syncContext
+        let unknownMessages = try await context.perform {
+            let fetchRequest = UnknownMessage.fetchRequest()
+            let unknownMessages = try context.fetch(fetchRequest)
+            return unknownMessages.map { ($0.nonce, $0.payload) }
+        }
+
+        for (messageID, payload) in unknownMessages {
+            guard let messageID, let payload, let message = GenericMessage(from: payload, validate: false) else {
+                continue
+            }
+
+
+            print(message)
+
+            // TODO: delete/replace unknown message
+        }
+
+
+        //throw SomeError.some // fatalError()
     }
 
+}
+
+enum SomeError: Error {
+    case some
 }

@@ -35,6 +35,7 @@ public extension ZMConversation {
             nonce: messageID,
             managedObjectContext: managedObjectContext
         )
+        unknownMessage.nonce = messageID
         unknownMessage.sender = sender
         unknownMessage.serverTimestamp = serverTimestamp
         unknownMessage.payload = payload

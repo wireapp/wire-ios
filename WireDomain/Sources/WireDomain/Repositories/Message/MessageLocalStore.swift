@@ -301,6 +301,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 nonce: messageID,
                 managedObjectContext: context
             )
+            unknownMessage.nonce = messageID
             unknownMessage.payload = payload
             unknownMessage.serverTimestamp = date
             finalizeMessageUpdate(
