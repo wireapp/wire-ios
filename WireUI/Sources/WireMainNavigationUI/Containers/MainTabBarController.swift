@@ -76,10 +76,14 @@ public final class MainTabBarController<
     private weak var _settingsUI: SettingsUI?
     private weak var _conversationUI: ConversationUI?
     private weak var _settingsContentUI: UIViewController?
+    /// We should use DeveloperFlag 'wireMeetings' after moving it to WireFoundation:
+    /// https://wearezeta.atlassian.net/browse/WPB-19065
+    private var showMeetings: Bool
 
     // MARK: - Life Cycle
 
-    public required init() {
+    public init(showMeetings: Bool) {
+        self.showMeetings = showMeetings
         super.init(nibName: nil, bundle: nil)
         setupTabs()
         setupAppearance()
@@ -113,9 +117,9 @@ public final class MainTabBarController<
             settingsNavigationController
         ]
 
-//        if DeveloperFlag.wireMeetings.isOn {
+        if showMeetings {
             tabs.insert(meetingsNavigationController, at: 2)
-//        }
+        }
         setViewControllers(tabs, animated: false)
 
         for content in MainTabBarControllerContent.allCases {

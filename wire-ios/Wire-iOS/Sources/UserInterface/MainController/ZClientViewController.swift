@@ -86,7 +86,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainCoordinator.TabBarController()
+        let tabBarController = MainCoordinator.TabBarController(showMeetings: DeveloperFlag.wireMeetings.isOn)
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()

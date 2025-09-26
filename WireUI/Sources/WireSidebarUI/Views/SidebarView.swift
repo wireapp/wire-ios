@@ -273,7 +273,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         case .meetings:
             text = Text(Strings.Meetings.AllMeetings.title)
-            // TODO: change
             icon = "video"
             accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
         case .settings:
