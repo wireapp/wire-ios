@@ -60,7 +60,7 @@ public class CoreCryptoKeyProvider {
             staleKeysTracker: StaleCoreCryptoKeysTracker(defaults: storage)
         )
     }
-    
+
     init(
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         userID: UUID,
@@ -250,9 +250,9 @@ public extension CoreCryptoKeyProvider {
         case failedToScopeKey(Error)
         case failedToRotateKey(Error)
         case failedToMigrateKeyToBytes(Error)
-        
+
         var errorDecscription: String {
-            switch self{
+            switch self {
             case .keyNotFound:
                 "key not found"
             case let .failedToScopeKey(error):
