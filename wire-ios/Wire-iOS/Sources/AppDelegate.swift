@@ -242,7 +242,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         DeveloperOverrides.storage = .shared()
         setupWindowAndRootViewController()
-        
+
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
             .hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])

@@ -97,7 +97,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             try await withExpiringActivity(reason: "processPayload in NSE") { [weak self] in
                 guard let self else { return }
                 // make sure no pushChannel is open
-                let pushChannelState = PushChannelState(sharedContainerURL: dependency.appContainerURL, clientID: clientID)
+                let pushChannelState = PushChannelState(
+                    sharedContainerURL: dependency.appContainerURL,
+                    clientID: clientID
+                )
                 do {
                     try await pushChannelState.markAsOpen()
                 } catch {
@@ -134,7 +137,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 try await currentTask?.value
                 WireLogger.sync.debug("closing push channel")
                 await pushChannelState.markAsClosed()
-                
+
                 // no need to monitor anymore let's cancel
                 monitoringTask?.cancel()
             }

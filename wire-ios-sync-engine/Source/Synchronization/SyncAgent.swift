@@ -121,7 +121,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         syncStateSubject.send(.idle)
-        
+
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
                 "resuming sync"
