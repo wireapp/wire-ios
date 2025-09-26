@@ -34,12 +34,6 @@ public final class UnknownMessage: ZMOTRMessage {
         NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
 
-    /// The latest app version which tried to process this message and failed.
-    /// This field is used for querying so that parsing attempts are made only once per app version.
-
-    @NSManaged public var appVersion: String? // TODO: delete
-    // TODO: add identifier
-
     /// The data which can be parsed into a `GenericMessage`.
 
     @NSManaged public var payload: Data?
