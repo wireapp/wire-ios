@@ -275,6 +275,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.Meetings.AllMeetings.title)
             icon = "video"
             accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
+
         case .settings:
             text = Text(Strings.Settings.title)
             icon = "gearshape"

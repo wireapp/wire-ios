@@ -181,7 +181,6 @@ public final class MainTabBarController<
                 )
                 meetingsNavigationController.tabBarItem = tabBarItem
 
-
             case .settings:
                 let tabBarItem = UITabBarItem(
                     title: String(localized: "tabBar.settings.title", bundle: .module),
