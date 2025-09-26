@@ -64,19 +64,17 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
         return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
-            var requestBuilder: URLRequestBuilder
-
-            if let nextSince {
-                requestBuilder = try URLRequestBuilder(path: resourcePath)
+            var requestBuilder: URLRequestBuilder = if let nextSince {
+                try URLRequestBuilder(path: resourcePath)
                     .withMethod(.get)
                     .withQueryItem(name: "size", value: "500")
                     .withQueryItem(name: "since", value: nextSince)
             } else {
-                requestBuilder = try URLRequestBuilder(path: resourcePath)
+                try URLRequestBuilder(path: resourcePath)
                     .withMethod(.get)
                     .withQueryItem(name: "size", value: "500")
             }
-            
+
             if let selfClientID {
                 requestBuilder = requestBuilder.withQueryItem(
                     name: "client",

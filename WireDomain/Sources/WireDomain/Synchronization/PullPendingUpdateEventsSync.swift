@@ -49,14 +49,14 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
     @discardableResult
     public func pull() async throws -> AsyncStream<[UpdateEvent]> {
-        var lastEventID: UUID? = nil
+        var lastEventID: UUID?
         // We want all events since this event.
         if let lastStoredEventID = store.lastEventID() {
             lastEventID = lastStoredEventID
         }
 
         WireLogger.sync.debug("pulling pending events since: \(String(describing: lastEventID))")
-        
+
         var events: [UpdateEvent] = []
 
         let timestampedUpdateEvents = api.getUpdateEvents(
