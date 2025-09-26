@@ -1713,9 +1713,9 @@ extension ZMUserSession {
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
             AppVersionMigration_4_8_0(
                 contextProvider: coreDataStack,
-                conversationLocalStore: <#T##any ConversationLocalStoreProtocol#>,
-                messageLocalStore: <#T##any MessageLocalStoreProtocol#>,
-                protobufMessageProcessor: <#T##any ConversationProtobufMessageProcessorProtocol#>
+                conversationLocalStore: clientSessionComponent?.conversationLocalStore,
+                messageLocalStore: clientSessionComponent?.messageLocalStore,
+                protobufMessageProcessor: clientSessionComponent?.conversationProtobufMessageProcessor
             )
         ]
     }

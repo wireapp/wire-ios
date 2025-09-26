@@ -24,9 +24,9 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.8.0"
     let contextProvider: ContextProvider
-    let conversationLocalStore: any ConversationLocalStoreProtocol
-    let messageLocalStore: any MessageLocalStoreProtocol
-    let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
+    let conversationLocalStore: (any ConversationLocalStoreProtocol)?
+    let messageLocalStore: (any MessageLocalStoreProtocol)?
+    let protobufMessageProcessor: (any ConversationProtobufMessageProcessorProtocol)?
 
     func perform() async throws {
 
@@ -42,12 +42,11 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
                 continue
             }
 
-            await context.perform {
-                context.delete(unknownMessage)
-            }
+// TODO: finish implementation
 
             // new sync
-// TODO: finish implementation
+
+            if let conversationLocalStore, let messageLocalStore, let protobufMessageProcessor {
             /*
             await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
                 conversation: conversation,
@@ -73,7 +72,15 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
             )
              */
 
-            // TODO: old sync?
+            } else if false {
+                // TODO: old sync?
+            } else {
+                continue
+            }
+
+            await context.perform {
+                context.delete(unknownMessage)
+            }
         }
     }
 
