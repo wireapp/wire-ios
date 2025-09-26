@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireFoundation
 import WireNetwork
 import WireReusableUIComponents
 
@@ -130,6 +131,7 @@ package struct DetermineAuthMethodView: View {
             .keyboardType(.emailAddress)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(Locators.WelcomePage.emailTextField.rawValue)
         }
     }
 
@@ -150,6 +152,7 @@ package struct DetermineAuthMethodView: View {
         })
         .wireButtonStyle(.primary)
         .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+        .accessibilityIdentifier(Locators.WelcomePage.nextButton.rawValue)
     }
 
     @ViewBuilder private var dismissButton: some View {

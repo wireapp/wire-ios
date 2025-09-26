@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireFoundation
 import WireReusableUIComponents
 
 package struct NoHistoryView: View {
@@ -60,6 +61,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+            .accessibilityIdentifier(String(describing: Locators.FirstTimePage.okButton))
 
         }
         .alert(

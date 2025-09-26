@@ -16,32 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import XCTest
+import Foundation
 
-class WelcomePage: PageModel {
+public enum Locators {
 
-    override var pageMainElement: XCUIElement {
-        emailTextField
+    public enum WelcomePage: String {
+        
+        case emailTextField
+        case nextButton
     }
 
-    var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
+    public enum LoginPage: String {
+
+        case emailTextField
+        case passwordSecureTextField
+        case nextButton
     }
 
-    var emailTextField: XCUIElement {
-        app.textFields[Locators.WelcomePage.emailTextField.rawValue]
+    public enum FirstTimePage: String {
+        
+        case okButton
     }
 
-    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
-        try typeEmailOrSSO(input)
-        nextButton.tap()
-        return try LoginPage()
+    public enum ConversationsPage: String {
+        
+        case bottomBarRecentListButton
+        case bottomBarSettingsButton
+
     }
 
-    @discardableResult
-    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
-        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
-        return self
-    }
 }

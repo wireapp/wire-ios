@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -116,7 +117,8 @@ public final class MainTabBarController<
                     image: .init(systemName: "text.bubble"),
                     selectedImage: .init(systemName: "text.bubble.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
+                tabBarItem
+                    .accessibilityIdentifier = Locators.ConversationsPage.bottomBarRecentListButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.conversations.description",
                     table: "Accessibility",
@@ -154,7 +156,8 @@ public final class MainTabBarController<
                     image: .init(systemName: "gearshape"),
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
+                tabBarItem
+                    .accessibilityIdentifier = Locators.ConversationsPage.bottomBarSettingsButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.settings.description",
                     table: "Accessibility",
