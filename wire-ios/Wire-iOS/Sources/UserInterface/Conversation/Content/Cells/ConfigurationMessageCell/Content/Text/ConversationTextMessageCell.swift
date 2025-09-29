@@ -183,8 +183,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     private func addAccentColorChangeObserver(userSession: UserSession?) {
         guard accentColorChangeHandler == nil, let userSession else { return }
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(userSession: userSession) { [unowned self] _ in
-                configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.configureTextColor(forOwnMessage: self?.message?.isSentBySelfUser ?? false)
             }
     }
 
