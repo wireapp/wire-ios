@@ -42,8 +42,18 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
                 continue
             }
 
-            let (conversation, eventTimestamp) = await context.perform {
-                (unknownMessage.conversation, unknownMessage.eventTimestamp)
+            let (
+                conversation,
+                senderID,
+                senderDomain,
+                eventTimestamp
+            ) = await context.perform {
+                (
+                    unknownMessage.conversation,
+                    unknownMessage.sender?.remoteIdentifier,
+                    unknownMessage.sender?.domain,
+                    unknownMessage.eventTimestamp
+                )
             }
 
             if
@@ -51,6 +61,7 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
                 let messageLocalStore,
                 let protobufMessageProcessor,
                 let conversation,
+                let senderID,
                 let eventTimestamp {
 
                 await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
@@ -59,14 +70,14 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
                     date: eventTimestamp
                 )
 
-                /*
-            await conversationLocalStore.addParticipantIfNeeded(
-                participantID: senderID.id,
-                participantDomain: senderID.domain,
-                in: conversation,
-                date: date.addingTimeInterval(-0.01)
-            )
+                await conversationLocalStore.addParticipantIfNeeded(
+                    participantID: senderID,
+                    participantDomain: senderDomain,
+                    in: conversation,
+                    date: eventTimestamp.addingTimeInterval(-0.01)
+                )
 
+                /*
             try await protobufMessageProcessor.processProtobufMessage(
                 genericMessage,
                 conversation: conversation,
@@ -78,8 +89,6 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
             )
              */
 
-            } else if false {
-                // TODO: old sync?
             } else {
                 continue
             }
