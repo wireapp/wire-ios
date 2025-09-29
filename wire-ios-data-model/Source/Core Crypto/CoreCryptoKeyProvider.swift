@@ -128,6 +128,9 @@ public class CoreCryptoKeyProvider {
         do {
             WireLogger.coreCrypto.info("Rotating core crypto key...", attributes: .safePublic)
             try await rotateKey(path: path)
+        } catch Failure.keyNotFound {
+            WireLogger.coreCrypto.info("Aborting key rotation: old key not found", attributes: .safePublic)
+            return
         } catch {
             throw Failure.failedToRotateKey(error)
         }
