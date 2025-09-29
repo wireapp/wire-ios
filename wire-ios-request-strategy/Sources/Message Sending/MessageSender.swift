@@ -389,10 +389,11 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMlsService
         }
 
-        if mlsStatus == .pendingJoin {
-            try await mlsService.reEstablishGroup(groupID: groupID)
-        }
         do {
+            if mlsStatus == .pendingJoin {
+                try await mlsService.reEstablishPendingGroup(groupID: groupID)
+            }
+
             try await mlsService.commitPendingProposals(in: groupID)
             let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 

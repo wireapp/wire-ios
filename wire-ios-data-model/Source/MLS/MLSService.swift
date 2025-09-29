@@ -931,27 +931,27 @@ public final class MLSService: MLSServiceInterface {
             context: context.notificationContext
         )
         
-        let (conversation, epoch) = await context.perform {
+        let (conversation, epoch, lastGroupID) = await context.perform {
             let conversation = ZMConversation.fetch(with: conversationInfo.qualifiedID.uuid,
                                                     domain: conversationInfo.qualifiedID.domain,
                                                     in: context)
-            return (conversation, conversation?.epoch)
+            return (conversation, conversation?.epoch, conversation?.mlsGroupID)
         }
         
-        guard let conversation else {
+        guard let conversation, let lastGroupID, let epoch else {
             throw MLSServiceError.conversationNotFound
         }
         
         let conversationExists = try await self.conversationExists(
-            groupID: groupID
+            groupID: lastGroupID
         )
 
         let shouldEstablishGroup = epoch == 0 && !conversationExists
 
-        if epoch == 0 {
-            try await internalEstablishPendingGroup(groupID: groupID, pendingGroup: conversation, context: context)
+        if shouldEstablishGroup {
+            try await internalEstablishPendingGroup(groupID: lastGroupID, pendingGroup: conversation, context: context)
         } else {
-            try await joinByExternalCommit(groupID: groupID)
+            try await joinByExternalCommit(groupID: lastGroupID)
         }
         
         await save(context)
