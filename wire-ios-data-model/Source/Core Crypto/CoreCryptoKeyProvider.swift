@@ -79,7 +79,7 @@ public class CoreCryptoKeyProvider {
     ) async throws -> Data {
         try await performKeyMigrationsIfNeeded(path: path)
 
-        if let key = try fetchCoreCryptoKey() {
+        if let key = try fetchCoreCryptoKey(scoped: true) {
             return key
         } else if createIfNeeded {
             return try createCoreCryptoKey()
@@ -101,7 +101,7 @@ public class CoreCryptoKeyProvider {
             let unscopedKey = try fetchCoreCryptoKey(scoped: false)
         else { return }
 
-        if (try fetchCoreCryptoKey()) != nil {
+        if (try fetchCoreCryptoKey(scoped: true)) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
         } else {
             do {
@@ -136,7 +136,7 @@ public class CoreCryptoKeyProvider {
     private func rotateKey(path: String) async throws {
 
         // Get the old key, to rotate with the new key
-        guard let oldKey = try fetchCoreCryptoKey() else {
+        guard let oldKey = try fetchCoreCryptoKey(scoped: true) else {
             throw Failure.keyNotFound
         }
         let oldKeyId = uniqueKeyId
@@ -167,20 +167,12 @@ public class CoreCryptoKeyProvider {
             coreCryptoKeyMigrationManager.markKeyRotationAsDone()
             logRotation("marked key rotation as done")
 
-        } catch {
+        } catch let CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError) {
 
-            // Check if we need to clean up or rollback, otherwise throw the error
-            switch error {
-            case let CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError):
-
-                // We failed to rotate the key, rollback by deleting the new key
-                deleteOrMarkAsStale(item: newItem)
-                logRotation("rollback: deleted or marked new key as stale")
-                throw underlyingError
-
-            default:
-                throw error
-            }
+            // We failed to rotate the key, rollback by deleting the new key
+            deleteOrMarkAsStale(item: newItem)
+            logRotation("rollback: deleted or marked new key as stale")
+            throw CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError: underlyingError)
         }
     }
 
@@ -219,7 +211,7 @@ public class CoreCryptoKeyProvider {
         }
     }
 
-    private func fetchCoreCryptoKey(scoped: Bool = true) throws -> Data? {
+    private func fetchCoreCryptoKey(scoped: Bool) throws -> Data? {
         do {
             let item = CoreCryptoKeychainItem(
                 uniqueKeyId: uniqueKeyId,
@@ -229,8 +221,6 @@ public class CoreCryptoKeyProvider {
             return try KeychainManager.fetchItem(item)
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
             return nil
-        } catch {
-            throw error
         }
     }
 

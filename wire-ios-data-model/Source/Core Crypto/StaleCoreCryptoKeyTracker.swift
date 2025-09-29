@@ -32,7 +32,7 @@ public struct StaleCoreCryptoKeysTracker: StaleCoreCryptoKeysTrackerProtocol {
 
     let key = "staleCoreCryptoKeyIds"
 
-    public init(defaults: UserDefaultsProtocol = UserDefaults.standard) {
+    public init(defaults: UserDefaultsProtocol) {
         self.defaults = defaults
     }
 
