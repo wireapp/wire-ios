@@ -29,6 +29,7 @@ enum BlockerViewControllerContext {
     case backendObsolete
     case clientObsolete
     case pendingCertificateEnroll
+    case networkError(code: Int)
     case genericError
 }
 
@@ -77,16 +78,39 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
+        case let .networkError(code):
+            showNetworkErrorMessage(code: code)
         case .genericError:
             showGenericErrorMessage()
         }
     }
 
+    private func showNetworkErrorMessage(code: Int) {
+        showErrorMessage(
+            title: "Network issue",
+            message: "Please check your internet connection and try again.",
+            debugLogMessage: "Account failed to load due to network error code: \(code)"
+        )
+    }
+
     private func showGenericErrorMessage() {
         typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
-        let alert = UIAlertController(
+        showErrorMessage(
             title: Strings.title,
             message: Strings.message,
+            debugLogMessage: "Account failed to load"
+        )
+    }
+
+    private func showErrorMessage(
+        title: String,
+        message: String,
+        debugLogMessage: String
+    ) {
+        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
+        let alert = UIAlertController(
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
 
@@ -110,7 +134,7 @@ final class BlockerViewController: LaunchImageViewController {
                     return
                 }
                 DebugLogSender.sendLogsByEmail(
-                    message: "My account failed to load.",
+                    message: debugLogMessage,
                     shareWithAVS: false,
                     presentingViewController: self,
                     fallbackActivityPopoverConfiguration: .sourceView(
