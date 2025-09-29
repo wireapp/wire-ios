@@ -481,14 +481,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// documentation](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration)
 
     func startProteusToMLSMigration() async throws
-    
+
     /// Restablish pending group
     ///
     /// Syncs the conversation metadata and join by external commit
     /// or establish the group by adding all mls clients depending on the epoch
     /// - Parameter groupID: the mls GroupID of the conversation to re-establish
     func reEstablishPendingGroup(groupID: MLSGroupID) async throws
-    
+
     // MARK: - Sync delegate
 
     /// Set the MLS sync delegate.
@@ -496,6 +496,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter delegate: The sync delegate to set.
 
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
-    
+
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
 }

@@ -718,6 +718,44 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testThatWhenSendingMlsMessageOnAPendingJoinConversation_CallsReEstablishPendingJoin() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .pendingJoin
+        }
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
+        let messageSendingStatus = Payload.MLSMessageSendingStatus(
+            time: Date(),
+            events: [],
+            failedToSend: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+        arrangement.mlsService.reEstablishPendingGroupGroupID_MockMethod = { _ in }
+
+        try await messageSender.sendMessage(message: message)
+
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 1)
+    }
+
     // MARK: - Helpers
 
     private func broadcastMessage() async -> GenericMessageEntity {

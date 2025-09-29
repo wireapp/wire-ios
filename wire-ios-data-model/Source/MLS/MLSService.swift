@@ -817,7 +817,6 @@ public final class MLSService: MLSServiceInterface {
             throw MLSServiceError.conversationNotFound
         }
 
-        
         try await internalEstablishPendingGroup(
             groupID: groupID,
             pendingGroup: conversation,
@@ -917,32 +916,34 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func reEstablishPendingGroup( groupID: MLSGroupID) async throws {
+    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
         guard let context else { return }
-        
+
         let conversationInfo = fetchConversationInfo(with: groupID, in: context)
-        
+
         guard let conversationInfo else {
             throw MLSServiceError.conversationNotFound
         }
-        
+
         try await actionsProvider.syncConversation(
             qualifiedID: conversationInfo.qualifiedID,
             context: context.notificationContext
         )
-        
+
         let (conversation, epoch, lastGroupID) = await context.perform {
-            let conversation = ZMConversation.fetch(with: conversationInfo.qualifiedID.uuid,
-                                                    domain: conversationInfo.qualifiedID.domain,
-                                                    in: context)
+            let conversation = ZMConversation.fetch(
+                with: conversationInfo.qualifiedID.uuid,
+                domain: conversationInfo.qualifiedID.domain,
+                in: context
+            )
             return (conversation, conversation?.epoch, conversation?.mlsGroupID)
         }
-        
+
         guard let conversation, let lastGroupID, let epoch else {
             throw MLSServiceError.conversationNotFound
         }
-        
-        let conversationExists = try await self.conversationExists(
+
+        let conversationExists = try await conversationExists(
             groupID: lastGroupID
         )
 
@@ -953,10 +954,10 @@ public final class MLSService: MLSServiceInterface {
         } else {
             try await joinByExternalCommit(groupID: lastGroupID)
         }
-        
+
         await save(context)
     }
-    
+
     // MARK: - Out-of-sync conversations
 
     public func repairOutOfSyncConversations() async throws {
