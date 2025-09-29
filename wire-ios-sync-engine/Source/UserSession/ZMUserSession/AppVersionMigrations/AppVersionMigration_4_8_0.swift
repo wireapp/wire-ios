@@ -19,16 +19,22 @@
 import GenericMessageProtocol
 import WireDataModel
 import WireDomain
+import WireNetwork
 
 struct AppVersionMigration_4_8_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.8.0"
     let contextProvider: ContextProvider
     let conversationLocalStore: (any ConversationLocalStoreProtocol)?
-    let messageLocalStore: (any MessageLocalStoreProtocol)?
     let protobufMessageProcessor: (any ConversationProtobufMessageProcessorProtocol)?
 
     func perform() async throws {
+        try await processUnknownMessages()
+    }
+
+    /// This code will never run, but it is a template for future migrations after the protobuf declaration changes and clients potentially have stored unprocessed events for later re-processing.
+
+    private func processUnknownMessages() async throws {
 
         let context = contextProvider.syncContext
         let unknownMessages = try await context.perform {
@@ -44,23 +50,25 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
 
             let (
                 conversation,
+                conversationID,
                 senderID,
-                senderDomain,
+                senderClientID,
                 eventTimestamp
             ) = await context.perform {
                 (
                     unknownMessage.conversation,
-                    unknownMessage.sender?.remoteIdentifier,
-                    unknownMessage.sender?.domain,
+                    unknownMessage.conversation?.qualifiedID,
+                    unknownMessage.sender?.qualifiedID,
+                    unknownMessage.senderClientID,
                     unknownMessage.eventTimestamp
                 )
             }
 
             if
                 let conversationLocalStore,
-                let messageLocalStore,
                 let protobufMessageProcessor,
                 let conversation,
+                let conversationID,
                 let senderID,
                 let eventTimestamp {
 
@@ -71,23 +79,21 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
                 )
 
                 await conversationLocalStore.addParticipantIfNeeded(
-                    participantID: senderID,
-                    participantDomain: senderDomain,
+                    participantID: senderID.uuid,
+                    participantDomain: senderID.domain,
                     in: conversation,
                     date: eventTimestamp.addingTimeInterval(-0.01)
                 )
 
-                /*
-            try await protobufMessageProcessor.processProtobufMessage(
-                genericMessage,
-                conversation: conversation,
-                conversationID: conversationID,
-                senderID: senderID,
-                senderClientID: messageSenderClientID,
-                date: date,
-                eventMessage: "unknown-message"
-            )
-             */
+                try await protobufMessageProcessor.processProtobufMessage(
+                    genericMessage,
+                    conversation: conversation,
+                    conversationID: .init(id: conversationID.uuid, domain: conversationID.domain),
+                    senderID: .init(id: senderID.uuid, domain: senderID.domain),
+                    senderClientID: senderClientID,
+                    date: eventTimestamp,
+                    eventMessage: "unknown-message"
+                )
 
             } else {
                 continue
