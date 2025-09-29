@@ -728,7 +728,7 @@ final class MessageSenderTests: MessagingTestBase {
         await assertItThrows(error: MessageSendError.missingGroupID) {
             try await messageSender.sendMessage(message: message)
         }
-        
+
         XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
     }
 
