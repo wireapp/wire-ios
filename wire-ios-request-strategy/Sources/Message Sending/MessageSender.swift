@@ -372,10 +372,11 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let (conversationID, groupID, mlsService) = await context.perform { (
+        let (conversationID, groupID, mlsService, mlsStatus) = await context.perform { (
             message.conversation?.qualifiedID,
             message.conversation?.mlsGroupID,
-            self.context.mlsService
+            self.context.mlsService,
+            message.conversation?.mlsStatus
         ) }
 
         guard let conversationID else {
@@ -388,6 +389,9 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMlsService
         }
 
+        if mlsStatus == .pendingJoin {
+            try await mlsService.reEstablishGroup(groupID: groupID)
+        }
         do {
             try await mlsService.commitPendingProposals(in: groupID)
             let encryptedData = try await encryptMlsMessage(message, groupID: groupID)

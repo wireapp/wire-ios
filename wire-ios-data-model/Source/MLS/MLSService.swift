@@ -808,6 +808,7 @@ public final class MLSService: MLSServiceInterface {
         guard let context else {
             return
         }
+
         let conversation = await context.perform {
             ZMConversation.fetch(with: groupID, in: context)
         }
@@ -816,6 +817,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSServiceError.conversationNotFound
         }
 
+        
         try await internalEstablishPendingGroup(
             groupID: groupID,
             pendingGroup: conversation,
@@ -915,6 +917,46 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    public func reEstablishPendingGroup( groupID: MLSGroupID) async throws {
+        guard let context else { return }
+        
+        let conversationInfo = fetchConversationInfo(with: groupID, in: context)
+        
+        guard let conversationInfo else {
+            throw MLSServiceError.conversationNotFound
+        }
+        
+        try await actionsProvider.syncConversation(
+            qualifiedID: conversationInfo.qualifiedID,
+            context: context.notificationContext
+        )
+        
+        let (conversation, epoch) = await context.perform {
+            let conversation = ZMConversation.fetch(with: conversationInfo.qualifiedID.uuid,
+                                                    domain: conversationInfo.qualifiedID.domain,
+                                                    in: context)
+            return (conversation, conversation?.epoch)
+        }
+        
+        guard let conversation else {
+            throw MLSServiceError.conversationNotFound
+        }
+        
+        let conversationExists = try await self.conversationExists(
+            groupID: groupID
+        )
+
+        let shouldEstablishGroup = epoch == 0 && !conversationExists
+
+        if epoch == 0 {
+            try await internalEstablishPendingGroup(groupID: groupID, pendingGroup: conversation, context: context)
+        } else {
+            try await joinByExternalCommit(groupID: groupID)
+        }
+        
+        await save(context)
+    }
+    
     // MARK: - Out-of-sync conversations
 
     public func repairOutOfSyncConversations() async throws {
