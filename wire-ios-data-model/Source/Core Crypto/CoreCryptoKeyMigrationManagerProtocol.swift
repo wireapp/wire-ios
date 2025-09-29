@@ -19,16 +19,16 @@
 // sourcery: AutoMockable
 public protocol CoreCryptoKeyMigrationManagerProtocol {
 
-    /// Wether or not we need to update the database key from String to Data (bytes) format
+    /// Wether we need to update the database key from String to Data (bytes) format
 
     var isMigrationToBytesNeeded: Bool { get }
 
-    /// Wether or not we need to migrate the stored database key from an unscoped keychain item to a keychain item
+    /// Wether we need to migrate the stored database key from an unscoped keychain item to a keychain item
     /// scoped by user
 
     var isMigrationToScopedKeyNeeded: Bool { get }
 
-    /// Wether or not we need to re-encrypt the database with a new key and update it in keychain storage
+    /// Wether we need to re-encrypt the database with a new key and update it in keychain storage
 
     var isKeyRotationNeeded: Bool { get }
 
