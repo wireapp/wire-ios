@@ -38,22 +38,28 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
         }
 
         for (unknownMessage, payload) in unknownMessages {
-            guard let payload, let message = GenericMessage(from: payload, validate: false) else {
+            guard let payload, let genericMessage = GenericMessage(from: payload, validate: false) else {
                 continue
             }
 
-// TODO: finish implementation
+            let (conversation, eventTimestamp) = await context.perform {
+                (unknownMessage.conversation, unknownMessage.eventTimestamp)
+            }
 
-            // new sync
+            if
+                let conversationLocalStore,
+                let messageLocalStore,
+                let protobufMessageProcessor,
+                let conversation,
+                let eventTimestamp {
 
-            if let conversationLocalStore, let messageLocalStore, let protobufMessageProcessor {
-            /*
-            await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
-                conversation: conversation,
-                genericMessage: genericMessage,
-                date: date
-            )
+                await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
+                    conversation: conversation,
+                    genericMessage: genericMessage,
+                    date: eventTimestamp
+                )
 
+                /*
             await conversationLocalStore.addParticipantIfNeeded(
                 participantID: senderID.id,
                 participantDomain: senderID.domain,

@@ -38,4 +38,8 @@ public final class UnknownMessage: ZMOTRMessage {
 
     @NSManaged public var payload: Data?
 
+    /// The date/time the event was initially received.
+
+    @NSManaged public var eventTimestamp: Date?
+
 }
