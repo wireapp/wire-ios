@@ -600,7 +600,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // WHEN
         try await sut.reEstablishPendingGroup(groupID: groupID)
 
-
         // THEN
         try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
         try XCTAssertCount(
@@ -642,7 +641,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // WHEN
         try await sut.reEstablishPendingGroup(groupID: groupID)
 
-
         // THEN
         try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
         try XCTAssertCount(
@@ -653,7 +651,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(conversation.mlsStatus, .ready)
         }
     }
-
 
     func test_EstablishGroup_WipesGroupOnError() async throws {
         // Given
