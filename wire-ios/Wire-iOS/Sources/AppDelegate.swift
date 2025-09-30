@@ -210,13 +210,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
-        let isHeadlessBackgroundLaunch =
-            application.applicationState == .background &&
-            UIApplication.shared.connectedScenes.allSatisfy {
-                $0.activationState == .background || $0.activationState == .unattached
-            }
-
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()

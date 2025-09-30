@@ -36,7 +36,7 @@ public extension ZMUserSession {
         guard !journal[.isSyncV2Enabled] else {
             WireLogger.sync.debug("background fetch is triggered")
             Task {
-                WireLogger.sync.debug("Sync already running: \(syncAgent?.syncRunning ?? false)", )
+                WireLogger.sync.debug("Sync already running: \(syncAgent?.syncRunning ?? false)")
                 await self.syncAgent?.suspend()
                 WireLogger.sync.debug("Sync suspended")
                 completionHandler(.noData)
