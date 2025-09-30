@@ -172,7 +172,8 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             return try context.fetch(fetchRequest)
         }
         XCTAssertEqual(remainingMessages.count, 1)
-        XCTAssertEqual(remainingMessages.first?.nonce, Scaffolding.messageID)
+        let nonce = await context.perform { remainingMessages.first?.nonce }
+        XCTAssertEqual(nonce, Scaffolding.messageID)
     }
 
     func testProcessStoredUnknownMessages_WithMessageMissingContext() async throws {
