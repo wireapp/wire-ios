@@ -254,7 +254,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
         // given
         let unsupportedVersions = Set(APIVersion.allCases).subtracting(
-            [.v9, .v10, .v11]
+            [.v9, .v10, .v11, .v12]
         )
 
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
