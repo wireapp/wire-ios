@@ -167,12 +167,11 @@ public extension ZMConversation {
             linkPreviews: [],
             replyingTo: quotedMessage as? ZMOTRMessage
         )
-        var genericMessage = GenericMessage(
+        let genericMessage = GenericMessage(
             content: text,
             nonce: nonce,
             expiresAfter: activeMessageDestructionTimeoutValue
         )
-        genericMessage.unknownStrategy = .warnUserAllowRetry // TODO: revert changes
 
         let clientMessage = try appendClientMessage(with: genericMessage, expires: true, hidden: false, configure: {
             $0.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
