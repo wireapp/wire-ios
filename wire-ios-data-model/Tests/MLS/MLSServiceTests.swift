@@ -571,14 +571,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(mockAddMembersCalled)
     }
 
-    func test_reEstablishGroup_establishGroup() async throws {
+    private func internalTestReEstablishGroup(epoch: UInt64) async throws {
         // GIVEN
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let conversation = await uiMOC.perform { self.createConversation(
             outOfSync: false,
-            currentEpoch: 0,
+            currentEpoch: epoch,
             groupID: groupID
         ).conversation }
+
         await uiMOC.perform {
             XCTAssertEqual(conversation.mlsStatus, .pendingJoin)
         }
@@ -594,18 +595,20 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(mlsGroupID, groupID)
             XCTAssertEqual(mlsGroupInfo, groupInfo)
         }
+        mockMLSActionExecutor.mockCommitPendingProposals = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+
         mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in }
-        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // WHEN
         try await sut.reEstablishPendingGroup(groupID: groupID)
 
         // THEN
         try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
-        try XCTAssertCount(
-            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations,
-            count: 1
-        )
         await uiMOC.perform {
             XCTAssertEqual(conversation.mlsStatus, .ready)
         }
@@ -613,43 +616,39 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_reEstablishGroup_joinViaExternalCommit() async throws {
         // GIVEN
-        let groupID = MLSGroupID(Data([1, 2, 3]))
-        let conversation = await uiMOC.perform { self.createConversation(
-            outOfSync: false,
-            currentEpoch: 1,
-            groupID: groupID
-        ).conversation }
-
-        await uiMOC.perform {
-            XCTAssertEqual(conversation.mlsStatus, .pendingJoin)
-        }
-        let mlsSelfUser = await uiMOC.perform {
-            MLSUser(from: self.selfUser, localDomain: self.localDomain)
-        }
-        let groupInfo = Data()
-        mockActionsProvider
-            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
-                groupInfo
-            }
-        mockMLSActionExecutor.mockJoinGroup = { mlsGroupID, mlsGroupInfo in
-            XCTAssertEqual(mlsGroupID, groupID)
-            XCTAssertEqual(mlsGroupInfo, groupInfo)
-        }
-        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in }
         mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // WHEN
-        try await sut.reEstablishPendingGroup(groupID: groupID)
+        try await internalTestReEstablishGroup(epoch: 1)
 
         // THEN
-        try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
         try XCTAssertCount(
             mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations,
             count: 1
         )
-        await uiMOC.perform {
-            XCTAssertEqual(conversation.mlsStatus, .ready)
-        }
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 0)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
+    func test_reEstablishGroup_establishGroup() async throws {
+        // GIVEN
+        mockCoreCryptoContext.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [KeyPackage(
+            client: "123e",
+            domain: "qwer",
+            keyPackage: "qwer",
+            keyPackageRef: "asdf",
+            userID: UUID()
+        )]
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        // WHEN
+        try await internalTestReEstablishGroup(epoch: 0)
+
+        // THEN
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 0)
     }
 
     func test_EstablishGroup_WipesGroupOnError() async throws {
