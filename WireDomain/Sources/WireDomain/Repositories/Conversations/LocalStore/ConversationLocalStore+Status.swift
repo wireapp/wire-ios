@@ -111,11 +111,12 @@ extension ConversationLocalStore {
         } catch {
             conversationExists = false
         }
-        
+
         var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform { [self] in
             if localConversation.mlsStatus == .pendingJoinAfterReset {
+                // don't override the mlsStatus, this will be handle in re-establish group when needed
                 newStatus = .pendingJoinAfterReset
             }
             localConversation.mlsStatus = newStatus

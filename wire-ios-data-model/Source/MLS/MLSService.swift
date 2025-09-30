@@ -371,9 +371,9 @@ public final class MLSService: MLSServiceInterface {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
-
-            let usersWithSelfUser = users + [mlsSelfUser]
-            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            // make sure we have the selfUser but only once
+            let usersWithSelfUser = Set(users + [mlsSelfUser])
+            try await addMembersToConversation(with: Array(usersWithSelfUser), for: groupID)
             return ciphersuite
         } catch {
             try await wipeGroup(groupID)
@@ -2058,7 +2058,7 @@ extension MLSService: EpochObserver {}
 
 // MARK: - Helper types
 
-public struct MLSUser: Equatable {
+public struct MLSUser: Equatable, Hashable {
 
     public let id: UUID
     public let domain: String

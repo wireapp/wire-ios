@@ -576,10 +576,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let conversation = await uiMOC.perform {
             let conversation = self.createConversation(
-            outOfSync: false,
-            currentEpoch: epoch,
-            groupID: groupID
-        ).conversation
+                outOfSync: false,
+                currentEpoch: epoch,
+                groupID: groupID
+            ).conversation
             conversation.mlsStatus = .pendingJoinAfterReset
             return conversation
         }

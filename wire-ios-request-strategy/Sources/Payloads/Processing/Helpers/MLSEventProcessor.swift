@@ -157,8 +157,9 @@ public class MLSEventProcessor: MLSEventProcessing {
 
         await context.perform {
             let previousStatus = conversation.mlsStatus
-            // double check
+
             if previousStatus == .pendingJoinAfterReset {
+                // never override pendingJoinAferReset, this will be handle in re-establish group
                 newStatus = .pendingJoinAfterReset
             }
             conversation.mlsStatus = newStatus
