@@ -40,7 +40,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
@@ -55,7 +54,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
         sut = nil
         conversationLocalStore = nil
         protobufMessageProcessor = nil
@@ -96,7 +94,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             )
         }
 
-        let unknownMessage = try await context.perform { [context] in
+        try await context.perform { [context] in
             let message = UnknownMessage(
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
@@ -107,7 +105,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             message.eventTimestamp = Scaffolding.eventTimestamp
             message.senderClientID = Scaffolding.senderClientID
             try context.save()
-            return message
         }
 
         // When
@@ -178,7 +175,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
     func testProcessStoredUnknownMessages_WithMessageMissingContext() async throws {
         // Given - create unknown message without proper conversation/sender context
-        let unknownMessage = try await context.perform { [context] in
+        try await context.perform { [context] in
             let message = UnknownMessage(
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
@@ -187,7 +184,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             message.eventTimestamp = Scaffolding.eventTimestamp
             // No conversation or sender set
             try context.save()
-            return message
         }
 
         // When
