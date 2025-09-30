@@ -44,7 +44,7 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
         }
 
         for (unknownMessage, payload) in unknownMessages {
-            guard let payload, let genericMessage = GenericMessage(from: payload, validate: false) else {
+            guard let payload, let genericMessage = GenericMessage(from: payload, validate: false), genericMessage.content != nil else {
                 continue
             }
 
