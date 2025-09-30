@@ -916,7 +916,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
+    public func reestablishPendingGroup(groupID: MLSGroupID) async throws {
         guard let context else { return }
 
         let conversationInfo = fetchConversationInfo(with: groupID, in: context)
