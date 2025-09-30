@@ -220,6 +220,29 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         }
     }
 
+    func test_CalculateSupportedProtocols_IfSelfClientSupportMLS_NoOverride() async throws {
+        // Given
+        await setup(remoteSupportedProtocols: [.mls])
+
+        userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
+        let selfProtocols = [WireDataModel.MessageProtocol.proteus, WireDataModel.MessageProtocol.mls]
+        userLocalStore.fetchSelfUserSupportedProtocols_MockValue = Set(selfProtocols)
+        let testCases: [
+            (migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireNetwork.MessageProtocol>)
+        ] =
+            [
+                (migrationState: .notStarted, supportedProtocols: [.proteus, .mls])
+            ]
+
+        for testCase in testCases {
+            await setup(migrationState: testCase.migrationState)
+            // When
+            let supportedProtocols = await sut.invoke()
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, supportedProtocols)
+        }
+    }
+
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
         // Given
         await setup(remoteSupportedProtocols: [.mls])
