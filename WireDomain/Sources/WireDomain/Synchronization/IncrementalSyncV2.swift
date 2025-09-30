@@ -147,6 +147,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         let task = Task { @Sendable [self] in
             do {
+                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
+                // cancel the task (not keeping any file lock in suspend mode)
                 try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
                     await processLiveStream(
                         liveEventStream,
