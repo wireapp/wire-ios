@@ -16,212 +16,199 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 import WireDataModel
 import WireDomain
+import WireDomainSupport
 import WireNetwork
+import WireDataModelSupport
+
 @testable import WireDomain
 
 final class UnknownMessageProcessingServiceTests: XCTestCase {
 
-    var contextProvider: MockContextProvider!
-    var conversationLocalStore: MockConversationLocalStore!
-    var protobufMessageProcessor: MockConversationProtobufMessageProcessor!
-    var service: UnknownMessageProcessingService!
+    private var sut: UnknownMessageProcessingService!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var protobufMessageProcessor: MockConversationProtobufMessageProcessorProtocol!
 
-    override func setUp() {
-        super.setUp()
-        contextProvider = MockContextProvider()
-        conversationLocalStore = MockConversationLocalStore()
-        protobufMessageProcessor = MockConversationProtobufMessageProcessor()
-        
-        service = UnknownMessageProcessingService(
-            contextProvider: contextProvider,
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+
+    private var context: NSManagedObjectContext {
+        coreDataStack.syncContext
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        coreDataStack = try await coreDataStackHelper.createStack()
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        protobufMessageProcessor = MockConversationProtobufMessageProcessorProtocol()
+
+        sut = UnknownMessageProcessingService(
+            contextProvider: coreDataStack,
             conversationLocalStore: conversationLocalStore,
             protobufMessageProcessor: protobufMessageProcessor
         )
     }
 
-    override func tearDown() {
-        service = nil
-        protobufMessageProcessor = nil
+    override func tearDown() async throws {
+        try await super.tearDown()
+        sut = nil
         conversationLocalStore = nil
-        contextProvider = nil
-        super.tearDown()
+        protobufMessageProcessor = nil
+        modelHelper = nil
+        coreDataStack = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
     }
 
     func testProcessStoredUnknownMessages_WithNoMessages() async throws {
-        // Given
-        contextProvider.mockUnknownMessages = []
+        // Given - no unknown messages in database
 
         // When
-        try await service.processStoredUnknownMessages()
+        try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageCallCount, 0)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
     }
 
     func testProcessStoredUnknownMessages_WithProcessableMessage() async throws {
         // Given
-        let mockConversation = MockZMConversation()
-        let mockSender = MockZMUser()
-        let mockUnknownMessage = MockUnknownMessage()
-        mockUnknownMessage.payload = Data("test payload".utf8)
-        mockUnknownMessage.conversation = mockConversation
-        mockUnknownMessage.sender = mockSender
-        mockUnknownMessage.eventTimestamp = Date()
-        mockUnknownMessage.senderClientID = "client123"
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
 
-        contextProvider.mockUnknownMessages = [mockUnknownMessage]
-        contextProvider.mockGenericMessage = MockGenericMessage()
+        let sender = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.senderID.id,
+                domain: Scaffolding.senderID.domain,
+                in: context
+            )
+        }
+
+        let unknownMessage = await context.perform { [self] in
+            let message = UnknownMessage(
+                nonce: Scaffolding.messageID,
+                managedObjectContext: context
+            )
+            message.payload = Scaffolding.validPayload
+            message.conversation = conversation
+            message.sender = sender
+            message.eventTimestamp = Scaffolding.eventTimestamp
+            message.senderClientID = Scaffolding.senderClientID
+            try context.save()
+            return message
+        }
 
         // When
-        try await service.processStoredUnknownMessages()
+        try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageCallCount, 1)
-        XCTAssertTrue(mockUnknownMessage.wasDeleted)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 1)
+        
+        // Verify the message was deleted
+        let remainingMessages = try await context.perform { [context] in
+            let fetchRequest = UnknownMessage.fetchRequest()
+            return try context.fetch(fetchRequest)
+        }
+        XCTAssertTrue(remainingMessages.isEmpty)
     }
 
     func testProcessStoredUnknownMessages_WithUnprocessableMessage() async throws {
         // Given
-        let mockUnknownMessage = MockUnknownMessage()
-        mockUnknownMessage.payload = Data("invalid payload".utf8)
-        mockUnknownMessage.conversation = MockZMConversation()
-        mockUnknownMessage.sender = MockZMUser()
-        mockUnknownMessage.eventTimestamp = Date()
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
 
-        contextProvider.mockUnknownMessages = [mockUnknownMessage]
-        contextProvider.mockGenericMessage = nil // Cannot decode
+        let sender = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.senderID.id,
+                domain: Scaffolding.senderID.domain,
+                in: context
+            )
+        }
+
+        let unknownMessage = await context.perform { [self] in
+            let message = UnknownMessage(
+                nonce: Scaffolding.messageID,
+                managedObjectContext: context
+            )
+            message.payload = Scaffolding.invalidPayload
+            message.conversation = conversation
+            message.sender = sender
+            message.eventTimestamp = Scaffolding.eventTimestamp
+            try context.save()
+            return message
+        }
 
         // When
-        try await service.processStoredUnknownMessages()
+        try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageCallCount, 0)
-        XCTAssertFalse(mockUnknownMessage.wasDeleted) // Should not be deleted if unprocessable
-    }
-
-}
-
-// MARK: - Mock Classes
-
-class MockContextProvider: ContextProvider {
-    var syncContext: NSManagedObjectContext {
-        return MockNSManagedObjectContext()
-    }
-    
-    var mockUnknownMessages: [MockUnknownMessage] = []
-    
-    func perform<T>(_ block: @escaping (NSManagedObjectContext) -> T) async -> T {
-        let context = MockNSManagedObjectContext()
-        context.mockUnknownMessages = mockUnknownMessages
-        return block(context)
-    }
-}
-
-class MockNSManagedObjectContext: NSManagedObjectContext {
-    var mockUnknownMessages: [MockUnknownMessage] = []
-    
-    override func fetch<T>(_ request: NSFetchRequest<T>) throws -> [T] {
-        if request.entityName == "UnknownMessage" {
-            return mockUnknownMessages as! [T]
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
+        
+        // Verify the message was NOT deleted (still unprocessable)
+        let remainingMessages = try await context.perform {
+            let fetchRequest = UnknownMessage.fetchRequest()
+            return try context.fetch(fetchRequest)
         }
-        return []
+        XCTAssertEqual(remainingMessages.count, 1)
+        XCTAssertEqual(remainingMessages.first?.nonce, Scaffolding.messageID)
     }
-    
-    override func delete(_ object: NSManagedObject) {
-        if let unknownMessage = object as? MockUnknownMessage {
-            unknownMessage.wasDeleted = true
+
+    func testProcessStoredUnknownMessages_WithMessageMissingContext() async throws {
+        // Given - create unknown message without proper conversation/sender context
+        let unknownMessage = await context.perform { [self] in
+            let message = UnknownMessage(
+                nonce: Scaffolding.messageID,
+                managedObjectContext: context
+            )
+            message.payload = Scaffolding.validPayload
+            message.eventTimestamp = Scaffolding.eventTimestamp
+            // No conversation or sender set
+            try context.save()
+            return message
         }
-    }
-}
 
-class MockUnknownMessage: UnknownMessage {
-    var wasDeleted = false
-    
-    override init(nonce: UUID, managedObjectContext: NSManagedObjectContext) {
-        super.init(nonce: nonce, managedObjectContext: managedObjectContext)
-    }
-}
+        // When
+        try await sut.processStoredUnknownMessages()
 
-class MockZMConversation: ZMConversation {
-    override var qualifiedID: QualifiedID? {
-        return QualifiedID(uuid: UUID(), domain: "example.com")
+        // Then
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
+        
+        // Verify the message was deleted (missing context is considered unprocessable)
+        let remainingMessages = try await context.perform {
+            let fetchRequest = UnknownMessage.fetchRequest()
+            return try context.fetch(fetchRequest)
+        }
+        XCTAssertTrue(remainingMessages.isEmpty)
     }
-}
 
-class MockZMUser: ZMUser {
-    override var qualifiedID: QualifiedID? {
-        return QualifiedID(uuid: UUID(), domain: "example.com")
-    }
-}
+    // MARK: - Scaffolding
 
-class MockGenericMessage: GenericMessage {
-    override var content: GenericMessage.OneOf_Content? {
-        return .text(Text(content: "test message"))
+    private enum Scaffolding {
+        static let conversationID = QualifiedID(uuid: UUID(), domain: "example.com")
+        static let senderID = QualifiedID(uuid: UUID(), domain: "example.com")
+        static let messageID = UUID()
+        static let senderClientID = "client123"
+        static let eventTimestamp = Date()
+        
+        // Valid protobuf payload that can be decoded
+        static let validPayload = Data(base64Encoded: "CgR0ZXN0")! // "test" as base64
+        
+        // Invalid payload that cannot be decoded
+        static let invalidPayload = Data("invalid protobuf data".utf8)
     }
-}
 
-class MockConversationLocalStore: ConversationLocalStoreProtocol {
-    func updateSecurityLevelAfterReceivingMessage(conversation: ZMConversation, genericMessage: GenericMessage, date: Date) async {
-        // Mock implementation
-    }
-    
-    func addParticipantIfNeeded(participantID: UUID, participantDomain: String, in conversation: ZMConversation, date: Date) async {
-        // Mock implementation
-    }
-    
-    // Add other required methods as needed
-    func fetchConversation(id: UUID, domain: String?) async -> ZMConversation? { return nil }
-    func updateLastReadMessageTimestamp(_ lastRead: LastRead, in conversation: ZMConversation) async {}
-    func updateClearedMessageTimestamp(_ cleared: Cleared, in conversation: ZMConversation) async {}
-    func addParticipant(participantID: UUID, participantDomain: String?, in conversation: ZMConversation, date: Date) async {}
-    func removeParticipant(participantID: UUID, participantDomain: String?, from conversation: ZMConversation, date: Date) async {}
-    func updateConversationName(_ name: String, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationReceiptMode(_ receiptMode: ReceiptMode, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationAccessMode(_ accessMode: ConversationAccessMode, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationAccessRole(_ accessRole: ConversationAccessRole, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMessageTimer(_ messageTimer: MessageTimer, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationGuestLink(_ guestLink: GuestLink, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationGuestLinkStatus(_ guestLinkStatus: GuestLinkStatus, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSVerificationStatus(_ mlsVerificationStatus: MLSVerificationStatus, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupID(_ mlsGroupID: MLSGroupID, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSEpoch(_ mlsEpoch: MLSEpoch, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSCommitBundle(_ mlsCommitBundle: MLSCommitBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSProposalBundle(_ mlsProposalBundle: MLSProposalBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSWelcomeMessage(_ mlsWelcomeMessage: MLSWelcomeMessage, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfo(_ mlsGroupInfo: MLSGroupInfo, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoCommitBundle(_ mlsGroupInfoCommitBundle: MLSGroupInfoCommitBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoProposalBundle(_ mlsGroupInfoProposalBundle: MLSGroupInfoProposalBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoWelcomeMessage(_ mlsGroupInfoWelcomeMessage: MLSGroupInfoWelcomeMessage, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfo(_ mlsGroupInfoGroupInfo: MLSGroupInfoGroupInfo, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoCommitBundle(_ mlsGroupInfoGroupInfoCommitBundle: MLSGroupInfoGroupInfoCommitBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoProposalBundle(_ mlsGroupInfoGroupInfoProposalBundle: MLSGroupInfoGroupInfoProposalBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoWelcomeMessage(_ mlsGroupInfoGroupInfoWelcomeMessage: MLSGroupInfoGroupInfoWelcomeMessage, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfo(_ mlsGroupInfoGroupInfoGroupInfo: MLSGroupInfoGroupInfoGroupInfo, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoCommitBundle(_ mlsGroupInfoGroupInfoGroupInfoCommitBundle: MLSGroupInfoGroupInfoGroupInfoCommitBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoProposalBundle(_ mlsGroupInfoGroupInfoGroupInfoProposalBundle: MLSGroupInfoGroupInfoGroupInfoProposalBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoWelcomeMessage(_ mlsGroupInfoGroupInfoGroupInfoWelcomeMessage: MLSGroupInfoGroupInfoGroupInfoWelcomeMessage, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoGroupInfo(_ mlsGroupInfoGroupInfoGroupInfoGroupInfo: MLSGroupInfoGroupInfoGroupInfoGroupInfo, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoGroupInfoCommitBundle(_ mlsGroupInfoGroupInfoGroupInfoGroupInfoCommitBundle: MLSGroupInfoGroupInfoGroupInfoGroupInfoCommitBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoGroupInfoProposalBundle(_ mlsGroupInfoGroupInfoGroupInfoGroupInfoProposalBundle: MLSGroupInfoGroupInfoGroupInfoGroupInfoProposalBundle, in conversation: ZMConversation, date: Date) async {}
-    func updateConversationMLSGroupInfoGroupInfoGroupInfoGroupInfoWelcomeMessage(_ mlsGroupInfoGroupInfoGroupInfoGroupInfoWelcomeMessage: MLSGroupInfoGroupInfoGroupInfoGroupInfoWelcomeMessage, in conversation: ZMConversation, date: Date) async {}
-}
-
-class MockConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
-    var processProtobufMessageCallCount = 0
-    
-    func processProtobufMessage(
-        _ genericMessage: GenericMessage,
-        conversation: ZMConversation,
-        conversationID: ConversationID,
-        senderID: UserID,
-        senderClientID: String?,
-        date: Date,
-        eventMessage: String
-    ) async throws {
-        processProtobufMessageCallCount += 1
-    }
 }
