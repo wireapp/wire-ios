@@ -27,7 +27,7 @@ struct DeveloperDebugActionsView: View {
         List(viewModel.debugItems) { debugItem in
             switch debugItem {
             case let .button(buttonItem):
-                Button(action: buttonItem.action) {
+                Button(hapticFeedbackStyle: .success, action: buttonItem.action) {
                     Text(buttonItem.title)
                 }
             case let .toggle(toggleItem):

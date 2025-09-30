@@ -118,12 +118,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func storeMLSConversationPendingJoin(
+    public func storeMLSConversationPendingJoinAfterReset(
         newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async {
         await context.perform {
-            conversation.mlsStatus = .pendingJoin
+            conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
         }
     }
