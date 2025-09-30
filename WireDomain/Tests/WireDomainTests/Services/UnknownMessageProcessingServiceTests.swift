@@ -72,14 +72,17 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
+        XCTAssertEqual(
+            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            0
+        )
     }
 
     func testProcessStoredUnknownMessages_WithProcessableMessage() async throws {
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.id,
+                id: Scaffolding.conversationID.uuid,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -87,19 +90,19 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         let sender = await context.perform { [self] in
             modelHelper.createUser(
-                id: Scaffolding.senderID.id,
+                id: Scaffolding.senderID.uuid,
                 domain: Scaffolding.senderID.domain,
                 in: context
             )
         }
 
-        let unknownMessage = await context.perform { [self] in
+        let unknownMessage = try await context.perform { [context] in
             let message = UnknownMessage(
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
             )
             message.payload = Scaffolding.validPayload
-            message.conversation = conversation
+            message.visibleInConversation = conversation
             message.sender = sender
             message.eventTimestamp = Scaffolding.eventTimestamp
             message.senderClientID = Scaffolding.senderClientID
@@ -111,8 +114,11 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 1)
-        
+        XCTAssertEqual(
+            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            1
+        )
+
         // Verify the message was deleted
         let remainingMessages = try await context.perform { [context] in
             let fetchRequest = UnknownMessage.fetchRequest()
@@ -125,7 +131,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.id,
+                id: Scaffolding.conversationID.uuid,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -133,33 +139,35 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         let sender = await context.perform { [self] in
             modelHelper.createUser(
-                id: Scaffolding.senderID.id,
+                id: Scaffolding.senderID.uuid,
                 domain: Scaffolding.senderID.domain,
                 in: context
             )
         }
 
-        let unknownMessage = await context.perform { [self] in
+        try await context.perform { [context] in
             let message = UnknownMessage(
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
             )
             message.payload = Scaffolding.invalidPayload
-            message.conversation = conversation
+            message.visibleInConversation = conversation
             message.sender = sender
             message.eventTimestamp = Scaffolding.eventTimestamp
             try context.save()
-            return message
         }
 
         // When
         try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
-        
+        XCTAssertEqual(
+            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            0
+        )
+
         // Verify the message was NOT deleted (still unprocessable)
-        let remainingMessages = try await context.perform {
+        let remainingMessages = try await context.perform { [context] in
             let fetchRequest = UnknownMessage.fetchRequest()
             return try context.fetch(fetchRequest)
         }
@@ -169,7 +177,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
     func testProcessStoredUnknownMessages_WithMessageMissingContext() async throws {
         // Given - create unknown message without proper conversation/sender context
-        let unknownMessage = await context.perform { [self] in
+        let unknownMessage = try await context.perform { [context] in
             let message = UnknownMessage(
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
@@ -185,10 +193,13 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         try await sut.processStoredUnknownMessages()
 
         // Then
-        XCTAssertEqual(protobufMessageProcessor.processProtobufMessage_Invocations.count, 0)
-        
+        XCTAssertEqual(
+            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            0
+        )
+
         // Verify the message was deleted (missing context is considered unprocessable)
-        let remainingMessages = try await context.perform {
+        let remainingMessages = try await context.perform { [context] in
             let fetchRequest = UnknownMessage.fetchRequest()
             return try context.fetch(fetchRequest)
         }
