@@ -705,7 +705,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
         XCTAssertEqual(mockCoreCryptoContext.wipeConversationConversationId_Invocations.count, 1)
