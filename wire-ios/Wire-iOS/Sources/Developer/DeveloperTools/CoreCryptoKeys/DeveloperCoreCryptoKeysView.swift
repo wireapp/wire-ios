@@ -19,9 +19,10 @@
 import SwiftUI
 
 // MARK: - Views
+
 struct DeveloperCoreCryptoKeysView: View {
     @StateObject var viewModel: DeveloperCoreCryptoKeysViewModel
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -37,7 +38,7 @@ struct DeveloperCoreCryptoKeysView: View {
             .navigationTitle("Core Crypto Keys")
         }
     }
-    
+
     func keysSection(keys: [KeychainItem]) -> some View {
         Section(header: Text("Keychain Items").font(.headline)) {
             ForEach(keys) { item in
@@ -54,10 +55,10 @@ struct DeveloperCoreCryptoKeysView: View {
             }
         }
     }
-    
+
     func uniqueKeyIdSection(uuid: UUID?) -> some View {
         Section(header: Text("Unique Key Identifier").font(.headline)) {
-            if let uuid = uuid {
+            if let uuid {
                 Text(uuid.uuidString)
                     .font(.footnote)
                     .foregroundColor(.secondary)

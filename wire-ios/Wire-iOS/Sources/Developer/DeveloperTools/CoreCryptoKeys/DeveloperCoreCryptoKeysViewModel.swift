@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
-import WireSyncEngine
-import WireFoundation
 import WireCommonComponents
+import WireFoundation
+import WireSyncEngine
 
 struct DebugCoreCryptoAccount: Hashable {
     let userID: UUID
@@ -30,22 +30,23 @@ struct DebugCoreCryptoAccount: Hashable {
 }
 
 // MARK: - ViewModel
+
 class DeveloperCoreCryptoKeysViewModel: ObservableObject {
     @Published var accounts: [DebugCoreCryptoAccount] = []
-    
+
     private let userDefaults = UserDefaults.applicationGroup
     private let keychainHelper = DeveloperKeychainHelper()
     private let accountManager = SessionManager.shared?.accountManager
-    
+
     init() {
         loadAccounts()
     }
-    
+
     func loadAccounts() {
         guard let accountManager else { return }
 
         accounts = accountManager.accounts.compactMap { account in
-            return DebugCoreCryptoAccount(
+            DebugCoreCryptoAccount(
                 userID: account.userIdentifier,
                 username: account.userName,
                 keys: fetchKechainItems(for: account.userIdentifier),
@@ -54,14 +55,14 @@ class DeveloperCoreCryptoKeysViewModel: ObservableObject {
             )
         }
     }
-    
+
     func nameText(for account: DebugCoreCryptoAccount) -> String {
         var text = account.username
-        
+
         if account.isSelected {
             text += " - current account"
         }
-        
+
         return text
     }
 
@@ -69,13 +70,13 @@ class DeveloperCoreCryptoKeysViewModel: ObservableObject {
         keychainHelper.delete(item)
         loadAccounts()
     }
-    
+
     private func fetchKechainItems(for userID: UUID) -> [KeychainItem] {
-        return keychainHelper.fetchAll(matchingSecClass: kSecClassKey).filter {
+        keychainHelper.fetchAll(matchingSecClass: kSecClassKey).filter {
             $0.applicationTag?.contains(userID.uuidString) ?? false
         }
     }
-    
+
     private func fetchUniqueIdentifier(for userID: UUID) -> UUID? {
         let userDefaults = PrivateUserDefaults<CoreCryptoKeyProviderDefaults>(
             userID: userID,
