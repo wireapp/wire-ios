@@ -571,6 +571,87 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(mockAddMembersCalled)
     }
 
+    private func internalTestReEstablishGroup(epoch: UInt64) async throws {
+        // GIVEN
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let conversation = await uiMOC.perform {
+            let conversation = self.createConversation(
+                outOfSync: false,
+                currentEpoch: epoch,
+                groupID: groupID
+            ).conversation
+            conversation.mlsStatus = .pendingJoinAfterReset
+            return conversation
+        }
+
+        let mlsSelfUser = await uiMOC.perform {
+            MLSUser(from: self.selfUser, localDomain: self.localDomain)
+        }
+        let groupInfo = Data()
+        mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
+                groupInfo
+            }
+        mockMLSActionExecutor.mockJoinGroup = { mlsGroupID, mlsGroupInfo in
+            XCTAssertEqual(mlsGroupID, groupID)
+            XCTAssertEqual(mlsGroupInfo, groupInfo)
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+
+        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in }
+
+        // WHEN
+        try await sut.reEstablishPendingGroup(groupID: groupID)
+
+        // THEN
+        try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
+        await uiMOC.perform {
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+        }
+    }
+
+    func test_reEstablishGroup_joinViaExternalCommit() async throws {
+        // GIVEN
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
+
+        // WHEN
+        try await internalTestReEstablishGroup(epoch: 1)
+
+        // THEN
+        try XCTAssertCount(
+            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations,
+            count: 1
+        )
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 0)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
+    func test_reEstablishGroup_establishGroup() async throws {
+        // GIVEN
+        mockCoreCryptoContext.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [KeyPackage(
+            client: "123e",
+            domain: "qwer",
+            keyPackage: "qwer",
+            keyPackageRef: "asdf",
+            userID: UUID()
+        )]
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        // WHEN
+        try await internalTestReEstablishGroup(epoch: 0)
+
+        // THEN
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 0)
+    }
+
     func test_EstablishGroup_WipesGroupOnError() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
@@ -613,8 +694,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
-        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
+
+        do {
             try await _ = sut.establishGroup(for: groupID, with: users)
+        } catch {
+            if case let MLSService.MLSAddMembersError.failedToClaimKeyPackages(users) = error {
+                XCTAssertEqual(Set(usersIncludingSelf), Set(users))
+            } else {
+                XCTFail("unexepected error  \(error)")
+            }
         }
 
         // Then
