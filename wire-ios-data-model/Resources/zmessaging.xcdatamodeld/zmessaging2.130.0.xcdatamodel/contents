@@ -310,7 +310,6 @@
         <attribute name="text" optional="YES" attributeType="String"/>
     </entity>
     <entity name="UnknownMessage" representedClassName=".UnknownMessage" parentEntity="Message" syncable="YES">
-        <attribute name="appVersion" optional="YES" attributeType="String"/>
         <attribute name="eventTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="payload" optional="YES" attributeType="Binary"/>
     </entity>
