@@ -111,10 +111,13 @@ extension ConversationLocalStore {
         } catch {
             conversationExists = false
         }
-
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
+        
+        var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform { [self] in
+            if localConversation.mlsStatus == .pendingJoinAfterReset {
+                newStatus = .pendingJoinAfterReset
+            }
             localConversation.mlsStatus = newStatus
             context.saveOrRollback()
         }

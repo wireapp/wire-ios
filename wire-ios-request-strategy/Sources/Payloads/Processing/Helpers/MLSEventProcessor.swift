@@ -153,11 +153,14 @@ public class MLSEventProcessor: MLSEventProcessing {
                 .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
             conversationExists = false
         }
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
+        var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
             let previousStatus = conversation.mlsStatus
-
+            // double check
+            if previousStatus == .pendingJoinAfterReset {
+                newStatus = .pendingJoinAfterReset
+            }
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")

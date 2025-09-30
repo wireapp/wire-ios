@@ -737,7 +737,7 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
-            self.groupConversation.mlsStatus = .pendingJoin
+            self.groupConversation.mlsStatus = .pendingJoinAfterReset
         }
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),

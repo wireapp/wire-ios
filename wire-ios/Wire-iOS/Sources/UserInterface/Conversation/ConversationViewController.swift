@@ -723,10 +723,6 @@ extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateLeftNavigationBarItems()
         if changeInfo.deletedObjects.contains(conversation) {
-            if conversation.mlsStatus == .pendingJoin {
-                // don't pop if mls reset happened
-                return
-            }
             ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
         }
     }

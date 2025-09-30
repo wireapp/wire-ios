@@ -390,7 +390,7 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            if mlsStatus == .pendingJoin {
+            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 

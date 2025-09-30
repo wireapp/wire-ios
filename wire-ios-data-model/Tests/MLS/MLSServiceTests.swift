@@ -574,15 +574,16 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     private func internalTestReEstablishGroup(epoch: UInt64) async throws {
         // GIVEN
         let groupID = MLSGroupID(Data([1, 2, 3]))
-        let conversation = await uiMOC.perform { self.createConversation(
+        let conversation = await uiMOC.perform {
+            let conversation = self.createConversation(
             outOfSync: false,
             currentEpoch: epoch,
             groupID: groupID
-        ).conversation }
-
-        await uiMOC.perform {
-            XCTAssertEqual(conversation.mlsStatus, .pendingJoin)
+        ).conversation
+            conversation.mlsStatus = .pendingJoinAfterReset
+            return conversation
         }
+
         let mlsSelfUser = await uiMOC.perform {
             MLSUser(from: self.selfUser, localDomain: self.localDomain)
         }
