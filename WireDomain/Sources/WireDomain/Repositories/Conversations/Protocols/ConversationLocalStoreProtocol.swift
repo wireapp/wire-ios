@@ -388,7 +388,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - Parameters:
     ///   - newMLSGroupID: The new generated MLS group ID
     ///   - conversation: The conversation to update the properties for.
-    func storeMLSConversationPendingJoin(
+    func storeMLSConversationPendingJoinAfterReset(
         newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async

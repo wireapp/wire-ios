@@ -55,6 +55,12 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
+    private var mockAddMembersCount_ = 0
+    var mockAddMembersCount: Int {
+        get { serialQueue.sync { mockAddMembersCount_ } }
+        set { serialQueue.sync { mockAddMembersCount_ = newValue } }
+    }
+
     typealias AddMembersMock = ([WireDataModel.KeyPackage], MLSGroupID) async throws -> Void
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
@@ -67,6 +73,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
             fatalError("no mock for `addMembers`")
         }
 
+        mockAddMembersCount_ += 1
         return try await mock(keyPackages, groupID)
     }
 
