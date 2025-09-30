@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 import WireDataModel
 import WireDomain
@@ -211,10 +212,12 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         static let messageID = UUID()
         static let senderClientID = "client123"
         static let eventTimestamp = Date()
-        
+
         // Valid protobuf payload that can be decoded
-        static let validPayload = Data(base64Encoded: "CgR0ZXN0")! // "test" as base64
-        
+        static let validPayload = try! GenericMessage.with { genericMessage in
+            genericMessage.content = .text(.init(content: "abcd"))
+        }.serializedData()
+
         // Invalid payload that cannot be decoded
         static let invalidPayload = Data("invalid protobuf data".utf8)
     }
