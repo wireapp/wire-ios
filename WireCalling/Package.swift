@@ -8,43 +8,20 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
-        .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
+    ],
+    dependencies: [
+        .package(path: "../WireFoundation"),
+        .package(path: "../WireUI")
     ],
     targets: [
         .target(
-            name: "WireCallingDomain",
-            dependencies: [
-                "WireFoundation",
-                "WireLogging"
-            ]
-        ),
-        .target(
-            name: "WireCallingData",
-            dependencies: [
-                "WireData",
-                "WireCallingDomain",
-                "WireLogging"
-            ]
-        ),
-        .target(
-            name: "WireCallingAssembly",
-            dependencies: [
-                "WireCallingDomain",
-                "WireCallingUI",
-                "WireCallingData"
-            ]
-        ),
-        .target(
             name: "WireCallingUI",
             dependencies: [
-                "WireCallingDomain",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireFoundation"
             ],
-            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
     ]
 )
