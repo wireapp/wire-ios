@@ -82,6 +82,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
             } else {
                 WireLogger.sync.debug("no new events on remote")
+                continue
             }
 
             // If we need to abort, do it before processing the next page.
