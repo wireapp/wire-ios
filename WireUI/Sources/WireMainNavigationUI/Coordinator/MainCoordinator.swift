@@ -64,6 +64,13 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    private var meetingsUI: TabBarController.MeetingsUI! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.meetingsUI
+        case .expanded: splitViewController.meetingsUI
+        }
+    }
+
     private var settingsUI: TabBarController.SettingsUI! {
         switch mainSplitViewState {
         case .collapsed: tabBarController.settingsUI
@@ -167,6 +174,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    public func showMeetings() async {
+
+    }
+
     public func showSettings() async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
@@ -250,6 +261,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     public func hideSettingsContent() {
         tabBarController.setSettingsContentUI(nil, animated: true)
         splitViewController.settingsContentUI = nil
+    }
+
+    public func hideMeetings() {
+
     }
 
     public func presentViewController(_ viewController: UIViewController) async {

@@ -46,6 +46,11 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         set { setArchiveUI(newValue, animated: false) }
     }
 
+    public var meetingsUI: MeetingsUI? {
+        get { _meetingsUI }
+        set { setMeetingsUI(newValue, animated: false) }
+    }
+
     public var settingsUI: SettingsUI? {
         get { _settingsUI }
         set { setSettingsUI(newValue, animated: false) }
@@ -79,6 +84,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
     private weak var _conversationListUI: ConversationListUI?
     private weak var _archiveUI: ArchiveUI?
+    private weak var _meetingsUI: MeetingsUI?
     private weak var _settingsUI: SettingsUI?
 
     private weak var _conversationUI: ConversationUI?
@@ -166,6 +172,14 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         _archiveUI = archiveUI
 
         let viewControllers = [archiveUI].compactMap(\.self)
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
+        _meetingsUI = meetingsUI
+
+        let viewControllers = [meetingsUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
