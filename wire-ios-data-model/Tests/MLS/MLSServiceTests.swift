@@ -694,9 +694,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
-        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
+
+        do {
             try await _ = sut.establishGroup(for: groupID, with: users)
+        } catch {
+            if case let MLSService.MLSAddMembersError.failedToClaimKeyPackages(users) = error {
+                XCTAssertEqual(Set(usersIncludingSelf), Set(users))
+            } else {
+                XCTFail("unexepected error  \(error)")
+            }
         }
+
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
