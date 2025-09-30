@@ -17,5 +17,136 @@
 //
 
 final class FeatureConfigsAPIV12: FeatureConfigsAPIV11 {
+
     override var apiVersion: APIVersion { .v12 }
+
+    override func getFeatureConfigs() async throws -> [FeatureConfig] {
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: FeatureConfigsResponseAPIV12.self)
+            .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
+            .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
+            .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
+
+    let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
+    let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
+    let conferenceCalling: FeatureWithConfig<FeatureConfigResponse.ConferenceCallingV6>
+    let conversationGuestLinks: FeatureWithoutConfig
+    let digitalSignatures: FeatureWithoutConfig
+    let fileSharing: FeatureWithoutConfig
+    let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
+    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
+    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
+    let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
+    let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
+    let consumableNotifications: FeatureWithoutConfig
+    let chatBubbles: FeatureWithoutConfig
+
+    // Added in v12
+    let assetAuditLog: FeatureWithoutConfig
+
+    func toAPIModel() -> [FeatureConfig] {
+        var featureConfigs: [FeatureConfig] = []
+
+        let appLockConfig = appLock.toAPIModel()
+        featureConfigs.append(.appLock(appLockConfig))
+
+        let classifiedDomainsConfig = classifiedDomains.toAPIModel()
+        featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
+
+        let conferenceCallingConfig = ConferenceCallingFeatureConfig(
+            status: conferenceCalling.status.toAPIModel(),
+            useSFTForOneToOneCalls: conferenceCalling.config.useSFTForOneToOneCalls
+        )
+
+        featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
+
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
+            status: conversationGuestLinks.status
+                .toAPIModel()
+        )
+        featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
+
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status.toAPIModel())
+        featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
+
+        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status.toAPIModel())
+        featureConfigs.append(.fileSharing(fileSharingConfig))
+
+        let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
+        featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
+
+        let mlsConfig = MLSFeatureConfig(
+            status: mls.status.toAPIModel(),
+            protocolToggleUsers: mls.config.protocolToggleUsers,
+            defaultProtocol: mls.config.defaultProtocol.toAPIModel(),
+            allowedCipherSuites: mls.config.allowedCipherSuites.map { $0.toAPIModel() },
+            defaultCipherSuite: mls.config.defaultCipherSuite.toAPIModel(),
+            supportedProtocols: Set(mls.config.supportedProtocols.map { $0.toAPIModel() })
+        )
+
+        featureConfigs.append(.mls(mlsConfig))
+
+        let mlsMigrationConfig = MLSMigrationFeatureConfig(
+            status: mlsMigration.status.toAPIModel(),
+            startTime: mlsMigration.config.startTime?.date,
+            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
+        )
+
+        featureConfigs.append(.mlsMigration(mlsMigrationConfig))
+
+        let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
+            status: mlsE2EId.status.toAPIModel(),
+            acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
+            verificationExpiration: mlsE2EId.config.verificationExpiration,
+            crlProxy: mlsE2EId.config.crlProxy,
+            useProxyOnMobile: mlsE2EId.config.useProxyOnMobile
+        )
+
+        featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
+
+        let channelsConfig = ChannelsFeatureConfig(
+            status: channels.status.toAPIModel(),
+            allowedToCreateChannels: channels.config.allowedToCreateChannels.toAPIModel(),
+            allowedToOpenChannels: channels.config.allowedToOpenChannels.toAPIModel()
+        )
+        featureConfigs.append(.channels(channelsConfig))
+
+        let allowedGlobalOperations = AllowedGlobalOperationsFeatureConfig(
+            status: allowedGlobalOperations.status.toAPIModel(),
+            resetMLSConversations: allowedGlobalOperations.config.mlsConversationReset
+        )
+        featureConfigs.append(.allowedGlobalOperations(allowedGlobalOperations))
+
+        let consumableNotifications = ConsumableNotificationsFeatureConfig(
+            status: consumableNotifications.status
+                .toAPIModel()
+        )
+        featureConfigs.append(.consumableNotifications(consumableNotifications))
+
+        let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
+        featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
+
+        featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
+            status: assetAuditLog.status.toAPIModel()
+        )))
+
+        return featureConfigs
+    }
+
 }
