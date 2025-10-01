@@ -1709,7 +1709,7 @@ extension ZMUserSession {
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager
-            ),
+            )
             // Disabling migration 4.3.0 because it causes database decryption
             // issues when the user has multiple accounts.
             //
