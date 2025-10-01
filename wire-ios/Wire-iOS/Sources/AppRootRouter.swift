@@ -107,7 +107,6 @@ final class AppRootRouter {
     func start(launchOptions: LaunchOptions) {
         lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
-        showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
