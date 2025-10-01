@@ -425,6 +425,7 @@ final class UserSessionLoader {
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
+            sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
