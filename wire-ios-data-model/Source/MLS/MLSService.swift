@@ -371,9 +371,9 @@ public final class MLSService: MLSServiceInterface {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
-
-            let usersWithSelfUser = users + [mlsSelfUser]
-            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            // make sure we have the selfUser but only once
+            let usersWithSelfUser = Set(users + [mlsSelfUser])
+            try await addMembersToConversation(with: Array(usersWithSelfUser), for: groupID)
             return ciphersuite
         } catch {
             try await wipeGroup(groupID)
@@ -808,6 +808,7 @@ public final class MLSService: MLSServiceInterface {
         guard let context else {
             return
         }
+
         let conversation = await context.perform {
             ZMConversation.fetch(with: groupID, in: context)
         }
@@ -913,6 +914,48 @@ public final class MLSService: MLSServiceInterface {
         _ = await context.perform { [context] in
             context.saveOrRollback()
         }
+    }
+
+    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
+        guard let context else { return }
+
+        let conversationInfo = fetchConversationInfo(with: groupID, in: context)
+
+        guard let conversationInfo else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        try await actionsProvider.syncConversation(
+            qualifiedID: conversationInfo.qualifiedID,
+            context: context.notificationContext
+        )
+
+        let (conversation, epoch, lastGroupID) = await context.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationInfo.qualifiedID.uuid,
+                domain: conversationInfo.qualifiedID.domain,
+                in: context
+            )
+            return (conversation, conversation?.epoch, conversation?.mlsGroupID)
+        }
+
+        guard let conversation, let lastGroupID, let epoch else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        let conversationExists = try await conversationExists(
+            groupID: lastGroupID
+        )
+
+        let shouldEstablishGroup = epoch == 0 && !conversationExists
+
+        if shouldEstablishGroup {
+            try await internalEstablishPendingGroup(groupID: lastGroupID, pendingGroup: conversation, context: context)
+        } else {
+            try await joinByExternalCommit(groupID: lastGroupID)
+        }
+
+        await save(context)
     }
 
     // MARK: - Out-of-sync conversations
@@ -2015,7 +2058,7 @@ extension MLSService: EpochObserver {}
 
 // MARK: - Helper types
 
-public struct MLSUser: Equatable {
+public struct MLSUser: Equatable, Hashable {
 
     public let id: UUID
     public let domain: String
