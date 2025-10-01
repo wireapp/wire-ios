@@ -4792,6 +4792,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock()
     }
 
+    // MARK: - reEstablishPendingGroup
+
+    public var reEstablishPendingGroupGroupID_Invocations: [MLSGroupID] = []
+    public var reEstablishPendingGroupGroupID_MockError: Error?
+    public var reEstablishPendingGroupGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
+        reEstablishPendingGroupGroupID_Invocations.append(groupID)
+
+        if let error = reEstablishPendingGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = reEstablishPendingGroupGroupID_MockMethod else {
+            fatalError("no mock for `reEstablishPendingGroupGroupID`")
+        }
+
+        try await mock(groupID)
+    }
+
     // MARK: - setSyncDelegate
 
     public var setSyncDelegate_Invocations: [any MLSSyncDelegate] = []
