@@ -18,8 +18,8 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 /// The purpose of this protocol is sharing code between `ConversationMLSMessageAddEventProcessor` and
 /// `ConversationProteusMessageAddEventProcessor`.

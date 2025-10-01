@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension UnknownMessage {
+public extension UnknownMessage {
 
-    public override var needsReadConfirmation: Bool {
+    override var needsReadConfirmation: Bool {
         false // as long as the message can't be displayed properly, don't send a read receipt
     }
 

@@ -17,14 +17,12 @@
 //
 
 import GenericMessageProtocol
-import XCTest
 import WireDataModel
+import WireDataModelSupport
 import WireDomain
 import WireDomainSupport
 import WireNetwork
-import WireDataModelSupport
-
-@testable import WireDomain
+import XCTest
 
 final class UnknownMessageProcessingServiceTests: XCTestCase {
 
@@ -72,7 +70,9 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            protobufMessageProcessor
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
             0
         )
     }
@@ -113,7 +113,9 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            protobufMessageProcessor
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
             1
         )
 
@@ -160,7 +162,9 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            protobufMessageProcessor
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
             0
         )
 
@@ -192,7 +196,9 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations.count,
+            protobufMessageProcessor
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
             0
         )
 
