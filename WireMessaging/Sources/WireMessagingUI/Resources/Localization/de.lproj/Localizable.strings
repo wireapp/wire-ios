@@ -103,7 +103,7 @@
 // MARK: Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Dokumente";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
-"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
 "conversation.wireCells.files.item.menu.rename" = "Umbenennen";
