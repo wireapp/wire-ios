@@ -304,7 +304,7 @@ extension ZMConversation {
     public func savePendingLastRead() {
         guard let upperBound = pendingLastReadServerTimestamp else { return }
         let lowerBound = previousLastReadServerTimestamp ?? lastReadServerTimeStamp ?? .distantPast
-        guard lowerBound <= upperBound else { return }
+        guard lowerBound < upperBound else { return }
 
         performMarkAsReadUpdate(in: lowerBound ... upperBound)
         pendingLastReadServerTimestamp = nil
