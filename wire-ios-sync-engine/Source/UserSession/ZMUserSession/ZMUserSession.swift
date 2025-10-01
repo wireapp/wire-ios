@@ -1710,7 +1710,10 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
+            // Disabling migration 4.3.0 because it causes database decryption
+            // issues when the user has multiple accounts.
+            //
+            // AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 
