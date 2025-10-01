@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIView {
@@ -81,7 +82,7 @@ class AvatarImageView: UIView {
         imageView.isOpaque = false
         container.backgroundColor = .yellow
 
-        initialsLabel.textColor = .white
+        initialsLabel.textColor = SemanticColors.Button.textPrimaryEnabled
         initialsLabel.font = .systemFont(ofSize: 17)
 
         container.clipsToBounds = true
