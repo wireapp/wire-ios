@@ -1192,11 +1192,7 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public var storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
 
     public func storeMLSConversationPendingJoinAfterReset(newMLSGroupID: MLSGroupID, conversation: ZMConversation) async {
-<<<<<<< HEAD
-        storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.append((newMLSGroupID: newMLSGroupID, conversation: conversation))
-=======
         storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.append((newMLSGroupID: newMLSGroupID, conversation: conversation))
->>>>>>> 6ecb75b61d (fix: mls reset sending - WPB-20693 🍒 (#3669))
 
         guard let mock = storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod else {
             fatalError("no mock for `storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation`")
