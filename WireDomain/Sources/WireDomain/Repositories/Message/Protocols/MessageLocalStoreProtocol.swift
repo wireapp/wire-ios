@@ -106,15 +106,16 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String
     ) async
 
-    // TODO: fix comment
-    /// <#Description#>
+    /// Adds a placeholder for an unknown message to the conversation.
+    /// This allows the message to be processed later when the app is updated with support for new message types.
     /// - Parameters:
-    ///   - messageID: <#messageID description#>
-    ///   - conversationID: <#conversationID description#>
-    ///   - conversationDomain: <#conversationDomain description#>
-    ///   - senderID: <#senderID description#>
-    ///   - senderDomain: <#senderDomain description#>
-    ///   - payload: <#payload description#>
+    ///   - messageID: The unique identifier of the message
+    ///   - conversationID: The ID of the conversation the message belongs to
+    ///   - conversationDomain: The domain of the conversation (nil for local conversations)
+    ///   - senderID: The ID of the user who sent the message
+    ///   - senderDomain: The domain of the sender
+    ///   - payload: The raw protobuf data that couldn't be decoded
+    ///   - date: The timestamp when the message was received
 
     func addUnknownMessage(
         messageID: UUID,
