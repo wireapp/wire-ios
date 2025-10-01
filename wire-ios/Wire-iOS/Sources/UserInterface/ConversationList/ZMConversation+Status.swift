@@ -173,8 +173,6 @@ extension StatusMessageType {
             } else {
                 return nil
             }
-        } else if true {
-            self = .text
         } else {
             return nil
         }
