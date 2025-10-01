@@ -127,15 +127,27 @@ final class MeetingsViewController: UIViewController {
 
     func setupRightNavigationBarButtonItems() {
 
+        let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
+        let actionImage = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
+        let joinNowAction = UIAction(title: "Meet Now", image: actionImage) { _ in }
+        let scheduleMeetingAction = UIAction(title: "Schedule a Meeting", image: actionImage) { _ in }
+
+        let menuChildren = [
+            joinNowAction,
+            scheduleMeetingAction
+        ]
+        let filterMenu = UIMenu(children: menuChildren)
+
         let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
-        let newConversationImage = UIImage(systemName: "plus.circle.fill", withConfiguration: symbolConfiguration)!
-        let newConversationAction = UIAction(image: newConversationImage) { _ in }
-        let newConversationButton = UIButton(primaryAction: newConversationAction)
-        let startConversationItem = UIBarButtonItem(customView: newConversationButton)
-        startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
-        startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
-            .description
-        navigationItem.rightBarButtonItems = [startConversationItem]
+        let startMeetingImage = UIImage(systemName: "video.fill", withConfiguration: symbolConfiguration)!
+        let startMeetingButton = UIButton(type: .system)
+        startMeetingButton.setImage(startMeetingImage, for: .normal)
+        startMeetingButton.showsMenuAsPrimaryAction = true
+        startMeetingButton.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterButton.description
+        startMeetingButton.menu = filterMenu
+        let startMeetingItem = UIBarButtonItem(customView: startMeetingButton)
+
+        navigationItem.rightBarButtonItems = [startMeetingItem]
 
     }
 
