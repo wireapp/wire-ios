@@ -21,7 +21,7 @@ import WireFoundation
 import WireLogging
 import WireSystem
 
-enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {
+public enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {
     case uniqueKeyIdentifier
 }
 
