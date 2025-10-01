@@ -384,7 +384,7 @@ public final class ClientSessionComponent {
     )
 
     public private(set) lazy var incrementalSync =
-        IncrementalSync( // TODO: figure out where to fetch and process unknown messages
+        IncrementalSync(
             selfClientID: selfClientID,
             pushChannelAPI: pushChannelAPI,
             updateEventsSync: pullPendingUpdateEventsSync,

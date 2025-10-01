@@ -114,9 +114,13 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             try context.save()
         }
 
-        conversationLocalStoreMock.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
-        conversationLocalStoreMock.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
-        protobufMessageProcessorMock.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _ in }
+        conversationLocalStoreMock
+            .updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
+        conversationLocalStoreMock
+            .addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
+        protobufMessageProcessorMock
+            .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod =
+            { _, _, _, _, _, _, _ in }
 
         // When
         try await sut.processStoredUnknownMessages()

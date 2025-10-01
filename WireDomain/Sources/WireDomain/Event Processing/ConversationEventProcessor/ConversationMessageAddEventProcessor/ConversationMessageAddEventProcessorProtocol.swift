@@ -34,7 +34,7 @@ protocol ConversationMessageAddEventProcessorProtocol {
         date: Date
     ) async
 
-    func addInvalidSystemMessage( // TODO: same text?
+    func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
         date: Date

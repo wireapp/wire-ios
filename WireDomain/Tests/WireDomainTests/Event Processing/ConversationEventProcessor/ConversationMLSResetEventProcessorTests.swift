@@ -58,7 +58,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         mlsService.wipeGroup_MockMethod = { _ in }
         mlsService.conversationExistsGroupID_MockValue = false
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore
+            .storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod = { _, _ in }
         conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
