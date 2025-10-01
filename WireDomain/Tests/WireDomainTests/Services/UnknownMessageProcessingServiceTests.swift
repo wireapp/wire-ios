@@ -27,8 +27,8 @@ import XCTest
 final class UnknownMessageProcessingServiceTests: XCTestCase {
 
     private var sut: UnknownMessageProcessingService!
-    private var conversationLocalStore: MockConversationLocalStoreProtocol!
-    private var protobufMessageProcessor: MockConversationProtobufMessageProcessorProtocol!
+    private var conversationLocalStoreMock: MockConversationLocalStoreProtocol!
+    private var protobufMessageProcessorMock: MockConversationProtobufMessageProcessorProtocol!
 
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -42,20 +42,20 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
-        conversationLocalStore = MockConversationLocalStoreProtocol()
-        protobufMessageProcessor = MockConversationProtobufMessageProcessorProtocol()
+        conversationLocalStoreMock = MockConversationLocalStoreProtocol()
+        protobufMessageProcessorMock = MockConversationProtobufMessageProcessorProtocol()
 
         sut = UnknownMessageProcessingService(
             contextProvider: coreDataStack,
-            conversationLocalStore: conversationLocalStore,
-            protobufMessageProcessor: protobufMessageProcessor
+            conversationLocalStore: conversationLocalStoreMock,
+            protobufMessageProcessor: protobufMessageProcessorMock
         )
     }
 
     override func tearDown() async throws {
         sut = nil
-        conversationLocalStore = nil
-        protobufMessageProcessor = nil
+        conversationLocalStoreMock = nil
+        protobufMessageProcessorMock = nil
         modelHelper = nil
         coreDataStack = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -70,7 +70,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor
+            protobufMessageProcessorMock
                 .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             0
@@ -78,6 +78,12 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     func testProcessStoredUnknownMessages_WithProcessableMessage() async throws {
+        let m = GenericMessage.with { genericMessage in
+            genericMessage.messageID = UUID().uuidString
+            genericMessage.content = .text(.init(content: "abcd"))
+        }
+        print(m.validateFields())
+
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -108,12 +114,16 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
             try context.save()
         }
 
+        conversationLocalStoreMock.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
+        conversationLocalStoreMock.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
+        protobufMessageProcessorMock.processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_MockMethod = { _, _, _, _, _, _, _ in }
+
         // When
         try await sut.processStoredUnknownMessages()
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor
+            protobufMessageProcessorMock
                 .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             1
@@ -162,7 +172,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor
+            protobufMessageProcessorMock
                 .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             0
@@ -196,7 +206,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Then
         XCTAssertEqual(
-            protobufMessageProcessor
+            protobufMessageProcessorMock
                 .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
                 .count,
             0
@@ -221,6 +231,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
 
         // Valid protobuf payload that can be decoded
         static let validPayload = try! GenericMessage.with { genericMessage in
+            genericMessage.messageID = UUID().uuidString
             genericMessage.content = .text(.init(content: "abcd"))
         }.serializedData()
 
