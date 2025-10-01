@@ -20,7 +20,8 @@ import Testing
 
 struct Test {
 
-    @Test func myNewTest() async throws {
+    @Test
+    func myNewTest() async throws {
         #expect(true)
     }
 
