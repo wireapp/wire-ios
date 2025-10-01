@@ -297,6 +297,11 @@ final class DeveloperToolsViewModel: ObservableObject {
                         AnyView(DeveloperKeychainItemsView(
                             viewModel: DeveloperKeychainItemsViewModel()
                         ))
+                    })),
+                    .destination(DestinationItem(title: "Core Crypto Keys", makeView: {
+                        AnyView(DeveloperCoreCryptoKeysView(
+                            viewModel: DeveloperCoreCryptoKeysViewModel()
+                        ))
                     }))
                 ]
             )
