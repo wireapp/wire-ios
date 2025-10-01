@@ -242,6 +242,10 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+
+        if let assetAuditLog = payload.assetAuditLog {
+            // TODO: [WPB-20713] store
+        }
     }
 
     func processEventPayload(
