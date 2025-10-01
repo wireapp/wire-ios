@@ -1186,16 +1186,20 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(mlsGroupID, conversation)
     }
 
-    // MARK: - storeMLSConversationPendingJoin
+    // MARK: - storeMLSConversationPendingJoinAfterReset
 
-    public var storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations: [(newMLSGroupID: MLSGroupID, conversation: ZMConversation)] = []
-    public var storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
+    public var storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations: [(newMLSGroupID: MLSGroupID, conversation: ZMConversation)] = []
+    public var storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
 
     public func storeMLSConversationPendingJoinAfterReset(newMLSGroupID: MLSGroupID, conversation: ZMConversation) async {
+<<<<<<< HEAD
         storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.append((newMLSGroupID: newMLSGroupID, conversation: conversation))
+=======
+        storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.append((newMLSGroupID: newMLSGroupID, conversation: conversation))
+>>>>>>> 6ecb75b61d (fix: mls reset sending - WPB-20693 🍒 (#3669))
 
-        guard let mock = storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod else {
-            fatalError("no mock for `storeMLSConversationPendingJoinNewMLSGroupIDConversation`")
+        guard let mock = storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod else {
+            fatalError("no mock for `storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation`")
         }
 
         await mock(newMLSGroupID, conversation)
