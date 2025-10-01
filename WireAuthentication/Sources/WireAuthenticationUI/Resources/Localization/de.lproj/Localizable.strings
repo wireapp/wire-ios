@@ -33,14 +33,14 @@
 "login.sso.title" = "Anmelden";
 "login.sso.expiration_message" = "Ihre Session ist abgelaufen. Melden Sie sich mit Ihrem Unternehmenskonto an, um fortzufahren.";
 "login.sso.input_code.title" = "SSO Zugangscode";
-"login.sso.input_code.placeholder" = "SSO Zugangscode eingeben";
+"login.sso.input_code.placeholder" = "SSO-Code eingeben";
 "login.sso.submit" = "Anmeldung für Unternehmen";
 
 "logout.button.title" = "Abmelden";
 "logout.alert.title" = "Abmelden";
-"logout.alert.message" = "Entscheiden Sie, ob Sie Ihre Gesprächshistorie behalten oder unwiderruflich von diesem Gerät löschen wollen.";
-"logout.alert.delete_data_button" = "Abmelden und Historie löschen";
-"logout.alert.keep_data_button" = "Abmelden und Historie behalten";
+"logout.alert.message" = "Entscheiden Sie, ob Sie Ihren Gesprächsverlauf behalten oder unwiderruflich von diesem Gerät löschen möchten.";
+"logout.alert.delete_data_button" = "Abmelden und Verlauf löschen";
+"logout.alert.keep_data_button" = "Abmelden und Verlauf behalten";
 "logout.alert.cancel" = "Abbrechen";
 
 "create_account_or_team.title" = "Sie haben kein Benutzerkonto? ";
