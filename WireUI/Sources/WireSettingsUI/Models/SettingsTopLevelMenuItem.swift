@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+
 public enum SettingsTopLevelMenuItem: Sendable {
     case account
     case devices
@@ -24,4 +26,19 @@ public enum SettingsTopLevelMenuItem: Sendable {
     case support
     case about
     case developerOptions
+}
+
+// MARK: - Accessibility identifiers
+extension SettingsTopLevelMenuItem {
+    public var accessibilityID: String {
+        switch self {
+        case .account: return Locators.SettingsPage.accountCell.rawValue
+        case .devices: return "devicesCell"
+        case .options: return Locators.SettingsPage.optionsCell.rawValue
+        case .advanced: return "advancedCell"
+        case .support: return "supportCell"
+        case .about: return "aboutCell"
+        case .developerOptions: return "developerOptionsCell"
+        }
+    }
 }

@@ -44,5 +44,11 @@ public enum Locators {
         case bottomBarSettingsButton
 
     }
+    
+    public enum SettingsPage: String {
+        
+        case accountCell
+        case optionsCell
 
+    }
 }

@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireFoundation
 
 class SettingsPage: PageModel {
 
@@ -25,17 +26,15 @@ class SettingsPage: PageModel {
     }
 
     var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+        app.cells[Locators.SettingsPage.accountCell.rawValue].firstMatch
     }
 
     var optionsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Options"]
+        app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
     }
 
     var conversationsTab: XCUIElement {
-        app.buttons["bottomBarRecentListButton"]
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {
