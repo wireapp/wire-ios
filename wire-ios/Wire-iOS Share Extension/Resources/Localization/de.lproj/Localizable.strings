@@ -84,4 +84,4 @@
 "share_extension.error.update_required.obsolete_backend" = "Ihr Wire-Server muss aktualisiert werden. Bitte informieren Sie Ihren Systemadministrator.";
 
 "share_extension.error.open_app.title" = "App öffnen";
-"share_extension.error.open_app.message" = "Öffnen Sie Ihr Benutzerkonto in Wire und versuchen Sie es erneut.";
+"share_extension.error.open_app.message" = "Öffnen Sie dieses Konto in der App und versuchen Sie es erneut.";
