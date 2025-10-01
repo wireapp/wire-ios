@@ -33,6 +33,7 @@ public class CoreCryptoConfigProvider {
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
+    private let coreCryptoPathComponent = "corecrypto"
 
     // MARK: - Life cycle
 
@@ -54,7 +55,7 @@ public class CoreCryptoConfigProvider {
         )
 
         try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent(coreCryptoPathComponent)
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(
@@ -66,7 +67,10 @@ public class CoreCryptoConfigProvider {
                 key: key
             )
         } catch {
-            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
+            WireLogger.coreCrypto.error(
+                "Failed to get core crypto key: \(String(describing: error))",
+                attributes: .safePublic
+            )
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
