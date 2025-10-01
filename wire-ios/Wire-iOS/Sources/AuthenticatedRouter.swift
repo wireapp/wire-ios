@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum NavigationDestination {
@@ -65,7 +66,8 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
-        environment: BackendEnvironment,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: BackendEnvironment2?,
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
@@ -81,7 +83,8 @@ final class AuthenticatedRouter {
             account: account,
             userSession: userSession,
             trackingManager: trackingManager,
-            environment: environment
+            legacyEnvironment: legacyEnvironment,
+            newEnvironment: newEnvironment
         )
 
         self.notificationCenter = notificationCenter
