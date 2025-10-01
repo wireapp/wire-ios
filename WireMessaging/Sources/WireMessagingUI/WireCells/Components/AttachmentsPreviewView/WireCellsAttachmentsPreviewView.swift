@@ -29,7 +29,14 @@ package struct WireCellsAttachmentsPreviewView: View {
     }
 
     package var body: some View {
-        Text(verbatim: "\(viewModel.attachments.count) attachments")
+        VStack {
+            ForEach(viewModel.attachments, id: \.nodeID) { attachment in
+                Text(attachment.initialName ?? "Unnamed")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+        }
+        .background(Color.red)
     }
 }
 
