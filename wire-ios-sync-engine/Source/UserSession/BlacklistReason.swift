@@ -37,17 +37,17 @@ public enum BlacklistReason: Equatable {
     public static func == (lhs: BlacklistReason, rhs: BlacklistReason) -> Bool {
         switch (lhs, rhs) {
         case (.appVersionBlacklisted, .appVersionBlacklisted):
-            return true
+            true
         case (.clientAPIVersionObsolete, .clientAPIVersionObsolete):
-            return true
+            true
         case (.backendAPIVersionObsolete, .backendAPIVersionObsolete):
-            return true
+            true
         case let (.networkError(lhsCode), .networkError(rhsCode)):
-            return lhsCode == rhsCode
+            lhsCode == rhsCode
         case (.genericError, .genericError):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
