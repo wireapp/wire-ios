@@ -4879,8 +4879,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
 			requirement = {
-				branch = "temp/WPB-11752-";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.53.0;
 			};
 		};
 		5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {

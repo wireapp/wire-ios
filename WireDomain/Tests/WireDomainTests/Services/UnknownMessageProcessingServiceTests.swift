@@ -136,9 +136,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     func testProcessStoredUnknownMessages_WithUnprocessableMessage() async throws {
-        let genericMessage = try GenericMessage(serializedBytes: Scaffolding.unknownContentPayload)
-        print(genericMessage.content)
-
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
