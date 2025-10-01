@@ -86,10 +86,11 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showNetworkErrorMessage(code: Int) {
+        typealias Strings = L10n.Localizable.AccountBlocked.NetworkError.Alert
         showErrorMessage(
-            title: "Network issue",
-            message: "Please check your internet connection and try again.",
-            debugLogMessage: "Account failed to load due to network error code: \(code)"
+            title: Strings.title,
+            message: Strings.message,
+            debugLogMessage: "Account failed to load due to network error (code: \(code))"
         )
     }
 
