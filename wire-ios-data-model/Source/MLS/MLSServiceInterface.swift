@@ -482,6 +482,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func startProteusToMLSMigration() async throws
 
+    /// Re-establish pending group
+    ///
+    /// Syncs the conversation metadata and join by external commit
+    /// or establish the group by adding all mls clients depending on the epoch
+    /// - Parameter groupID: the mls GroupID of the conversation to re-establish
+    func reEstablishPendingGroup(groupID: MLSGroupID) async throws
+
     // MARK: - Sync delegate
 
     /// Set the MLS sync delegate.

@@ -1191,7 +1191,7 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public var storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations: [(newMLSGroupID: MLSGroupID, conversation: ZMConversation)] = []
     public var storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
 
-    public func storeMLSConversationPendingJoin(newMLSGroupID: MLSGroupID, conversation: ZMConversation) async {
+    public func storeMLSConversationPendingJoinAfterReset(newMLSGroupID: MLSGroupID, conversation: ZMConversation) async {
         storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.append((newMLSGroupID: newMLSGroupID, conversation: conversation))
 
         guard let mock = storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod else {
