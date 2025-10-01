@@ -230,11 +230,12 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         // Valid protobuf payload that can be decoded
         static let validPayload = try! GenericMessage.with { genericMessage in
             genericMessage.messageID = UUID().uuidString
-            genericMessage.content = .text(.init(content: "abcd"))
+            genericMessage.content = .text(.init(content: "Lorem Ipsum"))
         }.serializedData()
 
-        // Invalid payload that cannot be decoded
-        static let unknownContentPayload = Data(base64Encoded: "CiQzN0M4RTkzQS0xOUVCLTRCMjUtOTE3QS1BNjBDOTkzRDE5OTC6AwsKCXNvbWUgdGV4dA==")!
+        // Payload with an unknown content type
+        static let unknownContentPayload =
+            Data(base64Encoded: "CiQzN0M4RTkzQS0xOUVCLTRCMjUtOTE3QS1BNjBDOTkzRDE5OTC6AwsKCXNvbWUgdGV4dA==")!
     }
 
 }

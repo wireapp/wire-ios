@@ -711,7 +711,7 @@ extension ZMConversation {
         systemMessage.participantsRemovedReason = removedReason
         systemMessage.domains = domains
 
-        append(systemMessage) // TODO: call this for unknownMessages?
+        append(systemMessage)
 
         return systemMessage
     }
