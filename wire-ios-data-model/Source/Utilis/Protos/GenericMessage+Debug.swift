@@ -176,6 +176,63 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
 
         case .inCallHandRaise:
             "inCallHandRaise"
+
+        case .c28(_):
+            ""
+        case .c29(_):
+            ""
+        case .c30(_):
+            ""
+        case .c31(_):
+            ""
+        case .c32(_):
+            ""
+        case .c33(_):
+            ""
+        case .c34(_):
+            ""
+        case .c35(_):
+            ""
+        case .c36(_):
+            ""
+        case .c37(_):
+            ""
+        case .c38(_):
+            ""
+        case .c39(_):
+            ""
+        case .c40(_):
+            ""
+        case .c41(_):
+            ""
+        case .c42(_):
+            ""
+        case .c43(_):
+            ""
+        case .c44(_):
+            ""
+        case .c45(_):
+            ""
+        case .c46(_):
+            ""
+        case .c47(_):
+            ""
+        case .c48(_):
+            ""
+        case .c49(_):
+            ""
+        case .c50(_):
+            ""
+        case .c51(_):
+            ""
+        case .c52(_):
+            ""
+        case .c53(_):
+            ""
+        case .c54(_):
+            ""
+        case .c55(_):
+            ""
         }
     }
 

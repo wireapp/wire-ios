@@ -78,12 +78,6 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     func testProcessStoredUnknownMessages_WithProcessableMessage() async throws {
-        let m = GenericMessage.with { genericMessage in
-            genericMessage.messageID = UUID().uuidString
-            genericMessage.content = .text(.init(content: "abcd"))
-        }
-        print(m.validateFields())
-
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -142,6 +136,9 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
     }
 
     func testProcessStoredUnknownMessages_WithUnprocessableMessage() async throws {
+        let genericMessage = try GenericMessage(serializedBytes: Scaffolding.unknownContentPayload)
+        print(genericMessage.content)
+
         // Given
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -164,7 +161,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
                 nonce: Scaffolding.messageID,
                 managedObjectContext: context
             )
-            message.payload = Scaffolding.invalidPayload
+            message.payload = Scaffolding.unknownContentPayload
             message.visibleInConversation = conversation
             message.sender = sender
             message.eventTimestamp = Scaffolding.eventTimestamp
@@ -240,7 +237,7 @@ final class UnknownMessageProcessingServiceTests: XCTestCase {
         }.serializedData()
 
         // Invalid payload that cannot be decoded
-        static let invalidPayload = Data("invalid protobuf data".utf8)
+        static let unknownContentPayload = Data(base64Encoded: "CiQzN0M4RTkzQS0xOUVCLTRCMjUtOTE3QS1BNjBDOTkzRDE5OTC6AwsKCXNvbWUgdGV4dA==")!
     }
 
 }

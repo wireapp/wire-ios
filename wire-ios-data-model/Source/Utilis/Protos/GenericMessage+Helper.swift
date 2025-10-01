@@ -140,6 +140,62 @@ public extension GenericMessage {
             return data
         case let .inCallHandRaise(data):
             return data
+        case .c28(_):
+            fatalError()
+        case .c29(_):
+            fatalError()
+        case .c30(_):
+            fatalError()
+        case .c31(_):
+            fatalError()
+        case .c32(_):
+            fatalError()
+        case .c33(_):
+            fatalError()
+        case .c34(_):
+            fatalError()
+        case .c35(_):
+            fatalError()
+        case .c36(_):
+            fatalError()
+        case .c37(_):
+            fatalError()
+        case .c38(_):
+            fatalError()
+        case .c39(_):
+            fatalError()
+        case .c40(_):
+            fatalError()
+        case .c41(_):
+            fatalError()
+        case .c42(_):
+            fatalError()
+        case .c43(_):
+            fatalError()
+        case .c44(_):
+            fatalError()
+        case .c45(_):
+            fatalError()
+        case .c46(_):
+            fatalError()
+        case .c47(_):
+            fatalError()
+        case .c48(_):
+            fatalError()
+        case .c49(_):
+            fatalError()
+        case .c50(_):
+            fatalError()
+        case .c51(_):
+            fatalError()
+        case .c52(_):
+            fatalError()
+        case .c53(_):
+            fatalError()
+        case .c54(_):
+            fatalError()
+        case .c55(_):
+            fatalError()
         }
     }
 
