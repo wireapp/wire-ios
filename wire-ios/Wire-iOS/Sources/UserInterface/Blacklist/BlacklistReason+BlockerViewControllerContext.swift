@@ -28,6 +28,8 @@ extension BlacklistReason {
             .backendObsolete
         case .clientAPIVersionObsolete:
             .clientObsolete
+        case let .networkError(code: code):
+            .networkError(code: code)
         case .genericError:
             .genericError
         }
