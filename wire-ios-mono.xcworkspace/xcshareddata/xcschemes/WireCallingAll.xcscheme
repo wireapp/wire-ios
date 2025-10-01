@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireCallingUI"
                BuildableName = "WireCallingUI"
                BlueprintName = "WireCallingUI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireCalling">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -58,7 +58,7 @@
             BlueprintIdentifier = "WireCallingUI"
             BuildableName = "WireCallingUI"
             BlueprintName = "WireCallingUI"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireCalling">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
