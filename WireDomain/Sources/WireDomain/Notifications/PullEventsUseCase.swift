@@ -43,7 +43,7 @@ struct PullEventsUseCase: PullEventsUseCaseProtocol {
     func invoke() async throws -> AsyncStream<[UpdateEvent]> {
         logger.info(
             "Attempting to fetch pending events",
-            attributes: .newNSE
+            attributes: .newNSE, .safePublic
         )
 
         do {
