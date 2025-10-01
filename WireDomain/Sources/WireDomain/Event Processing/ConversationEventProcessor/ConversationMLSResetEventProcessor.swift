@@ -88,7 +88,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
                     conversation: localConversation
                 )
             } else {
-                await conversationLocalStore.storeMLSConversationPendingJoin(
+                await conversationLocalStore.storeMLSConversationPendingJoinAfterReset(
                     newMLSGroupID: newMLSGroupID,
                     conversation: localConversation
                 )

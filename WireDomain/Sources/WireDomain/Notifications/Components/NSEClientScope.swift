@@ -251,6 +251,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 selfUserID: dependency.accountID,
                 sharedContainerURL: dependency.appContainerURL,
                 accountDirectory: dependency.userAccountDataURL,
+                sharedUserDefaults: dependency.sharedUserDefaults,
                 syncContext: coreDataStack.syncContext,
                 cryptoboxMigrationManager: dependency.cryptoboxMigrationManager,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,

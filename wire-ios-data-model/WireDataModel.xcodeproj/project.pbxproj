@@ -436,6 +436,10 @@
 		87E2CE312119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */; };
 		87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */; };
 		87EFA3AC210F52C6004DFA53 /* ZMConversation+LastMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */; };
+		882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */; };
+		882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */; };
+		882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */; };
+		882B86BE2E8441AA008A50CA /* RemoveCoreCryptoKeysUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
 		A90676EB238EB05F006417AC /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E9238EB05F006417AC /* Role.swift */; };
@@ -1326,6 +1330,10 @@
 		87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Cleared.swift"; sourceTree = "<group>"; };
 		87E9508A2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+DeleteOlderMessages.swift"; sourceTree = "<group>"; };
 		87EFA3AB210F52C6004DFA53 /* ZMConversation+LastMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+LastMessages.swift"; sourceTree = "<group>"; };
+		882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeyTracker.swift; sourceTree = "<group>"; };
+		882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeysTrackerTests.swift; sourceTree = "<group>"; };
+		882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCaseTests.swift; sourceTree = "<group>"; };
+		882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCase.swift; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A90676E9238EB05F006417AC /* Role.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
@@ -2246,6 +2254,7 @@
 				59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */,
 				0667958F2B8C9E4700FF6A25 /* UpdateMLSGroupVerificationStatusUseCase.swift */,
 				638941ED2AF4FD4B0051ABFD /* RemoveLocalConversationUseCase.swift */,
+				882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -2258,6 +2267,7 @@
 				59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
 				06E2ABBC2B8C9D2C0094F567 /* UpdateMLSGroupVerificationStatusUseCaseTests.swift */,
+				882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -2354,6 +2364,17 @@
 				76E000B92DAFED1B00853C45 /* WireCellsMessageAttachmentDraftEntity.swift */,
 			);
 			path = WireCell;
+			sourceTree = "<group>";
+		};
+		882B85732E83EAC6008A50CA /* Core Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */,
+				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
+				6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */,
+				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
+			);
+			path = "Core Crypto";
 			sourceTree = "<group>";
 		};
 		A90676E5238EAE63006417AC /* ConversationRole */ = {
@@ -2607,8 +2628,6 @@
 			isa = PBXGroup;
 			children = (
 				06D4B1AA2D1F0731004627EB /* MLSClientManagerTests.swift */,
-				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
-				6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */,
 				59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */,
 				EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */,
 				63FACD55291BC598003AB25D /* MLSClientIDTests.swift */,
@@ -2622,7 +2641,6 @@
 				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
 				CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */,
 				6326E4712AEBB2E4006EEA28 /* ProteusToMLSMigrationCoordinatorTests.swift */,
-				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
 				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
 				EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */,
 			);
@@ -2657,6 +2675,7 @@
 		EEC737B22D01ADAA003C0FC9 /* Core Crypto */ = {
 			isa = PBXGroup;
 			children = (
+				882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */,
 				06D0648D2DDFF2560089EB6D /* CoreCryptoKeyMigrationManagerProtocol.swift */,
 				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
 				63B1334629A503D000009D84 /* CoreCryptoKeyProvider.swift */,
@@ -3623,6 +3642,7 @@
 				F9A7085D1CAEEF4700C2F5FE /* Helper */,
 				F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */,
 				F9A7080A1CAEEB7400C2F5FE /* Model */,
+				882B85732E83EAC6008A50CA /* Core Crypto */,
 				EE98879028882C6D002340D2 /* MLS */,
 				EE032B3429A62CD600E1DDF3 /* Proteus */,
 				EE7A90EA2B21CAB000B58E84 /* OneOnOne */,
@@ -4156,6 +4176,7 @@
 				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
 				5986A08D2C6B710E00299181 /* TextMessageData.swift in Sources */,
 				066328602428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift in Sources */,
+				882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */,
 				EE0DE5042A24D2A10029746C /* DeleteSubgroupAction.swift in Sources */,
 				EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */,
 				CB5212122D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift in Sources */,
@@ -4392,6 +4413,7 @@
 				F90D99A51E02DC6B00034070 /* AssetCollectionBatched.swift in Sources */,
 				54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */,
 				70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */,
+				882B86BE2E8441AA008A50CA /* RemoveCoreCryptoKeysUseCase.swift in Sources */,
 				63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */,
 				63B1335729A503D100009D84 /* MLSActionsProvider.swift in Sources */,
 				EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */,
@@ -4553,6 +4575,7 @@
 				BF949E5B1D3D17FB00587597 /* LinkPreview+ProtobufTests.swift in Sources */,
 				167BCC92260DB5FA00E9D7E3 /* CoreDataStackTests+ClearStorage.swift in Sources */,
 				165E141825CC516B00F0B075 /* ZMClientMessageTests+Prefetching.swift in Sources */,
+				882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */,
 				A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */,
 				16E7DA2A1FDABE440065B6A6 /* ZMOTRMessage+SelfConversationUpdateTests.swift in Sources */,
 				87DF59C01F729FDA00C7B406 /* ZMMovedIndexTests.swift in Sources */,
@@ -4772,6 +4795,7 @@
 				EEDB51DB255410D000F35A29 /* GenericMessageHelperTests.swift in Sources */,
 				F1B58928202DCF0C002BB59B /* ZMConversationTests+CreationSystemMessages.swift in Sources */,
 				F9DBA5251E28EE1500BE23C0 /* ConversationObserverTests.swift in Sources */,
+				882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */,
 				167BCB4E2600C62100E9D7E3 /* CoreDataStackTests+Migration.swift in Sources */,
 				BFE3A96C1ED2EC110024A05B /* ZMConversationListDirectoryTests+Teams.swift in Sources */,
 				BF491CEA1F063F440055EE44 /* AccountTests.swift in Sources */,
