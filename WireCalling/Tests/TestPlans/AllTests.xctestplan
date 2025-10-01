@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "A52862FA-ECE9-4143-AB2B-E6B095D3A4E9",
+      "id" : "7B1D3515-CEB5-4BD8-88AB-29FD9147D92B",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -14,7 +14,13 @@
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:WireCalling",
+        "identifier" : "WireCallingTests",
+        "name" : "WireCallingTests"
+      }
+    }
   ],
   "version" : 1
 }

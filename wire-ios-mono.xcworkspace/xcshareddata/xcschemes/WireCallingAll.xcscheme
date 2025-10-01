@@ -21,6 +21,20 @@
                ReferencedContainer = "container:WireCalling">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireCallingTests"
+               BuildableName = "WireCallingTests"
+               BlueprintName = "WireCallingTests"
+               ReferencedContainer = "container:WireCalling">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -30,7 +44,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:WireCalling/Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:WireCalling/Tests/TestPlans/AllTests.xctestplan">
-   </FileRef>
-   <FileRef
       location = "group:LICENSE">
    </FileRef>
    <FileRef

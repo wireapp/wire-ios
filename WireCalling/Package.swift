@@ -23,6 +23,12 @@ let package = Package(
                 "WireFoundation"
             ],
         ),
+        .testTarget(
+            name: "WireCallingTests",
+            dependencies: [
+                "WireFoundation"
+            ],
+        ),
     ]
 )
 for target in package.targets {
