@@ -34,7 +34,7 @@ final class JournalViewModelTests: XCTestCase {
             return
         }
         let boolSection = try XCTUnwrap(sut.sections[0])
-        XCTAssertEqual(boolSection.items.count, 7)
+        XCTAssertEqual(boolSection.items.count, 9)
 
         XCTAssertNotNil(sut.sections.last, "broken MLS Groups section is missing")
     }

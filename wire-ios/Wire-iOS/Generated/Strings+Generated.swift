@@ -1204,12 +1204,20 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "account_blocked.generic_error.alert.message", fallback: "Please contact support if the error persists.")
           /// Retry
           internal static let retry = L10n.tr("Localizable", "account_blocked.generic_error.alert.retry", fallback: "Retry")
-          /// Send debug logs
-          internal static let sendLogs = L10n.tr("Localizable", "account_blocked.generic_error.alert.send_logs", fallback: "Send debug logs")
+          /// Send Debug Report
+          internal static let sendLogs = L10n.tr("Localizable", "account_blocked.generic_error.alert.send_logs", fallback: "Send Debug Report")
           /// Switch accounts
           internal static let switchAccounts = L10n.tr("Localizable", "account_blocked.generic_error.alert.switch_accounts", fallback: "Switch accounts")
           /// Something went wrong
           internal static let title = L10n.tr("Localizable", "account_blocked.generic_error.alert.title", fallback: "Something went wrong")
+        }
+      }
+      internal enum NetworkError {
+        internal enum Alert {
+          /// Please check your internet connection and try again.
+          internal static let message = L10n.tr("Localizable", "account_blocked.network_error.alert.message", fallback: "Please check your internet connection and try again.")
+          /// Network issue
+          internal static let title = L10n.tr("Localizable", "account_blocked.network_error.alert.title", fallback: "Network issue")
         }
       }
     }
