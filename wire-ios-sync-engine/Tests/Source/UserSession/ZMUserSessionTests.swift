@@ -325,7 +325,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
-    // TODO: For some reason replacing implementation of fetchFeature configs will make this test hang forever
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
         // WHEN
         sut.didGoOffline()
