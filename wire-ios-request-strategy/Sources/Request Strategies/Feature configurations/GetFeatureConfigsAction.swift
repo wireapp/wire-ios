@@ -19,8 +19,7 @@
 import Foundation
 import WireDataModel
 
-/// Action to fetch FeatureConfigs only for LegacySync
-final class GetFeatureConfigsAction: EntityAction {
+public final class GetFeatureConfigsAction: EntityAction {
 
     // MARK: - Types
 

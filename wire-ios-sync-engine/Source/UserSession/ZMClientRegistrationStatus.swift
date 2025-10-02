@@ -114,6 +114,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var needsRefreshSelfUser: Bool = false
     private var needsToCheckCredentials: Bool = false
+    private var needsToFetchFeatureConfigs: Bool = false
     private var needsToVerifySelfClient: Bool = false
     private var isWaitingForE2EIEnrollment: Bool = false
     private var isWaitingForUserClients: Bool = false
@@ -208,6 +209,10 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         // we have a new password
         if needsToCheckCredentials && emailCredentials == nil {
             return .waitingForLogin
+        }
+
+        if needsToFetchFeatureConfigs {
+            return .waitingForFetchConfigs
         }
 
         if isWaitingForE2EIEnrollment {
@@ -305,6 +310,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     func determineInitialRegistrationStatus() {
         needsToVerifySelfClient = !needsToRegisterClient
+        needsToFetchFeatureConfigs = needsToRegisterClient
         needsRefreshSelfUser = needsToRegisterClient
 
         if !needsToRegisterClient, needsToRegisterMLSClient {
@@ -454,6 +460,32 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         return !hasNotYetRegisteredClient
     }
 
+    private func fetchFeatureConfigs() {
+        var action = GetFeatureConfigsAction()
+        action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
+            switch result {
+            case .success:
+                self?.didFetchFeatureConfigs()
+            case .failure:
+                self?.fetchFeatureConfigs()
+            }
+        }
+    }
+
+    private func fetchBackendMLSPublicKeys() {
+        var action = FetchBackendMLSPublicKeysAction()
+        action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
+            switch result {
+            case let .success(backendPublicKeys):
+                let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                BackendInfo.isMLSEnabled = hasValidKeys
+            case .failure:
+                WireLogger.authentication.info("Backend doesn't have MLS public keys")
+            }
+            self?.didFetchBackendMLSPublicKeys()
+        }
+    }
+
     @objc
     public func didDeleteClient() {
         WireLogger.userClient.info("client was deleted. will prepare for registration")
@@ -595,9 +627,21 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         } else if !needsToVerifySelfClient {
             emailCredentials = nil
         }
-        
-        // ask OperationLoop as it was at the end of didFetchMLSPublicKeys
-        // which is not needed with multibacken
+
+        if needsToFetchFeatureConfigs {
+            fetchFeatureConfigs()
+        }
+    }
+
+    @objc
+    public func didFetchFeatureConfigs() {
+        WireLogger.userClient.info("did fetch feature configs")
+        needsToFetchFeatureConfigs = false
+        fetchBackendMLSPublicKeys()
+    }
+
+    public func didFetchBackendMLSPublicKeys() {
+        WireLogger.userClient.info("did fetch backend MLS public keys")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -654,7 +698,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        let canRegisterMLSCLient = isBackendMLSEnabled
+        let canRegisterMLSCLient = DeveloperFlag.multibackend.isOn ? isBackendMLSEnabled : BackendInfo.isMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
