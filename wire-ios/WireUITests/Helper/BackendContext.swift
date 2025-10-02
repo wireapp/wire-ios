@@ -17,9 +17,22 @@
 //
 
 import Foundation
+import WireNetwork
 
 public enum BackendContext {
-    public static var current: BackendTarget = .staging
+    static var current: BackendTarget = .staging
+
+    static var backendEnvironment: BackendEnvironment {
+        switch current {
+        case .staging:
+            .staging
+        case .anta:
+            .anta
+        }
+    }
 }
 
-public enum BackendTarget { case staging, anta }
+public enum BackendTarget {
+    case staging
+    case anta
+}

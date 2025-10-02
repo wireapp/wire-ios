@@ -32,6 +32,14 @@
           {
             "key" : "ANTA_INBUCKET_URL",
             "value" : "$(ANTA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BACKEND_URL_ANTA",
+            "value" : "$(BACKEND_URL_ANTA)"
+          },
+          {
+            "key" : "BASIC_AUTH_ANTA",
+            "value" : "$(BASIC_AUTH_ANTA)"
           }
         ],
         "targetForVariableExpansion" : {
