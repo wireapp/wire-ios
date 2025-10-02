@@ -156,7 +156,6 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         super.tearDown()
 
-        // Assert after super.tearDown to ensure ARC cleanup has run
         XCTAssertNil(weakSut, "sut should have been deallocated after tearDown")
     }
 
