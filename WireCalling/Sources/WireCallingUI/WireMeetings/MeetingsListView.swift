@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 
-public struct MeetingsView: View {
+public struct MeetingsListView: View {
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @ObservedObject private var viewModel: MeetingsListViewModel
 
-    public init(viewModel: MeetingsViewModel) {
+    public init(viewModel: MeetingsListViewModel) {
         self.viewModel = viewModel
     }
 
@@ -30,9 +30,9 @@ public struct MeetingsView: View {
         VStack(spacing: 12) {
             Picker("", selection: Binding(
                 get: { viewModel.selectedTab.rawValue },
-                set: { viewModel.selectedTab = MeetingsViewModel.Tab(rawValue: $0) ?? .upcoming }
+                set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .upcoming }
             )) {
-                ForEach(MeetingsViewModel.Tab.allCases, id: \.rawValue) { tab in
+                ForEach(MeetingsListViewModel.Tab.allCases, id: \.rawValue) { tab in
                     Text(tab.title).tag(tab.rawValue)
                 }
             }
@@ -62,5 +62,5 @@ public struct MeetingsView: View {
 }
 
 #Preview {
-    MeetingsView(viewModel: MeetingsViewModel())
+    MeetingsListView(viewModel: MeetingsListViewModel())
 }

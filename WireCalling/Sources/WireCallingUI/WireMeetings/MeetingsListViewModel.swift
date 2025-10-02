@@ -17,3 +17,33 @@
 //
 
 import Foundation
+
+public final class MeetingsListViewModel: ObservableObject {
+
+    enum Tab: Int, CaseIterable {
+        case upcoming = 0
+        case past = 1
+
+        var title: String {
+            switch self {
+            case .upcoming: return "Upcoming"
+            case .past: return "Past"
+            }
+        }
+    }
+
+    @Published var selectedTab: Tab = .upcoming
+
+    public init() {}
+
+    func meetNowTapped() {
+        print("Meet Now tapped")
+    }
+
+    func scheduleMeetingTapped() {
+        print("Schedule a Meeting tapped")
+    }
+
+    var accessibilityHintForAvatar: String = "Opens account menu"
+
+}

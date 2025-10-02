@@ -16,13 +16,125 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import SwiftUI
 import UIKit
-import WireCommonComponents
-import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireAccountImageUI
-import SwiftUI
+
+public final class MeetingsListViewController: UIViewController {
+
+    private let viewModel: MeetingsListViewModel
+    private let hostingController: UIHostingController<MeetingsListView>
+    private weak var accountImageView: AccountImageView?
+
+    public init(viewModel: MeetingsListViewModel = .init()) {
+        self.viewModel = viewModel
+        self.hostingController = UIHostingController(rootView: MeetingsListView(viewModel: viewModel))
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        view.accessibilityViewIsModal = true
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
+
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        setupNavigationBar()
+        configureNavigationBarAppearance()
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Keep nav appearance in sync in case parent controller changes it
+        configureNavigationBarAppearance()
+    }
+
+    // MARK: - Navigation Bar
+
+    private func setupNavigationBar() {
+        navigationItem.title = "Meetings"
+        setupLeftNavigationBarButtonItems()
+        setupRightNavigationBarButtonItems()
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+    }
+
+    private func setupLeftNavigationBarButtonItems() {
+        let stackView = UIStackView()
+        stackView.spacing = 6
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+
+        let avatar = makeAccountImageView()
+        stackView.addArrangedSubview(avatar)
+        self.accountImageView = avatar
+
+        let container = UIBarButtonItem(customView: stackView)
+        navigationItem.leftBarButtonItems = [container]
+    }
+
+    private func setupRightNavigationBarButtonItems() {
+        let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
+        let chevron = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
+
+        let meetNow = UIAction(title: "Meet Now", image: chevron) { [weak self] _ in
+            self?.viewModel.meetNowTapped()
+        }
+        let schedule = UIAction(title: "Schedule a Meeting", image: chevron) { [weak self] _ in
+            self?.viewModel.scheduleMeetingTapped()
+        }
+
+        let menu = UIMenu(children: [meetNow, schedule])
+
+        let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
+        let video = UIImage(systemName: "video.fill", withConfiguration: symbolConfiguration)
+
+        let button = UIButton(type: .system)
+        button.setImage(video, for: .normal)
+        button.accessibilityLabel = "Start or schedule a meeting"
+        button.showsMenuAsPrimaryAction = true
+        button.menu = menu
+
+        let item = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItems = [item]
+    }
+
+    private func makeAccountImageView() -> AccountImageView {
+        let v = AccountImageView()
+        v.isAccessibilityElement = true
+        v.accessibilityHint = viewModel.accessibilityHintForAvatar
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        v.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        return v
+    }
+}
+
+
+
 
 //final class MeetingsViewController: UIViewController {
 //    weak var accountImageView: AccountImageView?
@@ -185,117 +297,3 @@ import SwiftUI
 //
 //}
 //
-
-final class MeetingsViewController: UIViewController {
-
-    private let viewModel: MeetingsViewModel
-    private let hostingController: UIHostingController<MeetingsView>
-    private weak var accountImageView: AccountImageView?
-
-    init(viewModel: MeetingsViewModel = .init()) {
-        self.viewModel = viewModel
-        self.hostingController = UIHostingController(rootView: MeetingsView(viewModel: viewModel))
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.accessibilityViewIsModal = true
-        addChild(hostingController)
-        view.addSubview(hostingController.view)
-        hostingController.didMove(toParent: self)
-
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        setupNavigationBar()
-        configureNavigationBarAppearance()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Keep nav appearance in sync in case parent controller changes it
-        configureNavigationBarAppearance()
-    }
-
-    // MARK: - Navigation Bar
-
-    private func setupNavigationBar() {
-        navigationItem.title = "Meetings"
-        setupLeftNavigationBarButtonItems()
-        setupRightNavigationBarButtonItems()
-    }
-
-    func configureNavigationBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = ColorTheme.Backgrounds.surface
-
-        // Configure appearance for different states
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.compactAppearance = appearance
-    }
-
-
-
-    private func setupLeftNavigationBarButtonItems() {
-        let stackView = UIStackView()
-        stackView.spacing = 6
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-
-        let avatar = makeAccountImageView()
-        stackView.addArrangedSubview(avatar)
-        self.accountImageView = avatar
-
-        let container = UIBarButtonItem(customView: stackView)
-        navigationItem.leftBarButtonItems = [container]
-    }
-
-    private func setupRightNavigationBarButtonItems() {
-        let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
-        let chevron = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
-
-        let meetNow = UIAction(title: "Meet Now", image: chevron) { [weak self] _ in
-            self?.viewModel.meetNowTapped()
-        }
-        let schedule = UIAction(title: "Schedule a Meeting", image: chevron) { [weak self] _ in
-            self?.viewModel.scheduleMeetingTapped()
-        }
-
-        let menu = UIMenu(children: [meetNow, schedule])
-
-        let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
-        let video = UIImage(systemName: "video.fill", withConfiguration: symbolConfiguration)
-
-        let button = UIButton(type: .system)
-        button.setImage(video, for: .normal)
-        button.accessibilityLabel = "Start or schedule a meeting"
-        button.showsMenuAsPrimaryAction = true
-        button.menu = menu
-
-        let item = UIBarButtonItem(customView: button)
-        navigationItem.rightBarButtonItems = [item]
-    }
-
-    private func makeAccountImageView() -> AccountImageView {
-        let v = AccountImageView()
-        v.isAccessibilityElement = true
-        v.accessibilityHint = viewModel.accessibilityHintForAvatar
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        v.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        return v
-    }
-}

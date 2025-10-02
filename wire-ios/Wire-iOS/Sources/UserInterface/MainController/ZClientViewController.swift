@@ -20,6 +20,7 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
+import WireCallingUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -344,7 +345,7 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = MeetingsViewController()
+        let meetingsUI = MeetingsListViewController()
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)

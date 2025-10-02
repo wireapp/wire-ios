@@ -12,7 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../WireFoundation"),
-        .package(path: "../WireUI")
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(
@@ -20,8 +20,9 @@ let package = Package(
             dependencies: [
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
+                .product(name: "WireAccountImageUI", package: "WireUI"),
                 "WireFoundation"
-            ],
+            ]
         ),
         .testTarget(
             name: "WireCallingTests",
