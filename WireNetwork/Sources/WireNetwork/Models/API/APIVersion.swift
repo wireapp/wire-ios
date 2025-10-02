@@ -36,6 +36,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v9
     case v10
     case v11
+    case v12
 
     /// API versions considered production ready by the client.
     ///
