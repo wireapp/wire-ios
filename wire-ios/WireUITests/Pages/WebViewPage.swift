@@ -19,13 +19,13 @@
 import XCTest
 
 class WebViewPage: PageModel {
-    
+
     override var pageMainElement: XCUIElement {
         webViewLabel
     }
 
     private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
-    
+
     var webViewLabel: XCUIElement {
         Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
     }
