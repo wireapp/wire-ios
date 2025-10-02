@@ -1393,8 +1393,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
     private func fetchAndStoreFeatureConfig() async {
         do {
-            var getFeatureConfigAction = GetFeatureConfigsAction()
-            try await getFeatureConfigAction.perform(in: notificationContext)
+            try await self.clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
