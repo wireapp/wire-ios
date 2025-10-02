@@ -29,7 +29,7 @@ import WireTransportSupport
 @testable import WireTransport
 
 class ZMUserSessionTestsBase: MessagingTest {
-
+    
     var mockSessionManager: MockSessionManager!
     var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
@@ -46,17 +46,17 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-
+    
     var sut: ZMUserSession!
-
+    
     override func setUp() {
         super.setUp()
-
+        
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
-
+        
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")
-
+        
         backendEnvironment = WireTransport.BackendEnvironment(
             title: "Mock backend environment",
             trustData: [],
@@ -73,7 +73,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             proxySettings: nil,
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
-
+        
         wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
@@ -81,7 +81,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             pinnedKeys: [],
             proxySettings: nil
         )
-
+        
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: .create(),
@@ -92,10 +92,10 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockSessionManager = MockSessionManager()
         mediaManager = MockMediaManager()
         flowManagerMock = FlowManagerMock()
-
+        
         mockEARService = MockEARServiceInterface()
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
-
+        
         mockMLSService = MockMLSServiceInterface()
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
@@ -106,24 +106,24 @@ class ZMUserSessionTestsBase: MessagingTest {
         }
         mockMLSService.setSyncDelegate_MockMethod = { _ in }
         mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
-
+        
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
-
+        
         sut = createSut()
         sut.sessionManager = mockSessionManager
-
+        
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-
+        
         validCookie = HTTPCookie.validCookieData()
     }
-
+    
     override func tearDown() {
         clearCache()
-
+        
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
-
+        
         backendEnvironment = nil
         wireAPIBackendEnvironment = nil
         baseURL = nil
@@ -137,14 +137,19 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockRecurringActionService = nil
         mockEARService.delegate = nil
         mockEARService = nil
-        let sut = sut
-        self.sut = nil
         mockCoreCryptoProvider = nil
-        sut?.tearDown()
-
+        
+        weak var weakSut: ZMUserSession?       
+        weakSut = self.sut
+        self.sut.tearDown()
+        self.sut = nil
+        
         super.tearDown()
+        
+        // Assert after super.tearDown to ensure ARC cleanup has run
+        XCTAssertNil(weakSut, "sut should have been deallocated after tearDown")
     }
-
+    
     func createSut() -> ZMUserSession {
         createSut(earService: mockEARService)
     }

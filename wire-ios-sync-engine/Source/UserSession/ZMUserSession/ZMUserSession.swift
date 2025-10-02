@@ -613,10 +613,10 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
-                onProcessedCallEvent: onProcessedCallEvent,
-                onSelfClientInvalidated: onSelfClientInvalidated,
-                onAuthenticationFailure: onAuthenticationFailure,
-                onProcessedTypingUsers: onProcessedTypingUsers
+                onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
+                onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
+                onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
             )
         )
         self.clientSessionComponent = clientSessionComponent
@@ -686,6 +686,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Deinitalize
 
     deinit {
+        userSessionComponent = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -1522,9 +1523,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             }
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
-            Task {
+            WaitingGroupTask(context: syncContext) {
                 WireLogger.sync.debug("Triggering initial sync after client registration")
-                await triggerSync()
+                await self.triggerSync()
             }
         }
     }
