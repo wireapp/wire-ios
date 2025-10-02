@@ -78,11 +78,14 @@ class WireUITestCase: XCTestCase {
                 app.wait(for: .runningForeground, timeout: timeout),
                 "App did not return to foreground after opening deeplink"
             )
-            app.buttons["Proceed"].tap()
-            let welcomeLabel = app.descendants(matching: .any)["onPremInfoButton"].label
+            guard let welcomePage = try? SetCustomBackendPage().tapOnProceedButton() else {
+                XCTFail("Failed to proceed to set custom backend")
+                return
+            }
+            let labeltext = welcomePage.setBackendLabel.label
             XCTAssertTrue(
-                welcomeLabel.contains(domainInfo),
-                "Expected domain missing from \(welcomeLabel)"
+                labeltext.contains(domainInfo),
+                "Expected domain missing from \(labeltext)"
             )
         }
     }
