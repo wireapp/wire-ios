@@ -48,6 +48,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
+    private lazy var backgroundContext = userSession.contextProvider.newBackgroundContext()
     private var fetchController: NSFetchedResultsController<ZMMessage>?
     private var lastFetchedObjectCount: Int = 0
 
@@ -124,8 +125,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         // Dispatching to background thread to offload sections calculation
 
-        let backgroundContext = userSession.contextProvider.newBackgroundContext()
-        backgroundContext.perform { [weak self] in
+        backgroundContext = userSession.contextProvider.newBackgroundContext()
+        backgroundContext.perform { [weak self, backgroundContext] in
             guard let self else { return }
 
             var messages: [ZMMessage] = messageIds.compactMap { objectID in

@@ -116,6 +116,9 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     func touchAction() {
+        print(parentMessage)
+        print(parentMessage.nonce)
+        print(parentMessage.managedObjectContext)
         guard let moc = parentMessage.managedObjectContext,
               let buttonId = button?.id,
               let messageId = parentMessage.nonce,
