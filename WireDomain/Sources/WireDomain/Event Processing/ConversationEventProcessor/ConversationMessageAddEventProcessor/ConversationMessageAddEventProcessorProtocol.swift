@@ -29,7 +29,7 @@ protocol ConversationMessageAddEventProcessorProtocol {
     var messageLocalStore: any MessageLocalStoreProtocol { get }
 
     /// Due to the protobuf declaration being extended we might receive a generic message where `content` cannot be deserialized.
-    /// This method adds a system message to the conversation to inform the user.
+    /// This method adds a system message to the conversation in order to inform the user.
 
     func addUnknownContentTypeSystemMessage(
         senderID: UserID,
@@ -61,7 +61,7 @@ extension ConversationMessageAddEventProcessorProtocol {
         conversationID: ConversationID,
         date: Date
     ) async {
-        let systemMessageType: SystemMessageType = .unknownMessageReceived(
+        let systemMessageType: SystemMessageType = .unknownMessageContentTypeReceived(
             sender: (senderID.id, senderID.domain),
             date: date
         )

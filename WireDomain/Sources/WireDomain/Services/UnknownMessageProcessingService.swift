@@ -78,9 +78,8 @@ public final class UnknownMessageProcessingService {
     /// Returns true if the message was successfully processed and deleted, false if it still cannot be decoded.
     private func processUnknownMessage(_ unknownMessage: UnknownMessage, payload: Data?) async throws -> Bool {
         guard let payload else {
-            logger.warn("Unknown message has no payload, deleting")
-            await deleteUnknownMessage(unknownMessage)
-            return true
+            logger.warn("Unknown message has no payload, skipping")
+            return false
         }
 
         // Attempt to decode the payload with current protobuf definitions

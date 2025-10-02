@@ -82,7 +82,7 @@ public enum SystemMessageType: Sendable {
         date: Date
     )
 
-    case unknownMessageReceived(
+    case unknownMessageContentTypeReceived(
         sender: (id: UUID, domain: String?),
         date: Date
     )

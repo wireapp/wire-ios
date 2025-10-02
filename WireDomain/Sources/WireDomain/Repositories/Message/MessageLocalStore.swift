@@ -796,7 +796,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .unknownMessageReceived(sender, date):
+        case let .unknownMessageContentTypeReceived(sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -805,7 +805,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             let systemMessage = await createSystemMessage(
-                messageType: .unknownMessageReceived,
+                messageType: .unknownMessageContentTypeReceived,
                 sender: sender,
                 timestamp: date
             )

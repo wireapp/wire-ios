@@ -318,7 +318,7 @@ extension ZMOTRMessage {
             in: context
         )
         conversation.appendSystemMessage(
-            type: .unknownMessageReceived,
+            type: .unknownMessageContentTypeReceived,
             sender: sender,
             users: nil,
             clients: nil,

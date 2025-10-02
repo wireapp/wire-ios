@@ -70,7 +70,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        // Get protobuf payload
+        // Deserialize the GenericMessage instance and handle `content` being `nil` if needed.
         let payload = await getProtobufPayload(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
