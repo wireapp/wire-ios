@@ -330,11 +330,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // WHEN
         sut.didGoOffline()
 
-        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            results: [.success(())],
-            context: syncMOC.notificationContext
-        )
-
         syncMOC.performAndWait {
             sut.didFinishIncrementalSync(isRecovering: false)
         }
