@@ -85,6 +85,11 @@ extension UpdateEventDecodingProxy {
                 let event = FeatureConfigUpdateEvent(featureConfig: .selfDeletingMessages(config))
                 updateEvent = .featureConfig(.update(event))
 
+            case "assetAuditLog":
+                let config = try AssetAuditLogFeatureConfigDecoder().decode(from: container)
+                let event = FeatureConfigUpdateEvent(featureConfig: .assetAuditLog(config))
+                updateEvent = .featureConfig(.update(event))
+
             default:
                 WireLogger.updateEvent.warn("encountered unknown feature config: \(featureName)")
                 let event = FeatureConfigUpdateEvent(featureConfig: .unknown(featureName: featureName))
