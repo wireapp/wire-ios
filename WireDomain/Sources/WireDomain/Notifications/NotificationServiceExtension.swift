@@ -90,6 +90,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             } catch {
                 // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
                 // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+                logger.warn("onGoingtask got cancelled: showing no notifications", attributes: .newNSE, .safePublic)
                 return notificationContentHandler(.emptyNotification)
             }
 
