@@ -245,7 +245,6 @@ struct FeatureConfigsPayloadProcessor {
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
-
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConversationGuestLinks(.init(status: response.status))
@@ -282,7 +281,10 @@ struct FeatureConfigsPayloadProcessor {
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
         case .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations:
-            WireLogger.featureConfigs.warn("decoding unsupported feature config: \"\(featureName)\", this should not happen", attributes: .safePublic)
+            WireLogger.featureConfigs.warn(
+                "decoding unsupported feature config: \"\(featureName)\", this should not happen",
+                attributes: .safePublic
+            )
         }
     }
 

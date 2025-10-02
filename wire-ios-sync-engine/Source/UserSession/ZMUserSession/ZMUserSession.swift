@@ -1264,8 +1264,8 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        Task {
-            await showSyncBar(false)
+        WaitingGroupTask(context: syncContext) { [weak self] in
+            await self?.showSyncBar(false)
         }
 
         WaitingGroupTask(context: syncContext) { [weak self] in
@@ -1394,7 +1394,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
     private func fetchAndStoreFeatureConfig() async {
         do {
-            try await self.clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
+            try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
