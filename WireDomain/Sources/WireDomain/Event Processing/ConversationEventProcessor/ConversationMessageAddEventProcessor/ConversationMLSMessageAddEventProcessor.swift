@@ -88,7 +88,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
-        // Parse into GenericMessage
+        // Parse into GenericMessage with `validate` being `false`, so that `content` to be `nil`. That case will then be handled separately.
         guard
             let payload = Data(base64Encoded: decryptedMessage.message),
             let genericMessage = GenericMessage(from: payload, validate: false)
@@ -104,8 +104,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
+        // If `content` is `nil` it probably means that the message content types have been extended and another client or user sent a message which this version doesn't understand yet.
         if genericMessage.content == nil {
-            return await handleNilContent(
+            return await handleMessageContentNil(
                 messageID: genericMessage.messageID,
                 payload: payload,
                 senderID: senderID,

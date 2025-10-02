@@ -28,7 +28,10 @@ protocol ConversationMessageAddEventProcessorProtocol {
 
     var messageLocalStore: any MessageLocalStoreProtocol { get }
 
-    func addUnknownSystemMessage(
+    /// Due to the protobuf declaration being extended we might receive a generic message where `content` cannot be deserialized.
+    /// This method adds a system message to the conversation to inform the user.
+
+    func addUnknownContentTypeSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
@@ -40,7 +43,7 @@ protocol ConversationMessageAddEventProcessorProtocol {
         date: Date
     ) async
 
-    func handleNilContent(
+    func handleMessageContentNil(
         messageID: String,
         payload: Data,
         senderID: WireNetwork.QualifiedID,
@@ -53,7 +56,7 @@ protocol ConversationMessageAddEventProcessorProtocol {
 
 extension ConversationMessageAddEventProcessorProtocol {
 
-    func addUnknownSystemMessage(
+    func addUnknownContentTypeSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
@@ -85,7 +88,7 @@ extension ConversationMessageAddEventProcessorProtocol {
         )
     }
 
-    func handleNilContent(
+    func handleMessageContentNil(
         messageID: String,
         payload: Data,
         senderID: WireNetwork.QualifiedID,
@@ -97,7 +100,7 @@ extension ConversationMessageAddEventProcessorProtocol {
         case .ignore:
             return
         case .discardAndWarn:
-            await addUnknownSystemMessage(
+            await addUnknownContentTypeSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
                 date: date
