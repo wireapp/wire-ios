@@ -39,7 +39,7 @@ public protocol UpdateEventsAPI {
 
     func getUpdateEvents(
         selfClientID: String?,
-        sinceEventID: UUID
+        sinceEventID: UUID?
     ) -> PayloadPager<UpdateEventBatch>
 
     /// Get the current server time in UTC with seconds precision.
