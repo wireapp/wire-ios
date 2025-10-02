@@ -383,20 +383,19 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    public private(set) lazy var incrementalSync =
-        IncrementalSync(
-            selfClientID: selfClientID,
-            pushChannelAPI: pushChannelAPI,
-            updateEventsSync: pullPendingUpdateEventsSync,
-            decryptor: updateEventDecryptor,
-            updateEventsStore: updateEventsLocalStore,
-            messageStore: messageLocalStore,
-            processor: updateEventProcessor,
-            databaseSaver: databaseSaver,
-            syncStateSubject: syncStateSubject,
-            journal: journal,
-            mlsGroupRepairAgent: mlsGroupRepairAgent
-        )
+    public private(set) lazy var incrementalSync = IncrementalSync(
+        selfClientID: selfClientID,
+        pushChannelAPI: pushChannelAPI,
+        updateEventsSync: pullPendingUpdateEventsSync,
+        decryptor: updateEventDecryptor,
+        updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject,
+        journal: journal,
+        mlsGroupRepairAgent: mlsGroupRepairAgent
+    )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
         IncrementalSyncV2(
