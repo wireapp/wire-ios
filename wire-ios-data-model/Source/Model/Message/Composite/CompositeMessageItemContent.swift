@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 
-class CompositeMessageItemContent: NSObject {
+final class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage
     private let item: Composite.Item
 
@@ -116,22 +116,17 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     func touchAction() {
-        print(parentMessage)
-        print(parentMessage.nonce)
-        print(parentMessage.managedObjectContext)
-        guard let moc = parentMessage.managedObjectContext,
-              let buttonId = button?.id,
-              let messageId = parentMessage.nonce,
-              !hasSelectedButton else { return }
+        guard let context = parentMessage.managedObjectContext else { return }
 
-        moc.performGroupedBlock { [weak self] in
-            guard let self else { return }
+        context.performGroupedBlock { [weak self] in
+            guard let self, let messageId = parentMessage.nonce, let buttonId = button?.id, !hasSelectedButton else { return }
+
             let buttonState = buttonState ??
-                ButtonState.insert(with: buttonId, message: parentMessage, inContext: moc)
+                ButtonState.insert(with: buttonId, message: parentMessage, inContext: context)
             parentMessage.buttonStates?.resetExpired()
             guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
-                moc.saveOrRollback()
+                context.saveOrRollback()
                 return
             }
 
@@ -142,7 +137,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
                 Logging.messageProcessing.warn("Failed to append button action. Reason: \(error.localizedDescription)")
             }
 
-            moc.saveOrRollback()
+            context.saveOrRollback()
         }
     }
 }
