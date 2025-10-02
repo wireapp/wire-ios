@@ -53,13 +53,9 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        sut = ZMClientRegistrationStatus(
-            context: syncMOC,
-            cookieProvider: mockCookieStorage,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            localDomain: "wire.com",
-            isBackendMLSEnabled: false
-        )
+       
+        createSUT(enableMLS: false)
+        
         sut.registrationStatusDelegate = mockClientRegistationDelegate
 
         syncMOC.performAndWait {
@@ -87,7 +83,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             client.remoteIdentifier = "identifier"
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
 
-            enableMLS()
+            createSUT(enableMLS: true)
             enableE2EI()
 
             // when
@@ -114,7 +110,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
             mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
-            enableMLS()
+            createSUT(enableMLS: true)
 
             // when
             sut.determineInitialRegistrationStatus()
@@ -436,7 +432,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = "yay"
 
-            enableMLS()
+            createSUT(enableMLS: true)
             enableE2EI()
 
             // when
@@ -588,7 +584,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
 
-            enableMLS()
+            createSUT()
 
             // then
             XCTAssertFalse(sut.needsToRegisterMLSClient)
@@ -605,7 +601,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfClient.remoteIdentifier = UUID.create().transportString()
             sut.didRegisterProteusClient(selfClient)
 
-            enableMLS()
+            createSUT(enableMLS: true)
 
             // then
             XCTAssertTrue(sut.needsToRegisterMLSClient)
@@ -621,7 +617,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "someKey")
             selfClient.needsToUploadMLSPublicKeys = false
 
-            enableMLS()
+            createSUT()
 
             // then
             XCTAssertFalse(sut.needsToRegisterMLSClient)
@@ -682,7 +678,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUserClient.remoteIdentifier = "clientID"
             mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
-            enableMLS()
+            createSUT(enableMLS: true)
 
             // when
             sut.didRegisterProteusClient(selfUserClient)
@@ -703,7 +699,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             let selfUserClient = createSelfClient()
             selfUserClient.remoteIdentifier = "clientID"
 
-            enableMLS()
+            createSUT(enableMLS: true)
             enableE2EI()
 
             // when
@@ -792,10 +788,15 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     @objc
-    private func enableMLS() {
-        LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
-        BackendInfo.apiVersion = .v5
-        BackendInfo.isMLSEnabled = true
+    private func createSUT(enableMLS: Bool = false) {
+        // enableMLS
+        sut = ZMClientRegistrationStatus(
+            context: syncMOC,
+            cookieProvider: mockCookieStorage,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: true
+        )
     }
 
     @objc
