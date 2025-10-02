@@ -1264,8 +1264,8 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        WaitingGroupTask(context: syncContext) { [weak self] in
-            await self?.showSyncBar(false)
+        Task {
+            await showSyncBar(false)
         }
 
         WaitingGroupTask(context: syncContext) { [weak self] in
@@ -1523,9 +1523,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             }
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
-            WaitingGroupTask(context: syncContext) {
+            Task {
                 WireLogger.sync.debug("Triggering initial sync after client registration")
-                await self.triggerSync()
+                await triggerSync()
             }
         }
     }
