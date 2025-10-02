@@ -119,6 +119,15 @@ public enum FeatureConfig: Equatable, Sendable {
     /// Enable or Disable chat bubbles
     case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
 
+    /// Config for "Asset Audit Log" feature.
+    ///
+    /// When this feature is enabled, additional metadata is provided
+    /// to the backend when uploading an asset so that an audit log
+    /// can be constructed for future referece, such as for security
+    /// review.
+
+    case assetAuditLog(AssetAuditLogFeatureConfig)
+
     /// An unknown feature.
 
     case unknown(featureName: String)
