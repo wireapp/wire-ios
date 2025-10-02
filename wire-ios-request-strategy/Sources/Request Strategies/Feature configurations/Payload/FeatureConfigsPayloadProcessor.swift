@@ -19,7 +19,8 @@
 import Foundation
 import protocol WireDataModel.LegacyFeatureRepositoryInterface
 import WireLogging
-
+/// This class process feature configs ONLY for apiVersion below 8.
+/// No modification for new feature configs are needed
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
