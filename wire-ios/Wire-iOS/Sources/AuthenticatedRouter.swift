@@ -67,7 +67,7 @@ final class AuthenticatedRouter {
         account: Account,
         userSession: UserSession,
         legacyEnvironment: WireTransport.BackendEnvironment,
-        newEnvironment: BackendEnvironment2?,
+        newEnvironment: BackendEnvironment2?, // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
