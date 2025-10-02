@@ -21,7 +21,11 @@ import XCTest
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        nameField
+        accountSettingsPageHeader
+    }
+
+    var accountSettingsPageHeader: XCUIElement {
+        app.staticTexts["Account"]
     }
 
     var nameField: XCUIElement {
@@ -52,6 +56,10 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
     }
 
+    var resetPasswordButton: XCUIElement {
+        app.descendants(matching: .any)["Reset Password"].firstMatch
+    }
+
     func getAccountName() -> String? {
         nameField.value as? String
     }
@@ -62,6 +70,11 @@ class AccountSettingsPage: PageModel {
 
     func getEmail() -> String {
         emailField.label
+    }
+
+    func tapEmailField() throws -> EmailUpdatePage {
+        emailField.tap()
+        return try EmailUpdatePage()
     }
 
     var backToSettingsButton: XCUIElement {
@@ -89,5 +102,10 @@ class AccountSettingsPage: PageModel {
     func goBackToSettingsPage() throws -> SettingsPage {
         backToSettingsButton.tap()
         return try SettingsPage()
+    }
+
+    func tapOnResetPasswordButton() throws -> WebViewPage {
+        resetPasswordButton.tap()
+        return try WebViewPage()
     }
 }
