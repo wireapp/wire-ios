@@ -364,7 +364,7 @@ extension ZMConversation {
         needsToCalculateUnreadMessages = false
     }
 
-    /// Returns the first unread message in a converation. If the first unread message is child message
+    /// Returns the first unread message in a conversation. If the first unread message is child message
     /// of system message the parent message will be returned.
 
     @objc public var firstUnreadMessage: ZMConversationMessage? {
