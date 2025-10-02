@@ -17,13 +17,14 @@
 //
 
 import Foundation
+import WireFoundationSupport
 import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
-    enum MockError: Error {
+    enum MockError: Swift.Error {
         case unmockedMethodCalled
         case coreCryptoKeyError
     }
@@ -47,7 +48,12 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     override func setUp() {
         super.setUp()
         mockCoreCryptoKeyProvider =
-            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+            MockCoreCryptoKeyProvider(
+                coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager,
+                userID: UUID(),
+                storage: UserDefaultsProtocolMock(),
+                staleKeysTracker: MockStaleCoreCryptoKeysTrackerProtocol()
+            )
         sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 

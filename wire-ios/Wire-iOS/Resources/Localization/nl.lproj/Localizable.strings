@@ -2146,8 +2146,10 @@
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
 
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
 "account_blocked.generic_error.alert.title" = "Er is iets mis gegaan";
 "account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
 "account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
-"account_blocked.generic_error.alert.send_logs" = "Send debug logs";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
 "account_blocked.generic_error.alert.retry" = "Retry";
