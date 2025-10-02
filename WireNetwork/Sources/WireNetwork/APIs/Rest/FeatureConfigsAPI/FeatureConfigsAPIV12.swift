@@ -142,6 +142,7 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
         featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
 
+        // added in v12
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))
