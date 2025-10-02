@@ -326,9 +326,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     }
 
     // TODO: For some reason replacing implementation of fetchFeature configs will make this test hang forever
-    func disable_testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
+    func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {
         // WHEN
         sut.didGoOffline()
+
+        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
+            results: [.success(())],
+            context: syncMOC.notificationContext
+        )
 
         syncMOC.performAndWait {
             sut.didFinishIncrementalSync(isRecovering: false)
@@ -490,6 +495,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+
+        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
         let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
