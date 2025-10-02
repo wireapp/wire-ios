@@ -327,11 +327,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // WHEN
         sut.didGoOffline()
 
-        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            results: [.success(())],
-            context: syncMOC.notificationContext
-        )
-
         syncMOC.performAndWait {
             sut.didFinishIncrementalSync(isRecovering: false)
         }
@@ -339,7 +334,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -493,11 +487,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-
-        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
         let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
@@ -531,7 +520,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
-        XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
         XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
     }
 

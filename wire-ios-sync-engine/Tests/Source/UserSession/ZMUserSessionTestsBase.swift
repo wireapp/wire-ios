@@ -44,8 +44,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
     var mockSyncStateDelegate: MockSyncStateDelegate!
-    var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
-    var mockFetchBackendMLSPublicKeysActionHandler: MockActionHandler<FetchBackendMLSPublicKeysAction>!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -55,13 +53,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         super.setUp()
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
-
-        mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
-        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        mockFetchBackendMLSPublicKeysActionHandler = .init(
-            result: .success(backendPublicKeys),
-            context: syncMOC.notificationContext
-        )
 
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")
@@ -148,8 +139,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService = nil
         let sut = sut
         self.sut = nil
-        mockGetFeatureConfigsActionHandler = nil
-        mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
         sut?.tearDown()
 
