@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserPropertiesAPIV11: UserPropertiesAPIV10 {
+class UserPropertiesAPIV11: UserPropertiesAPIV10 {
     override var apiVersion: APIVersion { .v11 }
 }
