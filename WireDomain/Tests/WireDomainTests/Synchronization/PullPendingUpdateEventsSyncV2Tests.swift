@@ -181,7 +181,6 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
     }
 
-
     func testPull_missedEvents() async throws {
 
         let upstream = AsyncThrowingStream { continuation in
@@ -231,7 +230,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             count: decryptionCount,
             "decryptionCount mismatch",
             file: file,
-            line: line,
+            line: line
         )
         // check events stored
         try XCTAssertCount(
