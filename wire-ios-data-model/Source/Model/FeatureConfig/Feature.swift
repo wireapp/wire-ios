@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "Feature")
-
 @objcMembers
 public class Feature: ZMManagedObject {
 
