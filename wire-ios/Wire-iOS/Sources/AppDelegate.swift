@@ -210,7 +210,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -235,7 +234,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = NSAttributedString.paragraphStyle
 
         DeveloperOverrides.storage = .shared()
-
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
@@ -351,7 +349,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler(.noData)
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
         }
     }
@@ -366,7 +370,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler()
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(
                 application,
                 handleEventsForBackgroundURLSession: identifier,
