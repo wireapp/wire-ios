@@ -126,6 +126,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -259,6 +260,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -358,6 +360,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -493,6 +496,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -616,6 +620,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         }
 
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
