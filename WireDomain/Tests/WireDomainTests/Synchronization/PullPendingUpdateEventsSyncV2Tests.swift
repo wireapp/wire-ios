@@ -181,6 +181,30 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
     }
 
+
+    func testPull_missedEvents() async throws {
+
+        let upstream = AsyncThrowingStream { continuation in
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event2]))
+            continuation.yield(PushChannelV2.Element.missedEvents)
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event3]))
+        }
+
+        let pushChannel = try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: 1,
+            decryptionCount: 1,
+            storedEventsCount: 1,
+            acknowledgementCount: 1
+        )
+
+        // the missedEvents should break the stream and not process the last event
+        // in reality the event3 will never come before you ack the fullsync
+        // ack the fullsync will be done in main app
+
+        XCTAssertEqual(pushChannel.acknowledgeFullSync_Invocations.count, 0)
+    }
+
     @discardableResult
     func internalTestPull(
         stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
@@ -205,19 +229,22 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         try XCTAssertCount(
             decryptor.decryptEventsInContext_Invocations,
             count: decryptionCount,
+            "decryptionCount mismatch",
             file: file,
-            line: line
+            line: line,
         )
         // check events stored
         try XCTAssertCount(
             updateEventsStore.indexOfLastEventEnvelope_Invocations,
             count: storedEventsCount,
+            "lastEventEnvelopeCount mismatch",
             file: file,
             line: line
         )
         try XCTAssertCount(
             updateEventsStore.persistEventEnvelopeIndex_Invocations,
             count: storedEventsCount,
+            "storedEventsCount mismatch",
             file: file,
             line: line
         )
@@ -226,6 +253,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         try XCTAssertCount(
             pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations,
             count: acknowledgementCount,
+            "acknowledgementCount mismatch",
             file: file,
             line: line
         )
