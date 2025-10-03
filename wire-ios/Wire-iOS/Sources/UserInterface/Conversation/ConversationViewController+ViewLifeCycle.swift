@@ -40,6 +40,6 @@ extension ConversationViewController {
 
         isAppearing = false
 
-        syncCellsStateIfPending()
+        syncCellsState()
     }
 }

@@ -879,10 +879,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         filesView.presentOverAll(animated: true)
     }
 
-    /// If cells state is pending we need to sync it to ensure the value is up to date
-    /// as it might have been updated to a `ready` state.
-    func syncCellsStateIfPending() {
-        guard wireCellsState == .pending else {
+    /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
+    /// as it might have been updated to either a `pending` or `ready` state.
+    func syncCellsState() {
+        guard wireCellsState != .ready else {
             return
         }
 
