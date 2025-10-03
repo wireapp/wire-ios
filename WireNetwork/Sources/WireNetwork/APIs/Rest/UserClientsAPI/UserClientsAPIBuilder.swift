@@ -63,6 +63,8 @@ public struct UserClientsAPIBuilder {
             UserClientsAPIV10(apiService: apiService)
         case .v11:
             UserClientsAPIV11(apiService: apiService)
+        case .v12:
+            UserClientsAPIV12(apiService: apiService)
         }
     }
 

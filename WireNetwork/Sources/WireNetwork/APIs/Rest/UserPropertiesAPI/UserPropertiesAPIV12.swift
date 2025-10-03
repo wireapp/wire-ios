@@ -16,15 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// Errors originating from `PullPendingUpdateEventsSync`.
-
-public enum PullPendingUpdateEventsSyncError: Error {
-
-    /// There is no known last event id from which to pull
-    /// new events.
-
-    case noLastEventID
-
+final class UserPropertiesAPIV12: UserPropertiesAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
 }

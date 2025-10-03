@@ -203,6 +203,23 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingFeatureConfigUpdateAssetAuditLogEvent() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateAssetAuditLog")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .featureConfig(.update(Scaffolding.assetAuditLogUpdateEvent))
+        )
+    }
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -321,6 +338,14 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 SelfDeletingMessagesFeatureConfig(
                     status: .enabled,
                     enforcedTimeoutSeconds: 123
+                )
+            )
+        )
+
+        static let assetAuditLogUpdateEvent = FeatureConfigUpdateEvent(
+            featureConfig: .assetAuditLog(
+                AssetAuditLogFeatureConfig(
+                    status: .enabled
                 )
             )
         )

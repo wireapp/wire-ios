@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UsersAPIV11: UsersAPIV10 {
+class UsersAPIV11: UsersAPIV10 {
     override var apiVersion: APIVersion { .v11 }
 }
