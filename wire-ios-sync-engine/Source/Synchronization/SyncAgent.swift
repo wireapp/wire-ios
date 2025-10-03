@@ -71,6 +71,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private var subscription: AnyCancellable?
 
+    var syncRunning: Bool {
+        ongoingSyncTask != nil || incrementalSyncToken != nil
+    }
+
     var isLive: Bool {
         if isSyncV2Enabled {
             syncStateSubject.value == .liveSyncing(.ongoing)
@@ -122,9 +126,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             WireLogger.sync.debug(
                 "resuming sync"
             )
-
             do {
-                try await performSync()
+                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
+                // cancel the task (not keeping any file lock in suspend mode)
+                try await withExpiringActivity(reason: "resuming sync") { [weak self] in
+                    try await self?.performSync()
+                }
             } catch is CancellationError {
                 // ignore error
             } catch {
@@ -133,18 +140,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     error: error
                 )
             }
+
         }
     }
 
     /// Suspend any ongoing sync tasks.
 
-    func suspend() {
-        Task {
-            await suspend()
-        }
-    }
-
-    private func suspend() async {
+    func suspend() async {
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
         )

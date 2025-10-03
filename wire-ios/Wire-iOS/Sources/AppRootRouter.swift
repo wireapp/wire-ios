@@ -468,12 +468,16 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
         guard let userSession = userSession as? ZMUserSession else { return nil }
+        let newEnvironment = try? sessionManager.environmentStore.fetchBackendEnvironment(
+            accountID: account.userIdentifier
+        )
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
             account: account,
             userSession: userSession,
-            environment: sessionManager.environment,
+            legacyEnvironment: sessionManager.environment,
+            newEnvironment: newEnvironment,
             trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(

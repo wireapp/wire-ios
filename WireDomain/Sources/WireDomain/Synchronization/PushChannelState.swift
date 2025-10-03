@@ -56,11 +56,13 @@ struct PushChannelState: PushChannelStateProtocol {
             throw Failure.alreadyLocked(sameProcess: false)
         }
         await Self.processLock.lock()
+        WireLogger.pushChannel.debug("pushChannel marked as opened")
     }
 
     func markAsClosed() async {
         fileContext.releaseDirectoryLock()
         await Self.processLock.unlock()
+        WireLogger.pushChannel.debug("pushChannel marked as closed")
     }
 }
 
