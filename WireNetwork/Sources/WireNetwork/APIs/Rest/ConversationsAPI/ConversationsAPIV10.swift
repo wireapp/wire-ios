@@ -88,6 +88,7 @@ struct CreateGroupConversationParametersV10: Encodable {
     let conversationRole: String?
     let messageProtocol: String
     let conversationGroupType: ConversationGroupTypeV8
+    let cells: Bool
     let skipCreator: Bool? // new in v10
 
     enum CodingKeys: String, CodingKey {
@@ -103,6 +104,7 @@ struct CreateGroupConversationParametersV10: Encodable {
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
         case skipCreator = "skip_creator"
+        case cells = "cells"
     }
 
     init(from parameters: CreateGroupConversationParameters) {
@@ -119,6 +121,7 @@ struct CreateGroupConversationParametersV10: Encodable {
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
         self.conversationGroupType = parameters.groupType.toNetworkModel()
         self.skipCreator = parameters.skipCreator
+        self.cells = parameters.cells ?? false
     }
 
 }
@@ -144,6 +147,7 @@ struct ConversationV10: Decodable, ToAPIModelConvertible {
         case type
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
+        case cellsState = "cells_state"
     }
 
     var access: Set<ConversationAccessModeV0>?
@@ -165,6 +169,7 @@ struct ConversationV10: Decodable, ToAPIModelConvertible {
     var type: ConversationTypeV0?
     var groupType: ConversationGroupTypeV8?
     var addPermission: ChannelPermissionV8?
+    var cellsState: CellsStateV8
 
     func toAPIModel() -> Conversation {
         let access = access?.map { $0.toAPIModel() }
@@ -190,7 +195,8 @@ struct ConversationV10: Decodable, ToAPIModelConvertible {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date,
             groupType: groupType?.toAPIModel(),
-            addPermission: addPermission?.toAPIModel()
+            addPermission: addPermission?.toAPIModel(),
+            cellsState: cellsState.toAPIModel()
         )
     }
 }
