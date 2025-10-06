@@ -145,7 +145,11 @@ public extension WireCellsFactory {
         let viewController = UIHostingController(
             rootView: WireCellsAttachmentsPreviewView(
                 viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments
+                    attachments: attachments,
+                    fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                        configuration: .message(nodeIDs: attachments.map(\.nodeID)),
+                        repository: nodesAPI
+                    )
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )

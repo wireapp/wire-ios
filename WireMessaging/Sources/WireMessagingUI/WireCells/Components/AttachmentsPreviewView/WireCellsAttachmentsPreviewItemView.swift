@@ -31,7 +31,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
 
     var body: some View {
         WireCellsDocumentAttachmentPreview(
-            headerIcon: Image(viewModel.icon.resource),
+            headerIcon: Image(viewModel.icon),
             headerText: viewModel.headerText,
             labelText: viewModel.fileName,
             progress: viewModel.progress,
@@ -51,7 +51,8 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 fileIcon: .document,
                 fileName: "Some file",
                 fileExtension: "pdf",
-                fileSize: 100
+                fileSize: 100,
+                isDeleted: false
             )
         )
     )

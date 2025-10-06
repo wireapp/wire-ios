@@ -29,15 +29,19 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     let fileName: String
 
     init(item: WireCellsAttachmentsPreviewViewItem) {
-        let fileSize = (item.fileSize?.formatted(.byteCount(style: .decimal)) as String?).map { "(\($0))" }
-
         self.item = item
-        self.headerText = [item.fileExtension?.uppercased(), fileSize].compactMap { $0 }.joined(separator: " ")
-        self.fileName = [item.fileName, item.fileExtension].compactMap { $0 }.joined(separator: ".")
+        if item.isDeleted {
+            self.headerText = ""
+            self.fileName = L10n.Localizable.Conversation.Message.Attachment.notAvailable
+        } else {
+            let fileSize = (item.fileSize?.formatted(.byteCount(style: .decimal)) as String?).map { "(\($0))" }
+            self.headerText = [item.fileExtension?.uppercased(), fileSize].compactMap { $0 }.joined(separator: " ")
+            self.fileName = [item.fileName, item.fileExtension].compactMap { $0 }.joined(separator: ".")
+        }
     }
 
-    var icon: FileIcon {
-        item.fileIcon
+    var icon: ImageResource {
+        item.isDeleted ? .fileIconNotAvailable : item.fileIcon.resource
     }
 
     var progress: Double {

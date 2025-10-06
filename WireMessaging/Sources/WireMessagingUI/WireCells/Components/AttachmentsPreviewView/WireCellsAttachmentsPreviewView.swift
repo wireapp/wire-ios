@@ -19,6 +19,7 @@
 package import SwiftUI
 import WireMessagingDomain
 import WireFoundation
+import WireMessagingDomainSupport
 
 /// A collection of attachment previews suitable for displaying in a conversation message.
 package struct WireCellsAttachmentsPreviewView: View {
@@ -36,6 +37,9 @@ package struct WireCellsAttachmentsPreviewView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear {
+            Task { await viewModel.fetchLatest() }
+        }
     }
 
     @ViewBuilder
@@ -44,33 +48,46 @@ package struct WireCellsAttachmentsPreviewView: View {
     }
 }
 
-#Preview {
-    WireCellsAttachmentsPreviewView(
-        viewModel: WireCellsAttachmentsPreviewViewModel(
-            attachments: [
-                WireCellsMessageAttachment(
-                    nodeID: UUID(),
-                    contentType: "image/png",
-                    initialName: "Picture.png",
-                    initialSize: 1000,
-                    initialMetadata: nil
-                ),
-                WireCellsMessageAttachment(
-                    nodeID: UUID(),
-                    contentType: "video/mp4",
-                    initialName: "Video.mp4",
-                    initialSize: 2000,
-                    initialMetadata: nil
-                ),
-                WireCellsMessageAttachment(
-                    nodeID: UUID(),
-                    contentType: "application/pdf",
-                    initialName: "Document.pdf",
-                    initialSize: 3000,
-                    initialMetadata: nil
-                )
-            ]
+// MARK: - Preview
+
+@MainActor
+private func makeViewModel() -> WireCellsAttachmentsPreviewViewModel {
+    let attachments = [
+        WireCellsMessageAttachment(
+            nodeID: UUID(),
+            contentType: "image/png",
+            initialName: "Picture.png",
+            initialSize: 1000,
+            initialMetadata: nil
+        ),
+        WireCellsMessageAttachment(
+            nodeID: UUID(),
+            contentType: "video/mp4",
+            initialName: "Video.mp4",
+            initialSize: 2000,
+            initialMetadata: nil
+        ),
+        WireCellsMessageAttachment(
+            nodeID: UUID(),
+            contentType: "application/pdf",
+            initialName: "Document.pdf",
+            initialSize: 3000,
+            initialMetadata: nil
+        )
+    ]
+    let nodesRepository = MockWireCellsNodesRepositoryProtocol()
+    nodesRepository.getNodes_MockValue = (nodes: [], nextOffset: nil)
+
+    return WireCellsAttachmentsPreviewViewModel(
+        attachments: attachments,
+        fetchNodesUseCase: WireCellsFetchNodesUseCase(
+            configuration: .message(nodeIDs: []),
+            repository: nodesRepository
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+}
+
+#Preview {
+    WireCellsAttachmentsPreviewView(viewModel: makeViewModel())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

@@ -63,6 +63,17 @@ package struct WireCellsFetchNodesUseCase: Sendable {
                 deletionStatus: .notDeleted
             )
         }
+
+        /// A `Configuration` for showing only specific nodes in the file view.
+        package static func message(nodeIDs: [UUID]) -> Configuration {
+            Configuration(
+                root: nil,
+                nodeIDs: nodeIDs,
+                isRecursive: true,
+                nodeType: .leaf,
+                deletionStatus: .any
+            )
+        }
     }
 
     private let configuration: Configuration

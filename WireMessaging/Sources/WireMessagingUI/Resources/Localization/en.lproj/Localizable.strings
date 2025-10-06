@@ -100,7 +100,7 @@
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
-// MARK: Conversation Files View
+// MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Files";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
@@ -114,3 +114,6 @@
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
 "conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
 "conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+
+// MARK: - Conversation
+"conversation.message.attachment.notAvailable" = "File not available";

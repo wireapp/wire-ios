@@ -18,6 +18,7 @@
 
 import Foundation
 import UniformTypeIdentifiers
+import WireLogging
 package import WireMessagingDomain
 
 
@@ -41,29 +42,54 @@ struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
     /// The size in bytes of the attachment.
     let fileSize: Int?
 
+    /// Whether the item is deleted or in the recycle bin.
+    let isDeleted: Bool
+
 }
 
 @MainActor
 package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     private let attachments: [WireCellsMessageAttachment]
+    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
 
     @Published var items: [WireCellsAttachmentsPreviewViewItem]
 
-    package init(attachments: [WireCellsMessageAttachment]) {
+    package init(
+        attachments: [WireCellsMessageAttachment],
+        fetchNodesUseCase: WireCellsFetchNodesUseCase
+    ) {
         self.attachments = attachments
-        self.items = attachments.map { WireCellsAttachmentsPreviewViewItem($0) }
+        self.fetchNodesUseCase = fetchNodesUseCase
+        self.items = attachments.map { WireCellsAttachmentsPreviewViewItem($0, isDeleted: false) }
     }
 
     /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(item: items[index])
     }
+
+    /// Fetches the latest nodes from the backend and updates the view model's items if necessary.
+    func fetchLatest() async {
+        do {
+            let (nodes, _) = try await fetchNodesUseCase.invoke(searchTerm: nil, offset: 0)
+
+            items = attachments.map { attachment in
+                if let node = nodes.first(where: { $0.id == attachment.nodeID }) {
+                    WireCellsAttachmentsPreviewViewItem(node)
+                } else {
+                    WireCellsAttachmentsPreviewViewItem(attachment, isDeleted: true)
+                }
+            }
+        } catch {
+            WireLogger.wireCells.info("Failed to fetch latest nodes: \(error)")
+        }
+    }
 }
 
 private extension WireCellsAttachmentsPreviewViewItem {
 
-    init(_ value: WireCellsMessageAttachment) {
+    init(_ value: WireCellsMessageAttachment, isDeleted: Bool) {
         let url = value.initialName.flatMap { URL(string: $0) }
         let fileType = value.contentType.flatMap { UTType(mimeType: $0) }
         let fileExtension = url?.pathExtension
@@ -73,6 +99,20 @@ private extension WireCellsAttachmentsPreviewViewItem {
         self.fileName = url?.deletingPathExtension().lastPathComponent
         self.fileExtension = fileExtension
         self.fileSize = value.initialSize
+        self.isDeleted = isDeleted
+    }
+
+    init(_ value: WireCellsNode) {
+        let url = URL(string: value.path)
+        let fileType = value.mimeType.flatMap { UTType(mimeType: $0) }
+        let fileExtension = url?.pathExtension
+
+        self.nodeID = value.id
+        self.fileIcon = .make(type: fileType, fileExtension: value.path)
+        self.fileName = url?.deletingPathExtension().lastPathComponent
+        self.fileExtension = fileExtension
+        self.fileSize = value.size.map { Int($0) }
+        self.isDeleted = value.isRecycled
     }
 
 }
