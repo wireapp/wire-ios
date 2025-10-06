@@ -52,7 +52,7 @@ public protocol BackupLocalStoreProtocol: Sendable {
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error>
 
-    /// Adds a message from the backup file to the local data store.
-    func addMessage(_ message: MessageBackupModel) async throws
+    /// Adds a batch of messages from the backup file to the local data store.
+    func addMessages(_ backupMessages: [MessageBackupModel]) async throws
 
 }
