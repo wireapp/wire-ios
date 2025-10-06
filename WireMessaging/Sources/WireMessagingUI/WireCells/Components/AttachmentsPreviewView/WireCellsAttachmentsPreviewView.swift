@@ -18,6 +18,7 @@
 
 package import SwiftUI
 import WireMessagingDomain
+import WireFoundation
 
 /// A collection of attachment previews suitable for displaying in a conversation message.
 package struct WireCellsAttachmentsPreviewView: View {
@@ -29,14 +30,17 @@ package struct WireCellsAttachmentsPreviewView: View {
     }
 
     package var body: some View {
-        VStack {
-            ForEach(viewModel.attachments, id: \.nodeID) { attachment in
-                Text(attachment.initialName ?? "Unnamed")
-                    .frame(maxWidth: .infinity)
-                    .padding()
+        FlowLayout {
+            ForEach(Array(viewModel.items.enumerated()), id: \.element) { index, item in
+                itemRow(index: index)
             }
         }
-        .background(Color.red)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    func itemRow(index: Int) -> some View {
+        WireCellsAttachmentsPreviewItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 }
 
@@ -46,12 +50,27 @@ package struct WireCellsAttachmentsPreviewView: View {
             attachments: [
                 WireCellsMessageAttachment(
                     nodeID: UUID(),
-                    contentType: nil,
-                    initialName: nil,
-                    initialSize: nil,
+                    contentType: "image/png",
+                    initialName: "Picture.png",
+                    initialSize: 1000,
+                    initialMetadata: nil
+                ),
+                WireCellsMessageAttachment(
+                    nodeID: UUID(),
+                    contentType: "video/mp4",
+                    initialName: "Video.mp4",
+                    initialSize: 2000,
+                    initialMetadata: nil
+                ),
+                WireCellsMessageAttachment(
+                    nodeID: UUID(),
+                    contentType: "application/pdf",
+                    initialName: "Document.pdf",
+                    initialSize: 3000,
                     initialMetadata: nil
                 )
             ]
         )
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
