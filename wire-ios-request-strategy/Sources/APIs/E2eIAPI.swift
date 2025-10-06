@@ -94,8 +94,12 @@ class E2eIAPIV10: E2eIAPIV9 {
     override var apiVersion: APIVersion { .v10 }
 }
 
-final class E2eIAPIV11: E2eIAPIV10 {
+class E2eIAPIV11: E2eIAPIV10 {
     override var apiVersion: APIVersion { .v11 }
+}
+
+final class E2eIAPIV12: E2eIAPIV11 {
+    override var apiVersion: APIVersion { .v12 }
 }
 
 private enum Constant {

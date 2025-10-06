@@ -270,6 +270,8 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .blacklisted(reason: .backendAPIVersionObsolete))
         case .clientIsObsolete:
             transition(to: .blacklisted(reason: .clientAPIVersionObsolete))
+        case let .networkError(code):
+            transition(to: .blacklisted(reason: .networkError(code: code)))
         case .genericError:
             transition(to: .blacklisted(reason: .genericError))
         }
