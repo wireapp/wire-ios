@@ -29,7 +29,8 @@ struct ZClientControllerBuilder {
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
-    let environment: WireTransport.BackendEnvironment
+    let legacyEnvironment: WireTransport.BackendEnvironment
+    let newEnvironment: WireNetwork.BackendEnvironment2?
 
     @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
@@ -52,7 +53,8 @@ struct ZClientControllerBuilder {
     @MainActor
     private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
         WireCellsFactory(
-            serverURL: environment.backendURL,
+            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
+            // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
