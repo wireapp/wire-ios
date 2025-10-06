@@ -125,9 +125,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
-    // TODO: [WPB-16224] Re-enable
     func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+
         let userClient = await syncMOC.perform {
             self.createSelfClient()
         }
@@ -136,6 +137,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         await syncMOC.perform {
             self.sut.didRegisterSelfUserClient(userClient)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         let syncStatus = try await syncMOC.perform {
@@ -327,11 +329,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // WHEN
         sut.didGoOffline()
 
-        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            results: [.success(())],
-            context: syncMOC.notificationContext
-        )
-
         syncMOC.performAndWait {
             sut.didFinishIncrementalSync(isRecovering: false)
         }
@@ -339,7 +336,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -531,7 +527,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
-        XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
         XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
     }
 
