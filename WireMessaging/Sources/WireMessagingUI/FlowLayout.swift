@@ -67,8 +67,8 @@ struct FlowLayout: Layout {
 
             items.append(Item(size: size, offset: offset))
 
+            maxX = max(maxX, offset.x + size.width)
             offset.x += size.width + spacing
-            maxX = max(maxX, offset.x)
             currentLineHeight = max(currentLineHeight, size.height)
         }
 
@@ -93,4 +93,6 @@ struct FlowLayout: Layout {
             .frame(idealWidth: .infinity)
             .frame(height: 70)
     }
+    .background(Color.yellow)
+    .padding(8)
 }
