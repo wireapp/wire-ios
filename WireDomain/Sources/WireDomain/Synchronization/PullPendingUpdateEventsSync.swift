@@ -49,12 +49,13 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
     @discardableResult
     public func pull() async throws -> AsyncStream<[UpdateEvent]> {
+        var lastEventID: UUID?
         // We want all events since this event.
-        guard let lastEventID = store.lastEventID() else {
-            throw PullPendingUpdateEventsSyncError.noLastEventID
+        if let lastStoredEventID = store.lastEventID() {
+            lastEventID = lastStoredEventID
         }
 
-        WireLogger.sync.debug("pulling pending events since: \(lastEventID)")
+        WireLogger.sync.debug("pulling pending events since: \(String(describing: lastEventID))")
 
         var events: [UpdateEvent] = []
 
@@ -81,6 +82,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
             } else {
                 WireLogger.sync.debug("no new events on remote")
+                continue
             }
 
             // If we need to abort, do it before processing the next page.

@@ -633,6 +633,10 @@ final class InputBar: UIView {
         }
     }
 
+    func updateTextViewTintColor() {
+        textView.tintColor = .accent()
+    }
+
     // MARK: – Editing View State
 
     func setInputBarText(_ text: String, mentions: [Mention]) {
