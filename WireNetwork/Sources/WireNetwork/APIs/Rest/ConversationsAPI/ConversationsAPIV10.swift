@@ -147,7 +147,6 @@ struct ConversationV10: Decodable, ToAPIModelConvertible {
         case cellsState = "cells_state"
     }
 
-
     var access: Set<ConversationAccessModeV0>?
     var accessRoles: Set<ConversationAccessRoleV0>?
     var cipherSuite: MLSCipherSuiteV0?
