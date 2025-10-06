@@ -31,12 +31,14 @@ package struct MeetingsEmptyStateView: View {
                     .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
+                    .accessibilityIdentifier("meetingsEmptyStateTitle")
 
                 Text(Strings.subtitle)
                     .font(.textStyle(.body1))
                     .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
+                    .accessibilityIdentifier("meetingsEmptyStateSubtitle")
                 Spacer(minLength: 0)
             }
         }

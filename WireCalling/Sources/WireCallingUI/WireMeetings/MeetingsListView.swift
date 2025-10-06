@@ -43,21 +43,12 @@ public struct MeetingsListView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
                     .padding(.bottom, 10)
+                    .accessibilityIdentifier("meetingsListPicker")
 
                     content
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
             } else {
-                //                VStack {
-                //                    Spacer()
-                //                    Text("No \(viewModel.selectedTab == .upcoming ? "upcoming" : "past") meetings")
-                //                        .font(.title3.weight(.semibold))
-                //                        .multilineTextAlignment(.center)
-                //                        .padding(.horizontal, 24)
-                //                        .accessibilityIdentifier("meetings_empty_state_text")
-                //                    Spacer()
-                //                }
-                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 MeetingsEmptyStateView()
             }
         }
