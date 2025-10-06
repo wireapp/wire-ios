@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class ConversationsAPIV11: ConversationsAPIV10 {
+class ConversationsAPIV11: ConversationsAPIV10 {
 
     override var apiVersion: APIVersion { .v11 }
 

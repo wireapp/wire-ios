@@ -33,6 +33,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
                 )
             )
+        case let .assetAuditLog(config):
+            .assetAuditLog(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status)
+                )
+            )
         case let .classifiedDomains(config):
             .classifiedDomains(
                 StorableClassifiedDomainsFeatureConfig(
@@ -144,6 +150,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel(),
                     isMandatory: config.isMandatory,
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
+                )
+            )
+        case let .assetAuditLog(config):
+            .assetAuditLog(
+                .init(
+                    status: config.status.toAPIModel()
                 )
             )
         case let .classifiedDomains(config):
@@ -258,6 +270,7 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
     case appLock(StorableAppLockFeatureConfig)
+    case assetAuditLog(StorableBasicFeatureConfig)
     case classifiedDomains(StorableClassifiedDomainsFeatureConfig)
     case conferenceCalling(StorableConferenceCallingFeatureConfig)
     case conversationGuestLinks(StorableBasicFeatureConfig)

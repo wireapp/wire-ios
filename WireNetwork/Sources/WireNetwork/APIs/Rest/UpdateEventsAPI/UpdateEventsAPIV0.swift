@@ -66,11 +66,11 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
     func getUpdateEvents(
         selfClientID: String?,
-        sinceEventID: UUID
+        sinceEventID: UUID?
     ) -> PayloadPager<UpdateEventBatch> {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
-        return PayloadPager(start: sinceEventID.transportString()) { nextSince in
+        return PayloadPager(start: sinceEventID?.transportString()) { nextSince in
             var requestBuilder = try URLRequestBuilder(path: resourcePath)
                 .withMethod(.get)
                 .withQueryItem(name: "since", value: nextSince)
