@@ -49,13 +49,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = 12
-
-        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = cornerRadius
-        containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        containerView.clipsToBounds = true
+        containerView.backgroundColor = .clear
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(containerView)

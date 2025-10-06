@@ -18,8 +18,9 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
+import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 import WireMessagingUI
@@ -141,13 +142,15 @@ public extension WireCellsFactory {
 
     @MainActor
     func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
-        UIHostingController(
+        let viewController = UIHostingController(
             rootView: WireCellsAttachmentsPreviewView(
                 viewModel: WireCellsAttachmentsPreviewViewModel(
                     attachments: attachments
                 )
-            )
+            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
+        viewController.view.backgroundColor = .clear
+        return viewController
     }
 
 }
