@@ -18,6 +18,7 @@
 
 public import Foundation
 public import UIKit
+public import SwiftUI
 public import WireData
 public import WireMessagingDomain
 import WireMessagingData
@@ -137,4 +138,16 @@ public extension WireCellsFactory {
             viewModel: viewModel
         )
     }
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
+        UIHostingController(
+            rootView: WireCellsAttachmentsPreviewView(
+                viewModel: WireCellsAttachmentsPreviewViewModel(
+                    attachments: attachments
+                )
+            )
+        )
+    }
+
 }

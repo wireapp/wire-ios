@@ -25,7 +25,7 @@ package struct WireCellsAttachmentsPreviewView: View {
 
     @StateObject var viewModel: WireCellsAttachmentsPreviewViewModel
 
-    init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
+    package init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 

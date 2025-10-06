@@ -165,7 +165,8 @@ final class ConversationViewController: UIViewController {
                 mediaPlaybackManager: mediaPlaybackManager,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                wireCellsFactory: wireCellsFactory
             )
         }
 

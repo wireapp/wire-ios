@@ -27,6 +27,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
+        let factory: WireCellsFactoryProtocol
     }
 
     private var containerView = UIView()
@@ -92,17 +93,13 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
                 initialMetadata: nil
             )
         }
-        let viewModel = WireCellsAttachmentsPreviewViewModel(attachments: attachments)
-        let wireCellsAttachmentsPreviewView = WireCellsAttachmentsPreviewView(viewModel: viewModel)
-        let wireCellsAttachmentsPreviewViewController = UIHostingController(rootView: wireCellsAttachmentsPreviewView)
 
-        setupWireCellsAttachmentsView(hostingController: wireCellsAttachmentsPreviewViewController)
+        let viewController = object.factory.makeAttachmentsPreviewView(attachments: attachments)
+        setupWireCellsAttachmentsView(viewController: viewController)
     }
 
-    private func setupWireCellsAttachmentsView(hostingController: UIHostingController<
-        WireCellsAttachmentsPreviewView
-    >) {
-        let view: UIView = hostingController.view
+    private func setupWireCellsAttachmentsView(viewController: UIViewController) {
+        let view: UIView = viewController.view
         containerView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -141,10 +138,12 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
     let accessibilityLabel: String? = nil
 
     init(
-        multipartMessage: MultipartMessageData
+        multipartMessage: MultipartMessageData,
+        wireCellsFactory: WireCellsFactoryProtocol
     ) {
         self.configuration = View.Configuration(
-            attachments: multipartMessage.attachments
+            attachments: multipartMessage.attachments,
+            factory: wireCellsFactory
         )
     }
 }
