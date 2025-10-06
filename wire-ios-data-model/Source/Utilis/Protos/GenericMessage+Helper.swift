@@ -527,18 +527,25 @@ public extension Text {
         }
     }
 
-    func applyEdit(from text: Text) -> Text {
-        var updatedText = text
-        // Transfer read receipt expectation
-        updatedText.expectsReadConfirmation = expectsReadConfirmation
+    func applyEdit(from content: MessageEdit.OneOf_Content) -> MessageEdit.OneOf_Content {
+        switch content {
 
-        // We always keep the quote from the original message
-        if hasQuote {
-            updatedText.quote = quote
-        } else {
-            updatedText.clearQuote()
+        case .text(var updatedText):
+            // Transfer read receipt expectation
+            updatedText.expectsReadConfirmation = expectsReadConfirmation
+
+            // We always keep the quote from the original message
+            if hasQuote {
+                updatedText.quote = quote
+            } else {
+                updatedText.clearQuote()
+            }
+            return .text(updatedText)
+
+        case .composite(let composite):
+            fatalError("TODO")
+
         }
-        return updatedText
     }
 
     func updateLinkPreview(from text: Text) -> Text {

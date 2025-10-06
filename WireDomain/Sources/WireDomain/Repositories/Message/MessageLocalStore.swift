@@ -1002,7 +1002,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         guard
             let messageNonce = UUID(uuidString: genericMessage.messageID),
             let originalText = clientMessage.underlyingMessage?.textData,
-            case .text? = messageEdit.content,
+            let messageEditContent = messageEdit.content,
             senderID == clientMessage.sender?.remoteIdentifier
         else {
             return false
@@ -1010,7 +1010,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         do {
             let genericMessage = GenericMessage(
-                content: originalText.applyEdit(from: messageEdit.text),
+                content: originalText.applyEdit(from: messageEditContent),
                 nonce: messageNonce
             )
             try clientMessage.setUnderlyingMessage(genericMessage)
