@@ -146,7 +146,7 @@ struct ConversationV10: Decodable, ToAPIModelConvertible {
         case addPermission = "add_permission"
         case cellsState = "cells_state"
     }
-    
+
 
     var access: Set<ConversationAccessModeV0>?
     var accessRoles: Set<ConversationAccessRoleV0>?
