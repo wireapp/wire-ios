@@ -613,10 +613,10 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
-                onProcessedCallEvent: onProcessedCallEvent,
-                onSelfClientInvalidated: onSelfClientInvalidated,
-                onAuthenticationFailure: onAuthenticationFailure,
-                onProcessedTypingUsers: onProcessedTypingUsers
+                onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
+                onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
+                onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
             )
         )
         self.clientSessionComponent = clientSessionComponent
@@ -686,6 +686,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Deinitalize
 
     deinit {
+        userSessionComponent = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -1393,8 +1394,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
     private func fetchAndStoreFeatureConfig() async {
         do {
-            var getFeatureConfigAction = GetFeatureConfigsAction()
-            try await getFeatureConfigAction.perform(in: notificationContext)
+            try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
