@@ -17,11 +17,13 @@
 //
 
 public import SwiftUI
-import UIKit
-import WireDesign
 import WireAccountImageUI
+import WireDesign
+import Foundation
 
 public final class MeetingsListViewController: UIViewController {
+
+    private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
     private let viewModel: MeetingsListViewModel
     private let hostingController: UIHostingController<MeetingsListView>
@@ -59,14 +61,13 @@ public final class MeetingsListViewController: UIViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // Keep nav appearance in sync in case parent controller changes it
         configureNavigationBarAppearance()
     }
 
     // MARK: - Navigation Bar
 
     private func setupNavigationBar() {
-        navigationItem.title = "Meetings"
+        navigationItem.title = L10n.Localizable.WireMeetings.List.title
         setupLeftNavigationBarButtonItems()
         setupRightNavigationBarButtonItems()
     }
@@ -76,7 +77,6 @@ public final class MeetingsListViewController: UIViewController {
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
 
-        // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
@@ -100,21 +100,16 @@ public final class MeetingsListViewController: UIViewController {
         let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
         let chevron = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
 
-        let meetNow = UIAction(title: "Meet Now", image: chevron) { [weak self] _ in
+        let meetNow = UIAction(title: Strings.meetNow, image: chevron) { [weak self] _ in
             self?.viewModel.meetNowTapped()
         }
-        let schedule = UIAction(title: "Schedule a Meeting", image: chevron) { [weak self] _ in
+        let schedule = UIAction(title: Strings.scheduleMeeting, image: chevron) { [weak self] _ in
             self?.viewModel.scheduleMeetingTapped()
         }
 
         let menu = UIMenu(children: [meetNow, schedule])
-
-        let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
-        let video = UIImage(systemName: "video.fill", withConfiguration: symbolConfiguration)
-
         let button = UIButton(type: .system)
-        button.setImage(video, for: .normal)
-        button.accessibilityLabel = "Start or schedule a meeting"
+        button.setImage(UIImage(resource: .videoCall), for: .normal)
         button.showsMenuAsPrimaryAction = true
         button.menu = menu
 
@@ -125,7 +120,6 @@ public final class MeetingsListViewController: UIViewController {
     private func makeAccountImageView() -> AccountImageView {
         let v = AccountImageView()
         v.isAccessibilityElement = true
-        v.accessibilityHint = viewModel.accessibilityHintForAvatar
         v.translatesAutoresizingMaskIntoConstraints = false
         v.widthAnchor.constraint(equalToConstant: 28).isActive = true
         v.heightAnchor.constraint(equalToConstant: 28).isActive = true

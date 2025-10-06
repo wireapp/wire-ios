@@ -16,30 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// MARK: - Meetings List
 
-public final class MeetingsListViewModel: ObservableObject {
-
-    private typealias Strings = L10n.Localizable.WireMeetings.List.Tabs
-
-    enum Tab: Int, CaseIterable {
-        case upcoming
-        case past
-
-        var title: String {
-            switch self {
-            case .upcoming: return Strings.upcoming
-            case .past: return Strings.past
-            }
-        }
-    }
-
-    @Published var selectedTab: Tab = .upcoming
-
-    public init() {}
-
-    func meetNowTapped() {}
-
-    func scheduleMeetingTapped() {}
-
-}
+"wireMeetings.list.title" = "Meetings";
+"wireMeetings.list.tabs.past" = "Past";
+"wireMeetings.list.tabs.upcoming" = "Upcoming";
+"wireMeetings.list.actions.meetNow" = "Meet Now";
+"wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
+"wireMeetings.list.emptyState.title" = "No meetings yet";
+"wireMeetings.list.emptyState.subtitle" = "Start a meeting with team members, guests, or external parties.";

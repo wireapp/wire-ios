@@ -11,7 +11,8 @@ let package = Package(
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
-        .package(path: "../WireFoundation"),
+        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WirePlugins"),
         .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
@@ -22,7 +23,8 @@ let package = Package(
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireAccountImageUI", package: "WireUI"),
                 "WireFoundation"
-            ]
+            ],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireCallingTests",

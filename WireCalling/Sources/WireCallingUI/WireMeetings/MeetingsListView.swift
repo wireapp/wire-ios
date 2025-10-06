@@ -37,11 +37,9 @@ public struct MeetingsListView: View {
                 }
             }
             .pickerStyle(.segmented)
-            //.padding(.horizontal)
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 10)
-            .accessibilityHint("Switch between upcoming and past meetings")
 
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -53,9 +51,9 @@ public struct MeetingsListView: View {
     private var content: some View {
         switch viewModel.selectedTab {
         case .upcoming:
-            Text("Upcoming meetings").frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+            Spacer(minLength: 0)
         case .past:
-            Text("Past meetings").frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+            Spacer(minLength: 0)
         }
     }
 

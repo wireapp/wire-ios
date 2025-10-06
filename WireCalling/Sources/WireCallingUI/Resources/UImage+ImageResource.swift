@@ -16,30 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-public final class MeetingsListViewModel: ObservableObject {
-
-    private typealias Strings = L10n.Localizable.WireMeetings.List.Tabs
-
-    enum Tab: Int, CaseIterable {
-        case upcoming
-        case past
-
-        var title: String {
-            switch self {
-            case .upcoming: return Strings.upcoming
-            case .past: return Strings.past
-            }
-        }
-    }
-
-    @Published var selectedTab: Tab = .upcoming
-
-    public init() {}
-
-    func meetNowTapped() {}
-
-    func scheduleMeetingTapped() {}
-
+extension UIImage {
+    static let videoCall = UIImage(resource: .videoCall)
 }
+
