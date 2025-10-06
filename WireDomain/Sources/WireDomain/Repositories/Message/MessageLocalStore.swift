@@ -1009,10 +1009,16 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
 
         do {
-            let genericMessage = GenericMessage(
-                content: originalText.applyEdit(from: messageEditContent),
-                nonce: messageNonce
-            )
+            let genericMessage: GenericMessage
+            switch messageEditContent {
+            case .text(let todo):
+                genericMessage = GenericMessage(
+                    content: originalText.applyEdit(from: messageEdit.text),
+                    nonce: messageNonce
+                )
+            case .composite(_):
+                fatalError()
+            }
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             WireLogger.messageProcessing.warn(
