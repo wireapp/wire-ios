@@ -101,7 +101,13 @@ extension ZMMessage: Shareable {
             ZMUserSession.shared()?.perform {
                 conversations.forEachNonEphemeral {
                     do {
-                        try $0.appendImage(from: imageData)
+                        // TODO: [ASSET] implement
+                        let image = SendableImage(
+                            name: nil,
+                            utType: nil,
+                            source: .data(imageData)
+                        )
+                        try $0.appendImage(image, nonce: UUID())
                     } catch {
                         WireLogger.messageProcessing
                             .warn("Failed to append image message. Reason: \(error.localizedDescription)")

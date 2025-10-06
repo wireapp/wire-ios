@@ -255,6 +255,25 @@ public extension ZMConversation {
         return clientMessage
     }
 
+    @discardableResult
+    func appendImage(
+        _ image: SendableImage,
+        nonce: UUID
+    ) throws -> ZMConversationMessage {
+        switch image.source {
+        case let .data(data):
+            try appendImage(
+                from: data,
+                nonce: nonce
+            )
+        case let .url(url):
+            try appendImage(
+                at: url,
+                nonce: nonce
+            )
+        }
+    }
+
     /// Append an image message.
     ///
     /// - Parameters:
@@ -268,7 +287,7 @@ public extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    private func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage {
         guard
             URL.isFileURL,
             ZMImagePreprocessor.sizeOfPrerotatedImage(at: URL) != .zero,
@@ -293,7 +312,7 @@ public extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    func appendImage(from imageData: Data, nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    private func appendImage(from imageData: Data, nonce: UUID = UUID()) throws -> ZMConversationMessage {
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
@@ -563,21 +582,6 @@ public extension ZMConversation {
         try? appendLocation(with: locationData)
     }
 
-    @discardableResult @objc(appendMessageWithImageData:)
-    func _appendImage(from imageData: Data) -> ZMConversationMessage? {
-        try? appendImage(from: imageData)
-    }
-
-    @discardableResult @objc(appendImageFromData:nonce:)
-    func _appendImage(from imageData: Data, nonce: UUID) -> ZMConversationMessage? {
-        try? appendImage(from: imageData, nonce: nonce)
-    }
-
-    @discardableResult @objc(appendImageAtURL:nonce:)
-    func _appendImage(at URL: URL, nonce: UUID) -> ZMConversationMessage? {
-        try? appendImage(at: URL, nonce: nonce)
-    }
-
     @discardableResult @objc(appendMessageWithFileMetadata:)
     func _appendFile(with fileMetadata: ZMFileMetadata) -> ZMConversationMessage? {
         try? appendFile(with: fileMetadata)
@@ -586,6 +590,33 @@ public extension ZMConversation {
     @discardableResult @objc(appendFile:nonce:)
     func _appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID) -> ZMConversationMessage? {
         try? appendFile(with: fileMetadata, nonce: nonce)
+    }
+
+}
+
+import UniformTypeIdentifiers
+
+public struct SendableImage {
+
+    public let name: String?
+    public let utType: UTType?
+    public let source: Source
+
+    public init(
+        name: String?,
+        utType: UTType?,
+        source: Source
+    ) {
+        self.name = name
+        self.utType = utType
+        self.source = source
+    }
+
+    public enum Source {
+
+        case data(Data)
+        case url(URL)
+
     }
 
 }

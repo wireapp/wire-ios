@@ -659,7 +659,16 @@ final class ConversationInputBarViewController: UIViewController,
 
     func postImage(_ image: MediaAsset) {
         guard let data = image.imageData else { return }
-        sendController.sendMessage(withImageData: data, userSession: userSession)
+        // TODO: [ASSET] implement
+        let image = SendableImage(
+            name: nil,
+            utType: nil,
+            source: .data(data)
+        )
+        sendController.sendMessage(
+            image: image,
+            userSession: userSession
+        )
     }
 
     func deallocateUnusedInputControllers() {
@@ -948,8 +957,14 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
+                        // TODO: [ASSET] implement
+                        let image = SendableImage(
+                            name: "",
+                            mimeType: "",
+                            source: .data(jpegData)
+                        )
                         self.sendController.sendMessage(
-                            withImageData: jpegData,
+                            image: image,
                             userSession: self.userSession,
                             completion: nil
                         )

@@ -182,8 +182,14 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         }
                         self.uploadDraft(data: dataToSend, type: type)
                     } else {
+                        // TODO: [ASSET] implement
+                        let image = SendableImage(
+                            name: nil,
+                            utType: nil,
+                            source: .data(dataToSend)
+                        )
                         self.sendController.sendMessage(
-                            withImageData: dataToSend,
+                            image: image,
                             userSession: self.userSession
                         )
                     }
@@ -299,7 +305,16 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
                     if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
-                        self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                        // TODO: [ASSET] implement
+                        let image = SendableImage(
+                            name: nil,
+                            utType: nil,
+                            source: .data(imageData)
+                        )
+                        self.sendController.sendMessage(
+                            image: image,
+                            userSession: self.userSession
+                        )
                     }
                 }
             }
