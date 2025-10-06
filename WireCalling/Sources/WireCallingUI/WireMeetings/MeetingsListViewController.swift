@@ -17,9 +17,9 @@
 //
 
 public import SwiftUI
+import Foundation
 import WireAccountImageUI
 import WireDesign
-import Foundation
 
 public final class MeetingsListViewController: UIViewController {
 
@@ -90,7 +90,7 @@ public final class MeetingsListViewController: UIViewController {
 
         let avatar = makeAccountImageView()
         stackView.addArrangedSubview(avatar)
-        self.accountImageView = avatar
+        accountImageView = avatar
 
         let container = UIBarButtonItem(customView: stackView)
         navigationItem.leftBarButtonItems = [container]
@@ -127,10 +127,7 @@ public final class MeetingsListViewController: UIViewController {
     }
 }
 
-
-
-
-//final class MeetingsViewController: UIViewController {
+// final class MeetingsViewController: UIViewController {
 //    weak var accountImageView: AccountImageView?
 //    private let segmentedControl: UISegmentedControl
 //
@@ -289,5 +286,5 @@ public final class MeetingsListViewController: UIViewController {
 //        return accountImageView
 //    }
 //
-//}
+// }
 //

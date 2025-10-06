@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+import WireDesign
 
 public struct MeetingsListView: View {
 
@@ -27,28 +28,44 @@ public struct MeetingsListView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 12) {
-            Picker("", selection: Binding(
-                get: { viewModel.selectedTab.rawValue },
-                set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .upcoming }
-            )) {
-                ForEach(MeetingsListViewModel.Tab.allCases, id: \.rawValue) { tab in
-                    Text(tab.title).tag(tab.rawValue)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 10)
+        Group {
+            if viewModel.hasMeetingsForSelectedTab {
+                VStack(spacing: 12) {
+                    Picker("", selection: Binding(
+                        get: { viewModel.selectedTab.rawValue },
+                        set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .upcoming }
+                    )) {
+                        ForEach(MeetingsListViewModel.Tab.allCases, id: \.rawValue) { tab in
+                            Text(tab.title).tag(tab.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 10)
 
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    content
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                }
+            } else {
+                //                VStack {
+                //                    Spacer()
+                //                    Text("No \(viewModel.selectedTab == .upcoming ? "upcoming" : "past") meetings")
+                //                        .font(.title3.weight(.semibold))
+                //                        .multilineTextAlignment(.center)
+                //                        .padding(.horizontal, 24)
+                //                        .accessibilityIdentifier("meetings_empty_state_text")
+                //                    Spacer()
+                //                }
+                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                MeetingsEmptyStateView()
+            }
         }
-        .background(Color(uiColor: .systemBackground))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(ColorTheme.Backgrounds.background.color)
     }
 
-    @ViewBuilder
-    private var content: some View {
+    @ViewBuilder private var content: some View {
         switch viewModel.selectedTab {
         case .upcoming:
             Spacer(minLength: 0)

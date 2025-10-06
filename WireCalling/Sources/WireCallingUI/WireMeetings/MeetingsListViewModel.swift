@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public final class MeetingsListViewModel: ObservableObject {
 
@@ -28,13 +28,24 @@ public final class MeetingsListViewModel: ObservableObject {
 
         var title: String {
             switch self {
-            case .upcoming: return Strings.upcoming
-            case .past: return Strings.past
+            case .upcoming: Strings.upcoming
+            case .past: Strings.past
             }
         }
     }
 
     @Published var selectedTab: Tab = .upcoming
+    @Published var upcomingMeetings: [Meeting] = []
+    @Published var pastMeetings: [Meeting] = []
+
+    var currentMeetings: [Meeting] {
+        switch selectedTab {
+        case .upcoming: upcomingMeetings
+        case .past:     pastMeetings
+        }
+    }
+
+    var hasMeetingsForSelectedTab: Bool { !currentMeetings.isEmpty }
 
     public init() {}
 
@@ -42,4 +53,11 @@ public final class MeetingsListViewModel: ObservableObject {
 
     func scheduleMeetingTapped() {}
 
+}
+
+package struct Meeting: Identifiable, Hashable {
+    public let id = UUID()
+    public let title: String
+    public let start: Date
+    public let end: Date
 }

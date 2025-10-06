@@ -21,4 +21,3 @@ import UIKit
 extension UIImage {
     static let videoCall = UIImage(resource: .videoCall)
 }
-

@@ -174,9 +174,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
-    public func showMeetings() async {
-
-    }
+    public func showMeetings() async {}
 
     public func showSettings() async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
@@ -263,9 +261,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         splitViewController.settingsContentUI = nil
     }
 
-    public func hideMeetings() {
-
-    }
+    public func hideMeetings() {}
 
     public func presentViewController(_ viewController: UIViewController) async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
