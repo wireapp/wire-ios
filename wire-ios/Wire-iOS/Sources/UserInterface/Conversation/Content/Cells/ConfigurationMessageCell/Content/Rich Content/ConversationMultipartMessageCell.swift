@@ -81,9 +81,9 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
         let attachments = object.attachments.map {
             WireCellsMessageAttachment(
                 nodeID: $0.nodeID,
-                contentType: nil,
-                initialName: $0.fileName,
-                initialSize: nil,
+                contentType: $0.contentType,
+                initialName: $0.initialName,
+                initialSize: $0.initialSize,
                 initialMetadata: nil
             )
         }
