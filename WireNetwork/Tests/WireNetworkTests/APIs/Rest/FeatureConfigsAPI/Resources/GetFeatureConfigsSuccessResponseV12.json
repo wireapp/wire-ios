@@ -32,6 +32,11 @@
             "useSFTForOneToOneCalls": true
         }
     },
+    "cells": {
+      "lockStatus": "locked",
+      "status": "enabled",
+      "ttl": "unlimited"
+    },
     "conversationGuestLinks": {
         "lockStatus": "locked",
         "status": "enabled",

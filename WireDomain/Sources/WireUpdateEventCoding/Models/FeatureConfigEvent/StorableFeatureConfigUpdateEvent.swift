@@ -129,8 +129,6 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: StorableFeatureConfigStatus(config.status)
                 )
             )
-        case let .unknown(featureName):
-            .unknown(featureName: featureName)
         case let .consumableNotifications(config):
             .consumableNotifications(
                 StorableBasicFeatureConfig(
@@ -139,6 +137,16 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
             )
+        case let .cells(config):
+            .cells(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .unknown(featureName):
+            .unknown(featureName: featureName)
         }
     }
 
@@ -253,6 +261,10 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
+        case let .cells(config):
+                .cells(
+                    .init(status: config.status.toAPIModel())
+                )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -284,6 +296,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
     case chatBubblesSimple(StorableBasicFeatureConfig)
+    case cells(StorableBasicFeatureConfig)
     case unknown(featureName: String)
 
 }

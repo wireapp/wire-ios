@@ -52,6 +52,7 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
     let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8> // this is added in v8
+    let cells: FeatureWithoutConfig // this is added in v8
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -119,6 +120,9 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
             allowedToOpenChannels: channels.config.allowedToOpenChannels.toAPIModel()
         )
         featureConfigs.append(.channels(channelsConfig))
+        
+        let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
+        featureConfigs.append(.cells(cellsFeatureConfig))
 
         return featureConfigs
     }
