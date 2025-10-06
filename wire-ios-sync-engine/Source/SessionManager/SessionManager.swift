@@ -1094,6 +1094,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     error: .clientIsObsolete
                 )
                 return nil
+            } catch let error as URLError {
+                WireLogger.sessionManager.error(
+                    "failed to load user session due to url error code: \(error.errorCode)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .networkError(code: error.errorCode)
+                )
+                return nil
             } catch let error as SafeForLoggingStringConvertible {
                 WireLogger.sessionManager.error(
                     "failed to load user session: \(error.safeForLoggingDescription)",
@@ -2078,6 +2088,7 @@ public extension SessionManager {
         case buildIsBlacklisted
         case backendIsObsolete
         case clientIsObsolete
+        case networkError(code: Int)
         case genericError
 
     }
