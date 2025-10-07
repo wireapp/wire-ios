@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-package import WireMessagingDomain
+public import Foundation
+public import WireMessagingDomain
 
-package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
+public final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     let attachments: [WireCellsMessageAttachment]
 
-    package init(attachments: [WireCellsMessageAttachment]) {
+    public init(attachments: [WireCellsMessageAttachment]) {
         self.attachments = attachments
     }
 
