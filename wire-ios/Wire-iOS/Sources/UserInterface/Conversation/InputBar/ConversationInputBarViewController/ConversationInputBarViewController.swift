@@ -269,7 +269,7 @@ final class ConversationInputBarViewController: UIViewController,
                 locationButton
             ]
         }
-        if !conversation.isSelfDeletingMessageSendingDisabled {
+        if !conversation.isCellsEnabled, !conversation.isSelfDeletingMessageSendingDisabled {
             buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
         }
 

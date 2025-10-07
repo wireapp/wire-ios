@@ -60,10 +60,20 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         get { titleLabel.text }
         set { updateTitle(newValue) }
     }
+    
+    var titleColor: UIColor {
+        get { titleLabel.textColor }
+        set { updateTitleColor(newValue) }
+    }
 
     var status: String? {
         get { statusLabel.text }
         set { updateStatus(newValue) }
+    }
+    
+    var statusColor: UIColor {
+        get { statusLabel.textColor }
+        set { updateStatusColor(newValue) }
     }
 
     var allowMultilineStatus: Bool = false {
@@ -168,6 +178,10 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         }
     }
 
+    private func updateTitleColor(_ newValue: UIColor) {
+        titleLabel.textColor = newValue
+    }
+
     private func updateStatus(_ newValue: String?) {
         if let value = newValue {
             statusLabel.text = value
@@ -175,6 +189,10 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         } else {
             statusLabel.isHidden = true
         }
+    }
+    
+    private func updateStatusColor(_ newValue: UIColor) {
+        statusLabel.textColor = newValue
     }
 
     private func setupAccessibility() {

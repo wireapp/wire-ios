@@ -81,10 +81,7 @@ enum ConversationSystemMessageCellDescription {
             }
 
             let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData,
-                timer: timer,
-                sender: sender
+                state: .updated(message: message, data: systemMessageData, timer: timer, sender: sender)
             )
             return [AnyConversationMessageCellDescription(timerCell)]
 
@@ -191,6 +188,13 @@ enum ConversationSystemMessageCellDescription {
             if conversation.isOpenGroup {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
+            }
+            
+            if conversation.isCellsEnabled {
+                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
+                    state: .unavailable
+                )
+                cells.append(AnyConversationMessageCellDescription(timerCell))
             }
 
             if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
