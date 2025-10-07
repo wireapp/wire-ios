@@ -255,21 +255,10 @@ public extension ZMConversation {
         return clientMessage
     }
 
-    @discardableResult
-    func appendImage(
-        _ image: SendableImage,
-        nonce: UUID
-    ) throws -> ZMConversationMessage {
-        try appendImage(
-            from: image.data,
-            nonce: nonce
-        )
-    }
-
     /// Append an image message.
     ///
     /// - Parameters:
-    ///     - imageData: Data representing an image.
+    ///     - image: The image to append.
     ///     - nonce: The nonce of the message.
     ///
     /// - Throws:
@@ -279,30 +268,41 @@ public extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    private func appendImage(from imageData: Data, nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    func appendImage(
+        _ image: SendableImage,
+        nonce: UUID
+    ) throws -> ZMConversationMessage {
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
 
-        guard let imageData = try? imageData.wr_removingImageMetadata() else {
+        guard let imageData = try? image.data.wr_removingImageMetadata() else {
             throw AppendMessageError.failedToRemoveImageMetadata
         }
 
         // mimeType is assigned first, to make sure UI can handle animated GIF file correctly.
-        let mimeType = imageData.mimeType ?? ""
+        let mimeType = image.utType?.preferredMIMEType
 
         // We update the size again when the the preprocessing is done.
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
         let asset = GenericMessageProtocol.Asset(
             imageSize: imageSize,
-            mimeType: mimeType,
+            mimeType: mimeType ?? "",
             size: UInt64(imageData.count)
         )
 
-        return try append(asset: asset, nonce: nonce, expires: true, prepareMessage: { message in
-            moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
-        })
+        return try append(
+            asset: asset,
+            nonce: nonce,
+            expires: true,
+            prepareMessage: { message in
+                moc.zm_fileAssetCache.storeOriginalImage(
+                    data: imageData,
+                    for: message
+                )
+            }
+        )
     }
 
     /// Append a file message.
