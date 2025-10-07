@@ -18,6 +18,19 @@
 			name = "Format & Lint Swift Code";
 			productName = "Format Swift Code";
 		};
+		5F7CE7D52E93F6CC000E166A /* Periphery */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5F7CE7D82E93F6CC000E166A /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildPhases = (
+				5F7CE7D92E93F70A000E166A /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Periphery;
+			packageProductDependencies = (
+			);
+			productName = Periphery;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -1516,6 +1529,9 @@
 					592996512C2EB98A008C334F = {
 						CreatedOnToolsVersion = 15.3;
 					};
+					5F7CE7D52E93F6CC000E166A = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -1625,6 +1641,7 @@
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 				01DFC4302D7B4C6F00D1962A /* WireUITests */,
+				5F7CE7D52E93F6CC000E166A /* Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -1748,6 +1765,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "SETTINGS_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Settings.bundle\"\n\nif [ $IS_INTERNAL_BUILD == '1' ]; then\n    echo \"Copy internal Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_internal.plist\" \"$SETTINGS_DIR/Root.plist\" \nelse\n    echo \"Copy public Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_public.plist\" \"$SETTINGS_DIR/Root.plist\"\nfi\n";
+		};
+		5F7CE7D92E93F70A000E166A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${WORKSPACE_DIR}/periphery/run-from-xcode.sh | tee ${WORKSPACE_DIR}/periphery/unused-code.txt\n";
 		};
 		BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2411,6 +2446,24 @@
 			};
 			name = Release;
 		};
+		5F7CE7D62E93F6CC000E166A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		5F7CE7D72E93F6CC000E166A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2708,6 +2761,15 @@
 			buildConfigurations = (
 				592996522C2EB98A008C334F /* Debug */,
 				592996532C2EB98A008C334F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5F7CE7D82E93F6CC000E166A /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F7CE7D62E93F6CC000E166A /* Debug */,
+				5F7CE7D72E93F6CC000E166A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
