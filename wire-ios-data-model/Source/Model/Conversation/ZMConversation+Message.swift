@@ -287,8 +287,9 @@ public extension ZMConversation {
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
         let asset = GenericMessageProtocol.Asset(
-            imageSize: imageSize,
+            name: image.name,
             mimeType: mimeType ?? "",
+            imageSize: imageSize,
             size: UInt64(imageData.count)
         )
 
