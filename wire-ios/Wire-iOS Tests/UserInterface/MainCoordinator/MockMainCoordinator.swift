@@ -48,6 +48,11 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     }
 
     @MainActor
+    func showMeetings() {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
     func showConversation(conversation: ZMConversation, message: ZMConversationMessage?) async {
         fatalError("Mock method not implemented")
     }
