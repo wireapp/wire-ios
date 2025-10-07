@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Locators
 import SwiftUI
 import WireAuthenticationAPI
 import WireFoundation

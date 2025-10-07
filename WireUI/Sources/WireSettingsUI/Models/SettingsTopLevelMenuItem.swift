@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Locators
 import WireFoundation
 
 public enum SettingsTopLevelMenuItem: Sendable {
@@ -29,16 +30,17 @@ public enum SettingsTopLevelMenuItem: Sendable {
 }
 
 // MARK: - Accessibility identifiers
-extension SettingsTopLevelMenuItem {
-    public var accessibilityID: String {
+
+public extension SettingsTopLevelMenuItem {
+    var accessibilityID: String {
         switch self {
-        case .account: return Locators.SettingsPage.accountCell.rawValue
-        case .devices: return "devicesCell"
-        case .options: return Locators.SettingsPage.optionsCell.rawValue
-        case .advanced: return "advancedCell"
-        case .support: return "supportCell"
-        case .about: return "aboutCell"
-        case .developerOptions: return "developerOptionsCell"
+        case .account: Locators.SettingsPage.accountCell.rawValue
+        case .devices: "devicesCell"
+        case .options: Locators.SettingsPage.optionsCell.rawValue
+        case .advanced: "advancedCell"
+        case .support: "supportCell"
+        case .about: "aboutCell"
+        case .developerOptions: "developerOptionsCell"
         }
     }
 }

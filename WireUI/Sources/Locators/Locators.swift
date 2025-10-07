@@ -21,7 +21,7 @@ import Foundation
 public enum Locators {
 
     public enum WelcomePage: String {
-        
+
         case emailTextField
         case nextButton
     }
@@ -34,19 +34,19 @@ public enum Locators {
     }
 
     public enum FirstTimePage: String {
-        
+
         case okButton
     }
 
     public enum ConversationsPage: String {
-        
+
         case bottomBarRecentListButton
         case bottomBarSettingsButton
 
     }
-    
+
     public enum SettingsPage: String {
-        
+
         case accountCell
         case optionsCell
 

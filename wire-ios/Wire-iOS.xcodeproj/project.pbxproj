@@ -104,6 +104,7 @@
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
+		76C39D3A2E950C0300DFFBB3 /* Locators in Frameworks */ = {isa = PBXBuildFile; productRef = 76C39D392E950C0300DFFBB3 /* Locators */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
 		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
@@ -911,6 +912,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76C39D3A2E950C0300DFFBB3 /* Locators in Frameworks */,
 				D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */,
 				76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */,
 			);
@@ -1282,6 +1284,7 @@
 			packageProductDependencies = (
 				D0E258142DDC864100959FB9 /* WireFoundation */,
 				76ED41EB2E053E3200A286F4 /* WireNetwork */,
+				76C39D392E950C0300DFFBB3 /* Locators */,
 			);
 			productName = WireUITests;
 			productReference = 01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */;
@@ -2987,6 +2990,10 @@
 		76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireViewsDebugUI;
+		};
+		76C39D392E950C0300DFFBB3 /* Locators */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Locators;
 		};
 		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
 			isa = XCSwiftPackageProductDependency;
