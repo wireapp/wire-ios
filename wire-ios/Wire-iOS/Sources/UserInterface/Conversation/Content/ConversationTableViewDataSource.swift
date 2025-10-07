@@ -124,7 +124,6 @@ final class ConversationTableViewDataSource: NSObject {
         let firstUnreadMessageNonce = firstUnreadMessage?.nonce
 
         // Dispatching to background thread to offload sections calculation
-
         backgroundContext.perform { [weak self, backgroundContext] in
             guard let self else { return }
 
@@ -199,7 +198,7 @@ final class ConversationTableViewDataSource: NSObject {
 
                     sectionController.selfUser = selfUserOnMainThread
 
-                    if sectionController.context != context || forceRecalculate {
+                    if sectionController.context != context || forceRecalculate || true {
                         sectionController.recreateCellDescriptions(in: context)
                     }
 
