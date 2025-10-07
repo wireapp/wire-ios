@@ -22,6 +22,14 @@ import WireDomain
 import WireLogging
 import WireNetwork
 
+/// This migration should be used to re-process events which were received before but couldn't be deserialized due to
+/// newly added message content types.
+///
+/// Currently incoming messages where the ``GenericMessage.content`` cannot be deserialized and the
+/// ``GenericMessage.unknownStrategy`` property is set to ``GenericMessage.UnknownStrategy.warnUserAllowRetry``, are
+/// stored as ``UnknownMessage`` in the database.
+/// This migration fetches them, tries to reprocess the events and on success converts the messages into a
+/// ``ZMClientMessage`` or ``ZMAssetClientMessage``.
 struct UnknownMessageAppVersionMigration: AppVersionMigration {
 
     let version: SemanticVersion
