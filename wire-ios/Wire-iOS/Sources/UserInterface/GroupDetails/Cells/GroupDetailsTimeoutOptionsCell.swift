@@ -49,7 +49,7 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
                 : SemanticColors.View.backgroundUserCell
         }
     }
-    
+
     private func setDisabledCell() {
         let disabled = MessageDestructionTimeoutValue.none
         status = disabled.displayString

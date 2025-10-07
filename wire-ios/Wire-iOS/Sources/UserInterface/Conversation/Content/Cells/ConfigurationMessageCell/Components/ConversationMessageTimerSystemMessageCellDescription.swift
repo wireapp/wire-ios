@@ -37,7 +37,7 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
-    
+
     enum State {
         case updated(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType)
         case unavailable
@@ -49,7 +49,7 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
             .font: UIFont.mediumFont,
             .foregroundColor: LabelColors.textDefault
         ]
-        
+
         switch state {
         case let .updated(message, _, timer, sender):
             let senderText = message.senderName
@@ -74,9 +74,12 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
             }
 
         case .unavailable:
-            updateText = NSAttributedString(string: L10n.Localizable.Content.System.messageTimerUnavailable, attributes: baseAttributes)
+            updateText = NSAttributedString(
+                string: L10n.Localizable.Content.System.messageTimerUnavailable,
+                attributes: baseAttributes
+            )
         }
-        
+
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
         self.configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
         self.accessibilityLabel = updateText?.string

@@ -85,7 +85,7 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: cell)
     }
-    
+
     func testThatItDisplaysDisabledCell_WithoutTimeout_Light() {
         // GIVEN & WHEN
         conversation.cellsState = .ready

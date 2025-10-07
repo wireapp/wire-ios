@@ -189,7 +189,7 @@ enum ConversationSystemMessageCellDescription {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
-            
+
             if conversation.isCellsEnabled {
                 let timerCell = ConversationMessageTimerSystemMessageCellDescription(
                     state: .unavailable

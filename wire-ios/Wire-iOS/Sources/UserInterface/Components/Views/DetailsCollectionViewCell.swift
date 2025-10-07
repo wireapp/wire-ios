@@ -60,7 +60,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         get { titleLabel.text }
         set { updateTitle(newValue) }
     }
-    
+
     var titleColor: UIColor {
         get { titleLabel.textColor }
         set { updateTitleColor(newValue) }
@@ -70,7 +70,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         get { statusLabel.text }
         set { updateStatus(newValue) }
     }
-    
+
     var statusColor: UIColor {
         get { statusLabel.textColor }
         set { updateStatusColor(newValue) }
@@ -190,7 +190,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
             statusLabel.isHidden = true
         }
     }
-    
+
     private func updateStatusColor(_ newValue: UIColor) {
         statusLabel.textColor = newValue
     }
