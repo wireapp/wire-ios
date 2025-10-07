@@ -18,8 +18,8 @@
 
 import Combine
 package import SwiftUI
-import WireMessagingDomain
 import WireFoundation
+import WireMessagingDomain
 import WireMessagingDomainSupport
 
 /// A collection of attachment previews suitable for displaying in a conversation message.
@@ -33,14 +33,11 @@ package struct WireCellsAttachmentsPreviewView: View {
 
     package var body: some View {
         FlowLayout {
-            ForEach(Array(viewModel.items.enumerated()), id: \.element) { index, item in
+            ForEach(Array(viewModel.items.enumerated()), id: \.element) { index, _ in
                 itemRow(index: index)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .onAppear {
-            Task { await viewModel.fetchLatest() }
-        }
     }
 
     @ViewBuilder
@@ -51,56 +48,7 @@ package struct WireCellsAttachmentsPreviewView: View {
 
 // MARK: - Preview
 
-@MainActor
-private func makeViewModel() -> WireCellsAttachmentsPreviewViewModel {
-    let attachments = [
-        WireCellsMessageAttachment(
-            nodeID: UUID(),
-            contentType: "image/png",
-            initialName: "Picture.png",
-            initialSize: 1000,
-            initialMetadata: nil
-        ),
-        WireCellsMessageAttachment(
-            nodeID: UUID(),
-            contentType: "video/mp4",
-            initialName: "Video.mp4",
-            initialSize: 2000,
-            initialMetadata: nil
-        ),
-        WireCellsMessageAttachment(
-            nodeID: UUID(),
-            contentType: "application/pdf",
-            initialName: "Document.pdf",
-            initialSize: 3000,
-            initialMetadata: nil
-        )
-    ]
-    let nodesRepository = MockWireCellsNodesRepositoryProtocol()
-    nodesRepository.getNodes_MockValue = (nodes: [], nextOffset: nil)
-
-    let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
-    localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
-
-    let fileCache = MockFileCache()
-    fileCache.fileURLForKey_MockValue = URL(filePath: "something")
-
-    return WireCellsAttachmentsPreviewViewModel(
-        attachments: attachments,
-        fetchNodesUseCase: WireCellsFetchNodesUseCase(
-            configuration: .message(nodeIDs: []),
-            repository: nodesRepository
-        ),
-        getAssetUseCase: WireCellsGetAssetUseCase(
-            localAssetRepository: localAssetRepository,
-            fileCache: fileCache
-        ),
-        localAssetRepository: localAssetRepository,
-        lastOpenRequest: WireCellsLastOpenRequest()
-    )
-}
-
 #Preview {
-    WireCellsAttachmentsPreviewView(viewModel: makeViewModel())
+    WireCellsAttachmentsPreviewView(viewModel: .makePreview())
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

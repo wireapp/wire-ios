@@ -48,7 +48,7 @@ package struct WireCellsGetAssetUseCase {
         guard let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey else {
             throw Failure.invalidDownloadState
         }
-        
+
         guard let fileURL = fileCache.fileURL(forKey: cacheKey) else {
             throw Failure.cachedFileMissing
         }

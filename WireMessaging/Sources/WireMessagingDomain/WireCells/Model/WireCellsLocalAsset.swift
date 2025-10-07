@@ -115,4 +115,13 @@ package extension WireCellsLocalAsset.DownloadState {
             nil
         }
     }
+
+    var isDownloading: Bool {
+        switch self {
+        case .downloading:
+            true
+        default:
+            false
+        }
+    }
 }

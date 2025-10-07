@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Combine
+import Foundation
 import UniformTypeIdentifiers
 import WireLogging
 package import WireMessagingDomain
-
-
+import WireMessagingDomainSupport
 
 /// An item in the `WireCellsAttachmentsPreviewView`.
 struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
@@ -51,7 +51,7 @@ struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
 package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     private let attachments: [WireCellsMessageAttachment]
-    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
@@ -60,13 +60,13 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     package init(
         attachments: [WireCellsMessageAttachment],
-        fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest
     ) {
         self.attachments = attachments
-        self.fetchNodesUseCase = fetchNodesUseCase
+        self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
@@ -78,28 +78,13 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(
             item: items[index],
+            fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest
         )
     }
 
-    /// Fetches the latest nodes from the backend and updates the view model's items if necessary.
-    func fetchLatest() async {
-        do {
-            let (nodes, _) = try await fetchNodesUseCase.invoke(searchTerm: nil, offset: 0)
-
-            items = attachments.map { attachment in
-                if let node = nodes.first(where: { $0.id == attachment.nodeID }) {
-                    WireCellsAttachmentsPreviewViewItem(node)
-                } else {
-                    WireCellsAttachmentsPreviewViewItem(attachment, isDeleted: true)
-                }
-            }
-        } catch {
-            WireLogger.wireCells.info("Failed to fetch latest nodes: \(error)")
-        }
-    }
 }
 
 private extension WireCellsAttachmentsPreviewViewItem {
@@ -117,17 +102,64 @@ private extension WireCellsAttachmentsPreviewViewItem {
         self.isDeleted = isDeleted
     }
 
-    init(_ value: WireCellsNode) {
-        let url = URL(string: value.path)
-        let fileType = value.mimeType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
+}
 
-        self.nodeID = value.id
-        self.fileIcon = .make(type: fileType, fileExtension: value.path)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.size.map { Int($0) }
-        self.isDeleted = value.isRecycled
+// MARK: - Previews
+
+extension WireCellsAttachmentsPreviewViewModel {
+
+    @MainActor
+    static func makePreview() -> WireCellsAttachmentsPreviewViewModel {
+        let attachments = [
+            WireCellsMessageAttachment(
+                nodeID: UUID(),
+                contentType: "image/png",
+                initialName: "Picture.png",
+                initialSize: 1000,
+                initialMetadata: nil
+            ),
+            WireCellsMessageAttachment(
+                nodeID: UUID(),
+                contentType: "video/mp4",
+                initialName: "Video.mp4",
+                initialSize: 2000,
+                initialMetadata: nil
+            ),
+            WireCellsMessageAttachment(
+                nodeID: UUID(),
+                contentType: "application/pdf",
+                initialName: "Document.pdf",
+                initialSize: 3000,
+                initialMetadata: nil
+            )
+        ]
+        let nodesRepository = MockWireCellsNodesRepositoryProtocol()
+        nodesRepository.getNodes_MockValue = (nodes: [], nextOffset: nil)
+        nodesRepository.getNodeId_MockMethod = { _ in nil }
+
+        let nodeCache = MockWireCellsNodeCacheProtocol()
+        nodeCache.itemFor_MockMethod = { _ in nil }
+        nodeCache.setItemFor_MockMethod = { _, _ in }
+
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
+
+        let fileCache = MockFileCache()
+        fileCache.fileURLForKey_MockMethod = { _ in nil }
+
+        return WireCellsAttachmentsPreviewViewModel(
+            attachments: attachments,
+            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                repository: nodesRepository,
+                cache: nodeCache
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetRepository,
+                fileCache: fileCache
+            ),
+            localAssetRepository: localAssetRepository,
+            lastOpenRequest: WireCellsLastOpenRequest()
+        )
     }
 
 }

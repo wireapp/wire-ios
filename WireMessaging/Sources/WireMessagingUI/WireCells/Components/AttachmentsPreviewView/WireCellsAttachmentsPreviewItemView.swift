@@ -40,8 +40,13 @@ struct WireCellsAttachmentsPreviewItemView: View {
         )
         .frame(height: 74)
         .frame(idealWidth: 288)
-        .onTapGesture(perform: `open`)
+        .onAppear(perform: refresh)
+        .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)
+    }
+
+    private func refresh() {
+        Task { await viewModel.refresh() }
     }
 
     private func open() {
@@ -52,33 +57,9 @@ struct WireCellsAttachmentsPreviewItemView: View {
 
 // MARK: - Preview
 
-@MainActor
-private func makeViewModel() -> WireCellsAttachmentsPreviewItemViewModel {
-    let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
-    localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
-
-    let fileCache = MockFileCache()
-    fileCache.fileURLForKey_MockValue = URL(filePath: "something")
-
-    return WireCellsAttachmentsPreviewItemViewModel(
-        item: WireCellsAttachmentsPreviewViewItem(
-            nodeID: UUID(),
-            fileIcon: .document,
-            fileName: "Some file",
-            fileExtension: "pdf",
-            fileSize: 100,
-            isDeleted: false
-        ),
-        getAssetUseCase: WireCellsGetAssetUseCase(
-            localAssetRepository: localAssetRepository,
-            fileCache: fileCache
-        ),
-        localAssetRepository: localAssetRepository,
-        lastOpenRequest: WireCellsLastOpenRequest()
-    )
-}
-
 #Preview {
-    WireCellsAttachmentsPreviewItemView(viewModel: makeViewModel())
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    WireCellsAttachmentsPreviewItemView(
+        viewModel: WireCellsAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
+    )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

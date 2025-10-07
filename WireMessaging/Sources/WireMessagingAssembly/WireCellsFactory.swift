@@ -35,9 +35,9 @@ public struct WireCellsFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeCache = WireCellsNodeCache()
 
-    @MainActor
-    var lastOpenRequestNodeID: UUID?
+    @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
@@ -151,9 +151,9 @@ public extension WireCellsFactory {
             rootView: WireCellsAttachmentsPreviewView(
                 viewModel: WireCellsAttachmentsPreviewViewModel(
                     attachments: attachments,
-                    fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                        configuration: .message(nodeIDs: attachments.map(\.nodeID)),
-                        repository: nodesAPI
+                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                        repository: nodesAPI,
+                        cache: nodeCache
                     ),
                     getAssetUseCase: WireCellsGetAssetUseCase(
                         localAssetRepository: localAssetRepository,
