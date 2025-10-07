@@ -41,6 +41,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case chatBubbles
     case chatBubblesSimple
     case consumableNotifications
+    case wireMeetings
 
     public var description: String {
         switch self {
@@ -100,6 +101,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
+
+        case .wireMeetings:
+            "Turn on to enable Wire meetings"
         }
     }
 
