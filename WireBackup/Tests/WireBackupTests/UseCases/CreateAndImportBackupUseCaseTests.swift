@@ -104,7 +104,10 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
         XCTAssertEqual(importEvents.last, .done)
         XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
-        XCTAssertEqual(backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelVoidReceivedInvocations, [[message]])
+        XCTAssertEqual(
+            backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelVoidReceivedInvocations,
+            [[message]]
+        )
 
     }
 
