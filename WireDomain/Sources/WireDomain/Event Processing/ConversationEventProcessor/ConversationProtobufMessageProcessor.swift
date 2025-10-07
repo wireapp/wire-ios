@@ -241,12 +241,21 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
     ) async throws {
         let (assetClientMessage, isNew): (ZMAssetClientMessage, Bool)
         do {
-            (assetClientMessage, isNew) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
-                id: message.messageID,
-                conversation: conversation,
-                sender: (sender.id, sender.domain, sender.clientID),
-                date: date
-            )
+            if isProcessingBackup {
+                (assetClientMessage, isNew) = (try await messageLocalStore.createAssetClientMessage(
+                    id: message.messageID,
+                    conversation: conversation,
+                    sender: (sender.id, sender.domain, sender.clientID),
+                    date: date
+                ), true)
+            } else {
+                (assetClientMessage, isNew) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+                    id: message.messageID,
+                    conversation: conversation,
+                    sender: (sender.id, sender.domain, sender.clientID),
+                    date: date
+                )
+            }
         } catch let MessageLocalStore.Failure.invalidInsertion(reason: reason) {
             return WireLogger.eventProcessing.warn(
                 "failed to process asset message, dropping. Reason: \(reason)",

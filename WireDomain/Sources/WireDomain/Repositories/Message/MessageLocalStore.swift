@@ -204,6 +204,23 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         ) as! (ZMAssetClientMessage, Bool)
 
     }
+    
+    public func createAssetClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date
+    ) async throws -> ZMAssetClientMessage {
+        
+        try await createClientMessage(
+            id: id,
+            messageType: .asset,
+            conversation: conversation,
+            sender: sender,
+            date: date
+        ) as! ZMAssetClientMessage
+        
+    }
 
     public func addClientMessage(
         _ clientMessage: ZMClientMessage,
