@@ -444,7 +444,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
+        if (userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn), conversation.isCellsEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,

@@ -1214,7 +1214,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func useWireCells() -> Bool {
-        DeveloperFlag.wireCells.isOn && conversation.isCellsEnabled
+        (userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn) && conversation.isCellsEnabled
     }
 
     private func observeDraftAttachments() {
