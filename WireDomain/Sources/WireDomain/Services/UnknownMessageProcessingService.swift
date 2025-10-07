@@ -28,16 +28,19 @@ public final class UnknownMessageProcessingService {
     private let contextProvider: ContextProvider
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
+    private let databaseSaver: any DatabaseSaverProtocol
     private let logger = WireLogger(tag: "UnknownMessageProcessing")
 
     public init(
         contextProvider: ContextProvider,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
+        protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol,
+        databaseSaver: any DatabaseSaverProtocol
     ) {
         self.contextProvider = contextProvider
         self.conversationLocalStore = conversationLocalStore
         self.protobufMessageProcessor = protobufMessageProcessor
+        self.databaseSaver = databaseSaver
     }
 
     /// Processes all stored unknown messages by attempting to decode them with the current protobuf definitions.
@@ -71,6 +74,7 @@ public final class UnknownMessageProcessingService {
             }
         }
 
+        try await databaseSaver.save()
         logger.info("Unknown message processing completed: \(processedCount) processed, \(failedCount) failed")
     }
 
