@@ -119,7 +119,8 @@ extension CompositeMessageItemContent: ButtonMessageData {
         guard let context = parentMessage.managedObjectContext else { return }
 
         context.performGroupedBlock { [weak self] in
-            guard let self, let messageId = parentMessage.nonce, let buttonId = button?.id, !hasSelectedButton else { return }
+            guard let self, let messageId = parentMessage.nonce, let buttonId = button?.id,
+                  !hasSelectedButton else { return }
 
             let buttonState = buttonState ??
                 ButtonState.insert(with: buttonId, message: parentMessage, inContext: context)
