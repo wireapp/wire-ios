@@ -128,7 +128,7 @@ struct FeatureConfigsResponseAPIV10: Decodable, ToAPIModelConvertible {
             resetMLSConversations: allowedGlobalOperations.config.mlsConversationReset
         )
         featureConfigs.append(.allowedGlobalOperations(allowedGlobalOperations))
-        
+
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))
 

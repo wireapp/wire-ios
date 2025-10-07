@@ -26,7 +26,7 @@ final class SectionFooter: UICollectionReusableView {
     var titleLabel: UILabel {
         footerView.titleLabel
     }
-    
+
     var linkTextView: UITextView {
         footerView.linkTextView
     }

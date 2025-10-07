@@ -139,7 +139,7 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
 
         let chatBubblesSimpleConfig = ChatBubblesSimpleFeatureConfig(status: chatBubbles.status.toAPIModel())
         featureConfigs.append(.chatBubblesSimple(chatBubblesSimpleConfig))
-        
+
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))
 

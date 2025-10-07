@@ -123,7 +123,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[11].name, .chatBubblesSimple)
         XCTAssertTrue(storeInvocations[11].isEnabled)
         XCTAssertNil(storeInvocations[11].config)
-        
+
         XCTAssertEqual(storeInvocations[12].name, .cells)
         XCTAssertTrue(storeInvocations[12].isEnabled)
         XCTAssertNil(storeInvocations[12].config)
@@ -216,7 +216,7 @@ private enum Scaffolding {
     static let chatBubblesSimpleFeatureConfig = ChatBubblesSimpleFeatureConfig(
         status: .enabled
     )
-    
+
     static let cellsFeatureConfig = CellsFeatureConfig(
         status: .enabled
     )

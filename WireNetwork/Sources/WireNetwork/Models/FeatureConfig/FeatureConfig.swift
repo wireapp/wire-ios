@@ -111,7 +111,7 @@ public enum FeatureConfig: Equatable, Sendable {
     /// **Channels** are discoverable groups
     /// with history sharing capabilities
     case channels(ChannelsFeatureConfig)
-    
+
     /// Config for **Cells** feature
     /// **Cells** allow users to send and receive messages with multiple attachments (video, image, files..)
     case cells(CellsFeatureConfig)

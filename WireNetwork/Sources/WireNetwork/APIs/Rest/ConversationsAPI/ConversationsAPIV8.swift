@@ -253,7 +253,7 @@ struct CreateGroupConversationParametersV8: Encodable {
         case conversationRole = "conversation_role"
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
-        case cells = "cells"
+        case cells
     }
 
     init(from parameters: CreateGroupConversationParameters) {

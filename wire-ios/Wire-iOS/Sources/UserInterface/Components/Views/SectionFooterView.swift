@@ -25,7 +25,7 @@ final class SectionFooterView: UIView {
         style: .subline1,
         color: SemanticColors.Label.textSectionFooter
     )
-    
+
     // Hidden by default, used to make easily clickable links on an attributed text
     let linkTextView = UITextView()
 
@@ -46,7 +46,7 @@ final class SectionFooterView: UIView {
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = SemanticColors.Label.textSectionFooter
         addSubview(titleLabel)
-        
+
         linkTextView.translatesAutoresizingMaskIntoConstraints = false
         linkTextView.isEditable = false
         linkTextView.isScrollEnabled = false
@@ -65,7 +65,7 @@ final class SectionFooterView: UIView {
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
-        
+
         NSLayoutConstraint.activate([
             linkTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             linkTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),

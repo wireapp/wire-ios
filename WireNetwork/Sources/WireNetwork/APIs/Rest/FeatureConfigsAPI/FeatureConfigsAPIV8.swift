@@ -120,7 +120,7 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
             allowedToOpenChannels: channels.config.allowedToOpenChannels.toAPIModel()
         )
         featureConfigs.append(.channels(channelsConfig))
-        
+
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))
 

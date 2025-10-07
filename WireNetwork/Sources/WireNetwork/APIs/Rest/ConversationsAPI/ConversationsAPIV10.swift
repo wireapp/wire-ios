@@ -104,7 +104,7 @@ struct CreateGroupConversationParametersV10: Encodable {
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
         case skipCreator = "skip_creator"
-        case cells = "cells"
+        case cells
     }
 
     init(from parameters: CreateGroupConversationParameters) {

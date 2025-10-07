@@ -147,7 +147,7 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))
-        
+
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))
 

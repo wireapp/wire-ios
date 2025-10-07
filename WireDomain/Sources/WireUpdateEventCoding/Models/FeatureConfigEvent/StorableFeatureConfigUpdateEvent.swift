@@ -262,9 +262,9 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 )
             )
         case let .cells(config):
-                .cells(
-                    .init(status: config.status.toAPIModel())
-                )
+            .cells(
+                .init(status: config.status.toAPIModel())
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }

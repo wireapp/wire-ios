@@ -537,9 +537,9 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             $0.status = chatBubblesSimple.status
         }
     }
-    
+
     // MARK: Cells
-    
+
     public func fetchCells() -> Feature.Cells {
         guard let feature = Feature.fetch(name: .cells, context: context) else {
             return .init()
@@ -547,7 +547,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
         return .init(status: feature.status)
     }
-    
+
     public func storeCells(_ cells: Feature.Cells) {
         Feature.updateOrCreate(havingName: .cells, in: context) {
             $0.status = cells.status
@@ -600,7 +600,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .chatBubblesSimple:
                 storeChatBubblesSimple(.init())
-                
+
             case .cells:
                 storeCells(.init())
             }

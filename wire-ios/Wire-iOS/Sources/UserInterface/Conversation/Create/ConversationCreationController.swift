@@ -140,15 +140,15 @@ final class ConversationCreationController: UIViewController {
         }
         return section
     }()
-    
+
     private lazy var fileManagementSection = {
         let section = ConversationCreateFileManagementSectionController(values: values)
-        
+
         section.toggleAction = { [unowned self] enableFileManagement in
             values.enableFileManagement = enableFileManagement
             updateOptions()
         }
-        
+
         return section
     }()
 

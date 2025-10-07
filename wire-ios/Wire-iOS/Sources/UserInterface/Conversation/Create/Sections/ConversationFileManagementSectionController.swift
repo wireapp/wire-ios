@@ -29,7 +29,7 @@ final class ConversationCreateFileManagementSectionController: ConversationCreat
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
     }
-    
+
 }
 
 extension ConversationCreateFileManagementSectionController {
@@ -44,7 +44,7 @@ extension ConversationCreateFileManagementSectionController {
         cell.action = toggleAction
         return cell
     }
-    
+
     override func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
@@ -55,14 +55,14 @@ extension ConversationCreateFileManagementSectionController {
             withReuseIdentifier: "SectionFooter",
             for: indexPath
         ) as! SectionFooter
-       
+
         addAttributedText(to: sectionFooter)
-        
+
         sectionFooter.linkTextView.isHidden = false
-        
+
         return sectionFooter
     }
-    
+
     override func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -72,24 +72,26 @@ extension ConversationCreateFileManagementSectionController {
         footer.size(fittingWidth: collectionView.bounds.width)
         return footer.bounds.size
     }
-    
+
     private func addAttributedText(
         to footer: SectionFooter
     ) {
         let fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
         let attributedText = NSMutableAttributedString(string: fullText)
-        
+
         guard let learnMoreRange = fullText.range(of: "Learn more", options: .caseInsensitive) else {
-            assertionFailure("'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)")
+            assertionFailure(
+                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
+            )
             return
         }
-        
+
         let linkRange = NSRange(learnMoreRange, in: fullText)
         let fullRange = NSRange(location: 0, length: fullText.count)
         attributedText.addAttribute(.link, value: "https://wire.com", range: linkRange) // URL to be defined
         attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
         attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
-        
+
         footer.linkTextView.attributedText = attributedText
     }
 }
