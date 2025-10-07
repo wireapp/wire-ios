@@ -188,7 +188,7 @@ final class ConversationTableViewDataSource: NSObject {
                     // Re-set messages from Main thread to section controller to not have crash with later interactions
                     // with data
 
-                    // Fix for tapping composite message buttons [WPB-19765]:
+                    // Fix for tapping composite message buttons [WPB-19793]:
                     // This workaround forces replacing `message` instance in `CompositeMessageItem` with an instance
                     // originating from the main context.
                     var recreateCellDescriptions = false
