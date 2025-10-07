@@ -22,9 +22,9 @@ import WireDomain
 import WireLogging
 import WireNetwork
 
-struct AppVersionMigration_4_8_0: AppVersionMigration {
+struct UnknownMessageAppVersionMigration: AppVersionMigration {
 
-    let version: SemanticVersion = "4.8.0"
+    let version: SemanticVersion
     let contextProvider: ContextProvider
     let conversationLocalStore: (any ConversationLocalStoreProtocol)?
     let protobufMessageProcessor: (any ConversationProtobufMessageProcessorProtocol)?
@@ -37,8 +37,7 @@ struct AppVersionMigration_4_8_0: AppVersionMigration {
     /// This migration enables the app to process messages that were received before the app was updated
     /// with support for new message content types.
     private func processUnknownMessages() async throws {
-        guard let conversationLocalStore,
-              let protobufMessageProcessor else {
+        guard let conversationLocalStore, let protobufMessageProcessor else {
             WireLogger.session.warn("Missing dependencies for unknown message processing migration")
             return
         }

@@ -1711,11 +1711,14 @@ extension ZMUserSession {
                 sessionManager: sessionManager
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_8_0(
+            /*
+            UnknownMessageAppVersionMigration(
+                version: <#T##SemanticVersion#>,
                 contextProvider: coreDataStack,
                 conversationLocalStore: clientSessionComponent?.conversationLocalStore,
                 protobufMessageProcessor: clientSessionComponent?.conversationProtobufMessageProcessor
             )
+             */
         ]
     }
 

@@ -237,7 +237,7 @@ enum ConversationSystemMessageCellDescription {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
-        case .unknownMessageReceived:
+        case .unknownMessageContentTypeReceived:
             let unknownMessage = UnknownStoredMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
 
