@@ -219,12 +219,11 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 return completion(nil)
             }
 
-            // TODO: [ASSET] implement
             let message = conversation.appendImage(
                 SendableImage(
                     name: nil,
-                    utType: nil,
-                    source: .data(imageData)
+                    utType: .jpeg,
+                    data: imageData
                 )
             )
 

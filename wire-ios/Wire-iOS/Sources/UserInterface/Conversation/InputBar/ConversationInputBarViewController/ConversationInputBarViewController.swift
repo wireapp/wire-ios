@@ -658,12 +658,13 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func postImage(_ image: MediaAsset) {
-        guard let data = image.imageData else { return }
-        // TODO: [ASSET] implement
+        guard let data = image.imageData else {
+            return
+        }
         let image = SendableImage(
             name: nil,
             utType: nil,
-            source: .data(data)
+            data: data
         )
         sendController.sendMessage(
             image: image,
@@ -903,7 +904,7 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
                 messageText,
                 mentions: [],
                 userSession: self.userSession,
-                withImageData: imageData
+                withGIFImageData: imageData
             )
         }
     }
@@ -957,11 +958,10 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
-                        // TODO: [ASSET] implement
                         let image = SendableImage(
-                            name: "",
-                            mimeType: "",
-                            source: .data(jpegData)
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
                         )
                         self.sendController.sendMessage(
                             image: image,
@@ -971,7 +971,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: UTType.jpeg.identifier)
+                        let image = SendableImage(
+                            name: nil, // TODO: can we get a name here?
+                            utType: .jpeg,
+                            data: jpegData
+                        )
+                        self.showConfirmationForImage(
+                            image,
+                            isFromCamera: false
+                        )
                     }
                 }
 

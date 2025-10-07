@@ -101,11 +101,10 @@ extension ZMMessage: Shareable {
             ZMUserSession.shared()?.perform {
                 conversations.forEachNonEphemeral {
                     do {
-                        // TODO: [ASSET] implement
                         let image = SendableImage(
                             name: nil,
                             utType: nil,
-                            source: .data(imageData)
+                            data: imageData
                         )
                         try $0.appendImage(image, nonce: UUID())
                     } catch {

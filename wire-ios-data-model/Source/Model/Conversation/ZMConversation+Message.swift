@@ -260,43 +260,10 @@ public extension ZMConversation {
         _ image: SendableImage,
         nonce: UUID
     ) throws -> ZMConversationMessage {
-        switch image.source {
-        case let .data(data):
-            try appendImage(
-                from: data,
-                nonce: nonce
-            )
-        case let .url(url):
-            try appendImage(
-                at: url,
-                nonce: nonce
-            )
-        }
-    }
-
-    /// Append an image message.
-    ///
-    /// - Parameters:
-    ///     - url: A url locating some image data.
-    ///     - nonce: The nonce of the message.
-    ///
-    /// - Throws:
-    ///     - `AppendMessageError` if the message couldn't be appended.
-    ///
-    /// - Returns:
-    ///     The appended message.
-
-    @discardableResult
-    private func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage {
-        guard
-            URL.isFileURL,
-            ZMImagePreprocessor.sizeOfPrerotatedImage(at: URL) != .zero,
-            let imageData = try? Data(contentsOf: URL, options: [])
-        else {
-            throw AppendMessageError.invalidImageUrl
-        }
-
-        return try appendImage(from: imageData)
+        try appendImage(
+            from: image.data,
+            nonce: nonce
+        )
     }
 
     /// Append an image message.
@@ -600,23 +567,28 @@ public struct SendableImage {
 
     public let name: String?
     public let utType: UTType?
-    public let source: Source
+    public let data: Data
 
     public init(
         name: String?,
         utType: UTType?,
-        source: Source
+        data: Data
     ) {
         self.name = name
-        self.utType = utType
-        self.source = source
+        self.utType = utType ?? Self.determineUTType(from: data)
+        self.data = data
     }
 
-    public enum Source {
+    private static func determineUTType(from data: Data) -> UTType? {
+        guard
+            !data.isEmpty,
+            let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+            let uti = CGImageSourceGetType(imageSource) as String?
+        else {
+            return nil
+        }
 
-        case data(Data)
-        case url(URL)
-
+        return UTType(uti)
     }
 
 }

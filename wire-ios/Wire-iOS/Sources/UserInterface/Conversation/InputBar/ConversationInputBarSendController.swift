@@ -98,7 +98,7 @@ final class ConversationInputBarSendController: NSObject {
         _ text: String,
         mentions: [Mention],
         userSession: UserSession,
-        withImageData data: Data
+        withGIFImageData data: Data
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -115,11 +115,10 @@ final class ConversationInputBarSendController: NSObject {
                     in: conversation,
                     fetchLinkPreview: shouldFetchLinkPreview
                 )
-                // TODO: [ASSET] implement
                 let image = SendableImage(
-                    name: "",
-                    mimeType: "",
-                    source: .data(data)
+                    name: nil,
+                    utType: nil,
+                    data: data
                 )
                 try imageMessageUseCase.invoke(
                     image: image,

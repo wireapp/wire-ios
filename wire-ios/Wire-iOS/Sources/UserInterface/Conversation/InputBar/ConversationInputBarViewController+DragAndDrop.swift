@@ -48,11 +48,10 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                             onConfirm: { [unowned self] _ in
                                 dismiss(animated: true) {
                                     if let draggedImageData = draggedImage.pngData() {
-                                        // TODO: [ASSET] implement
                                         let image = SendableImage(
                                             name: nil,
-                                            utType: nil,
-                                            source: .data(draggedImageData)
+                                            utType: .png,
+                                            data: draggedImageData
                                         )
                                         self.sendController.sendMessage(
                                             image: image,

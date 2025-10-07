@@ -31,14 +31,11 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
                 self.userSession.enqueue {
                     do {
                         let useCase = self.userSession.makeAppendImageMessageUseCase()
-
-                        // TODO: [ASSET] implement
                         let image = SendableImage(
-                            name: "",
-                            mimeType: "",
-                            source: .data(imageData)
+                            name: nil,
+                            utType: nil,
+                            data: imageData
                         )
-
                         try useCase.invoke(
                             image: image,
                             in: self.conversation
