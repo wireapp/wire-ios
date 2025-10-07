@@ -1710,15 +1710,7 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            /*
-            UnknownMessageAppVersionMigration(
-                version: <#T##SemanticVersion#>,
-                contextProvider: coreDataStack,
-                conversationLocalStore: clientSessionComponent?.conversationLocalStore,
-                protobufMessageProcessor: clientSessionComponent?.conversationProtobufMessageProcessor
-            )
-             */
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
         ]
     }
 
