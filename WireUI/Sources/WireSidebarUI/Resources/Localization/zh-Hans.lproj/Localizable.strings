@@ -31,6 +31,9 @@
 "sidebar.conversation_filter.folders.title" = "文件夹";
 "sidebar.conversation_filter.archived.title" = "归档";
 
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
 "sidebar.contacts.title" = "联络人";
 "sidebar.contacts.connect.title" = "新增好友";
 
