@@ -33,8 +33,8 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
-        isUserPremium: isUserPremium,
-        isWireCellsEnabled: isWireCellsEnabled,
+        isUserPremium: userSession.isEnterpriseUser,
+        isWireCellsEnabled: userSession.isWireCellsEnabled,
         teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
@@ -42,24 +42,6 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
             }
         }
     )
-    
-    private lazy var isWireCellsEnabled: Bool = {
-        guard let userSession = userSession as? ZMUserSession else { return false }
-        let conferenceCalling = userSession.syncContext.performAndWait {
-            userSession.featureRepository.fetchCells()
-        }
-
-        return conferenceCalling.status == .enabled && DeveloperFlag.wireCells.isOn
-    }()
-
-    private lazy var isUserPremium: Bool = {
-        guard let userSession = userSession as? ZMUserSession else { return false }
-        let conferenceCalling = userSession.syncContext.performAndWait {
-            userSession.featureRepository.fetchConferenceCalling()
-        }
-
-        return conferenceCalling.status == .enabled
-    }()
 
     weak var delegate: ConversationCreationControllerDelegate?
 
@@ -243,7 +225,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 teamID: teamID,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
-                cells: isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

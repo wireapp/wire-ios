@@ -51,6 +51,8 @@ final class SectionFooterView: UIView {
         linkTextView.isEditable = false
         linkTextView.isScrollEnabled = false
         linkTextView.backgroundColor = .clear
+        linkTextView.textContainerInset = .zero
+        linkTextView.textContainer.lineFragmentPadding = 0
         linkTextView.adjustsFontForContentSizeCategory = true
         linkTextView.isHidden = true
         addSubview(linkTextView)

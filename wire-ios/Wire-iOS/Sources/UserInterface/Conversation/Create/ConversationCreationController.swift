@@ -54,15 +54,6 @@ final class ConversationCreationController: UIViewController {
     private var values: ConversationCreationValues
 
     weak var delegate: ConversationCreationControllerDelegate?
-    
-    private lazy var isWireCellsEnabled: Bool = {
-        guard let userSession = userSession as? ZMUserSession else { return false }
-        let conferenceCalling = userSession.syncContext.performAndWait {
-            userSession.featureRepository.fetchCells()
-        }
-
-        return conferenceCalling.status == .enabled && DeveloperFlag.wireCells.isOn
-    }()
 
     // MARK: - Sections
 
@@ -80,7 +71,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            isWireCellsEnabled ? fileManagementSection : nil
+            userSession.isWireCellsEnabled ? fileManagementSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -404,7 +395,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 
