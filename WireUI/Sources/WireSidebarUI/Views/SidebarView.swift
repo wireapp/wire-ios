@@ -27,6 +27,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
     public var showUnreadFilters: Bool
+    public var showMeetings: Bool
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
@@ -44,6 +45,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         showUnreadFilters: Bool,
+        showMeetings: Bool,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         supportAction: @escaping () -> Void,
@@ -53,6 +55,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.showUnreadFilters = showUnreadFilters
+        self.showMeetings = showMeetings
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
         self.supportAction = supportAction
@@ -137,6 +140,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             // Additional filters
             selectableMenuItem(.folders)
             selectableMenuItem(.archive)
+
+            // Meetings
+            if showMeetings {
+                menuItemHeader(Strings.Meetings.title, addTopPadding: false)
+                selectableMenuItem(.meetings)
+            }
         }
         .padding(.horizontal, 16)
     }
@@ -261,6 +270,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.ConversationFilter.Archived.title)
             icon = "archivebox"
             accessibilityLabel = Text(Strings.ConversationFilter.Archived.title)
+
+        case .meetings:
+            text = Text(Strings.Meetings.AllMeetings.title)
+            icon = "video"
+            accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
 
         case .settings:
             text = Text(Strings.Settings.title)
