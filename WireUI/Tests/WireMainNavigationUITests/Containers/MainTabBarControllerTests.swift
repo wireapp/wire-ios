@@ -31,7 +31,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = .init()
+        sut = MainTabBarController(showMeetings: false)
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
