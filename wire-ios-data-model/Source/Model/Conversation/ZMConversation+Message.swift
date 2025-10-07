@@ -565,7 +565,7 @@ import UniformTypeIdentifiers
 
 public struct SendableImage {
 
-    public let name: String?
+    public let name: String
     public let utType: UTType?
     public let data: Data
 
@@ -574,8 +574,20 @@ public struct SendableImage {
         utType: UTType?,
         data: Data
     ) {
-        self.name = name
-        self.utType = utType ?? Self.determineUTType(from: data)
+        if let utType {
+            self.utType = utType
+        } else {
+            self.utType = Self.determineUTType(from: data)
+        }
+
+        if let name {
+            self.name = name
+        } else if let fileExtension = self.utType?.preferredFilenameExtension {
+            self.name = "picture.\(fileExtension)"
+        } else {
+            self.name = "picture"
+        }
+
         self.data = data
     }
 
@@ -589,6 +601,14 @@ public struct SendableImage {
         }
 
         return UTType(uti)
+    }
+
+}
+
+extension SendableImage: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "SendableImage(name: \(name), type: \(utType?.preferredMIMEType ?? "unknown"))"
     }
 
 }
