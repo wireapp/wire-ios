@@ -26,15 +26,18 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
+    let isProcessingBackup: Bool
 
     public init(
         messageLocalStore: any MessageLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol
+        userLocalStore: any UserLocalStoreProtocol,
+        isProcessingBackup: Bool
     ) {
         self.messageLocalStore = messageLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
+        self.isProcessingBackup = isProcessingBackup
     }
 
     public func processProtobufMessage(
@@ -270,12 +273,21 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
     ) async throws {
         let (clientMessage, isNew): (ZMClientMessage, isNew: Bool)
         do {
-            (clientMessage, isNew) = try await messageLocalStore.fetchOrCreateClientMessage(
-                id: message.messageID,
-                conversation: conversation,
-                sender: (sender.id, sender.domain, sender.clientID),
-                date: date
-            )
+            if isProcessingBackup {
+                (clientMessage, isNew) = (try await messageLocalStore.createClientMessage(
+                    id: message.messageID,
+                    conversation: conversation,
+                    sender: sender,
+                    date: date
+                ), true)
+            } else {
+                (clientMessage, isNew) = try await messageLocalStore.fetchOrCreateClientMessage(
+                    id: message.messageID,
+                    conversation: conversation,
+                    sender: (sender.id, sender.domain, sender.clientID),
+                    date: date
+                )
+            }
         } catch let MessageLocalStore.Failure.invalidInsertion(reason: reason) {
             return WireLogger.eventProcessing.warn(
                 "failed to process message, dropping. Reason: \(reason)",

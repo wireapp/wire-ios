@@ -398,7 +398,8 @@ extension SettingsCellDescriptorFactory {
             processor: ConversationProtobufMessageProcessor(
                 context: context,
                 localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                isProcessingBackup: true
             )
         )
         let userSession = sessionManager.activeUserSession!
@@ -533,7 +534,8 @@ private extension ConversationProtobufMessageProcessor {
     init(
         context: NSManagedObjectContext,
         localDomain: String?,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        isProcessingBackup: Bool
     ) {
         let messageLocalStore = MessageLocalStore(context: context)
         self.init(
@@ -548,7 +550,8 @@ private extension ConversationProtobufMessageProcessor {
             userLocalStore: UserLocalStore(
                 context: context,
                 messageLocalStore: messageLocalStore
-            )
+            ),
+            isProcessingBackup: isProcessingBackup
         )
     }
 

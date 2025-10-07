@@ -171,6 +171,23 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     }
 
+    public func createClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date
+    ) async throws -> ZMClientMessage {
+
+        try await createClientMessage(
+            id: id,
+            messageType: .default,
+            conversation: conversation,
+            sender: sender,
+            date: date
+        ) as! ZMClientMessage
+
+    }
+    
     public func fetchOrCreateAssetClientMessage(
         id: String,
         conversation: ZMConversation,
@@ -401,17 +418,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
         try await context.perform { [self] in
 
-            if let clearedTime = conversation.clearedTimeStamp, clearedTime.compare(date) != .orderedAscending {
-                throw Failure.invalidInsertion(reason: "message is older than cleared time")
-            }
-
-            guard conversation.conversationType != .`self` else {
-                throw Failure.invalidInsertion(reason: "message cannot be sent to self")
-            }
-
-            guard let nonce = UUID(uuidString: id) else {
-                throw Failure.invalidInsertion(reason: "invalid nonce")
-            }
+            let nonce = try validateClientMessage(
+                id: id,
+                conversation: conversation,
+                date: date
+            )
 
             let clientMessage = messageType == .asset ?
                 ZMAssetClientMessage.fetch(
@@ -428,21 +439,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             if let clientMessage {
                 return (clientMessage, false)
             } else {
-                let newClientMessage = messageType == .asset ?
-                    ZMAssetClientMessage(
-                        nonce: nonce,
-                        managedObjectContext: context
-                    ) :
-                    ZMClientMessage(
-                        nonce: nonce,
-                        managedObjectContext: context
-                    )
-
-                setupNewClientMessage(
-                    newClientMessage,
+                let newClientMessage = createValidatedClientMessage(
+                    nonce: nonce,
+                    messageType: messageType,
                     conversation: conversation,
-                    senderID: sender.id,
-                    clientID: sender.clientID,
+                    sender: sender,
                     date: date
                 )
 
@@ -450,7 +451,80 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
         }
     }
+    
+    private func createClientMessage(
+        id: String,
+        messageType: ClientMessageType,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date
+    ) async throws -> ZMOTRMessage {
+        try await context.perform { [self] in
+            
+            let nonce = try validateClientMessage(
+                id: id,
+                conversation: conversation,
+                date: date
+            )
+            
+            return createValidatedClientMessage(
+                nonce: nonce,
+                messageType: messageType,
+                conversation: conversation,
+                sender: sender,
+                date: date
+            )
+        }
+    }
+    
+    private func createValidatedClientMessage(
+        nonce: UUID,
+        messageType: ClientMessageType,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date
+    ) -> ZMOTRMessage {
+        let clientMessage = messageType == .asset ?
+            ZMAssetClientMessage(
+                nonce: nonce,
+                managedObjectContext: context
+            ) :
+            ZMClientMessage(
+                nonce: nonce,
+                managedObjectContext: context
+            )
 
+        setupNewClientMessage(
+            clientMessage,
+            conversation: conversation,
+            senderID: sender.id,
+            clientID: sender.clientID,
+            date: date
+        )
+        
+        return clientMessage
+    }
+    
+    private func validateClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        date: Date
+    ) throws -> UUID {
+        if let clearedTime = conversation.clearedTimeStamp, clearedTime.compare(date) != .orderedAscending {
+            throw Failure.invalidInsertion(reason: "message is older than cleared time")
+        }
+
+        guard conversation.conversationType != .`self` else {
+            throw Failure.invalidInsertion(reason: "message cannot be sent to self")
+        }
+
+        guard let nonce = UUID(uuidString: id) else {
+            throw Failure.invalidInsertion(reason: "invalid nonce")
+        }
+
+        return nonce
+    }
+    
     private func setupNewClientMessage(
         _ message: ZMOTRMessage,
         conversation: ZMConversation,

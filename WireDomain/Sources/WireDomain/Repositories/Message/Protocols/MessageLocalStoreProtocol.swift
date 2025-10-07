@@ -55,6 +55,14 @@ public protocol MessageLocalStoreProtocol {
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool)
+    
+    // TODO: Add doc comment
+    func createClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date
+    ) async throws -> ZMClientMessage
 
     /// Fetches or creates a `ZMAssetClientMessage` locally.
     /// - Parameters:

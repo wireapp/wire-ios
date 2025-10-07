@@ -772,7 +772,8 @@ public final class ClientSessionComponent {
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
         messageLocalStore: messageLocalStore,
         conversationLocalStore: conversationLocalStore,
-        userLocalStore: userLocalStore
+        userLocalStore: userLocalStore,
+        isProcessingBackup: false
     )
 
     private lazy var oneOnOneResolver = OneOnOneResolver(
