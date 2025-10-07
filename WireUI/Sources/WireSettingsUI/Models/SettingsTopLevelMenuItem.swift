@@ -17,7 +17,6 @@
 //
 
 import Locators
-import WireFoundation
 
 public enum SettingsTopLevelMenuItem: Sendable {
     case account

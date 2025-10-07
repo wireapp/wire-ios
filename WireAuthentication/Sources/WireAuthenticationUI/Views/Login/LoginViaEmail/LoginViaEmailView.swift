@@ -20,7 +20,6 @@ import Locators
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
-import WireFoundation
 import WireNetwork
 import WireReusableUIComponents
 

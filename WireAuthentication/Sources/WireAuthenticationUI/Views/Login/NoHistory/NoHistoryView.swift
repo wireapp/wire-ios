@@ -19,7 +19,6 @@
 import Locators
 import SwiftUI
 import WireAuthenticationAPI
-import WireFoundation
 import WireReusableUIComponents
 
 package struct NoHistoryView: View {
