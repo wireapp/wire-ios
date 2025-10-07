@@ -186,9 +186,11 @@ final class ConversationTableViewDataSource: NSObject {
 
                     // Re-set messages from Main thread to section controller to not have crash with later interactions
                     // with data
+                    var recreateCellDescriptions = false
                     if let managedID = (sectionController.message as? ZMMessage)?.objectID,
                        let mainThreadMessage = try? mainThreadContext.existingObject(with: managedID) as? ZMMessage {
                         sectionController.updateMessage(mainThreadMessage)
+                        recreateCellDescriptions = mainThreadMessage.isComposite
                     } else {
                         WireLogger.conversation
                             .debug(
@@ -198,7 +200,7 @@ final class ConversationTableViewDataSource: NSObject {
 
                     sectionController.selfUser = selfUserOnMainThread
 
-                    if sectionController.context != context || forceRecalculate || true {
+                    if sectionController.context != context || forceRecalculate || recreateCellDescriptions {
                         sectionController.recreateCellDescriptions(in: context)
                     }
 
