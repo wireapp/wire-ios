@@ -20,7 +20,7 @@ import SwiftUI
 
 @MainActor
 func MainTabBarControllerPreview() -> some MainTabBarControllerProtocol {
-    let tabBarController = PreviewTabBarController()
+    let tabBarController = PreviewTabBarController(showMeetings: false)
     tabBarController.conversationListUI = .init("conversationList")
     tabBarController.archiveUI = PlaceholderViewController()
     tabBarController.settingsUI = .init()

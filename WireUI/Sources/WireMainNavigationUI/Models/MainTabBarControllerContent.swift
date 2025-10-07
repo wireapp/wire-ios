@@ -22,4 +22,5 @@ public enum MainTabBarControllerContent: Int, CaseIterable {
     case conversations
     case archive
     case settings
+    case meetings
 }
