@@ -35,6 +35,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showArchive() async
     @MainActor
     func showSettings() async
+    @MainActor
+    func showMeetings() async
 
     @MainActor
     func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async
