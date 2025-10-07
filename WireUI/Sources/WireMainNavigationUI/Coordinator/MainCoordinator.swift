@@ -174,8 +174,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
-    public func showMeetings() async {}
-
     public func showSettings() async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
