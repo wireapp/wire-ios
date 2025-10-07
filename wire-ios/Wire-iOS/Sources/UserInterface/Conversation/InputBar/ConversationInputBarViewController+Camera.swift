@@ -172,7 +172,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         isFromCamera: isFromCamera
                     )
                     let dataToSend = editedImage?.pngData() ?? imageData
-                    if (self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn), self.conversation.isCellsEnabled {
+                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                       self.conversation.isCellsEnabled {
                         let type: UTType = if editedImage != nil {
                             .png
                         } else if let uti, let utType = UTType(uti) {
@@ -296,7 +297,8 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    if (self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn), self.conversation.isCellsEnabled {
+                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                       self.conversation.isCellsEnabled {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
                         self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
