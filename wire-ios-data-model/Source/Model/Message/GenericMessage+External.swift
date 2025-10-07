@@ -23,6 +23,7 @@ import WireLogging
 private let zmLog = ZMSLog(tag: "GenericMessage")
 
 extension GenericMessage {
+
     /// Helper to generate the payload for a generic message of type an external
     /// In case the payload of a regular (text) message is to large,
     /// we need to symmetrically encrypt the original generic message using a generated
@@ -53,7 +54,7 @@ extension GenericMessage {
     }
 
     /// Creates a genericMessage from a ZMUpdateEvent and  External
-    /// The symetrically encrypted data (representing the original GenericMessage)
+    /// The symmetrically encrypted data (representing the original GenericMessage)
     /// contained in the update event will be decrypted using the encryption keys in the External
     /// - Parameters:
     ///   - updateEvent: the decrypted  ZMUpdateEvent containing the external data
@@ -79,4 +80,5 @@ extension GenericMessage {
 
         self = message
     }
+
 }
