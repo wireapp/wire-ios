@@ -53,6 +53,9 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+        case let .assetAuditLog(config):
+            // TODO: [WPB-20713]
+            assertionFailure("not implemented")
         case let .classifiedDomains(config):
             await storeFeature(
                 name: .classifiedDomains,

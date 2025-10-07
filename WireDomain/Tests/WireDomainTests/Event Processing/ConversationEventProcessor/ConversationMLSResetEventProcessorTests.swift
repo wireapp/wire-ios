@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
@@ -57,7 +58,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         mlsService.wipeGroup_MockMethod = { _ in }
         mlsService.conversationExistsGroupID_MockValue = false
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore
+            .storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod = { _, _ in }
         conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
@@ -100,10 +102,10 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             }
 
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
             1
         )
-        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations
+        conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations
             .forEach {
                 XCTAssertEqual(
                     $0.newMLSGroupID,
@@ -132,7 +134,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             }
 
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
             0
         )
         XCTAssertEqual(
@@ -162,7 +164,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         XCTAssertEqual(mockResetLockRepository.removeResetInitiatedConversationID_Invocations.count, 1)
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
             0
         )
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
