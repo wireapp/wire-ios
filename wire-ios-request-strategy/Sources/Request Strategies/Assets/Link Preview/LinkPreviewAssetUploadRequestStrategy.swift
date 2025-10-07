@@ -160,6 +160,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             transportRequest: requestFactory.upstreamRequestForAsset(
                 withData: imageData,
                 retention: retention,
+                assetAuditLogMetaData: nil, // TODO: [ASSET] fix
                 apiVersion: apiVersion
             )
         )

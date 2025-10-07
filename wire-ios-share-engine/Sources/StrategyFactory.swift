@@ -146,7 +146,8 @@ final class StrategyFactory {
     private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
         let strategy = AssetV3UploadRequestStrategy(
             withManagedObjectContext: syncContext,
-            applicationStatus: applicationStatus
+            applicationStatus: applicationStatus,
+            localDomain: localDomain
         )
 
         // WORKAROUND:

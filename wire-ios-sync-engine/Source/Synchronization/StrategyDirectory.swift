@@ -171,7 +171,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
+                applicationStatus: applicationStatusDirectory,
+                localDomain: metadata.domain
             ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,

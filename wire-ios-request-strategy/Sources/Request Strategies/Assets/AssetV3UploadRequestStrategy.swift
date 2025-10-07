@@ -29,12 +29,15 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     var preprocessor: AssetsPreprocessor
 
     public var shouldUseBackgroundSession = true
+    let localDomain: String?
 
-    public override init(
+    public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        localDomain: String?
     ) {
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
+        self.localDomain = localDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
@@ -142,19 +145,60 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         for message: ZMAssetClientMessage,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"
+        ]
+
         guard let data = asset.encrypted else {
-            WireLogger.assets.warn("Encrypted data not available")
+            WireLogger.assets.warn(
+                "Encrypted data not available",
+                attributes: logAttributes
+            )
             return nil
         }
-        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
-        else {
-            WireLogger.assets.warn("Trying to send message that doesn't have a conversation")
+
+        guard let conversation = message.conversation else {
+            WireLogger.assets.warn(
+                "Trying to send message that doesn't have a conversation",
+                attributes: logAttributes
+            )
             return nil
+        }
+
+        let retention = AssetRequestFactory.Retention(conversation: conversation)
+
+        /// TODO: [ASSET] fix
+        let shouldIncludeExtraMetaData = true
+
+        var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+        if shouldIncludeExtraMetaData {
+            guard
+                let asset = message.underlyingMessage?.assetData?.original,
+                let domain = conversation.domain ?? localDomain
+            else {
+                WireLogger.assets.warn(
+                    "should include extra metadata but not able to",
+                    attributes: logAttributes
+                )
+                return nil
+            }
+
+            let conversationID = QualifiedID(
+                uuid: conversation.remoteIdentifier,
+                domain: domain
+            )
+
+            extraMetaData = .init(
+                conversationID: conversationID,
+                fileName: asset.name,
+                mimeType: asset.mimeType
+            )
         }
 
         WireLogger.assets.debug(
             "sending request for asset",
-            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+            attributes: logAttributes
         )
         let request: ZMTransportRequest? = if shouldUseBackgroundSession {
             requestFactory.backgroundUpstreamRequestForAsset(
@@ -162,6 +206,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
                 withData: data,
                 shareable: false,
                 retention: retention,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
         } else {
@@ -169,6 +214,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
                 withData: data,
                 shareable: false,
                 retention: retention,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
         }

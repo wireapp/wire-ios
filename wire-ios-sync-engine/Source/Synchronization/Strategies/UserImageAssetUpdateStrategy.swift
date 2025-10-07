@@ -246,6 +246,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
                 withData: image,
                 shareable: true,
                 retention: .eternal,
+                assetAuditLogMetaData: nil, // TODO: [ASSET] fix
                 apiVersion: apiVersion
             )
 
