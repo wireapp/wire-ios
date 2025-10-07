@@ -18,8 +18,14 @@
 
 public import Foundation
 
+import GenericMessageProtocol
+
 public extension ZMConversation {
 
+    /// Appends a placeholder message to the conversation. This message can later be exchanged once the payload can
+    /// successfully be deserialized.
+    /// - Parameters:
+    ///   - payload: The binary data to be deserialized into a ``GenericMessage`` instance.
     func appendUnknownMessage(
         messageID: UUID,
         sender: ZMUser,

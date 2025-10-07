@@ -34,7 +34,7 @@ public final class UnknownMessage: ZMOTRMessage {
         NSFetchRequest<UnknownMessage>(entityName: "UnknownMessage")
     }
 
-    /// The data which can be parsed into a `GenericMessage`.
+    /// The data which can be deserialized into a ``GenericMessage``.
 
     @NSManaged public var payload: Data?
 
