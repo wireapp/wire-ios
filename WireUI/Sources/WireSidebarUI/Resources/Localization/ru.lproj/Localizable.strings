@@ -31,6 +31,9 @@
 "sidebar.conversation_filter.folders.title" = "Папки";
 "sidebar.conversation_filter.archived.title" = "Архивировать";
 
+"sidebar.meetings.title" = "Встречи";
+"sidebar.meetings.all_meetings.title" = "Все встречи";
+
 "sidebar.contacts.title" = "Контакты";
 "sidebar.contacts.connect.title" = "Связаться";
 
