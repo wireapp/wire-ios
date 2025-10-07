@@ -903,7 +903,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 )
             } catch {
                 WireLogger.conversation
-                    .error("could not sync cells state for conversation")
+                    .error("could not sync cells state for conversation: \(String(describing: error))")
             }
         }
 
