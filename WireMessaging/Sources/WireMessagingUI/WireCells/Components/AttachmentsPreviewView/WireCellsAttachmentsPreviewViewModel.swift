@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 import UniformTypeIdentifiers
 import WireLogging
 package import WireMessagingDomain
@@ -52,21 +52,36 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     private let attachments: [WireCellsMessageAttachment]
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
+    private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let lastOpenRequest: WireCellsLastOpenRequest
 
     @Published var items: [WireCellsAttachmentsPreviewViewItem]
 
     package init(
         attachments: [WireCellsMessageAttachment],
-        fetchNodesUseCase: WireCellsFetchNodesUseCase
+        fetchNodesUseCase: WireCellsFetchNodesUseCase,
+        getAssetUseCase: WireCellsGetAssetUseCase,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireCellsLastOpenRequest
     ) {
         self.attachments = attachments
         self.fetchNodesUseCase = fetchNodesUseCase
+        self.getAssetUseCase = getAssetUseCase
+        self.localAssetRepository = localAssetRepository
+        self.lastOpenRequest = lastOpenRequest
+
         self.items = attachments.map { WireCellsAttachmentsPreviewViewItem($0, isDeleted: false) }
     }
 
     /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
-        WireCellsAttachmentsPreviewItemViewModel(item: items[index])
+        WireCellsAttachmentsPreviewItemViewModel(
+            item: items[index],
+            getAssetUseCase: getAssetUseCase,
+            localAssetRepository: localAssetRepository,
+            lastOpenRequest: lastOpenRequest
+        )
     }
 
     /// Fetches the latest nodes from the backend and updates the view model's items if necessary.

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import WireDesign
 import WireFoundation
@@ -39,22 +40,45 @@ struct WireCellsAttachmentsPreviewItemView: View {
         )
         .frame(height: 74)
         .frame(idealWidth: 288)
+        .onTapGesture(perform: `open`)
+        .quickLookPreview($viewModel.viewingURL)
+    }
+
+    private func open() {
+        Task { await viewModel.open() }
     }
 
 }
 
-#Preview {
-    WireCellsAttachmentsPreviewItemView(
-        viewModel: .init(
-            item: WireCellsAttachmentsPreviewViewItem(
-                nodeID: UUID(),
-                fileIcon: .document,
-                fileName: "Some file",
-                fileExtension: "pdf",
-                fileSize: 100,
-                isDeleted: false
-            )
-        )
+// MARK: - Preview
+
+@MainActor
+private func makeViewModel() -> WireCellsAttachmentsPreviewItemViewModel {
+    let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+    localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
+
+    let fileCache = MockFileCache()
+    fileCache.fileURLForKey_MockValue = URL(filePath: "something")
+
+    return WireCellsAttachmentsPreviewItemViewModel(
+        item: WireCellsAttachmentsPreviewViewItem(
+            nodeID: UUID(),
+            fileIcon: .document,
+            fileName: "Some file",
+            fileExtension: "pdf",
+            fileSize: 100,
+            isDeleted: false
+        ),
+        getAssetUseCase: WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetRepository,
+            fileCache: fileCache
+        ),
+        localAssetRepository: localAssetRepository,
+        lastOpenRequest: WireCellsLastOpenRequest()
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+}
+
+#Preview {
+    WireCellsAttachmentsPreviewItemView(viewModel: makeViewModel())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

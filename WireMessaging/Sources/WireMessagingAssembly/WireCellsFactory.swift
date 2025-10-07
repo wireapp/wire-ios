@@ -34,6 +34,10 @@ public struct WireCellsFactory {
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
+    private let lastOpenRequest: WireCellsLastOpenRequest
+
+    @MainActor
+    var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
@@ -66,6 +70,7 @@ public struct WireCellsFactory {
             fileCache: fileCache,
             store: localAssetStore
         )
+        self.lastOpenRequest = WireCellsLastOpenRequest()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -149,7 +154,13 @@ public extension WireCellsFactory {
                     fetchNodesUseCase: WireCellsFetchNodesUseCase(
                         configuration: .message(nodeIDs: attachments.map(\.nodeID)),
                         repository: nodesAPI
-                    )
+                    ),
+                    getAssetUseCase: WireCellsGetAssetUseCase(
+                        localAssetRepository: localAssetRepository,
+                        fileCache: fileCache
+                    ),
+                    localAssetRepository: localAssetRepository,
+                    lastOpenRequest: lastOpenRequest
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )

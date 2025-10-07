@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 package import SwiftUI
 import WireMessagingDomain
 import WireFoundation
@@ -78,12 +79,24 @@ private func makeViewModel() -> WireCellsAttachmentsPreviewViewModel {
     let nodesRepository = MockWireCellsNodesRepositoryProtocol()
     nodesRepository.getNodes_MockValue = (nodes: [], nextOffset: nil)
 
+    let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+    localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
+
+    let fileCache = MockFileCache()
+    fileCache.fileURLForKey_MockValue = URL(filePath: "something")
+
     return WireCellsAttachmentsPreviewViewModel(
         attachments: attachments,
         fetchNodesUseCase: WireCellsFetchNodesUseCase(
             configuration: .message(nodeIDs: []),
             repository: nodesRepository
-        )
+        ),
+        getAssetUseCase: WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetRepository,
+            fileCache: fileCache
+        ),
+        localAssetRepository: localAssetRepository,
+        lastOpenRequest: WireCellsLastOpenRequest()
     )
 }
 

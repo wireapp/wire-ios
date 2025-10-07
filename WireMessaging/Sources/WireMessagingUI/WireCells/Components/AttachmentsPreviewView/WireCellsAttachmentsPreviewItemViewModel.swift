@@ -24,12 +24,26 @@ import WireMessagingDomain
 final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private let item: WireCellsAttachmentsPreviewViewItem
+    private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let lastOpenRequest: WireCellsLastOpenRequest
+    private var cancellables = Set<AnyCancellable>()
 
     let headerText: String
     let fileName: String
 
-    init(item: WireCellsAttachmentsPreviewViewItem) {
+    @Published var viewingURL: URL?
+    @Published private var asset: WireCellsLocalAsset?
+
+    init(
+        item: WireCellsAttachmentsPreviewViewItem,
+        getAssetUseCase: WireCellsGetAssetUseCase,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireCellsLastOpenRequest
+    ) {
         self.item = item
+        self.getAssetUseCase = getAssetUseCase
+        self.lastOpenRequest = lastOpenRequest
+
         if item.isDeleted {
             self.headerText = ""
             self.fileName = L10n.Localizable.Conversation.Message.Attachment.notAvailable
@@ -38,6 +52,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
             self.headerText = [item.fileExtension?.uppercased(), fileSize].compactMap { $0 }.joined(separator: " ")
             self.fileName = [item.fileName, item.fileExtension].compactMap { $0 }.joined(separator: ".")
         }
+
+        localAssetRepository.observeAsset(nodeID: item.nodeID).sink { [self] asset in
+            self.asset = asset
+        }.store(in: &cancellables)
     }
 
     var icon: ImageResource {
@@ -45,11 +63,40 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     var progress: Double {
-        0.0
+        switch asset?.downloadState {
+        case let .downloading(progress):
+            progress
+        case .failed:
+            1 // We show a full red progress bar on failure
+        default:
+            0
+        }
     }
 
     var isError: Bool {
-        false
+        switch asset?.downloadState {
+        case .failed:
+            true
+        default:
+            false
+        }
+    }
+
+    func open() async {
+        guard !item.isDeleted else { return }
+
+        // FIXME: check not in progress
+
+        lastOpenRequest.nodeID = item.nodeID
+
+        do {
+            let url = try await getAssetUseCase.invoke(nodeID: item.nodeID)
+            if lastOpenRequest.nodeID == item.nodeID {
+                viewingURL = url
+            }
+        } catch {
+            // FIXME: Handle error
+        }
     }
 
 }

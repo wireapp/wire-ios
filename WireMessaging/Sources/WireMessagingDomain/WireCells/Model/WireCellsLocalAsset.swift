@@ -104,3 +104,15 @@ public struct WireCellsLocalAsset: Equatable, Sendable {
         self.downloadState = downloadState
     }
 }
+
+package extension WireCellsLocalAsset.DownloadState {
+
+    var cacheKey: String? {
+        switch self {
+        case let .downloaded(key):
+            key
+        default:
+            nil
+        }
+    }
+}
