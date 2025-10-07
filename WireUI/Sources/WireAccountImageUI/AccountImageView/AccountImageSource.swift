@@ -23,3 +23,18 @@ public enum AccountImageSource: Hashable, Sendable {
     case text(_ initials: String)
     public init() { self = .text("") }
 }
+
+
+public enum LegalHoldStatus { case disabled, pending, enabled }
+
+public struct AccountUIViewModel {
+    let avatarSource: AccountImageSource
+    let availability: Availability
+    let showNotificationsBadge: Bool
+    let legalHoldStatus: LegalHoldStatus
+    let isE2EICertified: Bool
+    let isProteusVerified: Bool
+    let action: () -> Void
+    let onLegalHoldRequest: (() -> Void)?
+    let onLegalHoldInfo: (() -> Void)?
+}

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireFoundation
+import WireDesign
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
@@ -395,5 +396,92 @@ private extension View {
             }
             Spacer()
         }
+    }
+}
+
+
+public protocol LegalHoldBadgeProvidingSwiftUI: AnyObject {
+    @ViewBuilder
+    func badgeView(for status: LegalHoldStatus) -> AnyView?
+}
+
+
+
+public struct AccountUI: View {
+
+    private let viewModel: AccountUIViewModel
+
+    public init(
+        viewModel: AccountUIViewModel
+    ) {
+        self.viewModel = viewModel
+    }
+
+    public var body: some View {
+        HStack(spacing: 4) {
+
+            AccountImageViewRepresentable(
+                source: viewModel.avatarSource,
+                availability: viewModel.availability,
+                showNotificationsBadge: viewModel.showNotificationsBadge
+            )
+
+            switch viewModel.legalHoldStatus {
+            case .disabled:
+                EmptyView()
+            case .pending:
+                pendingBadge
+            case .enabled:
+                enabledBadge
+            }
+
+
+            if viewModel.isE2EICertified {
+//                Image(uiImage: UIImage(resource: .certificateValid))
+//                    .resizable()
+//                    .scaledToFit()
+            }
+            if viewModel.isProteusVerified {
+//                Image(uiImage: UIImage(resource: .verifiedShield))
+//                    .resizable()
+//                    .scaledToFit()
+            }
+        }
+        .frame(height: 28)
+        .accessibilityElement(children: .contain)
+    }
+}
+
+private extension AccountUI {
+    var pendingBadge: some View {
+        Button(action: { viewModel.onLegalHoldRequest?() }) {
+            ZStack {
+                Circle()
+                    .fill(Color(uiColor: SemanticColors.Icon.backgroundLegalHold.withAlphaComponent(0.8)))
+                Image(uiImage: UIImage(resource: .clock))
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 24, height: 24)
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    var enabledBadge: some View {
+        Image(uiImage: UIImage(resource: .legalholdactive))
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            //.frame(width: size * 0.65, height: size * 0.65)
+            .foregroundStyle(ColorTheme.Base.requiredField.color)
+            .frame(width: 16, height: 16)
+            .contentShape(Rectangle())
+            .onTapGesture { viewModel.onLegalHoldInfo?() }
+            .accessibilityElement(children: .ignore)
+            .accessibilityAddTraits(.isButton)
     }
 }
