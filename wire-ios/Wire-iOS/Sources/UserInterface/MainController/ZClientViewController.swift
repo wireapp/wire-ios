@@ -44,7 +44,10 @@ final class ZClientViewController: UIViewController {
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
-        didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
+        didSet {
+            sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
+            updateMeetingsAccountAvatar()
+        }
     }
 
     private(set) var cachedAccountInfo = SidebarAccountInfo() {
@@ -146,6 +149,14 @@ final class ZClientViewController: UIViewController {
         conversationFilter: { [weak self] in
             self?.conversationFilter()
         }
+    )
+
+    private lazy var meetingsViewModel = MeetingsListViewModel(
+        account: AccountUIViewModel(
+            avatarSource: cachedAccountImage.mapToAccountImageSource(),
+            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
+            action: {}
+        )
     )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
@@ -345,7 +356,7 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = MeetingsListViewController()
+        let meetingsUI = MeetingsListViewController(viewModel: meetingsViewModel)
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
@@ -811,6 +822,18 @@ final class ZClientViewController: UIViewController {
             ).mapToAccountImageSource()
         } catch {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+        }
+    }
+
+    private func updateMeetingsAccountAvatar() {
+        let newAccount = AccountUIViewModel(
+            avatarSource: cachedAccountImage.mapToAccountImageSource(),
+            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
+            action: {}
+        )
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.meetingsViewModel.updateAccount(newAccount)
         }
     }
 

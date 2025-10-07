@@ -46,11 +46,17 @@ public final class MeetingsListViewModel: ObservableObject {
     }
 
     var hasMeetingsForSelectedTab: Bool { !currentMeetings.isEmpty }
+    @Published var account: AccountUIViewModel
 
-    public init() {}
+    public init(account: AccountUIViewModel) {
+        self.account = account
+    }
+
+    public func updateAccount(_ account: AccountUIViewModel) {
+        self.account = account
+    }
 
     func meetNowTapped() {}
-
     func scheduleMeetingTapped() {}
 
 }

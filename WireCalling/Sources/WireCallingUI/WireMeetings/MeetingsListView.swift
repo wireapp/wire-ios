@@ -68,5 +68,5 @@ public struct MeetingsListView: View {
 }
 
 #Preview {
-    MeetingsListView(viewModel: MeetingsListViewModel())
+    MeetingsListView(viewModel: MeetingsListViewModel(account: AccountUIViewModel(avatarSource: .text("AN"), availability: nil, action: {})))
 }

@@ -20,6 +20,7 @@ public import SwiftUI
 import Foundation
 import WireAccountImageUI
 import WireDesign
+import Combine
 
 public final class MeetingsListViewController: UIViewController {
 
@@ -27,9 +28,10 @@ public final class MeetingsListViewController: UIViewController {
 
     private let viewModel: MeetingsListViewModel
     private let hostingController: UIHostingController<MeetingsListView>
-    private weak var accountImageView: AccountImageView?
+    private var cancellables = Set<AnyCancellable>()
+    private var accountWrapperView: AccountUIWrapperView?
 
-    public init(viewModel: MeetingsListViewModel = .init()) {
+    public init(viewModel: MeetingsListViewModel) {
         self.viewModel = viewModel
         self.hostingController = UIHostingController(rootView: MeetingsListView(viewModel: viewModel))
         super.init(nibName: nil, bundle: nil)
@@ -57,6 +59,12 @@ public final class MeetingsListViewController: UIViewController {
 
         setupNavigationBar()
         configureNavigationBarAppearance()
+        viewModel.$account
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newAccount in
+                self?.accountWrapperView?.apply(account: newAccount)
+            }
+            .store(in: &cancellables)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -112,19 +120,19 @@ public final class MeetingsListViewController: UIViewController {
 
         let avatar = makeAccountImageView()
         stackView.addArrangedSubview(avatar)
-        accountImageView = avatar
+        accountWrapperView = avatar
 
         let container = UIBarButtonItem(customView: stackView)
         container.accessibilityIdentifier = "accountImageBarButton"
         navigationItem.leftBarButtonItems = [container]
     }
 
-    private func makeAccountImageView() -> AccountImageView {
-        let v = AccountImageView()
-        v.isAccessibilityElement = true
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        v.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        return v
+    private func makeAccountImageView() -> AccountUIWrapperView {
+        let accountUI = AccountUIWrapperView(viewModel: viewModel.account)
+        accountUI.isAccessibilityElement = true
+        accountUI.translatesAutoresizingMaskIntoConstraints = false
+        accountUI.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        accountUI.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        return accountUI
     }
 }
