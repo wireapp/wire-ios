@@ -497,6 +497,28 @@
         }
       }
     },
+    "tabBar.meetings.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meetings"
+          }
+        }
+      }
+    },
+    "tabBar.meetings.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of meetings"
+          }
+        }
+      }
+    },
     "tabBar.settings.description" : {
       "localizations" : {
         "ar" : {

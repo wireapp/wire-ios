@@ -249,6 +249,17 @@
         }
       }
     },
+    "tabBar.meetings.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meetings"
+          }
+        }
+      }
+    },
     "tabBar.settings.title" : {
       "localizations" : {
         "ar" : {

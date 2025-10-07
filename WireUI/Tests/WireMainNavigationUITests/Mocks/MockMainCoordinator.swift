@@ -44,6 +44,11 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
         showSettings_Invocations.append(())
     }
 
+    var showMeetings_Invocations: [Void] = []
+    func showMeetings() async {
+        showMeetings_Invocations.append(())
+    }
+
     var showConversation_Invocations: [(conversation: ConversationModel, message: ConversationMessageModel?)] = []
     func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async {
         showConversation_Invocations += [(conversation, message)]
