@@ -62,7 +62,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.minTLSVersion = minTLSVersion
         self.preferredAPIVersion = preferredAPIVersion
         registerProviderFactories()
-        logger.info("initializing new notification service", attributes: .newNSE)
+        logger.info("initializing new notification service", attributes: .newNSE, .safePublic)
     }
 
     // MARK: - Notifications
@@ -75,7 +75,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         if onGoingTask != nil {
             logger.warn(
                 "onGoingtask not null: a notification is already being processed",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
         }
 
@@ -90,6 +90,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             } catch {
                 // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
                 // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+                logger.warn("onGoingtask got cancelled: showing no notifications", attributes: .newNSE, .safePublic)
                 return notificationContentHandler(.emptyNotification)
             }
 
@@ -131,7 +132,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     }
 
     public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire", attributes: .newNSE)
+        logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
         onGoingTask?.cancel()
     }
 }
@@ -182,7 +183,7 @@ extension NotificationServiceExtension {
             )
         case let .unableToLoadStores(loadStoresError):
             logger.error(
-                "Loading coreDataStack with error: \(loadStoresError.localizedDescription)",
+                "Loading coreDataStack with error: \(String(describing: loadStoresError))",
                 attributes: .newNSE, .safePublic
             )
         }
@@ -192,8 +193,8 @@ extension NotificationServiceExtension {
         switch error {
         case let .unableToPullPendingEvents(error):
             logger.error(
-                "Could not pull pending events: \(error.localizedDescription)",
-                attributes: .newNSE
+                "Could not pull pending events: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
             )
         }
     }
@@ -270,7 +271,7 @@ extension NotificationServiceExtension {
 
     private func logDefaultError(_ error: any Error) {
         logger.error(
-            "Unable to create a session: \(error.localizedDescription)",
+            "Unable to create a session: \(String(describing: error))",
             attributes: .newNSE, .safePublic
         )
     }
