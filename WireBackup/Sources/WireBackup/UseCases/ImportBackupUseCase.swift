@@ -20,6 +20,8 @@ public import Foundation
 public import WireLogging
 public import WireFoundation
 
+@preconcurrency import KaliumBackup
+
 public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let url: URL
@@ -112,15 +114,15 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     // messages
                     let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
                     while messagesPager.hasMorePages() {
-                        let backupMessages = messagesPager.nextPage()
-                        for current in 0 ..< backupMessages.size {
-                            guard let backupMessage = backupMessages.get(index: current) else { continue }
 
-                            if !storedMessageIDs.contains(backupMessage.id),
-                               let message = MessageBackupModel(backupMessage) {
-                                try await backupLocalStore.addMessage(message)
-                            }
-                        }
+                        // Map messages
+                        let backupMessages = mapBackupMessages(
+                            fromPage: messagesPager.nextPage(),
+                            storedMessageIDs: storedMessageIDs
+                        )
+
+                        try await backupLocalStore.addMessages(backupMessages)
+
                         try Task.checkCancellation()
                         current += 1
                         reportProgress(current, Int(exactly: total) ?? 1)
@@ -146,6 +148,24 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 task.cancel()
             }
         }
+    }
+
+    private func mapBackupMessages(
+        fromPage page: KotlinArray<BackupMessage>,
+        storedMessageIDs: Set<String>
+    ) -> [MessageBackupModel] {
+        var backupMessages: [MessageBackupModel] = []
+
+        for current in 0 ..< page.size {
+            guard let backupMessage = page.get(index: current) else { continue }
+
+            if !storedMessageIDs.contains(backupMessage.id),
+               let message = MessageBackupModel(backupMessage) {
+                backupMessages.append(message)
+            }
+        }
+
+        return backupMessages
     }
 
 }

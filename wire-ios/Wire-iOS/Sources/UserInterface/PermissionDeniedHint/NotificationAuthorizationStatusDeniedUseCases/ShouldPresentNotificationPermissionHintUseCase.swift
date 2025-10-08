@@ -18,6 +18,7 @@
 
 import UserNotifications
 import WireFoundation
+import WireLogging
 import WireUtilities
 
 struct ShouldPresentNotificationPermissionHintUseCase<
@@ -33,8 +34,16 @@ struct ShouldPresentNotificationPermissionHintUseCase<
 
         // show hint only if `authorizationStatus` is `.denied`
         let notificationSettings = await userNotificationCenter.notificationSettings()
-        guard notificationSettings.authorizationStatus == .denied else { return false }
+        guard notificationSettings.authorizationStatus == .denied else {
+            WireLogger.push.info(
+                "notifications authorizationStatus settings: \(notificationSettings.authorizationStatus)",
+                attributes: .safePublic
+            )
 
+            return false
+        }
+
+        WireLogger.push.info("notifications authorizationStatus settings are denied", attributes: .safePublic)
         let lastPresentationDate = userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown)
         if let lastPresentationDate, lastPresentationDate > currentDateProvider.now.addingTimeInterval(-.oneDay) {
             // hint has already been shown within the last 24 hours

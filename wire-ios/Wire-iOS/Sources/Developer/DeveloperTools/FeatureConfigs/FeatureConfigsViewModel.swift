@@ -17,42 +17,14 @@
 //
 
 import Foundation
+import WireDomain
 import WireSyncEngine
 
 final class FeatureConfigsViewModel: ObservableObject {
 
-    enum FeatureConfigName: String {
-        case mls
-        case conferenceCalling
-        case e2EI
-        case allowedGlobalOperations
-        case appLock
-        case channels
-        case classifiedDomains
-        case consumableNotifications
-        case conversationGuestLinks
-        case fileSharing
-        case selfDeletingMessages
-        case digitalSignature
-    }
-
-    enum FeatureConfigStatus: String {
-        case enabled
-        case disabled
-
-        init(status: Feature.Status) {
-            switch status {
-            case .enabled:
-                self = .enabled
-            case .disabled:
-                self = .disabled
-            }
-        }
-    }
-
     struct Item: Identifiable {
-        let featureConfigName: FeatureConfigName
-        let enabled: FeatureConfigStatus
+        let featureConfigName: Feature.Name
+        let enabled: Bool
 
         var id: String {
             featureConfigName.rawValue
@@ -60,70 +32,27 @@ final class FeatureConfigsViewModel: ObservableObject {
     }
 
     @Published var items: [Item] = []
-    private let featureConfigRepository: any LegacyFeatureRepositoryInterface
-    private let context: NSManagedObjectContext
+    private let store: FeatureConfigLocalStore
 
-    init(
-        featureConfigRepository: any LegacyFeatureRepositoryInterface,
-        context: NSManagedObjectContext
-    ) {
-        self.featureConfigRepository = featureConfigRepository
-        self.context = context
+    init(context: NSManagedObjectContext) {
+        self.store = FeatureConfigLocalStore(context: context)
     }
 
+    @MainActor
     func fetchFeatureConfigs() async {
-        let mls = await featureConfigRepository.fetchMLS()
-        let allowedGlobalOperations = await featureConfigRepository.fetchAllowedGlobalOperations()
-
-        await context.perform { [weak self] in
-            guard let self else { return }
-
-            let conferenceCalling = featureConfigRepository.fetchConferenceCalling()
-            let e2EI = featureConfigRepository.fetchE2EI()
-            let appLock = featureConfigRepository.fetchAppLock()
-            let channels = featureConfigRepository.fetchChannels()
-            let classifiedDomains = featureConfigRepository.fetchClassifiedDomains()
-            let consumableNotifications = featureConfigRepository.fetchConsumableNotifications()
-            let conversationGuestLinks = featureConfigRepository.fetchConversationGuestLinks()
-            let digitalSignature = featureConfigRepository.fetchDigitalSignature()
-            let fileSharing = featureConfigRepository.fetchFileSharing()
-            let selfDeletingMessages = featureConfigRepository.fetchSelfDeletingMessages()
-
-            items = [
-                .init(featureConfigName: .mls, enabled: FeatureConfigStatus(status: mls.status)),
+        var items = [Item]()
+        for featureName in Feature.Name.allCases {
+            guard let feature = try? await store.fetchFeature(name: featureName) else {
+                continue
+            }
+            items.append(
                 .init(
-                    featureConfigName: .conferenceCalling,
-                    enabled: FeatureConfigStatus(status: conferenceCalling.status)
-                ),
-                .init(featureConfigName: .e2EI, enabled: FeatureConfigStatus(status: e2EI.status)),
-                .init(
-                    featureConfigName: .allowedGlobalOperations,
-                    enabled: FeatureConfigStatus(status: allowedGlobalOperations.status)
-                ),
-                .init(featureConfigName: .appLock, enabled: FeatureConfigStatus(status: appLock.status)),
-                .init(featureConfigName: .channels, enabled: FeatureConfigStatus(status: channels.status)),
-                .init(
-                    featureConfigName: .classifiedDomains,
-                    enabled: FeatureConfigStatus(status: classifiedDomains.status)
-                ),
-                .init(
-                    featureConfigName: .consumableNotifications,
-                    enabled: FeatureConfigStatus(status: consumableNotifications.status)
-                ),
-                .init(
-                    featureConfigName: .conversationGuestLinks,
-                    enabled: FeatureConfigStatus(status: conversationGuestLinks.status)
-                ),
-                .init(
-                    featureConfigName: .digitalSignature,
-                    enabled: FeatureConfigStatus(status: digitalSignature.status)
-                ),
-                .init(featureConfigName: .fileSharing, enabled: FeatureConfigStatus(status: fileSharing.status)),
-                .init(
-                    featureConfigName: .selfDeletingMessages,
-                    enabled: FeatureConfigStatus(status: selfDeletingMessages.status)
+                    featureConfigName: featureName,
+                    enabled: await store.isFeatureEnabled(feature: feature)
                 )
-            ]
+            )
         }
+
+        self.items = items
     }
 }

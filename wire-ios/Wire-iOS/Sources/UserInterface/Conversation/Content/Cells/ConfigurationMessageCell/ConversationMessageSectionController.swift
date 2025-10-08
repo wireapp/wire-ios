@@ -376,7 +376,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
-        let cellDescription = UnknownMessageCellDescription()
+        let cellDescription = UnknownStoredMessageCellDescription()
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 

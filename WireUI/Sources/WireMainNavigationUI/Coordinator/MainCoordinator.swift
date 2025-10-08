@@ -190,6 +190,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
+    public func showMeetings() async {
+        // TODO: [WPB-20272]: add list of meetings
+    }
+
     public func showConversation(
         conversation: ConversationModel,
         message: ConversationMessageModel?
@@ -408,6 +412,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
+
+        case .meetings:
+            sidebar.selectedMenuItem = .init(.meetings)
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)

@@ -20,6 +20,7 @@ import Foundation
 import GenericMessageProtocol
 
 extension ZMAssetClientMessage {
+
     open override func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
         guard let message = GenericMessage(from: updateEvent) else { return }
 
@@ -52,4 +53,5 @@ extension ZMAssetClientMessage {
         default: break
         }
     }
+
 }

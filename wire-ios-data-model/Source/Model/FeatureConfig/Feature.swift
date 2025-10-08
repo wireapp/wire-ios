@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "Feature")
-
 @objcMembers
 public class Feature: ZMManagedObject {
 
@@ -46,6 +44,7 @@ public class Feature: ZMManagedObject {
         case allowedGlobalOperations
         case consumableNotifications
         case chatBubblesSimple
+        case assetAuditLog
 
     }
 
@@ -237,7 +236,8 @@ public class Feature: ZMManagedObject {
              .e2ei,
              .channels,
              .consumableNotifications,
-             .chatBubblesSimple:
+             .chatBubblesSimple,
+             .assetAuditLog:
             break
         }
     }

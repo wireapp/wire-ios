@@ -112,6 +112,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showArchive()
             case .settings:
                 await mainCoordinator.showSettings()
+            case .meetings:
+                await mainCoordinator.showMeetings()
             }
         }
     }
