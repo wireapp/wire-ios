@@ -113,7 +113,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
             return newToken
         } catch {
             WireLogger.authentication.error(
-                "Failed to renew access token with error: \(error.localizedDescription)"
+                "Failed to renew access token with error: \(String(describing: error))", attributes: .safePublic
             )
 
             currentToken = nil
@@ -124,6 +124,10 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
                     try await cookieStorage.removeCookies()
+                    WireLogger.authentication.info(
+                        "Removed cookies (invalidCredentials)", attributes: .safePublic
+                    )
+
                     onAuthenticationFailure()
                 }
 

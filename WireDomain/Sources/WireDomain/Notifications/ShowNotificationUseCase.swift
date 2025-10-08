@@ -64,14 +64,14 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
                     WireLogger.calling.info(
                         "Detected a call event",
-                        attributes: .newNSE
+                        attributes: .newNSE, .safePublic
                     )
 
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
-                        "failed to wake up main app: \(error.localizedDescription)",
-                        attributes: .newNSE
+                        "failed to wake up main app: \(String(describing: error))",
+                        attributes: .newNSE, .safePublic
                     )
                 }
             }
@@ -102,7 +102,7 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
         WireLogger.notifications.info(
             "Showing notification to the user",
-            attributes: .newNSE
+            attributes: .newNSE, .safePublic
         )
 
         // Displays the notification to the user
