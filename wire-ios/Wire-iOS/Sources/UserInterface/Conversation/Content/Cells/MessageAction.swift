@@ -283,10 +283,10 @@ extension MessageAction {
              (.resetSession, .resetSession),
              (.react("❤️"), .react("❤️")),
              (.delete, .delete):
-            return true
-            
+            true
+
         default:
-            return false
+            false
         }
     }
 }

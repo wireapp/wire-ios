@@ -27,12 +27,11 @@ struct ConversationMessageCellMenuPresenter {
         let index = messageActions.firstIndex(of: .delete())
         assert(index != nil)
         messageActions[index!] = .delete(onDeletion: contentView?.onDeletion)
-        
+
         guard
             let contentView,
             let controller = messageActionsMenuController(with: messageActions)
         else { return }
-        
 
         conversationMessageCellDelegate?.conversationMessageCell(contentView, present: controller)
     }

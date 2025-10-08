@@ -127,7 +127,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     func conversationMessageShouldUpdate() {
         dataSource.loadMessages(forceRecalculate: true)
     }
-    
+
     func conversationMessageWantsToDeleteFiles(
         _ attachments: [MultipartMessageData.Attachment],
         for multipartMessage: any WireDataModel.ZMConversationMessage,

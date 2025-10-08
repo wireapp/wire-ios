@@ -732,7 +732,6 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
             deletionType: deletionType
         )
     }
-    
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,

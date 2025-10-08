@@ -175,7 +175,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             presentParticipantsViewController(participantsController, from: sourceView)
         }
     }
-    
+
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         didDeleteMultipartMessage message: any ZMConversationMessage,
@@ -190,7 +190,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                     try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
                     WireLogger.conversation.info("Deleted files for message: \(message.nonce?.uuidString ?? "nil")")
                 } catch {
-                    WireLogger.conversation.error("Unable to delete files for message: \(message.nonce?.uuidString ?? "nil")")
+                    WireLogger.conversation
+                        .error("Unable to delete files for message: \(message.nonce?.uuidString ?? "nil")")
                 }
             }
         case .local:

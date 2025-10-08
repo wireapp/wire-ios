@@ -137,7 +137,8 @@ enum DeletionType {
 
 private enum AlertAction {
 
-    case delete(DeletionType), cancel
+    case delete(DeletionType)
+    case cancel
 }
 
 // Used to enforce only valid configurations can be shown.

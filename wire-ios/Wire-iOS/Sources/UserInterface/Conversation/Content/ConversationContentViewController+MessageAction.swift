@@ -91,7 +91,7 @@ extension ConversationContentViewController {
 
                 message.resend()
             }
-        case .delete(let onDeletion):
+        case let .delete(onDeletion):
             assert(message.canBeDeleted)
 
             deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: presentedViewController ?? self)

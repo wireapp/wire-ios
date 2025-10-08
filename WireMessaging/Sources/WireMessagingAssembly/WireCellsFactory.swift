@@ -108,7 +108,7 @@ public struct WireCellsFactory {
             filenameGenerator: filenameGenerator
         )
     }
-    
+
     public func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
         WireCellsDeleteNodesUseCase(
             repository: nodesAPI,
