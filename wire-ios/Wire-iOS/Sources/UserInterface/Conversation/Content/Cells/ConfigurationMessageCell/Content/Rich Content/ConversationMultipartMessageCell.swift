@@ -115,6 +115,10 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     var selectionRect: CGRect {
         containerView.bounds
     }
+
+    func prepareForReuse() {
+        containerView.removeSubviews()
+    }
 }
 
 final class ConversationMultipartMessageCellDescription: ConversationMessageCellDescription {
