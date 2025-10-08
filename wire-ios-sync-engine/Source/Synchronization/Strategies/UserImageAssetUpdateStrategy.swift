@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 enum AssetTransportError: Error {
@@ -242,11 +243,40 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
+            // TODO: [ASSET] fix
+            var shouldIncludeExtraMetaData = true
+            var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+            if shouldIncludeExtraMetaData {
+                guard
+                    // Since there's no conversation, we use a null id.
+                    let nullID = UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
+                    let localDomain
+                else {
+                    WireLogger.assets.warn(
+                        "should include extra metadata for profile image but not able to",
+                        attributes: .safePublic
+                    )
+                    return nil
+                }
+
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: image
+                )
+
+                extraMetaData = .init(
+                    conversationID: QualifiedID(uuid: nullID, domain: localDomain),
+                    fileName: image.name,
+                    mimeType: image.utType?.preferredMIMEType ?? ""
+                )
+            }
+
             let request = requestFactory.upstreamRequestForAsset(
                 withData: image,
                 shareable: true,
                 retention: .eternal,
-                assetAuditLogMetaData: nil, // TODO: [ASSET] fix
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
 
