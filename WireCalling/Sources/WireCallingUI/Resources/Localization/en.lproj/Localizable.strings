@@ -20,7 +20,7 @@
 
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
-"wireMeetings.list.tabs.upcoming" = "Upcoming";
+"wireMeetings.list.tabs.next" = "Next";
 "wireMeetings.list.actions.meetNow" = "Meet Now";
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.emptyState.title" = "No meetings yet";

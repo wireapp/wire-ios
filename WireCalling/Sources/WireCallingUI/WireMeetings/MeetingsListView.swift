@@ -30,10 +30,10 @@ public struct MeetingsListView: View {
     public var body: some View {
         Group {
             if viewModel.hasMeetingsForSelectedTab {
-                VStack(spacing: 12) {
+                VStack(spacing: 0) {
                     Picker("", selection: Binding(
                         get: { viewModel.selectedTab.rawValue },
-                        set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .upcoming }
+                        set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .next }
                     )) {
                         ForEach(MeetingsListViewModel.Tab.allCases, id: \.rawValue) { tab in
                             Text(tab.title).tag(tab.rawValue)
@@ -42,29 +42,136 @@ public struct MeetingsListView: View {
                     .pickerStyle(.segmented)
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
-                    .padding(.bottom, 10)
                     .accessibilityIdentifier("meetingsListPicker")
 
-                    content
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
             } else {
                 MeetingsEmptyStateView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(ColorTheme.Backgrounds.background.color)
+        .background(ColorTheme.Backgrounds.surface.color)
     }
 
     @ViewBuilder private var content: some View {
         switch viewModel.selectedTab {
-        case .upcoming:
-            Spacer(minLength: 0)
+        case .next:
+            MeetingsDaySectionedList(
+                sections: viewModel.upcomingDaySections,
+                footer: viewModel.shouldShowAllOnUpcoming ? AnyView(ShowAllFooter { viewModel.onTapShowAll() }) : nil
+            )
         case .past:
-            Spacer(minLength: 0)
+            MeetingsDaySectionedList(
+                sections: viewModel.pastDaySections,
+                footer: nil
+            )
         }
     }
 
+}
+
+private struct MeetingRow: View {
+    let meeting: Meeting
+    private let timeFmt: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "h:mm a"
+        return df
+    }()
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(ColorTheme.Backgrounds.surface.color)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
+                    )
+                    .frame(width: 31, height: 31)
+                
+                Image(systemName: "video.fill").font(.system(size: 15))
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(meeting.title)
+                    .font(.textStyle(.body2))
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    .lineLimit(2)
+
+                Text("\(timeFmt.string(from: meeting.start)) – \(timeFmt.string(from: meeting.end))")
+                    .font(.textStyle(.subline1))
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                HStack(spacing: 6) {
+                        Label(meeting.team, systemImage: "person.3.fill")
+                            .font(.textStyle(.subline1))
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                }
+                .padding(.top, 2)
+            }
+
+            Spacer()
+
+            Image(systemName: "ellipsis")
+                .rotationEffect(.degrees(90))
+                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+        }
+        .contentShape(Rectangle())
+        .padding(.vertical, 6)
+    }
+}
+
+private struct MeetingsDaySectionedList: View {
+    let sections: [MeetingDaySection]
+    let footer: AnyView?
+
+    var body: some View {
+        List {
+            ForEach(sections) { day in
+                if !day.timeGroups.isEmpty {
+                    Section(header: Text(day.title)
+                        .font(.textStyle(.body2))
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .textCase(nil)
+                    ) {
+                        ForEach(day.timeGroups) { group in
+                            Text(group.timeLabel)
+                                .font(.textStyle(.subline1))
+                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                                .padding(.top, 4)
+                                .listRowBackground(Color.clear)
+
+                            ForEach(group.items) { meeting in
+                                MeetingRow(meeting: meeting)
+                                    .contentShape(Rectangle())
+                                    .listRowBackground(Color.clear)
+                            }
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                }
+            }
+
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(ColorTheme.Backgrounds.surface.color)
+    }
+}
+
+private struct ShowAllFooter: View {
+    var action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Spacer()
+                Text("Show All").fontWeight(.semibold)
+                Spacer()
+            }
+        }
+        .accessibilityIdentifier("showAllButton")
+    }
 }
 
 #Preview {

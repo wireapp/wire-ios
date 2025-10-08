@@ -151,13 +151,14 @@ final class ZClientViewController: UIViewController {
         }
     )
 
-    private lazy var meetingsViewModel = MeetingsListViewModel(
-        account: AccountUIViewModel(
-            avatarSource: cachedAccountImage.mapToAccountImageSource(),
-            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
-            action: {}
-        )
-    )
+    private lazy var meetingsViewModel = MeetingsListViewModel.demo()
+//    MeetingsListViewModel(
+//        account: AccountUIViewModel(
+//            avatarSource: cachedAccountImage.mapToAccountImageSource(),
+//            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
+//            action: {}
+//        )
+//    )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -831,7 +832,7 @@ final class ZClientViewController: UIViewController {
             availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
             action: {}
         )
-        
+
         DispatchQueue.main.async { [weak self] in
             self?.meetingsViewModel.updateAccount(newAccount)
         }
