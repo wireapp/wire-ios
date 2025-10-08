@@ -18,6 +18,8 @@
 
 import Foundation
 
+/// Stores the node ID of the last document the user requested to open. This is used to only open the most recently
+/// requested document when multiple requests are made in a short period of time. (due to time to download)
 @MainActor
 package final class WireCellsLastOpenRequest {
 
