@@ -123,6 +123,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
 
             let buttonState = buttonState ??
                 ButtonState.insert(with: buttonId, message: parentMessage, inContext: context)
+            buttonState.state = .confirmed
             parentMessage.buttonStates?.resetExpired()
             guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
