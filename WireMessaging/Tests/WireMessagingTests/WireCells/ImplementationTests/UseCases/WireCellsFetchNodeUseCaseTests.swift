@@ -19,8 +19,8 @@
 import Foundation
 import Testing
 
-@testable import WireMessagingDomain
 import WireMessagingDomainSupport
+@testable import WireMessagingDomain
 
 final class WireCellsFetchNodeUseCaseTests {
 
@@ -29,7 +29,7 @@ final class WireCellsFetchNodeUseCaseTests {
     private let sut: WireCellsFetchNodeUseCase
 
     init() {
-        sut = WireCellsFetchNodeUseCase(repository: repository, cache: cache)
+        self.sut = WireCellsFetchNodeUseCase(repository: repository, cache: cache)
 
         cache.setItemFor_MockMethod = { _, _ in }
     }
