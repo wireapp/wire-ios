@@ -39,6 +39,9 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Methods
 
     public func storeLocalToken(_ token: PushToken?) {
+        if PushTokenStorage.pushToken != nil, token != PushTokenStorage.pushToken {
+            WireLogger.push.info("updating token \(token == nil ? "to nil" : "")", attributes: .safePublic)
+        }
         PushTokenStorage.pushToken = token
         onTokenChange?(token)
     }
