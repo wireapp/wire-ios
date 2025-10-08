@@ -116,9 +116,6 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     func touchAction() {
-
-// TODO: don't send targeted messages
-
         guard let context = parentMessage.managedObjectContext else { return }
 
         context.performGroupedBlock { [weak self] in
