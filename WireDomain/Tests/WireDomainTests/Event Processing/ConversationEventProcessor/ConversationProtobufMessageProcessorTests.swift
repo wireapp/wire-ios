@@ -108,7 +108,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             1
         )
     }
-    
+
     func testProcessEvent_It_Invokes_Local_Store_Add_Message_Confirmation_Method() async throws {
         // Given
         let conversation = await context.perform { [self] in
@@ -178,7 +178,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.id)
         XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
     }
-    
+
     func testProcessEvent_InvokesCreateClientMessage_WhenProcessingBackupMessage() async throws {
         // Given
 
@@ -188,7 +188,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             userLocalStore: userLocalStore,
             isProcessingBackup: true
         )
-        
+
         let (conversation, clientMessage) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             let clientMessage = ZMClientMessage(context: context)
@@ -226,7 +226,6 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             1
         )
     }
-
 
     private enum Scaffolding {
         static let eventDate = Date()

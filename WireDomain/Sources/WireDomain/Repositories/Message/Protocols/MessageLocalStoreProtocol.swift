@@ -55,7 +55,7 @@ public protocol MessageLocalStoreProtocol {
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool)
-    
+
     /// Creates a `ZMClientMessage` locally.
     /// - Parameters:
     ///     - id: The message ID.
@@ -83,7 +83,7 @@ public protocol MessageLocalStoreProtocol {
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool)
-    
+
     /// Creates a `ZMAssetClientMessage` locally.
     /// - Parameters:
     ///     - id: The message ID.
@@ -97,7 +97,7 @@ public protocol MessageLocalStoreProtocol {
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> ZMAssetClientMessage
-    
+
     /// Adds a `ZMClientMessage` to a given conversation.
     /// - Parameters:
     ///     - clientMessage: The client message.

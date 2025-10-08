@@ -187,7 +187,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         ) as! ZMClientMessage
 
     }
-    
+
     public func fetchOrCreateAssetClientMessage(
         id: String,
         conversation: ZMConversation,
@@ -204,14 +204,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         ) as! (ZMAssetClientMessage, Bool)
 
     }
-    
+
     public func createAssetClientMessage(
         id: String,
         conversation: ZMConversation,
         sender: (id: UUID, domain: String, clientID: String?),
         date: Date
     ) async throws -> ZMAssetClientMessage {
-        
+
         try await createClientMessage(
             id: id,
             messageType: .asset,
@@ -219,7 +219,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             sender: sender,
             date: date
         ) as! ZMAssetClientMessage
-        
+
     }
 
     public func addClientMessage(
@@ -468,7 +468,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
         }
     }
-    
+
     private func createClientMessage(
         id: String,
         messageType: ClientMessageType,
@@ -477,13 +477,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         date: Date
     ) async throws -> ZMOTRMessage {
         try await context.perform { [self] in
-            
+
             let nonce = try validateClientMessage(
                 id: id,
                 conversation: conversation,
                 date: date
             )
-            
+
             return createValidatedClientMessage(
                 nonce: nonce,
                 messageType: messageType,
@@ -493,7 +493,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
         }
     }
-    
+
     private func createValidatedClientMessage(
         nonce: UUID,
         messageType: ClientMessageType,
@@ -518,10 +518,10 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             clientID: sender.clientID,
             date: date
         )
-        
+
         return clientMessage
     }
-    
+
     private func validateClientMessage(
         id: String,
         conversation: ZMConversation,
@@ -541,7 +541,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         return nonce
     }
-    
+
     private func setupNewClientMessage(
         _ message: ZMOTRMessage,
         conversation: ZMConversation,
