@@ -191,7 +191,9 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                     WireLogger.conversation.info("Deleted files for message: \(message.nonce?.uuidString ?? "nil")")
                 } catch {
                     WireLogger.conversation
-                        .error("Unable to delete files for message: \(message.nonce?.uuidString ?? "nil")")
+                        .error(
+                            "Unable to delete files for message: \(message.nonce?.uuidString ?? "nil"), error: \(String(describing: error))"
+                        )
                 }
             }
         case .local:

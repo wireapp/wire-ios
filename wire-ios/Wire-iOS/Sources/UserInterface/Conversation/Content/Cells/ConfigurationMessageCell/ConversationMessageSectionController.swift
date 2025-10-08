@@ -337,12 +337,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 searchQueries: context.searchQueries,
                 selfUser: selfUser,
                 userSession: userSession,
-                onDeletion: {
-                    [weak self] in self?.onDeletion(
-                        deletionType: $0,
-                        attachments: attachments
-                    )
-                }
+                onDeletion: { [weak self] in self?.onDeletion(deletionType: $0, attachments: attachments) }
             )
     }
 
@@ -414,12 +409,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     searchQueries: context.searchQueries,
                     selfUser: selfUser,
                     userSession: userSession,
-                    onDeletion: {
-                        [weak self] in self?.onDeletion(
-                            deletionType: $0,
-                            attachments: attachments
-                        )
-                    }
+                    onDeletion: { [weak self] in self?.onDeletion(deletionType: $0, attachments: attachments) }
                 )
 
             case let .button(data):
