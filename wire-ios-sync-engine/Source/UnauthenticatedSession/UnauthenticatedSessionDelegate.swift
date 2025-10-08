@@ -29,11 +29,6 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
 
     func session(
         session: UnauthenticatedSession,
-        updatedProfileImage imageData: Data
-    )
-
-    func session(
-        session: UnauthenticatedSession,
         createdAccount account: Account,
         newEnvironment: NewEnvironment?
     )
