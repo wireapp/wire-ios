@@ -89,9 +89,7 @@ extension ZMClientMessage {
     }
 
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {
-        guard let buttonID = buttonAction.hasButtonID ? buttonAction.buttonID : nil else { return }
-
-        let state = buttonStates?.first(where: { $0.remoteIdentifier == buttonID })
+        let state = buttonStates?.first(where: { $0.remoteIdentifier == buttonAction.buttonID })
         managedObjectContext?.performGroupedBlock { [managedObjectContext] in
             state?.isExpired = true
             state?.state = .unselected

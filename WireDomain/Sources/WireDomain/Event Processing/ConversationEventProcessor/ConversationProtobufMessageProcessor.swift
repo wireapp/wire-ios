@@ -123,7 +123,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case let .buttonAction(buttonAction):
 
             await messageLocalStore.updateButtonStates(
-                buttonID: buttonAction.hasButtonID ? buttonAction.buttonID : .none,
+                buttonID: buttonAction.buttonID,
                 referenceMessageID: buttonAction.referenceMessageID,
                 in: conversation,
                 senderID: senderID.id
@@ -134,7 +134,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             return () // TODO: delete
 
             await messageLocalStore.updateButtonStates(
-                buttonID: buttonActionConfirmation.buttonID,
+                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
                 referenceMessageID: buttonActionConfirmation.referenceMessageID,
                 in: conversation,
                 senderID: senderID.id

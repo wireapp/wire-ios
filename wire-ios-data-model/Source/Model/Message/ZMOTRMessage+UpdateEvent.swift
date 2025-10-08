@@ -136,15 +136,16 @@ extension ZMOTRMessage {
 
             let buttonAction = message.buttonAction
             ZMClientMessage.updateButtonStates(
-                buttonID: buttonAction.hasButtonID ? buttonAction.buttonID : .none,
+                buttonID: buttonAction.buttonID,
                 referenceMessageID: buttonAction.referenceMessageID,
                 for: conversation,
                 in: context
             )
 
         case .buttonActionConfirmation:
+            let buttonActionConfirmation = message.buttonActionConfirmation
             ZMClientMessage.updateButtonStates(
-                buttonID: message.buttonActionConfirmation.buttonID,
+                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
                 referenceMessageID: message.buttonActionConfirmation.referenceMessageID,
                 for: conversation,
                 in: context
