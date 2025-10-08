@@ -2547,6 +2547,29 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
     }
 
+    // MARK: - createClientMessage
+
+    public var createClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
+    public var createClientMessageIdConversationSenderDate_MockError: Error?
+    public var createClientMessageIdConversationSenderDate_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date) async throws -> ZMClientMessage)?
+    public var createClientMessageIdConversationSenderDate_MockValue: ZMClientMessage?
+
+    public func createClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date) async throws -> ZMClientMessage {
+        createClientMessageIdConversationSenderDate_Invocations.append((id: id, conversation: conversation, sender: sender, date: date))
+
+        if let error = createClientMessageIdConversationSenderDate_MockError {
+            throw error
+        }
+
+        if let mock = createClientMessageIdConversationSenderDate_MockMethod {
+            return try await mock(id, conversation, sender, date)
+        } else if let mock = createClientMessageIdConversationSenderDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createClientMessageIdConversationSenderDate`")
+        }
+    }
+
     // MARK: - fetchOrCreateAssetClientMessage
 
     public var fetchOrCreateAssetClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
@@ -2567,6 +2590,29 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchOrCreateAssetClientMessageIdConversationSenderDate`")
+        }
+    }
+
+    // MARK: - createAssetClientMessage
+
+    public var createAssetClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
+    public var createAssetClientMessageIdConversationSenderDate_MockError: Error?
+    public var createAssetClientMessageIdConversationSenderDate_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date) async throws -> ZMAssetClientMessage)?
+    public var createAssetClientMessageIdConversationSenderDate_MockValue: ZMAssetClientMessage?
+
+    public func createAssetClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date) async throws -> ZMAssetClientMessage {
+        createAssetClientMessageIdConversationSenderDate_Invocations.append((id: id, conversation: conversation, sender: sender, date: date))
+
+        if let error = createAssetClientMessageIdConversationSenderDate_MockError {
+            throw error
+        }
+
+        if let mock = createAssetClientMessageIdConversationSenderDate_MockMethod {
+            return try await mock(id, conversation, sender, date)
+        } else if let mock = createAssetClientMessageIdConversationSenderDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createAssetClientMessageIdConversationSenderDate`")
         }
     }
 

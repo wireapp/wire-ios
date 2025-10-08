@@ -53,7 +53,8 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         sut = ConversationProtobufMessageProcessor(
             messageLocalStore: messageLocalStore,
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            isProcessingBackup: false
         )
     }
 
@@ -107,7 +108,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             1
         )
     }
-
+    
     func testProcessEvent_It_Invokes_Local_Store_Add_Message_Confirmation_Method() async throws {
         // Given
         let conversation = await context.perform { [self] in
@@ -177,6 +178,55 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.id)
         XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
     }
+    
+    func testProcessEvent_InvokesCreateClientMessage_WhenProcessingBackupMessage() async throws {
+        // Given
+
+        let sut = ConversationProtobufMessageProcessor(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore,
+            isProcessingBackup: true
+        )
+        
+        let (conversation, clientMessage) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(in: context)
+            let clientMessage = ZMClientMessage(context: context)
+
+            return (conversation, clientMessage)
+        }
+
+        messageLocalStore.createClientMessageIdConversationSenderDate_MockValue = clientMessage
+        messageLocalStore
+            .addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod =
+            { _, _, _, _, _, _ in
+            }
+
+        let genericMessage = try XCTUnwrap(GenericMessage.validatedMessage(from: Scaffolding.base64EncodedString))
+
+        // When
+
+        try await sut.processProtobufMessage(
+            genericMessage,
+            conversation: conversation,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            senderClientID: "",
+            date: Scaffolding.eventDate,
+            eventMessage: ""
+        )
+
+        // Then
+
+        XCTAssertEqual(messageLocalStore.createClientMessageIdConversationSenderDate_Invocations.count, 1)
+        XCTAssertEqual(messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_Invocations.count, 0)
+        XCTAssertEqual(
+            messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations
+                .count,
+            1
+        )
+    }
+
 
     private enum Scaffolding {
         static let eventDate = Date()
