@@ -59,7 +59,7 @@ extension SessionManager {
         WireLogger.push.info("syncLocalTokenWithRemote")
 
         guard let clientID = session.selfUserClient?.remoteIdentifier else {
-            WireLogger.push.info("syncLocalTokenWithRemote: failed: no self client id")
+            WireLogger.push.info("syncLocalTokenWithRemote: failed: no self client id", attributes: .safePublic)
             return
         }
 
@@ -72,11 +72,14 @@ extension SessionManager {
                     in: notificationContext
                 )
 
-                WireLogger.push.info("syncLocalTokenWithRemote: success")
+                WireLogger.push.info("syncLocalTokenWithRemote: success", attributes: .safePublic)
 
             } catch {
                 WireLogger.push
-                    .error("syncLocalTokenWithRemote: failed: pushTokenService failed: \(error.localizedDescription)")
+                    .error(
+                        "syncLocalTokenWithRemote: failed: pushTokenService failed: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
             }
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }
