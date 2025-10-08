@@ -208,6 +208,7 @@ final class ConversationInputBarViewController: UIViewController,
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?
     var replyComposingView: ReplyComposingView?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     // MARK: feedback
 
@@ -873,6 +874,16 @@ final class ConversationInputBarViewController: UIViewController,
 
             self?.updateViewsForSelfDeletingMessageChanges()
         }
+        guard accentColorChangeHandler == nil else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        sendButton.updateSendButtonColor()
+        inputBar.updateTextViewTintColor()
     }
 
     // MARK: - Keyboard Shortcuts

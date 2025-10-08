@@ -31,6 +31,9 @@
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "Archyvuoti";
 
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
 "sidebar.contacts.title" = "Kontaktai";
 "sidebar.contacts.connect.title" = "Užmegzti kontaktą";
 

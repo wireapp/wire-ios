@@ -59,11 +59,6 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
         from sourceView: UIView
     )
 
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        presentFilesViewForNodes: [UUID]
-    )
-
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)
 
     func didSwipeToReact(

@@ -31,6 +31,9 @@
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "アーカイブ";
 
+"sidebar.meetings.title" = "Meetings";
+"sidebar.meetings.all_meetings.title" = "All Meetings";
+
 "sidebar.contacts.title" = "連絡先";
 "sidebar.contacts.connect.title" = "接続";
 

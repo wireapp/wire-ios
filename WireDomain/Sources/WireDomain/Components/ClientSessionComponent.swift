@@ -187,7 +187,7 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    public lazy var conversationLocalStore = ConversationLocalStore(
+    public private(set) lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
         messageLocalStore: messageLocalStore,
@@ -195,11 +195,11 @@ public final class ClientSessionComponent {
         isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
-    public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
+    public private(set) lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
         context: syncContext
     )
 
-    private lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
+    public private(set) lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
         context: syncContext
     )
 
@@ -215,7 +215,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    public lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
+    public private(set) lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
@@ -232,7 +232,7 @@ public final class ClientSessionComponent {
 
     // MARK: - Pull syncs
 
-    public lazy var pullAllConversationsSync = PullAllConversationsSync(
+    public private(set) lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled,
         isMLSEnabled: isMLSEnabled,
@@ -345,9 +345,9 @@ public final class ClientSessionComponent {
 
     // MARK: High level syncs
 
-    public lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
 
-    public lazy var initialSync = {
+    public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
             pullSelfUserClientsSync: pullSelfUserClientsSync,
@@ -418,7 +418,7 @@ public final class ClientSessionComponent {
         fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
     }
 
-    public lazy var mainAppPushChannelCoordinator = MainAppPushChannelCoordinator(
+    public private(set) lazy var mainAppPushChannelCoordinator = MainAppPushChannelCoordinator(
         clientID: selfClientID
     )
 
@@ -443,7 +443,7 @@ public final class ClientSessionComponent {
         conversationLabelsLocalStore: conversationLabelsLocalStore
     )
 
-    public lazy var conversationRepository = ConversationRepository(
+    public private(set) lazy var conversationRepository = ConversationRepository(
         conversationsAPI: conversationsAPI,
         conversationsLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore,
@@ -455,7 +455,7 @@ public final class ClientSessionComponent {
         mlsProvider: mlsProvider
     )
 
-    public lazy var featureConfigRepository = FeatureConfigRepository(
+    public private(set) lazy var featureConfigRepository = FeatureConfigRepository(
         featureConfigsAPI: featureConfigsAPI,
         featureConfigLocalStore: featureConfigsLocalStore
     )
@@ -769,7 +769,7 @@ public final class ClientSessionComponent {
 
     // MARK: - Other
 
-    private lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
+    public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
         messageLocalStore: messageLocalStore,
         conversationLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore
