@@ -19,6 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 import WireLinkPreview
+import WireLogging
 
 public final class LinkPreviewDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
@@ -73,6 +74,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
     /// Upstream sync
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
+    let localDomain: String?
 
     @available(*, unavailable)
     public override init(
@@ -86,7 +88,8 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor?,
-        previewImagePreprocessor: ZMImagePreprocessingTracker?
+        previewImagePreprocessor: ZMImagePreprocessingTracker?,
+        localDomain: String?
     ) {
         if LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() == nil {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector())
@@ -97,6 +100,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         )
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker
             .createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
+        self.localDomain = localDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -147,12 +151,57 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
-        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else {
-            fatal("Trying to send message that doesn't have a conversation")
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"
+        ]
+
+        guard let conversation = message.conversation else {
+            WireLogger.assets.warn(
+                "Trying to send message that doesn't have a conversation",
+                attributes: logAttributes
+            )
+            return nil
         }
+
+        let retention = AssetRequestFactory.Retention(conversation: conversation)
 
         guard let imageData = managedObjectContext.zm_fileAssetCache.encryptedMediumImageData(for: message) else {
             return nil
+        }
+
+        // TODO: [ASSET] fix
+        var shouldIncludeExtraMetaData = true
+
+        var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+        if shouldIncludeExtraMetaData {
+            guard
+                let original = managedObjectContext.zm_fileAssetCache.originalImageData(for: message),
+                let domain = conversation.domain ?? localDomain
+            else {
+                WireLogger.assets.warn(
+                    "should include extra metadata for link preview but not able to",
+                    attributes: logAttributes
+                )
+                return nil
+            }
+
+            let conversationID = QualifiedID(
+                uuid: conversation.remoteIdentifier,
+                domain: domain
+            )
+
+            let image = SendableImage(
+                name: nil,
+                utType: nil,
+                data: imageData
+            )
+
+            extraMetaData = .init(
+                conversationID: conversationID,
+                fileName: image.name,
+                mimeType: image.utType?.preferredMIMEType ?? ""
+            )
         }
 
         return ZMUpstreamRequest(
@@ -160,7 +209,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             transportRequest: requestFactory.upstreamRequestForAsset(
                 withData: imageData,
                 retention: retention,
-                assetAuditLogMetaData: nil, // TODO: [ASSET] fix
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
         )

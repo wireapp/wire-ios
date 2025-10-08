@@ -130,7 +130,8 @@ final class StrategyFactory {
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
-            previewImagePreprocessor: nil
+            previewImagePreprocessor: nil,
+            localDomain: localDomain
         )
     }
 

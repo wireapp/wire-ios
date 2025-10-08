@@ -202,7 +202,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 linkPreviewPreprocessor: nil,
-                previewImagePreprocessor: nil
+                previewImagePreprocessor: nil,
+                localDomain: metadata.domain
             ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
