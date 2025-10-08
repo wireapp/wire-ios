@@ -720,6 +720,19 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 }
 
 extension ConversationTableViewDataSource: ConversationMessageSectionControllerDelegate {
+    func messageSectionController(
+        _ controller: ConversationMessageSectionController,
+        didDeleteMultipartMessage message: any WireDataModel.ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    ) {
+        conversationCellDelegate?.conversationMessageWantsToDeleteFiles(
+            attachments,
+            for: message,
+            deletionType: deletionType
+        )
+    }
+    
 
     func messageSectionController(
         _ controller: ConversationMessageSectionController,

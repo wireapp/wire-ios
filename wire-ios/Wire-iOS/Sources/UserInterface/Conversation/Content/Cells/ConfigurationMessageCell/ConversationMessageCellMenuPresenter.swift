@@ -23,10 +23,16 @@ struct ConversationMessageCellMenuPresenter {
     weak var conversationMessageCellDelegate: ConversationMessageCellDelegate?
 
     func showMenu() {
+        var messageActions = MessageAction.allCases
+        let index = messageActions.firstIndex(of: .delete())
+        assert(index != nil)
+        messageActions[index!] = .delete(onDeletion: contentView?.onDeletion)
+        
         guard
             let contentView,
-            let controller = messageActionsMenuController(with: MessageAction.allCases)
+            let controller = messageActionsMenuController(with: messageActions)
         else { return }
+        
 
         conversationMessageCellDelegate?.conversationMessageCell(contentView, present: controller)
     }
@@ -37,7 +43,7 @@ struct ConversationMessageCellMenuPresenter {
             MessageAction.reply,
             MessageAction.edit,
             MessageAction.openDetails,
-            MessageAction.delete,
+            MessageAction.delete(onDeletion: contentView?.onDeletion),
             MessageAction.cancel
         ]
 

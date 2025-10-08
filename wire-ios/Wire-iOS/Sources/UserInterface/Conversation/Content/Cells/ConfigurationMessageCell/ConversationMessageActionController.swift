@@ -280,7 +280,7 @@ final class ConversationMessageActionController {
 
     @objc
     func deleteMessage() {
-        perform(action: .delete)
+        perform(action: .delete())
     }
 
     @objc

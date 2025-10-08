@@ -27,13 +27,14 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
+        var onDeletion: (DeletionType) -> Void
     }
 
     private var containerView = UIView()
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
-
+    var onDeletion: ((DeletionType) -> Void)?
     var isSelected: Bool = false
 
     override init(frame: CGRect) {
@@ -83,6 +84,8 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
+        self.onDeletion = object.onDeletion
+        
         let attachments = object.attachments.map {
             WireCellsMessageAttachment(
                 nodeID: $0.nodeID,
@@ -139,12 +142,15 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
+    var supportsActions: Bool = true
 
     init(
-        multipartMessage: MultipartMessageData
+        multipartMessage: MultipartMessageData,
+        onDeletion: @escaping (DeletionType) -> Void
     ) {
         self.configuration = View.Configuration(
-            attachments: multipartMessage.attachments
+            attachments: multipartMessage.attachments,
+            onDeletion: onDeletion
         )
     }
 }

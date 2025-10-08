@@ -805,7 +805,7 @@ extension FullscreenImageViewController: MessageActionResponder {
 
             // iPad popover points to delete button of container is availible. The scrollView occupies most of the
             // screen area and the popover is compressed.
-            = if action == .delete,
+            = if action == .delete(),
             let conversationImagesViewController = delegate as? ConversationImagesViewController {
             conversationImagesViewController.deleteButton
         } else {

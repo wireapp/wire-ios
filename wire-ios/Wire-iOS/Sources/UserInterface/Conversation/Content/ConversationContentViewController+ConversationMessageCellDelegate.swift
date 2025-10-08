@@ -67,7 +67,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     ) {
 
         let actionView = view.targetView(for: message, dataSource: dataSource)
-        let shouldDismissModal = action != .delete && action != .copy
+        let shouldDismissModal = action != .delete() && action != .copy
         if messagePresenter.modalTargetController?.presentedViewController != nil,
            shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
@@ -126,6 +126,19 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageShouldUpdate() {
         dataSource.loadMessages(forceRecalculate: true)
+    }
+    
+    func conversationMessageWantsToDeleteFiles(
+        _ attachments: [MultipartMessageData.Attachment],
+        for multipartMessage: any WireDataModel.ZMConversationMessage,
+        deletionType: DeletionType
+    ) {
+        delegate?.conversationContentViewController(
+            self,
+            didDeleteMultipartMessage: multipartMessage,
+            withAttachments: attachments,
+            deletionType: deletionType
+        )
     }
 
 }

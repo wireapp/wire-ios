@@ -27,6 +27,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         let showImage: Bool
         var message: ZMConversationMessage
         var isObfuscated: Bool
+        let onDeletion: ((DeletionType) -> Void)?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -50,6 +51,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 
     var configuration: Configuration?
+    var onDeletion: ((DeletionType) -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,6 +79,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        onDeletion = object.onDeletion
         configuration = object
         articleView.configure(
             withTextMessageData: object.textMessageData,
@@ -137,14 +140,15 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: TextMessageData) {
+    init(message: ZMConversationMessage, data: TextMessageData, onDeletion: ((DeletionType) -> Void)?) {
         let showImage = data.linkPreviewHasImage
         self.configuration = View
             .Configuration(
                 textMessageData: data,
                 showImage: showImage,
                 message: message,
-                isObfuscated: message.isObfuscated
+                isObfuscated: message.isObfuscated,
+                onDeletion: onDeletion
             )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }

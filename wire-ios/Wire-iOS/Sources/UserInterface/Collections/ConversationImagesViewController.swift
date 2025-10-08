@@ -35,7 +35,7 @@ final class ConversationImagesViewController: UIViewController {
         options: [:]
     )
     var buttonsBar: InputBarButtonsView!
-    lazy var deleteButton = iconButton(messageAction: .delete)
+    lazy var deleteButton = iconButton(messageAction: .delete())
     let overlay = FeedbackOverlayView()
     let separator: UIView = {
         let view = UIView()
@@ -444,7 +444,7 @@ final class ConversationImagesViewController: UIViewController {
 
     @objc
     func deleteCurrent(_ sender: AnyObject!) {
-        perform(action: .delete, sender: sender)
+        perform(action: .delete(), sender: sender)
     }
 
     @objc

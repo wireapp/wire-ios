@@ -175,6 +175,29 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             presentParticipantsViewController(participantsController, from: sourceView)
         }
     }
+    
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: any ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    ) {
+        switch deletionType {
+        case .everywhere:
+            Task {
+                let deleteNodesUseCase = wireCellsFactory.makeDeleteNodesUseCase()
+                do {
+                    try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
+                    WireLogger.conversation.info("Deleted files for message: \(message.nonce?.uuidString ?? "nil")")
+                } catch {
+                    WireLogger.conversation.error("Unable to delete files for message: \(message.nonce?.uuidString ?? "nil")")
+                }
+            }
+        case .local:
+            // no op, related files will still show up for self user (as aligned other clients)
+            break
+        }
+    }
 
 }
 

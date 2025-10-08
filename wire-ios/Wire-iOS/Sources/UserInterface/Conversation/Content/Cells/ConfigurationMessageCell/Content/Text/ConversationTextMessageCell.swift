@@ -27,11 +27,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let attributedText: NSAttributedString
         let isObfuscated: Bool
         let userSession: UserSession?
+        let onDeletion: ((DeletionType) -> Void)?
 
-        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil) {
+        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil, onDeletion: ((DeletionType) -> Void)? = nil) {
             self.attributedText = attributedText
             self.isObfuscated = isObfuscated
             self.userSession = userSession
+            self.onDeletion = onDeletion
         }
 
         static func == (
@@ -83,6 +85,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
     private var accentColorChangeHandler: AccentColorChangeHandler?
+    var onDeletion: ((DeletionType) -> Void)?
 
     var selectionView: UIView? {
         messageTextView
@@ -151,6 +154,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        self.onDeletion = object.onDeletion
+        
         if isChatBubbleSimpleEnabled {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.firstLineHeadIndent = 0
@@ -263,11 +268,12 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?) {
+    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?, onDeletion: ((DeletionType) -> Void)? = nil) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
             isObfuscated: isObfuscated,
-            userSession: userSession
+            userSession: userSession,
+            onDeletion: onDeletion
         )
     }
 }
@@ -280,7 +286,8 @@ extension ConversationTextMessageCellDescription {
         for message: ZMConversationMessage,
         searchQueries: [String],
         selfUser: any UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        onDeletion: ((DeletionType) ->Void)? = nil
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -291,7 +298,8 @@ extension ConversationTextMessageCellDescription {
             message: message,
             searchQueries: searchQueries,
             selfUser: selfUser,
-            userSession: userSession
+            userSession: userSession,
+            onDeletion: onDeletion
         )
     }
 
@@ -300,7 +308,8 @@ extension ConversationTextMessageCellDescription {
         message: ZMConversationMessage,
         searchQueries: [String],
         selfUser: any UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        onDeletion: ((DeletionType) -> Void)? = nil
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
@@ -339,7 +348,8 @@ extension ConversationTextMessageCellDescription {
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(
                 quotedMessage: quotedMessage,
-                accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+                accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+                onDeletion: onDeletion
             )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
@@ -349,7 +359,8 @@ extension ConversationTextMessageCellDescription {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated,
-                userSession: userSession
+                userSession: userSession,
+                onDeletion: onDeletion
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -361,12 +372,17 @@ extension ConversationTextMessageCellDescription {
             // Link Attachment
             let attachmentCell = ConversationLinkAttachmentCellDescription(
                 attachment: attachment,
-                thumbnailResource: message.linkAttachmentImage
+                thumbnailResource: message.linkAttachmentImage,
+                onDeletion: onDeletion
             )
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
-            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
+            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(
+                message: message,
+                data: textMessageData,
+                onDeletion: onDeletion
+            )
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 

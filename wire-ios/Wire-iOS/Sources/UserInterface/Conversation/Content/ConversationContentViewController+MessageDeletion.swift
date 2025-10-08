@@ -63,7 +63,7 @@ final class DeletionDialogPresenter: NSObject {
         message: ZMConversationMessage,
         sourceView: UIView,
         userSession: UserSession,
-        completion: @escaping (_ succeeded: Bool) -> Void
+        completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
     ) -> UIAlertController {
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
@@ -78,10 +78,10 @@ final class DeletionDialogPresenter: NSObject {
                         ZMMessage.deleteForEveryone(message)
                     }
                 } completionHandler: {
-                    completion(true)
+                    completion(true, type)
                 }
             } else {
-                completion(false)
+                completion(false, nil)
             }
         }
 
@@ -116,7 +116,7 @@ final class DeletionDialogPresenter: NSObject {
         forMessage message: ZMConversationMessage,
         source: UIView,
         userSession: UserSession,
-        completion: @escaping (_ succeeded: Bool) -> Void
+        completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
     ) {
         guard !message.hasBeenDeleted else { return }
 
@@ -130,12 +130,12 @@ final class DeletionDialogPresenter: NSObject {
     }
 }
 
-private enum AlertAction {
+enum DeletionType {
+    case local
+    case everywhere
+}
 
-    enum DeletionType {
-        case local
-        case everywhere
-    }
+private enum AlertAction {
 
     case delete(DeletionType), cancel
 }

@@ -86,7 +86,7 @@ final class MessageActionsViewController: UIAlertController {
               let selector = action.selector,
               actionController.canPerformAction(selector)
         else { return }
-        let style: UIAlertAction.Style = (action == .delete) ? .destructive : .default
+        let style: UIAlertAction.Style = (action == .delete()) ? .destructive : .default
         let newAction = UIAlertAction(title: title, style: style) { [action, weak actionController] _ in
             actionController?.perform(action: action)
         }

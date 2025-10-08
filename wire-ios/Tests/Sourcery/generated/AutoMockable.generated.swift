@@ -1801,6 +1801,24 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeDeleteNodesUseCase
+
+    var makeDeleteNodesUseCase_Invocations: [Void] = []
+    var makeDeleteNodesUseCase_MockMethod: (() -> any WireCellsDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: any WireCellsDeleteNodesUseCaseProtocol?
+
+    func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
+        makeDeleteNodesUseCase_Invocations.append(())
+
+        if let mock = makeDeleteNodesUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeDeleteNodesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteNodesUseCase`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name
