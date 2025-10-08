@@ -145,6 +145,9 @@ extension CompositeMessageItemContent: ButtonMessageData {
 // MARK: - Helpers
 
 extension CompositeMessageItemContent {
+
+    /// Returns `true` if there is a button which has been selected but hasn't been confirmed, `false` otherwise.
+
     private var hasSelectedButton: Bool {
         parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
     }

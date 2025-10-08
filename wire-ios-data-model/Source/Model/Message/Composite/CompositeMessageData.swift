@@ -57,7 +57,7 @@ public protocol ButtonMessageData {
     func touchAction()
 }
 
-public enum ButtonMessageState {
+public enum ButtonMessageState { // TODO: consider deleting
     case unselected
     case selected
     case confirmed

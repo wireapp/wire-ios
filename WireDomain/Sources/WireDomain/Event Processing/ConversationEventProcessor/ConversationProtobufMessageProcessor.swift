@@ -60,6 +60,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
+        WireLogger.eventProcessing.debug("\(content)") // TODO: delete!
         switch content {
         case let .lastRead(lastRead):
 
@@ -119,11 +120,24 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 date: date
             )
 
-        case let .buttonActionConfirmation(buttonActionConfirmation):
+        case let .buttonAction(buttonAction):
 
             await messageLocalStore.updateButtonStates(
-                buttonActionConfirmation,
-                in: conversation
+                buttonID: buttonAction.buttonID,
+                referenceMessageID: buttonAction.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id
+            )
+
+        case let .buttonActionConfirmation(buttonActionConfirmation):
+
+            return () // TODO: delete
+
+            await messageLocalStore.updateButtonStates(
+                buttonID: buttonActionConfirmation.buttonID,
+                referenceMessageID: buttonActionConfirmation.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id
             )
 
         case let .edited(edited):
@@ -207,7 +221,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction, .multipart:
+        case .text, .knock, .location, .composite, .multipart:
 
             try await processMessageContent(
                 message: message,
@@ -227,6 +241,8 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case .inCallHandRaise:
             break // Not handled yet, TODO: [WPB-11769] implement here
         }
+
+        // TODO: why do we receive reaction messages with emoji ""?
     }
 
     private func processAssetMessageContent(
