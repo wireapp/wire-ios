@@ -582,6 +582,10 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .chatBubblesSimple:
                 storeChatBubblesSimple(.init())
+
+            case .assetAuditLog:
+                // No op: not supported in legacy repository.
+                break
             }
         }
     }

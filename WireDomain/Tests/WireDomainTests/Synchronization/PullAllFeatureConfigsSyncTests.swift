@@ -53,7 +53,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 12)
+        try XCTAssertCount(storeInvocations, count: 13)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -123,6 +123,10 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[11].name, .chatBubblesSimple)
         XCTAssertTrue(storeInvocations[11].isEnabled)
         XCTAssertNil(storeInvocations[11].config)
+
+        XCTAssertEqual(storeInvocations[12].name, .assetAuditLog)
+        XCTAssertTrue(storeInvocations[12].isEnabled)
+        XCTAssertNil(storeInvocations[12].config)
     }
 
 }
@@ -141,7 +145,8 @@ private enum Scaffolding {
         .mlsMigration(mlsMigrationFeatureConfig),
         .endToEndIdentity(endToEndIdentityFeatureConfig),
         .consumableNotifications(consumableNotificationsFeatureConfig),
-        .chatBubblesSimple(chatBubblesSimpleFeatureConfig)
+        .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
+        .assetAuditLog(assetAuditLogFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -212,4 +217,7 @@ private enum Scaffolding {
         status: .enabled
     )
 
+    static let assetAuditLogFeatureConfig = AssetAuditLogFeatureConfig(
+        status: .enabled
+    )
 }
