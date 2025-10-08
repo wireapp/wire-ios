@@ -56,7 +56,13 @@ public protocol MessageLocalStoreProtocol {
         date: Date
     ) async throws -> (ZMClientMessage, isNew: Bool)
     
-    // TODO: Add doc comment
+    /// Creates a `ZMClientMessage` locally.
+    /// - Parameters:
+    ///     - id: The message ID.
+    ///     - conversation: The conversation the message is related to.
+    ///     - sender: The message sender info.
+    ///     - date: The date the message was received.
+
     func createClientMessage(
         id: String,
         conversation: ZMConversation,
@@ -78,7 +84,13 @@ public protocol MessageLocalStoreProtocol {
         date: Date
     ) async throws -> (ZMAssetClientMessage, isNew: Bool)
     
-    // TODO: Add doc comment
+    /// Creates a `ZMAssetClientMessage` locally.
+    /// - Parameters:
+    ///     - id: The message ID.
+    ///     - conversation: The conversation the message is related to.
+    ///     - sender: The message sender info.
+    ///     - date: The date the message was received.
+
     func createAssetClientMessage(
         id: String,
         conversation: ZMConversation,
