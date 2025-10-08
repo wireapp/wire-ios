@@ -556,7 +556,7 @@ platform :ios do
             buildlog_path: build.build_path,
             result_bundle: true,
             suppress_xcode_output: true,
-            build_for_testing: true,
+            test_without_building: true,
             output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
             output_types: "junit",
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
