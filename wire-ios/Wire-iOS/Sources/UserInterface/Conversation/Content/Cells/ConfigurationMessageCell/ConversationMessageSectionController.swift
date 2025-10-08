@@ -35,7 +35,7 @@ protocol ConversationMessageSectionControllerDelegate: AnyObject {
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     )
-    
+
     func messageSectionController(
         _ controller: ConversationMessageSectionController,
         didDeleteMultipartMessage message: ZMConversationMessage,
@@ -328,9 +328,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
-        
+
         let attachments = message.multipartMessageData?.attachments ?? []
-        
+
         return ConversationTextMessageCellDescription
             .cells(
                 for: message,
@@ -729,7 +729,7 @@ extension ConversationMessageSectionController {
         // on message deletion, ensure attached files (if any) are deleted as well
         // see `ConversationViewController+ConversationContentViewControllerDelegate`
         guard !attachments.isEmpty else { return }
-        
+
         sectionDelegate?.messageSectionController(
             self,
             didDeleteMultipartMessage: message,

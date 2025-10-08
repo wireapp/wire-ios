@@ -84,8 +84,8 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
-        self.onDeletion = object.onDeletion
-        
+        onDeletion = object.onDeletion
+
         let attachments = object.attachments.map {
             WireCellsMessageAttachment(
                 nodeID: $0.nodeID,

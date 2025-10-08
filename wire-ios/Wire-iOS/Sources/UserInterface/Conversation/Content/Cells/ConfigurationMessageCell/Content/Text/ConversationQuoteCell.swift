@@ -304,7 +304,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
-    
+
     var onDeletion: ((DeletionType) -> Void)?
 
     override init(frame: CGRect) {
@@ -335,7 +335,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        self.onDeletion = object.onDeletion
+        onDeletion = object.onDeletion
         contentView.configure(with: object)
     }
 

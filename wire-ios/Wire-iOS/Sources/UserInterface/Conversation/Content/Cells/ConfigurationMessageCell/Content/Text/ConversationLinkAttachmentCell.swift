@@ -189,7 +189,11 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?, onDeletion: ((DeletionType) -> Void)? = nil) {
+    init(
+        attachment: LinkAttachment,
+        thumbnailResource: WireImageResource?,
+        onDeletion: ((DeletionType) -> Void)? = nil
+    ) {
         self.configuration = View.Configuration(
             attachment: attachment,
             thumbnailResource: thumbnailResource,

@@ -29,7 +29,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let userSession: UserSession?
         let onDeletion: ((DeletionType) -> Void)?
 
-        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil, onDeletion: ((DeletionType) -> Void)? = nil) {
+        init(
+            attributedText: NSAttributedString,
+            isObfuscated: Bool,
+            userSession: UserSession? = nil,
+            onDeletion: ((DeletionType) -> Void)? = nil
+        ) {
             self.attributedText = attributedText
             self.isObfuscated = isObfuscated
             self.userSession = userSession
@@ -154,8 +159,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        self.onDeletion = object.onDeletion
-        
+        onDeletion = object.onDeletion
+
         if isChatBubbleSimpleEnabled {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.firstLineHeadIndent = 0
@@ -268,7 +273,12 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?, onDeletion: ((DeletionType) -> Void)? = nil) {
+    init(
+        attributedString: NSAttributedString,
+        isObfuscated: Bool,
+        userSession: UserSession?,
+        onDeletion: ((DeletionType) -> Void)? = nil
+    ) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
             isObfuscated: isObfuscated,
@@ -287,7 +297,7 @@ extension ConversationTextMessageCellDescription {
         searchQueries: [String],
         selfUser: any UserType,
         userSession: UserSession,
-        onDeletion: ((DeletionType) ->Void)? = nil
+        onDeletion: ((DeletionType) -> Void)? = nil
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
