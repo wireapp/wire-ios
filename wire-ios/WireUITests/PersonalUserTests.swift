@@ -65,7 +65,7 @@ final class PersonalUsersTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        _ = try  firstTimePage.acceptPopup()
+        _ = try  firstTimePage.acceptPopup(with: self)
             .openSettings()
             .openAccountSettings()
             .logout()
@@ -79,7 +79,7 @@ final class PersonalUsersTests: WireUITestCase {
         let messageFromUserB = "Hello from \(userB.name)"
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
-            .acceptPopup()
+            .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
@@ -94,7 +94,7 @@ final class PersonalUsersTests: WireUITestCase {
             .openUserAccountPageForUser(with: userA.name)
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
-            .acceptPopup()
+            .acceptPopup(with: self)
             .openPendingRequest()
 
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
