@@ -56,28 +56,3 @@ public protocol ButtonMessageData {
     var isExpired: Bool { get }
     func touchAction()
 }
-
-public enum ButtonMessageState { // TODO: consider deleting
-    case unselected
-    case selected
-    case confirmed
-
-    init(from state: ButtonState.State?) {
-        guard let state else {
-            self = .unselected
-            return
-        }
-        self = ButtonMessageState(from: state)
-    }
-
-    init(from state: ButtonState.State) {
-        switch state {
-        case .unselected:
-            self = .unselected
-        case .selected:
-            self = .selected
-        case .confirmed:
-            self = .confirmed
-        }
-    }
-}

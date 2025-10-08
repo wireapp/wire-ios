@@ -108,7 +108,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     var state: ButtonMessageState {
-        ButtonMessageState(from: buttonState?.state)
+        buttonState?.state ?? .unselected
     }
 
     var isExpired: Bool {

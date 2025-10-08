@@ -41,20 +41,20 @@ final class ButtonState: ZMManagedObject {
         false
     }
 
-    enum State: Int16 {
-        case unselected
-        case selected
-        case confirmed
-    }
-
-    var state: State {
+    var state: ButtonMessageState {
         get {
-            State(rawValue: stateValue) ?? .unselected
+            ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
             stateValue = newValue.rawValue
         }
     }
+}
+
+public enum ButtonMessageState: Int16 {
+    case unselected
+    case selected
+    case confirmed
 }
 
 extension Set where Element: ButtonState {
