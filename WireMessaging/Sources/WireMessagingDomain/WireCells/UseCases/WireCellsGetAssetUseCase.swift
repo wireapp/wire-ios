@@ -18,6 +18,7 @@
 
 package import Foundation
 
+/// Returns the URL to a locally cached file for a given node ID, and downloads it first if not already cached.
 package struct WireCellsGetAssetUseCase {
 
     package enum Failure: Error {
