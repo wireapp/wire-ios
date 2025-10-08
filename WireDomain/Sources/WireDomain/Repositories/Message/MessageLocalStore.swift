@@ -341,7 +341,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func updateButtonStates(
-        buttonID: String,
+        buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
         senderID: UUID

@@ -181,14 +181,15 @@ public protocol MessageLocalStoreProtocol {
 
     /// Updates button states.
     /// - Parameters:
-    ///     - buttonActionConfirmation: The button action confirmation protobuf object.
+    ///     - buttonID: The id of the button.
+    ///     - referenceMessageID: The id of the parent message.
     ///     - conversation: The related conversation.
     ///     - senderID: The message sender id.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
 
     func updateButtonStates(
-        buttonID: String,
+        buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
         senderID: UUID

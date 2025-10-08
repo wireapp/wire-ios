@@ -51,7 +51,7 @@ extension ZMClientMessage: CompositeMessageData {
 extension ZMClientMessage {
 
     public static func updateButtonStates(
-        buttonID: String,
+        buttonID: String?,
         referenceMessageID: String,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
@@ -75,13 +75,13 @@ extension ZMClientMessage {
 // MARK: - ButtonStates Helpers
 
 extension ZMClientMessage {
-    private func updateButtonStates(buttonID: String) {
+    private func updateButtonStates(buttonID: String?) {
         guard let context = managedObjectContext else { return }
 
-        if !containsButtonState(withId: buttonID) {
+        if let buttonID, !containsButtonState(withId: buttonID) {
             ButtonState.insert(with: buttonID, message: self, inContext: context)
         }
-        buttonStates?.confirmButtonState(withId: buttonID)
+        buttonStates?.confirmButtonState(buttonID: buttonID)
     }
 
     private func containsButtonState(withId buttonId: String) -> Bool {
@@ -89,7 +89,9 @@ extension ZMClientMessage {
     }
 
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {
-        let state = buttonStates?.first(where: { $0.remoteIdentifier == buttonAction.buttonID })
+        guard let buttonID = buttonAction.hasButtonID ? buttonAction.buttonID : nil else { return }
+
+        let state = buttonStates?.first(where: { $0.remoteIdentifier == buttonID })
         managedObjectContext?.performGroupedBlock { [managedObjectContext] in
             state?.isExpired = true
             state?.state = .unselected

@@ -134,9 +134,10 @@ extension ZMOTRMessage {
             // ignore if the sender is not the self user
             guard senderID == selfUser.remoteIdentifier else { return nil }
 
+            let buttonAction = message.buttonAction
             ZMClientMessage.updateButtonStates(
-                buttonID: message.buttonAction.buttonID,
-                referenceMessageID: message.buttonAction.referenceMessageID,
+                buttonID: buttonAction.hasButtonID ? buttonAction.buttonID : .none,
+                referenceMessageID: buttonAction.referenceMessageID,
                 for: conversation,
                 in: context
             )

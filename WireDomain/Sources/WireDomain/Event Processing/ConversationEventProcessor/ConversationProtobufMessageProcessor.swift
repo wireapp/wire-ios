@@ -123,7 +123,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case let .buttonAction(buttonAction):
 
             await messageLocalStore.updateButtonStates(
-                buttonID: buttonAction.buttonID,
+                buttonID: buttonAction.hasButtonID ? buttonAction.buttonID : .none,
                 referenceMessageID: buttonAction.referenceMessageID,
                 in: conversation,
                 senderID: senderID.id

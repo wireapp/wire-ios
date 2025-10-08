@@ -58,11 +58,13 @@ public enum ButtonMessageState: Int16 {
 }
 
 extension Set where Element: ButtonState {
-    func confirmButtonState(withId id: String) {
+    func confirmButtonState(buttonID: String?) {
         for button in self {
-            button.state = button.remoteIdentifier == id ?
-                .confirmed :
+            button.state = if let buttonID, button.remoteIdentifier == buttonID {
+                .confirmed
+            } else {
                 .unselected
+            }
         }
     }
 
