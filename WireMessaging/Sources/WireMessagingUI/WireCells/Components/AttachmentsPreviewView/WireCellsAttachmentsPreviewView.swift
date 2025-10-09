@@ -16,42 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+import Combine
+package import SwiftUI
+import WireFoundation
 import WireMessagingDomain
+import WireMessagingDomainSupport
 
 /// A collection of attachment previews suitable for displaying in a conversation message.
-public struct WireCellsAttachmentsPreviewView: View {
+package struct WireCellsAttachmentsPreviewView: View {
 
     @StateObject var viewModel: WireCellsAttachmentsPreviewViewModel
 
-    public init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
+    package init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
-    public var body: some View {
-        VStack {
-            ForEach(viewModel.attachments, id: \.nodeID) { attachment in
-                Text(attachment.initialName ?? "Unnamed")
-                    .frame(maxWidth: .infinity)
-                    .padding()
+    package var body: some View {
+        FlowLayout {
+            ForEach(Array(viewModel.items.enumerated()), id: \.element) { index, _ in
+                itemRow(index: index)
             }
         }
-        .background(Color.red)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    func itemRow(index: Int) -> some View {
+        WireCellsAttachmentsPreviewItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 }
 
+// MARK: - Preview
+
 #Preview {
-    WireCellsAttachmentsPreviewView(
-        viewModel: WireCellsAttachmentsPreviewViewModel(
-            attachments: [
-                WireCellsMessageAttachment(
-                    nodeID: UUID(),
-                    contentType: nil,
-                    initialName: nil,
-                    initialSize: nil,
-                    initialMetadata: nil
-                )
-            ]
-        )
-    )
+    WireCellsAttachmentsPreviewView(viewModel: .makePreview())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
