@@ -1023,7 +1023,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     nonce: messageNonce
                 )
             case .composite(_):
-                fatalError()
+                fatalError() // TODO: fix
             }
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {

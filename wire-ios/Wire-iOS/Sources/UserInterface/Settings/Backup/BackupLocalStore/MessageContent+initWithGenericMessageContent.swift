@@ -71,7 +71,7 @@ extension MessageBackupModel.Content {
         case let .text(text):
             self.init(text)
         case .composite, .none:
-            fatalError("TODO: handle")
+            fatalError("TODO: handle") // TODO: fix
         }
     }
 

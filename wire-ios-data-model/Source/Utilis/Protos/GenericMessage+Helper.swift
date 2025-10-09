@@ -156,13 +156,17 @@ public extension GenericMessage {
     }
 
     var compositeData: Composite? {
-        guard let content else { return nil }
         switch content {
         case let .composite(data):
             return data
+        case let .edited(messageEdit):
+            if case let .composite(composite)? = messageEdit.content {
+                return composite
+            }
         default:
-            return nil
+            break
         }
+        return nil
     }
 
     var imageAssetData: ImageAsset? {
