@@ -149,7 +149,9 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case .services:
             delegate?.presentServicesOptions(animated: true)
         case .timeout:
-            delegate?.presentTimeoutOptions(animated: true)
+            if !conversation.isCellsEnabled {
+                delegate?.presentTimeoutOptions(animated: true)
+            }
         case .notifications:
             delegate?.presentNotificationsOptions(animated: true)
         case .channelAccess:

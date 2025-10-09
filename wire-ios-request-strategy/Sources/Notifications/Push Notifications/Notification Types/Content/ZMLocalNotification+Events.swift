@@ -342,7 +342,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
            conversation.isMessageSilenced(message, senderID: senderUUID) {
             WireLogger.push
                 .info(
-                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced",
+                    attributes: .safePublic
                 )
             return false
         } else if conversation == nil {
