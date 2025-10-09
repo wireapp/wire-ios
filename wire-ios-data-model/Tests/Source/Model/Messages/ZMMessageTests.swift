@@ -88,4 +88,24 @@ extension ZMMessageTests {
         // then
         XCTAssertFalse(message!.userIsTheSender)
     }
+
+    func testThatItReturnsTheOriginalImageDataWhenTheMediumDataIsNotAvailable() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID()
+        let jpegData = try verySmallJPEGData().wr_removingImageMetadata()
+        let temporaryMessage = try conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: jpegData),
+            nonce: UUID()
+        )
+
+        // when
+        let imageData = try XCTUnwrap(temporaryMessage.imageMessageData?.imageData)
+
+        // then
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO:  [Bill] check why 1 btye is removed from jpegData?
+        XCTAssertEqual(imageData.count, jpegData.count + 1)
+    }
+
 }

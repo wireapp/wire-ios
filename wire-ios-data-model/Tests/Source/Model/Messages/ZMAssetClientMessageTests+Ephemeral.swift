@@ -276,7 +276,12 @@ extension ZMAssetClientMessageTests_Ephemeral {
 
         let imageData = verySmallJPEGData()
         let assetMessage = GenericMessage(
-            content: GenericMessageProtocol.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
+            content: GenericMessageProtocol.Asset(
+                name: "picture.jpg",
+                mimeType: "",
+                imageSize: .zero,
+                size: UInt64(imageData.count)
+            ),
             nonce: nonce,
             expiresAfter: .tenSeconds
         )
