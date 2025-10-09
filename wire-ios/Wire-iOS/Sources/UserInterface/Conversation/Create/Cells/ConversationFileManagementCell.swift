@@ -22,7 +22,7 @@ final class ConversationCreateFileManagementCell: IconToggleCell {
 
     override func setUp() {
         super.setUp()
-        title = L10n.Localizable.Conversation.Create.FileManagement.title
+        title = L10n.Localizable.Conversation.Create.FileManagement.title + " (Cells Beta)"
         showSeparator = false
         icon = nil
     }
