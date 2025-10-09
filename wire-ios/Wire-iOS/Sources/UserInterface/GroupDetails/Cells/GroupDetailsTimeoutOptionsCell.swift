@@ -34,8 +34,12 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
-        status = timeout.displayString
+        if conversation.isCellsEnabled {
+            setDisabledCell()
+        } else {
+            let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
+            status = timeout.displayString
+        }
     }
 
     override var isHighlighted: Bool {
@@ -44,6 +48,17 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
                 ? SemanticColors.View.backgroundUserCellHightLighted
                 : SemanticColors.View.backgroundUserCell
         }
+    }
+
+    private func setDisabledCell() {
+        let disabled = MessageDestructionTimeoutValue.none
+        status = disabled.displayString
+        iconColor = UIColor.systemGray
+        titleColor = UIColor.systemGray
+        statusColor = UIColor.systemGray
+        accessoryColor = UIColor.systemGray
+        isUserInteractionEnabled = false
+        alpha = 0.8
     }
 
 }
