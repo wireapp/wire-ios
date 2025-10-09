@@ -2031,6 +2031,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
+        /// Self-deleting messages are disabled for the conversations with Cells
+        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are disabled for the conversations with Cells")
         /// You haven’t used this device for a while. Some messages may not appear here.
         internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
