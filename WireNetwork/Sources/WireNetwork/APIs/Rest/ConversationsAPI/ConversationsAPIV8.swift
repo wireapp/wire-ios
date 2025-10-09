@@ -239,6 +239,7 @@ struct CreateGroupConversationParametersV8: Encodable {
     let conversationRole: String?
     let messageProtocol: String
     let conversationGroupType: ConversationGroupTypeV8 // Introduced in v8
+    let cells: Bool // Introduced in v8
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -252,6 +253,7 @@ struct CreateGroupConversationParametersV8: Encodable {
         case conversationRole = "conversation_role"
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
+        case cells
     }
 
     init(from parameters: CreateGroupConversationParameters) {
@@ -267,6 +269,7 @@ struct CreateGroupConversationParametersV8: Encodable {
         self.conversationRole = "wire_member"
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
         self.conversationGroupType = parameters.groupType.toNetworkModel()
+        self.cells = parameters.cells ?? false
     }
 
 }
