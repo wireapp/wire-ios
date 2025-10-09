@@ -596,7 +596,6 @@
 		015DE3A62DB29CE000DC34E8 /* SessionManagerEncryptionAtRestMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerEncryptionAtRestMigrationTests.swift; sourceTree = "<group>"; };
 		015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserSessionDelegate.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
-		01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_2_0.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
 		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
@@ -1436,7 +1435,6 @@
 			isa = PBXGroup;
 			children = (
 				06FC8DC72E150AA000D5629D /* AppVersionMigration_4_1_1.swift */,
-				01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
