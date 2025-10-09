@@ -94,12 +94,13 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         config = object
-        guard let userSession = config?.userSession else {
+        guard let userSession = config?.userSession,
+              accentColorChangeHandler == nil else {
             return
         }
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(userSession: userSession) { [unowned self] color in
-                updateBackgroundColor(color: color)
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateBackgroundColor(color: color)
             }
     }
 

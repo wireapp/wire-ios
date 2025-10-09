@@ -119,12 +119,27 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 date: date
             )
 
-        case let .buttonActionConfirmation(buttonActionConfirmation):
+        case let .buttonAction(buttonAction):
 
             await messageLocalStore.updateButtonStates(
-                buttonActionConfirmation,
-                in: conversation
+                buttonID: buttonAction.buttonID,
+                referenceMessageID: buttonAction.referenceMessageID,
+                in: conversation,
+                senderID: senderID.id
             )
+
+        case let .buttonActionConfirmation(buttonActionConfirmation):
+
+            // [WPB-17921]: handling ButtonActionConfirmation is currently not needed.
+            // It might come back when we can send targeted messages using MLS.
+            #if false
+                await messageLocalStore.updateButtonStates(
+                    buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
+                    referenceMessageID: buttonActionConfirmation.referenceMessageID,
+                    in: conversation,
+                    senderID: senderID.id
+                )
+            #endif
 
         case let .edited(edited):
 
@@ -207,7 +222,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction, .multipart:
+        case .text, .knock, .location, .composite, .multipart:
 
             try await processMessageContent(
                 message: message,

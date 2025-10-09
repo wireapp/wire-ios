@@ -204,8 +204,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addPingMessageCells()
         } else if message.isComposite {
             addCompositeMessageCells()
+        } else if message.isText, message.isMultipart {
+            addTextMessageCells() + addMultipartMessageCells()
         } else if message.isText {
             addTextMessageCells()
+        } else if message.isMultipart {
+            addMultipartMessageCells()
         } else if message.isImage {
             addImageMessageCell()
         } else if message.isLocation {
@@ -245,6 +249,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     // MARK: - Content Cells
+
+    private func addMultipartMessageCells() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+
+        let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
+            multipartMessage: message.multipartMessageData!
+        )
+
+        return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
+    }
 
     private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let sender = message.senderUser else { return [] }
@@ -356,7 +372,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
-        let cellDescription = UnknownMessageCellDescription()
+        let cellDescription = UnknownStoredMessageCellDescription()
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 

@@ -117,7 +117,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             from: messageType,
             conversation: conversation
         )
-
         await addSystemMessages(
             systemMessages,
             to: conversation
@@ -214,7 +213,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             finalizeMessageUpdate(
-                clientMessage: clientMessage,
+                message: clientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -267,7 +266,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             finalizeMessageUpdate(
-                clientMessage: assetClientMessage,
+                message: assetClientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -342,14 +341,21 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID
     ) async {
         await context.perform { [context] in
+
+            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+            guard senderID == selfUserID else { return }
+
             ZMClientMessage.updateButtonStates(
-                withConfirmation: buttonActionConfirmation,
-                forConversation: conversation,
-                inContext: context
+                buttonID: buttonID,
+                referenceMessageID: referenceMessageID,
+                for: conversation,
+                in: context
             )
         }
     }
@@ -470,7 +476,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     private func finalizeMessageUpdate(
-        clientMessage: ZMOTRMessage,
+        message: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
         conversation: ZMConversation
@@ -481,13 +487,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             in: context
         )
 
-        clientMessage.visibleInConversation = conversation
-        clientMessage.sender = sender
-        updateQuoteRelationships(message: clientMessage)
-        conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
-        clientMessage.unarchiveIfNeeded(conversation)
-        clientMessage.updateCategoryCache()
-        clientMessage.markAsSent()
+        message.visibleInConversation = conversation
+        message.sender = sender
+        updateQuoteRelationships(message: message)
+        conversation.updateTimestampsAfterUpdatingMessage(message)
+        message.unarchiveIfNeeded(conversation)
+        message.updateCategoryCache()
+        message.markAsSent()
     }
 
     private func createSystemMessages(
