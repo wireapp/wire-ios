@@ -38,6 +38,7 @@ final class ConversationCreationValues {
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
+    var enableFileManagement: Bool
     var encryptionProtocol: MessageProtocol {
         didSet {
             allowServices = shouldIncludeServices
@@ -78,6 +79,7 @@ final class ConversationCreationValues {
         allowGuests: Bool = true,
         allowServices: Bool = true,
         enableReceipts: Bool = true,
+        enableFileManagement: Bool = true,
         encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
@@ -87,6 +89,7 @@ final class ConversationCreationValues {
         self.allowGuests = allowGuests
         self.allowServices = allowServices
         self.enableReceipts = enableReceipts
+        self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser
     }

@@ -70,7 +70,8 @@ final class ConversationCreationController: UIViewController {
             values.shouldIncludeServices ? servicesSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
-            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
+            userSession.isWireCellsEnabled ? fileManagementSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -137,6 +138,17 @@ final class ConversationCreationController: UIViewController {
                 reloadOptionsSections()
             }
         }
+        return section
+    }()
+
+    private lazy var fileManagementSection = {
+        let section = ConversationCreateFileManagementSectionController(values: values)
+
+        section.toggleAction = { [unowned self] enableFileManagement in
+            values.enableFileManagement = enableFileManagement
+            updateOptions()
+        }
+
         return section
     }()
 
@@ -295,6 +307,7 @@ final class ConversationCreationController: UIViewController {
         guestsSection.configure(with: values)
         servicesSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
+        fileManagementSection.configure(with: values)
     }
 }
 
@@ -382,6 +395,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
+                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 
