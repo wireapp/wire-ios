@@ -88,7 +88,8 @@ extension ConversationCreateFileManagementSectionController {
 
         let linkRange = NSRange(learnMoreRange, in: fullText)
         let fullRange = NSRange(location: 0, length: fullText.count)
-        attributedText.addAttribute(.link, value: "https://wire.com", range: linkRange) // URL to be defined
+        attributedText
+            .addAttribute(.link, value: "https://wire.com", range: linkRange) // TODO: [WPB-16736] URL to be defined
         attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
         attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
 
