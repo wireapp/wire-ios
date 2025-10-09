@@ -79,6 +79,7 @@
     [self.sut tearDown];
     self.sut = nil;
 
+    [self resetDeveloperFlagStorage];
     [super tearDown];
 }
 

@@ -26,7 +26,9 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
         DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
+        defer {
+            DeveloperFlag.multibackend.enable(true, storage: .standard)
+        }
         syncMOC.performAndWait {
             let selfClient = createSelfClient()
 

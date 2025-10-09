@@ -74,6 +74,9 @@ final class UserClientRequestFactoryTests: MessagingTest {
             }
         }
         DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.consumableNotifications.enable(false, storage: .standard)
+        }
 
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
