@@ -63,6 +63,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
                 deletionStatus: .notDeleted
             )
         }
+
     }
 
     private let configuration: Configuration

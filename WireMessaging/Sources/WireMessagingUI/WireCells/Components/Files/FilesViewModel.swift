@@ -310,15 +310,3 @@ package final class FilesViewModel: ObservableObject {
     }
 
 }
-
-private extension WireCellsLocalAsset.DownloadState {
-
-    var cacheKey: String? {
-        switch self {
-        case let .downloaded(key):
-            key
-        default:
-            nil
-        }
-    }
-}
