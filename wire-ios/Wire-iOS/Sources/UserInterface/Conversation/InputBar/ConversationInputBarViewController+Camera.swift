@@ -155,16 +155,13 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         _ image: SendableImage,
         isFromCamera: Bool
     ) {
-        let mediaAsset: MediaAsset
-
-        if
+        let mediaAsset: MediaAsset = if
             image.utType == .gif,
             let gifImage = FLAnimatedImage(animatedGIFData: image.data),
-            gifImage.frameCount > 1
-        {
-            mediaAsset = gifImage
+            gifImage.frameCount > 1 {
+            gifImage
         } else {
-            mediaAsset = UIImage(data: image.data) ?? UIImage()
+            UIImage(data: image.data) ?? UIImage()
         }
 
         let context = ConfirmAssetViewController.Context(

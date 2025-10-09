@@ -983,7 +983,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                 } else {
                     parent?.dismiss(animated: true) {
                         let image = SendableImage(
-                            name: nil, // TODO: can we get a name here?
+                            name: nil,
                             utType: .jpeg,
                             data: jpegData
                         )

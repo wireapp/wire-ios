@@ -168,7 +168,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
         let retention = AssetRequestFactory.Retention(conversation: conversation)
 
-        /// TODO: [ASSET] fix
+        // TODO: [ASSET] fix
         let shouldIncludeExtraMetaData = true
 
         var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
