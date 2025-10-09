@@ -21,10 +21,10 @@ import XCTest
 
 @testable import Wire
 
-final class InvalidSystemMessageCellTests: ConversationMessageSnapshotTestCase {
+final class UnknownMessageContentTypeReceivedCellTests: ConversationMessageSnapshotTestCase {
 
     func testCell() {
-        let systemMessage = MockMessageFactory.systemMessage(with: .invalid)
+        let systemMessage = MockMessageFactory.systemMessage(with: .unknownMessageContentTypeReceived)
         verify(message: systemMessage!)
     }
 
