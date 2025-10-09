@@ -60,7 +60,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-        WireLogger.eventProcessing.debug("\(content)") // TODO: delete!
         switch content {
         case let .lastRead(lastRead):
 
@@ -131,14 +130,16 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
-            return () // TODO: delete
-
-            await messageLocalStore.updateButtonStates(
-                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
-                referenceMessageID: buttonActionConfirmation.referenceMessageID,
-                in: conversation,
-                senderID: senderID.id
-            )
+            // [WPB-17921]: handling ButtonActionConfirmation is currently not needed.
+            // It might come back when we can send targeted messages using MLS.
+            #if false
+                await messageLocalStore.updateButtonStates(
+                    buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
+                    referenceMessageID: buttonActionConfirmation.referenceMessageID,
+                    in: conversation,
+                    senderID: senderID.id
+                )
+            #endif
 
         case let .edited(edited):
 
@@ -241,8 +242,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
         case .inCallHandRaise:
             break // Not handled yet, TODO: [WPB-11769] implement here
         }
-
-        // TODO: why do we receive reaction messages with emoji ""?
     }
 
     private func processAssetMessageContent(
