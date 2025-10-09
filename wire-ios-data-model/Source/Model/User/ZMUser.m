@@ -630,15 +630,8 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     if (selfUser == nil) {
         selfUser = [ZMUser insertNewObjectInManagedObjectContext:moc];
-        BOOL succeed = [moc obtainPermanentIDsForObjects:@[selfUser] error:&error];
-#if DEBUG
-    if (!succeed) {
-        NSLog(@"Failed to get ID for self user: %lu", (long) error.code);
-    }
-#else
-        RequireString(succeed,
+        RequireString([moc obtainPermanentIDsForObjects:@[selfUser] error:&error],
                       "Failed to get ID for self user: %lu", (long) error.code);
-#endif
     }
 
     session.selfUser = selfUser;
