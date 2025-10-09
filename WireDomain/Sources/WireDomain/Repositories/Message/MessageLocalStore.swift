@@ -1014,20 +1014,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         let genericMessage: GenericMessage
         switch messageEditContent {
 
-        case .text(let newText):
+        case let .text(newText):
             guard let originalText = clientMessage.underlyingMessage?.textData else { return false }
             genericMessage = GenericMessage(
                 content: originalText.applyEdit(from: newText),
                 nonce: messageNonce
             )
 
-        case .composite(let newComposite):
+        case let .composite(newComposite):
             guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
             genericMessage = GenericMessage(
                 content: newComposite,
                 nonce: messageNonce
             )
-
         }
 
         do {
