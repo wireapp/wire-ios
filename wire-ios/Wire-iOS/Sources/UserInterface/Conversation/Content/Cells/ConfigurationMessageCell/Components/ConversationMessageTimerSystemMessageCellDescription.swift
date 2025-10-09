@@ -38,30 +38,44 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType) {
-        let senderText = message.senderName
-        let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
+    enum State {
+        case updated(message: ZMConversationMessage, data: ZMSystemMessageData, timer: NSNumber, sender: UserType)
+        case unavailable
+    }
 
+    init(state: State) {
         var updateText: NSAttributedString?
         let baseAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumFont,
             .foregroundColor: LabelColors.textDefault
         ]
 
-        if timeoutValue == .none {
-            updateText = NSAttributedString(
-                string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText),
-                attributes: baseAttributes
-            )
+        switch state {
+        case let .updated(message, _, timer, sender):
+            let senderText = message.senderName
+            let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
 
-        } else if let displayString = timeoutValue.displayString {
-            let timerString = displayString.replacingOccurrences(
-                of: String.breakingSpace,
-                with: String.nonBreakingSpace
-            )
+            if timeoutValue == .none {
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText),
+                    attributes: baseAttributes
+                )
+
+            } else if let displayString = timeoutValue.displayString {
+                let timerString = displayString.replacingOccurrences(
+                    of: String.breakingSpace,
+                    with: String.nonBreakingSpace
+                )
+                updateText = NSAttributedString(
+                    string: "content.system.message_timer_changes"
+                        .localized(pov: sender.pov, args: senderText, timerString),
+                    attributes: baseAttributes
+                )
+            }
+
+        case .unavailable:
             updateText = NSAttributedString(
-                string: "content.system.message_timer_changes"
-                    .localized(pov: sender.pov, args: senderText, timerString),
+                string: L10n.Localizable.Content.System.messageTimerUnavailable,
                 attributes: baseAttributes
             )
         }
