@@ -104,7 +104,7 @@ extension ZMMessageTests {
 
         // then
         // swiftlint:disable:next todo_requires_jira_link
-        // TODO:  [Bill] check why 1 btye is removed from jpegData?
+        // TODO: [Bill] check why 1 btye is removed from jpegData?
         XCTAssertEqual(imageData.count, jpegData.count + 1)
     }
 

@@ -315,7 +315,10 @@ extension ZMConversationTests {
         }
     }
 
-    private func assertThatAppendingAMessageUnarchivesAConversation(insertBlock: (ZMConversation) throws -> Void) throws {
+    private func assertThatAppendingAMessageUnarchivesAConversation(
+        insertBlock: (ZMConversation) throws
+            -> Void
+    ) throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group

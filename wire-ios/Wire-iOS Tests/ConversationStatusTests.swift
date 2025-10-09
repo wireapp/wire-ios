@@ -176,7 +176,7 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
 
         let message3 = try! sut.appendImage(image, nonce: UUID()) as! ZMMessage
         message3.sender = otherUser
-        
+
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
