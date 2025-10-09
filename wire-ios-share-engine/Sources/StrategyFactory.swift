@@ -65,9 +65,9 @@ final class StrategyFactory {
         self.localDomain = localDomain
 
         if let localDomain, localDomain != "wire.com", featureRepository.fetchAssetAuditLog().status == .enabled {
-            isAssetAuditLogEnabled = true
+            self.isAssetAuditLogEnabled = true
         } else {
-            isAssetAuditLogEnabled = false
+            self.isAssetAuditLogEnabled = false
         }
 
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)

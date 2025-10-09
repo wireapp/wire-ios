@@ -543,7 +543,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         guard let feature = Feature.fetch(name: .assetAuditLog, context: context) else {
             return .init()
         }
-        
+
         return .init(status: feature.status)
     }
 
