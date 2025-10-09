@@ -31,6 +31,7 @@ public protocol CreateGroupConversationUseCaseProtocol {
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation
 }
@@ -88,6 +89,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         do {
@@ -99,6 +101,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 accessMode: accessMode,
                 accessRoles: accessRoles,
                 enableReceipts: enableReceipts,
+                cells: cells,
                 isMLSEnabled: isMLSEnabled
             )
         } catch let error as ConversationsAPIError {
@@ -122,6 +125,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                         accessMode: accessMode,
                         accessRoles: accessRoles,
                         enableReceipts: enableReceipts,
+                        cells: cells,
                         users: users
                     )
                 } catch {
@@ -144,6 +148,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         isMLSEnabled: Bool
     ) async throws -> ZMConversation {
         let (
@@ -187,7 +192,8 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             accessRoles: teamID == nil ? [] : accessRoles,
             legacyAccessRole: nil,
             teamID: teamID,
-            isReadReceiptsEnabled: teamID == nil ? false : enableReceipts
+            isReadReceiptsEnabled: teamID == nil ? false : enableReceipts,
+            cells: cells
         )
 
         let remoteConversation = try await api.createGroupConversation(
@@ -223,6 +229,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
+        cells: Bool?,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
         let (unreachableUsers, reachableUsers) = await context.perform {
@@ -241,6 +248,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             accessMode: accessMode,
             accessRoles: accessRoles,
             enableReceipts: enableReceipts,
+            cells: cells,
             isMLSEnabled: isMLSEnabled
         )
 

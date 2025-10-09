@@ -28,6 +28,7 @@ public protocol CreateChannelUseCaseProtocol {
         teamID: UUID,
         name: String?,
         historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -81,6 +82,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         teamID: UUID,
         name: String?,
         historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -91,6 +93,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 teamID: teamID,
                 name: name,
                 historyDepth: historyDepth,
+                cells: cells,
                 users: users,
                 accessMode: accessMode,
                 accessRoles: accessRoles,
@@ -117,6 +120,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                         accessMode: accessMode,
                         accessRoles: accessRoles,
                         historyDepth: historyDepth,
+                        cells: cells,
                         enableReceipts: enableReceipts,
                         users: users
                     )
@@ -136,6 +140,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         teamID: UUID,
         name: String?,
         historyDepth: String?,
+        cells: Bool?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -183,7 +188,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             teamID: teamID,
-            isReadReceiptsEnabled: enableReceipts
+            isReadReceiptsEnabled: enableReceipts,
+            cells: cells
         )
 
         let remoteConversation = try await api.createGroupConversation(
@@ -211,6 +217,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
         historyDepth: String?,
+        cells: Bool?,
         enableReceipts: Bool,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
@@ -226,6 +233,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             teamID: teamID,
             name: name,
             historyDepth: historyDepth,
+            cells: cells,
             users: reachableUsers,
             accessMode: accessMode,
             accessRoles: accessRoles,

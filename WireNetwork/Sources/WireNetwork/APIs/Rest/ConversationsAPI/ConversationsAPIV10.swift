@@ -88,6 +88,7 @@ struct CreateGroupConversationParametersV10: Encodable {
     let conversationRole: String?
     let messageProtocol: String
     let conversationGroupType: ConversationGroupTypeV8
+    let cells: Bool
     let skipCreator: Bool? // new in v10
 
     enum CodingKeys: String, CodingKey {
@@ -103,6 +104,7 @@ struct CreateGroupConversationParametersV10: Encodable {
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
         case skipCreator = "skip_creator"
+        case cells
     }
 
     init(from parameters: CreateGroupConversationParameters) {
@@ -119,6 +121,7 @@ struct CreateGroupConversationParametersV10: Encodable {
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
         self.conversationGroupType = parameters.groupType.toNetworkModel()
         self.skipCreator = parameters.skipCreator
+        self.cells = parameters.cells ?? false
     }
 
 }

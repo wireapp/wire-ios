@@ -178,6 +178,24 @@ public final class ZMUserSession: NSObject {
         chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 
+    public var wireCellsFeature: Feature.Cells {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchCells()
+    }
+
+    public var isWireCellsEnabled: Bool {
+        wireCellsFeature.status == .enabled || DeveloperFlag.wireCells.isOn
+    }
+
+    public var conferenceCallingFeature: Feature.ConferenceCalling {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchConferenceCalling()
+    }
+
+    public var isEnterpriseUser: Bool {
+        conferenceCallingFeature.status == .enabled || DeveloperFlag.channelsHistory.isOn
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
