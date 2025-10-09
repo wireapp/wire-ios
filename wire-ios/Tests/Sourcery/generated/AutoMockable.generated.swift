@@ -1804,10 +1804,10 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
     // MARK: - makeDeleteNodesUseCase
 
     var makeDeleteNodesUseCase_Invocations: [Void] = []
-    var makeDeleteNodesUseCase_MockMethod: (() -> any WireCellsDeleteNodesUseCaseProtocol)?
-    var makeDeleteNodesUseCase_MockValue: any WireCellsDeleteNodesUseCaseProtocol?
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
 
-    func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
+    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
         makeDeleteNodesUseCase_Invocations.append(())
 
         if let mock = makeDeleteNodesUseCase_MockMethod {
