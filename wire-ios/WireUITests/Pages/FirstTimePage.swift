@@ -29,13 +29,13 @@ class FirstTimePage: PageModel {
             handler?.0.removeUIInterruptionMonitor(token)
         }
     }
-    
+
     var okButton: XCUIElement {
         app.buttons["OK"]
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?
-    
+
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         okButton.tap()
@@ -51,16 +51,17 @@ class FirstTimePage: PageModel {
         handleNotificationPermissionAlert(testCase: testCase)
         return try SetUsernamePage()
     }
-    
+
     private func handleNotificationPermissionAlert(testCase: XCTestCase) {
-        let handler = testCase.addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { (alertElement) -> Bool in
-            let notifPermission = "Would Like to Send You Notifications"
-            if alertElement.label.contains(notifPermission) {
-                alertElement.buttons["Allow"].tap()
+        let handler = testCase
+            .addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                if alertElement.label.contains(notifPermission) {
+                    alertElement.buttons["Allow"].tap()
+                }
+
+                return true
             }
-           
-            return true
-        }
         self.handler = (testCase, handler)
     }
 }
