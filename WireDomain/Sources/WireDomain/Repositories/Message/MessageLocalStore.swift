@@ -1022,9 +1022,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
         case .composite(let newComposite):
-            guard let originalComposite = clientMessage.underlyingMessage?.compositeData else { return false }
+            guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
             genericMessage = GenericMessage(
-                content: originalComposite.applyEdit(from: newComposite),
+                content: newComposite,
                 nonce: messageNonce
             )
 

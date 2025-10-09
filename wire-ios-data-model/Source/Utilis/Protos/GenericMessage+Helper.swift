@@ -558,15 +558,6 @@ public extension Text {
     }
 }
 
-public extension Composite {
-
-    func applyEdit(from composite: Composite) -> Composite {
-        var composite = composite
-        return composite
-    }
-
-}
-
 extension GenericMessageProtocol.InCallHandRaise {
     init(handUp: Bool) {
 
