@@ -546,18 +546,25 @@ public extension Text {
     }
 
     func updateLinkPreview(from text: Text) -> Text {
-        guard !text.linkPreview.isEmpty else {
-            return self
-        }
+        guard !text.linkPreview.isEmpty else { return self }
         do {
             let data = try serializedData()
-            var updatedText = try Text(serializedData: data)
+            var updatedText = try Text(serializedBytes: data)
             updatedText.linkPreview = text.linkPreview
             return updatedText
         } catch {
             return self
         }
     }
+}
+
+public extension Composite {
+
+    func applyEdit(from composite: Composite) -> Composite {
+        var composite = composite
+        return composite
+    }
+
 }
 
 extension GenericMessageProtocol.InCallHandRaise {
