@@ -125,7 +125,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
-    // TODO: [WPB-16224] Re-enable
     func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
