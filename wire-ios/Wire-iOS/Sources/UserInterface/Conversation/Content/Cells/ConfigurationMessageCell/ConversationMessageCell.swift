@@ -127,7 +127,7 @@ extension ConversationMessageCell {
 
     var onDeletion: ((DeletionType) -> Void)? {
         get { nil }
-        set {}
+        set { fatalError("Conform to this property in your concrete cell type") }
     }
 
     func willDisplay() {
