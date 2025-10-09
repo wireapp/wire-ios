@@ -86,6 +86,26 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
             .verify(matching: cell)
     }
 
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Light() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
+
+        // THEN
+        snapshotHelper.verify(matching: cell)
+    }
+
+    func testThatItDisplaysDisabledCell_WithoutTimeout_Dark() {
+        // GIVEN & WHEN
+        conversation.cellsState = .ready
+        updateTimeout(0)
+
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: cell)
+    }
+
     private func updateTimeout(_ newValue: TimeInterval) {
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: newValue), for: .groupConversation)
         cell.configure(with: (conversation as Any) as! ZMConversation)
