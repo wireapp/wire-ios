@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
+public import SwiftUI
 import WireMessagingDomain
 
 /// A collection of attachment previews suitable for displaying in a conversation message.
-package struct WireCellsAttachmentsPreviewView: View {
+public struct WireCellsAttachmentsPreviewView: View {
 
     @StateObject var viewModel: WireCellsAttachmentsPreviewViewModel
 
-    init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
+    public init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
-    package var body: some View {
+    public var body: some View {
         VStack {
             ForEach(viewModel.attachments, id: \.nodeID) { attachment in
                 Text(attachment.initialName ?? "Unnamed")
