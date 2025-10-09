@@ -30,6 +30,7 @@ final class StrategyFactory {
     private(set) var strategies = [AnyObject]()
     private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
+    private let isAssetAuditLogEnabled: Bool
 
     private var tornDown = false
 
@@ -46,6 +47,7 @@ final class StrategyFactory {
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
@@ -56,11 +58,18 @@ final class StrategyFactory {
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-            featureRepository: LegacyFeatureRepository(context: syncContext),
+            featureRepository: featureRepository,
             apiVersion: apiVersion
         )
         self.apiVersion = apiVersion
         self.localDomain = localDomain
+
+        if let localDomain, localDomain != "wire.com", featureRepository.fetchAssetAuditLog().status == .enabled {
+            isAssetAuditLogEnabled = true
+        } else {
+            isAssetAuditLogEnabled = false
+        }
+
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -131,7 +140,8 @@ final class StrategyFactory {
             applicationStatus: applicationStatus,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             previewImagePreprocessor: nil,
-            localDomain: localDomain
+            localDomain: localDomain,
+            shouldUploadExtraMetaData: isAssetAuditLogEnabled
         )
     }
 
@@ -148,7 +158,8 @@ final class StrategyFactory {
         let strategy = AssetV3UploadRequestStrategy(
             withManagedObjectContext: syncContext,
             applicationStatus: applicationStatus,
-            localDomain: localDomain
+            localDomain: localDomain,
+            shouldUploadExtraMetaData: isAssetAuditLogEnabled
         )
 
         // WORKAROUND:

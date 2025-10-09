@@ -75,6 +75,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
     /// Upstream sync
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
     let localDomain: String?
+    private let shouldUploadExtraMetaData: Bool
 
     @available(*, unavailable)
     public override init(
@@ -89,7 +90,8 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor?,
         previewImagePreprocessor: ZMImagePreprocessingTracker?,
-        localDomain: String?
+        localDomain: String?,
+        shouldUploadExtraMetaData: Bool
     ) {
         if LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() == nil {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector())
@@ -101,6 +103,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker
             .createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
         self.localDomain = localDomain
+        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -170,11 +173,8 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
-        // TODO: [ASSET] fix
-        var shouldIncludeExtraMetaData = true
-
         var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
-        if shouldIncludeExtraMetaData {
+        if shouldUploadExtraMetaData {
             guard
                 let original = managedObjectContext.zm_fileAssetCache.originalImageData(for: message),
                 let domain = conversation.domain ?? localDomain

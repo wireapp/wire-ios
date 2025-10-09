@@ -121,8 +121,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         metadata: BackendMetadataProvider
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
+        let featureRepository = LegacyFeatureRepository(context: syncMOC)
 
-        let mlsFeature = LegacyFeatureRepository(context: syncMOC).fetchMLS()
+        let mlsFeature = featureRepository.fetchMLS()
         let oneOnOneResolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
@@ -131,6 +132,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             coreCryptoProvider: coreCryptoProvider,
             mlsService: mlsService
         )
+
+        let assetAuditLog = featureRepository.fetchAssetAuditLog()
+
+        var isAssetAuditLogEnabled = false
+        if let localDomain = metadata.domain, localDomain != "wire.com", assetAuditLog.status == .enabled {
+            isAssetAuditLogEnabled = true
+        }
 
         return [
             UserClientRequestStrategy(
@@ -172,7 +180,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                shouldUploadExtraMetaData: isAssetAuditLogEnabled
             ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -203,7 +212,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 linkPreviewPreprocessor: nil,
                 previewImagePreprocessor: nil,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                shouldUploadExtraMetaData: isAssetAuditLogEnabled
             ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -368,7 +378,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
                 userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus,
-                localDomain: metadata.domain
+                localDomain: metadata.domain,
+                shouldUploadExtraMetaData: isAssetAuditLogEnabled
             ),
             localNotificationDispatcher,
             MLSRequestStrategy(

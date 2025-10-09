@@ -49,19 +49,22 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     fileprivate var observers: [Any] = []
 
     private let localDomain: String?
+    private let shouldUploadExtraMetaData: Bool
 
     @objc
     public convenience init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatusDirectory: ApplicationStatusDirectory,
         userProfileImageUpdateStatus: UserProfileImageUpdateStatus,
-        localDomain: String?
+        localDomain: String?,
+        shouldUploadExtraMetaData: Bool
     ) {
         self.init(
             managedObjectContext: managedObjectContext,
             applicationStatus: applicationStatusDirectory,
             imageUploadStatus: userProfileImageUpdateStatus,
-            localDomain: localDomain
+            localDomain: localDomain,
+            shouldUploadExtraMetaData: shouldUploadExtraMetaData
         )
     }
 
@@ -69,11 +72,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         imageUploadStatus: UserProfileImageUploadStatusProtocol,
-        localDomain: String?
+        localDomain: String?,
+        shouldUploadExtraMetaData: Bool
     ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
         self.localDomain = localDomain
+        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
@@ -243,10 +248,8 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
-            // TODO: [ASSET] fix
-            var shouldIncludeExtraMetaData = true
             var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
-            if shouldIncludeExtraMetaData {
+            if shouldUploadExtraMetaData {
                 guard
                     // Since there's no conversation, we use a null id.
                     let nullID = UUID(uuidString: "00000000-0000-0000-0000-000000000000"),

@@ -30,14 +30,17 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
 
     public var shouldUseBackgroundSession = true
     let localDomain: String?
+    private let shouldUploadExtraMetaData: Bool
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        localDomain: String?
+        localDomain: String?,
+        shouldUploadExtraMetaData: Bool
     ) {
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
         self.localDomain = localDomain
+        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
@@ -168,11 +171,8 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
         let retention = AssetRequestFactory.Retention(conversation: conversation)
 
-        // TODO: [ASSET] fix
-        let shouldIncludeExtraMetaData = true
-
         var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
-        if shouldIncludeExtraMetaData {
+        if shouldUploadExtraMetaData {
             guard
                 let asset = message.underlyingMessage?.assetData?.original,
                 let domain = conversation.domain ?? localDomain
