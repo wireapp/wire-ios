@@ -93,7 +93,8 @@ final class ConversationContentViewController: UIViewController {
         actionResponder: self,
         cellDelegate: self,
         userSession: userSession,
-        getUserByIDUseCase: GetUserByIdUseCase()
+        getUserByIDUseCase: GetUserByIdUseCase(),
+        wireCellsFactory: wireCellsFactory
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
@@ -122,6 +123,7 @@ final class ConversationContentViewController: UIViewController {
 
     private let logger: WireLogger
     private var accentColorChangeHandler: AccentColorChangeHandler?
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     init(
         conversation: ZMConversation,
@@ -130,7 +132,8 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -143,6 +146,7 @@ final class ConversationContentViewController: UIViewController {
             userID: userSession.selfUser.remoteIdentifier,
             storage: userDefaults
         )
+        self.wireCellsFactory = wireCellsFactory
 
         super.init(nibName: nil, bundle: nil)
 

@@ -18,7 +18,9 @@
 
 public import Foundation
 public import UIKit
+import SwiftUI
 public import WireData
+import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 import WireMessagingUI
@@ -32,6 +34,10 @@ public struct WireCellsFactory {
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
+    private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeCache = WireCellsNodeCache()
+
+    @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
@@ -64,6 +70,7 @@ public struct WireCellsFactory {
             fileCache: fileCache,
             store: localAssetStore
         )
+        self.lastOpenRequest = WireCellsLastOpenRequest()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -137,4 +144,28 @@ public extension WireCellsFactory {
             viewModel: viewModel
         )
     }
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
+        let viewController = UIHostingController(
+            rootView: WireCellsAttachmentsPreviewView(
+                viewModel: WireCellsAttachmentsPreviewViewModel(
+                    attachments: attachments,
+                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                        repository: nodesAPI,
+                        cache: nodeCache
+                    ),
+                    getAssetUseCase: WireCellsGetAssetUseCase(
+                        localAssetRepository: localAssetRepository,
+                        fileCache: fileCache
+                    ),
+                    localAssetRepository: localAssetRepository,
+                    lastOpenRequest: lastOpenRequest
+                )
+            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        )
+        viewController.view.backgroundColor = .clear
+        return viewController
+    }
+
 }
