@@ -29,7 +29,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        sut = AssetV3UploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = AssetV3UploadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            localDomain: "wire.com",
+            shouldUploadExtraMetaData: false
+        )
     }
 
     override func tearDown() {
@@ -86,7 +91,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         line: UInt = #line
     ) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
-        let message = try! targetConversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! targetConversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
 
         for asset in message.assets {
