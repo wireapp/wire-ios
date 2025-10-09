@@ -29,11 +29,6 @@ extension ZMOperationLoopTests {
     }
 
     @objc
-    func resetDeveloperFlagStorage() {
-        DeveloperFlag.storage = .standard
-    }
-
-    @objc
     func setBackendInfoAPIVersionNil() {
         BackendInfo.apiVersion = nil
     }

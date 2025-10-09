@@ -45,7 +45,6 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         delegate = nil
         authenticationStatus = nil
 
-        DeveloperFlag.multibackend.enable(true, storage: .standard)
         super.tearDown()
     }
 

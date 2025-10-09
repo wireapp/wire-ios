@@ -72,7 +72,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage = nil
         sut = nil
 
-        DeveloperFlag.multibackend.enable(true, storage: .standard)
         super.tearDown()
     }
 
