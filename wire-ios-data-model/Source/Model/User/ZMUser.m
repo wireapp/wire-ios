@@ -621,8 +621,15 @@ static NSString *const PrimaryKey = @"primaryKey";
     ZMSession *session = (ZMSession *)[moc executeFetchRequestOrAssert:[ZMSession sortedFetchRequest]].firstObject;
     if (session == nil) {
         session = [ZMSession insertNewObjectInManagedObjectContext:moc];
-        RequireString([moc obtainPermanentIDsForObjects:@[session] error:&error],
+        BOOL succeed = [moc obtainPermanentIDsForObjects:@[selfUser] error:&error];
+#if DEBUG
+    if (!succeed) {
+        NSLog(@"Failed to get ID for self user: %lu", (long) error.code);
+    }
+#else
+        RequireString(succeed,
                       "Failed to get ID for self user: %lu", (long) error.code);
+#endif
     }
     
     //if there is already user in session, don't create new
