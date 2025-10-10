@@ -552,7 +552,7 @@ public extension Text {
         }
         do {
             let data = try serializedData()
-            var updatedText = try Text(serializedData: data)
+            var updatedText = try Text(serializedBytes: data)
             updatedText.linkPreview = text.linkPreview
             return updatedText
         } catch {
