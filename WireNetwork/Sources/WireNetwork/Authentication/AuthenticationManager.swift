@@ -45,14 +45,14 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
 
     private var currentToken: CurrentToken?
     private let clientID: String?
-    private let cookieStorage: any CookieStorageProtocol
-    private let networkService: any NetworkServiceProtocol
+    private let cookieStorage: any CookieStorageProtocol & Sendable
+    private let networkService: any NetworkServiceProtocol & Sendable
     private let onAuthenticationFailure: () -> Void
 
     public init(
         clientID: String?,
-        cookieStorage: any CookieStorageProtocol,
-        networkService: any NetworkServiceProtocol,
+        cookieStorage: any CookieStorageProtocol & Sendable,
+        networkService: any NetworkServiceProtocol & Sendable,
         onAuthenticationFailure: @escaping () -> Void
     ) {
         self.clientID = clientID
@@ -138,7 +138,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     private func makeRenewTokenTask(
         lastKnownToken: AccessToken?
     ) -> Task<AccessToken, any Error> {
-        Task {
+        Task { @Sendable [cookieStorage, networkService, clientID] in
             let cookies = try await cookieStorage.fetchCookies()
 
             var requestBuilder = try URLRequestBuilder(path: "/access")
