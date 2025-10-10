@@ -76,7 +76,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // THEN
         let buttonState = message.buttonStates?.first(where: { $0.remoteIdentifier == id })
         XCTAssertNotNil(buttonState)
-        XCTAssertEqual(WireDataModel.ButtonState.State.selected, buttonState?.state)
+        XCTAssertEqual(ButtonMessageState.selected, buttonState?.state)
     }
 
     func testThatButtonTouchActionExpiresButtonStateAndDoesntInsertMessage_WhenSenderIsNotInConversation() {
@@ -94,7 +94,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // THEN
         let buttonState = message.buttonStates?.first(where: { $0.remoteIdentifier == id })
         XCTAssertEqual(buttonState?.isExpired, true)
-        XCTAssertEqual(buttonState?.state, WireDataModel.ButtonState.State.unselected)
+        XCTAssertEqual(buttonState?.state, ButtonMessageState.unselected)
         let lastmessage = conversation.hiddenMessages.first as? ZMClientMessage
         if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content { XCTFail() }
     }
