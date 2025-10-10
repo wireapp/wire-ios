@@ -462,6 +462,8 @@
 		BFE764431ED5AAE500C65C3E /* ZMConversation+TeamsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE764421ED5AAE400C65C3E /* ZMConversation+TeamsTests.swift */; };
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
+		C912D5742E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = C912D5732E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift */; };
+		C938F0692E93C077002F1FA4 /* Feature.Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = C938F0682E93C077002F1FA4 /* Feature.Cells.swift */; };
 		C95C70682E535781004E4C79 /* Feature.ConsumableNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C70672E535781004E4C79 /* Feature.ConsumableNotifications.swift */; };
 		C9B82AAF2E60640000183723 /* store2-129-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = C9B82AAE2E60640000183723 /* store2-129-0.wiredatabase */; };
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
@@ -1288,6 +1290,8 @@
 		BFE764421ED5AAE400C65C3E /* ZMConversation+TeamsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+TeamsTests.swift"; sourceTree = "<group>"; };
 		BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Deletion.swift"; sourceTree = "<group>"; };
 		BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Deletion.swift"; sourceTree = "<group>"; };
+		C912D5732E3131C10019959D /* ZMConversation+ChannelHistoryDepth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ChannelHistoryDepth.swift"; sourceTree = "<group>"; };
+		C938F0682E93C077002F1FA4 /* Feature.Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.Cells.swift; sourceTree = "<group>"; };
 		C95C70672E535781004E4C79 /* Feature.ConsumableNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConsumableNotifications.swift; sourceTree = "<group>"; };
 		C9B8074D2E605B3100183723 /* zmessaging2.129.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.129.0.xcdatamodel; sourceTree = "<group>"; };
 		C9B82AAE2E60640000183723 /* store2-129-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-129-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1980,6 +1984,7 @@
 		54CB3FE824A3993400BA86DD /* FeatureConfig */ = {
 			isa = PBXGroup;
 			children = (
+				C938F0672E93C070002F1FA4 /* Cells */,
 				C95C70662E535755004E4C79 /* ConsumableNotifications */,
 				5F1D54092E4B603600A6D57A /* ChatBubblesSimple */,
 				0686649D256FB087001C8747 /* AppLock */,
@@ -2280,6 +2285,14 @@
 				BF491CDA1F0525DC0055EE44 /* AccountTests.swift */,
 			);
 			name = Accounts;
+			sourceTree = "<group>";
+		};
+		C938F0672E93C070002F1FA4 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				C938F0682E93C077002F1FA4 /* Feature.Cells.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		C95C70662E535755004E4C79 /* ConsumableNotifications */ = {
@@ -3985,6 +3998,7 @@
 				E66029D22BDA43E10033C524 /* SearchUsersCache.swift in Sources */,
 				D5FA30CF2063F8EC00716618 /* Version.swift in Sources */,
 				06D5423C26399C33006B0C5A /* UserType+External.swift in Sources */,
+				C938F0692E93C077002F1FA4 /* Feature.Cells.swift in Sources */,
 				F9DBA5201E28EA8B00BE23C0 /* DependencyKeyStore.swift in Sources */,
 				EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */,
 				EE74E4DE2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift in Sources */,

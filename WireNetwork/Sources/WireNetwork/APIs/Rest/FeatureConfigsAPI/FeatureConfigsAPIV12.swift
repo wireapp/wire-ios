@@ -53,6 +53,7 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
     let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
+    let cells: FeatureWithoutConfig
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
     let chatBubbles: FeatureWithoutConfig
@@ -146,6 +147,9 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))
+
+        let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
+        featureConfigs.append(.cells(cellsFeatureConfig))
 
         return featureConfigs
     }
