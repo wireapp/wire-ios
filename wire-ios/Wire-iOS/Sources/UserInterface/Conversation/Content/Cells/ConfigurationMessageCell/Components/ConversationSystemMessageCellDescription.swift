@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
@@ -247,7 +248,7 @@ enum ConversationSystemMessageCellDescription {
 
         case .invalid:
             // Nothing to display.
-            break
+            WireLogger.conversation.warn("No cell to display for ZMSystemMessageType.invalid.")
 
         case .channelHistoryDepthModified:
             let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
