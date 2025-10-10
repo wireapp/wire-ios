@@ -22,6 +22,12 @@ package import Foundation
 /// A repository of `WireCellNode` objects.
 package protocol WireCellsNodesRepositoryProtocol: Sendable {
 
+    /// Fetches a node with the specified ID.
+    ///
+    /// - Parameter id: The UUID of the node to fetch.
+    /// - Returns: The `WireCellsNode` object with the specified ID, or `nil` if not found.
+    func getNode(id: UUID) async throws -> WireCellsNode?
+
     /// Fetches nodes based on the provided request.
     ///
     /// - Parameter request: The request containing the scope, filter, limit, and offset for fetching nodes.
