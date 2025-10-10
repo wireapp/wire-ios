@@ -410,6 +410,7 @@ public final class ClientSessionComponent {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }
