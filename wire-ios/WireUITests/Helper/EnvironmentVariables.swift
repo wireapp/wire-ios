@@ -26,13 +26,17 @@ struct EnvironmentVariables {
         case missingDeepLinkURL
     }
 
-    var backendURL: URL
-    var inbucketURL: URL
-    var inbucketUsername: String
-    var inbucketPassword: String
-    var antaDeepLinkURL: URL
-    var antaInbucketURL: URL
-    var backendURLAnta: URL
+    private let stagingBackendURL: URL
+    private let antaBackendURL: URL
+
+    private let stagingInbucketURL: URL
+    private let antaInbucketURL: URL
+
+    let antaDeepLinkURL: URL
+
+    let inbucketUsername: String
+    let inbucketPassword: String
+
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -69,12 +73,40 @@ struct EnvironmentVariables {
             throw Failure.missingBackendURL
         }
 
-        self.backendURL = URL(string: "https://\(backendURLString)")!
-        self.inbucketURL = URL(string: "https://\(inbucketHostname)")!
+        self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
+        self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
-        self.backendURLAnta = URL(string: "https://\(backendURLAntaString)")!
+        self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
     }
+
+    var inbucketURL: URL {
+        switch BackendContext.current {
+        case .anta:
+            antaInbucketURL
+        case .staging:
+            stagingInbucketURL
+        }
+    }
+
+    var backendURL: URL {
+        switch BackendContext.current {
+        case .anta:
+            antaBackendURL
+        case .staging:
+            stagingBackendURL
+        }
+    }
+
+    func deepLinkURL(for target: BackendTarget) -> URL {
+        switch target {
+        case .anta:
+            antaDeepLinkURL
+        case .staging:
+            fatalError("Not implemented yet")
+        }
+    }
+
 }

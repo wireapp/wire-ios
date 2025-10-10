@@ -22,28 +22,25 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     private func testLoginToBackend(
-        _ backend: BackendTarget,
-        expectedDomain: String
+        _ backend: BackendTarget
     ) async throws -> (AccountSettingsPage, UserInfo) {
 
         let userHelper = UserHelper()
         let user = try await userHelper.createPersonalUser()
+
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+
         let accountPage = try firstTimePage
             .acceptPopup()
             .openSettings()
             .openAccountSettings()
 
-        let accountName = try XCTUnwrap(accountPage.getAccountName())
-        let domainInfo = try XCTUnwrap(accountPage.getDomainInfo())
-
-        XCTAssertEqual(accountName, user.name, "Account name didn't match \(user.name)")
-        XCTAssertTrue(
-            accountPage.getUsername().contains(user.username),
-            "Username didn't contain \(user.username)"
+        try verifySwitchingAccount(
+            accountPage: accountPage,
+            expectedUser: user,
+            expectedDomain: backend.domainInfo
         )
-        XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't match \(user.email)")
-        XCTAssertEqual(domainInfo, expectedDomain, "Domain info \(domainInfo) mismatched on account page")
+
         return (accountPage, user)
     }
 
@@ -51,30 +48,21 @@ final class MultiBackendSupportTests: WireUITestCase {
     func test_Add_MultiBackend_Accounts() async throws {
 
         defer { BackendContext.current = .staging }
-        let domainInfoStaging = "staging.zinfra.io"
-        let domainInfoAnta = "anta.wire.link"
 
-        var (accountPageBackend1, userBackend1) = try await testLoginToBackend(
-            BackendTarget.staging,
-            expectedDomain: domainInfoStaging
-        )
+        var (accountPageBackend1, userBackend1) = try await testLoginToBackend(.staging)
 
-        _ = try accountPageBackend1.backToSettings()
+        _ = try accountPageBackend1
+            .backToSettings()
             .switchToConversationsTab()
             .openUserAccountPageForUser(with: userBackend1.name)
             .tapAddAccountOrTeamButton()
 
-        let deeplink = try EnvironmentVariables().antaDeepLinkURL
-        setCustomBackend(byDeeplink: deeplink, domainInfo: domainInfoAnta)
+        try switchBackend(target: .anta)
 
-        BackendContext.current = .anta
+        let (accountPageBackend2, userBackend2) = try await testLoginToBackend(.anta)
 
-        let (accountPageBackend2, userBackend2) = try await testLoginToBackend(
-            BackendTarget.anta,
-            expectedDomain: domainInfoAnta
-        )
-
-        accountPageBackend1 = try accountPageBackend2.backToSettings()
+        accountPageBackend1 = try accountPageBackend2
+            .backToSettings()
             .switchToConversationsTab()
             .openUserAccountPageForUser(with: userBackend2.name)
             .switchUserAccountForUser(withName: userBackend1.name)
@@ -82,14 +70,31 @@ final class MultiBackendSupportTests: WireUITestCase {
             .openAccountSettings()
 
         // Verify switching account
-        let accountName = try XCTUnwrap(accountPageBackend1.getAccountName())
-        let domanInfo = try XCTUnwrap(accountPageBackend1.getDomainInfo())
-        XCTAssertEqual(accountName, userBackend1.name, "Account name didn't match \(userBackend1.name)")
-        XCTAssertTrue(
-            accountPageBackend1.getUsername().contains(userBackend1.username),
-            "Username didn't contain \(userBackend1.username)"
+        try verifySwitchingAccount(
+            accountPage: accountPageBackend1,
+            expectedUser: userBackend1,
+            expectedDomain: BackendTarget.staging.domainInfo
         )
-        XCTAssertEqual(accountPageBackend1.getEmail(), userBackend1.email, "Email didn't contain \(userBackend1.email)")
-        XCTAssertEqual(domanInfo, domainInfoStaging, "Domain info \(domanInfo) mismatched on account page")
     }
+
+    private func verifySwitchingAccount(
+        accountPage: AccountSettingsPage,
+        expectedUser: UserInfo,
+        expectedDomain: String
+    ) throws {
+
+        let accountName = try XCTUnwrap(accountPage.getAccountName())
+        let domainInfo = try XCTUnwrap(accountPage.getDomainInfo())
+        let username = accountPage.getUsername()
+        let email = accountPage.getEmail()
+
+        XCTAssertEqual(accountName, expectedUser.name, "Account name didn't match \(expectedUser.name)")
+        XCTAssertTrue(
+            username.contains(expectedUser.username),
+            "Username didn't contain \(expectedUser.username)"
+        )
+        XCTAssertEqual(email, expectedUser.email, "Email didn't match \(expectedUser.email)")
+        XCTAssertEqual(domainInfo, expectedDomain, "Domain info \(domainInfo) mismatched on account page")
+    }
+
 }

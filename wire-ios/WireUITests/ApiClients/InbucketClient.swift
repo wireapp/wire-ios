@@ -25,8 +25,7 @@ enum InbucketClient {
         let envVariables = try EnvironmentVariables()
 
         var verificationCode = ""
-        let baseURL: URL = await (BackendContext.current == .anta) ? envVariables.antaInbucketURL : envVariables
-            .inbucketURL
+        let baseURL: URL = envVariables.inbucketURL
         let requestUrl = baseURL.appending(path: "api/v1/mailbox/\(email)/latest")
 
         var request = URLRequest(url: requestUrl)
