@@ -68,11 +68,8 @@ public actor NetworkStack {
                 proxyCredentials: proxyCredentials
             )
             self.state = .ready(services)
-        } catch .proxyCredentialsRequired {
-            self.state = .awaitingProxyCredentials
         } catch {
-            // Xcode warns that this case will never be executed, but if
-            // we take it away, it complains that not all errors are handled.
+            self.state = .awaitingProxyCredentials
         }
     }
 
