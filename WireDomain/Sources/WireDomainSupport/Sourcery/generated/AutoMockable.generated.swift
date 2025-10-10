@@ -2600,6 +2600,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(assetClientMessage, isNewMessage, genericMessage, conversation, senderID, senderDomain)
     }
 
+    // MARK: - addUnknownMessage
+
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations: [(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date)] = []
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod: ((UUID, UUID, String?, UUID, String, Data, Date) async -> Void)?
+
+    public func addUnknownMessage(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date) async {
+        addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations.append((messageID: messageID, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, payload: payload, date: date))
+
+        guard let mock = addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod else {
+            fatalError("no mock for `addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate`")
+        }
+
+        await mock(messageID, conversationID, conversationDomain, senderID, senderDomain, payload, date)
+    }
+
     // MARK: - canAddMessage
 
     public var canAddMessageConversationSenderID_Invocations: [(conversation: ZMConversation, senderID: UUID)] = []
