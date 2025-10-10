@@ -76,7 +76,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // THEN
         let buttonState = message.buttonStates?.first(where: { $0.remoteIdentifier == id })
         XCTAssertNotNil(buttonState)
-        XCTAssertEqual(ButtonMessageState.selected, buttonState?.state)
+        XCTAssertEqual(buttonState?.state, .confirmed)
     }
 
     func testThatButtonTouchActionExpiresButtonStateAndDoesntInsertMessage_WhenSenderIsNotInConversation() {
