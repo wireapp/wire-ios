@@ -2595,6 +2595,12 @@ internal enum L10n {
           /// New channel
           internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
         }
+        internal enum FileManagement {
+          /// Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more")
+          /// File management
+          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "File management")
+        }
         internal enum GroupName {
           /// Group name
           internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")
