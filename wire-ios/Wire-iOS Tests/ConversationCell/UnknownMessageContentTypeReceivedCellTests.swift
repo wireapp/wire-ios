@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
+import XCTest
 
-public extension ZMConversation {
+@testable import Wire
 
-    /// Appends a "message invalid" system message
-    @objc @discardableResult
-    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        appendSystemMessage(
-            type: .invalid,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: date
-        )
+final class UnknownMessageContentTypeReceivedCellTests: ConversationMessageSnapshotTestCase {
+
+    func testCell() {
+        let systemMessage = MockMessageFactory.systemMessage(with: .unknownMessageContentTypeReceived)
+        verify(message: systemMessage!)
     }
+
 }

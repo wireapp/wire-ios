@@ -383,7 +383,7 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    public lazy var incrementalSync = IncrementalSync(
+    public private(set) lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,

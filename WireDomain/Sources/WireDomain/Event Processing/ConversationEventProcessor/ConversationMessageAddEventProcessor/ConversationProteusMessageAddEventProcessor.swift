@@ -70,21 +70,30 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        // Get protobuf message
-        let genericMessage = await getProtobufMessage(
+        // Deserialize the GenericMessage instance and handle `content` being `nil` if needed.
+        let payload = await getProtobufPayload(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
-
-        guard let genericMessage, genericMessage.validateFields() else {
+        guard let payload, let genericMessage = GenericMessage(from: payload, validate: false) else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
             )
-
             return await addInvalidSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
+                date: date
+            )
+        }
+
+        if genericMessage.content == nil {
+            return await handleMessageContentNil(
+                messageID: genericMessage.messageID,
+                payload: payload,
+                senderID: senderID,
+                conversationID: conversationID,
+                unknownStrategy: genericMessage.unknownStrategy,
                 date: date
             )
         }
@@ -124,29 +133,32 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
     }
 
-    private func getProtobufMessage(
+    private func getProtobufPayload(
         from base64Message: String,
         externalData: String?
-    ) async -> GenericMessage? {
-        guard var genericMessage = GenericMessage.validatedMessage(from: base64Message) else { return nil }
+    ) async -> Data? {
+        guard let payload = Data(base64Encoded: base64Message) else { return nil }
 
-        if let externalData, case let .some(.external(external)) = genericMessage.content {
+        if
+            let externalData,
+            let genericMessage = GenericMessage(from: payload, validate: false),
+            case let .some(.external(external)) = genericMessage.content {
             /// Content message is external, we decrypt the external payload
             /// and turns it back into a generic non-external content message.
-            if let decryptedGenericMessage = decryptExternalMessage(externalData: externalData, external: external) {
-                genericMessage = decryptedGenericMessage
+            if let externalPayload = decryptExternalPayload(externalData: externalData, external: external) {
+                return externalPayload
             } else {
                 return nil
             }
         }
 
-        return genericMessage
+        return payload
     }
 
-    private func decryptExternalMessage(
+    private func decryptExternalPayload(
         externalData: String,
         external: External
-    ) -> GenericMessage? {
+    ) -> Data? {
         /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
         /// message.
         /// See `External` section from https://github.com/wireapp/generic-message-proto
@@ -162,12 +174,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             return nil
         }
 
-        let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
+        return externalData?.zmDecryptPrefixedPlainTextIV(
             key: external.otrKey
         )
-
-        guard let base64String = decryptedData?.base64String() else { return nil }
-        return GenericMessage.validatedMessage(from: base64String)
     }
 
     // MARK: - Calling

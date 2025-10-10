@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import XCTest
+public extension UnknownMessage {
 
-@testable import Wire
-
-final class UnknownMessageCellTests: ConversationMessageSnapshotTestCase {
-
-    func testCell() {
-        let systemMessage = MockMessageFactory.systemMessage(with: .invalid)
-        verify(message: systemMessage!)
+    override var needsReadConfirmation: Bool {
+        false // as long as the message can't be displayed properly, don't send a read receipt
     }
+
 }
