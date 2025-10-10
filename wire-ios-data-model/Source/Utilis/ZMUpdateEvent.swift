@@ -37,7 +37,7 @@ public extension ZMUpdateEvent {
              .conversationOtrMessageAdd,
              .conversationOtrAssetAdd,
              .conversationMLSMessageAdd:
-            let message = GenericMessage(from: self)
+            let message = GenericMessage(from: self, validate: true)
             guard let messageID = message?.messageID else {
                 return nil
             }

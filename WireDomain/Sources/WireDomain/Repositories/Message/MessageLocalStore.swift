@@ -274,6 +274,38 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
+    public func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data,
+        date: Date
+    ) async {
+        await context.perform { [self] in
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            ) else { return }
+
+            let unknownMessage = UnknownMessage(
+                nonce: messageID,
+                managedObjectContext: context
+            )
+            unknownMessage.nonce = messageID
+            unknownMessage.payload = payload
+            unknownMessage.serverTimestamp = date
+            finalizeMessageUpdate(
+                message: unknownMessage,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                conversation: conversation
+            )
+        }
+    }
+
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
         in conversation: ZMConversation
@@ -759,6 +791,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .readReceiptsOn,
                 sender: creator,
+                timestamp: date
+            )
+
+            return [systemMessage]
+
+        case let .unknownMessageContentTypeReceived(sender, date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .unknownMessageContentTypeReceived,
+                sender: sender,
                 timestamp: date
             )
 

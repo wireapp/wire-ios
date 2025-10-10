@@ -22,7 +22,7 @@ import GenericMessageProtocol
 extension ZMAssetClientMessage {
 
     open override func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = GenericMessage(from: updateEvent) else { return }
+        guard let message = GenericMessage(from: updateEvent, validate: true) else { return }
 
         do {
             try setUnderlyingMessage(message)

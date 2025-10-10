@@ -88,8 +88,13 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
-        // Parse into GenericMessage
-        guard let genericMessage = GenericMessage.validatedMessage(from: decryptedMessage.message) else {
+        // Parse into GenericMessage with `validate` being `false`. This way the instance can be created even if the
+        // `content` cannot be deserialized (it will be set to `nil`).
+        // `GenericMessage`s with `content` set to `nil` will be handled later based on the `unknownStrategy` property.
+        guard
+            let payload = Data(base64Encoded: decryptedMessage.message),
+            let genericMessage = GenericMessage(from: payload, validate: false)
+        else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
@@ -97,6 +102,19 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             return await addInvalidSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
+                date: date ?? .now
+            )
+        }
+
+        // If `content` is `nil` it probably means that the message content types have been extended and another client
+        // or user sent a message which this version doesn't understand yet.
+        if genericMessage.content == nil {
+            return await handleMessageContentNil(
+                messageID: genericMessage.messageID,
+                payload: payload,
+                senderID: senderID,
+                conversationID: conversationID,
+                unknownStrategy: genericMessage.unknownStrategy,
                 date: date ?? .now
             )
         }
