@@ -152,11 +152,25 @@ extension ZMOTRMessage {
                 updateEvent: updateEvent
             )
 
-        case .buttonActionConfirmation:
+        case .buttonAction:
+            // ignore if the sender is not the self user
+            guard senderID == selfUser.remoteIdentifier else { return nil }
+
+            let buttonAction = message.buttonAction
             ZMClientMessage.updateButtonStates(
-                withConfirmation: message.buttonActionConfirmation,
-                forConversation: conversation,
-                inContext: context
+                buttonID: buttonAction.buttonID,
+                referenceMessageID: buttonAction.referenceMessageID,
+                for: conversation,
+                in: context
+            )
+
+        case .buttonActionConfirmation:
+            let buttonActionConfirmation = message.buttonActionConfirmation
+            ZMClientMessage.updateButtonStates(
+                buttonID: buttonActionConfirmation.hasButtonID ? buttonActionConfirmation.buttonID : .none,
+                referenceMessageID: message.buttonActionConfirmation.referenceMessageID,
+                for: conversation,
+                in: context
             )
 
         case .edited:

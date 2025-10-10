@@ -18,8 +18,8 @@
 
 import Foundation
 
-class ButtonState: ZMManagedObject {
-    @NSManaged var stateValue: Int16
+final class ButtonState: ZMManagedObject {
+    @NSManaged private(set) var stateValue: Int16
     @NSManaged var message: ZMMessage?
     @NSManaged var remoteIdentifier: String?
     @NSManaged var isExpired: Bool
@@ -41,15 +41,9 @@ class ButtonState: ZMManagedObject {
         false
     }
 
-    enum State: Int16 {
-        case unselected
-        case selected
-        case confirmed
-    }
-
-    var state: State {
+    var state: ButtonMessageState {
         get {
-            State(rawValue: stateValue) ?? .unselected
+            ButtonMessageState(rawValue: stateValue) ?? .unselected
         }
         set {
             stateValue = newValue.rawValue
@@ -57,12 +51,20 @@ class ButtonState: ZMManagedObject {
     }
 }
 
+public enum ButtonMessageState: Int16 {
+    case unselected
+    case selected
+    case confirmed
+}
+
 extension Set where Element: ButtonState {
-    func confirmButtonState(withId id: String) {
+    func confirmButtonState(buttonID: String?) {
         for button in self {
-            button.state = button.remoteIdentifier == id ?
-                .confirmed :
+            button.state = if let buttonID, button.remoteIdentifier == buttonID {
+                .confirmed
+            } else {
                 .unselected
+            }
         }
     }
 
