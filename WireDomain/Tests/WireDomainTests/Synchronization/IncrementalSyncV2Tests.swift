@@ -40,6 +40,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var coreCrypto: MockSafeCoreCrypto!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var pushChannelState: MockPushChannelStateProtocol!
+    var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var journal: Journal!
 
     override func setUp() {
@@ -60,6 +61,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             storage: UserDefaults.temporary()
         )
         pushChannelState = MockPushChannelStateProtocol()
+        mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
@@ -73,6 +75,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent,
             createPushChannelState: {
                 self.pushChannelState
             },
@@ -85,11 +88,14 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pullServerTimeSync.pull_MockMethod = {}
         pushChannelState.markAsOpen_MockMethod = {}
         pushChannelState.markAsClosed_MockMethod = {}
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
     }
 
     override func tearDown() {
         sut = nil
         pushChannelAPI = nil
+        mlsGroupRepairAgent = nil
         pullServerTimeSync = nil
         decryptor = nil
         updateEventsStore = nil
@@ -120,6 +126,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -253,6 +260,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -352,6 +360,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -487,6 +496,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
@@ -610,6 +620,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         }
 
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
