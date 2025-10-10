@@ -102,7 +102,7 @@ extension ConversationContentViewController {
                 userSession: userSession
             ) { [weak self] deleted, deletionType in
                 guard let self else { return }
-                
+
                 if deleted {
                     presentedViewController?.dismiss(animated: true)
                     assert(deletionType != nil) // extra check, not null when deletion is successful

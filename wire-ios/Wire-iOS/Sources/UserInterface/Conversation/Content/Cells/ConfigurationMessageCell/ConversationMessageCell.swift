@@ -53,7 +53,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
 
     func conversationMessageShouldUpdate()
-    
+
 }
 
 /// A generic view that displays conversation contents.
