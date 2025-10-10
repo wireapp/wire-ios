@@ -2797,7 +2797,7 @@
 			repositoryURL = "https://github.com/wireapp/Down";
 			requirement = {
 				kind = exactVersion;
-				version = 2.3.5;
+				version = 2.3.6;
 			};
 		};
 		E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
