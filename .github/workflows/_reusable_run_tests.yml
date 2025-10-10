@@ -219,6 +219,7 @@ jobs:
 
       - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
+        continue-on-error: true
         if: ${{ inputs.all && always() }}
         with:
           status: ${{ job.status }}
@@ -231,6 +232,7 @@ jobs:
       
       - name: Notify on Wire for iOS CI
         uses: 8398a7/action-slack@v3
+        continue-on-error: true
         if: ${{ !inputs.all && failure() }}
         with:
           status: ${{ job.status }}
