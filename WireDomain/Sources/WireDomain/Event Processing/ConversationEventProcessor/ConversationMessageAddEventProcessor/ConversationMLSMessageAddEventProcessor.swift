@@ -88,8 +88,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
-        // Parse into GenericMessage with `validate` being `false`, so that `content` to be `nil`. That case will then
-        // be handled separately.
+        // Parse into GenericMessage with `validate` being `false`. This way the instance can be created even if the
+        // `content` cannot be deserialized (it will be set to `nil`).
+        // `GenericMessage`s with `content` set to `nil` will be handled later based on the `unknownStrategy` property.
         guard
             let payload = Data(base64Encoded: decryptedMessage.message),
             let genericMessage = GenericMessage(from: payload, validate: false)
