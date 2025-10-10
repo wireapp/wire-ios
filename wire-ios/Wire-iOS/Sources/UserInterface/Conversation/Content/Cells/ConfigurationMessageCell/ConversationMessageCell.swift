@@ -53,13 +53,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
 
     func conversationMessageShouldUpdate()
-
-    func conversationMessageWantsToDeleteFiles(
-        _ attachments: [MultipartMessageData.Attachment],
-        for multipartMessage: ZMConversationMessage,
-        deletionType: DeletionType
-    )
-
+    
 }
 
 /// A generic view that displays conversation contents.
@@ -94,8 +88,6 @@ protocol ConversationMessageCell: UIView {
     /// - parameter object: The view model for the cell.
     /// - parameter animated: True if the view should animate the changes
 
-    var onDeletion: ((DeletionType) -> Void)? { get set }
-
     func configure(with object: Configuration, animated: Bool)
 
     /// Called before the cell will be displayed on the screen.
@@ -123,11 +115,6 @@ extension ConversationMessageCell {
             actionController: actionController,
             conversationMessageCellDelegate: delegate
         )
-    }
-
-    var onDeletion: ((DeletionType) -> Void)? {
-        get { nil }
-        set { fatalError("Conform to this property in your concrete cell type") }
     }
 
     func willDisplay() {

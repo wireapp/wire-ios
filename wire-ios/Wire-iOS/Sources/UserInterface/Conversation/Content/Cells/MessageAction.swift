@@ -41,7 +41,7 @@ enum MessageAction: CaseIterable, Equatable {
         .present,
         .openQuote,
         .resetSession,
-        .delete(onDeletion: nil),
+        .delete,
         .react("❤️")
     ]
 
@@ -51,7 +51,7 @@ enum MessageAction: CaseIterable, Equatable {
         reply,
         openDetails,
         edit,
-        delete(onDeletion: ((DeletionType) -> Void)? = nil),
+        delete,
         save,
         cancel,
         download,
@@ -257,36 +257,6 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageAction.CollapseButton.description
         default:
             return nil
-        }
-    }
-}
-
-extension MessageAction {
-    static func == (lhs: MessageAction, rhs: MessageAction) -> Bool {
-        switch (lhs, rhs) {
-        case (.visitLink, .visitLink),
-             (.digitallySign, .digitallySign),
-             (.copy, .copy),
-             (.collapse, .collapse),
-             (.reply, .reply),
-             (.openDetails, .openDetails),
-             (.edit, .edit),
-             (.save, .save),
-             (.cancel, .cancel),
-             (.download, .download),
-             (.resend, .resend),
-             (.showInConversation, .showInConversation),
-             (.sketchDraw, .sketchDraw),
-             (.sketchEmoji, .sketchEmoji),
-             (.present, .present),
-             (.openQuote, .openQuote),
-             (.resetSession, .resetSession),
-             (.react("❤️"), .react("❤️")),
-             (.delete, .delete):
-            true
-
-        default:
-            false
         }
     }
 }

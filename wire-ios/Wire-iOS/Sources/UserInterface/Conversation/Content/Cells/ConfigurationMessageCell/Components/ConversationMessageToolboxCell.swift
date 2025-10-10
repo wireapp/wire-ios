@@ -102,7 +102,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     }
 
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {
-        perform(action: .delete(), sender: sender)
+        perform(action: .delete, sender: sender)
     }
 
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView) {

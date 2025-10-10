@@ -76,14 +76,6 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
     ) {
         // no-op
     }
-
-    func conversationMessageWantsToDeleteFiles(
-        _ attachments: [WireDataModel.MultipartMessageData.Attachment],
-        for multipartMessage: any WireDataModel.ZMConversationMessage,
-        deletionType: Wire.DeletionType
-    ) {
-        // no-op
-    }
 }
 
 // MARK: - MockArticleViewDelegate

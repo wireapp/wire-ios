@@ -37,7 +37,6 @@ final class ConversationReplyContentView: UIView {
 
         var quotedMessage: ZMConversationMessage?
         let accentColor: AccentColor
-        let onDeletion: ((DeletionType) -> Void)?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -305,8 +304,6 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    var onDeletion: ((DeletionType) -> Void)?
-
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
         self.container = ReplyRoundCornersView(containedView: contentView)
@@ -335,7 +332,6 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        onDeletion = object.onDeletion
         contentView.configure(with: object)
     }
 
@@ -373,12 +369,11 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?, accentColor: AccentColor, onDeletion: ((DeletionType) -> Void)? = nil) {
+    init(quotedMessage: ZMConversationMessage?, accentColor: AccentColor) {
         self.configuration = View
             .Configuration(
                 quotedMessage: quotedMessage,
-                accentColor: accentColor,
-                onDeletion: onDeletion
+                accentColor: accentColor
             )
     }
 }

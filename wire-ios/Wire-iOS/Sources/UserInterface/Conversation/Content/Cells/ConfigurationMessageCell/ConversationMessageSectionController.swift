@@ -35,13 +35,6 @@ protocol ConversationMessageSectionControllerDelegate: AnyObject {
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     )
-
-    func messageSectionController(
-        _ controller: ConversationMessageSectionController,
-        didDeleteMultipartMessage message: ZMConversationMessage,
-        withAttachments attachments: [MultipartMessageData.Attachment],
-        deletionType: DeletionType,
-    )
 }
 
 extension ZMConversationMessage {
@@ -264,13 +257,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
-            multipartMessage: message.multipartMessageData!,
-            onDeletion: { [weak self] in
-                self?.onDeletion(
-                    deletionType: $0,
-                    attachments: attachments
-                )
-            }
+            multipartMessage: message.multipartMessageData!
         )
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
     }
@@ -336,8 +323,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 for: message,
                 searchQueries: context.searchQueries,
                 selfUser: selfUser,
-                userSession: userSession,
-                onDeletion: { [weak self] in self?.onDeletion(deletionType: $0, attachments: attachments) }
+                userSession: userSession
             )
     }
 
@@ -408,8 +394,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     message: message,
                     searchQueries: context.searchQueries,
                     selfUser: selfUser,
-                    userSession: userSession,
-                    onDeletion: { [weak self] in self?.onDeletion(deletionType: $0, attachments: attachments) }
+                    userSession: userSession
                 )
 
             case let .button(data):
@@ -708,23 +693,5 @@ extension ConversationMessageSectionController {
         let maxHeight = singleLineHeight * CGFloat(numberOfLines)
 
         return boundingBox.height > maxHeight
-    }
-}
-
-extension ConversationMessageSectionController {
-    private func onDeletion(
-        deletionType: DeletionType,
-        attachments: [MultipartMessageData.Attachment]
-    ) {
-        // on message deletion, ensure attached files (if any) are deleted as well
-        // see `ConversationViewController+ConversationContentViewControllerDelegate`
-        guard !attachments.isEmpty else { return }
-
-        sectionDelegate?.messageSectionController(
-            self,
-            didDeleteMultipartMessage: message,
-            withAttachments: attachments,
-            deletionType: deletionType
-        )
     }
 }

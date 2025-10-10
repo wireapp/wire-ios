@@ -72,7 +72,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
 
         // create deletionDialogPresenter
         let message = MockMessageFactory.textMessage(withText: "test")
-        sut.messageAction(actionId: .delete(), for: message, view: view)
+        sut.messageAction(actionId: .delete, for: message, view: view)
 
         try verify(matching: sut.deletionDialogPresenter!.deleteAlert(
             message: mockMessage,

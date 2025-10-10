@@ -27,7 +27,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     struct Configuration: Equatable {
         var attachment: LinkAttachment
         var thumbnailResource: WireImageResource?
-        var onDeletion: ((DeletionType) -> Void)?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.attachment == rhs.attachment &&
@@ -51,7 +50,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     var isSelected: Bool = false
     var currentAttachment: LinkAttachment?
     var attachmentViewHeightRatioConstraint: NSLayoutConstraint?
-    var onDeletion: ((DeletionType) -> Void)?
 
     // MARK: - Initialization
 
@@ -120,7 +118,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     // MARK: - Configuration
 
     func configure(with object: Configuration, animated: Bool) {
-        onDeletion = object.onDeletion
         currentAttachment = object.attachment
         attachmentView.titleLabel.text = object.attachment.title
         attachmentView.previewImageView.setImageResource(object.thumbnailResource, hideLoadingView: true)
@@ -191,13 +188,11 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     init(
         attachment: LinkAttachment,
-        thumbnailResource: WireImageResource?,
-        onDeletion: ((DeletionType) -> Void)? = nil
+        thumbnailResource: WireImageResource?
     ) {
         self.configuration = View.Configuration(
             attachment: attachment,
-            thumbnailResource: thumbnailResource,
-            onDeletion: onDeletion
+            thumbnailResource: thumbnailResource
         )
         self.actionController = nil
     }
