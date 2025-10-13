@@ -68,7 +68,10 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
+    private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
+        isWireCellsEnabled: userSession.isWireCellsEnabled
+    )
+    
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
@@ -86,10 +89,10 @@ final class ZClientViewController: UIViewController {
     // TODO: [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
-    let mainTabBarController = {
+    lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
             showMeetings: DeveloperFlag.wireMeetings.isOn,
-            showFiles: DeveloperFlag.wireCells.isOn
+            showFiles: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController

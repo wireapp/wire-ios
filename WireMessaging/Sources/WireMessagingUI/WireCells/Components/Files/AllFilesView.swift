@@ -20,14 +20,15 @@ public import SwiftUI
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
+// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
 public struct AllFilesView: View {
     @State private var searchText = ""
 
     public init() {}
 
     public var body: some View {
-        Text("TODO: [WPB-21030] to be implemented")
-            .navigationTitle(Strings.Files.navigationTitle)
+        Text("")
+            .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, placement: .navigationBarDrawer)
     }
