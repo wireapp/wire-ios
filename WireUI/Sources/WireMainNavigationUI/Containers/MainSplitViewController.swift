@@ -173,7 +173,8 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
         let viewControllers = [filesUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
-        splitLayoutContainer.primaryColumnWidth = filesUI == nil ? 320 : UIScreen.main.bounds.width // when files shown, take up full width
+        splitLayoutContainer.primaryColumnWidth = filesUI == nil ? 320 : UIScreen.main.bounds
+            .width // when files shown, take up full width
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 

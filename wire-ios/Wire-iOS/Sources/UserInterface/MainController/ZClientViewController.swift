@@ -71,7 +71,7 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
         isWireCellsEnabled: userSession.isWireCellsEnabled
     )
-    
+
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
