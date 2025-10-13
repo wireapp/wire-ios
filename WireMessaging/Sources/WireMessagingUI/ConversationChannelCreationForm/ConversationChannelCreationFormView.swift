@@ -48,6 +48,11 @@ public struct ConversationChannelCreationForm: View {
             servicesSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
             //            readReceiptsSection
+
+            if viewModel.isWireCellsEnabled {
+                fileManagementSection
+            }
+
         }
         .onChange(of: channelName) { newValue in
             viewModel.onChannelNameUpdate(newValue)
@@ -189,6 +194,15 @@ public struct ConversationChannelCreationForm: View {
             Text(Strings.CreationForm.ReadReceipts.description)
         })
     }
+
+    var fileManagementSection: some View {
+        Section(content: {
+            Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
+        }, footer: {
+            Text(Strings.CreationForm.WireCells.description) +
+                Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-16736] URL to be defined
+        })
+    }
 }
 
 #Preview {
@@ -196,6 +210,7 @@ public struct ConversationChannelCreationForm: View {
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: false,
+            isWireCellsEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
     )

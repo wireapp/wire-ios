@@ -26,7 +26,7 @@ final class TeamManageTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        var userAccountPage = try  firstTimePage.acceptPopup()
+        var userAccountPage = try  firstTimePage.acceptPopup(with: self)
             .openUserAccountPageForUser(with: user.name)
 
         var conversationPage = try userAccountPage
@@ -71,7 +71,7 @@ final class TeamManageTests: WireUITestCase {
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
             .openUserAccountPageForUser(with: memberUser.username)
 
@@ -110,7 +110,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
 
         let activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
@@ -161,7 +161,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
             .openConversation()
             .openConversationDetails()
@@ -206,7 +206,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
             .openSettings()
             .openOptionsMenu()

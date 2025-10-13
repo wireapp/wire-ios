@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
@@ -241,9 +242,13 @@ enum ConversationSystemMessageCellDescription {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
-        case .invalid:
+        case .unknownMessageContentTypeReceived:
             let unknownMessage = UnknownStoredMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
+
+        case .invalid:
+            // Nothing to display.
+            WireLogger.conversation.warn("No cell to display for ZMSystemMessageType.invalid.")
 
         case .channelHistoryDepthModified:
             let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(

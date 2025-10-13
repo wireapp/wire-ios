@@ -48,6 +48,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
+    private lazy var backgroundContext = userSession.contextProvider.newBackgroundContext()
     private var fetchController: NSFetchedResultsController<ZMMessage>?
     private var lastFetchedObjectCount: Int = 0
 
@@ -107,6 +108,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     private let isChatBubbleSimpleEnabled: Bool
 
+    private let wireCellsFactory: any WireCellsFactoryProtocol
+
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
@@ -124,8 +127,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         // Dispatching to background thread to offload sections calculation
 
-        let backgroundContext = userSession.contextProvider.newBackgroundContext()
-        backgroundContext.perform { [weak self] in
+        backgroundContext = userSession.contextProvider.newBackgroundContext()
+        backgroundContext.perform { [weak self, backgroundContext] in
             guard let self else { return }
 
             var messages: [ZMMessage] = messageIds.compactMap { objectID in
@@ -187,9 +190,16 @@ final class ConversationTableViewDataSource: NSObject {
 
                     // Re-set messages from Main thread to section controller to not have crash with later interactions
                     // with data
+
+                    // Fix for tapping composite message buttons [WPB-19793]:
+                    // This workaround forces replacing `message` instance in `CompositeMessageItem` with an instance
+                    // originating from the main context.
+                    var recreateCellDescriptions = false
+
                     if let managedID = (sectionController.message as? ZMMessage)?.objectID,
                        let mainThreadMessage = try? mainThreadContext.existingObject(with: managedID) as? ZMMessage {
                         sectionController.updateMessage(mainThreadMessage)
+                        recreateCellDescriptions = mainThreadMessage.isComposite
                     } else {
                         WireLogger.conversation
                             .debug(
@@ -199,7 +209,7 @@ final class ConversationTableViewDataSource: NSObject {
 
                     sectionController.selfUser = selfUserOnMainThread
 
-                    if sectionController.context != context || forceRecalculate {
+                    if sectionController.context != context || forceRecalculate || recreateCellDescriptions {
                         sectionController.recreateCellDescriptions(in: context)
                     }
 
@@ -272,6 +282,7 @@ final class ConversationTableViewDataSource: NSObject {
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
         getUserByIDUseCase: GetUserByIDUseCaseProtocol,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -280,6 +291,8 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
+        self.wireCellsFactory = wireCellsFactory
+
         super.init()
 
         tableView.dataSource = self
@@ -354,7 +367,8 @@ final class ConversationTableViewDataSource: NSObject {
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled
+            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled,
+            wireCellsFactory: wireCellsFactory
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self

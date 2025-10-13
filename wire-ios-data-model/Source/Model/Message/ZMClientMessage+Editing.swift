@@ -47,14 +47,13 @@ extension ZMClientMessage {
     ///
     /// - parameter messageEdit: Message edit update
     /// - parameter updateEvent: Update event which delivered the message edit update
-    /// - Returns: true if edit was succesfully applied
+    /// - Returns: true if edit was successfully applied
 
     func processMessageEdit(_ messageEdit: MessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
         guard
             let nonce = updateEvent.messageNonce,
             let senderUUID = updateEvent.senderUUID,
             let originalText = underlyingMessage?.textData,
-            case .text? = messageEdit.content,
             senderUUID == sender?.remoteIdentifier
         else {
             return false

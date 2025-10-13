@@ -18,17 +18,13 @@
 
 import Foundation
 
-public extension ZMConversation {
+/// Stores the node ID of the last document the user requested to open. This is used to only open the most recently
+/// requested document when multiple requests are made in a short period of time. (due to time to download)
+@MainActor
+package final class WireCellsLastOpenRequest {
 
-    /// Appends a "message invalid" system message
-    @objc @discardableResult
-    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        appendSystemMessage(
-            type: .invalid,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: date
-        )
-    }
+    var nodeID: UUID?
+
+    package init() {}
+
 }

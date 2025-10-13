@@ -70,7 +70,9 @@ extension MessageBackupModel.Content {
         switch messageEdit.content {
         case let .text(text):
             self.init(text)
-        case .composite, .none:
+        case .composite:
+            fallthrough // composite messages are not supported in backups yet
+        case .none:
             return nil
         }
     }
