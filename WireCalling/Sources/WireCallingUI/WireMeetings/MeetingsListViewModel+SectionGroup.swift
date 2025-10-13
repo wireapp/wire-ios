@@ -16,16 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// MARK: - Meetings List
+import Foundation
 
-"wireMeetings.list.title" = "Meetings";
-"wireMeetings.list.tabs.past" = "Past";
-"wireMeetings.list.tabs.next" = "Next";
-"wireMeetings.list.actions.meetNow" = "Meet Now";
-"wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
-"wireMeetings.list.emptyState.title" = "No meetings yet";
-"wireMeetings.list.emptyState.subtitle" = "Start a meeting with team members, guests, or external parties.";
-"wireMeetings.list.header.today" = "Today";
-"wireMeetings.list.header.tomorrow" = "Tomorrow";
-"wireMeetings.list.header.yesterday" = "Yesterday";
-"wireMeetings.list.header.ongoing" = "Ongoing";
+//extension MeetingsListViewModel {
+//
+//    struct MeetingTimeGroup: Identifiable, Equatable {
+//        let id = UUID()
+//        let timeLabel: String
+//        let items: [Meeting]
+//    }
+//
+//    struct MeetingDaySection: Identifiable, Equatable {
+//        let id = UUID()
+//        let title: String
+//        let timeGroups: [MeetingTimeGroup]
+//    }
+//
+//}
+
+struct Meeting: Identifiable, Hashable {
+    
+    let id: UUID
+    let title: String
+    let start: Date
+    let end: Date
+
+}

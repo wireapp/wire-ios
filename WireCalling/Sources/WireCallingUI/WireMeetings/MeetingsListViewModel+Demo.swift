@@ -1,0 +1,105 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+
+public extension MeetingsListViewModel {
+    static func demo() -> MeetingsListViewModel {
+        let cal = Calendar.current
+        let now = Date()
+        func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
+            cal.date(bySettingHour: hour, minute: min, second: 0,
+                     of: cal.date(byAdding: .day, value: offset, to: cal.startOfDay(for: now))!)!
+        }
+        let meetings: [Meeting] = [
+            // YESTERDAY
+            Meeting(
+                id: UUID(),
+                title: "iOS Playtest - develop build",
+                start: day(-1, hour: 8, min: 0),
+                end:   day(-1, hour: 8, min: 30)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "Sprint Review (all teams)",
+                start: day(-1, hour: 16, min: 0),
+                end:   day(-1, hour: 16, min: 30)
+            ),
+
+            // TODAY — several at 7:00 AM for time grouping
+            Meeting(
+                id: UUID(),
+                title: "Candidate interview",
+                start: day(0, hour: 16, min: 0),
+                end: day(0, hour: 16, min: 45)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "Standup",
+                start: day(0, hour: 7, min: 0),
+                end: day(0, hour: 7, min: 30)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "iOS team update",
+                start: day(0, hour: 7, min: 0),
+                end: day(0, hour: 7, min: 20)
+            ),
+
+            Meeting(
+                id: UUID(),
+                title: "Design review",
+                start: day(0, hour: 11),
+                end: day(0, hour: 12)
+            ),
+
+            // TOMORROW — again two meetings at 7:00 AM to group
+            Meeting(
+                id: UUID(),
+                title: "Sprint planning",
+                start: day(1, hour: 7),
+                end: day(1, hour: 8)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "Daily sync",
+                start: day(1, hour: 7),
+                end: day(1, hour: 7, min: 20)
+            ),
+            Meeting(
+                id: UUID(),
+                title: "Architecture Forum",
+                start: day(1, hour: 13),
+                end: day(1, hour: 14)
+            ),
+
+            // AFTER TOMORROW — ensures "Show All" appears in the Next tab
+            Meeting(
+                id: UUID(),
+                title: "All hands",
+                start: day(3, hour: 11),
+                end: day(3, hour: 12)
+            )
+        ]
+
+        let account = AccountUIViewModel(avatarSource: .text("JJ"), availability: .available, action: {})
+        let viewModel = MeetingsListViewModel(meetings: meetings, account: account)
+        //viewModel.allMeetings = meetings
+        return viewModel
+    }
+}
