@@ -105,13 +105,12 @@ extension ConversationContentViewController {
 
                 if deleted {
                     presentedViewController?.dismiss(animated: true)
-                    assert(deletionType != nil) // extra check, not null when deletion is successful
-                    if let attachments {
+                    if let attachments, let deletionType {
                         delegate?.conversationContentViewController(
                             self,
                             didDeleteMultipartMessage: message,
                             withAttachments: attachments,
-                            deletionType: deletionType!
+                            deletionType: deletionType
                         )
                     }
                 }
