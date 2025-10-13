@@ -135,8 +135,5 @@ final class PersonalUsersTests: WireUITestCase {
         let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
 
         XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
-
-        try accountSettingsPage.logout()
-            .enterPassword(userB.password)
     }
 }
