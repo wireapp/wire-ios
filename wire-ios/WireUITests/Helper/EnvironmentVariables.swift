@@ -23,12 +23,19 @@ struct EnvironmentVariables {
         case missingInbucketURL
         case missingInbucketUsername
         case missingInbucketPassword
+        case missingDeepLinkURL
     }
 
-    var backendURL: URL
-    var inbucketURL: URL
-    var inbucketUsername: String
-    var inbucketPassword: String
+    private let stagingBackendURL: URL
+    private let antaBackendURL: URL
+
+    private let stagingInbucketURL: URL
+    private let antaInbucketURL: URL
+
+    let antaDeepLinkURL: URL
+
+    let inbucketUsername: String
+    let inbucketPassword: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -50,9 +57,55 @@ struct EnvironmentVariables {
             throw Failure.missingInbucketUsername
         }
 
-        self.backendURL = URL(string: "https://\(backendURLString)")!
-        self.inbucketURL = URL(string: "https://\(inbucketHostname)")!
+        guard let antaDeeplinkURL = ProcessInfo.processInfo.environment["ANTA_DEEPLINK_URL"],
+              !antaDeeplinkURL.isEmpty else {
+            throw Failure.missingDeepLinkURL
+        }
+
+        guard let antaInbucketURL = ProcessInfo.processInfo.environment["ANTA_INBUCKET_URL"],
+              !antaInbucketURL.isEmpty else {
+            throw Failure.missingInbucketURL
+        }
+
+        guard let backendURLAntaString = ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"],
+              !backendURLAntaString.isEmpty else {
+            throw Failure.missingBackendURL
+        }
+
+        self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
+        self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
+        self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
+        self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
+        self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
     }
+
+    var inbucketURL: URL {
+        switch BackendContext.current {
+        case .anta:
+            antaInbucketURL
+        case .staging:
+            stagingInbucketURL
+        }
+    }
+
+    var backendURL: URL {
+        switch BackendContext.current {
+        case .anta:
+            antaBackendURL
+        case .staging:
+            stagingBackendURL
+        }
+    }
+
+    func deepLinkURL(for target: BackendTarget) -> URL {
+        switch target {
+        case .anta:
+            antaDeepLinkURL
+        case .staging:
+            fatalError("Not implemented yet")
+        }
+    }
+
 }
