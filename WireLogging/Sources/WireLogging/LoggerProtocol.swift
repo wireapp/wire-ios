@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 public protocol LoggerProtocol {
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...)
