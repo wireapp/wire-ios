@@ -175,6 +175,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
         addAccentColorChangeObserver(userSession: object.userSession)
         setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
     }
