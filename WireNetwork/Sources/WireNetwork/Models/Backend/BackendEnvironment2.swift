@@ -181,3 +181,23 @@ public struct BackendEnvironment2: Sendable, Equatable, Hashable {
     }
 
 }
+
+public extension BackendEnvironment2 {
+
+    var isCloudEnvironment: Bool {
+        config.endpoints.restAPIURL.host() == "prod-nginz-https.wire.com"
+    }
+
+    static func isCloudDomain(_ domain: String) -> Bool {
+        domain == "wire.com"
+    }
+
+    var isStagingEnvironment: Bool {
+        config.endpoints.restAPIURL.host() == "staging.zinfra.io"
+    }
+
+    static func isStagingDomain(_ domain: String) -> Bool {
+        domain == "wire.com"
+    }
+
+}

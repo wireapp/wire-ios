@@ -136,7 +136,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let assetAuditLog = featureRepository.fetchAssetAuditLog()
 
         var isAssetAuditLogEnabled = false
-        if let localDomain = metadata.domain, localDomain != "wire.com", assetAuditLog.status == .enabled {
+        if let localDomain = metadata.domain, !BackendEnvironment2.isCloudDomain(localDomain), assetAuditLog.status == .enabled {
             isAssetAuditLogEnabled = true
         }
 

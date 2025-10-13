@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLinkPreview
+import WireNetwork
 import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 
@@ -64,7 +65,7 @@ final class StrategyFactory {
         self.apiVersion = apiVersion
         self.localDomain = localDomain
 
-        if let localDomain, localDomain != "wire.com", featureRepository.fetchAssetAuditLog().status == .enabled {
+        if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain), featureRepository.fetchAssetAuditLog().status == .enabled {
             self.isAssetAuditLogEnabled = true
         } else {
             self.isAssetAuditLogEnabled = false
