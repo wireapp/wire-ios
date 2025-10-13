@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ github.event.pull_request.draft != true && github.event_name != 'merge_group' }}
     container:
-      image: ghcr.io/realm/swiftlint:0.59.1
+      image: ghcr.io/realm/swiftlint:0.61.0
 
     steps:
 
