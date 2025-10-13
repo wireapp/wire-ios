@@ -1067,6 +1067,8 @@ final class SearchTaskTests: DatabaseTest {
         // when
         task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
+        // wait again to fix flaky test so second group is entered
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // then
         XCTAssertEqual(

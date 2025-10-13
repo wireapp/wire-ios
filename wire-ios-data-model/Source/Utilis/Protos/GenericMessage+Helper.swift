@@ -23,24 +23,29 @@ import GenericMessageProtocol
 
 public extension GenericMessage {
 
-    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. If the
-    /// result of the subsequent call to `validateFields()` returns `false`, the message instance is discarded.
+    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. If
+    /// `true` is passed for the `validate` argument, the initializer fails if `validateFields()` returns false.
 
-    static func validatedMessage(from base64String: String) -> GenericMessage? {
-        let message = nonValidatedMessage(from: base64String)
-        guard let message, message.validateFields() else { return nil }
-        return message
+    init?(
+        from base64String: String,
+        validate: Bool
+    ) {
+        guard let data = Data(base64Encoded: base64String) else { return nil }
+        self.init(from: data, validate: validate)
     }
 
-    /// Deserializes a `GenericMessage` instance from the data contained in the provided base64 encoded string. The
-    /// instance is returned as is and not being validated further.
+    /// Deserializes a `GenericMessage` instance from the provided data. If `true` is passed for the `validate`
+    /// argument, the initializer fails if `validateFields()` returns false.
 
-    static func nonValidatedMessage(from base64String: String) -> GenericMessage? {
-        Data(base64Encoded: base64String).map { data in
-            GenericMessage.with { message in
-                try? message.merge(serializedData: data)
-            }
+    init?(
+        from data: Data,
+        validate: Bool
+    ) {
+        let genericMessage = GenericMessage.with { message in
+            try? message.merge(serializedData: data)
         }
+        guard !validate || genericMessage.validateFields() else { return nil }
+        self = genericMessage
     }
 
     init(
@@ -156,13 +161,17 @@ public extension GenericMessage {
     }
 
     var compositeData: Composite? {
-        guard let content else { return nil }
         switch content {
         case let .composite(data):
             return data
+        case let .edited(messageEdit):
+            if case let .composite(composite)? = messageEdit.content {
+                return composite
+            }
         default:
-            return nil
+            break
         }
+        return nil
     }
 
     var imageAssetData: ImageAsset? {
@@ -542,12 +551,10 @@ public extension Text {
     }
 
     func updateLinkPreview(from text: Text) -> Text {
-        guard !text.linkPreview.isEmpty else {
-            return self
-        }
+        guard !text.linkPreview.isEmpty else { return self }
         do {
             let data = try serializedData()
-            var updatedText = try Text(serializedData: data)
+            var updatedText = try Text(serializedBytes: data)
             updatedText.linkPreview = text.linkPreview
             return updatedText
         } catch {

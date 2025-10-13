@@ -72,7 +72,7 @@ public struct VoIPPushPayload: Codable {
 
     public init?(from event: ZMUpdateEvent, accountID: UUID, serverTimeDelta: TimeInterval) {
         guard
-            let message = GenericMessage(from: event),
+            let message = GenericMessage(from: event, validate: true),
             let data = message.calling.content.data(using: .utf8, allowLossyConversion: false),
             let conversationID = event.conversationUUID,
             let senderID = event.senderUUID,

@@ -99,7 +99,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupAccessibility()
     }
 
     @available(*, unavailable)
@@ -177,11 +176,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         } else {
             messageTextView.accessibilityIdentifier = "Message"
         }
-        accessibilityLabel = messageTextView.attributedText.string
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
         addAccentColorChangeObserver(userSession: object.userSession)
+        setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
     }
 
     private func addAccentColorChangeObserver(userSession: UserSession?) {
@@ -234,11 +233,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private func setupAccessibility() {
+    private func setupAccessibility(accessibilityLabel: String) {
         typealias Conversation = L10n.Accessibility.Conversation
 
         isAccessibilityElement = false
         container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 

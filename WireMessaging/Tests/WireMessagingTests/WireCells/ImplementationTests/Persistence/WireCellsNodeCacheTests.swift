@@ -17,18 +17,29 @@
 //
 
 import Foundation
+import Testing
 
-public extension ZMConversation {
+@testable import WireMessagingData
+@testable import WireMessagingDomain
 
-    /// Appends a "message invalid" system message
-    @objc @discardableResult
-    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        appendSystemMessage(
-            type: .invalid,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: date
-        )
+struct WireCellsNodeCacheTests {
+
+    private let sut = WireCellsNodeCache()
+
+    @Test
+    func settingAndGetting() async {
+        // Given
+        let nodeIDA = UUID()
+        let nodeA = WireCellsNode.fixture(uuid: nodeIDA)
+        let nodeIDB = UUID()
+
+        // When
+        await sut.setItem(WireCellsNodeCacheItem(node: nodeA), for: nodeIDA)
+        await sut.setItem(WireCellsNodeCacheItem(node: nil), for: nodeIDB)
+
+        // Then
+        #expect(await sut.item(for: nodeIDA)?.node == nodeA)
+        #expect(await sut.item(for: nodeIDB)?.node == nil)
     }
+
 }

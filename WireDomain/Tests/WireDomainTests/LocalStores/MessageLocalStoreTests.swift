@@ -80,7 +80,7 @@ final class MessageLocalStoreTests: XCTestCase {
         }
 
         // Given a regular message to add to a conversation
-        let genericMessage = try XCTUnwrap(GenericMessage.validatedMessage(from: Scaffolding.base64EncodedString))
+        let genericMessage = try XCTUnwrap(GenericMessage(from: Scaffolding.base64EncodedString, validate: true))
 
         // When
 
@@ -221,6 +221,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.conversationNameChanged])
         case let .readReceiptsStatus(isEnabled, _, _):
             (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
+        case .unknownMessageContentTypeReceived:
+            (messagesCount: 1, [.unknownMessageContentTypeReceived])
         case .invalid:
             (messagesCount: 1, [.invalid])
         case .decryptionFailed:

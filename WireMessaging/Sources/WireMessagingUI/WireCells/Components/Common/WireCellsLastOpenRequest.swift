@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import XCTest
+import Foundation
 
-@testable import Wire
+/// Stores the node ID of the last document the user requested to open. This is used to only open the most recently
+/// requested document when multiple requests are made in a short period of time. (due to time to download)
+@MainActor
+package final class WireCellsLastOpenRequest {
 
-final class UnknownMessageCellTests: ConversationMessageSnapshotTestCase {
+    var nodeID: UUID?
 
-    func testCell() {
-        let systemMessage = MockMessageFactory.systemMessage(with: .invalid)
-        verify(message: systemMessage!)
-    }
+    package init() {}
+
 }
