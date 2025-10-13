@@ -135,9 +135,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
         let assetAuditLog = featureRepository.fetchAssetAuditLog()
 
-        var isAssetAuditLogEnabled = false
-        if let localDomain = metadata.domain, !BackendEnvironment2.isCloudDomain(localDomain), assetAuditLog.status == .enabled {
-            isAssetAuditLogEnabled = true
+        var isCloudDomain = false
+        if let localDomain = metadata.domain, !BackendEnvironment2.isCloudDomain(localDomain) {
+            isCloudDomain = true
         }
 
         return [
@@ -181,7 +181,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 localDomain: metadata.domain,
-                shouldUploadExtraMetaData: isAssetAuditLogEnabled
+                isCloudDomain: isCloudDomain
             ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -213,7 +213,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 linkPreviewPreprocessor: nil,
                 previewImagePreprocessor: nil,
                 localDomain: metadata.domain,
-                shouldUploadExtraMetaData: isAssetAuditLogEnabled
+                isCloudDomain: isCloudDomain
             ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -379,7 +379,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatusDirectory: applicationStatusDirectory,
                 userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus,
                 localDomain: metadata.domain,
-                shouldUploadExtraMetaData: isAssetAuditLogEnabled
+                isCloudDomain: isCloudDomain
             ),
             localNotificationDispatcher,
             MLSRequestStrategy(

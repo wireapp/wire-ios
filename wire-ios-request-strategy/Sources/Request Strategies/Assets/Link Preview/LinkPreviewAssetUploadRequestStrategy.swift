@@ -66,6 +66,7 @@ extension ZMImagePreprocessingTracker {
 public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     let requestFactory = AssetRequestFactory()
+    private let featureRepository: LegacyFeatureRepository
 
     /// Processors
     fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
@@ -75,7 +76,12 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
     /// Upstream sync
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
     let localDomain: String?
-    private let shouldUploadExtraMetaData: Bool
+    private let isCloudDomain: Bool
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return featureRepository.fetchAssetAuditLog().status == .enabled
+    }
 
     @available(*, unavailable)
     public override init(
@@ -91,7 +97,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         linkPreviewPreprocessor: LinkPreviewPreprocessor?,
         previewImagePreprocessor: ZMImagePreprocessingTracker?,
         localDomain: String?,
-        shouldUploadExtraMetaData: Bool
+        isCloudDomain: Bool
     ) {
         if LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() == nil {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector())
@@ -102,8 +108,9 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         )
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker
             .createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         self.localDomain = localDomain
-        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
+        self.isCloudDomain = isCloudDomain
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 

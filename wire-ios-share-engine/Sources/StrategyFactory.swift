@@ -31,7 +31,7 @@ final class StrategyFactory {
     private(set) var strategies = [AnyObject]()
     private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
-    private let isAssetAuditLogEnabled: Bool
+    private let isCloudDomain: Bool
 
     private var tornDown = false
 
@@ -65,10 +65,10 @@ final class StrategyFactory {
         self.apiVersion = apiVersion
         self.localDomain = localDomain
 
-        if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain), featureRepository.fetchAssetAuditLog().status == .enabled {
-            self.isAssetAuditLogEnabled = true
+        if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain) {
+            isCloudDomain = true
         } else {
-            self.isAssetAuditLogEnabled = false
+            isCloudDomain = false
         }
 
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
@@ -142,7 +142,7 @@ final class StrategyFactory {
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             previewImagePreprocessor: nil,
             localDomain: localDomain,
-            shouldUploadExtraMetaData: isAssetAuditLogEnabled
+            isCloudDomain: isCloudDomain
         )
     }
 
@@ -160,7 +160,7 @@ final class StrategyFactory {
             withManagedObjectContext: syncContext,
             applicationStatus: applicationStatus,
             localDomain: localDomain,
-            shouldUploadExtraMetaData: isAssetAuditLogEnabled
+            isCloudDomain: isCloudDomain
         )
 
         // WORKAROUND:

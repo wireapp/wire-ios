@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireLogging
 
 /// AssetV3UploadRequestStrategy is responsible for uploading all the assets associated with a asset message
@@ -28,19 +29,27 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     var upstreamSync: ZMUpstreamModifiedObjectSync!
     var preprocessor: AssetsPreprocessor
 
+    private let featureRepository: LegacyFeatureRepository
+
     public var shouldUseBackgroundSession = true
     let localDomain: String?
-    private let shouldUploadExtraMetaData: Bool
+    private let isCloudDomain: Bool
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return featureRepository.fetchAssetAuditLog().status == .enabled
+    }
 
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         localDomain: String?,
-        shouldUploadExtraMetaData: Bool
+        isCloudDomain: Bool
     ) {
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
         self.localDomain = localDomain
-        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
+        self.isCloudDomain = isCloudDomain
+        featureRepository = LegacyFeatureRepository(context: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline

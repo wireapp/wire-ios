@@ -49,7 +49,14 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     fileprivate var observers: [Any] = []
 
     private let localDomain: String?
-    private let shouldUploadExtraMetaData: Bool
+    private let isCloudDomain: Bool
+
+    private let featureRepository: LegacyFeatureRepository
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return featureRepository.fetchAssetAuditLog().status == .enabled
+    }
 
     @objc
     public convenience init(
@@ -57,14 +64,14 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         applicationStatusDirectory: ApplicationStatusDirectory,
         userProfileImageUpdateStatus: UserProfileImageUpdateStatus,
         localDomain: String?,
-        shouldUploadExtraMetaData: Bool
+        isCloudDomain: Bool
     ) {
         self.init(
             managedObjectContext: managedObjectContext,
             applicationStatus: applicationStatusDirectory,
             imageUploadStatus: userProfileImageUpdateStatus,
             localDomain: localDomain,
-            shouldUploadExtraMetaData: shouldUploadExtraMetaData
+            isCloudDomain: isCloudDomain
         )
     }
 
@@ -73,12 +80,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         applicationStatus: ApplicationStatus,
         imageUploadStatus: UserProfileImageUploadStatusProtocol,
         localDomain: String?,
-        shouldUploadExtraMetaData: Bool
+        isCloudDomain: Bool
     ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
         self.localDomain = localDomain
-        self.shouldUploadExtraMetaData = shouldUploadExtraMetaData
+        self.isCloudDomain = isCloudDomain
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
