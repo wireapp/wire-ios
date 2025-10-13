@@ -193,11 +193,11 @@ public extension BackendEnvironment2 {
     }
 
     var isStagingEnvironment: Bool {
-        config.endpoints.restAPIURL.host() == "staging.zinfra.io"
+        config.endpoints.restAPIURL.host() == "staging-nginz-https.zinfra.io"
     }
 
     static func isStagingDomain(_ domain: String) -> Bool {
-        domain == "wire.com"
+        domain == "staging.zinfra.io"
     }
 
 }
