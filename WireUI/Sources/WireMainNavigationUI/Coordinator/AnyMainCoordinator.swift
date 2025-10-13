@@ -28,6 +28,7 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     private let _showArchive: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
     private let _showMeetings: @MainActor () async -> Void
+    private let _showFiles: @MainActor () async -> Void
     private let _showConversation: @MainActor (
         _ conversation: ConversationModel,
         _ message: ConversationMessageModel?
@@ -57,6 +58,9 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
         }
         self._showMeetings = {
             await mainCoordinator.showMeetings()
+        }
+        self._showFiles = {
+            await mainCoordinator.showFiles()
         }
         self._showConversation = { conversation, message in
             await mainCoordinator.showConversation(conversation: conversation, message: message)
@@ -102,7 +106,12 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     public func showMeetings() async {
         await _showMeetings()
     }
-
+    
+    @MainActor
+    public func showFiles() async {
+        await _showFiles()
+    }
+    
     @MainActor
     public func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async {
         await _showConversation(conversation, message)

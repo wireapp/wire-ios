@@ -40,6 +40,11 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         get { _conversationListUI }
         set { setConversationListUI(newValue, animated: false) }
     }
+        
+    public var filesUI: FilesUI? {
+        get { _filesUI }
+        set { setFilesUI(newValue, animated: false) }
+    }
 
     public var archiveUI: ArchiveUI? {
         get { _archiveUI }
@@ -80,6 +85,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     private weak var _conversationListUI: ConversationListUI?
     private weak var _archiveUI: ArchiveUI?
     private weak var _settingsUI: SettingsUI?
+    private weak var _filesUI: FilesUI?
 
     private weak var _conversationUI: ConversationUI?
     private weak var _settingsContentUI: SettingsContentUI?
@@ -160,6 +166,15 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         let viewControllers = [conversationListUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+    }
+        
+    private func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
+        _filesUI = filesUI
+            
+        let viewControllers = [filesUI].compactMap(\.self)
+        splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
+        splitLayoutContainer.primaryColumnWidth = UIScreen.main.bounds.width // take up full width
     }
 
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {

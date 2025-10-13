@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "Files";
+"sidebar.files.all_files.title" = "All Files";
+
 "sidebar.contacts.title" = "Contacts";
 "sidebar.contacts.connect.title" = "Connect";
 

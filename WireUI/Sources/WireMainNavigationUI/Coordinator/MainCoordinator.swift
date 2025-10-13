@@ -71,6 +71,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
+    private var filesUI: TabBarController.FilesUI! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.filesUI
+        case .expanded: splitViewController.filesUI
+        }
+    }
     // MARK: - Life Cycle
 
     public init(
@@ -110,6 +116,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .expanded:
             dismissArchiveIfNeeded()
             dismissSettingsIfNeeded()
+            dismissFilesIfNeeded()
 
             // Move the conversation list from the tab bar controller to the split view controller if needed.
             if let conversationListUI = tabBarController.conversationListUI {
@@ -159,6 +166,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
+        dismissFilesIfNeeded()
 
         // move the archive from the tab bar controller to the split view controller
         if let archiveUI = tabBarController.archiveUI {
@@ -180,6 +188,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
+        dismissFilesIfNeeded()
 
         // move the settings from the tab bar controller to the split view controller
         if let settingsUI = tabBarController.settingsUI {
@@ -192,6 +201,29 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     public func showMeetings() async {
         // TODO: [WPB-20272]: add list of meetings
+    }
+    
+    public func showFiles() async {
+        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+            splitViewController.hideSidebar()
+        }
+
+        await dismissPresentedViewController()
+        // switch to the files tab
+        tabBarController.selectedContent = .files
+        
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissSettingsIfNeeded()
+
+        // move the files from the tab bar controller to the split view controller
+        if let filesUI = tabBarController.filesUI {
+            tabBarController.filesUI = nil
+            splitViewController.filesUI = filesUI
+        }
     }
 
     public func showConversation(
@@ -288,6 +320,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         if let settingsUI = splitViewController.settingsUI {
             splitViewController.settingsUI = nil
             tabBarController.settingsUI = settingsUI
+        }
+    }
+    
+    private func dismissFilesIfNeeded() {
+        // Move the files back to the tab bar controller if it's visible in the split view controller.
+        if let filesUI = splitViewController.filesUI {
+            splitViewController.filesUI = nil
+            tabBarController.filesUI = filesUI
         }
     }
 
@@ -409,6 +449,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .conversations:
             let mainMenuItem = MainSidebarMenuItem(conversationListUI.conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
+            
+        case .files:
+            
+            sidebar.selectedMenuItem = .init(.files)
 
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)

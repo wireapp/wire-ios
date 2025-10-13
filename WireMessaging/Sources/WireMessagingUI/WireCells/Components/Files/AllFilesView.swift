@@ -16,23 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import SwiftUI
 
-public enum MainSidebarMenuItem: Sendable, Equatable {
-    // conversation filters
-    case all
-    case favorites
-    case groups
-    case channels
-    case oneOnOne
-    case unread
-    case mentions
-    case replies
-    case drafts
-    case archive
-    case folders
-    case meetings
-    case files
-    // bottom
-    case settings
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
+public struct AllFilesView: View {
+    @State private var searchText = ""
+    
+    public init() {}
+    
+    public var body: some View {
+        Text("TODO: [WPB-21030] to be implemented")
+            .navigationTitle(Strings.Files.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, placement: .navigationBarDrawer)
+    }
+}
+
+#Preview {
+    AllFilesView()
 }

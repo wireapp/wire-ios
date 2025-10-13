@@ -31,6 +31,7 @@ import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
 import WireUtilities
+import WireMessagingUI
 
 final class ZClientViewController: UIViewController {
 
@@ -86,7 +87,10 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainCoordinator.TabBarController(showMeetings: DeveloperFlag.wireMeetings.isOn)
+        let tabBarController = MainCoordinator.TabBarController(
+            showMeetings: DeveloperFlag.wireMeetings.isOn,
+            showFiles: DeveloperFlag.wireCells.isOn
+        )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
@@ -345,6 +349,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
+        mainTabBarController.filesUI = UIHostingController(rootView: AllFilesView())
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator

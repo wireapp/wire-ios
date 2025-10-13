@@ -20,6 +20,7 @@
 /// Since UIKit has a type `UITab` this type has been suffixed with "Content".
 public enum MainTabBarControllerContent: Int, CaseIterable {
     case conversations
+    case files
     case archive
     case settings
     case meetings
