@@ -259,7 +259,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
             if shouldUploadExtraMetaData {
                 guard
-                    // Since there's no conversation, we use a null id.
+                    // As per the spec: there's no conversation so we use a null id instead.
                     let nullID = UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
                     let localDomain
                 else {
