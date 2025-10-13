@@ -76,7 +76,7 @@ struct FlowLayout: Layout {
             currentLineHeight = max(currentLineHeight, size.height)
         }
 
-        if currentRow.count > 0 {
+        if !currentRow.isEmpty {
             rows.append(currentRow)
         }
 
