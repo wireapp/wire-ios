@@ -950,7 +950,7 @@ public final class ZMUserSession: NSObject {
 
     public func triggerInitialSync() async {
         do {
-            syncAgent?.suspend()
+            await syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
             WireLogger.sync.error(
@@ -962,7 +962,7 @@ public final class ZMUserSession: NSObject {
 
     public func triggerResourcesSync() async {
         do {
-            syncAgent?.suspend()
+            await syncAgent?.suspend()
             try await syncAgent?.performResourceSync()
         } catch {
             WireLogger.sync.error(
