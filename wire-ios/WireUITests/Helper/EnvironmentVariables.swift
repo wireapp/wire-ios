@@ -37,7 +37,6 @@ struct EnvironmentVariables {
     let inbucketUsername: String
     let inbucketPassword: String
 
-
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
               !backendURLString.isEmpty else {
