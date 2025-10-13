@@ -49,7 +49,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
         self.localDomain = localDomain
         self.isCloudDomain = isCloudDomain
-        featureRepository = LegacyFeatureRepository(context: managedObjectContext)
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline

@@ -26,7 +26,8 @@ struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityChecke
     }
 
     func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        environment.isCloudEnvironment || environment.isStagingEnvironment
+        environment.isCloudEnvironment || environment.isStagingEnvironment
+
     }
 
 }

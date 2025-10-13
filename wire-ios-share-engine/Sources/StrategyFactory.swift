@@ -66,9 +66,9 @@ final class StrategyFactory {
         self.localDomain = localDomain
 
         if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain) {
-            isCloudDomain = true
+            self.isCloudDomain = true
         } else {
-            isCloudDomain = false
+            self.isCloudDomain = false
         }
 
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
