@@ -662,6 +662,8 @@ final class ConversationInputBarViewController: UIViewController,
         guard let data = image.imageData else {
             return
         }
+        // The image is a `UIImage` instances that came from
+        // the clipboard, so we don't have a name or UTType.
         let image = SendableImage(
             name: nil,
             utType: nil,
