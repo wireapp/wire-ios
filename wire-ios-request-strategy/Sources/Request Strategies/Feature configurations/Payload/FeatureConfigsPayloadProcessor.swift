@@ -238,6 +238,10 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
             repository.storeAppLock(.init(status: response.status, config: response.config))
 
+        case .apps:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeApps(.init(status: response.status))
+
         case .selfDeletingMessages:
             let response = try decoder.decode(
                 FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self,
@@ -280,7 +284,7 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
-        case .apps, .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations, .cells:
+        case .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations, .cells:
             WireLogger.featureConfigs.warn(
                 "decoding unsupported feature config: \"\(featureName)\", this should not happen",
                 attributes: .safePublic

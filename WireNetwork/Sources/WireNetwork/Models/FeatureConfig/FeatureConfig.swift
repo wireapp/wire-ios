@@ -30,9 +30,13 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case appLock(AppLockFeatureConfig)
 
-    /// Config for the *Classfied Domains* feature.`
+    /// Config for the *Apps* feature.
+
+    case apps(AppsFeatureConfig)
+
+    /// Config for the *Classified Domains* feature.`
     ///
-    /// *Classfied Domains* are a list of backend domains
+    /// *Classified Domains* are a list of backend domains
     /// considered to be safe for classified communication.
     /// Conversations containing users from only classified
     /// domains will show a "Classified" banner. Conversations
