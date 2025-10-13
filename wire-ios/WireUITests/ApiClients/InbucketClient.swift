@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 enum InbucketClient {
 
@@ -24,7 +25,8 @@ enum InbucketClient {
         let envVariables = try EnvironmentVariables()
 
         var verificationCode = ""
-        let requestUrl = envVariables.inbucketURL.appending(path: "api/v1/mailbox/\(email)/latest")
+        let baseURL: URL = envVariables.inbucketURL
+        let requestUrl = baseURL.appending(path: "api/v1/mailbox/\(email)/latest")
 
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "GET"
