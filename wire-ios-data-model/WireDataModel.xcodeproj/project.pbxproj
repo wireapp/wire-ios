@@ -4896,7 +4896,7 @@
 			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.53.0;
+				minimumVersion = 1.54.0;
 			};
 		};
 		5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
