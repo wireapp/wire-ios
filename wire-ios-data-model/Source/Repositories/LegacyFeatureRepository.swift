@@ -24,6 +24,8 @@ public protocol LegacyFeatureRepositoryInterface {
 
     func fetchAppLock() -> Feature.AppLock
     func storeAppLock(_ appLock: Feature.AppLock)
+    func fetchApps() -> Feature.Apps
+    func storeApps(_ appLock: Feature.Apps)
     func fetchConferenceCalling() -> Feature.ConferenceCalling
     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
     func fetchFileSharing() -> Feature.FileSharing
@@ -113,6 +115,22 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             }
         } catch {
             logger.error("failed to encode Feautre.AppLock.Config: \(error)")
+        }
+    }
+
+    // MARK: Apps
+
+    public func fetchApps() -> Feature.Apps {
+        guard let feature = Feature.fetch(name: .apps, context: context) else {
+            return .init(status: .enabled)
+        }
+
+        return .init(status: feature.status)
+    }
+
+    public func storeApps(_ apps: Feature.Apps) {
+        Feature.updateOrCreate(havingName: .apps, in: context) {
+            $0.status = apps.status
         }
     }
 
@@ -561,6 +579,9 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             switch name {
             case .appLock:
                 storeAppLock(.init())
+
+            case .apps:
+                storeApps(.init(status: .enabled))
 
             case .conferenceCalling:
                 storeConferenceCalling(.init())

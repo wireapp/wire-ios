@@ -3358,6 +3358,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(appLock)
     }
 
+    // MARK: - fetchApps
+
+    public var fetchApps_Invocations: [Void] = []
+    public var fetchApps_MockMethod: (() -> Feature.Apps)?
+    public var fetchApps_MockValue: Feature.Apps?
+
+    public func fetchApps() -> Feature.Apps {
+        fetchApps_Invocations.append(())
+
+        if let mock = fetchApps_MockMethod {
+            return mock()
+        } else if let mock = fetchApps_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchApps`")
+        }
+    }
+
+    // MARK: - storeApps
+
+    public var storeApps_Invocations: [Feature.Apps] = []
+    public var storeApps_MockMethod: ((Feature.Apps) -> Void)?
+
+    public func storeApps(_ appLock: Feature.Apps) {
+        storeApps_Invocations.append(appLock)
+
+        guard let mock = storeApps_MockMethod else {
+            fatalError("no mock for `storeApps`")
+        }
+
+        mock(appLock)
+    }
+
     // MARK: - fetchConferenceCalling
 
     public var fetchConferenceCalling_Invocations: [Void] = []

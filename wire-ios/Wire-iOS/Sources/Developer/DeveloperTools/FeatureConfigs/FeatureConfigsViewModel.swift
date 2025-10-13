@@ -22,19 +22,20 @@ import WireSyncEngine
 final class FeatureConfigsViewModel: ObservableObject {
 
     enum FeatureConfigName: String {
-        case mls
-        case conferenceCalling
-        case e2EI
         case allowedGlobalOperations
         case appLock
+        case apps
+        case cells
         case channels
         case classifiedDomains
+        case conferenceCalling
         case consumableNotifications
         case conversationGuestLinks
-        case fileSharing
-        case selfDeletingMessages
         case digitalSignature
-        case cells
+        case e2EI
+        case fileSharing
+        case mls
+        case selfDeletingMessages
     }
 
     enum FeatureConfigStatus: String {
@@ -82,6 +83,7 @@ final class FeatureConfigsViewModel: ObservableObject {
             let conferenceCalling = featureConfigRepository.fetchConferenceCalling()
             let e2EI = featureConfigRepository.fetchE2EI()
             let appLock = featureConfigRepository.fetchAppLock()
+            let apps = featureConfigRepository.fetchApps()
             let channels = featureConfigRepository.fetchChannels()
             let classifiedDomains = featureConfigRepository.fetchClassifiedDomains()
             let consumableNotifications = featureConfigRepository.fetchConsumableNotifications()
