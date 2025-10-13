@@ -210,6 +210,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let icon: String
         var iconHighlighted: String?
         let accessibilityLabel: Text
+        var accessibilityIdentifier: String?
         switch menuItem {
         case .all:
             text = Text(Strings.ConversationFilter.All.title)
@@ -280,6 +281,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.Settings.title)
             icon = "gearshape"
             accessibilityLabel = Text(Labels.Settings.description)
+            accessibilityIdentifier = "bottomBarSettingsButton"
         }
 
         return SidebarMenuItemView(
@@ -292,6 +294,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             accessibilityLabel: { accessibilityLabel },
             action: action
         )
+        .accessibilityIdentifier(accessibilityIdentifier ?? "")
     }
 
     public typealias AccountImageSource = SidebarAccountInfo.AccountImageSource
