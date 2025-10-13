@@ -373,14 +373,21 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID
     ) async {
         await context.perform { [context] in
+
+            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+            guard senderID == selfUserID else { return }
+
             ZMClientMessage.updateButtonStates(
-                withConfirmation: buttonActionConfirmation,
-                forConversation: conversation,
-                inContext: context
+                buttonID: buttonID,
+                referenceMessageID: referenceMessageID,
+                for: conversation,
+                in: context
             )
         }
     }

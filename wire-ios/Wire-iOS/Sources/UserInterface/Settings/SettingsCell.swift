@@ -149,6 +149,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
             case .none:
                 valueLabel.text = ""
+                valueLabel.accessibilityIdentifier = nil
                 badgeLabel.text = ""
                 badge.isHidden = true
                 imagePreview.image = .none
