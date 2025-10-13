@@ -69,7 +69,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireCellsEnabled: userSession.isWireCellsEnabled
+        isWireCellsEnabled: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
