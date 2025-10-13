@@ -227,19 +227,19 @@ public class Feature: ZMManagedObject {
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
         case .allowedGlobalOperations,
-                .apps,
-                .cells,
-                .channels,
-                .chatBubblesSimple,
-                .classifiedDomains,
-                .conferenceCalling,
-                .consumableNotifications,
-                .conversationGuestLinks,
-                .digitalSignature,
-                .e2ei,
-                .fileSharing,
-                .mls,
-                .mlsMigration:
+             .apps,
+             .cells,
+             .channels,
+             .chatBubblesSimple,
+             .classifiedDomains,
+             .conferenceCalling,
+             .consumableNotifications,
+             .conversationGuestLinks,
+             .digitalSignature,
+             .e2ei,
+             .fileSharing,
+             .mls,
+             .mlsMigration:
             break
         }
     }
