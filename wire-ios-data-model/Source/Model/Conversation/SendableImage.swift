@@ -59,11 +59,3 @@ public struct SendableImage {
     }
 
 }
-
-extension SendableImage: CustomDebugStringConvertible {
-
-    public var debugDescription: String {
-        "SendableImage(name: \(name), type: \(utType?.preferredMIMEType ?? "unknown"))"
-    }
-
-}
