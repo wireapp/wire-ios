@@ -226,6 +226,10 @@ public protocol UserSession: AnyObject {
 
     var isChatBubbleSimpleEnabled: Bool { get }
 
+    var isWireCellsEnabled: Bool { get }
+
+    var isEnterpriseUser: Bool { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(

@@ -176,19 +176,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         }
     }
 
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        presentFilesViewForNodes nodeIDs: [UUID]
-    ) {
-        let filesView = wireCellsFactory
-            .makeFilesView(
-                cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending,
-                nodeIDs: nodeIDs
-            )
-
-        filesView.presentOverAll(animated: true)
-    }
 }
 
 extension ConversationViewController {

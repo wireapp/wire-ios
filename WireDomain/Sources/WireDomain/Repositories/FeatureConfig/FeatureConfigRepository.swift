@@ -118,11 +118,15 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
         switch config {
         case let .appLock(appLockFeatureConfig):
-
             return FeatureState(
                 name: .appLock,
                 isEnabled: appLockFeatureConfig.status == .enabled
             )
+
+        case let .assetAuditLog(config):
+            // TODO: [WPB-20713]
+            assertionFailure("not implemented yet")
+            return nil
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
@@ -210,6 +214,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return FeatureState(
                 name: .chatBubblesSimple,
                 isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
+            )
+
+        case let .cells(cellsConfig):
+            return FeatureState(
+                name: .cells,
+                isEnabled: cellsConfig.status == .enabled
             )
 
         case let .unknown(featureName):

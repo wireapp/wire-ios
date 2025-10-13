@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class AuthenticationAPIV11: AuthenticationAPIV10 {
+class AuthenticationAPIV11: AuthenticationAPIV10 {
 
     override var apiVersion: APIVersion { .v11 }
 

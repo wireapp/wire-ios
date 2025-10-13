@@ -39,7 +39,7 @@ final class MainSplitViewControllerTests: XCTestCase {
         conversationListUI = .init("Conversation List", .purple)
         conversationUI = .init()
         noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
-        tabController = .init()
+        tabController = PreviewTabBarController(showMeetings: false)
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,

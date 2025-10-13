@@ -26,6 +26,21 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
+        let userSession: UserSession?
+
+        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil) {
+            self.attributedText = attributedText
+            self.isObfuscated = isObfuscated
+            self.userSession = userSession
+        }
+
+        static func == (
+            lhs: ConversationTextMessageCell.Configuration,
+            rhs: ConversationTextMessageCell.Configuration
+        ) -> Bool {
+            lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.attributedText.description == rhs.attributedText.description
+        }
     }
 
     private lazy var messageTextView: LinkInteractionTextView = {
@@ -67,6 +82,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var selectionView: UIView? {
         messageTextView
@@ -79,7 +95,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupAccessibility()
     }
 
     @available(*, unavailable)
@@ -135,18 +150,41 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        messageTextView.attributedText = object.attributedText
+        if isChatBubbleSimpleEnabled {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.lineSpacing = 3
+
+            let attributes: [NSAttributedString.Key: AnyObject] = [
+                .paragraphStyle: paragraphStyle
+            ]
+
+            messageTextView.attributedText = object.attributedText.addAttributes(
+                attributes,
+                toSubstring: object.attributedText.string
+            )
+        } else {
+            messageTextView.attributedText = object.attributedText
+        }
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
         } else {
             messageTextView.accessibilityIdentifier = "Message"
         }
-        accessibilityLabel = messageTextView.attributedText.string
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
-        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+        addAccentColorChangeObserver(userSession: object.userSession)
+        setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
+    }
+
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard accentColorChangeHandler == nil, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.configureTextColor(forOwnMessage: self?.message?.isSentBySelfUser ?? false)
+            }
     }
 
     private func updateContainerStyle() {
@@ -157,13 +195,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
-        // FIXME: [WPB-16311] Remove this temporary solution once file previews are working in conversations.
-        if DeveloperFlag.wireCells.isOn, url == URL.openFilesViewLink {
-            let nodeIDs = message?.multipartMessageData?.attachments.compactMap(\.nodeID) ?? []
-            openFilesView(nodeIDs: nodeIDs)
-            return true
-        }
-
         // Open mention link
         if url.isMention {
             if let message,
@@ -188,10 +219,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return true
     }
 
-    func openFilesView(nodeIDs: [UUID]) {
-        delegate?.conversationMessageWantsToOpenFilesView(self, nodeIDs: nodeIDs)
-    }
-
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -202,11 +229,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private func setupAccessibility() {
+    private func setupAccessibility(accessibilityLabel: String) {
         typealias Conversation = L10n.Accessibility.Conversation
 
         isAccessibilityElement = false
         container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
@@ -235,10 +263,11 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool) {
+    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
-            isObfuscated: isObfuscated
+            isObfuscated: isObfuscated,
+            userSession: userSession
         )
     }
 }
@@ -319,7 +348,8 @@ extension ConversationTextMessageCellDescription {
         if !messageText.string.isEmpty {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
-                isObfuscated: message.isObfuscated
+                isObfuscated: message.isObfuscated,
+                userSession: userSession
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }

@@ -1,0 +1,2 @@
+curl \
+	"/v12/feature-configs/"

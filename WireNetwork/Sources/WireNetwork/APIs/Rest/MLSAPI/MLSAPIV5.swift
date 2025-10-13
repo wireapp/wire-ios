@@ -76,7 +76,7 @@ class MLSAPIV5: MLSAPIV4 {
                 .failure(code: .conflict, decodableError: FailureResponseV0.self)
                 .parse(code: response.statusCode, data: data)
         } catch {
-            if let failureResponse = error as? FailureResponse {
+            if let failureResponse = error as? FailureResponseV0 {
                 throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
             } else {
                 throw error

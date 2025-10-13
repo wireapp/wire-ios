@@ -112,12 +112,25 @@ public enum FeatureConfig: Equatable, Sendable {
     /// with history sharing capabilities
     case channels(ChannelsFeatureConfig)
 
+    /// Config for **Cells** feature
+    /// **Cells** allow users to send and receive messages with multiple attachments (video, image, files..)
+    case cells(CellsFeatureConfig)
+
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
 
     case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
 
     /// Enable or Disable chat bubbles
     case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
+
+    /// Config for "Asset Audit Log" feature.
+    ///
+    /// When this feature is enabled, additional metadata is provided
+    /// to the backend when uploading an asset so that an audit log
+    /// can be constructed for future referece, such as for security
+    /// review.
+
+    case assetAuditLog(AssetAuditLogFeatureConfig)
 
     /// An unknown feature.
 

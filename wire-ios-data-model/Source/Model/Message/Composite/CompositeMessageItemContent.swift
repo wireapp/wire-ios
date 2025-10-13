@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 
-class CompositeMessageItemContent: NSObject {
+final class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage
     private let item: Composite.Item
 
@@ -108,7 +108,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     var state: ButtonMessageState {
-        ButtonMessageState(from: buttonState?.state)
+        buttonState?.state ?? .unselected
     }
 
     var isExpired: Bool {
@@ -116,30 +116,29 @@ extension CompositeMessageItemContent: ButtonMessageData {
     }
 
     func touchAction() {
-        guard let moc = parentMessage.managedObjectContext,
-              let buttonId = button?.id,
-              let messageId = parentMessage.nonce,
-              !hasSelectedButton else { return }
+        guard let context = parentMessage.managedObjectContext else { return }
 
-        moc.performGroupedBlock { [weak self] in
-            guard let self else { return }
+        context.performGroupedBlock { [weak self] in
+            guard let self, let messageID = parentMessage.nonce, let buttonID = button?.id,
+                  !hasSelectedButton else { return }
+
             let buttonState = buttonState ??
-                ButtonState.insert(with: buttonId, message: parentMessage, inContext: moc)
+                ButtonState.insert(with: buttonID, message: parentMessage, inContext: context)
             parentMessage.buttonStates?.resetExpired()
             guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
-                moc.saveOrRollback()
+                context.saveOrRollback()
                 return
             }
 
             do {
-                try parentMessage.conversation?.appendButtonAction(havingId: buttonId, referenceMessageId: messageId)
-                buttonState.state = .selected
+                try parentMessage.conversation?.appendButtonAction(havingId: buttonID, referenceMessageId: messageID)
+                parentMessage.buttonStates?.confirmButtonState(buttonID: buttonID)
             } catch {
                 Logging.messageProcessing.warn("Failed to append button action. Reason: \(error.localizedDescription)")
             }
 
-            moc.saveOrRollback()
+            context.saveOrRollback()
         }
     }
 }
@@ -147,6 +146,9 @@ extension CompositeMessageItemContent: ButtonMessageData {
 // MARK: - Helpers
 
 extension CompositeMessageItemContent {
+
+    /// Returns `true` if there is a button which has been selected but hasn't been confirmed, `false` otherwise.
+
     private var hasSelectedButton: Bool {
         parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
     }

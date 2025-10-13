@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/wireapp/Down",
         "state": {
           "branch": null,
-          "revision": "609219dda243620bedfef9777b70af92a7fe3494",
-          "version": "2.3.5"
+          "revision": "6fe54b29996eeca7a0a887af63330046de9a43a3",
+          "version": "2.3.6"
         }
       },
       {
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
         "state": {
           "branch": null,
-          "revision": "41982a3656a71c768319979febd796c6fd111d5c",
-          "version": "1.5.0"
+          "revision": "309a47b2b1d9b5e991f36961c983ecec72275be3",
+          "version": "1.6.1"
         }
       },
       {
@@ -222,8 +222,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
-          "version": "1.6.3"
+          "revision": "ce592ae52f982c847a4efc0dd881cc9eb32d29f2",
+          "version": "1.6.4"
         }
       },
       {

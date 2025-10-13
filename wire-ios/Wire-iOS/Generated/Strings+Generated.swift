@@ -1204,12 +1204,20 @@ internal enum L10n {
           internal static let message = L10n.tr("Localizable", "account_blocked.generic_error.alert.message", fallback: "Please contact support if the error persists.")
           /// Retry
           internal static let retry = L10n.tr("Localizable", "account_blocked.generic_error.alert.retry", fallback: "Retry")
-          /// Send debug logs
-          internal static let sendLogs = L10n.tr("Localizable", "account_blocked.generic_error.alert.send_logs", fallback: "Send debug logs")
+          /// Send Debug Report
+          internal static let sendLogs = L10n.tr("Localizable", "account_blocked.generic_error.alert.send_logs", fallback: "Send Debug Report")
           /// Switch accounts
           internal static let switchAccounts = L10n.tr("Localizable", "account_blocked.generic_error.alert.switch_accounts", fallback: "Switch accounts")
           /// Something went wrong
           internal static let title = L10n.tr("Localizable", "account_blocked.generic_error.alert.title", fallback: "Something went wrong")
+        }
+      }
+      internal enum NetworkError {
+        internal enum Alert {
+          /// Please check your internet connection and try again.
+          internal static let message = L10n.tr("Localizable", "account_blocked.network_error.alert.message", fallback: "Please check your internet connection and try again.")
+          /// Network issue
+          internal static let title = L10n.tr("Localizable", "account_blocked.network_error.alert.title", fallback: "Network issue")
         }
       }
     }
@@ -2023,6 +2031,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
+        /// Self-deleting messages are disabled for the conversations with Cells
+        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are disabled for the conversations with Cells")
         /// You haven’t used this device for a while. Some messages may not appear here.
         internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
@@ -2501,6 +2511,10 @@ internal enum L10n {
           /// This message can’t be displayed. You may be using an older version of Wire.
           internal static let body = L10n.tr("Localizable", "content.system.unknown_message.body", fallback: "This message can’t be displayed. You may be using an older version of Wire.")
         }
+        internal enum UnknownMessageReceived {
+          /// You have received a message that can't be displayed. You may be using an older version of Wire.
+          internal static let body = L10n.tr("Localizable", "content.system.unknown_message_received.body", fallback: "You have received a message that can't be displayed. You may be using an older version of Wire.")
+        }
       }
     }
     internal enum Conversation {
@@ -2580,6 +2594,12 @@ internal enum L10n {
           internal static let next = L10n.tr("Localizable", "conversation.create.channel.next", fallback: "Next")
           /// New channel
           internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
+        }
+        internal enum FileManagement {
+          /// Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more")
+          /// File management
+          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "File management")
         }
         internal enum GroupName {
           /// Group name

@@ -34,6 +34,7 @@ final class FeatureConfigsViewModel: ObservableObject {
         case fileSharing
         case selfDeletingMessages
         case digitalSignature
+        case cells
     }
 
     enum FeatureConfigStatus: String {
@@ -88,6 +89,7 @@ final class FeatureConfigsViewModel: ObservableObject {
             let digitalSignature = featureConfigRepository.fetchDigitalSignature()
             let fileSharing = featureConfigRepository.fetchFileSharing()
             let selfDeletingMessages = featureConfigRepository.fetchSelfDeletingMessages()
+            let cells = featureConfigRepository.fetchCells()
 
             items = [
                 .init(featureConfigName: .mls, enabled: FeatureConfigStatus(status: mls.status)),
@@ -122,6 +124,10 @@ final class FeatureConfigsViewModel: ObservableObject {
                 .init(
                     featureConfigName: .selfDeletingMessages,
                     enabled: FeatureConfigStatus(status: selfDeletingMessages.status)
+                ),
+                .init(
+                    featureConfigName: .cells,
+                    enabled: FeatureConfigStatus(status: cells.status)
                 )
             ]
         }

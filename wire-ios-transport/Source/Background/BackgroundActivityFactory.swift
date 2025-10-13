@@ -84,7 +84,7 @@ public final class BackgroundActivityFactory: NSObject {
     /// Starts a background activity if possible.
     /// - parameter name: The name of the task, for debugging purposes.
     /// - returns: A token representing the activity, if the background execution is available.
-    /// - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
+    /// - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
 
     @objc(startBackgroundActivityWithName:)
     public func startBackgroundActivity(name: String) -> BackgroundActivity? {

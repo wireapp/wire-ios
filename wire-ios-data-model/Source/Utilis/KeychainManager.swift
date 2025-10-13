@@ -64,6 +64,35 @@ public enum KeychainManager {
         }
     }
 
+    static func delete(query: CFDictionary) throws {
+        WireLogger.keychain.info("deleting item (query: \(query))")
+        let status = SecItemDelete(query)
+
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            WireLogger.keychain.error("deleting item (query: \(query)) failed: osstatus \(status)")
+            throw Error.failedToDeleteItemFromKeychain(status)
+        }
+    }
+
+    static func fetchAllItems(secClass: CFString) throws -> [[CFString: Any]] {
+        let query: [CFString: Any] = [
+            kSecClass: secClass,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecReturnAttributes: true,
+            kSecReturnRef: true
+        ]
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess, let items = result as? [[CFString: Any]] else {
+            WireLogger.keychain.error("fetching items (class: \(secClass)) failed: osstatus \(status)")
+            throw Error.failedToFetchItemBatch(status)
+        }
+
+        return items
+    }
+
     // MARK: - Key generation
 
     static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
@@ -167,6 +196,7 @@ public extension KeychainManager {
         case failedToGenerateKey(OSStatus)
         case failedToGeneratePublicPrivateKey(underlyingError: Swift.Error?)
         case failedToCopyPublicKey
+        case failedToFetchItemBatch(OSStatus)
 
         public var errorDescription: String? {
             switch self {
@@ -187,6 +217,9 @@ public extension KeychainManager {
 
             case .failedToCopyPublicKey:
                 "failed to copy public key"
+
+            case let .failedToFetchItemBatch(status):
+                "failed to fetch item batch, OSStatus: \(status)"
             }
         }
 

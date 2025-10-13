@@ -250,6 +250,28 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - V12
+
+    func testGetFeatureConfigs_SuccessResponse_200_V12_And_Next_Versions_Then_Verify_Requests() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV12")
+        ])
+
+        let supportedVersions = APIVersion.v12.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV12
+            )
+        }
+    }
+
 }
 
 extension FeatureConfigsAPITests {
@@ -555,7 +577,8 @@ extension FeatureConfigsAPITests {
                     allowedToCreateChannels: .everyone,
                     allowedToOpenChannels: .admins
                 )
-            )
+            ),
+            .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV10: [FeatureConfig] = [
@@ -631,12 +654,19 @@ extension FeatureConfigsAPITests {
                     status: .enabled,
                     resetMLSConversations: true
                 )
-            )
+            ),
+            .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
             .consumableNotifications(.init(status: .enabled)),
-            .chatBubblesSimple(.init(status: .enabled))
+            .chatBubblesSimple(.init(status: .enabled)),
+            .cells(.init(status: .enabled))
+        ]
+
+        static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
+            .assetAuditLog(.init(status: .enabled)),
+            .cells(.init(status: .enabled))
         ]
 
     }
