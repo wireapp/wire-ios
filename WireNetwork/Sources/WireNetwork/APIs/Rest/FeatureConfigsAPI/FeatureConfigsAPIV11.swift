@@ -65,6 +65,9 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
         let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
 
+        let appsFeatureConfig = AppsFeatureConfig(status: apps.status.toAPIModel())
+        featureConfigs.append(.apps(appsFeatureConfig))
+
         let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
