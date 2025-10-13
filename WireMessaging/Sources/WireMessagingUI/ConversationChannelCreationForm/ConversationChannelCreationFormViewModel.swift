@@ -80,9 +80,11 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
+    @Published var fileManagementEnabled: Bool = true
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
+    let isWireCellsEnabled: Bool
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
     private let isUserPremium: Bool
     private var subscriptions = Set<AnyCancellable>()
@@ -97,6 +99,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
         isUserPremium: Bool,
+        isWireCellsEnabled: Bool,
         teamsURL: URL,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
@@ -111,6 +114,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
+        self.isWireCellsEnabled = isWireCellsEnabled
         self.teamsURL = teamsURL
         self.onFormValidityUpdate = onFormValidityUpdate
 
@@ -201,7 +205,8 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
-                    historyDepth: getHistoryDepth()
+                    historyDepth: getHistoryDepth(),
+                    fileManagementEnabled: fileManagementEnabled
                 )
             }
             .get()

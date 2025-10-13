@@ -461,7 +461,7 @@ private extension EventDecoder {
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID,
-               let genericMessage = GenericMessage(from: event) {
+               let genericMessage = GenericMessage(from: event, validate: true) {
                 let included = genericMessage.hasAvailability
                 if !included {
                     WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)

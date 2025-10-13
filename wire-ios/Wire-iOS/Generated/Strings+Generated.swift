@@ -2511,6 +2511,10 @@ internal enum L10n {
           /// This message can’t be displayed. You may be using an older version of Wire.
           internal static let body = L10n.tr("Localizable", "content.system.unknown_message.body", fallback: "This message can’t be displayed. You may be using an older version of Wire.")
         }
+        internal enum UnknownMessageReceived {
+          /// You have received a message that can't be displayed. You may be using an older version of Wire.
+          internal static let body = L10n.tr("Localizable", "content.system.unknown_message_received.body", fallback: "You have received a message that can't be displayed. You may be using an older version of Wire.")
+        }
       }
     }
     internal enum Conversation {
@@ -2590,6 +2594,12 @@ internal enum L10n {
           internal static let next = L10n.tr("Localizable", "conversation.create.channel.next", fallback: "Next")
           /// New channel
           internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
+        }
+        internal enum FileManagement {
+          /// Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone. Learn more")
+          /// File management
+          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "File management")
         }
         internal enum GroupName {
           /// Group name

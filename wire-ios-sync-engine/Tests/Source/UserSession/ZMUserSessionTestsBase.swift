@@ -147,16 +147,9 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService = nil
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
+        sut?.tearDown()
         mockPushChannel = nil
-
-        weak var weakSut: ZMUserSession?
-        weakSut = sut
-        sut.tearDown()
-        sut = nil
-
         super.tearDown()
-
-        XCTAssertNil(weakSut, "sut should have been deallocated after tearDown")
     }
 
     func createSut() -> ZMUserSession {

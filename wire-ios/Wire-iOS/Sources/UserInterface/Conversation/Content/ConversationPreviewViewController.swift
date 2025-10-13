@@ -32,7 +32,8 @@ final class ConversationPreviewViewController: UIViewController {
         sourceView: UIView,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.conversation = conversation
         self.actionController = ConversationActionController(
@@ -47,7 +48,8 @@ final class ConversationPreviewViewController: UIViewController {
             mediaPlaybackManager: nil,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            wireCellsFactory: wireCellsFactory
         )
         DeveloperToolsViewModel.context.currentConversation = conversation
 

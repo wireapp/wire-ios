@@ -1934,24 +1934,24 @@ public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, historyDepth: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
+    public var invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, historyDepth: String?, cells: Bool?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
+    public var invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
+    public var invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, String?, Bool?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID, name: String?, historyDepth: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
-        invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, historyDepth: historyDepth, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
+    public func invoke(teamID: UUID, name: String?, historyDepth: String?, cells: Bool?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
+        invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, historyDepth: historyDepth, cells: cells, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
 
-        if let error = invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockError {
+        if let error = invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockError {
             throw error
         }
 
-        if let mock = invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockMethod {
-            return try await mock(teamID, name, historyDepth, users, accessMode, accessRoles, enableReceipts)
-        } else if let mock = invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockValue {
+        if let mock = invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockMethod {
+            return try await mock(teamID, name, historyDepth, cells, users, accessMode, accessRoles, enableReceipts)
+        } else if let mock = invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts`")
+            fatalError("no mock for `invokeTeamIDNameHistoryDepthCellsUsersAccessModeAccessRolesEnableReceipts`")
         }
     }
 
@@ -1966,24 +1966,24 @@ public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversation
 
     // MARK: - invoke
 
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError: Error?
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireNetwork.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue: ZMConversation?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, cells: Bool?, isMLSEnabled: Bool)] = []
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockError: Error?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockMethod: ((UUID?, WireNetwork.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool, Bool?, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
-        invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations.append((teamID: teamID, messageProtocol: messageProtocol, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts, isMLSEnabled: isMLSEnabled))
+    public func invoke(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, cells: Bool?, isMLSEnabled: Bool) async throws -> ZMConversation {
+        invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_Invocations.append((teamID: teamID, messageProtocol: messageProtocol, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts, cells: cells, isMLSEnabled: isMLSEnabled))
 
-        if let error = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError {
+        if let error = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockError {
             throw error
         }
 
-        if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod {
-            return try await mock(teamID, messageProtocol, name, users, accessMode, accessRoles, enableReceipts, isMLSEnabled)
-        } else if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue {
+        if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockMethod {
+            return try await mock(teamID, messageProtocol, name, users, accessMode, accessRoles, enableReceipts, cells, isMLSEnabled)
+        } else if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled`")
+            fatalError("no mock for `invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsCellsIsMLSEnabled`")
         }
     }
 
@@ -2598,6 +2598,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
 
         await mock(assetClientMessage, isNewMessage, genericMessage, conversation, senderID, senderDomain)
+    }
+
+    // MARK: - addUnknownMessage
+
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations: [(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date)] = []
+    public var addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod: ((UUID, UUID, String?, UUID, String, Data, Date) async -> Void)?
+
+    public func addUnknownMessage(messageID: UUID, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String, payload: Data, date: Date) async {
+        addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_Invocations.append((messageID: messageID, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, payload: payload, date: date))
+
+        guard let mock = addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate_MockMethod else {
+            fatalError("no mock for `addUnknownMessageMessageIDConversationIDConversationDomainSenderIDSenderDomainPayloadDate`")
+        }
+
+        await mock(messageID, conversationID, conversationDomain, senderID, senderDomain, payload, date)
     }
 
     // MARK: - canAddMessage

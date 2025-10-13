@@ -30,7 +30,7 @@ extension ZMUpdateEvent {
     ) -> Bool {
 
         guard
-            let message = GenericMessage(from: self),
+            let message = GenericMessage(from: self, validate: true),
             message.needsDeliveryConfirmation,
             let conversationID = conversationUUID,
             let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext),

@@ -211,6 +211,7 @@ jobs:
           base64: ${{ env.S3_PATHS }}
       - name: Notify on Wire if succeeded
         if: success()
+        continue-on-error: true
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
@@ -227,6 +228,7 @@ jobs:
             **SHA256:**  ${{ env.BUILD_SHA256 }}
       - name: Notify on Wire if failed
         if: failure()
+        continue-on-error: true
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}

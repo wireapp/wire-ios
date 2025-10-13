@@ -60,7 +60,7 @@ public class ZMGenericMessageData: ZMManagedObject {
 
     public var underlyingMessage: GenericMessage? {
         do {
-            return try GenericMessage(serializedData: getProtobufData())
+            return try GenericMessage(serializedBytes: getProtobufData())
         } catch {
             Logging.messageProcessing.warn("Could not retrieve GenericMessage: \(error.localizedDescription)")
             return nil

@@ -577,7 +577,8 @@ extension FeatureConfigsAPITests {
                     allowedToCreateChannels: .everyone,
                     allowedToOpenChannels: .admins
                 )
-            )
+            ),
+            .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV10: [FeatureConfig] = [
@@ -653,16 +654,19 @@ extension FeatureConfigsAPITests {
                     status: .enabled,
                     resetMLSConversations: true
                 )
-            )
+            ),
+            .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
             .consumableNotifications(.init(status: .enabled)),
-            .chatBubblesSimple(.init(status: .enabled))
+            .chatBubblesSimple(.init(status: .enabled)),
+            .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
-            .assetAuditLog(.init(status: .enabled))
+            .assetAuditLog(.init(status: .enabled)),
+            .cells(.init(status: .enabled))
         ]
 
     }

@@ -117,7 +117,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
                 }
             }
 
-            if let receivedMessage = GenericMessage(from: event) {
+            if let receivedMessage = GenericMessage(from: event, validate: true) {
 
                 if receivedMessage.hasReaction,
                    receivedMessage.reaction.emoji.isEmpty,
