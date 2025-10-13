@@ -19,6 +19,7 @@
 import WireDataModel
 import WireNetworkSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
@@ -61,6 +62,10 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             storeInvocations[0].config as? Feature.AppLock.Config,
             Scaffolding.appLockFeatureConfig.toDomainModel()
         )
+
+        XCTAssertEqual(storeInvocations[12].name, .apps)
+        XCTAssertTrue(storeInvocations[12].isEnabled)
+        XCTAssertNil(storeInvocations[12].config)
 
         XCTAssertEqual(storeInvocations[1].name, .classifiedDomains)
         XCTAssertEqual(storeInvocations[1].isEnabled, true)
@@ -135,6 +140,7 @@ private enum Scaffolding {
 
     static let featureConfigs: [FeatureConfig] = [
         .appLock(appLockFeatureConfig),
+        .apps(appsFeatureConfig),
         .classifiedDomains(classifiedDomainsFeatureConfig),
         .conferenceCalling(conferenceCallingFeatureConfig),
         .conversationGuestLinks(conversationGuestLinksFeatureConfig),
@@ -153,6 +159,10 @@ private enum Scaffolding {
         status: .enabled,
         isMandatory: true,
         inactivityTimeoutInSeconds: 2_147_483_647
+    )
+
+    static let appsFeatureConfig = AppsFeatureConfig(
+        status: .enabled
     )
 
     static let classifiedDomainsFeatureConfig = ClassifiedDomainsFeatureConfig(

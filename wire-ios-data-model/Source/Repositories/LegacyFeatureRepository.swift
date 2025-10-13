@@ -122,7 +122,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
     public func fetchApps() -> Feature.Apps {
         guard let feature = Feature.fetch(name: .apps, context: context) else {
-            return .init(status: .enabled)
+            return .init(status: .disabled)
         }
 
         return .init(status: feature.status)
@@ -581,7 +581,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
                 storeAppLock(.init())
 
             case .apps:
-                storeApps(.init(status: .enabled))
+                storeApps(.init(status: .disabled))
 
             case .conferenceCalling:
                 storeConferenceCalling(.init())
