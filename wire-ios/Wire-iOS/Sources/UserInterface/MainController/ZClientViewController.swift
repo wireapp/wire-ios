@@ -27,11 +27,11 @@ import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingDomain
+import WireMessagingUI
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
 import WireUtilities
-import WireMessagingUI
 
 final class ZClientViewController: UIViewController {
 

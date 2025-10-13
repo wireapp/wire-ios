@@ -143,14 +143,13 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             // Additional filters
             selectableMenuItem(.folders)
             selectableMenuItem(.archive)
-            
 
             // Meetings
             if showMeetings {
                 menuItemHeader(Strings.Meetings.title, addTopPadding: false)
                 selectableMenuItem(.meetings)
             }
-            
+
             // Files
             if showFiles {
                 menuItemHeader(Strings.Files.title, addTopPadding: false)
@@ -285,7 +284,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.Meetings.AllMeetings.title)
             icon = "video"
             accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
-            
+
         case .files:
             text = Text(Strings.Files.AllFiles.title)
             icon = "rectangle.stack"

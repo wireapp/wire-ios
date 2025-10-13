@@ -106,12 +106,12 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     public func showMeetings() async {
         await _showMeetings()
     }
-    
+
     @MainActor
     public func showFiles() async {
         await _showFiles()
     }
-    
+
     @MainActor
     public func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async {
         await _showConversation(conversation, message)

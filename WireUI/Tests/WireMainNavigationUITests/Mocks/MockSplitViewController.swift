@@ -65,11 +65,10 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     func setConnectUI(_ connectUI: ConnectUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
-    
+
     func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
-    
 
     func hideSidebar() {}
 }

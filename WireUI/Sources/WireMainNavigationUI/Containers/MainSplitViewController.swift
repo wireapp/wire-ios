@@ -40,7 +40,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         get { _conversationListUI }
         set { setConversationListUI(newValue, animated: false) }
     }
-        
+
     public var filesUI: FilesUI? {
         get { _filesUI }
         set { setFilesUI(newValue, animated: false) }
@@ -167,10 +167,10 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
-        
+
     private func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         _filesUI = filesUI
-            
+
         let viewControllers = [filesUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()

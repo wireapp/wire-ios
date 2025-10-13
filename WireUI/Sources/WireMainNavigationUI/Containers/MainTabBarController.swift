@@ -59,7 +59,7 @@ public final class MainTabBarController<
         get { _settingsContentUI }
         set { setSettingsContentUI(newValue, animated: false) }
     }
-    
+
     public var filesUI: UIViewController? {
         get { _filesUI }
         set { setFilesUI(newValue, animated: false) }
@@ -108,7 +108,7 @@ public final class MainTabBarController<
         let conversationListNavigationController = UINavigationController()
         conversationListNavigationController.navigationBar.isTranslucent = false
         self.conversationListNavigationController = conversationListNavigationController
-        
+
         let filesNavigationController = UINavigationController()
         filesNavigationController.navigationBar.isTranslucent = false
         self.filesNavigationController = filesNavigationController
@@ -130,7 +130,7 @@ public final class MainTabBarController<
             archiveNavigationController,
             settingsNavigationController
         ]
-        
+
         if showFiles {
             tabs.insert(filesNavigationController, at: 1)
         }
@@ -217,7 +217,7 @@ public final class MainTabBarController<
                     bundle: .module
                 )
                 settingsNavigationController.tabBarItem = tabBarItem
-                
+
             case .files:
                 let tabBarItem = UITabBarItem(
                     title: String(localized: "tabBar.files.title", bundle: .module),
@@ -236,7 +236,6 @@ public final class MainTabBarController<
                     bundle: .module
                 )
                 filesNavigationController.tabBarItem = tabBarItem
-                
             }
         }
         selectedContent = .conversations
@@ -316,7 +315,7 @@ public final class MainTabBarController<
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }
-    
+
     private func setFilesUI(
         _ filesUI: UIViewController?,
         animated: Bool

@@ -98,7 +98,7 @@ public final class SidebarViewController: UIViewController {
         get { model.showMeetings }
         set { model.showMeetings = newValue }
     }
-    
+
     public var showFiles: Bool {
         get { model.showFiles }
         set { model.showFiles = newValue }

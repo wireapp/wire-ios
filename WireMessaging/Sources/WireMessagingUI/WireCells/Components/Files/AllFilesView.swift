@@ -22,9 +22,9 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 public struct AllFilesView: View {
     @State private var searchText = ""
-    
+
     public init() {}
-    
+
     public var body: some View {
         Text("TODO: [WPB-21030] to be implemented")
             .navigationTitle(Strings.Files.navigationTitle)

@@ -133,7 +133,7 @@ final class MainTabBarControllerTests: XCTestCase {
         // Then
         XCTAssertNil(weakSettings)
     }
-    
+
     @MainActor
     func testFilesIsInstalled() throws {
         // Given

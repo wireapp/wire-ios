@@ -61,7 +61,7 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     func setSettingsContentUI(_ settingsContentUI: SettingsContentUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
-    
+
     func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
