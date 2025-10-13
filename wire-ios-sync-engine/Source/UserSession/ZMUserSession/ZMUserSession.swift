@@ -178,6 +178,24 @@ public final class ZMUserSession: NSObject {
         chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 
+    public var wireCellsFeature: Feature.Cells {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchCells()
+    }
+
+    public var isWireCellsEnabled: Bool {
+        wireCellsFeature.status == .enabled || DeveloperFlag.wireCells.isOn
+    }
+
+    public var conferenceCallingFeature: Feature.ConferenceCalling {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchConferenceCalling()
+    }
+
+    public var isEnterpriseUser: Bool {
+        conferenceCallingFeature.status == .enabled || DeveloperFlag.channelsHistory.isOn
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
@@ -613,10 +631,10 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
-                onProcessedCallEvent: onProcessedCallEvent,
-                onSelfClientInvalidated: onSelfClientInvalidated,
-                onAuthenticationFailure: onAuthenticationFailure,
-                onProcessedTypingUsers: onProcessedTypingUsers
+                onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
+                onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
+                onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
+                onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
             )
         )
         self.clientSessionComponent = clientSessionComponent
@@ -686,6 +704,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Deinitalize
 
     deinit {
+        userSessionComponent = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -949,7 +968,7 @@ public final class ZMUserSession: NSObject {
 
     public func triggerInitialSync() async {
         do {
-            syncAgent?.suspend()
+            await syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
             WireLogger.sync.error(
@@ -961,7 +980,7 @@ public final class ZMUserSession: NSObject {
 
     public func triggerResourcesSync() async {
         do {
-            syncAgent?.suspend()
+            await syncAgent?.suspend()
             try await syncAgent?.performResourceSync()
         } catch {
             WireLogger.sync.error(
@@ -1393,8 +1412,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
     private func fetchAndStoreFeatureConfig() async {
         do {
-            var getFeatureConfigAction = GetFeatureConfigsAction()
-            try await getFeatureConfigAction.perform(in: notificationContext)
+            try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }

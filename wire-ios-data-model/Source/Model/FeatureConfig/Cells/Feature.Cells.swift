@@ -18,13 +18,20 @@
 
 import Foundation
 
-/// Errors originating from `PullPendingUpdateEventsSync`.
+public extension Feature {
 
-public enum PullPendingUpdateEventsSyncError: Error {
+    struct Cells: Codable {
 
-    /// There is no known last event id from which to pull
-    /// new events.
+        // MARK: - Properties
 
-    case noLastEventID
+        public let status: Status
+
+        // MARK: - Life cycle
+
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
+
+    }
 
 }

@@ -34,6 +34,10 @@ class WelcomePage: PageModel {
         return elementsQuery["Email or SSO code"]
     }
 
+    var setBackendLabel: XCUIElement {
+        app.descendants(matching: .any)["onPremInfoButton"]
+    }
+
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {
         try typeEmailOrSSO(input)
         nextButton.tap()

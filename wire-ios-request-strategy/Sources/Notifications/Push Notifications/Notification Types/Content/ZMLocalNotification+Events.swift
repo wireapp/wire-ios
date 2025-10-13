@@ -35,7 +35,7 @@ public extension ZMLocalNotification {
         switch event.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             guard conversation?.isForcedReadOnly != true else { break }
-            guard let message = GenericMessage(from: event) else { break }
+            guard let message = GenericMessage(from: event, validate: true) else { break }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
                 .self
 
@@ -161,7 +161,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
-            let message = GenericMessage(from: event), message.hasReaction,
+            let message = GenericMessage(from: event, validate: true), message.hasReaction,
             let nonce = UUID(uuidString: message.reaction.messageID)
         else {
             return nil
@@ -291,7 +291,7 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
-            let message = GenericMessage(from: event),
+            let message = GenericMessage(from: event, validate: true),
             let contentType = LocalNotificationContentType(
                 message: message,
                 conversation: conversation,
@@ -342,7 +342,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
            conversation.isMessageSilenced(message, senderID: senderUUID) {
             WireLogger.push
                 .info(
-                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced",
+                    attributes: .safePublic
                 )
             return false
         } else if conversation == nil {

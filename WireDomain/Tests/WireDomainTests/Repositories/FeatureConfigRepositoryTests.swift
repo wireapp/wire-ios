@@ -277,6 +277,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 .init(
                     status: .enabled
                 )
+            ),
+            .cells(
+                .init(status: .enabled)
             )
         ]
 

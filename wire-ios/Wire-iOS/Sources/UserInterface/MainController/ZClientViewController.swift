@@ -86,7 +86,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainCoordinator.TabBarController()
+        let tabBarController = MainCoordinator.TabBarController(showMeetings: DeveloperFlag.wireMeetings.isOn)
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
@@ -177,7 +177,7 @@ final class ZClientViewController: UIViewController {
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    let wireCellsFactory: any WireCellsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -239,6 +239,7 @@ final class ZClientViewController: UIViewController {
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
+                self?.sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
             }
 
         createLegalHoldDisclosureController()

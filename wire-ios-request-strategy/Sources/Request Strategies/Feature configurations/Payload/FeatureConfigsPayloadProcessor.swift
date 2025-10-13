@@ -100,15 +100,6 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
 
-        if let allowedGlobalOperations = payload.allowedGlobalOperations {
-            repository.storeAllowedGlobalOperations(
-                Feature.AllowedGlobalOperations(
-                    status: allowedGlobalOperations.status,
-                    config: allowedGlobalOperations.config
-                )
-            )
-        }
-
         if let mlsMigration = payload.mlsMigration {
             repository.storeMLSMigration(
                 Feature.MLSMigration(
@@ -217,31 +208,6 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
-
-        if let channels = payload.channels {
-            repository.storeChannels(
-                Feature.Channels(
-                    status: channels.status,
-                    config: channels.config
-                )
-            )
-        }
-
-        if let consumableNotifications = payload.consumableNotifications {
-            repository.storeConsumableNotifications(
-                Feature.ConsumableNotifications(
-                    status: consumableNotifications.status
-                )
-            )
-        }
-
-        if let chatBubblesSimple = payload.chatBubbles {
-            repository.storeChatBubblesSimple(
-                Feature.ChatBubblesSimple(
-                    status: chatBubblesSimple.status
-                )
-            )
-        }
     }
 
     func processEventPayload(
@@ -279,16 +245,6 @@ struct FeatureConfigsPayloadProcessor {
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
-        case .allowedGlobalOperations:
-            let response = try decoder.decode(
-                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
-                from: data
-            )
-            repository.storeAllowedGlobalOperations(.init(
-                status: response.status,
-                config: response.config
-            ))
-
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConversationGuestLinks(.init(status: response.status))
@@ -324,17 +280,11 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
-        case .channels:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
-            repository.storeChannels(.init(status: response.status, config: response.config))
-
-        case .consumableNotifications:
-            let response = try decoder.decode(FeatureStatus.self, from: data)
-            repository.storeConsumableNotifications(.init(status: response.status))
-
-        case .chatBubblesSimple:
-            let response = try decoder.decode(FeatureStatus.self, from: data)
-            repository.storeChatBubblesSimple(.init(status: response.status))
+        case .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations, .cells:
+            WireLogger.featureConfigs.warn(
+                "decoding unsupported feature config: \"\(featureName)\", this should not happen",
+                attributes: .safePublic
+            )
         }
     }
 

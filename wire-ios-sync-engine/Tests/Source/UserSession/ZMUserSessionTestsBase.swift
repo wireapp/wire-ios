@@ -43,9 +43,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mediaManager: MediaManagerType!
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
-    var mockSyncStateDelegate: MockSyncStateDelegate!
-    var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
     var mockFetchBackendMLSPublicKeysActionHandler: MockActionHandler<FetchBackendMLSPublicKeysAction>!
+
     var mockRecurringActionService: MockRecurringActionServiceInterface!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -56,7 +55,6 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
 
-        mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
         let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
         mockFetchBackendMLSPublicKeysActionHandler = .init(
             result: .success(backendPublicKeys),
@@ -133,6 +131,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
+        transportSession = nil
         backendEnvironment = nil
         wireAPIBackendEnvironment = nil
         baseURL = nil
@@ -146,13 +145,10 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockRecurringActionService = nil
         mockEARService.delegate = nil
         mockEARService = nil
-        let sut = sut
-        self.sut = nil
-        mockGetFeatureConfigsActionHandler = nil
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
         sut?.tearDown()
-
+        mockPushChannel = nil
         super.tearDown()
     }
 

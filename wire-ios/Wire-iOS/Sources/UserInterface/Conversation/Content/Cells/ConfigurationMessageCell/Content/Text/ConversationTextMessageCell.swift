@@ -95,7 +95,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupAccessibility()
     }
 
     @available(*, unavailable)
@@ -173,11 +172,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         } else {
             messageTextView.accessibilityIdentifier = "Message"
         }
-        accessibilityLabel = messageTextView.attributedText.string
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
         addAccentColorChangeObserver(userSession: object.userSession)
+        setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
     }
 
     private func addAccentColorChangeObserver(userSession: UserSession?) {
@@ -196,13 +195,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
-        // FIXME: [WPB-16311] Remove this temporary solution once file previews are working in conversations.
-        if DeveloperFlag.wireCells.isOn, url == URL.openFilesViewLink {
-            let nodeIDs = message?.multipartMessageData?.attachments.compactMap(\.nodeID) ?? []
-            openFilesView(nodeIDs: nodeIDs)
-            return true
-        }
-
         // Open mention link
         if url.isMention {
             if let message,
@@ -227,10 +219,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return true
     }
 
-    func openFilesView(nodeIDs: [UUID]) {
-        delegate?.conversationMessageWantsToOpenFilesView(self, nodeIDs: nodeIDs)
-    }
-
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -241,11 +229,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private func setupAccessibility() {
+    private func setupAccessibility(accessibilityLabel: String) {
         typealias Conversation = L10n.Accessibility.Conversation
 
         isAccessibilityElement = false
         container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 

@@ -68,10 +68,12 @@ public protocol AuthenticationAPI: Sendable {
     func requestVerificationCode(for email: String) async throws
 
     /// Get Activation key & code for email
-    /// - Parameter email: email of user
+    /// - Parameters:
+    ///   - email: email of user
+    ///   - basicAuth: basicAuth value
     /// - Returns: Code & Key
     #if DEBUG
-        func getActivationCode(forEmail email: String) async throws -> (code: String, key: String)
+        func getActivationCode(forEmail email: String, basicAuth: String) async throws -> (code: String, key: String)
     #endif
 
     /// Register Personal Account
