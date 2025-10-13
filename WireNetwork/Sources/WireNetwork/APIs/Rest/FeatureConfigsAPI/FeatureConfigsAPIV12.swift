@@ -43,6 +43,7 @@ final class FeatureConfigsAPIV12: FeatureConfigsAPIV11 {
 struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
 
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
+    let apps: FeatureWithoutConfig
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithConfig<FeatureConfigResponse.ConferenceCallingV6>
     let conversationGuestLinks: FeatureWithoutConfig

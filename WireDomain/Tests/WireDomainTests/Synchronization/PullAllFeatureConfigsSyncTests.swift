@@ -54,7 +54,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 13)
+        try XCTAssertCount(storeInvocations, count: 14)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -63,75 +63,75 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             Scaffolding.appLockFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[12].name, .apps)
-        XCTAssertTrue(storeInvocations[12].isEnabled)
-        XCTAssertNil(storeInvocations[12].config)
+        XCTAssertEqual(storeInvocations[1].name, .apps)
+        XCTAssertTrue(storeInvocations[1].isEnabled)
+        XCTAssertNil(storeInvocations[1].config)
 
-        XCTAssertEqual(storeInvocations[1].name, .classifiedDomains)
-        XCTAssertEqual(storeInvocations[1].isEnabled, true)
+        XCTAssertEqual(storeInvocations[2].name, .classifiedDomains)
+        XCTAssertEqual(storeInvocations[2].isEnabled, true)
         XCTAssertEqual(
-            storeInvocations[1].config as? Feature.ClassifiedDomains.Config,
+            storeInvocations[2].config as? Feature.ClassifiedDomains.Config,
             Scaffolding.classifiedDomainsFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[2].name, .conferenceCalling)
-        XCTAssertEqual(storeInvocations[2].isEnabled, true)
+        XCTAssertEqual(storeInvocations[3].name, .conferenceCalling)
+        XCTAssertEqual(storeInvocations[3].isEnabled, true)
         XCTAssertEqual(
-            storeInvocations[2].config as? Feature.ConferenceCalling.Config,
+            storeInvocations[3].config as? Feature.ConferenceCalling.Config,
             Scaffolding.conferenceCallingFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[3].name, .conversationGuestLinks)
-        XCTAssertTrue(storeInvocations[3].isEnabled)
-        XCTAssertNil(storeInvocations[3].config)
-
-        XCTAssertEqual(storeInvocations[4].name, .digitalSignature)
+        XCTAssertEqual(storeInvocations[4].name, .conversationGuestLinks)
         XCTAssertTrue(storeInvocations[4].isEnabled)
         XCTAssertNil(storeInvocations[4].config)
 
-        XCTAssertEqual(storeInvocations[5].name, .fileSharing)
+        XCTAssertEqual(storeInvocations[5].name, .digitalSignature)
         XCTAssertTrue(storeInvocations[5].isEnabled)
         XCTAssertNil(storeInvocations[5].config)
 
-        XCTAssertEqual(storeInvocations[6].name, .selfDeletingMessages)
+        XCTAssertEqual(storeInvocations[6].name, .fileSharing)
         XCTAssertTrue(storeInvocations[6].isEnabled)
+        XCTAssertNil(storeInvocations[6].config)
+
+        XCTAssertEqual(storeInvocations[7].name, .selfDeletingMessages)
+        XCTAssertTrue(storeInvocations[7].isEnabled)
         XCTAssertEqual(
-            storeInvocations[6].config as? Feature.SelfDeletingMessages.Config,
+            storeInvocations[7].config as? Feature.SelfDeletingMessages.Config,
             Scaffolding.selfDeletingMessagesFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[7].name, .mls)
-        XCTAssertTrue(storeInvocations[7].isEnabled)
+        XCTAssertEqual(storeInvocations[8].name, .mls)
+        XCTAssertTrue(storeInvocations[8].isEnabled)
         XCTAssertEqual(
-            storeInvocations[7].config as? Feature.MLS.Config,
+            storeInvocations[8].config as? Feature.MLS.Config,
             Scaffolding.mlsFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[8].name, .mlsMigration)
-        XCTAssertTrue(storeInvocations[8].isEnabled)
+        XCTAssertEqual(storeInvocations[9].name, .mlsMigration)
+        XCTAssertTrue(storeInvocations[9].isEnabled)
         XCTAssertEqual(
-            storeInvocations[8].config as? Feature.MLSMigration.Config,
+            storeInvocations[9].config as? Feature.MLSMigration.Config,
             Scaffolding.mlsMigrationFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[9].name, .e2ei)
-        XCTAssertTrue(storeInvocations[9].isEnabled)
+        XCTAssertEqual(storeInvocations[10].name, .e2ei)
+        XCTAssertTrue(storeInvocations[10].isEnabled)
         XCTAssertEqual(
-            storeInvocations[9].config as? Feature.E2EI.Config,
+            storeInvocations[10].config as? Feature.E2EI.Config,
             Scaffolding.endToEndIdentityFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[10].name, .consumableNotifications)
-        XCTAssertTrue(storeInvocations[10].isEnabled)
-        XCTAssertNil(storeInvocations[10].config)
-
-        XCTAssertEqual(storeInvocations[11].name, .chatBubblesSimple)
+        XCTAssertEqual(storeInvocations[11].name, .consumableNotifications)
         XCTAssertTrue(storeInvocations[11].isEnabled)
         XCTAssertNil(storeInvocations[11].config)
 
-        XCTAssertEqual(storeInvocations[12].name, .cells)
+        XCTAssertEqual(storeInvocations[12].name, .chatBubblesSimple)
         XCTAssertTrue(storeInvocations[12].isEnabled)
         XCTAssertNil(storeInvocations[12].config)
+
+        XCTAssertEqual(storeInvocations[13].name, .cells)
+        XCTAssertTrue(storeInvocations[13].isEnabled)
+        XCTAssertNil(storeInvocations[13].config)
     }
 
 }
