@@ -29,7 +29,7 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
     // MARK: - Life Cycle
 
     convenience init(_ content: String) {
-        self.init  (content, .init(uiColor: .systemBackground))
+        self.init(content, .init(uiColor: .systemBackground))
     }
 
     convenience init(_ content: String, _ backgroundColor: Color) {
