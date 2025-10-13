@@ -53,15 +53,15 @@ final class CookieStorageTests: XCTestCase {
         let cookies = [HTTPCookie]()
 
         // Then
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // When
             try await sut.storeCookies(cookies)
-        }, errorHandler: { error in
+        } errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
                 return
             }
-        })
+        }
     }
 
     func testStoreCookies_Invalid_Cookie() async throws {
@@ -69,15 +69,15 @@ final class CookieStorageTests: XCTestCase {
         let invalidCookie = try XCTUnwrap(Scaffolding.invalidCookie)
 
         // Then
-        await XCTAssertThrowsErrorAsync({
+        await XCTAssertThrowsErrorAsync {
             // When
             try await sut.storeCookies([invalidCookie])
-        }, errorHandler: { error in
+        } errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
                 return
             }
-        })
+        }
     }
 
     func testStoreCookies_Adds_To_Keychain() async throws {

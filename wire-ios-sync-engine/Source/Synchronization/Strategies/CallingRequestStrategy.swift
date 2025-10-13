@@ -35,10 +35,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
-    private var callConfigRequestSync: ZMSingleRequestSync! = nil
+    private var callConfigRequestSync: ZMSingleRequestSync!
     private var callConfigCompletion: CallConfigRequestCompletion?
 
-    private var clientDiscoverySync: ZMSingleRequestSync! = nil
+    private var clientDiscoverySync: ZMSingleRequestSync!
     private var clientDiscoveryRequest: ClientDiscoveryRequest?
 
     private let ephemeralURLSession = URLSession(configuration: .ephemeral)

@@ -26,8 +26,8 @@ import XCTest
 
 final class OperationLoopTests: ZMTBaseTest {
 
-    var coreDataStack: CoreDataStack! = nil
-    var sut: OperationLoop! = nil
+    var coreDataStack: CoreDataStack!
+    var sut: OperationLoop!
 
     var uiMoc: NSManagedObjectContext {
         coreDataStack.viewContext

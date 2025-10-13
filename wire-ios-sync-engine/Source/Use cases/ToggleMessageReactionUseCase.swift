@@ -22,10 +22,10 @@ import WireDataModel
 
 public protocol ToggleMessageReactionUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         _ reaction: String,
         for message: ZMConversationMessage,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     )
 }
 

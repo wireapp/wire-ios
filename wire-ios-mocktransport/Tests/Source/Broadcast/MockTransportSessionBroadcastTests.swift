@@ -111,8 +111,10 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
-                    "missing": [selfUser.identifier: [secondSelfClient.identifier!],
-                                otherUser.identifier: [secondOtherUserClient.identifier!]],
+                    "missing": [
+                        selfUser.identifier: [secondSelfClient.identifier!],
+                        otherUser.identifier: [secondOtherUserClient.identifier!]
+                    ],
                     "deleted": [otherUser.identifier: [otherUserRedundantClient.identifier!]]
                 ]
 

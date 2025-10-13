@@ -127,11 +127,11 @@ final class CallController: NSObject {
     private func acceptDegradedCall(conversation: ZMConversation) {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        userSession.enqueue({
+        userSession.enqueue {
             conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
-        }, completionHandler: {
+        } completionHandler: {
             conversation.joinCall()
-        })
+        }
     }
 
     private func cancelCall(conversation: ZMConversation) {
