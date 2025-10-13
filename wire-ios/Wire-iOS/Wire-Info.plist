@@ -79,8 +79,6 @@
 	<string>$(FORCE_ENCRYPTION_AT_REST_ENABLED)</string>
 	<key>GenerateLinkPreviewEnabled</key>
 	<string>${GENERATE_LINK_PREVIEW_ENABLED}</string>
-	<key>OpenLinksExternally</key>
-	<string>${OPEN_LINKS_EXTERNALLY}</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<true/>
 	<key>ITSEncryptionExportComplianceCode</key>
@@ -126,6 +124,8 @@
 	<string>Allow Wire to store pictures you take in the photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow Wire to access pictures stored in photo library.</string>
+	<key>OpenLinksExternally</key>
+	<string>${OPEN_LINKS_EXTERNALLY}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>RedactedScript-Regular.ttf</string>
@@ -137,6 +137,8 @@
 		<string>remote-notification</string>
 		<string>fetch</string>
 	</array>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchScreen</key>

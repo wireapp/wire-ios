@@ -509,6 +509,10 @@ public class MockUserSession: UserSession {
     
     public var isChatBubbleSimpleEnabled: Bool = false
     
+    public var isWireCellsEnabled: Bool = false
+    
+    public var isEnterpriseUser: Bool = false
+    
     // MARK: - mlsGroupVerification
 
     public var mlsGroupVerification: (any MLSGroupVerificationProtocol)?

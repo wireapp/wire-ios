@@ -305,7 +305,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             }
 
         // When
-        sut.suspend()
+        await sut.suspend()
 
         await fulfillment(of: [expectation])
     }

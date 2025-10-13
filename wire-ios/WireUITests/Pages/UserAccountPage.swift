@@ -42,7 +42,7 @@ class UserAccountPage: PageModel {
     }
 
     var manageTeamButton: XCUIElement {
-        app.staticTexts["Manage Team"].firstMatch
+        app.staticTexts["Manage Team & Billing"].firstMatch
     }
 
     var closeButton: XCUIElement {
@@ -50,7 +50,7 @@ class UserAccountPage: PageModel {
     }
 
     var addAccountOrTeamButton: XCUIElement {
-        app.descendants(matching: .any)["Add Account or TeamField"]
+        app.descendants(matching: .any)["Add Account or Team"].firstMatch
     }
 
     func tapCreateTeamButtonAndContinue() throws -> TeamSetupStepsPage {
@@ -73,7 +73,7 @@ class UserAccountPage: PageModel {
     }
 
     func switchUserAccountForUser(withName name: String) throws -> ConversationsPage {
-        let predicate = NSPredicate(format: "value BEGINSWITH %@", name)
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
         let button = app.buttons.containing(predicate).firstMatch
         button.tap()
         return try ConversationsPage()

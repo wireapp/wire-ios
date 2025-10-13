@@ -24,18 +24,24 @@ public final class MultipartMessageData: NSObject {
 
     public struct Attachment {
         public let nodeID: UUID
-        public let fileName: String
+        public let contentType: String?
+        public let initialName: String?
+        public let initialSize: Int?
     }
 
     public let attachments: [Attachment]
 
     init(multipart: Multipart) {
         self.attachments = multipart.attachments.compactMap { attachment in
-            guard let nodeID = UUID(uuidString: attachment.cellAsset.uuid) else { return nil }
+            let asset = attachment.cellAsset
+
+            guard let nodeID = UUID(uuidString: asset.uuid) else { return nil }
 
             return Attachment(
                 nodeID: nodeID,
-                fileName: URL(string: attachment.cellAsset.initialName)?.lastPathComponent ?? "Unknown file name"
+                contentType: asset.hasContentType ? asset.contentType : nil,
+                initialName: asset.hasInitialName ? URL(string: asset.initialName)?.lastPathComponent : nil,
+                initialSize: asset.hasInitialSize ? Int(attachment.cellAsset.initialSize) : nil
             )
         }
     }

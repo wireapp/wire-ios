@@ -31,6 +31,7 @@ public struct CreateGroupConversationParameters: Sendable {
     let teamID: UUID?
     let isReadReceiptsEnabled: Bool
     let skipCreator: Bool?
+    let cells: Bool?
 
     public init(
         groupType: ConversationGroupType,
@@ -44,6 +45,7 @@ public struct CreateGroupConversationParameters: Sendable {
         legacyAccessRole: ConversationAccessRole?,
         teamID: UUID?,
         isReadReceiptsEnabled: Bool,
+        cells: Bool? = nil, // parameter used from api v8
         skipCreator: Bool? = nil // until really used
     ) {
         self.groupType = groupType
@@ -58,5 +60,6 @@ public struct CreateGroupConversationParameters: Sendable {
         self.teamID = teamID
         self.isReadReceiptsEnabled = isReadReceiptsEnabled
         self.skipCreator = skipCreator
+        self.cells = cells
     }
 }

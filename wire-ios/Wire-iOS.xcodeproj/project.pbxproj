@@ -600,7 +600,7 @@
 				ConversationCell/MultiParagraphSnapshotTests.swift,
 				ConversationCell/StartedConversationCellTests.swift,
 				ConversationCell/TextMessageMentionsTests.swift,
-				ConversationCell/UnknownMessageCellTests.swift,
+				ConversationCell/UnknownMessageContentTypeReceivedCellTests.swift,
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
 				ConversationDetail/ConversationDetailsTests.swift,
@@ -2800,7 +2800,7 @@
 			repositoryURL = "https://github.com/wireapp/Down";
 			requirement = {
 				kind = exactVersion;
-				version = 2.3.5;
+				version = 2.3.6;
 			};
 		};
 		E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {

@@ -27,6 +27,10 @@ final class SectionFooter: UICollectionReusableView {
         footerView.titleLabel
     }
 
+    var linkTextView: UITextView {
+        footerView.linkTextView
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(footerView)

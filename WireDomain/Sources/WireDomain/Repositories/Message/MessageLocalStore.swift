@@ -274,6 +274,38 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
+    public func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data,
+        date: Date
+    ) async {
+        await context.perform { [self] in
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            ) else { return }
+
+            let unknownMessage = UnknownMessage(
+                nonce: messageID,
+                managedObjectContext: context
+            )
+            unknownMessage.nonce = messageID
+            unknownMessage.payload = payload
+            unknownMessage.serverTimestamp = date
+            finalizeMessageUpdate(
+                message: unknownMessage,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                conversation: conversation
+            )
+        }
+    }
+
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
         in conversation: ZMConversation
@@ -341,14 +373,21 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID
     ) async {
         await context.perform { [context] in
+
+            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+            guard senderID == selfUserID else { return }
+
             ZMClientMessage.updateButtonStates(
-                withConfirmation: buttonActionConfirmation,
-                forConversation: conversation,
-                inContext: context
+                buttonID: buttonID,
+                referenceMessageID: referenceMessageID,
+                for: conversation,
+                in: context
             )
         }
     }
@@ -764,6 +803,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
+        case let .unknownMessageContentTypeReceived(sender, date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .unknownMessageContentTypeReceived,
+                sender: sender,
+                timestamp: date
+            )
+
+            return [systemMessage]
+
         case let .invalid(sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -1000,18 +1055,29 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) -> Bool {
         guard
             let messageNonce = UUID(uuidString: genericMessage.messageID),
-            let originalText = clientMessage.underlyingMessage?.textData,
-            case .text? = messageEdit.content,
+            let messageEditContent = messageEdit.content,
             senderID == clientMessage.sender?.remoteIdentifier
-        else {
-            return false
+        else { return false }
+
+        let genericMessage: GenericMessage
+        switch messageEditContent {
+
+        case let .text(newText):
+            guard let originalText = clientMessage.underlyingMessage?.textData else { return false }
+            genericMessage = GenericMessage(
+                content: originalText.applyEdit(from: newText),
+                nonce: messageNonce
+            )
+
+        case let .composite(newComposite):
+            guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
+            genericMessage = GenericMessage(
+                content: newComposite,
+                nonce: messageNonce
+            )
         }
 
         do {
-            let genericMessage = GenericMessage(
-                content: originalText.applyEdit(from: messageEdit.text),
-                nonce: messageNonce
-            )
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             WireLogger.messageProcessing.warn(

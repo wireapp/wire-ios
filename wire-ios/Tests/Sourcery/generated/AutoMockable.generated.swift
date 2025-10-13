@@ -1801,6 +1801,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeAttachmentsPreviewView
+
+    var makeAttachmentsPreviewViewAttachments_Invocations: [[WireCellsMessageAttachment]] = []
+    var makeAttachmentsPreviewViewAttachments_MockMethod: (([WireCellsMessageAttachment]) -> UIViewController)?
+    var makeAttachmentsPreviewViewAttachments_MockValue: UIViewController?
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
+        makeAttachmentsPreviewViewAttachments_Invocations.append(attachments)
+
+        if let mock = makeAttachmentsPreviewViewAttachments_MockMethod {
+            return mock(attachments)
+        } else if let mock = makeAttachmentsPreviewViewAttachments_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAttachmentsPreviewViewAttachments`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name

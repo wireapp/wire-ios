@@ -56,14 +56,14 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
         for await events in updateEvents {
             logger.info(
                 "Processing \(events.count) pending events...",
-                attributes: .newNSE
+                attributes: .newNSE, .safePublic
             )
 
             for event in events {
                 if let notification = await generateNotification(for: event) {
                     logger.info(
                         "Generated a notification from an event",
-                        attributes: .newNSE
+                        attributes: .newNSE, .safePublic
                     )
                     notifications.append(notification)
                 }
@@ -83,7 +83,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                     event: conversationEvent
                 )
             } catch {
-                var attributes = LogAttributes.newNSE
+                var attributes = LogAttributes.newNSE + .safePublic
                 attributes[.eventId] = eventID.safeForLoggingDescription
 
                 logger.error(

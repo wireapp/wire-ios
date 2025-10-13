@@ -120,9 +120,9 @@ public class ZMClientMessage: ZMOTRMessage {
                 return
             }
             ZMClientMessage.expireButtonState(
-                forButtonAction: genericMessage.buttonAction,
-                forConversation: conversation,
-                inContext: managedObjectContext
+                buttonAction: genericMessage.buttonAction,
+                for: conversation,
+                in: managedObjectContext
             )
         default:
             break
