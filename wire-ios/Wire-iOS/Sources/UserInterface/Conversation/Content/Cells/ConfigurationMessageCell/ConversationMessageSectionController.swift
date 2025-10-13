@@ -260,6 +260,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
             multipartMessage: message.multipartMessageData!,
+            isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
+            isSentBySelfUser: message.isSentBySelfUser,
             wireCellsFactory: wireCellsFactory
         )
 

@@ -21,15 +21,10 @@ import SwiftUI
 /// A view that organizes items into a grid similar to `UICollectionViewFlowLayout`.
 struct FlowLayout: Layout {
 
-    enum Alignment {
-        case leading
-        case trailing
-    }
-
     let spacing: Double
-    let alignment: Alignment
+    let alignment: HorizontalAlignment
 
-    init(spacing: Double = 8, alignment: Alignment = .trailing) {
+    init(spacing: Double = 8, alignment: HorizontalAlignment = .leading) {
         self.spacing = spacing
         self.alignment = alignment
     }
