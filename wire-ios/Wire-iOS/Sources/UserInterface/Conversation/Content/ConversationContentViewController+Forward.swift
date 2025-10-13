@@ -97,14 +97,14 @@ extension ZMMessage: Shareable {
                     }
                 }
             }
-        } else if isImage, let imageData = imageMessageData?.imageData {
+        } else if isImage, let imageMessageData, let data = imageMessageData.imageData {
             ZMUserSession.shared()?.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         let image = SendableImage(
-                            name: nil,
+                            name: imageMessageData.name,
                             utType: nil,
-                            data: imageData
+                            data: data
                         )
                         try $0.appendImage(image, nonce: UUID())
                     } catch {
