@@ -26,6 +26,7 @@ func SidebarViewControllerPreview() -> UIViewController {
         accountImageView: { _, _, _ in MockAccountImageView() },
         legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
     )
+    sidebarViewController.showFiles = true
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
     sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()

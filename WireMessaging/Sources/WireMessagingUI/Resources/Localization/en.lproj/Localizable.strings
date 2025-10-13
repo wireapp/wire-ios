@@ -101,7 +101,7 @@
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
 // MARK: Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Files";
+"conversation.wireCells.files.navigationTitle" = "All Files";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";

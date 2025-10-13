@@ -31,7 +31,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = MainTabBarController(showMeetings: false)
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
@@ -81,7 +81,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.archiveUI = archiveUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [archiveUI])
     }
 
@@ -112,7 +112,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.settingsUI = settingsUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [settingsUI])
     }
 
@@ -128,6 +128,37 @@ final class MainTabBarControllerTests: XCTestCase {
 
         // When
         sut.settingsUI = nil
+        await Task.yield()
+
+        // Then
+        XCTAssertNil(weakSettings)
+    }
+    
+    @MainActor
+    func testFilesIsInstalled() throws {
+        // Given
+        let filesUI = UIViewController()
+
+        // When
+        sut.filesUI = filesUI
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [filesUI])
+    }
+
+    @MainActor
+    func testFilesIsReleased() async throws {
+        // Given
+        weak var weakSettings: UIViewController?
+        sut.filesUI = {
+            let settings = UIViewController()
+            weakSettings = settings
+            return settings
+        }()
+
+        // When
+        sut.filesUI = nil
         await Task.yield()
 
         // Then
