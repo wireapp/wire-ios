@@ -188,11 +188,15 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 let deleteNodesUseCase = wireCellsFactory.makeDeleteNodesUseCase()
                 do {
                     try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
-                    WireLogger.conversation.info("Deleted files for message: \(message.nonce?.uuidString ?? "nil")")
+                    WireLogger.conversation.info(
+                        "Deleted files for message",
+                        attributes: [.nonce: message.nonce?.uuidString]
+                    )
                 } catch {
                     WireLogger.conversation
                         .error(
-                            "Unable to delete files for message: \(message.nonce?.uuidString ?? "nil"), error: \(String(describing: error))"
+                            "Unable to delete files: \(String(describing: error))",
+                            attributes: [.nonce: message.nonce?.uuidString], .safePublic
                         )
                 }
             }
