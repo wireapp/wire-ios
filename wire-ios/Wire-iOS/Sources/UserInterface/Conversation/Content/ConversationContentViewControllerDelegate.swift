@@ -65,4 +65,11 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
         actionController: ConversationMessageActionController,
         popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
     )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    )
 }
