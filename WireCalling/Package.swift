@@ -3,6 +3,8 @@
 
 import PackageDescription
 
+let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
+
 let package = Package(
     name: "WireCalling",
     defaultLocalization: "en",
@@ -46,13 +48,25 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingDomain"
+            ],
+        ),
+        .testTarget(
+            name: "WireCallingUITests",
+            dependencies: [
                 "WireCallingUI",
-                .product(name: "WireDesign", package: "WireUI"),
-                "WireFoundation"
+                .product(name: "WireDesign", package: "WireUI")
             ],
         ),
     ]
 )
+
+for target in package.targets {
+    if target.isTest {
+        target.dependencies += [WireTestingPackage]
+    }
+}
+
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),

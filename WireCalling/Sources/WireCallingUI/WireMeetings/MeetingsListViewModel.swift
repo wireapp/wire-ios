@@ -19,23 +19,22 @@
 package import Foundation
 package import WireCallingDomain
 
-// TODO: add tests
 package final class MeetingsListViewModel: ObservableObject {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @Published var selectedTab: Tab = .next
-    @Published var showAllNext: Bool = false
+    @Published package var showAllNext: Bool = false
 
     private let meetings: [Meeting]
-    private let currentDate: Date
-    private let calendar = Calendar.current
+    package let currentDate: Date
+    package let calendar = Calendar.current
 
     package init(meetings: [Meeting], currentDate: Date = Date()) {
         self.meetings = meetings.sorted { $0.start < $1.start }
         self.currentDate = currentDate
     }
 
-    var ongoingMeetings: [Meeting] {
+    package var ongoingMeetings: [Meeting] {
         meetings.filter { $0.start <= currentDate && $0.end > currentDate }
     }
 
@@ -43,7 +42,7 @@ package final class MeetingsListViewModel: ObservableObject {
         meetings.filter { $0.start > currentDate }
     }
 
-    var displayedNextMeetings: [Meeting] {
+    package var displayedNextMeetings: [Meeting] {
         if showAllNext {
             return allFutureMeetings
         } else {
@@ -55,11 +54,11 @@ package final class MeetingsListViewModel: ObservableObject {
         }
     }
 
-    var hasMoreNext: Bool {
+    package var hasMoreNext: Bool {
         !showAllNext && allFutureMeetings.count > displayedNextMeetings.count
     }
 
-    var displayedPastMeetings: [Meeting] {
+    package var displayedPastMeetings: [Meeting] {
         let allPast = meetings.filter { $0.end <= currentDate }
         let todayStart = calendar.startOfDay(for: currentDate)
         guard let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: todayStart) else {
@@ -102,19 +101,19 @@ package final class MeetingsListViewModel: ObservableObject {
         }
     }
 
-    var groupedOngoing: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
+    package var groupedOngoing: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
         groupedMeetings(ongoingMeetings, groupByTime: false, sortOrder: .none)
     }
 
-    var groupedNext: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
+    package var groupedNext: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
         groupedMeetings(displayedNextMeetings, sortOrder: .ascending)
     }
 
-    var groupedPast: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
+    package var groupedPast: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
         groupedMeetings(displayedPastMeetings, sortOrder: .descending)
     }
 
-    func formatDay(_ date: Date) -> String {
+    package func formatDay(_ date: Date) -> String {
         if calendar.isDate(date, inSameDayAs: currentDate) {
             Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
         } else if calendar.isDate(
