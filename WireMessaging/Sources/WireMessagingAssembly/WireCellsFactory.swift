@@ -116,6 +116,14 @@ public struct WireCellsFactory {
         )
     }
 
+    public func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
+        WireCellsDeleteNodesUseCase(
+            repository: nodesAPI,
+            fileCache: fileCache,
+            localAssetStore: localAssetStore
+        )
+    }
+
 }
 
 public extension WireCellsFactory {
