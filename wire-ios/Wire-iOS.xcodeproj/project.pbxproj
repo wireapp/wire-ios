@@ -82,6 +82,7 @@
 		595BE7A62E32368500ED9088 /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 595BE7A52E32368500ED9088 /* WireAnalyticsSupport */; };
 		595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettingsUI */; };
 		59703B282DD4A42000B45773 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59703B272DD4A42000B45773 /* ZIPFoundation */; };
+		5972B0DB2E9EABC8005E6417 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5972B0DA2E9EABC8005E6417 /* WireUtilitiesPackage */; };
 		5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5977ED1E2D26747900F5C78E /* WireLogging */; };
 		597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
@@ -978,6 +979,7 @@
 				76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */,
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
 				59537D952CFFA11A00920B59 /* WireLogging in Frameworks */,
+				5972B0DB2E9EABC8005E6417 /* WireUtilitiesPackage in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */,
 				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
@@ -1391,6 +1393,7 @@
 				34DC44AC2E01C1E6004D5DD5 /* WireNetwork */,
 				CBE5BB852E2D4A9200AC731F /* WireMessagingAssembly */,
 				C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */,
+				5972B0DA2E9EABC8005E6417 /* WireUtilitiesPackage */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -2937,6 +2940,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		5972B0DA2E9EABC8005E6417 /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
 		};
 		5977ED1E2D26747900F5C78E /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;

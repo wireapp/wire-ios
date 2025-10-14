@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
+import WireUtilitiesPackage
 import ZIPFoundation
 
 struct ImportBackupFileArchiver: FileUnarchiverProtocol {

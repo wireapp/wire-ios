@@ -26,6 +26,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSettingsUI
+import WireUtilitiesPackage
 import WireSyncEngine
 
 extension ZMUser {
