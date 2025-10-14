@@ -46,4 +46,29 @@ struct ZIPFoundationFileUnarchiverTests {
         #expect(content == "-A-\n")
     }
 
+    @Test func `test extracting single file in directory`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let sut = ZIPFoundationFileUnarchiver()
+        let archive = try #require(Bundle.module.url(forResource: "single-file-in-directory", withExtension: "zip"))
+        let temporaryDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: archive,
+            create: true // TODO: false
+        )
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let expectedFile = temporaryDirectory
+            .appending(path: "B", directoryHint: .isDirectory)
+            .appending(path: "B.txt", directoryHint: .notDirectory)
+
+        // When
+        try sut.unzipFile(at: archive, to: temporaryDirectory)
+
+        // Then
+        #expect(fileManager.fileExists(atPath: expectedFile.path()))
+        let content = try String(contentsOf: expectedFile)
+        #expect(content == "-B-\n")
+    }
+
 }
