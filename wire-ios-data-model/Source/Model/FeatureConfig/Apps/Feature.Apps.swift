@@ -26,7 +26,7 @@ public extension Feature {
 
         // MARK: - Life cycle
 
-        public init(status: Feature.Status) {
+        public init(status: Feature.Status = .disabled) {
             self.status = status
         }
 

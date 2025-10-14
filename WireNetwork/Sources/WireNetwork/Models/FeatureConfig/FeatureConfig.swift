@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Configurations for various app features.
 
 public enum FeatureConfig: Equatable, Sendable {
