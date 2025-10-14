@@ -22,7 +22,10 @@ import ZIPFoundation
 
 struct ZIPFoundationFileArchiver: FileArchiverProtocol {
 
-    func zipResources(at resourceURLs: [URL], into destinationURL: URL) throws {
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws {
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
         for resourceURL in resourceURLs {

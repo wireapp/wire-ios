@@ -19,7 +19,7 @@
 import Foundation
 import os.log
 import WireLogging
-import ZipArchive
+import ZIPFoundation
 
 /// Represents an entry to be logged.
 @objcMembers
@@ -350,7 +350,13 @@ public extension ZMSLog {
                 try? manager.moveItem(at: currentLogURL, to: tmpURL)
 
                 // zip to position 0 logs
-                SSZipArchive.createZipFile(atPath: previousZipLogURLs[0].path, withFilesAtPaths: [tmpURL.path])
+                try? manager.zipItem(
+                    at: tmpURL,
+                    to: previousZipLogURLs[0],
+                    shouldKeepParent: false, // TODO: verify
+                    compressionMethod: .deflate,
+                    progress: .none
+                )
 
                 // remove tmp file
                 try? manager.removeItem(at: tmpURL)
@@ -423,7 +429,14 @@ public extension FileManager {
         var tmpURL = url.deletingLastPathComponent()
         tmpURL.appendPathComponent("\(UUID().uuidString).zip")
 
-        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [url.path])
+        try? zipItem(
+            at: url,
+            to: tmpURL,
+            shouldKeepParent: false, // TODO: verify
+            compressionMethod: .deflate,
+            progress: .none
+        )
+
         defer {
             // clean up
             try? self.removeItem(at: tmpURL)

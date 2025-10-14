@@ -11,6 +11,7 @@
 		591B6E8C2C8B0A37009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		591B6E8F2C8B0A3A009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		5953781C2CFF42E900920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5953781B2CFF42E900920B59 /* WireLogging */; };
+		596A19E72E9E4F8700E190AE /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 596A19E62E9E4F8700E190AE /* ZIPFoundation */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
 		EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC832BD1585500F7853F /* WireSystem.docc */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 			files = (
 				5953781C2CFF42E900920B59 /* WireLogging in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
+				596A19E72E9E4F8700E190AE /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +191,7 @@
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
 				5953781B2CFF42E900920B59 /* WireLogging */,
+				596A19E62E9E4F8700E190AE /* ZIPFoundation */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -272,6 +275,7 @@
 			mainGroup = 3ECC34C31AD430BB0089FD4B;
 			packageReferences = (
 				013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
+				596A19E52E9E4F8700E190AE /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
 			projectDirPath = "";
@@ -677,6 +681,14 @@
 				minimumVersion = 3.8.5;
 			};
 		};
+		596A19E52E9E4F8700E190AE /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -688,6 +700,11 @@
 		5953781B2CFF42E900920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		596A19E62E9E4F8700E190AE /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 596A19E52E9E4F8700E190AE /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
