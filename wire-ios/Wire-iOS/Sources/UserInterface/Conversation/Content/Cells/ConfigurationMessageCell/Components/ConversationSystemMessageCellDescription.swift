@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
@@ -81,10 +82,7 @@ enum ConversationSystemMessageCellDescription {
             }
 
             let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData,
-                timer: timer,
-                sender: sender
+                state: .updated(message: message, data: systemMessageData, timer: timer, sender: sender)
             )
             return [AnyConversationMessageCellDescription(timerCell)]
 
@@ -193,6 +191,13 @@ enum ConversationSystemMessageCellDescription {
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
+            if conversation.isCellsEnabled {
+                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
+                    state: .unavailable
+                )
+                cells.append(AnyConversationMessageCellDescription(timerCell))
+            }
+
             if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
                 let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
                     sender: sender,
@@ -237,9 +242,13 @@ enum ConversationSystemMessageCellDescription {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
-        case .invalid:
+        case .unknownMessageContentTypeReceived:
             let unknownMessage = UnknownStoredMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
+
+        case .invalid:
+            // Nothing to display.
+            WireLogger.conversation.warn("No cell to display for ZMSystemMessageType.invalid.")
 
         case .channelHistoryDepthModified:
             let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(

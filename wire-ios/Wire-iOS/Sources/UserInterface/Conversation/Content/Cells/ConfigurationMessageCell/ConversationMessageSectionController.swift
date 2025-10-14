@@ -108,6 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
     private let isChatBubbleSimpleEnabled: Bool
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -126,6 +127,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         contentWidth: CGFloat,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         isChatBubbleSimpleEnabled: Bool,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.message = message
         self.context = context
@@ -142,6 +144,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         // We need to provide isChatBubbleEnabled as Bool on init() because can't use
         // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
         self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
+        self.wireCellsFactory = wireCellsFactory
 
         super.init()
 
@@ -255,10 +258,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell()
         }
 
+        let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
-            multipartMessage: message.multipartMessageData!
+            multipartMessage: message.multipartMessageData!,
+            wireCellsFactory: wireCellsFactory
         )
-
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
     }
 
@@ -315,6 +319,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
+
+        let attachments = message.multipartMessageData?.attachments ?? []
+
         return ConversationTextMessageCellDescription
             .cells(
                 for: message,
@@ -381,6 +388,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
+        let attachments = message.multipartMessageData?.attachments ?? []
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
 

@@ -16,15 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import XCTest
+import Foundation
 
-@testable import Wire
+public extension Feature {
 
-final class UnknownMessageCellTests: ConversationMessageSnapshotTestCase {
+    struct Cells: Codable {
 
-    func testCell() {
-        let systemMessage = MockMessageFactory.systemMessage(with: .invalid)
-        verify(message: systemMessage!)
+        // MARK: - Properties
+
+        public let status: Status
+
+        // MARK: - Life cycle
+
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
+
     }
+
 }

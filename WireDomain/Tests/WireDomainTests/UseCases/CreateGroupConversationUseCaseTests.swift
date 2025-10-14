@@ -109,6 +109,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -191,6 +192,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -248,6 +250,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -325,6 +328,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -410,6 +414,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -503,6 +508,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -587,6 +593,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
             enableReceipts: true,
+            cells: true,
             isMLSEnabled: true
         )
 
@@ -638,6 +645,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -670,6 +678,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -703,6 +712,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }
@@ -741,6 +751,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
                 enableReceipts: true,
+                cells: true,
                 isMLSEnabled: true
             )
         }

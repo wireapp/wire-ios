@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CellsSDK
 package import Foundation
 package import WireMessagingDomain
 
@@ -108,6 +109,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         return dto.toDomainModel()
     }
 
+    package func getNode(id: UUID) async throws -> WireCellsNode? {
+        do {
+            return try await getNode(nodeID: id)
+        } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 404 {
+            return nil
+        }
+    }
+
     package func getNodes(
         _ request: WireCellsGetNodesRequest
     ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
@@ -125,5 +134,15 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func deletePublicLink(linkUUID: UUID) async throws {
         try await restAPI.deletePublicLink(uuid: linkUUID)
+    }
+}
+
+private extension CellsSDK.ErrorResponse {
+
+    var httpStatusCode: Int? {
+        switch self {
+        case let .error(_, _, response, _):
+            (response as? HTTPURLResponse)?.statusCode
+        }
     }
 }

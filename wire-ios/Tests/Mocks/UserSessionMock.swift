@@ -403,6 +403,10 @@ final class UserSessionMock: UserSession {
 
     var isChatBubbleSimpleEnabled: Bool = false
 
+    var isWireCellsEnabled: Bool = false
+
+    var isEnterpriseUser: Bool = false
+
     func fetchAllClients() {}
 
     var createTeamOneOnOneWithCompletion_Invocations: [(

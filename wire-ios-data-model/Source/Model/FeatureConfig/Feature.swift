@@ -44,6 +44,7 @@ public class Feature: ZMManagedObject {
         case allowedGlobalOperations
         case consumableNotifications
         case chatBubblesSimple
+        case cells
         case assetAuditLog
 
     }
@@ -237,6 +238,7 @@ public class Feature: ZMManagedObject {
              .channels,
              .consumableNotifications,
              .chatBubblesSimple,
+             .cells,
              .assetAuditLog:
             break
         }

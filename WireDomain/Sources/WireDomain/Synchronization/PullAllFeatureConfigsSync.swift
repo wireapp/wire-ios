@@ -137,6 +137,12 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: nil
             )
+        case let .cells(config):
+            await storeFeature(
+                name: .cells,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")
             return

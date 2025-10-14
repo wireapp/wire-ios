@@ -125,8 +125,10 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertNil(storeInvocations[11].config)
 
         XCTAssertEqual(storeInvocations[12].name, .assetAuditLog)
-        XCTAssertTrue(storeInvocations[12].isEnabled)
-        XCTAssertNil(storeInvocations[12].config)
+        XCTAssertEqual(storeInvocations[12].name, .cells)
+
+        XCTAssertTrue(storeInvocations[13].isEnabled)
+        XCTAssertNil(storeInvocations[13].config)
     }
 
 }
@@ -146,6 +148,7 @@ private enum Scaffolding {
         .endToEndIdentity(endToEndIdentityFeatureConfig),
         .consumableNotifications(consumableNotificationsFeatureConfig),
         .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
+        .cells(cellsFeatureConfig),
         .assetAuditLog(assetAuditLogFeatureConfig)
     ]
 
@@ -217,7 +220,12 @@ private enum Scaffolding {
         status: .enabled
     )
 
+    static let cellsFeatureConfig = CellsFeatureConfig(
+        status: .enabled
+    )
+
     static let assetAuditLogFeatureConfig = AssetAuditLogFeatureConfig(
         status: .enabled
     )
+
 }

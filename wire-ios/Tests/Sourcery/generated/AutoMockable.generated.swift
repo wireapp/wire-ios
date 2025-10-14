@@ -1782,6 +1782,24 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeDeleteNodesUseCase
+
+    var makeDeleteNodesUseCase_Invocations: [Void] = []
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
+
+    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
+        makeDeleteNodesUseCase_Invocations.append(())
+
+        if let mock = makeDeleteNodesUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeDeleteNodesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteNodesUseCase`")
+        }
+    }
+
     // MARK: - makeFilesView
 
     var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
@@ -1798,6 +1816,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+        }
+    }
+
+    // MARK: - makeAttachmentsPreviewView
+
+    var makeAttachmentsPreviewViewAttachments_Invocations: [[WireCellsMessageAttachment]] = []
+    var makeAttachmentsPreviewViewAttachments_MockMethod: (([WireCellsMessageAttachment]) -> UIViewController)?
+    var makeAttachmentsPreviewViewAttachments_MockValue: UIViewController?
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
+        makeAttachmentsPreviewViewAttachments_Invocations.append(attachments)
+
+        if let mock = makeAttachmentsPreviewViewAttachments_MockMethod {
+            return mock(attachments)
+        } else if let mock = makeAttachmentsPreviewViewAttachments_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAttachmentsPreviewViewAttachments`")
         }
     }
 

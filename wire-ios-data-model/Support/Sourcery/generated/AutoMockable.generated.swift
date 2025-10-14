@@ -3787,6 +3787,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(chatBubblesSimple)
     }
 
+    // MARK: - fetchCells
+
+    public var fetchCells_Invocations: [Void] = []
+    public var fetchCells_MockMethod: (() -> Feature.Cells)?
+    public var fetchCells_MockValue: Feature.Cells?
+
+    public func fetchCells() -> Feature.Cells {
+        fetchCells_Invocations.append(())
+
+        if let mock = fetchCells_MockMethod {
+            return mock()
+        } else if let mock = fetchCells_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCells`")
+        }
+    }
+
+    // MARK: - storeCells
+
+    public var storeCells_Invocations: [Feature.Cells] = []
+    public var storeCells_MockMethod: ((Feature.Cells) -> Void)?
+
+    public func storeCells(_ cells: Feature.Cells) {
+        storeCells_Invocations.append(cells)
+
+        guard let mock = storeCells_MockMethod else {
+            fatalError("no mock for `storeCells`")
+        }
+
+        mock(cells)
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {

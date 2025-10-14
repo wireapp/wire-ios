@@ -383,7 +383,7 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    public lazy var incrementalSync = IncrementalSync(
+    public private(set) lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
@@ -410,6 +410,7 @@ public final class ClientSessionComponent {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }
