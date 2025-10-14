@@ -76,7 +76,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
                 applicationStatus: mockApplicationStatus,
                 imageUploadStatus: updateStatus,
                 localDomain: "wire.com",
-                shouldUploadExtraMetaData: false
+                isCloudDomain: false
             )
         }
 
