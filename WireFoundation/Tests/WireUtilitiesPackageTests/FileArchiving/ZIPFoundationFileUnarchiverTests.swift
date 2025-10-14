@@ -105,25 +105,3 @@ struct ZIPFoundationFileUnarchiverTests {
     }
 
 }
-
-extension FileManager {
-
-    fileprivate func temporaryDirectory(appropriateFor: URL? = nil) throws -> URL {
-
-        let appropriateFor = try appropriateFor ?? url(
-            for: .cachesDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: false
-        )
-
-        return try url(
-            for: .itemReplacementDirectory,
-            in: .userDomainMask,
-            appropriateFor: appropriateFor,
-            create: false
-        )
-
-    }
-
-}
