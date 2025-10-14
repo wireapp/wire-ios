@@ -80,7 +80,9 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
     private var shouldUploadExtraMetaData: Bool {
         guard !isCloudDomain else { return false }
-        return featureRepository.fetchAssetAuditLog().status == .enabled
+        return managedObjectContext.performAndWait {
+            featureRepository.fetchAssetAuditLog().status == .enabled
+        }
     }
 
     @available(*, unavailable)
