@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingAssembly
 import WireData
 @preconcurrency import WireDataModel
 import WireMessagingAssembly
@@ -39,7 +40,8 @@ struct ZClientControllerBuilder {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
-            wireCellsFactory: buildWireCellsFactory()
+            wireCellsFactory: buildWireCellsFactory(),
+            wireMeetingsFactory: buildWireMeetingsFactory()
         )
         viewController.router = router
         return viewController
@@ -59,6 +61,11 @@ struct ZClientControllerBuilder {
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
         )
+    }
+
+    @MainActor
+    private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
+        WireMeetingsFactory()
     }
 }
 

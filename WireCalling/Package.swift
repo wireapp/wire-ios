@@ -8,17 +8,35 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
+        .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
+        .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(
+            name: "WireCallingDomain",
+            dependencies: [
+                "WireFoundation",
+                "WireLogging"
+            ]
+        ),
+        .target(
+            name: "WireCallingAssembly",
+            dependencies: [
+                "WireCallingDomain",
+                "WireCallingUI"
+            ]
+        ),
+        .target(
             name: "WireCallingUI",
             dependencies: [
+                "WireCallingDomain",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireAccountImageUI", package: "WireUI"),
@@ -29,6 +47,8 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingUI",
+                .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
             ],
         ),

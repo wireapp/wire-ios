@@ -16,29 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Foundation
+package import WireCallingDomain
 
-// TODO: remove public
 // TODO: add tests
-public final class MeetingsListViewModel: ObservableObject {
+package final class MeetingsListViewModel: ObservableObject {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @Published var selectedTab: Tab = .next
     @Published var showAllNext: Bool = false
-    @Published var account: AccountUIViewModel
 
     private let meetings: [Meeting]
-    let currentDate: Date
-    let calendar = Calendar.current
+    private let currentDate: Date
+    private let calendar = Calendar.current
 
-    init(meetings: [Meeting], account: AccountUIViewModel, currentDate: Date = Date()) {
+    package init(meetings: [Meeting], currentDate: Date = Date()) {
         self.meetings = meetings.sorted { $0.start < $1.start }
         self.currentDate = currentDate
-        self.account = account
-    }
-
-    public func updateAccount(_ account: AccountUIViewModel) {
-        self.account = account
     }
 
     var ongoingMeetings: [Meeting] {

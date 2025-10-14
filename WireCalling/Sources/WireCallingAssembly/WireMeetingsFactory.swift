@@ -17,13 +17,20 @@
 //
 
 import Foundation
+import WireCallingDomain
+import WireCallingUI
+public import UIKit
 
-// TODO: move out
-struct Meeting: Identifiable {
+public struct WireMeetingsFactory {
+    @MainActor
+    public init() {}
 
-    let id: UUID
-    let title: String
-    let start: Date
-    let end: Date
+}
 
+public extension WireMeetingsFactory {
+    @MainActor
+    func makeMeetingsListView() -> UIViewController {
+        let meetingsViewModel = MeetingsListViewModel.demo()
+        return MeetingsListViewController(viewModel: meetingsViewModel)
+    }
 }

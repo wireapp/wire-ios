@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCallingAssembly
 import WireMessagingAssembly
 import WireMessagingDomain
 
@@ -35,3 +36,10 @@ protocol WireCellsFactoryProtocol {
 }
 
 extension WireCellsFactory: WireCellsFactoryProtocol {}
+
+protocol WireMeetingsFactoryProtocol {
+    @MainActor
+    func makeMeetingsListView() -> UIViewController
+}
+
+extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

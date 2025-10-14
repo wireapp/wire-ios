@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+package import SwiftUI
+import WireCallingDomain
 import WireDesign
 
-// TODO: remove public
-public struct MeetingsListView: View {
+package struct MeetingsListView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @ObservedObject private var viewModel: MeetingsListViewModel
 
-    public init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsListViewModel) {
         self.viewModel = viewModel
     }
 
-    public var body: some View {
+    package var body: some View {
         VStack {
             Picker("", selection: Binding(
                 get: { viewModel.selectedTab.rawValue },
@@ -174,6 +174,6 @@ private struct MeetingRow: View {
     }
 }
 
-// #Preview {
-//    MeetingsListView(viewModel: MeetingsListViewModel(account: AccountUIViewModel(avatarSource: .text("AN"), availability: nil, action: {})))
-// }
+#Preview {
+    MeetingsListView(viewModel: MeetingsListViewModel(meetings: []))
+}

@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import WireCallingDomain
 
-public extension MeetingsListViewModel {
+package extension MeetingsListViewModel {
     static func demo() -> MeetingsListViewModel {
         let cal = Calendar.current
         let now = Date()
@@ -101,7 +102,6 @@ public extension MeetingsListViewModel {
             )
         ]
 
-        let account = AccountUIViewModel(avatarSource: .text("JJ"), availability: .available, action: {})
-        return MeetingsListViewModel(meetings: meetings, account: account)
+        return MeetingsListViewModel(meetings: meetings)
     }
 }

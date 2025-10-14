@@ -16,22 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import Combine
 import Foundation
-import WireAccountImageUI
+package import SwiftUI
 import WireDesign
 
-public final class MeetingsListViewController: UIViewController {
+package final class MeetingsListViewController: UIViewController {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
     private let viewModel: MeetingsListViewModel
     private let hostingController: UIHostingController<MeetingsListView>
-    private var cancellables = Set<AnyCancellable>()
     private var accountWrapperView: AccountUIWrapperView?
 
-    public init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsListViewModel) {
         self.viewModel = viewModel
         self.hostingController = UIHostingController(rootView: MeetingsListView(viewModel: viewModel))
         super.init(nibName: nil, bundle: nil)
@@ -42,7 +39,7 @@ public final class MeetingsListViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    public override func viewDidLoad() {
+    package override func viewDidLoad() {
         super.viewDidLoad()
         view.accessibilityViewIsModal = true
         addChild(hostingController)
@@ -59,15 +56,9 @@ public final class MeetingsListViewController: UIViewController {
 
         setupNavigationBar()
         configureNavigationBarAppearance()
-        viewModel.$account
-            .receive(on: RunLoop.main)
-            .sink { [weak self] newAccount in
-                self?.accountWrapperView?.apply(account: newAccount)
-            }
-            .store(in: &cancellables)
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    package override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavigationBarAppearance()
     }
@@ -76,7 +67,6 @@ public final class MeetingsListViewController: UIViewController {
 
     private func setupNavigationBar() {
         navigationItem.title = L10n.Localizable.WireMeetings.List.title
-        setupLeftNavigationBarButtonItems()
         setupRightNavigationBarButtonItems()
     }
 
@@ -112,27 +102,4 @@ public final class MeetingsListViewController: UIViewController {
         navigationItem.rightBarButtonItems = [item]
     }
 
-    private func setupLeftNavigationBarButtonItems() {
-        let stackView = UIStackView()
-        stackView.spacing = 6
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-
-        let avatar = makeAccountImageView()
-        stackView.addArrangedSubview(avatar)
-        accountWrapperView = avatar
-
-        let container = UIBarButtonItem(customView: stackView)
-        container.accessibilityIdentifier = "accountImageBarButton"
-        navigationItem.leftBarButtonItems = [container]
-    }
-
-    private func makeAccountImageView() -> AccountUIWrapperView {
-        let accountUI = AccountUIWrapperView(viewModel: viewModel.account)
-        accountUI.isAccessibilityElement = true
-        accountUI.translatesAutoresizingMaskIntoConstraints = false
-        accountUI.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        accountUI.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        return accountUI
-    }
 }

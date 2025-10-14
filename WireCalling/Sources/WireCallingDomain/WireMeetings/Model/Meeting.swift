@@ -16,23 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireAccountImageUI
+public import Foundation
 
-package struct AccountUIViewModel: Identifiable {
-    public let id = UUID()
+/// Represents the meeting entity
 
-    let avatarSource: AccountImageSource
-    let availability: Availability?
-    public let action: () -> Void
+public struct Meeting: Equatable, Sendable {
 
-    package init(
-        avatarSource: AccountImageSource,
-        availability: Availability?,
-        action: @escaping () -> Void
+    public let id: UUID
+
+    public let title: String
+
+    public let start: Date
+
+    public let end: Date
+
+    public init(
+        id: UUID,
+        title: String,
+        start: Date,
+        end: Date
     ) {
-        self.avatarSource = avatarSource
-        self.availability = availability
-        self.action = action
+        self.id = id
+        self.title = title
+        self.start = start
+        self.end = end
     }
+
 }

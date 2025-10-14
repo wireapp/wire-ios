@@ -20,7 +20,7 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
-import WireCallingUI
+import WireCallingAssembly
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -46,7 +46,6 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
             sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
-            updateMeetingsAccountAvatar()
         }
     }
 
@@ -151,13 +150,14 @@ final class ZClientViewController: UIViewController {
         }
     )
 
-    private lazy var meetingsViewModel = MeetingsListViewModel.demo()
-//    MeetingsListViewModel(
+//    private lazy var meetingsViewModel = MeetingsListViewModel.demo()
+//    private lazy var meetingsViewModel = MeetingsListViewModel(
+//        meetings: [],
 //        account: AccountUIViewModel(
 //            avatarSource: cachedAccountImage.mapToAccountImageSource(),
 //            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
 //            action: {}
-//        )
+//        ),
 //    )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
@@ -191,6 +191,7 @@ final class ZClientViewController: UIViewController {
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
     private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -205,7 +206,8 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireCellsFactory: any WireCellsFactoryProtocol,
+        wireMeetingsFactory: any WireMeetingsFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
@@ -213,6 +215,7 @@ final class ZClientViewController: UIViewController {
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
         self.wireCellsFactory = wireCellsFactory
+        self.wireMeetingsFactory = wireMeetingsFactory
 
         super.init(nibName: nil, bundle: nil)
 
@@ -357,7 +360,7 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = MeetingsListViewController(viewModel: meetingsViewModel)
+        let meetingsUI = wireMeetingsFactory.makeMeetingsListView()
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
@@ -823,18 +826,6 @@ final class ZClientViewController: UIViewController {
             ).mapToAccountImageSource()
         } catch {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
-        }
-    }
-
-    private func updateMeetingsAccountAvatar() {
-        let newAccount = AccountUIViewModel(
-            avatarSource: cachedAccountImage.mapToAccountImageSource(),
-            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
-            action: {}
-        )
-
-        DispatchQueue.main.async { [weak self] in
-            self?.meetingsViewModel.updateAccount(newAccount)
         }
     }
 
