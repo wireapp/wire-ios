@@ -79,6 +79,6 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             message: mockMessage,
             sourceView: view,
             userSession: userSession
-        ) { _ in })
+        ) { _, _ in })
     }
 }
