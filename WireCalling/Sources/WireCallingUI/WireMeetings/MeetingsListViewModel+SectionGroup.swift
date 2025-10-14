@@ -18,24 +18,9 @@
 
 import Foundation
 
-//extension MeetingsListViewModel {
-//
-//    struct MeetingTimeGroup: Identifiable, Equatable {
-//        let id = UUID()
-//        let timeLabel: String
-//        let items: [Meeting]
-//    }
-//
-//    struct MeetingDaySection: Identifiable, Equatable {
-//        let id = UUID()
-//        let title: String
-//        let timeGroups: [MeetingTimeGroup]
-//    }
-//
-//}
+// TODO: move out
+struct Meeting: Identifiable {
 
-struct Meeting: Identifiable, Hashable {
-    
     let id: UUID
     let title: String
     let start: Date

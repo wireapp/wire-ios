@@ -17,10 +17,10 @@
 //
 
 public import SwiftUI
+import Combine
 import Foundation
 import WireAccountImageUI
 import WireDesign
-import Combine
 
 public final class MeetingsListViewController: UIViewController {
 

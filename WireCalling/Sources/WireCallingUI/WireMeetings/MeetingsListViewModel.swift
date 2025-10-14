@@ -18,206 +18,11 @@
 
 public import Foundation
 
-//public final class MeetingsListViewModel: ObservableObject {
-//
-//    private typealias Strings = L10n.Localizable.WireMeetings.List.Tabs
-//
-//    @Published var allMeetings: [Meeting] = []
-//    @Published var account: AccountUIViewModel
-//    @Published var selectedTab: Tab = .next
-//    @Published private(set) var ongoingSections: [MeetingDaySection] = []
-//    @Published private(set) var upcomingSections: [MeetingDaySection] = []
-//    @Published private(set) var pastSections: [MeetingDaySection] = []
-//    @Published private(set) var shouldShowAll: Bool = false
-//
-//    var onShowAll: (() -> Void)?
-//
-//    private let calendar: Calendar
-//    private let nowProvider: () -> Date
-//
-//    public init(
-//        account: AccountUIViewModel,
-//        calendar: Calendar = .current,
-//        now: @escaping () -> Date = { Date() }
-//    ) {
-//        self.account = account
-//        self.calendar = calendar
-//        self.nowProvider = now
-//        recompute()
-//    }
-//
-//    public func updateAccount(_ account: AccountUIViewModel) {
-//        self.account = account
-//        recompute()
-//    }
-//
-//    var hasMeetingsForSelectedTab: Bool {
-//        switch selectedTab {
-//        case .next: return upcomingSections.contains { !$0.timeGroups.isEmpty }
-//        case .past: return pastSections.contains { !$0.timeGroups.isEmpty }
-//        }
-//    }
-//
-//    // MARK: - Recompute
-//
-//    private func recompute() {
-//        let result = Self.computeSections(meetings: allMeetings)
-//
-//        upcomingSections = result.upcoming
-//        pastSections = result.past
-//        ongoingSections = result.ongoing
-//    }
-//
-//    // MARK: - Actions
-//
-//    func meetNowTapped() {}
-//    func scheduleMeetingTapped() {}
-//    func onTapShowAll() { onShowAll?() }
-//
-//}
-//
-//extension MeetingsListViewModel {
-//
-//    typealias Sections = (
-//        upcoming: [MeetingDaySection],
-//        ongoing: [MeetingDaySection],
-//        past: [MeetingDaySection]
-//    )
-//
-//    static func computeSections(meetings: [Meeting]) -> Sections {
-//        let now = Date()
-//        let calendar = Calendar.current
-//        let startOfToday = calendar.startOfDay(for: now)
-//        let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday)!
-//        let startOfDayAfterTomorrow = calendar.date(byAdding: .day, value: 2, to: startOfToday)!
-//        let startOfYesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday)!
-//
-//        func isSameDay(_ d1: Date, _ d2: Date) -> Bool { calendar.isDate(d1, inSameDayAs: d2) }
-//
-//        func dayHeader(for dayStart: Date, label: String) -> String {
-//            "\(label) (\(DateFormatter.dayHeader.string(from: dayStart)))"
-//        }
-//
-//        // Ongoing: meetings happening right now (today)
-//        let ongoingItems = meetings
-//            .filter { calendar.isDate($0.start, inSameDayAs: now) && $0.start <= now && now < $0.end }
-//            .sorted { $0.start < $1.start }
-//
-//        let ongoingSection: [MeetingDaySection] = ongoingItems.isEmpty
-//        ? []
-//        : [MeetingDaySection(
-//            title: "Ongoing",
-//            timeGroups: [MeetingTimeGroup(timeLabel: "", items: ongoingItems)]
-//        )]
-//
-//        // Upcoming: meetings starting later today or tomorrow
-//        let upcomingItems = meetings
-//            .filter { $0.start > now }
-//            .filter { isSameDay($0.start, startOfToday) || isSameDay($0.start, startOfTomorrow) }
-//            .sorted { $0.start < $1.start }
-//
-//        // Past: yesterday, and today’s that already ended
-//        let pastItems = meetings
-//            .filter { m in
-//                if isSameDay(m.start, startOfYesterday) { return true }
-//                if isSameDay(m.start, startOfToday) && m.end <= now { return true }
-//                return false
-//            }
-//            .sorted { $0.start > $1.start } // most recent day first
-//
-//        func sectionizeByDay(_ items: [Meeting], ascendingDays: Bool) -> [MeetingDaySection] {
-//            guard !items.isEmpty else { return [] }
-//
-//            // Group by day start (stable ordering)
-//            let groupedByDay = Dictionary(grouping: items) { calendar.startOfDay(for: $0.start) }
-//            let orderedDayKeys = groupedByDay.keys.sorted(by: { ascendingDays ? $0 < $1 : $0 > $1 })
-//
-//            return orderedDayKeys.map { dayStart in
-//                let label: String =
-//                isSameDay(dayStart, startOfToday) ? "Today" :
-//                isSameDay(dayStart, startOfTomorrow) ? "Tomorrow" : "Yesterday"
-//
-//                let dayItems = (groupedByDay[dayStart] ?? []).sorted { $0.start < $1.start }
-//                let groupedByTime = Dictionary(grouping: dayItems) { DateFormatter.timeHeader.string(from: $0.start) }
-//
-//                let orderedTimeKeys = groupedByTime.keys.sorted { lhs, rhs in
-//                    if let d1 = DateFormatter.timeHeader.date(from: lhs),
-//                       let d2 = DateFormatter.timeHeader.date(from: rhs) { return d1 < d2 }
-//                    return lhs < rhs
-//                }
-//
-//                let timeGroups = orderedTimeKeys.map { key in
-//                    MeetingTimeGroup(timeLabel: key,
-//                                     items: (groupedByTime[key] ?? []).sorted { $0.start < $1.start })
-//                }
-//
-//                return MeetingDaySection(title: dayHeader(for: dayStart, label: label),
-//                                         timeGroups: timeGroups)
-//            }
-//        }
-//
-//        let upcomingSections = sectionizeByDay(upcomingItems, ascendingDays: true)
-//        let pastSections     = sectionizeByDay(pastItems,     ascendingDays: false)
-//
-//        let showAll = meetings.contains { $0.start >= startOfDayAfterTomorrow }
-//
-//        return (upcoming: upcomingSections,
-//                ongoing: ongoingSection,
-//                past: pastSections
-//        )
-//    }
-//
-//}
-//
-//extension MeetingsListViewModel {
-//
-//    enum Tab: Int, CaseIterable {
-//        case next
-//        case past
-//
-//        var title: String {
-//            switch self {
-//            case .next: Strings.next
-//            case .past: Strings.past
-//            }
-//        }
-//    }
-//
-//}
-//
-//// MARK: - Helpers
-//
-//private extension DateFormatter {
-//
-//    static let dayHeader: DateFormatter = {
-//        let formatter = DateFormatter()
-//        formatter.locale = .current
-//        formatter.dateFormat = "EEEE, MMMM d"
-//        return formatter
-//    }()
-//
-//    static let timeHeader: DateFormatter = {
-//        let formatter = DateFormatter()
-//        formatter.locale = .current
-//        formatter.dateFormat = "h:mm a"
-//        return formatter
-//    }()
-//
-//    static let weekdayFormatter: DateFormatter = {
-//        let df = DateFormatter()
-//        df.locale = .autoupdatingCurrent
-//        df.setLocalizedDateFormatFromTemplate("EEEE")
-//        return df
-//    }()
-//
-//}
-
-
+// TODO: remove public
+// TODO: add tests
 public final class MeetingsListViewModel: ObservableObject {
-    enum Tab {
-        case next
-        case past
-    }
+    private typealias Strings = L10n.Localizable.WireMeetings.List
+
     @Published var selectedTab: Tab = .next
     @Published var showAllNext: Bool = false
     @Published var account: AccountUIViewModel
@@ -269,59 +74,119 @@ public final class MeetingsListViewModel: ObservableObject {
         return allPast.filter { $0.end >= yesterdayStart }
     }
 
-    func groupedMeetings(_ meetings: [Meeting], groupByTime: Bool = true) -> [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
+    func groupedMeetings(_ meetings: [Meeting], groupByTime: Bool = true, sortOrder: SortOrder = .none) -> [(
+        day: Date,
+        timeSlots: [(time: Date, meetings: [Meeting])]
+    )] {
         let groupedByDay = Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
             .map { (day: $0.key, meetings: $0.value.sorted { $0.start < $1.start }) }
-            .sorted { $0.day > $1.day }
-
-        if !groupByTime {
-            return groupedByDay.map { (day: $0.day, timeSlots: [(time: $0.day, meetings: $0.meetings)]) }
+        let sortedByDay: [(day: Date, meetings: [Meeting])] = switch sortOrder {
+        case .ascending:
+            groupedByDay.sorted { $0.day < $1.day }
+        case .descending:
+            groupedByDay.sorted { $0.day > $1.day }
+        case .none:
+            groupedByDay
         }
 
-        return groupedByDay.map { dayGroup in
+        if !groupByTime {
+            return sortedByDay.map { (day: $0.day, timeSlots: [(time: $0.day, meetings: $0.meetings)]) }
+        }
+
+        return sortedByDay.map { dayGroup in
             let timeSlots = Dictionary(grouping: dayGroup.meetings) { date in
-                calendar.date(bySettingHour: calendar.component(.hour, from: date.start), minute: 0, second: 0, of: date.start) ?? date.start
+                calendar.date(
+                    bySettingHour: calendar.component(.hour, from: date.start),
+                    minute: 0,
+                    second: 0,
+                    of: date.start
+                ) ?? date.start
             }
-                .map { (time: $0.key, meetings: $0.value.sorted { $0.start < $1.start }) }
-                .sorted { $0.time < $1.time }
+            .map { (time: $0.key, meetings: $0.value.sorted { $0.start < $1.start }) }
+            .sorted { $0.time < $1.time }
             return (day: dayGroup.day, timeSlots: timeSlots)
         }
     }
 
     var groupedOngoing: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
-        groupedMeetings(ongoingMeetings, groupByTime: false)
+        groupedMeetings(ongoingMeetings, groupByTime: false, sortOrder: .none)
     }
 
     var groupedNext: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
-        groupedMeetings(displayedNextMeetings)
+        groupedMeetings(displayedNextMeetings, sortOrder: .ascending)
     }
 
     var groupedPast: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])] {
-        groupedMeetings(displayedPastMeetings)
+        groupedMeetings(displayedPastMeetings, sortOrder: .descending)
     }
 
     func formatDay(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d"
-
         if calendar.isDate(date, inSameDayAs: currentDate) {
-            return "Today (\(formatter.string(from: date)))"
-        } else if calendar.isDate(date, equalTo: calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate, toGranularity: .day) {
-            return "Tomorrow (\(formatter.string(from: date)))"
-        } else if calendar.isDate(date, equalTo: calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate, toGranularity: .day) {
-            return "Yesterday (\(formatter.string(from: date)))"
+            Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
+        } else if calendar.isDate(
+            date,
+            equalTo: calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate,
+            toGranularity: .day
+        ) {
+            Strings.Header.tomorrow + " (\(DateFormatter.dayHeader.string(from: date)))"
+        } else if calendar.isDate(
+            date,
+            equalTo: calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate,
+            toGranularity: .day
+        ) {
+            Strings.Header.yesterday + " (\(DateFormatter.dayHeader.string(from: date)))"
         } else {
-            formatter.dateFormat = "EEEE, MMMM d, yyyy"
-            return formatter.string(from: date)
+            DateFormatter.dayHeader.string(from: date)
         }
     }
 
     func formatTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+        DateFormatter.timeHeader.string(from: date)
     }
+
     func meetNowTapped() {}
     func scheduleMeetingTapped() {}
+
+}
+
+// MARK: - Helpers
+
+extension DateFormatter {
+
+    static let dayHeader: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = .current
+        formatter.dateFormat = "EEEE, MMMM d"
+        return formatter
+    }()
+
+    static let timeHeader: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = .current
+        formatter.dateFormat = "h:mm a"
+        return formatter
+    }()
+
+}
+
+extension MeetingsListViewModel {
+
+    enum Tab: Int, CaseIterable {
+        case next
+        case past
+
+        var title: String {
+            switch self {
+            case .next: Strings.Tabs.next
+            case .past: Strings.Tabs.past
+            }
+        }
+    }
+
+    enum SortOrder {
+        case none
+        case ascending
+        case descending
+    }
 
 }

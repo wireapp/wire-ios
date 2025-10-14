@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import Foundation
+import SwiftUI
 import WireAccountImageUI
 import WireDesign
 
@@ -25,7 +25,7 @@ final class AccountUIWrapperView: UIView {
     private let hostingController: UIHostingController<AccountUI>
 
     init(viewModel: AccountUIViewModel) {
-        hostingController = UIHostingController(rootView: AccountUI(viewModel: viewModel))
+        self.hostingController = UIHostingController(rootView: AccountUI(viewModel: viewModel))
         super.init(frame: .zero)
 
         backgroundColor = .clear
@@ -37,7 +37,7 @@ final class AccountUIWrapperView: UIView {
             hostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
             hostingController.view.topAnchor.constraint(equalTo: topAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 

@@ -21,7 +21,7 @@ public import WireAccountImageUI
 
 public struct AccountUIViewModel: Identifiable {
     public let id = UUID()
-    
+
     let avatarSource: AccountImageSource
     let availability: Availability?
     public let action: () -> Void
