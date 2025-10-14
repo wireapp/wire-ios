@@ -27,6 +27,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
+        let alignment: HorizontalAlignment
         let factory: WireCellsFactoryProtocol
     }
 
@@ -88,7 +89,10 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
             )
         }
 
-        let viewController = object.factory.makeAttachmentsPreviewView(attachments: attachments)
+        let viewController = object.factory.makeAttachmentsPreviewView(
+            attachments: attachments,
+            alignment: object.alignment
+        )
         setupWireCellsAttachmentsView(viewController: viewController)
     }
 
@@ -137,10 +141,13 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     init(
         multipartMessage: MultipartMessageData,
+        isSimpleChatBubblesEnabled: Bool,
+        isSentBySelfUser: Bool,
         wireCellsFactory: WireCellsFactoryProtocol
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
+            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading,
             factory: wireCellsFactory
         )
     }
