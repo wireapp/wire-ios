@@ -27,4 +27,8 @@ struct ZIPFoundationFileArchiverTests {
         fatalError()
     }
 
+    // TODO: test cleanup, no permission, invalid url, unzipping, non-existent source files
+
 }
+
+// TODO: test wire backup manually

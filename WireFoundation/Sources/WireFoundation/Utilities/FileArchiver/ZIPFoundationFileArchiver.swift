@@ -31,7 +31,7 @@ public struct ZIPFoundationFileArchiver: FileArchiverProtocol {
         // temporary directory representing the content of the zip file.
 
         let fileManager = FileManager.default
-        let tmpDestination = destinationURL.appendingPathExtension("tmp")
+        let tmpDestination = destinationURL.appendingPathExtension("tmp") // TODO: use temporary directory
         try fileManager.createDirectory(at: tmpDestination, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: tmpDestination) }
 
