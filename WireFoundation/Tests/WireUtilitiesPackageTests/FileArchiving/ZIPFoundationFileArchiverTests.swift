@@ -43,7 +43,50 @@ struct ZIPFoundationFileArchiverTests {
         #expect(content == "-C-")
     }
 
-    // TODO: test cleanup, no permission, invalid url, unzipping, non-existent source files
+    // TODO: from a single root directory
+
+    @Test func `test creating an archive from invalid source files`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let archiveURL = temporaryDirectory.appending(path: "C.zip", directoryHint: .notDirectory)
+        let invalidURLs = [
+            URL(string: "https://wire.com/file.zip")!,
+            URL(filePath: "/path/to/non-writable/directory", directoryHint: .isDirectory)
+        ]
+        let sut = ZIPFoundationFileArchiver()
+
+        // When & Then
+        for invalidURL in invalidURLs {
+            #expect(throws: (any Error).self) {
+                try sut.zipResources(at: [invalidURL], into: archiveURL)
+            }
+        }
+    }
+
+    @Test func `test creating an archive at an invalid destination url`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let fileURL = temporaryDirectory.appending(path: "C.txt", directoryHint: .notDirectory)
+        try "-C-".write(to: fileURL, atomically: true, encoding: .utf8)
+        let invalidURLs = [
+            URL(string: "https://wire.com/file.zip")!,
+            URL(filePath: "/path/to/non-writable/directory", directoryHint: .isDirectory),
+            temporaryDirectory, // an existing directory
+            fileURL // existing file
+        ]
+        let sut = ZIPFoundationFileArchiver()
+
+        // When & Then
+        for invalidURL in invalidURLs {
+            #expect(throws: (any Error).self) {
+                try sut.zipResources(at: [fileURL], into: invalidURL)
+            }
+        }
+    }
 
 }
 
