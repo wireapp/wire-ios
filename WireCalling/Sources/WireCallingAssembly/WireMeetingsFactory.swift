@@ -24,7 +24,6 @@ public import UIKit
 public struct WireMeetingsFactory {
     @MainActor
     public init() {}
-
 }
 
 public extension WireMeetingsFactory {

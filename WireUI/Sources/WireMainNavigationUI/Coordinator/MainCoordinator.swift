@@ -263,6 +263,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         splitViewController.settingsContentUI = nil
     }
 
+    // TODO- remove
     public func hideMeetings() {}
 
     public func presentViewController(_ viewController: UIViewController) async {

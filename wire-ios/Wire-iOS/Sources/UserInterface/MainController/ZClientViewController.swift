@@ -150,16 +150,6 @@ final class ZClientViewController: UIViewController {
         }
     )
 
-//    private lazy var meetingsViewModel = MeetingsListViewModel.demo()
-//    private lazy var meetingsViewModel = MeetingsListViewModel(
-//        meetings: [],
-//        account: AccountUIViewModel(
-//            avatarSource: cachedAccountImage.mapToAccountImageSource(),
-//            availability: userSession.selfUser.availability.mapToAccountImageAvailability(),
-//            action: {}
-//        ),
-//    )
-
     private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,

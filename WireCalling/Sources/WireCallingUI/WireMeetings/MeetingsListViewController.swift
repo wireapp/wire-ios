@@ -26,7 +26,6 @@ package final class MeetingsListViewController: UIViewController {
 
     private let viewModel: MeetingsListViewModel
     private let hostingController: UIHostingController<MeetingsListView>
-    private var accountWrapperView: AccountUIWrapperView?
 
     package init(viewModel: MeetingsListViewModel) {
         self.viewModel = viewModel
@@ -70,7 +69,7 @@ package final class MeetingsListViewController: UIViewController {
         setupRightNavigationBarButtonItems()
     }
 
-    func configureNavigationBarAppearance() {
+    private func configureNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
