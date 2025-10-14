@@ -53,7 +53,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 13)
+        try XCTAssertCount(storeInvocations, count: 14)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -124,11 +124,11 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertTrue(storeInvocations[11].isEnabled)
         XCTAssertNil(storeInvocations[11].config)
 
-        XCTAssertEqual(storeInvocations[12].name, .assetAuditLog)
         XCTAssertEqual(storeInvocations[12].name, .cells)
+        XCTAssertTrue(storeInvocations[12].isEnabled)
 
+        XCTAssertEqual(storeInvocations[13].name, .assetAuditLog)
         XCTAssertTrue(storeInvocations[13].isEnabled)
-        XCTAssertNil(storeInvocations[13].config)
     }
 
 }
