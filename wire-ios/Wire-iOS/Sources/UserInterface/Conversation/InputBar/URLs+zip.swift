@@ -17,17 +17,19 @@
 //
 
 import Foundation
-import ZIPFoundation
+import WireLogging
 
-// TODO: delete
-//extension [URL] {
-//    func zipFiles(filename: String = "archive.zip") -> URL? {
-//        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
-//
-//        let paths = map(\.path)
-//
-//        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
-//
-//        return zipSucceded ? archiveURL : nil
-//    }
-//}
+extension [URL] {
+
+    func zipFiles(filename: String = "archive.zip") -> URL? {
+        do {
+            let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+            try ZIPFoundationFileArchiver().zipResources(at: self, into: archiveURL)
+            return archiveURL
+        } catch {
+            WireLogger.conversation.error("Failed to zip files: \(error)") // TODO: don't log into `conversation`
+            return nil
+        }
+    }
+
+}
