@@ -111,13 +111,13 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                     data: data
                 )
         } catch let error as FailureResponseV0 {
-            if error.code == HTTPStatusCode.tooManyRequests.rawValue && error.label == "client-error" {
+            if error.code == HTTPStatusCode.tooManyRequests.rawValue, error.label == "client-error" {
                 let retryAfter = responseHeaders["retry-after"].flatMap { TimeInterval($0) }
                 throw AuthenticationAPIError.tooManyRequests(error.message, retyAfter: retryAfter)
             }
             throw error
         }
-        
+
         return (cookies, accessToken)
     }
 

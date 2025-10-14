@@ -45,7 +45,7 @@ public enum AuthenticationAPIError: Error {
     case serviceUnavailable
 
     case tooManyRequests(_ message: String, retyAfter: TimeInterval?)
-    
+
     /// Thrown by `requestVerificationCode(for:)`.
 
     case invalidEmail
