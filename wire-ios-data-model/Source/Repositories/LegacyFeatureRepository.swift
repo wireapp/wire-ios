@@ -274,8 +274,8 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
     }
 
     public func fetchAllowedGlobalOperations() async -> Feature.AllowedGlobalOperations {
-        let (featureStatus, featureConfig) = await context.perform {
-            let feature = Feature.fetch(name: .allowedGlobalOperations, context: self.context)
+        let (featureStatus, featureConfig) = await context.perform { [context] in
+            let feature = Feature.fetch(name: .allowedGlobalOperations, context: context)
             return (feature?.status, feature?.config)
         }
 
@@ -376,8 +376,8 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
     // MARK: - MLS
 
     public func fetchMLS() async -> Feature.MLS {
-        let (status, configData) = await context.perform {
-            let feature = Feature.fetch(name: .mls, context: self.context)
+        let (status, configData) = await context.perform { [context] in
+            let feature = Feature.fetch(name: .mls, context: context)
             return (feature?.status, feature?.config)
         }
 
