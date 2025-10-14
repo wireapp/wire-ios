@@ -45,6 +45,7 @@ public class Feature: ZMManagedObject {
         case consumableNotifications
         case chatBubblesSimple
         case cells
+        case assetAuditLog
 
     }
 
@@ -237,7 +238,8 @@ public class Feature: ZMManagedObject {
              .channels,
              .consumableNotifications,
              .chatBubblesSimple,
-             .cells:
+             .cells,
+             .assetAuditLog:
             break
         }
     }
