@@ -43,7 +43,27 @@ struct ZIPFoundationFileArchiverTests {
         #expect(content == "-C-")
     }
 
-    // TODO: from a single root directory
+    @Test func `test creating an archive from a directory`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let directoryURL = temporaryDirectory.appending(path: "C", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: false)
+        let fileURL = directoryURL.appending(path: "C.txt", directoryHint: .notDirectory)
+        let archiveURL = temporaryDirectory.appending(path: "C.zip", directoryHint: .notDirectory)
+        try "-C-".write(to: fileURL, atomically: true, encoding: .utf8)
+        let sut = ZIPFoundationFileArchiver()
+
+        // When
+        try sut.zipResources(at: [directoryURL], into: archiveURL)
+
+        // Then
+        try fileManager.removeItem(at: directoryURL)
+        try ZIPFoundationFileUnarchiver().unzipFile(at: archiveURL, to: temporaryDirectory)
+        let content = try String(contentsOf: fileURL)
+        #expect(content == "-C-")
+    }
 
     @Test func `test creating an archive from invalid source files`() async throws {
         // Given
