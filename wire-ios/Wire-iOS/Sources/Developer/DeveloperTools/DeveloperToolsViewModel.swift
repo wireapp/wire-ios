@@ -337,7 +337,6 @@ final class DeveloperToolsViewModel: ObservableObject {
                 AnyView(
                     FeatureConfigsView(
                         viewModel: FeatureConfigsViewModel(
-                            featureConfigRepository: userSession.featureRepository,
                             context: userSession.syncContext
                         )
                     )
