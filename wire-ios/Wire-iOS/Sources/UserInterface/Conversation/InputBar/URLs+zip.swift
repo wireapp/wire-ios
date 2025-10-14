@@ -17,16 +17,17 @@
 //
 
 import Foundation
-import ZipArchive
+import ZIPFoundation
 
-extension [URL] {
-    func zipFiles(filename: String = "archive.zip") -> URL? {
-        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
-
-        let paths = map(\.path)
-
-        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
-
-        return zipSucceded ? archiveURL : nil
-    }
-}
+// TODO: delete
+//extension [URL] {
+//    func zipFiles(filename: String = "archive.zip") -> URL? {
+//        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+//
+//        let paths = map(\.path)
+//
+//        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
+//
+//        return zipSucceded ? archiveURL : nil
+//    }
+//}
