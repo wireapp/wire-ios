@@ -18,7 +18,7 @@
 
 public import Foundation
 public import UIKit
-import SwiftUI
+public import SwiftUI
 public import WireData
 import WireFoundation
 public import WireMessagingDomain
@@ -154,11 +154,15 @@ public extension WireCellsFactory {
     }
 
     @MainActor
-    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
+    func makeAttachmentsPreviewView(
+        attachments: [WireCellsMessageAttachment],
+        alignment: HorizontalAlignment
+    ) -> UIViewController {
         let viewController = UIHostingController(
             rootView: WireCellsAttachmentsPreviewView(
                 viewModel: WireCellsAttachmentsPreviewViewModel(
                     attachments: attachments,
+                    alignment: alignment,
                     fetchNodeUseCase: WireCellsFetchNodeUseCase(
                         repository: nodesAPI,
                         cache: nodeCache
