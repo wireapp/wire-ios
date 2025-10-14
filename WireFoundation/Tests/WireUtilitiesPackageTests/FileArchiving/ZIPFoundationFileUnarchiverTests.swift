@@ -28,12 +28,7 @@ struct ZIPFoundationFileUnarchiverTests {
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()
         let archive = try #require(Bundle.module.url(forResource: "single-file", withExtension: "zip"))
-        let temporaryDirectory = try fileManager.url(
-            for: .itemReplacementDirectory,
-            in: .userDomainMask,
-            appropriateFor: archive,
-            create: true // TODO: false
-        )
+        let temporaryDirectory = try fileManager.temporaryDirectory(appropriateFor: archive)
         defer { try? fileManager.removeItem(at: temporaryDirectory) }
         let expectedFile = temporaryDirectory.appending(path: "A.txt", directoryHint: .notDirectory)
 
@@ -51,12 +46,7 @@ struct ZIPFoundationFileUnarchiverTests {
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()
         let archive = try #require(Bundle.module.url(forResource: "single-file-in-directory", withExtension: "zip"))
-        let temporaryDirectory = try fileManager.url(
-            for: .itemReplacementDirectory,
-            in: .userDomainMask,
-            appropriateFor: archive,
-            create: true // TODO: false
-        )
+        let temporaryDirectory = try fileManager.temporaryDirectory(appropriateFor: archive)
         defer { try? fileManager.removeItem(at: temporaryDirectory) }
         let expectedFile = temporaryDirectory
             .appending(path: "B", directoryHint: .isDirectory)
@@ -69,6 +59,71 @@ struct ZIPFoundationFileUnarchiverTests {
         #expect(fileManager.fileExists(atPath: expectedFile.path()))
         let content = try String(contentsOf: expectedFile)
         #expect(content == "-B-\n")
+    }
+
+    @Test func `test failing for invalid source urls`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let sut = ZIPFoundationFileUnarchiver()
+        let temporaryDirectory = try fileManager.temporaryDirectory()
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let invalidURLs = [
+            URL(string: "https://wire.com/file.zip")!,
+            URL(filePath: "/path/to/non-existing/file.zip", directoryHint: .notDirectory),
+            URL(filePath: "/", directoryHint: .isDirectory)
+        ]
+
+        // When & Then
+        for invalidURL in invalidURLs {
+            #expect(throws: (any Error).self) {
+                try sut.unzipFile(at: invalidURL, to: temporaryDirectory)
+            }
+        }
+    }
+
+    @Test func `test failing for invalid destination urls`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let sut = ZIPFoundationFileUnarchiver()
+        let archive = try #require(Bundle.module.url(forResource: "single-file", withExtension: "zip"))
+        let temporaryDirectory = try fileManager.temporaryDirectory()
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let existingFile = temporaryDirectory.appending(path: "existing-file.zip", directoryHint: .notDirectory)
+        try fileManager.copyItem(at: archive, to: existingFile)
+        let invalidURLs = [
+            URL(string: "https://wire.com/file.zip")!,
+            URL(filePath: "/path/to/non-writable/directory", directoryHint: .isDirectory),
+            existingFile
+        ]
+
+        // When & Then
+        for invalidURL in invalidURLs {
+            #expect(throws: (any Error).self) {
+                try sut.unzipFile(at: archive, to: invalidURL)
+            }
+        }
+    }
+
+}
+
+extension FileManager {
+
+    fileprivate func temporaryDirectory(appropriateFor: URL? = nil) throws -> URL {
+
+        let appropriateFor = try appropriateFor ?? url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
+
+        return try url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: appropriateFor,
+            create: false
+        )
+
     }
 
 }
