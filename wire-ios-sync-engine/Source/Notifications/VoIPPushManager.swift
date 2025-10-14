@@ -123,6 +123,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let hasVideo = payload["hasVideo"] as? Bool
         else {
             Self.logger.critical("error: processing NSE push: invalid payload")
+            completion()
             return
         }
 
@@ -151,6 +152,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         Task {
             Self.logger.debug("processPendingCallEvents")
             await delegate?.processPendingCallEvents(accountID: accountID)
+            // Note that here we don't guarantee the sync was finished, only that it was triggered
+            completion()
         }
     }
 }

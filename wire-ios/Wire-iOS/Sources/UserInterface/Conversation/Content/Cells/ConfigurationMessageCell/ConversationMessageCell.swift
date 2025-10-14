@@ -52,11 +52,6 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
         sourceView: UIView
     )
 
-    func conversationMessageWantsToOpenFilesView(
-        _ cell: UIView,
-        nodeIDs: [UUID]
-    )
-
     func conversationMessageShouldUpdate()
 
 }

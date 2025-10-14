@@ -28,6 +28,7 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     private let _showArchive: @MainActor () async -> Void
     private let _showMeetings: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
+    private let _showMeetings: @MainActor () async -> Void
     private let _showConversation: @MainActor (
         _ conversation: ConversationModel,
         _ message: ConversationMessageModel?

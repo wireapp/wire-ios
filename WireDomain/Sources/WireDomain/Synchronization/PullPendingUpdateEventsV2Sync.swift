@@ -90,7 +90,14 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                         break streamLoop
                     }
                 case .missedEvents:
-                    logger.debug("missedEvents event", attributes: logAttributes)
+                    logger.warn(
+                        "missedEvents event, full sync required, open main app",
+                        attributes: logAttributes,
+                        .safePublic
+                    )
+                    // end the stream gracefully so notifications can be shown
+                    continuation.finish()
+                    break streamLoop
                 case let .events(envelopes):
                     do {
                         try await processBatch(

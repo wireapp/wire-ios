@@ -50,7 +50,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             mediaPlaybackManager: nil,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            wireCellsFactory: MockWireCellsFactoryProtocol()
         )
 
         // Call the setup codes in viewDidLoad
@@ -78,6 +79,6 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             message: mockMessage,
             sourceView: view,
             userSession: userSession
-        ) { _ in })
+        ) { _, _ in })
     }
 }

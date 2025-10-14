@@ -49,6 +49,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let createPushChannelState: CreatePushChannelStateClosure
+    private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -64,6 +65,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -78,6 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.syncStateSubject = syncStateSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
+        self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -140,12 +143,29 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             throw error
         }
 
+        await mlsGroupRepairAgent.repairConversations()
+
         let task = Task { @Sendable [self] in
-            await processLiveStream(
-                liveEventStream,
-                pushChannel: pushChannel,
-                syncMarker: syncMarker
-            )
+            do {
+                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
+                // cancel the task (not keeping any file lock in suspend mode)
+                try await withExpiringActivity(reason: "processLiveStream IncrementalSyncV2") {
+                    await processLiveStream(
+                        liveEventStream,
+                        pushChannel: pushChannel,
+                        syncMarker: syncMarker
+                    )
+
+                    WireLogger.sync.debug("Live stream ended, close push channel")
+                    await pushChannel.close()
+                    await pushChannelState.markAsClosed()
+                }
+            } catch {
+                // if we expire, close everything
+                WireLogger.sync.debug("Error while processing live stream, close push channel")
+                await pushChannel.close()
+                await pushChannelState.markAsClosed()
+            }
         }
 
         return IncrementalSync.Token(task: task, closePushChannel: {

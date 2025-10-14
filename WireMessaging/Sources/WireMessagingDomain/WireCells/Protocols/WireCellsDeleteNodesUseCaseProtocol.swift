@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public extension ZMConversation {
+public protocol WireCellsDeleteNodesUseCaseProtocol: Sendable {
 
-    /// Appends a "message invalid" system message
-    @objc @discardableResult
-    func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        appendSystemMessage(
-            type: .invalid,
-            sender: sender,
-            users: nil,
-            clients: nil,
-            timestamp: date
-        )
-    }
+    func invoke(nodeIDs: [UUID]) async throws
+
 }

@@ -16,23 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 import WireDataModel
 
-extension CustomMessageView: ConversationMessageCell {
+/// A description for a message cell that informs the user an unknown message was received.
 
-    var selectionView: UIView? {
-        messageLabel
-    }
+final class UnknownMessageReceivedCellDescription: ConversationMessageCellDescription {
 
-    func configure(with object: String, animated: Bool) {
-        messageText = object
-    }
-}
-
-/// A description for a message cell that informs the user a message cannot be rendered.
-
-final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     typealias View = CustomMessageView
     let configuration: String
 
@@ -40,13 +30,18 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 0
+
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
+    let isFullWidth: Bool = false
+    let supportsActions: Bool = false
     let containsHighlightableContent = false
 
     init() {
-        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
+        self.configuration = L10n.Localizable.Content.System.UnknownMessageReceived.body
         self.accessibilityLabel = configuration
     }
 

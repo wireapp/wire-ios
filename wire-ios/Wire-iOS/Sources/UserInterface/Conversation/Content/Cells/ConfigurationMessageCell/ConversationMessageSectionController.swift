@@ -108,6 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
     private let isChatBubbleSimpleEnabled: Bool
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -126,6 +127,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         contentWidth: CGFloat,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         isChatBubbleSimpleEnabled: Bool,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.message = message
         self.context = context
@@ -142,6 +144,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         // We need to provide isChatBubbleEnabled as Bool on init() because can't use
         // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
         self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
+        self.wireCellsFactory = wireCellsFactory
 
         super.init()
 
@@ -204,8 +207,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addPingMessageCells()
         } else if message.isComposite {
             addCompositeMessageCells()
+        } else if message.isText, message.isMultipart {
+            addTextMessageCells() + addMultipartMessageCells()
         } else if message.isText {
             addTextMessageCells()
+        } else if message.isMultipart {
+            addMultipartMessageCells()
         } else if message.isImage {
             addImageMessageCell()
         } else if message.isLocation {
@@ -245,6 +252,19 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     // MARK: - Content Cells
+
+    private func addMultipartMessageCells() -> [AnyConversationMessageCellDescription] {
+        if shouldCollapseCell() {
+            return addCollapsedCell()
+        }
+
+        let attachments = message.multipartMessageData?.attachments ?? []
+        let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
+            multipartMessage: message.multipartMessageData!,
+            wireCellsFactory: wireCellsFactory
+        )
+        return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
+    }
 
     private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let sender = message.senderUser else { return [] }
@@ -299,6 +319,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
+
+        let attachments = message.multipartMessageData?.attachments ?? []
+
         return ConversationTextMessageCellDescription
             .cells(
                 for: message,
@@ -356,7 +379,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addUnknownMessageCell() -> [AnyConversationMessageCellDescription] {
-        let cellDescription = UnknownMessageCellDescription()
+        let cellDescription = UnknownStoredMessageCellDescription()
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
@@ -365,6 +388,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
+        let attachments = message.multipartMessageData?.attachments ?? []
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
 

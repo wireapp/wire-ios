@@ -165,7 +165,8 @@ final class ConversationViewController: UIViewController {
                 mediaPlaybackManager: mediaPlaybackManager,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                wireCellsFactory: wireCellsFactory
             )
         }
 
@@ -444,7 +445,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
+        if userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -879,10 +880,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         filesView.presentOverAll(animated: true)
     }
 
-    /// If cells state is pending we need to sync it to ensure the value is up to date
-    /// as it might have been updated to a `ready` state.
-    func syncCellsStateIfPending() {
-        guard wireCellsState == .pending else {
+    /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
+    /// as it might have been updated to either a `pending` or `ready` state.
+    func syncCellsState() {
+        guard wireCellsState != .ready else {
             return
         }
 
@@ -903,7 +904,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 )
             } catch {
                 WireLogger.conversation
-                    .error("could not sync cells state for conversation")
+                    .error("could not sync cells state for conversation: \(String(describing: error))")
             }
         }
 

@@ -59,15 +59,17 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
         from sourceView: UIView
     )
 
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        presentFilesViewForNodes: [UUID]
-    )
-
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)
 
     func didSwipeToReact(
         actionController: ConversationMessageActionController,
         popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
     )
 }

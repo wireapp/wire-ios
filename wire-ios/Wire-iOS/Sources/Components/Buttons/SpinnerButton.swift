@@ -103,6 +103,10 @@ final class SpinnerButton: LegacyButton {
         setTitleColor(.white, for: .disabled)
 
         setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
+
+        setBorderColor(UIColor.accent(), for: .normal)
+        setBorderColor(UIColor.accentDarken, for: .highlighted)
+        setBorderColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .disabled)
     }
 
     /// custom empty style with accent color for disabled state.
