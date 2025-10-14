@@ -42,7 +42,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
             linkPreviewPreprocessor: nil,
             previewImagePreprocessor: nil,
             localDomain: "wire.com",
-            shouldUploadExtraMetaData: false
+            isCloudDomain: false
         )
     }
 

@@ -33,7 +33,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             localDomain: "wire.com",
-            shouldUploadExtraMetaData: false
+            isCloudDomain: false
         )
     }
 
