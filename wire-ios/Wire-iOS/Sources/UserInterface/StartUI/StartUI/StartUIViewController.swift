@@ -107,9 +107,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        SearchGroup.all.count > 1 &&
-            userSession.selfUser.canSeeServices &&
-            userSession.defaultProtocol != .mls
+        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
