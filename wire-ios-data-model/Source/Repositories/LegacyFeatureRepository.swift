@@ -51,8 +51,12 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
     func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple
     func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple)
+<<<<<<< HEAD
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
+=======
+    func fetchAssetAuditLog() -> Feature.AssetAuditLog
+>>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
 }
 
 /// **Do not use it for new code, use FeatureConfigRepository instead**
@@ -538,22 +542,32 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         }
     }
 
+<<<<<<< HEAD
     // MARK: Cells
 
     public func fetchCells() -> Feature.Cells {
         guard let feature = Feature.fetch(name: .cells, context: context) else {
+=======
+    // MARK: - Asset audit log
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        guard let feature = Feature.fetch(name: .assetAuditLog, context: context) else {
+>>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
             return .init()
         }
 
         return .init(status: feature.status)
     }
 
+<<<<<<< HEAD
     public func storeCells(_ cells: Feature.Cells) {
         Feature.updateOrCreate(havingName: .cells, in: context) {
             $0.status = cells.status
         }
     }
 
+=======
+>>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {

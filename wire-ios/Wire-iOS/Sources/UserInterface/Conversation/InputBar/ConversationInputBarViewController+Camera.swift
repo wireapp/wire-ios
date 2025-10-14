@@ -102,11 +102,13 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
-        didSelectImageData imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        didSelectImage image: SendableImage,
+        isFromCamera: Bool
     ) {
-        showConfirmationForImage(imageData, isFromCamera: isFromCamera, uti: uti)
+        showConfirmationForImage(
+            image,
+            isFromCamera: isFromCamera
+        )
     }
 
     @objc
@@ -150,16 +152,16 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func showConfirmationForImage(
-        _ imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        _ image: SendableImage,
+        isFromCamera: Bool
     ) {
-        let mediaAsset: MediaAsset = if uti == UTType.gif.identifier,
-                                        let gifImage = FLAnimatedImage(animatedGIFData: imageData),
-                                        gifImage.frameCount > 1 {
+        let mediaAsset: MediaAsset = if
+            image.utType == .gif,
+            let gifImage = FLAnimatedImage(animatedGIFData: image.data),
+            gifImage.frameCount > 1 {
             gifImage
         } else {
-            UIImage(data: imageData) ?? UIImage()
+            UIImage(data: image.data) ?? UIImage()
         }
 
         let context = ConfirmAssetViewController.Context(
@@ -168,9 +170,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
-                        imageData: imageData,
+                        imageData: image.data,
                         isFromCamera: isFromCamera
                     )
+<<<<<<< HEAD
                     let dataToSend = editedImage?.pngData() ?? imageData
                     if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
                        self.conversation.isCellsEnabled {
@@ -182,9 +185,24 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                             .image
                         }
                         self.uploadDraft(data: dataToSend, type: type)
+=======
+                    let dataToSend = editedImage?.pngData() ?? image.data
+                    let utType: UTType = if editedImage != nil {
+                        .png
+>>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
                     } else {
+                        image.utType ?? .image
+                    }
+                    if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
+                        self.uploadDraft(data: dataToSend, type: utType)
+                    } else {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: utType,
+                            data: dataToSend
+                        )
                         self.sendController.sendMessage(
-                            withImageData: dataToSend,
+                            image: image,
                             userSession: self.userSession
                         )
                     }
@@ -291,7 +309,10 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
 
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
-    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+    func canvasViewController(
+        _ canvasViewController: CanvasViewController,
+        didExportImage image: UIImage
+    ) {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
@@ -301,7 +322,15 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
                        self.conversation.isCellsEnabled {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
-                        self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .png,
+                            data: imageData
+                        )
+                        self.sendController.sendMessage(
+                            image: image,
+                            userSession: self.userSession
+                        )
                     }
                 }
             }

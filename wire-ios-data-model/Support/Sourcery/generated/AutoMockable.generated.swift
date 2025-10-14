@@ -3787,6 +3787,7 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(chatBubblesSimple)
     }
 
+<<<<<<< HEAD
     // MARK: - fetchCells
 
     public var fetchCells_Invocations: [Void] = []
@@ -3820,6 +3821,26 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(cells)
     }
 
+=======
+    // MARK: - fetchAssetAuditLog
+
+    public var fetchAssetAuditLog_Invocations: [Void] = []
+    public var fetchAssetAuditLog_MockMethod: (() -> Feature.AssetAuditLog)?
+    public var fetchAssetAuditLog_MockValue: Feature.AssetAuditLog?
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        fetchAssetAuditLog_Invocations.append(())
+
+        if let mock = fetchAssetAuditLog_MockMethod {
+            return mock()
+        } else if let mock = fetchAssetAuditLog_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAssetAuditLog`")
+        }
+    }
+
+>>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {

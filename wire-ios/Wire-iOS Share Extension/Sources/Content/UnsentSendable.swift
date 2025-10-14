@@ -211,8 +211,23 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let self else { return }
-            completion(imageData.flatMap(conversation.appendImage))
+            guard let self else {
+                return
+            }
+
+            guard let imageData else {
+                return completion(nil)
+            }
+
+            let message = conversation.appendImage(
+                SendableImage(
+                    name: nil,
+                    utType: .jpeg,
+                    data: imageData
+                )
+            )
+
+            completion(message)
         }
     }
 

@@ -38,7 +38,10 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
 
     func testThatReturnsAssetsForImageMessage() {
         // given
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
 
         // then
         XCTAssertEqual(message.assets.count, 1)
