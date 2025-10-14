@@ -51,6 +51,7 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
     func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple
     func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple)
+    func fetchAssetAuditLog() -> Feature.AssetAuditLog
 }
 
 /// **Do not use it for new code, use FeatureConfigRepository instead**
@@ -534,6 +535,16 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         Feature.updateOrCreate(havingName: .chatBubblesSimple, in: context) {
             $0.status = chatBubblesSimple.status
         }
+    }
+
+    // MARK: - Asset audit log
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        guard let feature = Feature.fetch(name: .assetAuditLog, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
     }
 
     // MARK: - Methods
