@@ -32,12 +32,9 @@ package struct MeetingsListView: View {
 
     package var body: some View {
         VStack {
-            Picker("", selection: Binding(
-                get: { viewModel.selectedTab.rawValue },
-                set: { viewModel.selectedTab = MeetingsListViewModel.Tab(rawValue: $0) ?? .next }
-            )) {
-                ForEach(MeetingsListViewModel.Tab.allCases, id: \.rawValue) { tab in
-                    Text(tab.title).tag(tab.rawValue)
+            Picker("", selection: $viewModel.selectedTab) {
+                ForEach(MeetingsListViewModel.Tab.allCases, id: \.self) { tab in
+                    Text(tab.title).tag(tab)
                 }
             }
             .pickerStyle(.segmented)
@@ -60,33 +57,14 @@ package struct MeetingsListView: View {
                             MeetingRow(meeting: meeting)
                         }
                     } header: {
-                        Text(Strings.Header.ongoing)
-                            .font(.textStyle(.body2))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            .textCase(nil)
+                        SectionTitle(Strings.Header.ongoing)
                     }
                 }
-                // TODO: clean up
-                ForEach(viewModel.groupedNext, id: \.day) { dayGroup in
-                    Section {
-                        ForEach(dayGroup.timeSlots, id: \.time) { timeSlot in
-                            Section {
-                                ForEach(timeSlot.meetings, id: \.id) { meeting in
-                                    MeetingRow(meeting: meeting)
-                                }
-                            } header: {
-                                Text(viewModel.formatTime(timeSlot.time))
-                                    .font(.textStyle(.subline1))
-                                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            }
-                        }
-                    } header: {
-                        Text(viewModel.formatDay(dayGroup.day))
-                            .font(.textStyle(.body2))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            .textCase(nil)
-                    }
-                }
+                GroupedSections(
+                    groups: viewModel.groupedNext,
+                    formatDay: viewModel.formatDay(_:),
+                    formatTime: viewModel.formatTime(_:)
+                )
 
                 if viewModel.hasMoreNext {
                     Button {
@@ -99,26 +77,11 @@ package struct MeetingsListView: View {
                     .listRowBackground(Color.clear)
                 }
             } else {
-                ForEach(viewModel.groupedPast, id: \.day) { dayGroup in
-                    Section {
-                        ForEach(dayGroup.timeSlots, id: \.time) { timeSlot in
-                            Section {
-                                ForEach(timeSlot.meetings, id: \.id) { meeting in
-                                    MeetingRow(meeting: meeting)
-                                }
-                            } header: {
-                                Text(viewModel.formatTime(timeSlot.time))
-                                    .font(.textStyle(.subline1))
-                                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            }
-                        }
-                    } header: {
-                        Text(viewModel.formatDay(dayGroup.day))
-                            .font(.textStyle(.body2))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            .textCase(nil)
-                    }
-                }
+                GroupedSections(
+                    groups: viewModel.groupedPast,
+                    formatDay: viewModel.formatDay(_:),
+                    formatTime: viewModel.formatTime(_:)
+                )
             }
         }
         .listStyle(.insetGrouped)
@@ -126,6 +89,45 @@ package struct MeetingsListView: View {
         .background(ColorTheme.Backgrounds.surface.color)
     }
 }
+
+private func SectionTitle(_ text: String) -> some View {
+    Text(text)
+        .font(.textStyle(.body2))
+        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+        .textCase(nil)
+}
+
+private func TimeHeader(_ text: String) -> some View {
+    Text(text)
+        .font(.textStyle(.subline1))
+        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+}
+
+private struct GroupedSections: View {
+    let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
+    let formatDay: (Date) -> String
+    let formatTime: (Date) -> String
+
+    var body: some View {
+        ForEach(groups, id: \.day) { dayGroup in
+            Section {
+                ForEach(dayGroup.timeSlots, id: \.time) { slot in
+                    Section {
+                        ForEach(slot.meetings, id: \.id) { meeting in
+                            MeetingRow(meeting: meeting)
+                        }
+                    } header: {
+                        TimeHeader(formatTime(slot.time))
+                    }
+                }
+            } header: {
+                SectionTitle(formatDay(dayGroup.day))
+            }
+        }
+    }
+}
+
+// MARK: - Row
 
 private struct MeetingRow: View {
     let meeting: Meeting
