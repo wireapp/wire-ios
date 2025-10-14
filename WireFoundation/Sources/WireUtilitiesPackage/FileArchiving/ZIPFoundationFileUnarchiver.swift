@@ -20,6 +20,8 @@ public import Foundation
 
 public struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
+    public init() {}
+
     public func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
         try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }

@@ -21,6 +21,7 @@ import WireFoundation
 import WireFoundationSupport
 import WireLogging
 import XCTest
+import WireUtilitiesPackage
 
 @testable import WireBackup
 

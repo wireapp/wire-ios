@@ -22,6 +22,8 @@ import ZIPFoundation
 
 public struct ZIPFoundationFileArchiver: FileArchiverProtocol {
 
+    public init() {}
+
     public func zipResources(
         at resourceURLs: [URL],
         into destinationURL: URL
