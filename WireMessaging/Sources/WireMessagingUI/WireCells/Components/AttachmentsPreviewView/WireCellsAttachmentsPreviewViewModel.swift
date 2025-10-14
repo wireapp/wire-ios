@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+package import SwiftUI
 import UniformTypeIdentifiers
 import WireLogging
 package import WireMessagingDomain
@@ -56,16 +57,19 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
 
+    let alignment: HorizontalAlignment
     @Published var items: [WireCellsAttachmentsPreviewViewItem]
 
     package init(
         attachments: [WireCellsMessageAttachment],
+        alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest
     ) {
         self.attachments = attachments
+        self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.localAssetRepository = localAssetRepository
@@ -78,6 +82,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(
             item: items[index],
+            alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
@@ -149,6 +154,7 @@ extension WireCellsAttachmentsPreviewViewModel {
 
         return WireCellsAttachmentsPreviewViewModel(
             attachments: attachments,
+            alignment: .leading,
             fetchNodeUseCase: WireCellsFetchNodeUseCase(
                 repository: nodesRepository,
                 cache: nodeCache
