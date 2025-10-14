@@ -58,7 +58,11 @@ let package = Package(
         ),
         .testTarget(
             name: "WireUtilitiesPackageTests",
-            dependencies: ["WireUtilitiesPackage"]
+            dependencies: ["WireUtilitiesPackage"],
+            resources: [
+                .copy("Resources/single-file.zip"),
+                .copy("Resources/single-file-in-directory.zip")
+            ]
         ),
 
         .target(

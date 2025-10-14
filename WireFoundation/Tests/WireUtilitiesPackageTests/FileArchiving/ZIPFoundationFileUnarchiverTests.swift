@@ -16,12 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
+
+@testable import WireUtilitiesPackage
 
 struct ZIPFoundationFileUnarchiverTests {
 
-    @Test func todo() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test func `test extracting a single root file`() async throws {
+        // Given
+        let fileManager = FileManager.default
+        let sut = ZIPFoundationFileUnarchiver()
+        let archive = try #require(Bundle.module.url(forResource: "single-file", withExtension: "zip"))
+        let temporaryDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: archive,
+            create: true // TODO: false
+        )
+        defer { try? fileManager.removeItem(at: temporaryDirectory) }
+        let expectedFile = temporaryDirectory.appending(path: "A.txt", directoryHint: .notDirectory)
+
+        // When
+        try sut.unzipFile(at: archive, to: temporaryDirectory)
+
+        // Then
+        #expect(fileManager.fileExists(atPath: expectedFile.path()))
+        let content = try String(contentsOf: expectedFile)
+        #expect(content == "-A-\n")
     }
 
 }
