@@ -95,7 +95,10 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         )
         sut.mainSplitViewState = .collapsed
 
-        let tabBarController = ZClientViewController.MainCoordinator.TabBarController(showMeetings: false)
+        let tabBarController = ZClientViewController.MainCoordinator.TabBarController(
+            showMeetings: false,
+            showFiles: true
+        )
         tabBarController.applyMainTabBarControllerAppearance()
         tabBarController.conversationListUI = sut
 
