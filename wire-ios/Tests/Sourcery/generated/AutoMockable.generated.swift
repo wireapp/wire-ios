@@ -1840,6 +1840,33 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
 }
 
+class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeMeetingsListView
+
+    var makeMeetingsListView_Invocations: [Void] = []
+    var makeMeetingsListView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsListView_MockValue: UIViewController?
+
+    @MainActor
+    func makeMeetingsListView() -> UIViewController {
+        makeMeetingsListView_Invocations.append(())
+
+        if let mock = makeMeetingsListView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsListView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeMeetingsListView`")
+        }
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

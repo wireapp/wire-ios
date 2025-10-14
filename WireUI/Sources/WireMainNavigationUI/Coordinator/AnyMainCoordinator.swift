@@ -26,14 +26,13 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     private let _showConversationList: @MainActor (_ conversationFilter: ConversationFilter?) async -> Void
     private let _applyConversationFilter: @MainActor (_ conversationFilter: ConversationFilter?) -> Void
     private let _showArchive: @MainActor () async -> Void
-    private let _showMeetings: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
+    private let _showMeetings: @MainActor () async -> Void
     private let _showConversation: @MainActor (
         _ conversation: ConversationModel,
         _ message: ConversationMessageModel?
     ) async -> Void
     private let _hideConversation: @MainActor () -> Void
-    private let _hideMeetings: @MainActor () -> Void
     private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
     private let _hideSettingsContent: @MainActor () -> Void
     private let _presentViewController: @MainActor (_ viewController: UIViewController) async -> Void
@@ -64,9 +63,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
         }
         self._hideConversation = {
             mainCoordinator.hideConversation()
-        }
-        self._hideMeetings = {
-            mainCoordinator.hideMeetings()
         }
         self._showSettingsContent = { topLevelMenuItem in
             mainCoordinator.showSettingsContent(topLevelMenuItem)
@@ -120,11 +116,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     @MainActor
     public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
         _showSettingsContent(topLevelMenuItem)
-    }
-
-    @MainActor
-    public func hideMeetings() {
-        _hideMeetings()
     }
 
     @MainActor

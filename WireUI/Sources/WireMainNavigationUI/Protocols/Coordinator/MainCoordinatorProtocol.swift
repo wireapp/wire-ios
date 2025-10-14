@@ -43,8 +43,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
     func hideConversation()
-    @MainActor
-    func hideMeetings()
 
     @MainActor
     func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
