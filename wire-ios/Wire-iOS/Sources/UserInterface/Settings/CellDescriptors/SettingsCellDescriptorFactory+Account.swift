@@ -407,7 +407,7 @@ extension SettingsCellDescriptorFactory {
                 url: url,
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
-                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                fileUnarchiver: ZIPFoundationFileUnarchiver(),
                 syncTrigger: {
                     Task {
                         await userSession.triggerResourcesSync()
