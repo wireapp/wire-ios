@@ -19,7 +19,7 @@
 import Foundation
 import WireCrypto
 import WireDomainPackage
-import ZipArchive
+import ZIPFoundation
 
 extension SessionManager {
 
@@ -113,7 +113,13 @@ extension SessionManager {
 
     private static func compress(backup: CoreDataStack.BackupInfo) throws -> URL {
         let url = temporaryURL(for: backup.url)
-        guard backup.url.zipDirectory(to: url) else { throw CreateLegacyBackupError.compressionError }
+        try FileManager.default.zipItem(
+            at: url,
+            to: backup.url,
+            shouldKeepParent: false, // TODO: verify
+            compressionMethod: .deflate,
+            progress: nil
+        )
         return url
     }
 
@@ -153,19 +159,10 @@ private extension BackupMetadata {
     }
 }
 
-// MARK: - Zip Helper
-
-private extension URL {
-    func zipDirectory(to url: URL) -> Bool {
-        SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
-    }
-}
-
 // MARK: -
 
 public enum CreateLegacyBackupError: Error {
     case noActiveAccountForExport
-    case compressionError
     /// Failed to create `InputStream` or `OutputStream` from `URL`.
     case failedToCreateStreamsForEncryption
 }

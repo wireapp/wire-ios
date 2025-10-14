@@ -17,20 +17,13 @@
 //
 
 import WireFoundation
-import ZipArchive
+import ZIPFoundation
 
 struct ImportBackupFileArchiver: FileUnarchiverProtocol {
 
     func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
 
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
-
-        guard success else {
-            throw FileArchivingError.unknown
-        }
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
 
     }
 }
