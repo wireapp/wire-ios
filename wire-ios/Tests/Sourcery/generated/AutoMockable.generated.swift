@@ -29,6 +29,7 @@ import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
+import SwiftUI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -1803,20 +1804,20 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
     // MARK: - makeAttachmentsPreviewView
 
-    var makeAttachmentsPreviewViewAttachments_Invocations: [[WireCellsMessageAttachment]] = []
-    var makeAttachmentsPreviewViewAttachments_MockMethod: (([WireCellsMessageAttachment]) -> UIViewController)?
-    var makeAttachmentsPreviewViewAttachments_MockValue: UIViewController?
+    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
 
     @MainActor
-    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
-        makeAttachmentsPreviewViewAttachments_Invocations.append(attachments)
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
+        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
 
-        if let mock = makeAttachmentsPreviewViewAttachments_MockMethod {
-            return mock(attachments)
-        } else if let mock = makeAttachmentsPreviewViewAttachments_MockValue {
+        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
+            return mock(attachments, alignment)
+        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeAttachmentsPreviewViewAttachments`")
+            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
         }
     }
 

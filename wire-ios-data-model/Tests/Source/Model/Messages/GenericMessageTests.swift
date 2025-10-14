@@ -68,8 +68,9 @@ final class GenericMessageTests: XCTestCase {
 
     func testThatItConsidersAssetMessageTypeAsKnownMessage() {
         let assetMessageType = GenericMessage(content: GenericMessageProtocol.Asset(
-            imageSize: .zero,
+            name: "picture.jpg",
             mimeType: "image/jpeg",
+            imageSize: .zero,
             size: 0
         ))
         XCTAssertNotNil(assetMessageType.content)

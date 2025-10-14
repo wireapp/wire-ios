@@ -37,7 +37,7 @@ package struct WireCellsAttachmentsPreviewView: View {
                 itemRow(index: index)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: viewModel.alignment == .leading ? .leading : .trailing)
     }
 
     @ViewBuilder

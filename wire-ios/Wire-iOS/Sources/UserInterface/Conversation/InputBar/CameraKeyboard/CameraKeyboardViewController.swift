@@ -36,9 +36,8 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
     )
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
-        didSelectImageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        didSelectImage image: SendableImage,
+        isFromCamera: Bool
     )
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController)
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController)
@@ -313,12 +312,19 @@ class CameraKeyboardViewController: UIViewController {
                 data
             }
 
+            let name = PHAssetResource.assetResources(for: asset).first?.originalFilename
+
+            let image = SendableImage(
+                name: name,
+                utType: .jpeg,
+                data: returnData
+            )
+
             DispatchQueue.main.async {
                 self.delegate?.cameraKeyboardViewController(
                     self,
-                    didSelectImageData: returnData,
-                    isFromCamera: false,
-                    uti: uti
+                    didSelectImage: image,
+                    isFromCamera: false
                 )
             }
         }
@@ -629,12 +635,14 @@ extension CameraKeyboardViewController: CameraCellDelegate {
         delegate?.cameraKeyboardViewControllerWantsToOpenFullScreenCamera(self)
     }
 
-    func cameraCell(_ cameraCell: CameraCell, didPickImageData imageData: Data, type: UTType) {
+    func cameraCell(
+        _ cameraCell: CameraCell,
+        didPickImage image: SendableImage
+    ) {
         delegate?.cameraKeyboardViewController(
             self,
-            didSelectImageData: imageData,
-            isFromCamera: true,
-            uti: type.identifier
+            didSelectImage: image,
+            isFromCamera: true
         )
     }
 }
