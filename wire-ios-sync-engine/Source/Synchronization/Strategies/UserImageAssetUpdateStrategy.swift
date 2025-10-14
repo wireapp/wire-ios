@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 enum AssetTransportError: Error {
@@ -48,19 +49,31 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     fileprivate var observers: [Any] = []
 
     private let localDomain: String?
+    private let isCloudDomain: Bool
+
+    private let featureRepository: LegacyFeatureRepository
+
+    private var shouldUploadExtraMetaData: Bool {
+        guard !isCloudDomain else { return false }
+        return managedObjectContext.performAndWait {
+            featureRepository.fetchAssetAuditLog().status == .enabled
+        }
+    }
 
     @objc
     public convenience init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatusDirectory: ApplicationStatusDirectory,
         userProfileImageUpdateStatus: UserProfileImageUpdateStatus,
-        localDomain: String?
+        localDomain: String?,
+        isCloudDomain: Bool
     ) {
         self.init(
             managedObjectContext: managedObjectContext,
             applicationStatus: applicationStatusDirectory,
             imageUploadStatus: userProfileImageUpdateStatus,
-            localDomain: localDomain
+            localDomain: localDomain,
+            isCloudDomain: isCloudDomain
         )
     }
 
@@ -68,11 +81,14 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         imageUploadStatus: UserProfileImageUploadStatusProtocol,
-        localDomain: String?
+        localDomain: String?,
+        isCloudDomain: Bool
     ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
         self.localDomain = localDomain
+        self.isCloudDomain = isCloudDomain
+        self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
@@ -242,10 +258,38 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
+            var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
+            if shouldUploadExtraMetaData {
+                guard
+                    // As per the spec: there's no conversation so we use a null id instead.
+                    let nullID = UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
+                    let localDomain
+                else {
+                    WireLogger.assets.warn(
+                        "should include extra metadata for profile image but not able to",
+                        attributes: .safePublic
+                    )
+                    return nil
+                }
+
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: image
+                )
+
+                extraMetaData = .init(
+                    conversationID: QualifiedID(uuid: nullID, domain: localDomain),
+                    fileName: image.name,
+                    mimeType: image.utType?.preferredMIMEType ?? ""
+                )
+            }
+
             let request = requestFactory.upstreamRequestForAsset(
                 withData: image,
                 shareable: true,
                 retention: .eternal,
+                assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
             )
 

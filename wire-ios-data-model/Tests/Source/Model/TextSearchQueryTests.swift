@@ -592,9 +592,15 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             name: "Berlin, Germany",
             zoomLevel: 8
         ))
-        try conversation.appendImage(from: mediumJPEGData())
+        try conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: mediumJPEGData()),
+            nonce: UUID()
+        )
         try conversation.appendKnock()
-        try conversation.appendImage(from: verySmallJPEGData())
+        try conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 10, normalized: true)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         verifyAllMessagesAreIndexed(in: conversation)

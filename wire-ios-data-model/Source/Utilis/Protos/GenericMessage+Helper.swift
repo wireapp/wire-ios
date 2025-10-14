@@ -774,8 +774,9 @@ public extension LinkPreview {
             $0.summary = articleMetadata.summary ?? ""
             if let imageData = articleMetadata.imageData.first {
                 $0.image = GenericMessageProtocol.Asset(
-                    imageSize: CGSize(width: 0, height: 0),
+                    name: "picture.jpeg",
                     mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
                     size: UInt64(imageData.count)
                 )
             }
@@ -791,8 +792,9 @@ public extension LinkPreview {
             $0.title = twitterMetadata.message ?? ""
             if let imageData = twitterMetadata.imageData.first {
                 $0.image = GenericMessageProtocol.Asset(
-                    imageSize: CGSize(width: 0, height: 0),
+                    name: "picture.jpeg",
                     mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
                     size: UInt64(imageData.count)
                 )
             }
