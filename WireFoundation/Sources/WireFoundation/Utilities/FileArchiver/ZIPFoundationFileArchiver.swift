@@ -16,31 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireFoundation
+public import Foundation
+
 import ZIPFoundation
 
-struct ZIPFoundationFileArchiver: FileArchiverProtocol {
+public struct ZIPFoundationFileArchiver: FileArchiverProtocol {
 
-    func zipResources(
+    public func zipResources(
         at resourceURLs: [URL],
         into destinationURL: URL
     ) throws {
+
+        // We need to pass a directory URL to ZIPFoundation. Therefore we first copy the target files into a separate,
+        // temporary directory representing the content of the zip file.
+
         let fileManager = FileManager.default
-        try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+        let tmpDestination = destinationURL.appendingPathExtension("tmp")
+        try fileManager.createDirectory(at: tmpDestination, withIntermediateDirectories: true)
+        defer { try? fileManager.removeItem(at: tmpDestination) }
+
         for resourceURL in resourceURLs {
             try fileManager.copyItem(
                 at: resourceURL,
-                to: destinationURL.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
+                to: tmpDestination.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
             )
         }
+
         try fileManager.zipItem(
-            at: destinationURL,
-            to: destinationURL.appendingPathExtension("tmp"),
-            shouldKeepParent: false
+            at: tmpDestination,
+            to: destinationURL,
+            shouldKeepParent: false,
+            compressionMethod: .deflate,
+            progress: .none
         )
-        try fileManager.removeItem(at: destinationURL)
-        try fileManager.moveItem(at: destinationURL.appendingPathExtension("tmp"), to: destinationURL)
+
+        try fileManager.removeItem(at: tmpDestination)
+
     }
 
 }

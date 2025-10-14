@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireFoundation
+public import Foundation
 
-struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
+public struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+    public func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
         try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
 

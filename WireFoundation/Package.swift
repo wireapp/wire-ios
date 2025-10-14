@@ -36,14 +36,16 @@ let package = Package(
             dependencies: ["WireCrypto", "WireTestingPackage"]
         ),
 
-        .target(name: "WireFoundation"),
+        .target(
+            name: "WireFoundation",
+            dependencies: ["ZIPFoundation"]
+        ),
         .testTarget(
             name: "WireFoundationTests",
             dependencies: [
                 "WireFoundation",
                 "WireFoundationSupport",
-                "WireTestingPackage",
-                "ZIPFoundation"
+                "WireTestingPackage"
             ]
         ),
         .target(
