@@ -221,11 +221,11 @@ final class FilesViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesView_ErrorState() async {
         let view = makeFilesView(state: .error)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")

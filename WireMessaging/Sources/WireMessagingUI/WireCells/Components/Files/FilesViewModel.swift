@@ -108,7 +108,7 @@ package final class FilesViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
-        
+
         bindSearch()
     }
 
@@ -116,7 +116,7 @@ package final class FilesViewModel: ObservableObject {
     var isLoading: Bool {
         loadMoreTask != nil
     }
-    
+
     private func bindSearch() {
         $searchText
             .debounce(for: 0.5, scheduler: DispatchQueue.main)

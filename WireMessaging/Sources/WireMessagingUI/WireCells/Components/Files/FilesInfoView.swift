@@ -23,45 +23,55 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
-    
+
     enum Info: Equatable {
         case preparingFiles
         case noFilesFound(scope: Scope)
         case error
-        
+
         enum Scope: Equatable {
             case allConversations
             case oneConversation
         }
-        
+
         var localizedStrings: (title: String, message: String) {
             switch self {
             case .preparingFiles:
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
-            case .noFilesFound(let scope):
-                (Strings.Files.NoData.title, scope == .allConversations ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message)
+            case let .noFilesFound(scope):
+                (
+                    Strings.Files.NoData.title,
+                    scope == .allConversations ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message
+                )
             case .error:
                 (Strings.Files.Error.title, Strings.Files.Error.message)
             }
         }
-        
+
         var accessibilityStrings: (title: String, message: String) {
             switch self {
             case .preparingFiles:
                 (Accessibility.Files.PendingCells.title, Accessibility.Files.PendingCells.message)
-            case .noFilesFound(let scope):
-                (Accessibility.Files.NoData.title, scope == .allConversations ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData.message)
+            case let .noFilesFound(scope):
+                (
+                    Accessibility.Files.NoData.title,
+                    scope == .allConversations ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData
+                        .message
+                )
             case .error:
                 (Accessibility.Files.Error.title, Accessibility.Files.Error.message)
             }
         }
-        
+
         var acessibilityIdentifiers: (title: String, message: String) {
             switch self {
             case .preparingFiles:
                 ("preparing-files-title", "preparing-files-message")
-            case .noFilesFound(let scope):
-                ("no-files-title", scope == .allConversations ? "no-files-all-conversations-message" : "no-files-message")
+            case let .noFilesFound(scope):
+                (
+                    "no-files-title",
+                    scope == .allConversations ? "no-files-all-conversations-message" : "no-files-message"
+                )
             case .error:
                 ("error-title", "error-message")
             }
@@ -69,7 +79,7 @@ struct FilesInfoView: View {
     }
 
     let info: Info
-    var onReload: (() -> Void)? = nil
+    var onReload: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 25) {
@@ -80,7 +90,7 @@ struct FilesInfoView: View {
                 .foregroundStyle(SemanticColors.Label.textDefault.color)
                 .accessibilityLabel(info.accessibilityStrings.title)
                 .accessibilityIdentifier(info.acessibilityIdentifiers.title)
-            
+
             Text(info.localizedStrings.message)
                 .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
                 .font(.body)
@@ -89,7 +99,7 @@ struct FilesInfoView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.acessibilityIdentifiers.message)
-            
+
             if info == .error {
                 Button {
                     onReload?()
@@ -105,7 +115,7 @@ struct FilesInfoView: View {
                                 style: .continuous
                             )
                             .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-                            
+
                         )
                 }
             }

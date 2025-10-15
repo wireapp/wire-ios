@@ -40,7 +40,7 @@ package struct FilesView: FilesViewProtocol {
             ZStack {
                 ColorTheme.Backgrounds.surface.color
                     .ignoresSafeArea(.all)
-                
+
                 Group {
                     switch viewModel.state {
                     case .initial:
@@ -48,7 +48,7 @@ package struct FilesView: FilesViewProtocol {
                             Image(systemName: "arrow.trianglehead.clockwise")
                                 .wireTextStyle(.body3)
                                 .foregroundStyle(SemanticColors.Label.textDefault.color)
-                            
+
                         }
                     case .loading:
                         ProgressView()
@@ -63,7 +63,6 @@ package struct FilesView: FilesViewProtocol {
                         }
                     case .pending:
                         FilesInfoView(info: .preparingFiles)
-                        
                     case .error:
                         FilesInfoView(info: .error, onReload: {
                             reloadTask()

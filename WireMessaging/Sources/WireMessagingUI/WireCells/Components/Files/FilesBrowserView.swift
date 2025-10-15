@@ -29,11 +29,11 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 /// Allows browsing files shared accross all conversations
 package struct FilesBrowserView: FilesViewProtocol {
     @ObservedObject package var viewModel: FilesViewModel
-    
+
     package init(viewModel: FilesViewModel) {
         self.viewModel = viewModel
     }
-    
+
     package var body: some View {
         ZStack {
             ColorTheme.Backgrounds.surface.color
@@ -45,7 +45,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                         Image(systemName: "arrow.trianglehead.clockwise")
                             .wireTextStyle(.body3)
                             .foregroundStyle(SemanticColors.Label.textDefault.color)
-                        
+
                     }
                 case .loading:
                     ProgressView()
@@ -60,7 +60,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                     }
                 case .pending:
                     FilesInfoView(info: .preparingFiles)
-                    
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -94,9 +93,9 @@ package struct FilesBrowserView: FilesViewProtocol {
 
 private extension View {
     @ViewBuilder
-    func `if`<Content: View>(
+    func `if`(
         _ condition: Bool,
-        transform: (Self) -> Content
+        transform: (Self) -> some View
     ) -> some View {
         if condition {
             transform(self)
@@ -112,4 +111,3 @@ private extension View {
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
-

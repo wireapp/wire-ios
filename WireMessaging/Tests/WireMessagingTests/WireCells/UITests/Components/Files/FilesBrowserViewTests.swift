@@ -97,11 +97,11 @@ final class FilesBrowserViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesBrowserView_ErrorState() async {
         let view = makeFilesBrowserView(state: .error)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -109,12 +109,12 @@ final class FilesBrowserViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilesBrowserView_ReceivedItemsState() async {
         let view = makeFilesBrowserView(state: .received(items: [.fixture(), .fixture()]))
         localAssetsRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -138,7 +138,7 @@ final class FilesBrowserViewTests: XCTestCase {
         filesViewModel.state = state
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
-        
+
         return NavigationStack {
             filesBrowserView
         }

@@ -126,27 +126,26 @@ public extension WireCellsFactory {
         isCellsStatePending: Bool,
         nodeIDs: [UUID]
     ) -> UIViewController {
-        let filesView: UIHostingController<FilesView> = makeFilesHostingController(
+        makeFilesHostingController(
             cellName: cellName,
             isCellsStatePending: isCellsStatePending,
             nodeIDs: nodeIDs
         )
-        
-        return filesView
     }
-    
+
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
-        let filesBrowserView: UIHostingController<FilesBrowserView> = makeFilesHostingController()
-        return filesBrowserView
+        makeFilesHostingController()
     }
-    
+
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
         cellName: String? = nil, isCellsStatePending: Bool = false, nodeIDs: [UUID] = []
     ) -> UIHostingController<T> {
         let configuration: WireCellsFetchNodesUseCase.Configuration =
-        nodeIDs.isEmpty ? .conversationFileView(root: cellName.flatMap { .path($0) }) : .nodesFileView(nodeIDs: nodeIDs)
+            nodeIDs
+                .isEmpty ? .conversationFileView(root: cellName.flatMap { .path($0) }) :
+                .nodesFileView(nodeIDs: nodeIDs)
 
         let viewModel = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
@@ -167,7 +166,6 @@ public extension WireCellsFactory {
             viewModel: viewModel
         )
     }
-    
 
     @MainActor
     func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment]) -> UIViewController {
