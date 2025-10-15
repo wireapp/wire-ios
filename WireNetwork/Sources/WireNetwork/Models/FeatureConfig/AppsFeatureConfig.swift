@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// A configuration for the *Apps* feature.
 
-public extension LinkPreviewAssetUploadRequestStrategy {
+public struct AppsFeatureConfig: Equatable, Sendable {
 
-    static func create(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
-    ) -> LinkPreviewAssetUploadRequestStrategy {
-        LinkPreviewAssetUploadRequestStrategy(
-            managedObjectContext: managedObjectContext,
-            applicationStatus: applicationStatus,
-            linkPreviewPreprocessor: nil,
-            previewImagePreprocessor: nil
-        )
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
     }
 
 }

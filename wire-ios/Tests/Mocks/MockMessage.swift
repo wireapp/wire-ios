@@ -292,6 +292,8 @@ final class MockKnockMessageData: NSObject, ZMKnockMessageData {}
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
 
+    var name: String?
+
     var mockOriginalSize: CGSize = .zero
     var mockImageData = Data()
     var mockImageDataIdentifier = String()
