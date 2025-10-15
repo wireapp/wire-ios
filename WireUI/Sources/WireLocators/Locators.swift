@@ -42,13 +42,11 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
-
     }
 
     public enum SettingsPage: String {
 
         case accountCell
         case optionsCell
-
     }
 }

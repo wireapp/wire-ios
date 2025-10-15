@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Locators
 import SwiftUI
+import WireLocators
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 

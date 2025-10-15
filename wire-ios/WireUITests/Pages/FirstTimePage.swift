@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Locators
+import WireLocators
 import XCTest
 
 /// Page for popup on first time user login
