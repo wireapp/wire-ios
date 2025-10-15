@@ -287,10 +287,6 @@ public extension ZMSLog {
 
     @objc static let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
-    @objc static var currentZipLog: Data? {
-        FileManager.default.zipData(from: currentLogURL)
-    }
-
     @objc static let previousZipLogURLs: [URL] = [0 ..< Constant.maxNumberOfLogFiles]
         .joined()
         .compactMap { index in
@@ -416,32 +412,3 @@ public extension ZMSLog {
 
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
-
-public extension FileManager {
-    func zipData(from url: URL?) -> Data? {
-        guard
-            let url,
-            fileExists(atPath: url.path)
-        else {
-            return nil
-        }
-
-        var tmpURL = url.deletingLastPathComponent()
-        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
-
-        try? zipItem(
-            at: url,
-            to: tmpURL,
-            shouldKeepParent: false, // TODO: verify
-            compressionMethod: .deflate,
-            progress: .none
-        )
-
-        defer {
-            // clean up
-            try? self.removeItem(at: tmpURL)
-        }
-
-        return try? Data(contentsOf: tmpURL, options: [.uncached])
-    }
-}
