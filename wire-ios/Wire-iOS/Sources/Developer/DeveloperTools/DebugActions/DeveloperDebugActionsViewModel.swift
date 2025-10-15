@@ -268,7 +268,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
         DebugLogSender.sendLogsByEmail(
             message: "Send logs",
-            shareWithAVS: false,
             presentingViewController: presentingViewController,
             fallbackActivityPopoverConfiguration: .sourceView(
                 sourceView: presentingViewController.view,
