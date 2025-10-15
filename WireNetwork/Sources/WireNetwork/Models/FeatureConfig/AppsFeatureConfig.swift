@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension Feature {
+/// A configuration for the *Apps* feature.
 
-    struct AssetAuditLog: Codable {
+public struct AppsFeatureConfig: Equatable, Sendable {
 
-        // MARK: - Properties
+    /// The feature's status.
 
-        public let status: Status
+    public let status: FeatureConfigStatus
 
-        // MARK: - Life cycle
-
-        public init(status: Feature.Status = .disabled) {
-            self.status = status
-        }
-
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
     }
 
 }

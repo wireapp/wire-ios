@@ -55,6 +55,7 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let cells: FeatureWithoutConfig
     // this is added in v11
+    let apps: FeatureWithoutConfig
     let consumableNotifications: FeatureWithoutConfig
     let chatBubbles: FeatureWithoutConfig
 
@@ -63,6 +64,9 @@ struct FeatureConfigsResponseAPIV11: Decodable, ToAPIModelConvertible {
 
         let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
+
+        let appsFeatureConfig = AppsFeatureConfig(status: apps.status.toAPIModel())
+        featureConfigs.append(.apps(appsFeatureConfig))
 
         let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))

@@ -53,6 +53,12 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+        case let .apps(config):
+            await storeFeature(
+                name: .apps,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .assetAuditLog(config):
             await storeFeature(
                 name: .assetAuditLog,
