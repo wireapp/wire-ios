@@ -45,7 +45,7 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
             try? FileManager.default.zipItem(
                 at: fileURL,
                 to: archiveURL,
-                shouldKeepParent: false, // TODO: verify
+                shouldKeepParent: false,
                 compressionMethod: .deflate,
                 progress: nil
             )
