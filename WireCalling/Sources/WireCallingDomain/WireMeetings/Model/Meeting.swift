@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import SwiftUICore
 
 /// Represents the meeting entity
 
@@ -30,16 +31,34 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
+    public let isNew: Bool
+
+    public let participants: [Participant]
+
     public init(
         id: UUID,
         title: String,
         start: Date,
-        end: Date
+        end: Date,
+        isNew: Bool = false,
+        participants: [Participant]
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.isNew = isNew
+        self.participants = participants
     }
 
+}
+
+public struct Participant: Equatable, Sendable, Identifiable {
+    public let id = UUID()
+    public let initials: String
+    public let color: Color = .blue
+
+    public init(initials: String) {
+        self.initials = initials
+    }
 }
