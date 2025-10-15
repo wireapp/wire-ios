@@ -114,9 +114,9 @@ extension SessionManager {
     private static func compress(backup: CoreDataStack.BackupInfo) throws -> URL {
         let url = temporaryURL(for: backup.url)
         try FileManager.default.zipItem(
-            at: url,
-            to: backup.url,
-            shouldKeepParent: false, // TODO: verify
+            at: backup.url,
+            to: url,
+            shouldKeepParent: false,
             compressionMethod: .deflate,
             progress: nil
         )
