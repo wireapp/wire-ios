@@ -126,21 +126,29 @@ public extension WireCellsFactory {
         isCellsStatePending: Bool,
         nodeIDs: [UUID]
     ) -> UIViewController {
-        makeFilesHostingController(
+        let filesView: UIHostingController<FilesView>
+
+        filesView = makeFilesHostingController(
             cellName: cellName,
             isCellsStatePending: isCellsStatePending,
             nodeIDs: nodeIDs
         )
+
+        return filesView
     }
 
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
-        makeFilesHostingController()
+        let filesBrowserView: UIHostingController<FilesBrowserView>
+        filesBrowserView = makeFilesHostingController()
+        return filesBrowserView
     }
 
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
-        cellName: String? = nil, isCellsStatePending: Bool = false, nodeIDs: [UUID] = []
+        cellName: String? = nil,
+        isCellsStatePending: Bool = false,
+        nodeIDs: [UUID] = []
     ) -> UIHostingController<T> {
         let configuration: WireCellsFetchNodesUseCase.Configuration =
             nodeIDs
