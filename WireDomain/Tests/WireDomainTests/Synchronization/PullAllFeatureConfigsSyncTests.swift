@@ -53,7 +53,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 13)
+        try XCTAssertCount(storeInvocations, count: 14)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -126,7 +126,9 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
 
         XCTAssertEqual(storeInvocations[12].name, .cells)
         XCTAssertTrue(storeInvocations[12].isEnabled)
-        XCTAssertNil(storeInvocations[12].config)
+
+        XCTAssertEqual(storeInvocations[13].name, .assetAuditLog)
+        XCTAssertTrue(storeInvocations[13].isEnabled)
     }
 
 }
@@ -146,7 +148,8 @@ private enum Scaffolding {
         .endToEndIdentity(endToEndIdentityFeatureConfig),
         .consumableNotifications(consumableNotificationsFeatureConfig),
         .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
-        .cells(cellsFeatureConfig)
+        .cells(cellsFeatureConfig),
+        .assetAuditLog(assetAuditLogFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -218,6 +221,10 @@ private enum Scaffolding {
     )
 
     static let cellsFeatureConfig = CellsFeatureConfig(
+        status: .enabled
+    )
+
+    static let assetAuditLogFeatureConfig = AssetAuditLogFeatureConfig(
         status: .enabled
     )
 

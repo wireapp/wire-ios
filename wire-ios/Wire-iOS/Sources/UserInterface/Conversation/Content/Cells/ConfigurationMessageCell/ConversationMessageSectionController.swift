@@ -261,6 +261,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
             multipartMessage: message.multipartMessageData!,
+            isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
+            isSentBySelfUser: message.isSentBySelfUser,
             wireCellsFactory: wireCellsFactory
         )
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
