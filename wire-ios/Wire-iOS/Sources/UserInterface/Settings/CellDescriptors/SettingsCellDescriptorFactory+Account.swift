@@ -26,8 +26,8 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSettingsUI
-import WireUtilitiesPackage
 import WireSyncEngine
+import WireUtilitiesPackage
 
 extension ZMUser {
     var hasValidEmail: Bool {

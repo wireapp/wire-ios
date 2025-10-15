@@ -20,8 +20,8 @@ import WireBackupSupport
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
-import XCTest
 import WireUtilitiesPackage
+import XCTest
 
 @testable import WireBackup
 
