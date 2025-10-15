@@ -21,6 +21,7 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 import WireTransport
+import WireLogging
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 
@@ -43,7 +44,10 @@ public final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append {
-                        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                        guard let apiVersion = BackendInfo.apiVersion else {
+                            WireLogger.network.warn("BackendInfo.apiVersion is nil for requestGenerator, no request genereated", attributes: .safePublic)
+                            return nil
+                        }
                         return requestGenerator.nextRequest(for: apiVersion)
                     }
                 }
@@ -59,7 +63,10 @@ public final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append {
-                    guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                    guard let apiVersion = BackendInfo.apiVersion else {
+                        WireLogger.network.warn("BackendInfo.apiVersion is nil for requestStrategy, no request generated", attributes: .safePublic)
+                        return nil
+                    }
                     return requestStrategy.nextRequest(for: apiVersion)
                 }
             }

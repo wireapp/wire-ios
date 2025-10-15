@@ -374,7 +374,7 @@ public final class NotificationSession {
             return
         }
 
-        WireLogger.notifications.info("attempting to fetch events", attributes: .legacyNSE)
+        WireLogger.notifications.info("attempting to fetch events", attributes: .legacyNSE, .safePublic)
         applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce) { result in
             switch result {
             case .success:
@@ -569,7 +569,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
-        WireLogger.notifications.info("did finish processing events", attributes: .legacyNSE)
+        WireLogger.notifications.info("did finish processing events", attributes: .legacyNSE, .safePublic)
         processCallEvent()
         processLocalNotifications()
     }
@@ -589,7 +589,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         let notification: ZMLocalNotification?
 
         if localNotifications.count > 1 {
-            WireLogger.notifications.info("bundling \(localNotifications.count) notifications", attributes: .legacyNSE)
+            WireLogger.notifications.info("bundling \(localNotifications.count) notifications", attributes: .legacyNSE, .safePublic)
             notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: context)
         } else {
             notification = localNotifications.first

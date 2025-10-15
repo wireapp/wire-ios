@@ -111,8 +111,8 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             } catch {
                 WireLogger.notifications
                     .error(
-                        "failed to process process request: could not create session: \(error.localizedDescription)",
-                        attributes: .legacyNSE
+                        "failed to process process request: could not create session: \(String(describing: error))",
+                        attributes: .legacyNSE, .safePublic
                     )
                 return finishWithoutShowingNotification()
             }
@@ -122,12 +122,12 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     override func serviceExtensionTimeWillExpire() {
-        WireLogger.notifications.warn("legacy service extension will expire")
+        WireLogger.notifications.warn("legacy service extension will expire", attributes: .safePublic, .legacyNSE)
         finishWithoutShowingNotification()
     }
 
     private func finishWithoutShowingNotification() {
-        WireLogger.notifications.info("finishing without showing notification")
+        WireLogger.notifications.info("finishing without showing notification", attributes: .safePublic, .legacyNSE)
         contentHandler?(.empty)
         tearDown()
     }
@@ -137,7 +137,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            WireLogger.notifications.info("session did not generate a notification")
+            WireLogger.notifications.info("session did not generate a notification", attributes: .legacyNSE, .safePublic)
             return finishWithoutShowingNotification()
         }
 
