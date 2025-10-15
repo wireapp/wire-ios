@@ -37,45 +37,52 @@ package struct FilesView: FilesViewProtocol {
 
     package var body: some View {
         NavigationStack {
-            Group {
-                switch viewModel.state {
-                case .initial:
-                    Button(action: reloadTask) {
-                        Image(systemName: "arrow.trianglehead.clockwise")
-                            .wireTextStyle(.body3)
-                            .foregroundStyle(SemanticColors.Label.textDefault.color)
-
+            ZStack {
+                ColorTheme.Backgrounds.surface.color
+                    .ignoresSafeArea(.all)
+                
+                Group {
+                    switch viewModel.state {
+                    case .initial:
+                        Button(action: reloadTask) {
+                            Image(systemName: "arrow.trianglehead.clockwise")
+                                .wireTextStyle(.body3)
+                                .foregroundStyle(SemanticColors.Label.textDefault.color)
+                            
+                        }
+                    case .loading:
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                    case let .received(items):
+                        if items.isEmpty {
+                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+                        } else {
+                            filesList
+                                .listStyle(.plain)
+                                .refreshable { reloadTask() }
+                        }
+                    case .pending:
+                        FilesInfoView(info: .preparingFiles)
+                        
+                    case .error:
+                        FilesInfoView(info: .error, onReload: {
+                            reloadTask()
+                        })
                     }
-                case .loading:
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                case let .received(items):
-                    if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                    } else {
-                        filesList
-                            .listStyle(.plain)
-                            .refreshable { reloadTask() }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
-                    
-                case .error:
-                    FilesInfoView(info: .error, onReload: {
-                        reloadTask()
-                    })
                 }
+                .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+                .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+                .toolbar { toolbarContent }
+                .onAppear { reloadTask() }
+                .alert(
+                    item: $viewModel.alert,
+                    title: { Text($0.title) },
+                    message: { Text($0.message) },
+                    actions: { _ in confirmButton }
+                )
             }
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbarContent }
-            .onAppear { reloadTask() }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
         }
     }
 }

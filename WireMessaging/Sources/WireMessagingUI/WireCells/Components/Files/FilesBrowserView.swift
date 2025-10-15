@@ -29,58 +29,64 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 /// Allows browsing files shared accross all conversations
 package struct FilesBrowserView: FilesViewProtocol {
     @ObservedObject package var viewModel: FilesViewModel
-
+    
     package init(viewModel: FilesViewModel) {
         self.viewModel = viewModel
     }
-
+    
     package var body: some View {
-        Group {
-            switch viewModel.state {
-            case .initial:
-                Button(action: reloadTask) {
-                    Image(systemName: "arrow.trianglehead.clockwise")
-                        .wireTextStyle(.body3)
-                        .foregroundStyle(SemanticColors.Label.textDefault.color)
-
+        ZStack {
+            ColorTheme.Backgrounds.surface.color
+                .ignoresSafeArea(.all)
+            Group {
+                switch viewModel.state {
+                case .initial:
+                    Button(action: reloadTask) {
+                        Image(systemName: "arrow.trianglehead.clockwise")
+                            .wireTextStyle(.body3)
+                            .foregroundStyle(SemanticColors.Label.textDefault.color)
+                        
+                    }
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case let .received(items):
+                    if items.isEmpty {
+                        FilesInfoView(info: .noFilesFound(scope: .allConversations))
+                    } else {
+                        filesList
+                            .listStyle(.plain)
+                            .refreshable { reloadTask() }
+                    }
+                case .pending:
+                    FilesInfoView(info: .preparingFiles)
+                    
+                case .error:
+                    FilesInfoView(info: .error, onReload: {
+                        reloadTask()
+                    })
                 }
-            case .loading:
-                ProgressView()
-                    .progressViewStyle(.circular)
-            case let .received(items):
-                if items.isEmpty {
-                    FilesInfoView(info: .noFilesFound(scope: .allConversations))
-                } else {
-                    filesList
-                        .listStyle(.plain)
-                        .refreshable { reloadTask() }
-                }
-            case .pending:
-                FilesInfoView(info: .preparingFiles)
-                
-            case .error:
-                FilesInfoView(info: .error, onReload: {
-                    reloadTask()
-                })
             }
-        }
-        .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-        .navigationTitle(Strings.AllFiles.navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .if(!viewModel.state.items.isEmpty) { view in
-            view.searchable(
-                text: $viewModel.searchText,
-                placement: .navigationBarDrawer,
-                prompt: Strings.Files.Search.title
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(Strings.AllFiles.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+            .if(!viewModel.state.items.isEmpty || !viewModel.searchText.isEmpty) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
+                )
+            }
+            .onAppear { reloadTask() }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
             )
         }
-        .onAppear { reloadTask() }
-        .alert(
-            item: $viewModel.alert,
-            title: { Text($0.title) },
-            message: { Text($0.message) },
-            actions: { _ in confirmButton }
-        )
     }
 }
 

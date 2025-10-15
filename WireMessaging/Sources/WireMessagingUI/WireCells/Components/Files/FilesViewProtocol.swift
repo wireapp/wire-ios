@@ -42,6 +42,7 @@ extension FilesViewProtocol {
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
+            .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
         .animation(.default, value: viewModel.state)
     }
