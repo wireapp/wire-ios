@@ -205,9 +205,9 @@ func generateMarkdownReport(groupedData: GroupedData, outputFileTemplate: String
     for (project, files) in groupedData.sorted(by: { $0.key < $1.key }) {
         let projectFilename = "\(base)-\(project).\(ext)"
         let projectFileUrl = outputDirURL.appendingPathComponent(projectFilename)
-        
+
         let reportContent = generateProjectMarkdown(project: project, files: files)
-        
+
         try reportContent.write(to: projectFileUrl, atomically: true, encoding: .utf8)
         print("Markdown report for '\(project)' saved to '\(projectFileUrl.path)'")
     }
@@ -237,7 +237,7 @@ do {
 
     print("Parsing log file: \(logFilePath)...")
     let groupedData = try parseLogFile(at: logFilePath)
-    
+
     print("\nGenerating report...")
     try generateMarkdownReport(groupedData: groupedData, outputFileTemplate: outputFileTemplate)
 
