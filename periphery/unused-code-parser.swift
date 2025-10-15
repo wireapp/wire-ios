@@ -53,7 +53,8 @@ func extractProjectName(from filePath: String) -> String {
 ///
 /// - Parameter line: The line of text to match.
 /// - Returns: A tuple containing the captured groups, or nil if no match is found.
-func matchIssueLine(line: String) -> (filePath: String, lineNum: String, colNum: String, type: String, message: String)? {
+func matchIssueLine(line: String) ->
+    (filePath: String, lineNum: String, colNum: String, type: String, message: String)? {
     guard let regex = try? NSRegularExpression(pattern: ISSUE_LINE_PATTERN, options: []),
           let match = regex.firstMatch(in: line, options: [], range: NSRange(line.startIndex..., in: line)) else {
         return nil
@@ -62,7 +63,7 @@ func matchIssueLine(line: String) -> (filePath: String, lineNum: String, colNum:
     let nsString = line as NSString
     // Group 1: File Path, 2: Line, 3: Column, 4: Type, 5: Message
     let capturedGroups = (1...5).map { nsString.substring(with: match.range(at: $0)) }
-    
+
     return (capturedGroups[0], capturedGroups[1], capturedGroups[2], capturedGroups[3], capturedGroups[4])
 }
 
@@ -75,15 +76,15 @@ func parseLogFile(at logPath: String) throws -> GroupedData {
     guard let fileContents = try? String(contentsOfFile: logPath, encoding: .utf8) else {
         throw NSError(domain: "LogParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Log file not found or could not be read at '\(logPath)'"])
     }
-    
+
     var groupedIssues: GroupedData = [:]
-    var currentIssue: Issue? = nil
-    
+    var currentIssue: Issue?
+
     let lines = fileContents.components(separatedBy: .newlines)
-    
+
     for line in lines {
         let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         // 1. Check if the line should be ignored (e.g., 'In file included from...')
         if IGNORED_LINE_PATTERNS.contains(where: { $0.firstMatch(in: line, options: [], range: NSRange(line.startIndex..., in: line)) != nil }) {
             continue
@@ -93,7 +94,7 @@ func parseLogFile(at logPath: String) throws -> GroupedData {
         if let match = matchIssueLine(line: line) {
             // A new issue line was found. Create a new Issue object.
             let project = extractProjectName(from: match.filePath)
-            
+
             currentIssue = Issue(
                 filePath: match.filePath,
                 lineNumber: Int(match.lineNum) ?? 0,
@@ -102,23 +103,23 @@ func parseLogFile(at logPath: String) throws -> GroupedData {
                 project: project,
                 fullMessage: trimmedLine // Start with the first line of the message
             )
-            
+
             // Initialize the nested dictionaries if necessary and append the new issue.
             groupedIssues[project, default: [:]][match.filePath, default: []].append(currentIssue!)
         }
-        
+
         // 3. Check for a continuation line of the current issue (e.g., a 'note:')
         else if currentIssue != nil && !trimmedLine.isEmpty {
             // Append this continuation line to the message of the current issue.
             currentIssue!.fullMessage += "\n\(trimmedLine)"
         }
-        
+
         // 4. Blank line signifies the end of an issue block
         else {
             currentIssue = nil
         }
     }
-    
+
     return groupedIssues
 }
 
@@ -133,10 +134,10 @@ func generateProjectMarkdown(project: String, files: FileIssues) -> String {
 
     // Sort files by path for consistent output
     let sortedFiles = files.sorted { $0.key < $1.key }
-    
+
     for (filePath, issues) in sortedFiles {
         reportLines.append("\n### File: `\(filePath)`")
-        
+
         // Sort issues by line number
         for issue in issues.sorted(by: { $0.lineNumber < $1.lineNumber }) {
             reportLines.append("\n- **\(issue.issueType.capitalized)** at Line \(issue.lineNumber):\(issue.columnNumber)")
@@ -156,11 +157,11 @@ func clearPreviousReports(outputTemplate: String) throws {
     let fileManager = FileManager.default
     let outputURL = URL(fileURLWithPath: outputTemplate)
     let outputDirURL = outputURL.deletingLastPathComponent()
-    
+
     let baseName = outputURL.lastPathComponent
     let base = URL(fileURLWithPath: baseName).deletingPathExtension().lastPathComponent
     let ext = outputURL.pathExtension
-    
+
     // The search pattern for files created by this script is: baseName-ProjectName.ext
     let reportSearchPrefix = "\(base)-"
     let reportSearchSuffix = ".\(ext)"
@@ -170,7 +171,7 @@ func clearPreviousReports(outputTemplate: String) throws {
     // Ensure directory exists before listing contents
     if fileManager.fileExists(atPath: outputDirURL.path) {
         let contents = try fileManager.contentsOfDirectory(atPath: outputDirURL.path)
-        
+
         for filename in contents {
             if filename.hasPrefix(reportSearchPrefix) && filename.hasSuffix(reportSearchSuffix) {
                 let fullPath = outputDirURL.appendingPathComponent(filename).path
@@ -190,7 +191,7 @@ func generateMarkdownReport(groupedData: GroupedData, outputFileTemplate: String
     let fileManager = FileManager.default
     let outputURL = URL(fileURLWithPath: outputFileTemplate)
     let outputDirURL = outputURL.deletingLastPathComponent()
-    
+
     // 1. Ensure the output directory exists.
     if !fileManager.fileExists(atPath: outputDirURL.path) {
         try fileManager.createDirectory(at: outputDirURL, withIntermediateDirectories: true)
@@ -199,7 +200,7 @@ func generateMarkdownReport(groupedData: GroupedData, outputFileTemplate: String
     let baseName = outputURL.lastPathComponent
     let base = URL(fileURLWithPath: baseName).deletingPathExtension().lastPathComponent
     let ext = outputURL.pathExtension.isEmpty ? "md" : outputURL.pathExtension
-    
+
     // Sort projects alphabetically for consistent output
     for (project, files) in groupedData.sorted(by: { $0.key < $1.key }) {
         let projectFilename = "\(base)-\(project).\(ext)"
@@ -239,7 +240,7 @@ do {
     
     print("\nGenerating report...")
     try generateMarkdownReport(groupedData: groupedData, outputFileTemplate: outputFileTemplate)
-    
+
 } catch {
     // Print the localized description of the error
     print("An error occurred: \(error.localizedDescription)")
