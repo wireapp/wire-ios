@@ -42,6 +42,7 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
             let fileURL = userSession.managedObjectContext.zm_storeURL!
             let archiveURL = fileURL.appendingPathExtension("zip")
 
+            try? FileManager.default.removeItem(at: archiveURL)
             try? FileManager.default.zipItem(
                 at: fileURL,
                 to: archiveURL,
@@ -69,14 +70,17 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
 
         super.init(title: "Share Cryptobox", isDestructive: false) { _ in
             guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent()
-                .deletingLastPathComponent().appendingPathComponent("otr")
+            let fileURL = userSession.managedObjectContext.zm_storeURL!
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .appending(path: "otr", directoryHint: .notDirectory)
             let archiveURL = fileURL.appendingPathExtension("zip")
 
+            try? FileManager.default.removeItem(at: archiveURL)
             try? FileManager.default.zipItem(
                 at: fileURL,
                 to: archiveURL,
-                shouldKeepParent: false, // TODO: verify
+                shouldKeepParent: false,
                 compressionMethod: .deflate,
                 progress: nil
             )
