@@ -54,7 +54,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 14)
+        try XCTAssertCount(storeInvocations, count: 15)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -144,6 +144,7 @@ private enum Scaffolding {
     static let featureConfigs: [FeatureConfig] = [
         .appLock(appLockFeatureConfig),
         .apps(appsFeatureConfig),
+        .assetAuditLog(assetAuditLogFeatureConfig),
         .classifiedDomains(classifiedDomainsFeatureConfig),
         .conferenceCalling(conferenceCallingFeatureConfig),
         .conversationGuestLinks(conversationGuestLinksFeatureConfig),
@@ -155,8 +156,7 @@ private enum Scaffolding {
         .endToEndIdentity(endToEndIdentityFeatureConfig),
         .consumableNotifications(consumableNotificationsFeatureConfig),
         .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
-        .cells(cellsFeatureConfig),
-        .assetAuditLog(assetAuditLogFeatureConfig)
+        .cells(cellsFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
