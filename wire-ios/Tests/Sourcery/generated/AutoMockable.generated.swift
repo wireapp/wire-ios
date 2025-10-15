@@ -1784,12 +1784,12 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String, Bool, [UUID]) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String?, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String?, Bool, [UUID]) -> UIViewController)?
     var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+    func makeFilesView(cellName: String?, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
         makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, nodeIDs: nodeIDs))
 
         if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod {
@@ -1798,6 +1798,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+        }
+    }
+
+    // MARK: - makeFilesBrowserView
+
+    var makeFilesBrowserView_Invocations: [Void] = []
+    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
+    var makeFilesBrowserView_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesBrowserView() -> UIViewController {
+        makeFilesBrowserView_Invocations.append(())
+
+        if let mock = makeFilesBrowserView_MockMethod {
+            return mock()
+        } else if let mock = makeFilesBrowserView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesBrowserView`")
         }
     }
 
