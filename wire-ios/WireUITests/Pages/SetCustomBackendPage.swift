@@ -18,35 +18,18 @@
 
 import XCTest
 
-class WelcomePage: PageModel {
-
+class SetCustomBackendPage: PageModel {
     override var pageMainElement: XCUIElement {
-        emailTextField
+        proceedButton
     }
 
-    var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
-    }
-
-    var emailTextField: XCUIElement {
-        let elementsQuery = app.textFields
-        return elementsQuery["Email or SSO code"]
-    }
-
-    var setBackendLabel: XCUIElement {
-        app.descendants(matching: .any)["onPremInfoButton"]
-    }
-
-    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
-        try typeEmailOrSSO(input)
-        nextButton.tap()
-        return try LoginPage()
+    var proceedButton: XCUIElement {
+        app.buttons["Proceed"]
     }
 
     @discardableResult
-    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
-        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
-        return self
+    func tapOnProceedButton() throws -> WelcomePage {
+        proceedButton.tap()
+        return try WelcomePage()
     }
 }

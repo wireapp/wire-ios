@@ -133,8 +133,6 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 mlsMigration.config.finaliseRegardlessAfter?.transportString(),
                 "2024-02-19T11:59:28.542Z"
             )
-
-            // TODO: [WPB-20713] add assertion for assetAuditLog
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

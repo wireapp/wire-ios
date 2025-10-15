@@ -213,6 +213,7 @@
 		256C1B792B1654BB0015C89D /* E2eIdentityCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */; };
 		3416DE162DC8F94E00827BCB /* MLSSyncDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3416DE152DC8F94E00827BCB /* MLSSyncDelegate.swift */; };
 		347FA6002E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347FA5FF2E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift */; };
+		34A900592E9647A0001B5684 /* AssetAuditLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A900582E9647A0001B5684 /* AssetAuditLog.swift */; };
 		34BD6E032DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD6E022DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift */; };
 		34DC44B52E01C210004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B42E01C210004D5DD5 /* WireNetwork */; };
 		4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA12AA76BFA0013DE71 /* ReactionData.swift */; };
@@ -1051,6 +1052,7 @@
 		256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityCertificate.swift; sourceTree = "<group>"; };
 		3416DE152DC8F94E00827BCB /* MLSSyncDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSSyncDelegate.swift; sourceTree = "<group>"; };
 		347FA5FF2E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+BackendMetadata.swift"; sourceTree = "<group>"; };
+		34A900582E9647A0001B5684 /* AssetAuditLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetAuditLog.swift; sourceTree = "<group>"; };
 		34BD6E022DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredUpdateEventEnvelope+Helpers.swift"; sourceTree = "<group>"; };
 		4058AAA12AA76BFA0013DE71 /* ReactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionData.swift; sourceTree = "<group>"; };
 		4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-109-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1955,6 +1957,14 @@
 			path = Label;
 			sourceTree = "<group>";
 		};
+		34A900572E96479A001B5684 /* AssetAuditLog */ = {
+			isa = PBXGroup;
+			children = (
+				34A900582E9647A0001B5684 /* AssetAuditLog.swift */,
+			);
+			path = AssetAuditLog;
+			sourceTree = "<group>";
+		};
 		34BD6E012DB26F8600DFA11A /* StoredUpdateEventEnvelope */ = {
 			isa = PBXGroup;
 			children = (
@@ -1986,6 +1996,7 @@
 			isa = PBXGroup;
 			children = (
 				C938F0672E93C070002F1FA4 /* Cells */,
+				34A900572E96479A001B5684 /* AssetAuditLog */,
 				C95C70662E535755004E4C79 /* ConsumableNotifications */,
 				5F1D54092E4B603600A6D57A /* ChatBubblesSimple */,
 				0686649D256FB087001C8747 /* AppLock */,
@@ -4247,6 +4258,7 @@
 				16DF3B5D2285B13100D09365 /* UserClientType.swift in Sources */,
 				017B55792CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift in Sources */,
 				5986A08F2C6B744300299181 /* TextMessage.swift in Sources */,
+				34A900592E9647A0001B5684 /* AssetAuditLog.swift in Sources */,
 				54E3EE431F6194A400A261E3 /* ZMAssetClientMessage+GenericMessage.swift in Sources */,
 				01BDA31B2C59210400675DCB /* CoreDataMigrator.swift in Sources */,
 				F9A706C31CAEE01D00C2F5FE /* UserImageLocalCache.swift in Sources */,

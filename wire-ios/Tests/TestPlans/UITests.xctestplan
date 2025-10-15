@@ -24,6 +24,22 @@
           {
             "key" : "INBUCKET_PASSWORD",
             "value" : "$(INBUCKET_PASSWORD)"
+          },
+          {
+            "key" : "ANTA_DEEPLINK_URL",
+            "value" : "$(ANTA_DEEPLINK_URL)"
+          },
+          {
+            "key" : "ANTA_INBUCKET_URL",
+            "value" : "$(ANTA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BACKEND_URL_ANTA",
+            "value" : "$(BACKEND_URL_ANTA)"
+          },
+          {
+            "key" : "BASIC_AUTH_ANTA",
+            "value" : "$(BASIC_AUTH_ANTA)"
           }
         ],
         "targetForVariableExpansion" : {

@@ -516,11 +516,12 @@ private extension AppDelegate {
     }
 
     private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        let env = ProcessInfo.processInfo.arguments.contains("--useEnvStaging") ? "staging" : "default"
         guard let path = Bundle.backendBundle.path(
-            forResource: "default",
+            forResource: env,
             ofType: "json"
         ) else {
-            fatalError("default.json missing in Backend.bundle")
+            fatalError("\(env).json missing in Backend.bundle")
         }
 
         do {
