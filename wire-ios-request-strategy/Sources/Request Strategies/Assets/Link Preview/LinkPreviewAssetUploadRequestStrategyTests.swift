@@ -40,7 +40,9 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             linkPreviewPreprocessor: nil,
-            previewImagePreprocessor: nil
+            previewImagePreprocessor: nil,
+            localDomain: "wire.com",
+            isCloudDomain: false
         )
     }
 

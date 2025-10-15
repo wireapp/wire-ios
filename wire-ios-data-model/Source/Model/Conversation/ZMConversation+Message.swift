@@ -258,7 +258,7 @@ public extension ZMConversation {
     /// Append an image message.
     ///
     /// - Parameters:
-    ///     - url: A url locating some image data.
+    ///     - image: The image to append.
     ///     - nonce: The nonce of the message.
     ///
     /// - Throws:
@@ -268,55 +268,42 @@ public extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage {
-        guard
-            URL.isFileURL,
-            ZMImagePreprocessor.sizeOfPrerotatedImage(at: URL) != .zero,
-            let imageData = try? Data(contentsOf: URL, options: [])
-        else {
-            throw AppendMessageError.invalidImageUrl
-        }
-
-        return try appendImage(from: imageData)
-    }
-
-    /// Append an image message.
-    ///
-    /// - Parameters:
-    ///     - imageData: Data representing an image.
-    ///     - nonce: The nonce of the message.
-    ///
-    /// - Throws:
-    ///     - `AppendMessageError` if the message couldn't be appended.
-    ///
-    /// - Returns:
-    ///     The appended message.
-
-    @discardableResult
-    func appendImage(from imageData: Data, nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    func appendImage(
+        _ image: SendableImage,
+        nonce: UUID
+    ) throws -> ZMConversationMessage {
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
 
-        guard let imageData = try? imageData.wr_removingImageMetadata() else {
+        guard let imageData = try? image.data.wr_removingImageMetadata() else {
             throw AppendMessageError.failedToRemoveImageMetadata
         }
 
         // mimeType is assigned first, to make sure UI can handle animated GIF file correctly.
-        let mimeType = imageData.mimeType ?? ""
+        let mimeType = image.utType?.preferredMIMEType
 
         // We update the size again when the the preprocessing is done.
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
         let asset = GenericMessageProtocol.Asset(
+            name: image.name,
+            mimeType: mimeType ?? "",
             imageSize: imageSize,
-            mimeType: mimeType,
             size: UInt64(imageData.count)
         )
 
-        return try append(asset: asset, nonce: nonce, expires: true, prepareMessage: { message in
-            moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
-        })
+        return try append(
+            asset: asset,
+            nonce: nonce,
+            expires: true,
+            prepareMessage: { message in
+                moc.zm_fileAssetCache.storeOriginalImage(
+                    data: imageData,
+                    for: message
+                )
+            }
+        )
     }
 
     /// Append a file message.
@@ -561,21 +548,6 @@ public extension ZMConversation {
     @discardableResult @objc(appendMessageWithLocationData:)
     func _appendLocation(with locationData: LocationData) -> ZMConversationMessage? {
         try? appendLocation(with: locationData)
-    }
-
-    @discardableResult @objc(appendMessageWithImageData:)
-    func _appendImage(from imageData: Data) -> ZMConversationMessage? {
-        try? appendImage(from: imageData)
-    }
-
-    @discardableResult @objc(appendImageFromData:nonce:)
-    func _appendImage(from imageData: Data, nonce: UUID) -> ZMConversationMessage? {
-        try? appendImage(from: imageData, nonce: nonce)
-    }
-
-    @discardableResult @objc(appendImageAtURL:nonce:)
-    func _appendImage(at URL: URL, nonce: UUID) -> ZMConversationMessage? {
-        try? appendImage(at: URL, nonce: nonce)
     }
 
     @discardableResult @objc(appendMessageWithFileMetadata:)
