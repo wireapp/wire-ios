@@ -32,6 +32,7 @@ public class Feature: ZMManagedObject {
 
         case allowedGlobalOperations
         case appLock
+        case assetAuditLog
         case apps
         case cells
         case channels
@@ -228,6 +229,7 @@ public class Feature: ZMManagedObject {
 
         case .allowedGlobalOperations,
              .apps,
+             .assetAuditLog,
              .cells,
              .channels,
              .chatBubblesSimple,

@@ -16,29 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public extension Feature {
 
-struct FeatureConfigsView: View {
+    struct AssetAuditLog: Codable {
 
-    // MARK: - Properties
+        // MARK: - Properties
 
-    @StateObject var viewModel: FeatureConfigsViewModel
+        public let status: Status
 
-    // MARK: - Views
+        // MARK: - Life cycle
 
-    var body: some View {
-        List(viewModel.items) { item in
-            HStack {
-                Text(item.featureConfigName.rawValue)
-                Spacer()
-                Text(item.enabled ? "enabled" : "disabled")
-                    .foregroundStyle(.gray)
-            }
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
         }
-        .navigationTitle("Statuses")
-        .navigationBarTitleDisplayMode(.inline)
-        .task {
-            await viewModel.fetchFeatureConfigs()
-        }
+
     }
+
 }

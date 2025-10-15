@@ -21,12 +21,13 @@ import SwiftUI
 /// A view that organizes items into a grid similar to `UICollectionViewFlowLayout`.
 struct FlowLayout: Layout {
 
-    private struct Item {
-        let size: CGSize
-        let offset: CGPoint
-    }
+    let spacing: Double
+    let alignment: HorizontalAlignment
 
-    let spacing: CGFloat = 8
+    init(spacing: Double = 8, alignment: HorizontalAlignment = .leading) {
+        self.spacing = spacing
+        self.alignment = alignment
+    }
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let containerWidth = proposal.replacingUnspecifiedDimensions().width
@@ -38,7 +39,7 @@ struct FlowLayout: Layout {
 
         for (item, subview) in zip(items, subviews) {
             subview.place(
-                at: CGPoint(x: item.offset.x + bounds.minX, y: item.offset.y + bounds.minY),
+                at: CGPoint(x: item.origin.x + bounds.minX, y: item.origin.y + bounds.minY),
                 proposal: .init(item.size)
             )
         }
@@ -46,13 +47,14 @@ struct FlowLayout: Layout {
 
     // MARK: - Private
 
-    private func layout(subviews: Subviews, containerWidth: CGFloat) -> (items: [Item], size: CGSize) {
+    private func layout(subviews: Subviews, containerWidth: CGFloat) -> (items: [CGRect], size: CGSize) {
         let sizes = subviews.map { subview in
             let size = subview.sizeThatFits(.unspecified)
             return CGSize(width: min(size.width, containerWidth), height: size.height)
         }
 
-        var items: [Item] = []
+        var rows: [[CGRect]] = []
+        var currentRow: [CGRect] = []
         var offset = CGPoint.zero
         var currentLineHeight: Double = 0
         var maxX: Double = 0
@@ -63,13 +65,31 @@ struct FlowLayout: Layout {
                 offset.x = 0
                 offset.y += currentLineHeight + spacing
                 currentLineHeight = 0
+                rows.append(currentRow)
+                currentRow = []
             }
 
-            items.append(Item(size: size, offset: offset))
+            currentRow.append(CGRect(origin: offset, size: size))
 
             maxX = max(maxX, offset.x + size.width)
             offset.x += size.width + spacing
             currentLineHeight = max(currentLineHeight, size.height)
+        }
+
+        if !currentRow.isEmpty {
+            rows.append(currentRow)
+        }
+
+        var items: [CGRect] = []
+        for row in rows {
+            guard let rowWidth = row.last?.maxX else { continue }
+
+            let deltaX = alignment == .leading ? 0 : maxX - rowWidth
+            for var item in row {
+                item = item.offsetBy(dx: deltaX, dy: 0)
+                items.append(item)
+
+            }
         }
 
         let totalHeight = offset.y + currentLineHeight
