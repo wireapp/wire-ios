@@ -18,7 +18,7 @@
 
 public extension Feature {
 
-    struct AssetAuditLog: Codable {
+    struct Apps: Codable {
 
         // MARK: - Properties
 

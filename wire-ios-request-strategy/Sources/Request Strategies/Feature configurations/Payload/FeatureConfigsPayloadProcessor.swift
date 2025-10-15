@@ -238,6 +238,10 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
             repository.storeAppLock(.init(status: response.status, config: response.config))
 
+        case .apps:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeApps(.init(status: response.status))
+
         case .selfDeletingMessages:
             let response = try decoder.decode(
                 FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self,
