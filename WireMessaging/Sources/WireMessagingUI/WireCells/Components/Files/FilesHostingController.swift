@@ -17,9 +17,8 @@
 //
 
 package import SwiftUI
-import WireDesign
 
-package final class FilesHostingController: UIHostingController<FilesView> {
+package final class FilesHostingController<T: FilesViewProtocol>: UIHostingController<T> {
 
     private typealias Strings = L10n.Localizable.Conversation.WireCells
     private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -28,7 +27,7 @@ package final class FilesHostingController: UIHostingController<FilesView> {
 
     public init(viewModel: FilesViewModel) {
         self.viewModel = viewModel
-        super.init(rootView: FilesView(viewModel: viewModel))
+        super.init(rootView: T(viewModel: viewModel))
     }
 
     @available(*, unavailable)

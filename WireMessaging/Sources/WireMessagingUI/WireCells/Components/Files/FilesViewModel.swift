@@ -61,6 +61,7 @@ package final class FilesViewModel: ObservableObject {
         case loading
         case received(items: [FilesViewItem])
         case pending // cells are not ready yet
+        case error
 
         var items: [FilesViewItem] {
             switch self {
@@ -73,7 +74,7 @@ package final class FilesViewModel: ObservableObject {
 
         var isLoaded: Bool {
             switch self {
-            case .loading, .pending, .initial:
+            case .loading, .pending, .initial, .error:
                 false
             case .received:
                 true
@@ -89,6 +90,7 @@ package final class FilesViewModel: ObservableObject {
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
+    @Published var searchText = ""
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
@@ -208,13 +210,8 @@ package final class FilesViewModel: ObservableObject {
             let (newItems, isLastPage) = try await task.value
             state = .received(items: Self.processItems(state.items + newItems))
             hasMore = !isLastPage
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            alert = .noInternet
-            state = state.items.isEmpty ? .initial : state
-            hasMore = state.items.isEmpty ? true : hasMore
         } catch {
-            alert = .unknownError
-            state = state.items.isEmpty ? .initial : state
+            state = .error
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil

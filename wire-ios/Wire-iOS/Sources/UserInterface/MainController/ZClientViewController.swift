@@ -352,7 +352,9 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
-        mainTabBarController.filesUI = UIHostingController(rootView: AllFilesView())
+        
+        let filesBrowserView = wireCellsFactory.makeFilesBrowserView()
+        mainTabBarController.filesUI = filesBrowserView
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
