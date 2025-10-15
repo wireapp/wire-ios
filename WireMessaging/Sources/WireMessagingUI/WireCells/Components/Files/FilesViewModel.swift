@@ -87,6 +87,8 @@ package final class FilesViewModel: ObservableObject {
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
+    private var subscriptions = Set<AnyCancellable>()
+    private var startedFiltering: Bool = false
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -107,11 +109,23 @@ package final class FilesViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
+        
+        bindSearch()
     }
 
     /// Whether the view model is currently loading items.
     var isLoading: Bool {
         loadMoreTask != nil
+    }
+    
+    private func bindSearch() {
+        $searchText
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task {
+                    await self?.loadItems()
+                }
+            }.store(in: &subscriptions)
     }
 
     /// Reloads the items, clearing any previously loaded items.
@@ -126,7 +140,7 @@ package final class FilesViewModel: ObservableObject {
         state = .loading
         hasMore = true
 
-        await loadMore()
+        await loadItems()
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -139,7 +153,7 @@ package final class FilesViewModel: ObservableObject {
     func loadMoreIfNeeded(index: Int) async {
         let remaining = state.items.count - index - 1
         if remaining < Constants.loadMoreThreshold, hasMore {
-            await loadMore()
+            await loadItems(loadMore: true)
         }
     }
 
@@ -199,16 +213,17 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore() async {
+    private func loadItems(loadMore: Bool = false) async {
         guard loadMoreTask == nil else { return }
 
-        let offset = state.items.count
+        let offset = loadMore ? state.items.count : 0
         let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            state = .received(items: Self.processItems(state.items + newItems))
+            let items = Self.processItems(loadMore ? state.items + newItems : newItems)
+            state = .received(items: items)
             hasMore = !isLastPage
         } catch {
             state = .error
@@ -220,7 +235,10 @@ package final class FilesViewModel: ObservableObject {
     private nonisolated func fetchItems(
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
-        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, offset: offset)
+        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
+            searchTerm: searchText,
+            offset: offset
+        )
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
