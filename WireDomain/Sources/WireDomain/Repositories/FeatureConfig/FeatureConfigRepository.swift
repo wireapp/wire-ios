@@ -130,9 +130,10 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             )
 
         case let .assetAuditLog(config):
-            // TODO: [WPB-20713]
-            assertionFailure("not implemented yet")
-            return nil
+            return FeatureState(
+                name: .assetAuditLog,
+                isEnabled: config.status == .enabled
+            )
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
