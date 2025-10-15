@@ -119,11 +119,19 @@ extension CompositeMessageItemContent: ButtonMessageData {
         guard let context = parentMessage.managedObjectContext else { return }
 
         context.performGroupedBlock { [weak self] in
+<<<<<<< HEAD
             guard let self, let messageID = parentMessage.nonce, let buttonID = button?.id,
                   !hasSelectedButton else { return }
 
             let buttonState = buttonState ??
                 ButtonState.insert(with: buttonID, message: parentMessage, inContext: context)
+=======
+            guard let self, let messageId = parentMessage.nonce, let buttonId = button?.id,
+                  !hasSelectedButton else { return }
+
+            let buttonState = buttonState ??
+                ButtonState.insert(with: buttonId, message: parentMessage, inContext: context)
+>>>>>>> e71e703cca (fix: tapping buttons in composite messages (e.g. polls) - WPB-19793 (#3738))
             parentMessage.buttonStates?.resetExpired()
             guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
