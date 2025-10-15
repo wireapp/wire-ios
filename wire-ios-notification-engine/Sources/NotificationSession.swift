@@ -223,8 +223,9 @@ public final class NotificationSession {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             lastEventIDRepository: lastEventIDRepository
         )
+        fatalError("not updated init - need to be fixed")
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy], apiVersion: .v0)
 
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,

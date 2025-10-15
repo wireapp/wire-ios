@@ -168,7 +168,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         WireLogger.notifications.info(
             "showing notification to user",
             attributes: notification.logAttributes,
-            .legacyNSE
+            .legacyNSE, .safePublic
         )
         contentHandler(content)
     }

@@ -129,7 +129,8 @@ public struct LegacyNotificationSessionLoader {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             backendMetadata: metadata,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            apiVersion: metadata.apiVersion
         )
     }
 
@@ -250,7 +251,8 @@ public struct LegacyNotificationSessionLoader {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        apiVersion: WireNetwork.APIVersion
     ) async throws -> NotificationSession {
         let legacyEnvironment = BackendEnvironment(environment)
         // Don't cache the cookie because if the user logs out and back in again in the main app
@@ -296,7 +298,10 @@ public struct LegacyNotificationSessionLoader {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             lastEventIDRepository: lastEventIDRepository
         )
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
+        
+        let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
+        
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy], apiVersion: transportAPIVersion)
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
