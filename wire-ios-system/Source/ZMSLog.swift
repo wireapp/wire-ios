@@ -353,7 +353,7 @@ public extension ZMSLog {
                 try? manager.zipItem(
                     at: tmpURL,
                     to: previousZipLogURLs[0],
-                    shouldKeepParent: false, // TODO: verify
+                    shouldKeepParent: false,
                     compressionMethod: .deflate,
                     progress: .none
                 )
