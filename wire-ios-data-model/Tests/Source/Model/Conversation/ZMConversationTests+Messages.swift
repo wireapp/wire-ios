@@ -71,7 +71,10 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         conversation.lastModifiedDate = msg1.serverTimestamp
 
         // when
-        guard let msg2 = try? conversation.appendImage(from: verySmallJPEGData()) as? ZMAssetClientMessage else {
+        guard let msg2 = try? conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
@@ -121,99 +124,18 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.textMessageData?.messageText, originalText)
     }
 
-    func testThatWeCanInsertAnImageMessageFromAFileURL() {
-        // given
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        let imageFileURL = fileURL(forResource: "1900x1500", extension: "jpg")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID()
-
-        // when
-        let message = try! conversation.appendImage(at: imageFileURL) as! ZMAssetClientMessage
-
-        // then
-        XCTAssertNotNil(message)
-        XCTAssertNotNil(message.nonce)
-        XCTAssertTrue(message.imageMessageData!.originalSize.equalTo(CGSize(width: 1900, height: 1500)))
-        XCTAssertEqual(message.conversation, conversation)
-        XCTAssertEqual(conversation.lastMessage as! ZMMessage, message)
-        XCTAssertNotNil(message.nonce)
-
-        let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
-        XCTAssertNotNil(expectedData)
-        XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
-        XCTAssertEqual(selfUser, message.sender)
-    }
-
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsPointingToSomethingThatIsNotAnImage() {
-        // given
-        let imageFileURL = fileURL(forResource: "1900x1500", extension: "jpg")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID()
-
-        // when
-        let message = try! conversation.appendImage(at: imageFileURL) as! ZMAssetClientMessage
-
-        // then
-        XCTAssertNotNil(message)
-        XCTAssertNotNil(message.nonce)
-        XCTAssertTrue(message.imageMessageData!.originalSize.equalTo(CGSize(width: 1900, height: 1500)))
-        XCTAssertEqual(message.conversation, conversation)
-        XCTAssertEqual(conversation.lastMessage as! ZMMessage, message)
-        XCTAssertNotNil(message.nonce)
-
-        let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
-        XCTAssertNotNil(expectedData)
-        XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
-    }
-
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotAFileURL() {
-        // given
-        let imageURL = URL(string: "http://www.placehold.it/350x150")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID()
-        let start = uiMOC.insertedObjects
-
-        // when
-        var message: Any?
-        performIgnoringZMLogError {
-            message = try? conversation.appendImage(at: imageURL)
-        }
-
-        // then
-        XCTAssertNil(message)
-        XCTAssertEqual(start, uiMOC.insertedObjects)
-    }
-
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotPointingToAFile() {
-        // given
-        let textFileURL = fileURL(forResource: "Lorem Ipsum", extension: "txt")!
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID()
-        let start = uiMOC.insertedObjects
-
-        // when
-        var message: Any?
-        performIgnoringZMLogError {
-            message = try? conversation.appendImage(at: textFileURL)
-        }
-
-        // then
-        XCTAssertNil(message)
-        XCTAssertEqual(start, uiMOC.insertedObjects)
-    }
-
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: check why fail on Xcode 11
     func disable_testThatWeCanInsertAnImageMessageFromImageData() {
         // given
         let imageData = try! data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData)
         XCTAssertNotNil(imageData)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
 
         // when
-        guard let message = try? conversation.appendImage(from: imageData) as? ZMAssetClientMessage else {
+        guard let message = try? conversation.appendImage(image, nonce: UUID()) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
@@ -234,11 +156,12 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         // given
         let originalImageData = try! data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()
         var imageData = originalImageData
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
 
         // when
-        guard let message = try? conversation.appendImage(from: imageData) as? ZMAssetClientMessage else {
+        guard let message = try? conversation.appendImage(image, nonce: UUID()) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
@@ -251,6 +174,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
     func testThatNoMessageIsInsertedWhenTheImageDataIsNotAnImage() {
         // given
         let textData = data(forResource: "Lorem Ipsum", extension: "txt")!
+        let image = SendableImage(name: "text.txt", utType: .text, data: textData)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
         let start = uiMOC.insertedObjects
@@ -258,7 +182,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         // when
         var message: ZMConversationMessage?
         performIgnoringZMLogError {
-            message = try? conversation.appendImage(from: textData)
+            message = try? conversation.appendImage(image, nonce: UUID())
         }
 
         // then
@@ -342,7 +266,10 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
-        let imageMessage = try? conversation.appendImage(from: verySmallJPEGData())
+        let imageMessage = try? conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        )
 
         // when
         let textMessage = try? conversation.appendText(content: "Hello World", replyingTo: imageMessage)

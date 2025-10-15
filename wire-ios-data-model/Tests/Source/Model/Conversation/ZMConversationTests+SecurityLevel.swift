@@ -605,7 +605,8 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             conversation.addParticipantsAndUpdateConversationState(users: Set([user, selfUser]), role: nil)
             conversation.securityLevel = .secure
 
-            let message1 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+            let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData())
+            let message1 = try! conversation.appendImage(image, nonce: UUID()) as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1)  // cause system time to advance
             let message2 = try! conversation.appendText(content: "foo 2") as! ZMOTRMessage
 
@@ -638,7 +639,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let user = self.insertUser(conversation: conversation, userIsTrusted: true, moc: context)
             conversation.securityLevel = .secure
 
-            let message1 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+            let message1 = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            ) as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
             let message2 = try! conversation.appendText(content: "foo 2") as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
@@ -646,7 +650,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
             let message4 = try! conversation.appendText(content: "foo 4") as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
-            let message5 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+            let message5 = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            ) as! ZMOTRMessage
 
             let client = UserClient.insertNewObject(in: context)
             client.remoteIdentifier = "aabbccdd"
@@ -690,7 +697,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
             message2 = try! conversation.appendText(content: "foo 3") as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
-            message3 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+            message3 = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            ) as! ZMOTRMessage
 
             let client = UserClient.insertNewObject(in: context)
             client.remoteIdentifier = "aabbccdd"
@@ -803,7 +813,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
             message2 = try! conversation.appendText(content: "foo 3") as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
-            message3 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+            message3 = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            ) as! ZMOTRMessage
 
             let client = UserClient.insertNewObject(in: context)
             client.remoteIdentifier = "aabbccdd"
