@@ -228,30 +228,17 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     @MainActor
     private func createSession(accountID: UUID) async throws -> NotificationSession {
-        if DeveloperFlag.multibackend.isOn {
-            let loader = try LegacyNotificationSessionLoader(
-                account: Account(userName: "", userIdentifier: accountID),
-                appContainerURL: appContainerURL,
-                appGroupID: appGroupID,
-                buildNumber: currentBuildNumber,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            let session = try await loader.load()
-            session.delegate = self
-            return session
-        } else {
-            let session = try await NotificationSession(
-                currentAppVersion: currentAppVersion,
-                applicationGroupIdentifier: appGroupID,
-                accountIdentifier: accountID,
-                environment: BackendEnvironment.shared,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            session.delegate = self
-            return session
-        }
+        let loader = try LegacyNotificationSessionLoader(
+            account: Account(userName: "", userIdentifier: accountID),
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: currentBuildNumber,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+        let session = try await loader.load()
+        session.delegate = self
+        return session
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
