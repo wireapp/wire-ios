@@ -32,8 +32,8 @@ public class Feature: ZMManagedObject {
 
         case allowedGlobalOperations
         case appLock
-        case assetAuditLog
         case apps
+        case assetAuditLog
         case cells
         case channels
         case chatBubblesSimple

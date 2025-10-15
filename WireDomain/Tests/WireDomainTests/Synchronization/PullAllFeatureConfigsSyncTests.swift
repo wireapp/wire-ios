@@ -70,71 +70,71 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[2].name, .assetAuditLog)
         XCTAssertTrue(storeInvocations[2].isEnabled)
 
-        XCTAssertEqual(storeInvocations[3].name, .classifiedDomains)
-        XCTAssertEqual(storeInvocations[3].isEnabled, true)
+        XCTAssertEqual(storeInvocations[3].name, .cells)
+        XCTAssertTrue(storeInvocations[3].isEnabled)
+        XCTAssertNil(storeInvocations[3].config)
+
+        XCTAssertEqual(storeInvocations[4].name, .chatBubblesSimple)
+        XCTAssertTrue(storeInvocations[4].isEnabled)
+        XCTAssertNil(storeInvocations[4].config)
+
+        XCTAssertEqual(storeInvocations[5].name, .classifiedDomains)
+        XCTAssertEqual(storeInvocations[5].isEnabled, true)
         XCTAssertEqual(
-            storeInvocations[3].config as? Feature.ClassifiedDomains.Config,
+            storeInvocations[5].config as? Feature.ClassifiedDomains.Config,
             Scaffolding.classifiedDomainsFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[4].name, .conferenceCalling)
-        XCTAssertEqual(storeInvocations[4].isEnabled, true)
+        XCTAssertEqual(storeInvocations[6].name, .conferenceCalling)
+        XCTAssertEqual(storeInvocations[6].isEnabled, true)
         XCTAssertEqual(
-            storeInvocations[4].config as? Feature.ConferenceCalling.Config,
+            storeInvocations[6].config as? Feature.ConferenceCalling.Config,
             Scaffolding.conferenceCallingFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[5].name, .conversationGuestLinks)
-        XCTAssertTrue(storeInvocations[5].isEnabled)
-        XCTAssertNil(storeInvocations[5].config)
-
-        XCTAssertEqual(storeInvocations[6].name, .digitalSignature)
-        XCTAssertTrue(storeInvocations[6].isEnabled)
-        XCTAssertNil(storeInvocations[6].config)
-
-        XCTAssertEqual(storeInvocations[7].name, .fileSharing)
+        XCTAssertEqual(storeInvocations[7].name, .consumableNotifications)
         XCTAssertTrue(storeInvocations[7].isEnabled)
         XCTAssertNil(storeInvocations[7].config)
 
-        XCTAssertEqual(storeInvocations[8].name, .selfDeletingMessages)
+        XCTAssertEqual(storeInvocations[8].name, .conversationGuestLinks)
         XCTAssertTrue(storeInvocations[8].isEnabled)
-        XCTAssertEqual(
-            storeInvocations[8].config as? Feature.SelfDeletingMessages.Config,
-            Scaffolding.selfDeletingMessagesFeatureConfig.toDomainModel()
-        )
+        XCTAssertNil(storeInvocations[8].config)
 
-        XCTAssertEqual(storeInvocations[9].name, .mls)
+        XCTAssertEqual(storeInvocations[9].name, .digitalSignature)
         XCTAssertTrue(storeInvocations[9].isEnabled)
-        XCTAssertEqual(
-            storeInvocations[9].config as? Feature.MLS.Config,
-            Scaffolding.mlsFeatureConfig.toDomainModel()
-        )
+        XCTAssertNil(storeInvocations[9].config)
 
-        XCTAssertEqual(storeInvocations[10].name, .mlsMigration)
+        XCTAssertEqual(storeInvocations[10].name, .e2ei)
         XCTAssertTrue(storeInvocations[10].isEnabled)
         XCTAssertEqual(
-            storeInvocations[10].config as? Feature.MLSMigration.Config,
-            Scaffolding.mlsMigrationFeatureConfig.toDomainModel()
-        )
-
-        XCTAssertEqual(storeInvocations[11].name, .e2ei)
-        XCTAssertTrue(storeInvocations[11].isEnabled)
-        XCTAssertEqual(
-            storeInvocations[11].config as? Feature.E2EI.Config,
+            storeInvocations[10].config as? Feature.E2EI.Config,
             Scaffolding.endToEndIdentityFeatureConfig.toDomainModel()
         )
 
-        XCTAssertEqual(storeInvocations[12].name, .consumableNotifications)
+        XCTAssertEqual(storeInvocations[11].name, .fileSharing)
+        XCTAssertTrue(storeInvocations[11].isEnabled)
+        XCTAssertNil(storeInvocations[11].config)
+
+        XCTAssertEqual(storeInvocations[12].name, .mls)
         XCTAssertTrue(storeInvocations[12].isEnabled)
-        XCTAssertNil(storeInvocations[12].config)
+        XCTAssertEqual(
+            storeInvocations[12].config as? Feature.MLS.Config,
+            Scaffolding.mlsFeatureConfig.toDomainModel()
+        )
 
-        XCTAssertEqual(storeInvocations[13].name, .chatBubblesSimple)
+        XCTAssertEqual(storeInvocations[13].name, .mlsMigration)
         XCTAssertTrue(storeInvocations[13].isEnabled)
-        XCTAssertNil(storeInvocations[13].config)
+        XCTAssertEqual(
+            storeInvocations[13].config as? Feature.MLSMigration.Config,
+            Scaffolding.mlsMigrationFeatureConfig.toDomainModel()
+        )
 
-        XCTAssertEqual(storeInvocations[14].name, .cells)
+        XCTAssertEqual(storeInvocations[14].name, .selfDeletingMessages)
         XCTAssertTrue(storeInvocations[14].isEnabled)
-        XCTAssertNil(storeInvocations[14].config)
+        XCTAssertEqual(
+            storeInvocations[14].config as? Feature.SelfDeletingMessages.Config,
+            Scaffolding.selfDeletingMessagesFeatureConfig.toDomainModel()
+        )
     }
 
 }
@@ -145,18 +145,18 @@ private enum Scaffolding {
         .appLock(appLockFeatureConfig),
         .apps(appsFeatureConfig),
         .assetAuditLog(assetAuditLogFeatureConfig),
+        .cells(cellsFeatureConfig),
+        .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
         .classifiedDomains(classifiedDomainsFeatureConfig),
         .conferenceCalling(conferenceCallingFeatureConfig),
+        .consumableNotifications(consumableNotificationsFeatureConfig),
         .conversationGuestLinks(conversationGuestLinksFeatureConfig),
         .digitalSignature(digitalSignatureFeatureConfig),
+        .endToEndIdentity(endToEndIdentityFeatureConfig),
         .fileSharing(fileSharingFeatureConfig),
-        .selfDeletingMessages(selfDeletingMessagesFeatureConfig),
         .mls(mlsFeatureConfig),
         .mlsMigration(mlsMigrationFeatureConfig),
-        .endToEndIdentity(endToEndIdentityFeatureConfig),
-        .consumableNotifications(consumableNotificationsFeatureConfig),
-        .chatBubblesSimple(chatBubblesSimpleFeatureConfig),
-        .cells(cellsFeatureConfig)
+        .selfDeletingMessages(selfDeletingMessagesFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
