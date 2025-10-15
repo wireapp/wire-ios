@@ -52,10 +52,9 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
 
     var cameraKeyboardViewControllerDidSelectImageDataHitCount: UInt = 0
     func cameraKeyboardViewController(
-        _ controller: CameraKeyboardViewController,
-        didSelectImageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        _ controller: Wire.CameraKeyboardViewController,
+        didSelectImage image: WireDataModel.SendableImage,
+        isFromCamera: Bool
     ) {
         cameraKeyboardViewControllerDidSelectImageDataHitCount += 1
     }

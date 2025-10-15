@@ -178,21 +178,21 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
     // MARK: - appendImage
 
-    public var appendImage_Invocations: [(imageData: Data, nonce: UUID)] = []
+    public var appendImage_Invocations: [(image: SendableImage, nonce: UUID)] = []
     public var appendImage_MockError: Error?
-    public var appendImage_MockMethod: ((Data, UUID) throws -> any ZMConversationMessage)?
+    public var appendImage_MockMethod: ((SendableImage, UUID) throws -> any ZMConversationMessage)?
     public var appendImage_MockValue: (any ZMConversationMessage)?
 
     @discardableResult
-    public func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage {
-        appendImage_Invocations.append((imageData: imageData, nonce: nonce))
+    public func appendImage(_ image: SendableImage, nonce: UUID) throws -> any ZMConversationMessage {
+        appendImage_Invocations.append((image: image, nonce: nonce))
 
         if let error = appendImage_MockError {
             throw error
         }
 
         if let mock = appendImage_MockMethod {
-            return try mock(imageData, nonce)
+            return try mock(image, nonce)
         } else if let mock = appendImage_MockValue {
             return mock
         } else {

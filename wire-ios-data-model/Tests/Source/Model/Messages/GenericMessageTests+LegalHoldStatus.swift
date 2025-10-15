@@ -90,8 +90,9 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
         // given
         var genericMessage = GenericMessage(
             content: GenericMessageProtocol.Asset(
-                imageSize: CGSize(width: 42, height: 12),
+                name: "picture.jpg",
                 mimeType: "image/jpeg",
+                imageSize: CGSize(width: 42, height: 12),
                 size: 123
             ),
             nonce: UUID.create()
@@ -109,8 +110,9 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
         // given
         let asset = GenericMessageProtocol.Asset(
-            imageSize: CGSize(width: 42, height: 12),
+            name: "picture.jpg",
             mimeType: "image/jpeg",
+            imageSize: CGSize(width: 42, height: 12),
             size: 123
         )
         var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)

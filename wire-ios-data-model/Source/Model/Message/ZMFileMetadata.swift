@@ -38,7 +38,14 @@ open class ZMFileMetadata: NSObject {
         } else {
             nil
         }
-        let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
+
+        let endName: String = if let name {
+            name
+        } else if !fileURL.lastPathComponent.isEmpty {
+            fileURL.lastPathComponent
+        } else {
+            "file"
+        }
 
         self.filename = endName.removingExtremeCombiningCharacters
         super.init()

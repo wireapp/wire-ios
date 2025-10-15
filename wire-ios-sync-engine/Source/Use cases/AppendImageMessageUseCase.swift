@@ -24,7 +24,7 @@ import WireDataModel
 public protocol AppendImageMessageUseCaseProtocol {
 
     func invoke<Conversation: MessageAppendableConversation>(
-        withImageData imageData: Data,
+        image: SendableImage,
         in conversation: Conversation
     ) throws
 }
@@ -38,10 +38,10 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
     }
 
     public func invoke(
-        withImageData imageData: Data,
+        image: SendableImage,
         in conversation: some MessageAppendableConversation
     ) throws {
-        try conversation.appendImage(from: imageData, nonce: UUID())
+        try conversation.appendImage(image, nonce: UUID())
         analyticsEventTracker?.trackEvent(
             .Contributed.conversationContribution(
                 .imageMessage,

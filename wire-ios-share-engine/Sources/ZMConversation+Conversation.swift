@@ -36,9 +36,9 @@ extension ZMConversation: Conversation {
         }
     }
 
-    public func appendImage(_ data: Data) -> Sendable? {
+    public func appendImage(_ image: SendableImage) -> Sendable? {
         do {
-            return try appendImage(from: data) as? Sendable
+            return try appendImage(image, nonce: UUID()) as? Sendable
         } catch {
             WireLogger.messageProcessing
                 .warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")

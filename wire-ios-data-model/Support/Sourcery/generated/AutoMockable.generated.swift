@@ -3787,6 +3787,24 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(chatBubblesSimple)
     }
 
+    // MARK: - fetchAssetAuditLog
+
+    public var fetchAssetAuditLog_Invocations: [Void] = []
+    public var fetchAssetAuditLog_MockMethod: (() -> Feature.AssetAuditLog)?
+    public var fetchAssetAuditLog_MockValue: Feature.AssetAuditLog?
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        fetchAssetAuditLog_Invocations.append(())
+
+        if let mock = fetchAssetAuditLog_MockMethod {
+            return mock()
+        } else if let mock = fetchAssetAuditLog_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAssetAuditLog`")
+        }
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
