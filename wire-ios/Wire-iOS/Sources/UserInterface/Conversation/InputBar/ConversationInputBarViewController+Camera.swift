@@ -173,27 +173,16 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         imageData: image.data,
                         isFromCamera: isFromCamera
                     )
-<<<<<<< HEAD
-                    let dataToSend = editedImage?.pngData() ?? imageData
-                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
-                       self.conversation.isCellsEnabled {
-                        let type: UTType = if editedImage != nil {
-                            .png
-                        } else if let uti, let utType = UTType(uti) {
-                            utType
-                        } else {
-                            .image
-                        }
-                        self.uploadDraft(data: dataToSend, type: type)
-=======
+
                     let dataToSend = editedImage?.pngData() ?? image.data
                     let utType: UTType = if editedImage != nil {
                         .png
->>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
                     } else {
                         image.utType ?? .image
                     }
-                    if DeveloperFlag.wireCells.isOn, self.conversation.isCellsEnabled {
+
+                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                       self.conversation.isCellsEnabled {
                         self.uploadDraft(data: dataToSend, type: utType)
                     } else {
                         let image = SendableImage(

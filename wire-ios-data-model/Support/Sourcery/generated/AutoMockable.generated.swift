@@ -3787,7 +3787,6 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(chatBubblesSimple)
     }
 
-<<<<<<< HEAD
     // MARK: - fetchCells
 
     public var fetchCells_Invocations: [Void] = []
@@ -3821,7 +3820,6 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(cells)
     }
 
-=======
     // MARK: - fetchAssetAuditLog
 
     public var fetchAssetAuditLog_Invocations: [Void] = []
@@ -3840,7 +3838,6 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         }
     }
 
->>>>>>> 12524bcf1e (feat: asset audit log metadata - WPB-20714 (#3703))
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
