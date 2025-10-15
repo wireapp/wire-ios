@@ -88,7 +88,6 @@ package final class FilesViewModel: ObservableObject {
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private var subscriptions = Set<AnyCancellable>()
-    private var startedFiltering: Bool = false
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
