@@ -3,9 +3,7 @@ import Foundation
 
 // MARK: - Data Structures
 
-/**
- Represents a single compiler issue, including its full multi-line message.
- */
+// Represents a single compiler issue, including its full multi-line message.
 struct Issue {
     let filePath: String
     let lineNumber: Int
@@ -28,12 +26,10 @@ let IGNORED_LINE_PATTERNS = [
     try! NSRegularExpression(pattern: "^\\d+ warnings? generated\\.")
 ]
 
-/**
- Extracts a project name from a file path based on common repository and module structures.
-
- - Parameter filePath: The full path to the source file.
- - Returns: The extracted project name, or 'UnknownProject'.
- */
+/// Extracts a project name from a file path based on common repository and module structures.
+///
+/// - Parameter filePath: The full path to the source file.
+/// - Returns: The extracted project name, or 'UnknownProject'.
 func extractProjectName(from filePath: String) -> String {
     let parts = filePath.components(separatedBy: "/")
 
@@ -53,12 +49,10 @@ func extractProjectName(from filePath: String) -> String {
     return "UnknownProject"
 }
 
-/**
- Attempts to match a line against the primary issue regex pattern.
-
- - Parameter line: The line of text to match.
- - Returns: A tuple containing the captured groups, or nil if no match is found.
- */
+/// Attempts to match a line against the primary issue regex pattern.
+///
+/// - Parameter line: The line of text to match.
+/// - Returns: A tuple containing the captured groups, or nil if no match is found.
 func matchIssueLine(line: String) -> (filePath: String, lineNum: String, colNum: String, type: String, message: String)? {
     guard let regex = try? NSRegularExpression(pattern: ISSUE_LINE_PATTERN, options: []),
           let match = regex.firstMatch(in: line, options: [], range: NSRange(line.startIndex..., in: line)) else {
@@ -72,13 +66,11 @@ func matchIssueLine(line: String) -> (filePath: String, lineNum: String, colNum:
     return (capturedGroups[0], capturedGroups[1], capturedGroups[2], capturedGroups[3], capturedGroups[4])
 }
 
-/**
- Parses a build log file to identify and group compiler issues.
-
- - Parameter logPath: The path to the log file to parse.
- - Throws: An error if the file cannot be read.
- - Returns: A nested dictionary grouping issues by project and then by file path.
- */
+/// Parses a build log file to identify and group compiler issues.
+///
+/// - Parameter logPath: The path to the log file to parse.
+/// - Throws: An error if the file cannot be read.
+/// - Returns: A nested dictionary grouping issues by project and then by file path.
 func parseLogFile(at logPath: String) throws -> GroupedData {
     guard let fileContents = try? String(contentsOfFile: logPath, encoding: .utf8) else {
         throw NSError(domain: "LogParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Log file not found or could not be read at '\(logPath)'"])
@@ -130,14 +122,12 @@ func parseLogFile(at logPath: String) throws -> GroupedData {
     return groupedIssues
 }
 
-/**
- Generates the Markdown content for a single project.
-
- - Parameters:
-   - project: The name of the project.
-   - files: A dictionary of issues grouped by file path.
- - Returns: The complete Markdown content string.
- */
+/// Generates the Markdown content for a single project.
+///
+/// - Parameters:
+///   - project: The name of the project.
+///   - files: A dictionary of issues grouped by file path.
+/// - Returns: The complete Markdown content string.
 func generateProjectMarkdown(project: String, files: FileIssues) -> String {
     var reportLines = ["# Unused Code Report for Project: `\(project)`"]
 
@@ -158,12 +148,10 @@ func generateProjectMarkdown(project: String, files: FileIssues) -> String {
     return reportLines.joined(separator: "\n")
 }
 
-/**
- Deletes report files from previous runs based on the output template.
-
- - Parameter outputTemplate: The file path template for reports (e.g., 'reports/unused-code.md').
- - Throws: An error if a file cannot be removed.
- */
+/// Deletes report files from previous runs based on the output template.
+///
+/// - Parameter outputTemplate: The file path template for reports (e.g., 'reports/unused-code.md').
+/// - Throws: An error if a file cannot be removed.
 func clearPreviousReports(outputTemplate: String) throws {
     let fileManager = FileManager.default
     let outputURL = URL(fileURLWithPath: outputTemplate)
@@ -193,13 +181,11 @@ func clearPreviousReports(outputTemplate: String) throws {
     }
 }
 
-/**
- Generates Markdown reports, creating one file per project.
-
- - Parameters:
-   - groupedData: The dictionary of issues, grouped by project.
-   - outputFileTemplate: A path that serves as a template for the output files.
- */
+/// Generates Markdown reports, creating one file per project.
+///
+/// - Parameters:
+///   - groupedData: The dictionary of issues, grouped by project.
+///   - outputFileTemplate: A path that serves as a template for the output files.
 func generateMarkdownReport(groupedData: GroupedData, outputFileTemplate: String) throws {
     let fileManager = FileManager.default
     let outputURL = URL(fileURLWithPath: outputFileTemplate)
