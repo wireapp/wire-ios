@@ -1055,18 +1055,29 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) -> Bool {
         guard
             let messageNonce = UUID(uuidString: genericMessage.messageID),
-            let originalText = clientMessage.underlyingMessage?.textData,
-            case .text? = messageEdit.content,
+            let messageEditContent = messageEdit.content,
             senderID == clientMessage.sender?.remoteIdentifier
-        else {
-            return false
+        else { return false }
+
+        let genericMessage: GenericMessage
+        switch messageEditContent {
+
+        case let .text(newText):
+            guard let originalText = clientMessage.underlyingMessage?.textData else { return false }
+            genericMessage = GenericMessage(
+                content: originalText.applyEdit(from: newText),
+                nonce: messageNonce
+            )
+
+        case let .composite(newComposite):
+            guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
+            genericMessage = GenericMessage(
+                content: newComposite,
+                nonce: messageNonce
+            )
         }
 
         do {
-            let genericMessage = GenericMessage(
-                content: originalText.applyEdit(from: messageEdit.text),
-                nonce: messageNonce
-            )
             try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             WireLogger.messageProcessing.warn(

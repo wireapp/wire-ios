@@ -16,29 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import Foundation
 
-struct FeatureConfigsView: View {
+public protocol WireCellsDeleteNodesUseCaseProtocol: Sendable {
 
-    // MARK: - Properties
+    func invoke(nodeIDs: [UUID]) async throws
 
-    @StateObject var viewModel: FeatureConfigsViewModel
-
-    // MARK: - Views
-
-    var body: some View {
-        List(viewModel.items) { item in
-            HStack {
-                Text(item.featureConfigName.rawValue)
-                Spacer()
-                Text(item.enabled ? "enabled" : "disabled")
-                    .foregroundStyle(.gray)
-            }
-        }
-        .navigationTitle("Statuses")
-        .navigationBarTitleDisplayMode(.inline)
-        .task {
-            await viewModel.fetchFeatureConfigs()
-        }
-    }
 }

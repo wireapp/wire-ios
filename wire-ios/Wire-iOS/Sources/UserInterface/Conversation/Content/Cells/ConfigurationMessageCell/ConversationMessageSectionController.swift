@@ -258,11 +258,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell()
         }
 
+        let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
             multipartMessage: message.multipartMessageData!,
+            isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
+            isSentBySelfUser: message.isSentBySelfUser,
             wireCellsFactory: wireCellsFactory
         )
-
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
     }
 
@@ -319,6 +321,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
+
+        let attachments = message.multipartMessageData?.attachments ?? []
+
         return ConversationTextMessageCellDescription
             .cells(
                 for: message,
@@ -385,6 +390,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
+        let attachments = message.multipartMessageData?.attachments ?? []
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
 

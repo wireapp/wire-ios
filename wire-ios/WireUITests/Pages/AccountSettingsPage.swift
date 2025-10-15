@@ -36,6 +36,10 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)["EmailField"].firstMatch
     }
 
+    var domainField: XCUIElement {
+        app.descendants(matching: .any)["DomainFieldDisabled"].firstMatch
+    }
+
     var logoutButton: XCUIElement {
         app.staticTexts["Log Out"]
     }
@@ -46,6 +50,10 @@ class AccountSettingsPage: PageModel {
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
         app.buttons["OK"]
+    }
+
+    var backToSettingsButton: XCUIElement {
+        app.buttons["Settings"]
     }
 
     var backupOrRestoreButton: XCUIElement {
@@ -64,8 +72,13 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
-    var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
+    func getDomainInfo() -> String {
+        domainField.value as! String
+    }
+
+    func backToSettings() throws -> SettingsPage {
+        backToSettingsButton.tap()
+        return try SettingsPage()
     }
 
     @discardableResult

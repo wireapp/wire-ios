@@ -202,12 +202,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func getActivationCode(forEmail email: String) async throws -> (code: String, key: String) {
+    func getActivationCode(forEmail email: String, basicAuth: String) async throws -> (code: String, key: String) {
         let path = "/i/users/activation-code?email=\(email)"
-        let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
-            .addingHeader(field: "Authorization", value: "Basic \(auth)")
+            .addingHeader(field: "Authorization", value: "Basic \(basicAuth)")
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
