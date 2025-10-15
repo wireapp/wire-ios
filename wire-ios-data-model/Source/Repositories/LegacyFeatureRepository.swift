@@ -617,6 +617,10 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .cells:
                 storeCells(.init())
+
+            case .assetAuditLog:
+                // No op: not supported in legacy repository.
+                break
             }
         }
     }
