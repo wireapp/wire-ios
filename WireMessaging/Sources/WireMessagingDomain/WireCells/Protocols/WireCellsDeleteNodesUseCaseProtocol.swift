@@ -16,20 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public extension LinkPreviewAssetUploadRequestStrategy {
+public protocol WireCellsDeleteNodesUseCaseProtocol: Sendable {
 
-    static func create(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
-    ) -> LinkPreviewAssetUploadRequestStrategy {
-        LinkPreviewAssetUploadRequestStrategy(
-            managedObjectContext: managedObjectContext,
-            applicationStatus: applicationStatus,
-            linkPreviewPreprocessor: nil,
-            previewImagePreprocessor: nil
-        )
-    }
+    func invoke(nodeIDs: [UUID]) async throws
 
 }

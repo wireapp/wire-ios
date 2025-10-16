@@ -186,8 +186,14 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
-        self.configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
+    init(
+        attachment: LinkAttachment,
+        thumbnailResource: WireImageResource?
+    ) {
+        self.configuration = View.Configuration(
+            attachment: attachment,
+            thumbnailResource: thumbnailResource
+        )
         self.actionController = nil
     }
 }

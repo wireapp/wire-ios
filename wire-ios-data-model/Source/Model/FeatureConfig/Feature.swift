@@ -30,21 +30,23 @@ public class Feature: ZMManagedObject {
 
     public enum Name: String, Codable, CaseIterable {
 
-        case appLock
-        case conferenceCalling
-        case fileSharing
-        case selfDeletingMessages
-        case conversationGuestLinks
-        case classifiedDomains
-        case digitalSignature
-        case mls
-        case e2ei = "mlsE2EId"
-        case mlsMigration
-        case channels
         case allowedGlobalOperations
-        case consumableNotifications
-        case chatBubblesSimple
+        case appLock
+        case apps
+        case assetAuditLog
         case cells
+        case channels
+        case chatBubblesSimple
+        case classifiedDomains
+        case conferenceCalling
+        case consumableNotifications
+        case conversationGuestLinks
+        case digitalSignature
+        case e2ei = "mlsE2EId"
+        case fileSharing
+        case mls
+        case mlsMigration
+        case selfDeletingMessages
 
     }
 
@@ -225,19 +227,21 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling,
-             .fileSharing,
-             .conversationGuestLinks,
-             .classifiedDomains,
-             .digitalSignature,
-             .mls,
-             .mlsMigration,
-             .allowedGlobalOperations,
-             .e2ei,
+        case .allowedGlobalOperations,
+             .apps,
+             .assetAuditLog,
+             .cells,
              .channels,
-             .consumableNotifications,
              .chatBubblesSimple,
-             .cells:
+             .classifiedDomains,
+             .conferenceCalling,
+             .consumableNotifications,
+             .conversationGuestLinks,
+             .digitalSignature,
+             .e2ei,
+             .fileSharing,
+             .mls,
+             .mlsMigration:
             break
         }
     }

@@ -23,7 +23,7 @@ package enum WireCellsDeleteNodesError: Error {
 }
 
 /// Deletes `WireCellNodes`s from both the server and locally cached data.
-package struct WireCellsDeleteNodesUseCase: Sendable {
+package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol {
 
     private let repository: any WireCellsNodesRepositoryProtocol
     private let fileCache: any FileCache

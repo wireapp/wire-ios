@@ -27,6 +27,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
+        let alignment: HorizontalAlignment
         let factory: WireCellsFactoryProtocol
     }
 
@@ -34,7 +35,6 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
-
     var isSelected: Bool = false
 
     override init(frame: CGRect) {
@@ -78,6 +78,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
+
         let attachments = object.attachments.map {
             WireCellsMessageAttachment(
                 nodeID: $0.nodeID,
@@ -88,7 +89,10 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
             )
         }
 
-        let viewController = object.factory.makeAttachmentsPreviewView(attachments: attachments)
+        let viewController = object.factory.makeAttachmentsPreviewView(
+            attachments: attachments,
+            alignment: object.alignment
+        )
         setupWireCellsAttachmentsView(viewController: viewController)
     }
 
@@ -134,13 +138,17 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
+    var supportsActions: Bool = true
 
     init(
         multipartMessage: MultipartMessageData,
+        isSimpleChatBubblesEnabled: Bool,
+        isSentBySelfUser: Bool,
         wireCellsFactory: WireCellsFactoryProtocol
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
+            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading,
             factory: wireCellsFactory
         )
     }

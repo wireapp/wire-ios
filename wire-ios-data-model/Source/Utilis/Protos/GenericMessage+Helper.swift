@@ -161,13 +161,17 @@ public extension GenericMessage {
     }
 
     var compositeData: Composite? {
-        guard let content else { return nil }
         switch content {
         case let .composite(data):
             return data
+        case let .edited(messageEdit):
+            if case let .composite(composite)? = messageEdit.content {
+                return composite
+            }
         default:
-            return nil
+            break
         }
+        return nil
     }
 
     var imageAssetData: ImageAsset? {
@@ -547,9 +551,7 @@ public extension Text {
     }
 
     func updateLinkPreview(from text: Text) -> Text {
-        guard !text.linkPreview.isEmpty else {
-            return self
-        }
+        guard !text.linkPreview.isEmpty else { return self }
         do {
             let data = try serializedData()
             var updatedText = try Text(serializedBytes: data)
@@ -779,8 +781,9 @@ public extension LinkPreview {
             $0.summary = articleMetadata.summary ?? ""
             if let imageData = articleMetadata.imageData.first {
                 $0.image = GenericMessageProtocol.Asset(
-                    imageSize: CGSize(width: 0, height: 0),
+                    name: "picture.jpeg",
                     mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
                     size: UInt64(imageData.count)
                 )
             }
@@ -796,8 +799,9 @@ public extension LinkPreview {
             $0.title = twitterMetadata.message ?? ""
             if let imageData = twitterMetadata.imageData.first {
                 $0.image = GenericMessageProtocol.Asset(
-                    imageSize: CGSize(width: 0, height: 0),
+                    name: "picture.jpeg",
                     mimeType: "image/jpeg",
+                    imageSize: CGSize(width: 0, height: 0),
                     size: UInt64(imageData.count)
                 )
             }
