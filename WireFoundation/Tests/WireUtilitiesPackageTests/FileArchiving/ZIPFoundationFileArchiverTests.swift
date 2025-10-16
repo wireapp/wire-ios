@@ -23,7 +23,8 @@ import Testing
 
 struct ZIPFoundationFileArchiverTests {
 
-    @Test func testCreatingAnArchiveFromASingleFile() async throws {
+    @Test
+    func testCreatingAnArchiveFromASingleFile() async throws {
         // Given
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
@@ -43,7 +44,8 @@ struct ZIPFoundationFileArchiverTests {
         #expect(content == "-C-")
     }
 
-    @Test func testCreatingAnArchiveFromADirectory() async throws {
+    @Test
+    func testCreatingAnArchiveFromADirectory() async throws {
         // Given
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
@@ -65,7 +67,8 @@ struct ZIPFoundationFileArchiverTests {
         #expect(content == "-C-")
     }
 
-    @Test func testCreatingAnArchiveFromInvalidSourceFiles() async throws {
+    @Test
+    func testCreatingAnArchiveFromInvalidSourceFiles() async throws {
         // Given
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.temporaryDirectory(create: true)
@@ -85,7 +88,8 @@ struct ZIPFoundationFileArchiverTests {
         }
     }
 
-    @Test func testCreatingAnArchiveAtAnInvalidDestinationUrl() async throws {
+    @Test
+    func testCreatingAnArchiveAtAnInvalidDestinationUrl() async throws {
         // Given
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.temporaryDirectory(create: true)

@@ -47,8 +47,7 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
                 at: fileURL,
                 to: archiveURL,
                 shouldKeepParent: false,
-                compressionMethod: .deflate,
-                progress: nil
+                compressionMethod: .deflate
             )
 
             let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
@@ -73,7 +72,7 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
             let fileURL = userSession.managedObjectContext.zm_storeURL!
                 .deletingLastPathComponent()
                 .deletingLastPathComponent()
-                .appending(path: "otr", directoryHint: .notDirectory)
+                .appending(path: "otr", directoryHint: .isDirectory)
             let archiveURL = fileURL.appendingPathExtension("zip")
 
             try? FileManager.default.removeItem(at: archiveURL)
@@ -81,8 +80,7 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
                 at: fileURL,
                 to: archiveURL,
                 shouldKeepParent: false,
-                compressionMethod: .deflate,
-                progress: nil
+                compressionMethod: .deflate
             )
 
             let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)

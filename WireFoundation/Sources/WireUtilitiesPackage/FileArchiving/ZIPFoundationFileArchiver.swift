@@ -52,8 +52,7 @@ public struct ZIPFoundationFileArchiver: FileArchiverProtocol {
             at: tmpDestination,
             to: destinationURL,
             shouldKeepParent: false,
-            compressionMethod: .deflate,
-            progress: .none
+            compressionMethod: .deflate
         )
 
     }

@@ -350,8 +350,7 @@ public extension ZMSLog {
                     at: tmpURL,
                     to: previousZipLogURLs[0],
                     shouldKeepParent: false,
-                    compressionMethod: .deflate,
-                    progress: .none
+                    compressionMethod: .deflate
                 )
 
                 // remove tmp file

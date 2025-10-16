@@ -23,7 +23,8 @@ import Testing
 
 struct ZIPFoundationFileUnarchiverTests {
 
-    @Test func testExtractingASingleRootFile() async throws {
+    @Test
+    func testExtractingASingleRootFile() async throws {
         // Given
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()
@@ -41,7 +42,8 @@ struct ZIPFoundationFileUnarchiverTests {
         #expect(content == "-A-\n")
     }
 
-    @Test func testExtractingSingleFileInDirectory() async throws {
+    @Test
+    func testExtractingSingleFileInDirectory() async throws {
         // Given
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()
@@ -61,7 +63,8 @@ struct ZIPFoundationFileUnarchiverTests {
         #expect(content == "-B-\n")
     }
 
-    @Test func testFailingForInvalidSourceUrls() async throws {
+    @Test
+    func testFailingForInvalidSourceUrls() async throws {
         // Given
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()
@@ -81,7 +84,8 @@ struct ZIPFoundationFileUnarchiverTests {
         }
     }
 
-    @Test func testFailingForInvalidDestinationUrls() async throws {
+    @Test
+    func testFailingForInvalidDestinationUrls() async throws {
         // Given
         let fileManager = FileManager.default
         let sut = ZIPFoundationFileUnarchiver()

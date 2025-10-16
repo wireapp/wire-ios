@@ -456,8 +456,7 @@ private extension FileManager {
             at: url,
             to: tmpURL,
             shouldKeepParent: false,
-            compressionMethod: .deflate,
-            progress: .none
+            compressionMethod: .deflate
         )
 
         defer {

@@ -117,8 +117,7 @@ extension SessionManager {
             at: backup.url,
             to: url,
             shouldKeepParent: false,
-            compressionMethod: .deflate,
-            progress: nil
+            compressionMethod: .deflate
         )
         return url
     }
