@@ -16,18 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
-import WireNetwork
+import XCTest
 
-struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
+class VerifyEmailPage: PageModel {
 
-    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        BackendEnvironment2.isCloudDomain(domain) || BackendEnvironment2.isStagingDomain(domain)
+    override var pageMainElement: XCUIElement {
+        verifyEmailPageLabel
     }
 
-    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        environment.isCloudEnvironment || environment.isStagingEnvironment
+    var verifyEmailPageLabel: XCUIElement {
+        app.staticTexts["Verify email"]
+    }
 
+    var backToEmailUpdatePage: XCUIElement {
+        app.buttons["Email"]
+    }
+
+    var backToAccountSetting: XCUIElement {
+        app.buttons["Account"]
+    }
+
+    func goBacktoAccountSetting() throws -> AccountSettingsPage {
+        backToEmailUpdatePage.tap()
+        backToAccountSetting.tap()
+        return try AccountSettingsPage()
     }
 
 }

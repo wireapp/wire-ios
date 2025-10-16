@@ -75,7 +75,8 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
                 managedObjectContext: self.syncMOC,
                 applicationStatus: mockApplicationStatus,
                 imageUploadStatus: updateStatus,
-                localDomain: "wire.com"
+                localDomain: "wire.com",
+                isCloudDomain: false
             )
         }
 
@@ -165,6 +166,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: previewData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
         let completeData = Data("1111111".utf8)
@@ -172,6 +174,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: completeData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
 
