@@ -300,6 +300,10 @@ public struct LegacyNotificationSessionLoader {
         )
         
         guard let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) else {
+            // we need to call tearDown before these objects are deallocated
+            legacyEnvironment.reachability.tearDown()
+            transportSession.tearDown()
+
             throw Failure.missingAPIVersion(message: "unexpected api version \(apiVersion)")
         }
 
@@ -313,6 +317,10 @@ public struct LegacyNotificationSessionLoader {
         )
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
+            // we need to call tearDown before these objects are deallocated
+            legacyEnvironment.reachability.tearDown()
+            transportSession.tearDown()
+
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
         let earService = EARService(
