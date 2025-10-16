@@ -66,7 +66,8 @@ extension ConversationInputBarViewController {
             uploadFile(at: urls[0])
         } else {
             do {
-                let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + "archive.zip")
+                let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+                let archiveURL = temporaryDirectory.appending(path: "archive.zip", directoryHint: .notDirectory)
                 try ZIPFoundationFileArchiver().zipResources(at: urls, into: archiveURL)
                 uploadFile(at: archiveURL)
             } catch {
