@@ -28,7 +28,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let isObfuscated: Bool
         let userSession: UserSession?
 
-        init(attributedText: NSAttributedString, isObfuscated: Bool, userSession: UserSession? = nil) {
+        init(
+            attributedText: NSAttributedString,
+            isObfuscated: Bool,
+            userSession: UserSession? = nil
+        ) {
             self.attributedText = attributedText
             self.isObfuscated = isObfuscated
             self.userSession = userSession
@@ -175,6 +179,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         container?.isBubble = isChatBubbleSimpleEnabled
         updateContainerStyle()
+        configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
         addAccentColorChangeObserver(userSession: object.userSession)
         setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
     }
@@ -263,11 +268,15 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool, userSession: UserSession?) {
+    init(
+        attributedString: NSAttributedString,
+        isObfuscated: Bool,
+        userSession: UserSession?
+    ) {
         self.configuration = View.Configuration(
             attributedText: attributedString,
             isObfuscated: isObfuscated,
-            userSession: userSession
+            userSession: userSession,
         )
     }
 }
@@ -366,7 +375,10 @@ extension ConversationTextMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
-            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
+            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(
+                message: message,
+                data: textMessageData
+            )
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 
