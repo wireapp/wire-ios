@@ -54,7 +54,11 @@ package struct MeetingsListView: View {
                 if !viewModel.ongoingMeetings.isEmpty {
                     Section {
                         ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
+//                            MeetingRow2(meeting: meeting)
+                            MeetingRow2(state: MeetingState(
+                                meeting: meeting,
+                                currentDate: viewModel.currentDate)
+                            )
                         }
                     } header: {
                         SectionTitle(Strings.Header.ongoing)
@@ -114,7 +118,11 @@ private struct GroupedSections: View {
                 ForEach(dayGroup.timeSlots, id: \.time) { slot in
                     Section {
                         ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
+//                            MeetingRow2(meeting: meeting)
+                            MeetingRow2(state: MeetingState(
+                                meeting: meeting,
+                                currentDate: Date())
+                            )
                         }
                     } header: {
                         TimeHeader(formatTime(slot.time))
@@ -129,7 +137,7 @@ private struct GroupedSections: View {
 
 // MARK: - Row
 
-private struct MeetingRow: View {
+private struct MeetingRow11: View {
     let meeting: Meeting
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -180,154 +188,65 @@ private struct MeetingRow: View {
     MeetingsListView(viewModel: MeetingsListViewModel(meetings: []))
 }
 
+struct MeetingRow2: View {
+    let state: MeetingState
 
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(ColorTheme.Backgrounds.surface.color)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
+                        )
+                        .frame(width: 31, height: 31)
 
-//struct MeetingsView: View {
-//    @StateObject private var viewModel: MeetingsListViewModel
-//    init(meetings: [Meeting]) {
-//        _viewModel = StateObject(wrappedValue: MeetingsListViewModel(meetings: meetings))
-//    }
-//
-//    var body: some View {
-//        NavigationStack {
-//            VStack {
-//                Picker("Tab", selection: $viewModel.selectedTab) {
-//                    Text("Next").tag(MeetingsViewModel.Tab.next)
-//                    Text("Past").tag(MeetingsViewModel.Tab.past)
-//                }
-//                .pickerStyle(.segmented)
-//                .padding()
-//
-//                List {
-//                    if viewModel.selectedTab == .next {
-//                        if !viewModel.ongoingMeetings.isEmpty {
-//                            Section(header: Text("Ongoing")) {
-//                                ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting in
-//                                    MeetingRow(meeting: meeting, currentDate: viewModel.currentDate)
-//                                }
-//                            }
-//                        }
-//
-//                        ForEach(viewModel.groupedNext, id: \.day) { dayGroup in
-//                            Section(header: Text(viewModel.formatDay(dayGroup.day))) {
-//                                ForEach(dayGroup.timeSlots, id: \.time) { timeSlot in
-//                                    Section(header: Text(viewModel.formatTime(timeSlot.time))) {
-//                                        ForEach(timeSlot.meetings, id: \.id) { meeting in
-//                                            MeetingRow(meeting: meeting, currentDate: viewModel.currentDate)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        if viewModel.hasMoreNext {
-//                            Button("Show more") {
-//                                viewModel.showAllNext = true
-//                            }
-//                            .frame(maxWidth: .infinity)
-//                            .listRowBackground(Color.clear)
-//                        }
-//                    } else {
-//                        ForEach(viewModel.groupedPast, id: \.day) { dayGroup in
-//                            Section(header: Text(viewModel.formatDay(dayGroup.day))) {
-//                                ForEach(dayGroup.timeSlots, id: \.time) { timeSlot in
-//                                    Section(header: Text(viewModel.formatTime(timeSlot.time))) {
-//                                        ForEach(timeSlot.meetings, id: \.id) { meeting in
-//                                            MeetingRow(meeting: meeting, currentDate: viewModel.currentDate)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                .listStyle(.plain)
-//            }
-//            .navigationTitle("Meetings")
-//        }
-//    }
-//
-//}
+                    Image(systemName: "video.fill").font(.system(size: 15))
+                }
 
-//struct MeetingRow1: View {
-//    let meeting: Meeting
-//    let currentDate: Date
-//    private let calendar = Calendar.current
-//    private var isOngoing: Bool {
-//        meeting.start <= currentDate && meeting.end > currentDate
-//    }
-//
-//    private var isPast: Bool {
-//        meeting.end < currentDate
-//    }
-//
-//    private var isStartingSoon: Bool {
-//        let fiveMinutesLater = calendar.date(byAdding: .minute, value: 5, to: currentDate) ?? currentDate
-//        return meeting.start > currentDate && meeting.start < fiveMinutesLater
-//    }
-//
-//    private var backgroundColor: Color {
-//        if isPast || (!isOngoing && !isStartingSoon) {
-//            return .gray
-//        } else if isStartingSoon {
-//            return .green
-//        } else {
-//            return .blue
-//        }
-//    }
-//
-//    private var startingInText: String? {
-//        if isStartingSoon {
-//            let timeInterval = meeting.start.timeIntervalSince(currentDate)
-//            let minutes = Int(timeInterval / 60)
-//            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-//            return "Starting in \(minutes):\(String(format: "%02d", seconds))"
-//        }
-//        return nil
-//    }
-//
-//    private var pastText: String {
-//        let dayFormatter = DateFormatter()
-//        dayFormatter.dateFormat = "EEEE, MMMM d"
-//        let dayString = calendar.isDate(meeting.start, inSameDayAs: currentDate) ? "" : "\(dayFormatter.string(from: meeting.start)) - "
-//        return "\(dayString)Started \(timeRange(for: meeting))"
-//    }
-//
-//    var body: some View {
-//        VStack(alignment: .leading, spacing: 8) {
-//            HStack {
-//                ZStack {
-//                    Circle()
-//                        .fill(backgroundColor.opacity(0.2))
-//                        .frame(width: 40, height: 40)
-//                    Image(systemName: "phone.fill")
-//                        .foregroundColor(.black)
-//                }
-//
-//                VStack(alignment: .leading) {
-//                    Text(meeting.title)
-//                        .font(.headline)
-//                    if let startingIn = startingInText {
-//                        Text(startingIn)
-//                            .font(.subheadline)
-//                            .foregroundColor(.green)
-//                    } else if isPast {
-//                        Text(pastText)
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    } else {
-//                        Text(timeRange(for: meeting))
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                }
-//
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(state.meeting.title)
+                        .font(.textStyle(.body2))
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .lineLimit(2)
+                    if let startingIn = state.startingInText { //starting soon
+                        Text("Starting in \(startingIn)")
+                            .font(.textStyle(.subline1))
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    } else if state.isPast {
+                        Text(state.pastText)
+                            .font(.textStyle(.subline1))
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    } else if state.isOngoing {
+                        let startStr = state.startTime(for: state.meeting)
+                        if let remaining = state.remainingText {
+                            Text("Started at \(startStr) - \(remaining)")
+                                .font(.textStyle(.subline1))
+                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        } else {
+                            Text(state.timeRange(for: state.meeting))
+                                .font(.textStyle(.subline1))
+                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        }
+                    } else {
+                        Text(state.timeRange(for: state.meeting))
+                            .font(.textStyle(.subline1))
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    }
+                }
+                Spacer()
+
+                Image(systemName: "ellipsis")
+                    .rotationEffect(.degrees(90))
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+
 //                Spacer()
 //
-//                if isOngoing {
-//                    if meeting.isNew {
+//                if state.isOngoing {
+//                    if state.meeting.isNew {
 //                        Button("Join Channel") {
-//                            // Action to join
 //                        }
 //                        .buttonStyle(.borderedProminent)
 //                        .tint(.blue)
@@ -336,167 +255,12 @@ private struct MeetingRow: View {
 //                            .foregroundColor(.blue)
 //                    }
 //                }
-//            }
-//
-//            if !meeting.participants.isEmpty {
-//                HStack(spacing: -8) { // Overlapping avatars
-//                    let displayed = meeting.participants.prefix(3)
-//                    ForEach(displayed) { participant in
-//                        ZStack {
-//                            Circle()
-//                                .fill(participant.color)
-//                                .frame(width: 30, height: 30)
-//                            Text(participant.initials)
-//                                .foregroundColor(.white)
-//                                .font(.caption)
-//                        }
-//                    }
-//
-//                    if meeting.participants.count > 3 {
-//                        ZStack {
-//                            Circle()
-//                                .fill(Color.gray)
-//                                .frame(width: 30, height: 30)
-//                            Text("+\(meeting.participants.count - 3)")
-//                                .foregroundColor(.white)
-//                                .font(.caption)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        .padding(.vertical, 4)
-//    }
-//
-//    private func timeRange(for meeting: Meeting) -> String {
-//        let formatter = DateFormatter()
-//        formatter.timeStyle = .short
-//        return "\(formatter.string(from: meeting.start)) - \(formatter.string(from: meeting.end))"
-//    }
-//
-//    private func formatDay(_ date: Date) -> String {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "EEEE, MMMM d"
-//        return formatter.string(from: date)
-//    }
-//
-//}
-
-struct MeetingRow2: View {
-    let meeting: Meeting
-    let currentDate: Date
-    private let calendar = Calendar.current
-    private var isOngoing: Bool {
-        meeting.start <= currentDate && meeting.end > currentDate
-    }
-
-    private var isPast: Bool {
-        meeting.end < currentDate
-    }
-
-    private var isStartingSoon: Bool {
-        let fiveMinutesLater = calendar.date(byAdding: .minute, value: 5, to: currentDate) ?? currentDate
-        return meeting.start > currentDate && meeting.start < fiveMinutesLater
-    }
-
-    private var backgroundColor: Color {
-        if isPast || (!isOngoing && !isStartingSoon) {
-            return .gray
-        } else if isStartingSoon {
-            return .green
-        } else {
-            return .blue
-        }
-    }
-
-    private var startingInText: String? {
-        if isStartingSoon {
-            let timeInterval = meeting.start.timeIntervalSince(currentDate)
-            let minutes = Int(timeInterval / 60)
-            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-            return "\(minutes):\(String(format: "%02d", seconds))"
-        }
-        return nil
-    }
-
-    private var remainingText: String? {
-        if isOngoing {
-            let timeInterval = meeting.end.timeIntervalSince(currentDate)
-            let minutes = Int(timeInterval / 60)
-            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-            return "\(minutes):\(String(format: "%02d", seconds))"
-        }
-        return nil
-    }
-
-    private var pastText: String {
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateFormat = "EEEE, MMMM d"
-        let dayString = dayFormatter.string(from: meeting.start)
-        let timeString = timeRange(for: meeting)
-        return "\(dayString) - Started \(timeString)"
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                ZStack {
-                    Circle()
-                        .fill(backgroundColor.opacity(0.2))
-                        .frame(width: 40, height: 40)
-                    Image(systemName: "phone.fill")
-                        .foregroundColor(.black)
-                }
-
-                VStack(alignment: .leading) {
-                    Text(meeting.title)
-                        .font(.headline)
-                    if let startingIn = startingInText {
-                        Text("Starting in \(startingIn)")
-                            .font(.subheadline)
-                            .foregroundColor(.green)
-                    } else if isPast {
-                        Text(pastText)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    } else if isOngoing {
-                        let startStr = startTime(for: meeting)
-                        if let remaining = remainingText {
-                            Text("Started at \(startStr) - \(remaining)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text(timeRange(for: meeting))
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    } else {
-                        Text(timeRange(for: meeting))
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                Spacer()
-
-                if isOngoing {
-                    if meeting.isNew {
-                        Button("Join Channel") {
-                            // Action to join
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.blue)
-                    } else {
-                        Text("Attending")
-                            .foregroundColor(.blue)
-                    }
-                }
             }
 
-            if !meeting.participants.isEmpty {
-                HStack(spacing: -8) { // Overlapping avatars
-                    let maxAvatars = min(5, meeting.participants.count)
-                    let displayed = Array(meeting.participants.prefix(maxAvatars))
+            if !state.meeting.participants.isEmpty {
+                HStack(spacing: -8) {
+                    let maxAvatars = min(5, state.meeting.participants.count)
+                    let displayed = Array(state.meeting.participants.prefix(maxAvatars))
                     ForEach(displayed) { participant in
                         ZStack {
                             Circle()
@@ -507,16 +271,13 @@ struct MeetingRow2: View {
                                 .font(.caption)
                         }
                     }
-                    if meeting.participants.count > 5 {
-                        let remaining = meeting.participants.count - 5
-                        ZStack {
-                            Circle()
-                                .fill(Color.gray)
-                                .frame(width: 30, height: 30)
+                    if state.meeting.participants.count > 5 {
+
+                        let remaining = state.meeting.participants.count - 5
                             Text("+\(remaining)")
-                                .foregroundColor(.white)
-                                .font(.caption)
-                        }
+                            .padding(.leading, 12)
+                            .foregroundColor(.gray)
+                            .font(.caption)
                     }
                 }
             }
@@ -524,98 +285,86 @@ struct MeetingRow2: View {
         .padding(.vertical, 4)
     }
 
-    private func timeRange(for meeting: Meeting) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return "\(formatter.string(from: meeting.start)) - \(formatter.string(from: meeting.end))"
-    }
-
-    private func startTime(for meeting: Meeting) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: meeting.start)
-    }
-
 }
 
-#Preview("Upcoming") {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm"
-    let currentDate = formatter.date(from: "2025-10-14 16:00")!
-    let meeting = Meeting(
-        id: UUID(),
-        title: "Candidate Interview: Charles Royale",
-        start: formatter.date(from: "2025-10-14 17:00")!,
-        end: formatter.date(from: "2025-10-14 17:15")!,
-        participants: [
-            Participant(initials: "AF"),
-            Participant(initials: "WI"),
-            Participant(initials: "JO"),
-            Participant(initials: "BN"),
-            Participant(initials: "FS"),
-            Participant(initials: "GF"),
-            Participant(initials: "KO")
-        ]
-    )
-    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-}
-
-#Preview("Starting Soon") {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm"
-    let currentDate = formatter.date(from: "2025-10-14 16:00")!
-    let meeting = Meeting(
-        id: UUID(),
-        title: "Candidate Interview: Charles Royale",
-        start: formatter.date(from: "2025-10-14 16:03")!,
-        end: formatter.date(from: "2025-10-14 16:18")!,
-        participants: [Participant(initials: "AF"), Participant(initials: "WI")]
-    )
-    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-}
-
-#Preview("Now (New)") {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm"
-    let currentDate = formatter.date(from: "2025-10-14 16:00")!
-    let meeting = Meeting(
-        id: UUID(), title: "Candidate Interview: Charles Royale",
-        start: formatter.date(from: "2025-10-14 15:50")!,
-        end: formatter.date(from: "2025-10-14 16:15")!,
-        isNew: true,
-        participants: [Participant(initials: "JO")]
-    )
-    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-}
-
-#Preview("Participating (Ongoing)") {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm"
-    let currentDate = formatter.date(from: "2025-10-14 16:00")!
-    let meeting = Meeting(
-        id: UUID(),
-        title: "Candidate Interview: Charles Royale",
-        start: formatter.date(from: "2025-10-14 15:50")!,
-        end: formatter.date(from: "2025-10-14 16:15")!,
-        isNew: false,
-        participants: [
-            Participant(initials: "AF"),
-            Participant(initials: "WI"),
-            Participant(initials: "JO")
-        ]
-    )
-    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-}
-
-#Preview("Past") {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm"
-    let currentDate = formatter.date(from: "2025-10-14 16:00")!
-    let meeting = Meeting(
-        id: UUID(),
-        title: "Candidate Interview: Charles Royale",
-        start: formatter.date(from: "2025-10-14 14:00")!,
-        end: formatter.date(from: "2025-10-14 14:15")!,
-        participants: Array(repeating: Participant(initials: "P"), count: 5))
-    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-}
+//#Preview("Upcoming") {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//    let currentDate = formatter.date(from: "2025-10-14 16:00")!
+//    let meeting = Meeting(
+//        id: UUID(),
+//        title: "Candidate Interview: Charles Royale",
+//        start: formatter.date(from: "2025-10-14 17:00")!,
+//        end: formatter.date(from: "2025-10-14 17:15")!,
+//        participants: [
+//            Participant(initials: "AF"),
+//            Participant(initials: "WI"),
+//            Participant(initials: "JO"),
+//            Participant(initials: "BN"),
+//            Participant(initials: "FS"),
+//            Participant(initials: "GF"),
+//            Participant(initials: "KO")
+//        ]
+//    )
+//    return MeetingRow2(meeting: meeting, currentDate: currentDate)
+//}
+//
+//#Preview("Starting Soon") {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//    let currentDate = formatter.date(from: "2025-10-14 16:00")!
+//    let meeting = Meeting(
+//        id: UUID(),
+//        title: "Candidate Interview: Charles Royale",
+//        start: formatter.date(from: "2025-10-14 16:03")!,
+//        end: formatter.date(from: "2025-10-14 16:18")!,
+//        participants: [Participant(initials: "AF"), Participant(initials: "WI")]
+//    )
+//    return MeetingRow2(meeting: meeting, currentDate: currentDate)
+//}
+//
+//#Preview("Now (New)") {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//    let currentDate = formatter.date(from: "2025-10-14 16:00")!
+//    let meeting = Meeting(
+//        id: UUID(), title: "Candidate Interview: Charles Royale",
+//        start: formatter.date(from: "2025-10-14 15:50")!,
+//        end: formatter.date(from: "2025-10-14 16:15")!,
+//        isNew: true,
+//        participants: [Participant(initials: "JO")]
+//    )
+//    return MeetingRow2(meeting: meeting, currentDate: currentDate)
+//}
+//
+//#Preview("Participating (Ongoing)") {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//    let currentDate = formatter.date(from: "2025-10-14 16:00")!
+//    let meeting = Meeting(
+//        id: UUID(),
+//        title: "Candidate Interview: Charles Royale",
+//        start: formatter.date(from: "2025-10-14 15:50")!,
+//        end: formatter.date(from: "2025-10-14 16:15")!,
+//        isNew: false,
+//        participants: [
+//            Participant(initials: "AF"),
+//            Participant(initials: "WI"),
+//            Participant(initials: "JO")
+//        ]
+//    )
+//    return MeetingRow2(meeting: meeting, currentDate: currentDate)
+//}
+//
+//#Preview("Past") {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//    let currentDate = formatter.date(from: "2025-10-14 16:00")!
+//    let meeting = Meeting(
+//        id: UUID(),
+//        title: "Candidate Interview: Charles Royale",
+//        start: formatter.date(from: "2025-10-14 14:00")!,
+//        end: formatter.date(from: "2025-10-14 14:15")!,
+//        participants: Array(repeating: Participant(initials: "P"), count: 5))
+//    return MeetingRow2(meeting: meeting, currentDate: currentDate)
+//}

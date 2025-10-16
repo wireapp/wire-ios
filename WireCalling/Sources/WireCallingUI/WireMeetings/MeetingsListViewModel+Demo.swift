@@ -38,14 +38,22 @@ package extension MeetingsListViewModel {
                 title: "iOS Playtest - develop build",
                 start: day(-1, hour: 8, min: 0),
                 end: day(-1, hour: 8, min: 30),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "Sprint Review (all teams)",
                 start: day(-1, hour: 16, min: 0),
                 end: day(-1, hour: 16, min: 30),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
 
             // TODAY — several at 7:00 AM for time grouping
@@ -54,14 +62,22 @@ package extension MeetingsListViewModel {
                 title: "Candidate interview",
                 start: day(0, hour: 16, min: 0),
                 end: day(0, hour: 16, min: 45),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "Standup",
                 start: day(0, hour: 7, min: 0),
                 end: day(0, hour: 7, min: 30),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
             Meeting(
                 id: UUID(),
@@ -76,7 +92,11 @@ package extension MeetingsListViewModel {
                 title: "Design review",
                 start: day(0, hour: 17),
                 end: day(0, hour: 18),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group
@@ -85,21 +105,33 @@ package extension MeetingsListViewModel {
                 title: "Sprint planning",
                 start: day(1, hour: 7),
                 end: day(1, hour: 8),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "Daily sync",
                 start: day(1, hour: 7),
                 end: day(1, hour: 7, min: 20),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
             Meeting(
                 id: UUID(),
                 title: "Architecture Forum",
                 start: day(1, hour: 13),
                 end: day(1, hour: 14),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             ),
 
             // AFTER TOMORROW — ensures "Show All" appears in the Next tab
@@ -108,7 +140,11 @@ package extension MeetingsListViewModel {
                 title: "All hands",
                 start: day(3, hour: 11),
                 end: day(3, hour: 12),
-                participants: []
+                participants: [
+                    Participant(initials: "AF"),
+                    Participant(initials: "WI"),
+                    Participant(initials: "JO")
+                ]
             )
         ]
 
