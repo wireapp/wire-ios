@@ -129,10 +129,13 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata: ResolvedBackendMetadata = if let newMetadata = newEnvironment?.metadata {
-            newMetadata
+        let metadata: ResolvedBackendMetadata
+        if let newMetadata = newEnvironment?.metadata {
+            metadata = newMetadata
+            // we store the metadata for NSE
+            try backendStore.storeBackendMetadata(metadata, for: accountID)
         } else {
-            try await resolveBackendMetadata(with: networkStack)
+            metadata = try await resolveBackendMetadata(with: networkStack)
         }
 
         // Load persistence stack.

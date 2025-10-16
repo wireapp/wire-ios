@@ -100,6 +100,7 @@ public struct BackendEnvironmentStore {
             if
                 nsError.domain == NSCocoaErrorDomain,
                 nsError.code == NSFileReadNoSuchFileError {
+                // Why do we return nil ?
                 return nil
             }
 
