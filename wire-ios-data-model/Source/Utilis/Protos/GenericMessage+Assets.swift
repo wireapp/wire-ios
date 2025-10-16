@@ -60,11 +60,17 @@ public extension GenericMessageProtocol.Asset {
         }
     }
 
-    init(imageSize: CGSize, mimeType: String, size: UInt64) {
+    init(
+        name: String,
+        mimeType: String,
+        imageSize: CGSize,
+        size: UInt64
+    ) {
         self = GenericMessageProtocol.Asset.with {
             $0.original = GenericMessageProtocol.Asset.Original.with {
-                $0.size = size
+                $0.name = name
                 $0.mimeType = mimeType
+                $0.size = size
                 $0.image = GenericMessageProtocol.Asset.ImageMetaData.with {
                     $0.width = Int32(imageSize.width)
                     $0.height = Int32(imageSize.height)
@@ -228,12 +234,14 @@ public extension GenericMessageProtocol.Asset.RemoteData {
 
 extension GenericMessage {
     mutating func updateAssetOriginal(withImageProperties imageProperties: ZMIImageProperties) {
-        let asset = GenericMessageProtocol.Asset(
-            imageSize: imageProperties.size,
-            mimeType: imageProperties.mimeType,
-            size: UInt64(imageProperties.length)
-        )
-        update(asset: asset)
+        updateAsset { existingAsset in
+            existingAsset.original.mimeType = imageProperties.mimeType
+            existingAsset.original.size = UInt64(imageProperties.length)
+            existingAsset.original.image = GenericMessageProtocol.Asset.ImageMetaData.with {
+                $0.width = Int32(imageProperties.size.width)
+                $0.height = Int32(imageProperties.size.height)
+            }
+        }
     }
 
     mutating func updateAssetPreview(withUploadedOTRKey otrKey: Data, sha256: Data) {

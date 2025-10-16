@@ -644,8 +644,9 @@ extension ZMLocalNotificationTests_Message {
         let imageData = verySmallJPEGData()
         let assetMessage = GenericMessage(
             content: GenericMessageProtocol.Asset(
-                imageSize: .zero,
+                name: "picture.jpg",
                 mimeType: "image/jpeg",
+                imageSize: .zero,
                 size: UInt64(imageData.count)
             ),
             nonce: UUID.create(),

@@ -232,7 +232,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -322,7 +325,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -337,7 +343,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try duplicateProteusConversation.appendKnock()
             message.updateServerTimestamp(with: 11)
 
-            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try duplicateProteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 12)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -453,7 +462,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try proteusConversation.appendKnock()
             message.updateServerTimestamp(with: 1)
 
-            message = try proteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try proteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 2)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)
@@ -468,7 +480,10 @@ final class OneOnOneMigratorTests: XCTestCase {
             message = try duplicateProteusConversation.appendKnock()
             message.updateServerTimestamp(with: 11)
 
-            message = try duplicateProteusConversation.appendImage(from: ZMTBaseTest.verySmallJPEGData())
+            message = try duplicateProteusConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: ZMTBaseTest.verySmallJPEGData()),
+                nonce: UUID()
+            )
             message.updateServerTimestamp(with: 12)
 
             XCTAssertEqual(proteusConversation.allMessages.count, 3)

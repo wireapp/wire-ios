@@ -339,7 +339,8 @@ class MessageObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesWhenUserReadsTheMessage_Asset() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let message = try! conversation.appendImage(from: verySmallJPEGData())  as! ZMAssetClientMessage
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData())
+        let message = try! conversation.appendImage(image, nonce: UUID())  as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
         // when

@@ -16,17 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
-import WireNetwork
+public extension Feature {
 
-struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
+    struct AssetAuditLog: Codable {
 
-    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        BackendEnvironment2.isCloudDomain(domain) || BackendEnvironment2.isStagingDomain(domain)
-    }
+        // MARK: - Properties
 
-    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        environment.isCloudEnvironment || environment.isStagingEnvironment
+        public let status: Status
+
+        // MARK: - Life cycle
+
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
 
     }
 

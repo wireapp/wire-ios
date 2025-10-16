@@ -31,7 +31,7 @@ struct FeatureConfigsView: View {
             HStack {
                 Text(item.featureConfigName.rawValue)
                 Spacer()
-                Text(item.enabled.rawValue)
+                Text(item.enabled ? "enabled" : "disabled")
                     .foregroundStyle(.gray)
             }
         }
