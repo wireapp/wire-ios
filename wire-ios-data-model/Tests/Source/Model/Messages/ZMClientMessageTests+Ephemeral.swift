@@ -125,7 +125,10 @@ extension ZMClientMessageTests_Ephemeral {
 
     func testItCreatesAnEphemeralMessageForImages() {
         checkItCreatesAnEphemeralMessage { conv -> ZMMessage in
-            let message = try! conv.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
+            let message = try! conv.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: mediumJPEGData()),
+                nonce: UUID()
+            ) as! ZMAssetClientMessage
             var hasImage = false
             if case .image? = message.underlyingMessage?.ephemeral.content {
                 hasImage = true
@@ -167,7 +170,12 @@ extension ZMClientMessageTests_Ephemeral {
 
             let imageData = self.verySmallJPEGData()
             let assetMessage = GenericMessage(
-                content: GenericMessageProtocol.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
+                content: GenericMessageProtocol.Asset(
+                    name: "picture.jpg",
+                    mimeType: "image/jpeg",
+                    imageSize: .zero,
+                    size: UInt64(imageData.count)
+                ),
                 nonce: nonce,
                 expiresAfter: .tenSeconds
             )

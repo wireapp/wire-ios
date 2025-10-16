@@ -38,11 +38,21 @@ public final class AssetRequestFactory: NSObject {
         case eternalInfrequentAccess = "eternal-infrequent_access"
     }
 
-    struct AssetAuditLogMetaData {
+    public struct AssetAuditLogMetaData {
 
-        let conversationID: QualifiedID
-        let fileName: String
-        let mimeType: String
+        public let conversationID: QualifiedID
+        public let fileName: String
+        public let mimeType: String
+
+        public init(
+            conversationID: QualifiedID,
+            fileName: String,
+            mimeType: String
+        ) {
+            self.conversationID = conversationID
+            self.fileName = fileName
+            self.mimeType = mimeType
+        }
 
     }
 
@@ -69,6 +79,7 @@ public final class AssetRequestFactory: NSObject {
         withData data: Data,
         shareable: Bool = true,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         guard let uploadURL = uploadURL(
@@ -76,6 +87,7 @@ public final class AssetRequestFactory: NSObject {
             in: message.managedObjectContext!,
             shareable: shareable,
             retention: retention,
+            assetAuditLogMetaData: assetAuditLogMetaData,
             data: data
         ) else {
             return nil
@@ -109,13 +121,14 @@ public final class AssetRequestFactory: NSObject {
         withData data: Data,
         shareable: Bool = true,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(
             data,
             shareable: shareable,
             retention: retention,
-            assetAuditLogMetaData: nil // TODO: [WPB-20714] pass in metadata
+            assetAuditLogMetaData: assetAuditLogMetaData
         ) else { return nil }
 
         let path = switch apiVersion {
@@ -170,13 +183,14 @@ public final class AssetRequestFactory: NSObject {
         in moc: NSManagedObjectContext,
         shareable: Bool,
         retention: Retention,
+        assetAuditLogMetaData: AssetAuditLogMetaData?,
         data: Data
     ) -> URL? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(
             data,
             shareable: shareable,
             retention: retention,
-            assetAuditLogMetaData: nil // TODO: [WPB-20714] pass in metadata
+            assetAuditLogMetaData: assetAuditLogMetaData,
         ) else {
             return nil
         }

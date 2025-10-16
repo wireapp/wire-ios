@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 import UniformTypeIdentifiers
 import WireLogging
 import WireMessagingDomain
@@ -30,18 +31,22 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let lastOpenRequest: WireCellsLastOpenRequest
     private var cancellables = Set<AnyCancellable>()
 
+    let alignment: HorizontalAlignment
+
     @Published private var item: WireCellsAttachmentsPreviewViewItem
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
 
     init(
         item: WireCellsAttachmentsPreviewViewItem,
+        alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest
     ) {
         self.item = item
+        self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest

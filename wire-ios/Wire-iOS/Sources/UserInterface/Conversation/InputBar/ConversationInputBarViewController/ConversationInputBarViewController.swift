@@ -659,8 +659,20 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func postImage(_ image: MediaAsset) {
-        guard let data = image.imageData else { return }
-        sendController.sendMessage(withImageData: data, userSession: userSession)
+        guard let data = image.imageData else {
+            return
+        }
+        // The image is a `UIImage` instances that came from
+        // the clipboard, so we don't have a name or UTType.
+        let image = SendableImage(
+            name: nil,
+            utType: nil,
+            data: data
+        )
+        sendController.sendMessage(
+            image: image,
+            userSession: userSession
+        )
     }
 
     func deallocateUnusedInputControllers() {
@@ -905,7 +917,7 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
                 messageText,
                 mentions: [],
                 userSession: self.userSession,
-                withImageData: imageData
+                withGIFImageData: imageData
             )
         }
     }
@@ -959,15 +971,28 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
                         self.sendController.sendMessage(
-                            withImageData: jpegData,
+                            image: image,
                             userSession: self.userSession,
                             completion: nil
                         )
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: UTType.jpeg.identifier)
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
+                        self.showConfirmationForImage(
+                            image,
+                            isFromCamera: false
+                        )
                     }
                 }
 

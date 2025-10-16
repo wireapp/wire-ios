@@ -22,23 +22,12 @@ import WireNetwork
 struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
 
     func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        let whitelistedDomains = [
-            "wire.com",
-            "staging.zinfra.io"
-        ]
-        return whitelistedDomains.contains(domain)
+        BackendEnvironment2.isCloudDomain(domain) || BackendEnvironment2.isStagingDomain(domain)
     }
 
     func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        guard let backendConfigHost = environment.config.endpoints.restAPIURL.host() else { return false }
+        environment.isCloudEnvironment || environment.isStagingEnvironment
 
-        let whitelistedHosts = [
-            // prod
-            "prod-nginz-https.wire.com",
-            // staging
-            "staging-nginz-https.zinfra.io"
-        ]
-        return whitelistedHosts.contains(backendConfigHost)
     }
 
 }

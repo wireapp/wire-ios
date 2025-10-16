@@ -797,7 +797,7 @@ extension CollectionsViewController: CollectionCellDelegate {
                 forMessage: message,
                 source: source,
                 userSession: userSession
-            ) { [weak self] deleted in
+            ) { [weak self] deleted, _ in
                 guard deleted else { return }
                 _ = self?.navigationController?.popViewController(animated: true)
                 self?.refetchCollection()

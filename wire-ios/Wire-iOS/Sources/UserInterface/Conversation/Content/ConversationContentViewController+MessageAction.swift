@@ -93,15 +93,26 @@ extension ConversationContentViewController {
             }
         case .delete:
             assert(message.canBeDeleted)
+            let attachments = message.multipartMessageData?.attachments
 
             deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: presentedViewController ?? self)
             deletionDialogPresenter?.presentDeletionAlertController(
                 forMessage: message,
                 source: view,
                 userSession: userSession
-            ) { deleted in
+            ) { [weak self] deleted, deletionType in
+                guard let self else { return }
+
                 if deleted {
-                    self.presentedViewController?.dismiss(animated: true)
+                    presentedViewController?.dismiss(animated: true)
+                    if let attachments, let deletionType {
+                        delegate?.conversationContentViewController(
+                            self,
+                            didDeleteMultipartMessage: message,
+                            withAttachments: attachments,
+                            deletionType: deletionType
+                        )
+                    }
                 }
             }
         case .present:
