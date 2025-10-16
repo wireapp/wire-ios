@@ -48,7 +48,7 @@ class BaseTest: ZMTBaseTest {
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
     var lastEventIDRepository: LastEventIDRepository!
     var apiVersion = WireTransport.APIVersion.v5
-    
+
     override func setUp() async throws {
         try await super.setUp()
 

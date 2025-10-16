@@ -90,7 +90,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
-        WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch", attributes: .legacyNSE, .safePublic)
+        WireLogger.notifications.info(
+            "fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch",
+            attributes: .legacyNSE,
+            .safePublic
+        )
 
         isProcessingNotifications = true
 

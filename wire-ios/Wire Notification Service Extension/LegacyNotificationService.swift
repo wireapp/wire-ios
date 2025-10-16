@@ -137,7 +137,11 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            WireLogger.notifications.info("session did not generate a notification", attributes: .legacyNSE, .safePublic)
+            WireLogger.notifications.info(
+                "session did not generate a notification",
+                attributes: .legacyNSE,
+                .safePublic
+            )
             return finishWithoutShowingNotification()
         }
 

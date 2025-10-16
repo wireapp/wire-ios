@@ -298,7 +298,7 @@ public struct LegacyNotificationSessionLoader {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             lastEventIDRepository: lastEventIDRepository
         )
-        
+
         guard let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) else {
             // we need to call tearDown before these objects are deallocated
             legacyEnvironment.reachability.tearDown()
@@ -307,7 +307,10 @@ public struct LegacyNotificationSessionLoader {
             throw Failure.missingAPIVersion(message: "unexpected api version \(apiVersion)")
         }
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy], apiVersion: transportAPIVersion)
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: [pushNotificationStrategy],
+            apiVersion: transportAPIVersion
+        )
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,

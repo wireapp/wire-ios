@@ -418,7 +418,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         let notification: ZMLocalNotification?
 
         if localNotifications.count > 1 {
-            WireLogger.notifications.info("bundling \(localNotifications.count) notifications", attributes: .legacyNSE, .safePublic)
+            WireLogger.notifications.info(
+                "bundling \(localNotifications.count) notifications",
+                attributes: .legacyNSE,
+                .safePublic
+            )
             notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: context)
         } else {
             notification = localNotifications.first
