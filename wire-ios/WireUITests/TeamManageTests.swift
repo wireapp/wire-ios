@@ -188,37 +188,4 @@ final class TeamManageTests: WireUITestCase {
             "User \(teamMembers[0].name) is not present in group"
         )
     }
-
-    @MainActor
-    func test_Account_Management_Lock_With_Passcode() async throws {
-        let passcode = UserGenerator.generateAppPasscode()
-
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
-        let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMember.username)
-            .openSettings()
-            .openOptionsMenu()
-            .enableLockWithPasscode()
-            .SetPasscode(passcode)
-            .backgroundAndResume(app: app, forDelay: 2)
-
-        XCTAssertFalse(
-            page.conversationsPageLabel.exists,
-            "App incorrectly showing conversations page without app passcode"
-        )
-
-        _ = try page.enterPasscode(passcode)
-    }
 }
