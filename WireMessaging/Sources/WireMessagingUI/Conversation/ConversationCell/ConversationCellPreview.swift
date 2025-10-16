@@ -26,6 +26,7 @@ final class ConversationCellsPreview: UITableViewController {
 
     typealias ItemIdentifier = ConversationCellModel
 
+    private let cellProvider = ConversationCellProvider()
     private let itemIdentifiers: [ItemIdentifier]
     private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
 
@@ -58,10 +59,10 @@ final class ConversationCellsPreview: UITableViewController {
     }
 
     private func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
-            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
-            itemIdentifier.configureCell(cell)
-            return cell
+        dataSource = UITableViewDiffableDataSource(
+            tableView: tableView
+        ) { [cellProvider] tableView, indexPath, itemIdentifier in
+            cellProvider.provideCell(for: itemIdentifier, tableView: tableView, indexPath: indexPath)
         }
     }
 

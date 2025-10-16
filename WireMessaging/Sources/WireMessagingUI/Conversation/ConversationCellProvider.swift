@@ -18,11 +18,26 @@
 
 public import UIKit
 
-public extension ConversationCellModel {
+public final class ConversationCellProvider {
+
+    public init() {}
 
     @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
+    public func provideCell(
+        for model: ConversationCellModel,
+        tableView: UITableView,
+        indexPath: IndexPath
+    ) -> UITableViewCell {
+        model.registerIfNeeded(in: tableView)
+        let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+        configureCell(cell, with: model)
+
+        return cell
+    }
+
+    @MainActor
+    private func configureCell(_ cell: UITableViewCell, with model: ConversationCellModel) {
+        switch model {
 
         case let .timeDivider(timeDivider):
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }

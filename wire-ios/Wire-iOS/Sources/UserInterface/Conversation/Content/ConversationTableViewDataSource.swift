@@ -20,6 +20,7 @@ import DifferenceKit
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireMessagingUI
 import WireSyncEngine
 
 extension Int: Differentiable {}
@@ -109,6 +110,8 @@ final class ConversationTableViewDataSource: NSObject {
     private let isChatBubbleSimpleEnabled: Bool
 
     private let wireCellsFactory: any WireCellsFactoryProtocol
+
+    private let cellProvider: ConversationCellProvider
 
     /// calculate cell sections
     ///
@@ -292,6 +295,7 @@ final class ConversationTableViewDataSource: NSObject {
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
         self.wireCellsFactory = wireCellsFactory
+        self.cellProvider = ConversationCellProvider()
 
         super.init()
 
@@ -719,10 +723,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
 
-            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-            model.configureCell(cell)
-            return cell
+            return cellProvider.provideCell(for: model, tableView: tableView, indexPath: indexPath)
 
         } else {
 
