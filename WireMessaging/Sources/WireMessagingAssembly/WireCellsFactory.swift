@@ -170,9 +170,7 @@ public extension WireCellsFactory {
             fileCache: fileCache
         )
 
-        return FilesHostingController<T>(
-            viewModel: viewModel
-        )
+        return UIHostingController(rootView: T(viewModel: viewModel))
     }
 
     @MainActor
