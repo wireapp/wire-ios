@@ -34,7 +34,7 @@ public final class RequestGeneratorStore {
 
     private let strategies: [AnyObject]
 
-    public init(strategies: [AnyObject], apiVersion: WireTransport.APIVersion?) {
+    public init(strategies: [AnyObject], apiVersion: WireTransport.APIVersion) {
 
         self.strategies = strategies
         self.apiVersion = apiVersion
@@ -46,10 +46,6 @@ public final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append {
-                        guard let apiVersion else {
-                            WireLogger.network.warn("BackendInfo.apiVersion is nil for requestGenerator, no request genereated", attributes: .safePublic)
-                            return nil
-                        }
                         return requestGenerator.nextRequest(for: apiVersion)
                     }
                 }
@@ -65,10 +61,6 @@ public final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append {
-                    guard let apiVersion else {
-                        WireLogger.network.warn("BackendInfo.apiVersion is nil for requestStrategy, no request generated", attributes: .safePublic)
-                        return nil
-                    }
                     return requestStrategy.nextRequest(for: apiVersion)
                 }
             }

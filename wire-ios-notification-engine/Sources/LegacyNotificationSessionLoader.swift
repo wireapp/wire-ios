@@ -35,7 +35,7 @@ public struct LegacyNotificationSessionLoader {
         case failedToLoadPersistenceStack(any Error)
         case failedToCheckBuildBlacklist(any Error)
         case buildIsBlacklisted(buildNumber: String)
-
+        case missingAPIVersion(message: String)
     }
 
     private let account: Account
@@ -299,8 +299,10 @@ public struct LegacyNotificationSessionLoader {
             lastEventIDRepository: lastEventIDRepository
         )
         
-        let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
-        
+        guard let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) else {
+            throw Failure.missingAPIVersion(message: "unexpected api version \(apiVersion)")
+        }
+
         let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy], apiVersion: transportAPIVersion)
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
