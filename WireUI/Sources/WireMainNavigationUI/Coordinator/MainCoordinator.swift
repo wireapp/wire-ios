@@ -452,7 +452,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             sidebar.selectedMenuItem = .init(mainMenuItem)
 
         case .files:
-
             sidebar.selectedMenuItem = .init(.files)
 
         case .archive:
