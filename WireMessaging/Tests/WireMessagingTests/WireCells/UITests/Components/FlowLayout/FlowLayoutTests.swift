@@ -37,7 +37,32 @@ class FlowLayoutTests: XCTestCase {
 
     @MainActor
     func testLeadingAlignment() {
-        let view = FlowLayout {
+        let view = FlowLayout(alignment: .leading) {
+            Rectangle()
+                .fill(.red)
+                .frame(width: 50, height: 50)
+
+            Rectangle()
+                .fill(.green)
+                .frame(width: 50, height: 30)
+
+            Rectangle()
+                .fill(.blue)
+                .frame(idealWidth: .infinity)
+                .frame(height: 70)
+        }
+        .background(Color.yellow)
+        .padding(8)
+        .frame(width: 350, height: 200)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+    }
+
+    @MainActor
+    func testTrailingAlignment() {
+        let view = FlowLayout(alignment: .trailing) {
             Rectangle()
                 .fill(.red)
                 .frame(width: 50, height: 50)

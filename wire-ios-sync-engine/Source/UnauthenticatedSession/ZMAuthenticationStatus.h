@@ -77,7 +77,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
 @property (nonatomic, readonly) NSUUID *authenticatedUserIdentifier;
-@property (nonatomic) NSData *profileImageData;
 
 @property (nonatomic) NSData *authenticationCookieData;
 

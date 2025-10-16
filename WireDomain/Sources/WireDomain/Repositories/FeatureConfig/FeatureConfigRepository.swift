@@ -123,10 +123,17 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: appLockFeatureConfig.status == .enabled
             )
 
+        case let .apps(cellsConfig):
+            return FeatureState(
+                name: .apps,
+                isEnabled: cellsConfig.status == .enabled
+            )
+
         case let .assetAuditLog(config):
-            // TODO: [WPB-20713]
-            assertionFailure("not implemented yet")
-            return nil
+            return FeatureState(
+                name: .assetAuditLog,
+                isEnabled: config.status == .enabled
+            )
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
