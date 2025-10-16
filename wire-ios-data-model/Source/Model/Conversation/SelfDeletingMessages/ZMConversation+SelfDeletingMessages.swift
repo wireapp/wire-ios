@@ -127,7 +127,7 @@ public extension ZMConversation {
         guard let context = managedObjectContext else { return nil }
         return LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
     }
-    
+
     private var isWireCellsEnabled: Bool {
         guard let context = managedObjectContext else { return false }
         let cellsFeature = LegacyFeatureRepository(context: context).fetchCells()
