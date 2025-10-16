@@ -855,7 +855,6 @@
 				WarningLabelViewTests.swift,
 				WirelessExpirationTimeFormatterTests.swift,
 				ZClientViewControllerTests.swift,
-				ZipFile/ZipFileTests.swift,
 			);
 			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
 		};

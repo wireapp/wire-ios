@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireLogging
 import WireMessagingAssembly
 import WireSyncEngine
+import WireUtilitiesPackage
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
@@ -63,10 +64,14 @@ extension ConversationInputBarViewController {
             }
         } else if urls.count == 1 {
             uploadFile(at: urls[0])
-        } else if let archiveURL = urls.zipFiles() {
-            uploadFile(at: archiveURL)
         } else {
-            zmLog.error("Cannot archive files at URLs: \(urls.description)")
+            do {
+                let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + "archive.zip")
+                try ZIPFoundationFileArchiver().zipResources(at: urls, into: archiveURL)
+                uploadFile(at: archiveURL)
+            } catch {
+                zmLog.error("Cannot archive files at URLs: \(urls)")
+            }
         }
     }
 
