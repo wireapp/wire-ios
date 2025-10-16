@@ -18,31 +18,20 @@
 
 import XCTest
 
-class SaveBackupFileBottomSheetPage: PageModel {
+class WebViewPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        saveToFilesOption
+        webViewLabel
     }
 
-    var saveToFilesOption: XCUIElement {
-        app.cells["Save to Files"]
+    private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+
+    var webViewLabel: XCUIElement {
+        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
     }
 
-    func getBackupFileName() -> String? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let dateString = formatter.string(from: Date())
-
-        let predicate = NSPredicate(format: "label BEGINSWITH %@", "WireBackup-\(dateString)")
-        let element = app.otherElements.matching(predicate).firstMatch
-
-        guard element.waitForExistence(timeout: 3) else { return nil }
-        return element.exists ? element.label : nil
+    @discardableResult
+    func webViewOpened(timeout: TimeInterval = 5) -> Bool {
+        Self.safariApp.webViews.firstMatch.waitForExistence(timeout: timeout)
     }
-
-    func tapSaveToFilesOnBottomSheet() throws -> OnMyiPhonePage {
-        saveToFilesOption.tap()
-        return try OnMyiPhonePage()
-    }
-
 }
