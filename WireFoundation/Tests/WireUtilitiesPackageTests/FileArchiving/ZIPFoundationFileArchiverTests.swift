@@ -109,5 +109,3 @@ struct ZIPFoundationFileArchiverTests {
     }
 
 }
-
-// TODO: test WireBackup manually
