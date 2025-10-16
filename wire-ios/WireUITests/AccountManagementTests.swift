@@ -38,7 +38,7 @@ final class AccountManagementTests: WireUITestCase {
         )
 
         let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
             .openSettings()
             .openOptionsMenu()
@@ -71,7 +71,7 @@ final class AccountManagementTests: WireUITestCase {
         )
 
         let verifyEmailPage = try app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
             .openSettings()
             .openAccountSettings()
