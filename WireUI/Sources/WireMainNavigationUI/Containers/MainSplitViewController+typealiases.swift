@@ -23,6 +23,7 @@ public extension MainSplitViewController {
     typealias ConversationListUI = TabController.ConversationListUI
     typealias ArchiveUI = TabController.ArchiveUI
     typealias SettingsUI = TabController.SettingsUI
+    typealias FilesUI = TabController.FilesUI
 
     typealias ConversationUI = TabController.ConversationUI
     typealias SettingsContentUI = UIViewController

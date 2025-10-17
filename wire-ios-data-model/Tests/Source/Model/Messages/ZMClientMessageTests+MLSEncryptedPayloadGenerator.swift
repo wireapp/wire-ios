@@ -90,7 +90,10 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
     func test_EncryptForTransport_AssetClientMessage() async throws {
         // Given
         let message = try await syncMOC.perform {
-            try self.syncConversation.appendImage(from: self.verySmallJPEGData()) as? ZMAssetClientMessage
+            try self.syncConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: self.verySmallJPEGData()),
+                nonce: UUID()
+            ) as? ZMAssetClientMessage
         }
 
         guard let message else {

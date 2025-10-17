@@ -17,24 +17,29 @@
 //
 
 import XCTest
-@testable import Wire
 
-final class ZipFileTests: XCTestCase {
+class VerifyEmailPage: PageModel {
 
-    func testThatFileURLsCanBeZipped() {
-        // GIVEN
-        let urls = ["not_animated.gif", "0x0.pdf", "sample.pkpass"].map {
-            urlForResource(inTestBundleNamed: $0)
-        }
-
-        // WHEN
-        let zipURL = urls.zipFiles(filename: "test.zip")
-
-        // THEN
-        XCTAssertNotNil(zipURL)
-        XCTAssertGreaterThan(zipURL!.fileSize!, 0)
-
-        try! FileManager.default.removeItem(atPath: zipURL!.path)
-        XCTAssertNil(zipURL?.fileSize)
+    override var pageMainElement: XCUIElement {
+        verifyEmailPageLabel
     }
+
+    var verifyEmailPageLabel: XCUIElement {
+        app.staticTexts["Verify email"]
+    }
+
+    var backToEmailUpdatePage: XCUIElement {
+        app.buttons["Email"]
+    }
+
+    var backToAccountSetting: XCUIElement {
+        app.buttons["Account"]
+    }
+
+    func goBacktoAccountSetting() throws -> AccountSettingsPage {
+        backToEmailUpdatePage.tap()
+        backToAccountSetting.tap()
+        return try AccountSettingsPage()
+    }
+
 }

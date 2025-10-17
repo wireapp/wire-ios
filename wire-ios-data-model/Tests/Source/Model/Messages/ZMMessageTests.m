@@ -1100,24 +1100,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNil(message.knockMessageData);
 }
 
-- (void)testThatItReturnsTheOriginalImageDataWhenTheMediumDataIsNotAvailable;
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    NSData *jpegData = [self.verySmallJPEGData wr_imageDataWithoutMetadataAndReturnError:nil];
-    id<ZMConversationMessage> temporaryMessage = [conversation appendMessageWithImageData:jpegData];
-    
-    // when
-    NSData *imageData = [temporaryMessage imageMessageData].imageData;
-    
-    // then
-    XCTAssertNotNil(imageData);
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO:  [Bill] check why 1 btye is removed from jpegData?
-    XCTAssertEqual(imageData.length, jpegData.length + 1);
-}
-
 - (void)testThatFlagIsSetWhenSenderIsTheOnlyUser
 {
     // given

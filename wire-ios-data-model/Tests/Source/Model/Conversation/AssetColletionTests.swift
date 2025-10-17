@@ -90,7 +90,10 @@ final class AssetColletionTests: ModelObjectsTests {
         var offset: TimeInterval = 0
         var messages = [ZMMessage]()
         (0 ..< count).forEach { _ in
-            let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
+            let message = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            ) as! ZMMessage
             offset += 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
             messages.append(message)
@@ -299,7 +302,8 @@ final class AssetColletionTests: ModelObjectsTests {
     func testThatItExcludesDefinedCategories_PreCategorized() {
         // given
         let data = data(forResource: "animated", extension: "gif")!
-        _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
+        let image = SendableImage(name: "picture.gif", utType: .gif, data: data)
+        _ = try! conversation.appendImage(image, nonce: UUID()) as! ZMAssetClientMessage
 
         // when
         conversation.allMessages.forEach { _ = $0.cachedCategory }
@@ -319,7 +323,8 @@ final class AssetColletionTests: ModelObjectsTests {
         // given
         insertAssetMessages(count: 1)
         let data = data(forResource: "animated", extension: "gif")!
-        _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
+        let image = SendableImage(name: "picture.gif", utType: .gif, data: data)
+        _ = try! conversation.appendImage(image, nonce: UUID()) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
         // when
@@ -340,7 +345,8 @@ final class AssetColletionTests: ModelObjectsTests {
         insertAssetMessages(count: 1)
 
         let data = data(forResource: "animated", extension: "gif")!
-        _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
+        let image = SendableImage(name: "picture.gif", utType: .gif, data: data)
+        _ = try! conversation.appendImage(image, nonce: UUID()) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
         // when
