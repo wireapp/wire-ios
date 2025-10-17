@@ -16,36 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
 import XCTest
 
-class WelcomePage: PageModel {
+class WebViewPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        emailTextField
+        webViewLabel
     }
 
-    var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
-    }
+    private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
 
-    var emailTextField: XCUIElement {
-        app.textFields[Locators.WelcomePage.emailTextField.rawValue]
-    }
-
-    var setBackendLabel: XCUIElement {
-        app.descendants(matching: .any)["onPremInfoButton"]
-    }
-
-    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
-        try typeEmailOrSSO(input)
-        nextButton.tap()
-        return try LoginPage()
+    var webViewLabel: XCUIElement {
+        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
     }
 
     @discardableResult
-    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
-        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
-        return self
+    func webViewOpened(timeout: TimeInterval = 5) -> Bool {
+        Self.safariApp.webViews.firstMatch.waitForExistence(timeout: timeout)
     }
 }
