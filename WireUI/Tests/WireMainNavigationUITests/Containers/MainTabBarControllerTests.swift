@@ -31,7 +31,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = MainTabBarController(showMeetings: false, showFiles: true)
+        sut = MainTabBarController(showMeetings: false, showFiles: false)
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
@@ -81,7 +81,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.archiveUI = archiveUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [archiveUI])
     }
 
@@ -112,7 +112,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.settingsUI = settingsUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController)
+        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [settingsUI])
     }
 
@@ -137,6 +137,7 @@ final class MainTabBarControllerTests: XCTestCase {
     @MainActor
     func testFilesIsInstalled() throws {
         // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
         let filesUI = UIViewController()
 
         // When
@@ -150,6 +151,7 @@ final class MainTabBarControllerTests: XCTestCase {
     @MainActor
     func testFilesIsReleased() async throws {
         // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
         weak var weakSettings: UIViewController?
         sut.filesUI = {
             let settings = UIViewController()
@@ -175,5 +177,15 @@ final class MainTabBarControllerTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut, named: "dark", testName: "dark")
+    }
+
+    @MainActor
+    func testAppearanceWithFilesTab() {
+        let sut = MainTabBarControllerPreview(showFiles: true)
+        snapshotHelper
+            .verify(matching: sut, named: "light", testName: "tabBarWithFilesTabItem")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark", testName: "tabBarWithFilesTabItem")
     }
 }
