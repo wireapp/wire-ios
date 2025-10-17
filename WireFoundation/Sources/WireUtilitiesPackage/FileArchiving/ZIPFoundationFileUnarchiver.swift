@@ -16,21 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import ZipArchive
+public import Foundation
 
-struct ZipArchiveFileUnarchiver: FileUnarchiverProtocol {
+public struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+    public init() {}
 
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
-
-        guard success else {
-            throw FileArchivingError.unknown
-        }
-
+    public func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
+
 }

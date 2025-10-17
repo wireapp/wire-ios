@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 enum CallSnapshotTestFixture {
@@ -24,7 +25,7 @@ enum CallSnapshotTestFixture {
         conversationId: AVSIdentifier,
         user: ZMUser,
         callCenter: WireCallCenterV3,
-        messageProtocol: MessageProtocol = .mls
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callMember = AVSCallMember(client: AVSClient(
@@ -62,7 +63,7 @@ enum CallSnapshotTestFixture {
         clients: [AVSClient],
         state: CallState = .established,
         activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = [],
-        messageProtocol: MessageProtocol = .mls
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> CallSnapshot {
 
         let callParticipantsSnapshot = CallParticipantsSnapshot(

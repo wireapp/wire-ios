@@ -17,16 +17,28 @@
 //
 
 import Foundation
-import ZipArchive
 
-extension [URL] {
-    func zipFiles(filename: String = "archive.zip") -> URL? {
-        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+extension FileManager {
 
-        let paths = map(\.path)
+    func temporaryDirectory(
+        appropriateFor: URL? = nil,
+        create: Bool = false
+    ) throws -> URL {
 
-        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
+        let appropriateFor = try appropriateFor ?? url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
 
-        return zipSucceded ? archiveURL : nil
+        return try url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: appropriateFor,
+            create: false
+        )
+
     }
+
 }
