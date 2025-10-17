@@ -18,31 +18,28 @@
 
 import XCTest
 
-class SaveBackupFileBottomSheetPage: PageModel {
+class VerifyEmailPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        saveToFilesOption
+        verifyEmailPageLabel
     }
 
-    var saveToFilesOption: XCUIElement {
-        app.cells["Save to Files"]
+    var verifyEmailPageLabel: XCUIElement {
+        app.staticTexts["Verify email"]
     }
 
-    func getBackupFileName() -> String? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let dateString = formatter.string(from: Date())
-
-        let predicate = NSPredicate(format: "label BEGINSWITH %@", "WireBackup-\(dateString)")
-        let element = app.otherElements.matching(predicate).firstMatch
-
-        guard element.waitForExistence(timeout: 3) else { return nil }
-        return element.exists ? element.label : nil
+    var backToEmailUpdatePage: XCUIElement {
+        app.buttons["Email"]
     }
 
-    func tapSaveToFilesOnBottomSheet() throws -> OnMyiPhonePage {
-        saveToFilesOption.tap()
-        return try OnMyiPhonePage()
+    var backToAccountSetting: XCUIElement {
+        app.buttons["Account"]
+    }
+
+    func goBacktoAccountSetting() throws -> AccountSettingsPage {
+        backToEmailUpdatePage.tap()
+        backToAccountSetting.tap()
+        return try AccountSettingsPage()
     }
 
 }
