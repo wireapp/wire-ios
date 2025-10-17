@@ -80,27 +80,6 @@ final class ConversationMessageCellTableViewAdapter<
         bottom.priority = UILayoutPriority(999)
 
         self.existingHorizontalConstraints = [leading, trailing]
-        self.ownMessagesHorizontalConstraints = [
-            cellView.leadingAnchor
-                .constraint(
-                    greaterThanOrEqualTo: contentView.leadingAnchor,
-                    constant: ChatBubbleLayoutConfig.ownMessageMinimumLeadingDistance
-                ),
-            cellView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            )
-        ]
-        self.othersMessagesHorizontalConstraints = [
-            cellView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: conversationHorizontalMargins.left
-            ),
-            cellView.trailingAnchor.constraint(
-                lessThanOrEqualTo: contentView.trailingAnchor,
-                constant: -ChatBubbleLayoutConfig.otherMessageMinimumTrailingDistance
-            )
-        ]
 
         NSLayoutConstraint.activate([
             top,
@@ -131,12 +110,62 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = cellDescription?.topMargin ?? 0
         bottom.constant = cellDescription?.bottomMargin ?? 0
+        configureChatBubbleConstraints()
+    }
 
+    private func configureChatBubbleConstraints() {
         // Deactivate all horizontal constraints before applying new ones.
         NSLayoutConstraint.deactivate(
             ownMessagesHorizontalConstraints +
                 othersMessagesHorizontalConstraints
         )
+        let othersMessagesLeadingConstraint = cellView.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: isCellAlreadyAligned() ? 0 : conversationHorizontalMargins.left
+        )
+
+        if isBubbleHasMaximumWidth() {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        equalTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+
+        } else {
+            ownMessagesHorizontalConstraints = [
+                cellView.leadingAnchor
+                    .constraint(
+                        greaterThanOrEqualTo: contentView.leadingAnchor,
+                        constant: conversationHorizontalMargins.chatBubbleMinimumLeading
+                    ),
+                cellView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.right
+                )
+            ]
+
+            othersMessagesHorizontalConstraints = [
+                othersMessagesLeadingConstraint,
+                cellView.trailingAnchor.constraint(
+                    lessThanOrEqualTo: contentView.trailingAnchor,
+                    constant: -conversationHorizontalMargins.chatBubbleMinimumTrailing
+                )
+            ]
+        }
 
         if cellDescription?.shouldAlignMessageContentForBubbles == true {
             if cellDescription?.message?.isSentBySelfUser == true {
@@ -150,6 +179,16 @@ final class ConversationMessageCellTableViewAdapter<
             setupExistingLayout()
         }
         setNeedsLayout()
+    }
+
+    private func isCellAlreadyAligned() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isCellAlreadyAligned
+    }
+
+    private func isBubbleHasMaximumWidth() -> Bool {
+        guard let cellDescription else { return false }
+        return cellDescription.isBubbleHasMaximumWidth
     }
 
     private func setupExistingLayout() {

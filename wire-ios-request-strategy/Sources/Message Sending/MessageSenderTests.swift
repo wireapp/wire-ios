@@ -463,6 +463,7 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
         let messageSendingStatus = Payload.MLSMessageSendingStatus(
@@ -494,6 +495,7 @@ final class MessageSenderTests: MessagingTestBase {
         try await messageSender.sendMessage(message: message)
 
         // then test completes
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
     }
 
     func testThatWhenSendingMlsMessageSucceeds_thenCommitPendingProposalsInGroup() async throws {
@@ -501,6 +503,7 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
         let messageSendingStatus = Payload.MLSMessageSendingStatus(
@@ -533,6 +536,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         // then
         XCTAssertEqual([Arrangement.Scaffolding.groupID], arrangement.mlsService.commitPendingProposalsIn_Invocations)
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
     }
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
@@ -540,6 +544,7 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
         let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = NetworkError.errorDecodingResponse(response)
@@ -573,8 +578,8 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -606,8 +611,8 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -634,6 +639,7 @@ final class MessageSenderTests: MessagingTestBase {
         let invocation = arrangement.initiateResetMLSConversationUseCase.invokeGroupIDEpoch_Invocations.first
         XCTAssertEqual(invocation?.epoch, 0)
         XCTAssertEqual(invocation?.groupID, Arrangement.Scaffolding.groupID)
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
     }
 
     func testThatWhenSendingMlsMessageFailsWithResetMLSConversationError_AndFeatureFlagIsOff_JustThrows() async throws {
@@ -641,8 +647,8 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = SendMLSMessageFailure.mlsInvalidLeafNodeIndex(message: "Test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -669,6 +675,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         XCTAssertEqual(arrangement.initiateResetMLSConversationUseCase.invokeGroupIDEpoch_Invocations.count, 0)
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
     }
 
     func testThatWhenSendingMlsMessageWithoutMlsService_thenThrowError() async throws {
@@ -676,6 +683,7 @@ final class MessageSenderTests: MessagingTestBase {
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -700,6 +708,7 @@ final class MessageSenderTests: MessagingTestBase {
         // given
         await syncMOC.performGrouped {
             self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
         }
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -708,7 +717,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil
         )
 
-        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
@@ -719,6 +728,45 @@ final class MessageSenderTests: MessagingTestBase {
         await assertItThrows(error: MessageSendError.missingGroupID) {
             try await messageSender.sendMessage(message: message)
         }
+
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
+    }
+
+    func testThatWhenSendingMlsMessageOnAPendingJoinConversation_CallsReEstablishPendingJoin() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .pendingJoinAfterReset
+        }
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
+        let messageSendingStatus = Payload.MLSMessageSendingStatus(
+            time: Date(),
+            events: [],
+            failedToSend: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        try await messageSender.sendMessage(message: message)
+
+        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 1)
     }
 
     // MARK: - Helpers
@@ -743,7 +791,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
     }
 
-    struct Arrangement {
+    class Arrangement {
 
         enum Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
@@ -785,6 +833,7 @@ final class MessageSenderTests: MessagingTestBase {
         let initiateResetMLSConversationUseCase = WireRequestStrategySupport
             .MockInitiateResetMLSConversationUseCaseProtocol()
         let featureRepository = MockLegacyFeatureRepositoryInterface()
+        var apiVersion: APIVersion?
 
         init(coreDataStack: CoreDataStack) {
             self.coreDataStack = coreDataStack
@@ -797,11 +846,11 @@ final class MessageSenderTests: MessagingTestBase {
                 status: .enabled,
                 config: .init(mlsConversationReset: true)
             )
-
+            mlsService.reEstablishPendingGroupGroupID_MockMethod = { _ in }
         }
 
         func withApiVersionResolving(to apiVersion: APIVersion?) -> Arrangement {
-            BackendInfo.apiVersion = apiVersion
+            self.apiVersion = apiVersion
             return self
         }
 
@@ -935,7 +984,8 @@ final class MessageSenderTests: MessagingTestBase {
                     context: coreDataStack.syncContext,
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-                    featureRepository: featureRepository
+                    featureRepository: featureRepository,
+                    apiVersion: apiVersion
                 )
             )
         }

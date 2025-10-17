@@ -76,7 +76,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         let targetConversation = conversation ?? groupConversation!
         let message: ZMAssetClientMessage!
         if isImage {
-            message = try! targetConversation.appendImage(from: imageData) as? ZMAssetClientMessage
+            message = try! targetConversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData),
+                nonce: UUID()
+            ) as? ZMAssetClientMessage
         } else {
             let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(
                 forResource: "Lorem Ipsum",

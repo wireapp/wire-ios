@@ -17,7 +17,9 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -173,6 +175,37 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             presentParticipantsViewController(participantsController, from: sourceView)
         }
     }
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: any ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
+    ) {
+        switch deletionType {
+        case .everywhere:
+            Task {
+                let deleteNodesUseCase = wireCellsFactory.makeDeleteNodesUseCase()
+                do {
+                    try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
+                    WireLogger.conversation.info(
+                        "Deleted files for message",
+                        attributes: [.nonce: message.nonce?.uuidString]
+                    )
+                } catch {
+                    WireLogger.conversation
+                        .error(
+                            "Unable to delete files: \(String(describing: error))",
+                            attributes: [.nonce: message.nonce?.uuidString], .safePublic
+                        )
+                }
+            }
+        case .local:
+            // no op, related files will still show up for self user (as aligned other clients)
+            break
+        }
+    }
+
 }
 
 extension ConversationViewController {

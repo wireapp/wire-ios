@@ -104,7 +104,14 @@ final class MessageToolboxView: UIView {
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorContainer = UIView()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
-    private let messageFailureView = MessageSendFailureView()
+
+    private lazy var messageFailureView: MessageSendFailureView = {
+        let view = MessageSendFailureView(ischatBubbleSimpleEnabled: isChatBubbleSimpleEnabled)
+        view.tapHandler = { [weak self] _ in
+            self?.resendMessage()
+        }
+        return view
+    }()
 
     private lazy var statusLabel: UILabel = {
         let label = UILabel()
@@ -194,10 +201,6 @@ final class MessageToolboxView: UIView {
         countdownView.translatesAutoresizingMaskIntoConstraints = false
         countdownContainer.addSubview(countdownView)
 
-        messageFailureView.tapHandler = { [weak self] _ in
-            self?.resendMessage()
-        }
-
         [
             detailsLabel,
             timestampSeparatorContainer,
@@ -208,7 +211,7 @@ final class MessageToolboxView: UIView {
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             [
                 contentStack,
                 messageFailureView
@@ -280,7 +283,7 @@ final class MessageToolboxView: UIView {
             countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
 
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             NSLayoutConstraint.activate(chatBubbleConstraints)
         } else {
             separatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -363,13 +366,9 @@ final class MessageToolboxView: UIView {
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
-            statusSeparatorContainer.isHidden = true
-            countdownContainer.isHidden = true
-            countdownLabel.isHidden = true
-            timestampSeparatorContainer.isHidden = false
+            setAllContentHidden()
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString)
-            editedLabel.isHidden = true
 
         case let .details(timestamp, state, countdown):
             detailsLabel.text = timestamp
@@ -417,6 +416,10 @@ final class MessageToolboxView: UIView {
         case nil:
             statusContainerView.isHidden = true
         }
+    }
+
+    private var isChatBubbleSimpleEnabled: Bool {
+        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
     }
 
     // MARK: - Timer

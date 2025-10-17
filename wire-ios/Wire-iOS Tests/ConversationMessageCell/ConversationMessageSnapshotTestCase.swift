@@ -185,7 +185,9 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,
-            userDefaults: mockUserDefaults
+            userDefaults: mockUserDefaults,
+            isChatBubbleSimpleEnabled: false,
+            wireCellsFactory: MockWireCellsFactoryProtocol()
         )
 
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView(message) }

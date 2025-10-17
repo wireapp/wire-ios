@@ -49,7 +49,7 @@ class AVSBridgingTests: MessagingTest {
 
         userID = AVSIdentifier.stub
         clientID = UUID().uuidString
-        let avsWrapper = MockAVSWrapper(userId: userID, clientId: clientID, observer: nil)
+        let avsWrapper = MockAVSWrapper(userId: userID, clientId: clientID, observer: nil, isFederationEnabled: false)
         callCenter = WireCallCenterV3(
             userId: userID,
             clientId: clientID,
@@ -57,7 +57,9 @@ class AVSBridgingTests: MessagingTest {
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock(),
-            notificationCenter: .init()
+            notificationCenter: .init(),
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
         callCenterRef = Unmanaged.passUnretained(callCenter).toOpaque()
     }

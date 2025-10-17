@@ -29,8 +29,27 @@ class SettingsPage: PageModel {
         return elementsQuery["Account"]
     }
 
+    var optionsMenu: XCUIElement {
+        let elementsQuery = app.cells
+        return elementsQuery["Options"]
+    }
+
+    var conversationsTab: XCUIElement {
+        app.buttons["bottomBarRecentListButton"]
+    }
+
     func openAccountSettings() throws -> AccountSettingsPage {
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
+    }
+
+    func openOptionsMenu() throws -> OptionsOnSettingsPage {
+        optionsMenu.tap()
+        return try OptionsOnSettingsPage()
+    }
+
+    func switchToConversationsTab() throws -> ConversationsPage {
+        conversationsTab.tap()
+        return try ConversationsPage()
     }
 }

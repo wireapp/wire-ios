@@ -22,10 +22,16 @@ import WireSyncEngine
 extension BlacklistReason {
     var blockerViewControllerContext: BlockerViewControllerContext {
         switch self {
-        case .appVersionBlacklisted, .clientAPIVersionObsolete:
+        case .appVersionBlacklisted:
             .blacklist
         case .backendAPIVersionObsolete:
-            .backendNotSupported
+            .backendObsolete
+        case .clientAPIVersionObsolete:
+            .clientObsolete
+        case let .networkError(code: code):
+            .networkError(code: code)
+        case .genericError:
+            .genericError
         }
     }
 }

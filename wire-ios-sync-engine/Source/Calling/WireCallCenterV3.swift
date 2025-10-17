@@ -104,6 +104,9 @@ public class WireCallCenterV3: NSObject {
 
     private(set) var isEnabled = true
 
+    let localDomain: String?
+    let isFederationEnabled: Bool
+
     // MARK: - Initialization
 
     deinit {
@@ -127,18 +130,27 @@ public class WireCallCenterV3: NSObject {
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport,
-        notificationCenter: NotificationCenter
+        notificationCenter: NotificationCenter,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
         self.notificationCenter = notificationCenter
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
 
         super.init()
 
         let observer = Unmanaged.passUnretained(self).toOpaque()
-        self.avsWrapper = avsWrapper ?? AVSWrapper(userId: userId, clientId: clientId, observer: observer)
+        self.avsWrapper = avsWrapper ?? AVSWrapper(
+            userId: userId,
+            clientId: clientId,
+            observer: observer,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     func tearDown() {
@@ -192,6 +204,7 @@ extension WireCallCenterV3 {
         let group = conversation.conversationType == .group
 
         callSnapshots[conversationId] = CallSnapshot(
+            messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,

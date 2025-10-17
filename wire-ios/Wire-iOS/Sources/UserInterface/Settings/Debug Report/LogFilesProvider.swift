@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireSyncEngine
 import WireSystem
@@ -128,7 +129,7 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Helpers
 
-    var info: String {
+    func info(includingJournal: Bool = false) -> String {
         let date = Date()
 
         var body = """
@@ -139,6 +140,10 @@ struct LogFilesProvider: LogFilesProviding {
         Date: \(date.transportString())
         """
 
+        if includingJournal {
+            body += "\n\nJournal:\n\(journalInfos())"
+        }
+
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
@@ -146,9 +151,23 @@ struct LogFilesProvider: LogFilesProviding {
         return body
     }
 
+    private func journalInfos() -> String {
+        guard let selfUserID = ZMUserSession.shared()?.selfUser.remoteIdentifier else {
+            return "Not Available"
+        }
+
+        let journal = Journal(
+            userID: selfUserID,
+            storage: UserDefaults.shared()
+        )
+
+        return journal.values().compactMap { "\($0): \($1)" }.joined(separator: "\n")
+    }
+
     private func createInfoFile(at url: URL) throws -> URL {
         let infoFileURL = url.appendingPathComponent("info.txt")
 
+        let info = self.info(includingJournal: true)
         try info.write(
             to: infoFileURL,
             atomically: true,

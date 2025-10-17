@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireData
+@preconcurrency import WireDataModel
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
@@ -28,8 +29,10 @@ struct ZClientControllerBuilder {
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
-    let environment: WireTransport.BackendEnvironment
+    let legacyEnvironment: WireTransport.BackendEnvironment
+    let newEnvironment: WireNetwork.BackendEnvironment2?
 
+    @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
@@ -42,22 +45,20 @@ struct ZClientControllerBuilder {
         return viewController
     }
 
+    @MainActor
     func callAsFunction(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         build(router: router)
     }
 
+    @MainActor
     private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
-        if DeveloperFlag.wireCellsManualAuthentication.isOn {
-            WireCellsFactory(
-                serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-                accessToken: ManualTokenProvider()
-            )
-        } else {
-            WireCellsFactory(
-                serverURL: environment.backendURL,
-                accessToken: DefaultAccessTokenProvider(userSession: userSession)
-            )
-        }
+        WireCellsFactory(
+            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
+            // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
+            accessToken: DefaultAccessTokenProvider(userSession: userSession),
+            fileCache: userSession.fileAssetCache,
+            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
+        )
     }
 }
 
@@ -82,12 +83,18 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
     }
 }
 
-private struct ManualTokenProvider: AccessTokenProvider {
+extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
 
-    func accessToken() async throws -> WireCellsAccessToken {
-        WireCellsAccessToken(
-            token: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
-            expirationDate: Date.distantFuture
-        )
+private struct DefaultContextProvider: ManagedObjectContextProvider {
+
+    let contextProvider: any ContextProvider
+
+    var viewContext: NSManagedObjectContext {
+        contextProvider.viewContext
     }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
+
 }

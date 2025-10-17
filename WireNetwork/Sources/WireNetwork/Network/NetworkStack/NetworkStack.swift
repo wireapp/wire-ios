@@ -23,10 +23,16 @@ import WireLogging
 /// High level access to a specific backend with automatic api
 /// version resolution.
 
-public final class NetworkStack {
+public actor NetworkStack {
 
-    let backendEnvironment: BackendEnvironment2
-    private(set) var proxyCredentials: ProxyCredentials?
+    public typealias NetworkServices = (
+        rest: NetworkService,
+        webSocket: NetworkService,
+        blacklist: NetworkService
+    )
+
+    public nonisolated let backendEnvironment: BackendEnvironment2
+    public private(set) var proxyCredentials: ProxyCredentials?
 
     let minTLSVersion: TLSVersion
     let preferredAPIVersion: APIVersion?
@@ -34,13 +40,13 @@ public final class NetworkStack {
     private var state: NetworkState
     private var backendMetadata: ResolvedBackendMetadata?
 
-    public var networkServices: (rest: NetworkService, webSocket: NetworkService) {
+    public var networkServices: NetworkServices {
         get throws {
             switch state {
             case .awaitingProxyCredentials:
                 throw NetworkStackError.proxyCredentialsRequired
-            case let .ready(rest, webSocket):
-                (rest, webSocket)
+            case let .ready(services):
+                services
             }
         }
     }
@@ -56,15 +62,12 @@ public final class NetworkStack {
         self.preferredAPIVersion = preferredAPIVersion
 
         do {
-            let (restService, webSocketService) = try NetworkService.makeServices(
+            let services = try NetworkService.makeServices(
                 backendConfig: backendEnvironment.config,
                 minTLSVersion: minTLSVersion,
                 proxyCredentials: proxyCredentials
             )
-            self.state = .ready(
-                rest: restService,
-                webSocket: webSocketService
-            )
+            self.state = .ready(services)
         } catch .proxyCredentialsRequired {
             self.state = .awaitingProxyCredentials
         } catch {
@@ -75,25 +78,16 @@ public final class NetworkStack {
 
     // MARK: - Methods
 
-    func setProxyCredentials(
-        username: String,
-        password: String
-    ) throws {
-        proxyCredentials = ProxyCredentials(
-            username: username,
-            password: password
-        )
+    public func setProxyCredentials(proxyCredentials: ProxyCredentials) throws {
+        self.proxyCredentials = proxyCredentials
 
-        let (restService, webSocketService) = try NetworkService.makeServices(
+        let services = try NetworkService.makeServices(
             backendConfig: backendEnvironment.config,
             minTLSVersion: minTLSVersion,
             proxyCredentials: proxyCredentials
         )
 
-        state = .ready(
-            rest: restService,
-            webSocket: webSocketService
-        )
+        state = .ready(services)
     }
 
     public func resolvedAPIVersion() async throws -> APIVersion {
@@ -104,6 +98,13 @@ public final class NetworkStack {
     public func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
         if let backendMetadata {
             return backendMetadata
+        }
+
+        // Simulate errors for testing.
+        if DeveloperOverrides.obsoleteBackendEnv == backendEnvironment.title {
+            throw NetworkStackError.backendAPIVersionObsolete
+        } else if DeveloperOverrides.obsoleteClientEnv == backendEnvironment.title {
+            throw NetworkStackError.clientAPIVersionObsolete
         }
 
         let api = BackendMetadataAPIBuilder(networkService: try networkServices.rest).makeAPI()
@@ -130,6 +131,6 @@ public final class NetworkStack {
 private enum NetworkState {
 
     case awaitingProxyCredentials
-    case ready(rest: NetworkService, webSocket: NetworkService)
+    case ready(NetworkStack.NetworkServices)
 
 }

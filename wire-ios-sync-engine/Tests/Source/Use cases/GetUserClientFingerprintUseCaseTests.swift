@@ -174,7 +174,8 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         return GetUserClientFingerprintUseCase(
             proteusProvider: mockProteusProvider,
             sessionEstablisher: mockSessionEstablisher,
-            managedObjectContext: syncMOC
+            managedObjectContext: syncMOC,
+            metadata: .mock()
         )
     }
 

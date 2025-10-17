@@ -31,6 +31,7 @@ protocol UserSessionLoaderDelegate: AnyObject {
 final class UserSessionLoader {
 
     private let account: Account
+    private let accountManager: AccountManager
     private let sharedContainerURL: URL
     private let legacyEnvironment: WireTransport.BackendEnvironment
     private let minTLSVersion: String?
@@ -52,6 +53,7 @@ final class UserSessionLoader {
 
     init(
         account: Account,
+        accountManager: AccountManager,
         sharedContainerURL: URL,
         legacyEnvironment: WireTransport.BackendEnvironment,
         minTLSVersion: String?,
@@ -66,6 +68,7 @@ final class UserSessionLoader {
         isDeveloperModeEnabled: Bool
     ) throws {
         self.account = account
+        self.accountManager = accountManager
         self.sharedContainerURL = sharedContainerURL
         self.legacyEnvironment = legacyEnvironment
         self.minTLSVersion = minTLSVersion
@@ -89,9 +92,24 @@ final class UserSessionLoader {
     }
 
     @MainActor
-    func load() async throws -> ZMUserSession {
-        // Get the stored environment for this account.
-        let backendEnvironment = try fetchBackendEnvironment()
+    func load(newEnvironment: NewEnvironment?) async throws -> ZMUserSession {
+        // Persist the new environment.
+        if let newEnvironment {
+            try await storeNewEnvironment(newEnvironment)
+        }
+
+        // Get the environment for this account.
+        let backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
+            environment
+        } else {
+            try fetchBackendEnvironment()
+        }
+
+        // Update account metadata.
+        if backendEnvironment.environmentType != .default {
+            account.backendName = backendEnvironment.title
+            accountManager.addOrUpdate(account)
+        }
 
         // Retrieve proxy credentials if needed.
         var proxyCredentials: WireNetwork.ProxyCredentials?
@@ -111,10 +129,17 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata = try await resolveBackendMetadata(with: networkStack)
+        let metadata: ResolvedBackendMetadata = if let newMetadata = newEnvironment?.metadata {
+            newMetadata
+        } else {
+            try await resolveBackendMetadata(with: networkStack)
+        }
 
         // Load persistence stack.
-        let coreDataStack = try await loadPersistenceStack()
+        let coreDataStack = try await loadPersistenceStack(
+            localDomain: metadata.domain,
+            isFederationEnabled: metadata.isFederationEnabled
+        )
 
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
@@ -123,7 +148,27 @@ final class UserSessionLoader {
         )
 
         // Load network stack.
-        let networkServices = try networkStack.networkServices
+        // TODO: [WPB-20310] require proxy credentials if missing
+        let networkServices = try await networkStack.networkServices
+
+        // Store any new cookies.
+        let cookieStorage = CookieStorage(
+            userID: accountID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: Keychain()
+        )
+
+        if let cookies = newEnvironment?.cookies {
+            try await cookieStorage.storeCookies(cookies)
+        }
+
+        // Check if this backend supports MLS.
+        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            networkService: networkServices.rest,
+            cookieStorage: cookieStorage,
+            apiVersion: metadata.apiVersion
+        )
+        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
 
         // Create user session.
         let userSession = await createUserSession(
@@ -131,14 +176,53 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
+            blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            cookieStorage: cookieStorage
         )
 
+        // Check if this build is blacklisted.
+        if try await isBuildBlacklisted(userSession: userSession) {
+            await userSession.close(deleteCookie: false)
+            throw Failure.buildIsBlacklisted
+        }
+
         // Perform pending migrations.
-        try await performPendingMigrations(userSession: userSession)
+        do {
+            try await performPendingMigrations(
+                userSession: userSession,
+                localDomain: metadata.domain
+            )
+        } catch {
+            await userSession.close(deleteCookie: false)
+            throw error
+        }
 
         return userSession
+    }
+
+    private func storeNewEnvironment(_ environment: NewEnvironment) async throws {
+        do {
+            try backendStore.storeBackendEnvironment(
+                environment.backendEnvironment,
+                for: accountID
+            )
+
+            if
+                let proxyConfig = environment.backendEnvironment.config.proxyConfig,
+                let credentials = environment.proxyCredentials {
+                let store = ProxyCredentialStore()
+                try await store.storeCredentials(
+                    host: proxyConfig.host,
+                    port: proxyConfig.port,
+                    username: credentials.username,
+                    password: credentials.password
+                )
+            }
+        } catch {
+            throw Failure.failedToStoreNewEnvironment(error)
+        }
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2 {
@@ -191,7 +275,6 @@ final class UserSessionLoader {
             let legacyAPIVersion = BackendInfo.apiVersion,
             let legacyDomain = BackendInfo.domain {
             // We're on the update path, use the legacy metadata.
-            // TODO: [WPB-19626] check... need isMLSEnabled too?
             prevMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
@@ -200,15 +283,30 @@ final class UserSessionLoader {
         }
 
         // Get new metadata.
-        let newMetadata = try await networkStack.resolvedBackendMetadata()
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            let metadata = try await networkStack.resolvedBackendMetadata()
+            newMetadata = ResolvedBackendMetadata(
+                apiVersion: metadata.apiVersion,
+                domain: metadata.domain,
+                isFederationEnabled: metadata.isFederationEnabled
+            )
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            // To allow offline browsing fallback to previous metadata if possible.
+            if let prevMetadata {
+                newMetadata = prevMetadata
+            } else {
+                throw Failure.noResolvedBackendMetadataAvailable
+            }
+        }
 
         if let prevMetadata {
             if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // TODO: [WPB-14630] mark federation migration needed
-            }
-
-            if prevMetadata.apiVersion < .v3, newMetadata.apiVersion >= .v3 {
-                // TODO: [WPB-14630] mark access token migration needed
+                // Now that federation is enabled we'll start storing domains
+                // on entities in the database. We'll therefore need to add
+                // the local domain to all existing entities so they're
+                // fully qualified.
+                journal[.isFederationMigrationRequired] = true
             }
         }
 
@@ -225,11 +323,16 @@ final class UserSessionLoader {
         return newMetadata
     }
 
-    private func loadPersistenceStack() async throws -> CoreDataStack {
+    private func loadPersistenceStack(
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) async throws -> CoreDataStack {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         if coreDataStack.needsMigration {
@@ -292,9 +395,10 @@ final class UserSessionLoader {
         proxyCredentials: WireNetwork.ProxyCredentials?,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
+        blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
-
+        cookieStorage: CookieStorage
     ) async -> ZMUserSession {
         let selfClientID = await coreDataStack.viewContext.perform {
             ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
@@ -305,7 +409,7 @@ final class UserSessionLoader {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             cookieStorage: legacyEnvironment.cookieStorage(for: account),
-            reachability: legacyEnvironment.reachabilityWrapper(),
+            reachability: legacyEnvironment.reachabilityWrapper(enabled: true),
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: buildNumber,
@@ -321,9 +425,11 @@ final class UserSessionLoader {
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
+            sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            localDomain: backendMetadata.domain
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -349,7 +455,9 @@ final class UserSessionLoader {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: backendMetadata.domain,
+            isBackendMLSEnabled: journal[.isBackendMLSEnabled]
         )
 
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
@@ -380,12 +488,14 @@ final class UserSessionLoader {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: accountID
+            userID: accountID,
+            localDomain: backendMetadata.domain
         )
 
         let proteusToMLSMigrationCoordinator = ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: accountID
+            userID: accountID,
+            apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
             storage: sharedUserDefaults,
@@ -415,6 +525,7 @@ final class UserSessionLoader {
             userId: accountID,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,
@@ -439,10 +550,12 @@ final class UserSessionLoader {
             recurringActionService: recurringActionService,
             dependencies: dependencies,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
 
         userSession.setup(
+            apiVersion: backendMetadata.apiVersion,
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
@@ -456,8 +569,69 @@ final class UserSessionLoader {
         return userSession
     }
 
-    private func performPendingMigrations(userSession: ZMUserSession) async throws {
-        // TODO: [WPB-14630] perform metadata migrations
+    private func isBackendMLSEnabled(
+        networkService: NetworkService,
+        cookieStorage: CookieStorage,
+        apiVersion: WireNetwork.APIVersion
+    ) async throws -> Bool {
+        do {
+            let authenticationManager = AuthenticationManager(
+                clientID: nil,
+                cookieStorage: cookieStorage,
+                networkService: networkService,
+                onAuthenticationFailure: {}
+            )
+            let apiService = APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+            let api = MLSAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+            let keys = try await api.getBackendMLSPublicKeys()
+            return keys.removal.isValid
+        } catch
+        URLError.notConnectedToInternet,
+            URLError.networkConnectionLost,
+            MLSAPIError.unsupportedEndpointForAPIVersion,
+            MLSAPIError.mlsNotEnabled {
+            // Don't block session loading, we'll try again later.
+            return false
+        }
+    }
+
+    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
+        do {
+            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+            return try await useCase.invoke()
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            return false
+        }
+    }
+
+    private func performPendingMigrations(
+        userSession: ZMUserSession,
+        localDomain: String
+    ) async throws {
+        if journal[.isFederationMigrationRequired] {
+            WireLogger.session.info(
+                "federation migration is required...",
+                attributes: .safePublic
+            )
+            do {
+                try await CoreDataStack.migrateLocalStorage(
+                    accountIdentifier: accountID,
+                    applicationContainer: sharedContainerURL,
+                    migration: {
+                        try $0.migrateToFederation(localDomain: localDomain)
+                    }
+                )
+                journal[.isFederationMigrationRequired] = false
+            } catch {
+                WireLogger.session.error(
+                    "failed to migrate to federation: \(String(describing: error))",
+                )
+                throw Failure.failedToMigrateToFederation(error)
+            }
+        }
 
         // Perform app version migrations.
         let migrationService = userSession.makeAppVersionMigrationService()
@@ -492,237 +666,47 @@ final class UserSessionLoader {
         }
     }
 
-    enum Failure: Error {
+    enum Failure: Error, SafeForLoggingStringConvertible {
 
+        case failedToStoreNewEnvironment(any Error)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
+        case noResolvedBackendMetadataAvailable
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
         case failedToEnabledSyncV2(any Error)
+        case buildIsBlacklisted
         case failedToPerformMigration(any Error)
+        case failedToMigrateToFederation(any Error)
         case failedToMigrationToConsumableNotifications(any Error)
 
-    }
-
-}
-
-private extension BackendEnvironment2 {
-
-    init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
-        let environmentType: EnvironmentType = switch legacyEnvironment.environmentType.value {
-        case .default:
-            .default
-        case .staging:
-            .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
-        case .chala:
-            .chala
-        case .diya:
-            .diya
-        case .elna:
-            .elna
-        case .foma:
-            .foma
-        case let .custom(url):
-            .custom(url: url)
+        var safeForLoggingDescription: String {
+            switch self {
+            case .failedToStoreNewEnvironment:
+                "failed to store new environment"
+            case .failedToFetchBackendEnvironment:
+                "failed to fetch backend environment"
+            case .failedToFetchProxyCredentials:
+                "failed to fetch proxy credentials"
+            case .noResolvedBackendMetadataAvailable:
+                "no resolved backend metadata available"
+            case .failedToStoreMetadata:
+                "failed to store metadata"
+            case .failedToLoadPersistenceStack:
+                "failed to load persistence stack"
+            case .failedToEnabledSyncV2:
+                "failed to enable sync v2"
+            case .buildIsBlacklisted:
+                "build is blacklisted"
+            case .failedToPerformMigration:
+                "failed to perform migration"
+            case .failedToMigrateToFederation:
+                "failed to migrate to federation"
+            case .failedToMigrationToConsumableNotifications:
+                "failed to migrate to consumable notifications"
+            }
         }
 
-        let endpoints = Endpoints(
-            restAPIURL: legacyEnvironment.backendURL,
-            websocketURL: legacyEnvironment.backendWSURL,
-            blacklistURL: legacyEnvironment.blackListURL,
-            teamsURL: legacyEnvironment.teamsURL,
-            accountsURL: legacyEnvironment.accountsURL,
-            websiteURL: legacyEnvironment.websiteURL,
-            countlyURL: legacyEnvironment.countlyURL
-        )
-
-        let pinnedKeys: [PinnedKey] = legacyEnvironment.trustData.map {
-            PinnedKey(
-                key: $0.certificateKey,
-                rawKey: $0.rawCertificateKey,
-                hosts: $0.hosts.map { host in
-                    switch host.rule {
-                    case .endsWith:
-                        .endsWith(host.value)
-                    case .equals:
-                        .equals(host.value)
-                    }
-                }
-            )
-        }
-
-        let proxyConfig = legacyEnvironment.proxy.map {
-            ProxyConfig(
-                host: $0.host,
-                port: $0.port,
-                needsAuthentication: $0.needsAuthentication
-            )
-        }
-
-        let config = Config(
-            endpoints: endpoints,
-            pinnedKeys: pinnedKeys,
-            proxyConfig: proxyConfig
-        )
-
-        self.init(
-            title: legacyEnvironment.title,
-            environmentType: environmentType,
-            config: config
-        )
-    }
-
-}
-
-private struct ProxyCredentialStore {
-
-    let keychain = Keychain()
-
-    func fetchCredentials(
-        host: String,
-        port: Int
-    ) async throws -> (username: String, password: String)? {
-        let usernameData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-username"),
-            .returningData(true)
-        ])
-
-        let passwordData: Data? = try await keychain.fetchItem(query: [
-            .itemClass(.genericPassword),
-            .account("proxy-\(host):\(port)-password"),
-            .returningData(true)
-        ])
-
-        guard
-            let usernameData,
-            let passwordData
-        else {
-            return nil
-        }
-
-        return (
-            username: String(decoding: usernameData, as: UTF8.self),
-            password: String(decoding: passwordData, as: UTF8.self)
-        )
-    }
-
-}
-
-private extension WireNetwork.APIVersion {
-
-    init(_ legacyVersion: WireTransport.APIVersion) {
-        switch legacyVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        case .v9:
-            self = .v9
-        case .v10:
-            self = .v10
-        case .v11:
-            self = .v11
-        }
-    }
-
-}
-
-extension WireTransport.BackendEnvironment {
-
-    convenience init(_ backendEnvironment: BackendEnvironment2) {
-        let trustData: [TrustData] = backendEnvironment.config.pinnedKeys.map { pinnedKey in
-            TrustData(
-                certificateKey: pinnedKey.key,
-                rawCertificateKey: pinnedKey.rawKey,
-                hosts: pinnedKey.hosts.map { host in
-                    switch host {
-                    case let .endsWith(value):
-                        TrustData.Host(
-                            rule: .endsWith,
-                            value: value
-                        )
-                    case let .equals(value):
-                        TrustData.Host(
-                            rule: .equals,
-                            value: value
-                        )
-                    }
-                }
-            )
-        }
-
-        let environmentType: EnvironmentType = switch backendEnvironment.environmentType {
-        case .default:
-            .default
-        case .staging:
-            .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
-        case .chala:
-            .chala
-        case .diya:
-            .diya
-        case .elna:
-            .elna
-        case .foma:
-            .foma
-        case let .custom(url):
-            .custom(url: url)
-        }
-
-        let endpoints = BackendEndpoints(
-            backendURL: backendEnvironment.config.endpoints.restAPIURL,
-            backendWSURL: backendEnvironment.config.endpoints.websocketURL,
-            blackListURL: backendEnvironment.config.endpoints.blacklistURL,
-            teamsURL: backendEnvironment.config.endpoints.teamsURL,
-            accountsURL: backendEnvironment.config.endpoints.accountsURL,
-            websiteURL: backendEnvironment.config.endpoints.websiteURL,
-            countlyURL: backendEnvironment.config.endpoints.countlyURL
-        )
-
-        var proxySettings: WireTransport.ProxySettings?
-        if let proxyConfig = backendEnvironment.config.proxyConfig {
-            proxySettings = WireTransport.ProxySettings(
-                host: proxyConfig.host,
-                port: proxyConfig.port,
-                needsAuthentication: proxyConfig.needsAuthentication
-            )
-        }
-
-        let certificateTrust = ServerCertificateTrust(
-            trustData: trustData,
-            currentDateProvider: .system
-        )
-
-        self.init(
-            title: backendEnvironment.title,
-            trustData: trustData,
-            environmentType: environmentType,
-            endpoints: endpoints,
-            proxySettings: proxySettings,
-            certificateTrust: certificateTrust
-        )
     }
 
 }

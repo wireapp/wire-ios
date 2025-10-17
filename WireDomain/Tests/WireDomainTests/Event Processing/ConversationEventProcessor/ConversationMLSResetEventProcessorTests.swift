@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
@@ -55,8 +56,11 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         zmConversation = conversation
 
         mlsService.wipeGroup_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = false
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore
+            .storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
         mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
@@ -98,13 +102,50 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             }
 
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
             1
         )
-        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations
+        conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations
             .forEach {
                 XCTAssertEqual(
                     $0.newMLSGroupID,
+                    MLSGroupID(Scaffolding.newMLSGroupIDData)
+                )
+            }
+    }
+
+    func testProcessEvent_AlreadyReset() async throws {
+        // GIVEN
+        mlsService.conversationExistsGroupID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        mlsService.wipeGroup_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0,
+                    MLSGroupID(Scaffolding.oldMLSGroupIDData)
+                )
+            }
+
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
+            0
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            1
+        )
+
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0.mlsGroupID,
                     MLSGroupID(Scaffolding.newMLSGroupIDData)
                 )
             }
@@ -123,7 +164,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         XCTAssertEqual(mockResetLockRepository.removeResetInitiatedConversationID_Invocations.count, 1)
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_Invocations.count,
             0
         )
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)

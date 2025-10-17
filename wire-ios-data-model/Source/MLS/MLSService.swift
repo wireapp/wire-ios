@@ -68,6 +68,7 @@ public final class MLSService: MLSServiceInterface {
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     private var brokenGroupIDs: Set<MLSGroupID> = []
+    private let localDomain: String?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -105,7 +106,8 @@ public final class MLSService: MLSServiceInterface {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         featureRepository: LegacyFeatureRepositoryInterface,
         userDefaults: UserDefaults,
-        userID: UUID
+        userID: UUID,
+        localDomain: String?
     ) {
         self.init(
             context: context,
@@ -115,7 +117,8 @@ public final class MLSService: MLSServiceInterface {
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
             userID: userID,
-            featureRepository: featureRepository
+            featureRepository: featureRepository,
+            localDomain: localDomain
         )
     }
 
@@ -132,7 +135,9 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         userID: UUID,
         featureRepository: LegacyFeatureRepositoryInterface,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
+            SubconversationGroupIDRepository(),
+        localDomain: String?
     ) {
         self.context = context
         self.notificationContext = notificationContext
@@ -158,6 +163,7 @@ public final class MLSService: MLSServiceInterface {
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
+        self.localDomain = localDomain
         schedulePeriodicKeyMaterialUpdateCheck()
         startObservingEpochs()
     }
@@ -363,11 +369,11 @@ public final class MLSService: MLSServiceInterface {
             let ciphersuite = try await createGroup(for: groupID, removalKeys: removalKeys)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser)
+                return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
-
-            let usersWithSelfUser = users + [mlsSelfUser]
-            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
+            // make sure we have the selfUser but only once
+            let usersWithSelfUser = Set(users + [mlsSelfUser])
+            try await addMembersToConversation(with: Array(usersWithSelfUser), for: groupID)
             return ciphersuite
         } catch {
             try await wipeGroup(groupID)
@@ -413,7 +419,7 @@ public final class MLSService: MLSServiceInterface {
             let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
-                return MLSUser(from: selfUser)
+                return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
 
             do {
@@ -785,7 +791,7 @@ public final class MLSService: MLSServiceInterface {
 
         let mlsUser = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            return MLSUser(from: selfUser)
+            return MLSUser(from: selfUser, localDomain: self.localDomain)
         }
 
         try await joinGroup(with: groupID)
@@ -797,6 +803,50 @@ public final class MLSService: MLSServiceInterface {
     }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
+
+    public func establishPendingGroup(groupID: MLSGroupID) async throws {
+        guard let context else {
+            return
+        }
+
+        let conversation = await context.perform {
+            ZMConversation.fetch(with: groupID, in: context)
+        }
+
+        guard let conversation else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        try await internalEstablishPendingGroup(
+            groupID: groupID,
+            pendingGroup: conversation,
+            context: context
+        )
+
+        await save(context)
+    }
+
+    private func internalEstablishPendingGroup(
+        groupID: MLSGroupID,
+        pendingGroup: ZMConversation,
+        context: NSManagedObjectContext
+    ) async throws {
+        let mlsUsers = await context.perform {
+            pendingGroup.localParticipants.map {
+                MLSUser(from: $0, localDomain: self.localDomain)
+            }
+        }
+
+        let ciphersuite = try await establishGroup(
+            for: groupID,
+            with: mlsUsers
+        )
+
+        await context.perform {
+            pendingGroup.ciphersuite = ciphersuite
+            pendingGroup.mlsStatus = .ready
+        }
+    }
 
     public func performPendingJoins() async throws {
         guard let context else {
@@ -812,11 +862,11 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("joining \(pendingGroups.count) group(s)")
 
-        await withTaskGroup(of: Void.self) { group in
+        let needToSave = await withTaskGroup(of: Bool.self) { group in
             for pendingGroup in pendingGroups {
                 group.addTask {
                     guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }) else {
-                        return
+                        return false
                     }
 
                     do {
@@ -829,33 +879,83 @@ public final class MLSService: MLSServiceInterface {
                         let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
 
                         if shouldEstablishGroup {
-
-                            let mlsUsers = await context.perform {
-                                pendingGroup.localParticipants.map(MLSUser.init)
-                            }
-
-                            let ciphersuite = try await self.establishGroup(
-                                for: mlsGroupID,
-                                with: mlsUsers
+                            try await self.internalEstablishPendingGroup(
+                                groupID: mlsGroupID,
+                                pendingGroup: pendingGroup,
+                                context: context
                             )
-
-                            await context.perform {
-                                pendingGroup.ciphersuite = ciphersuite
-                                pendingGroup.mlsStatus = .ready
-                            }
-
+                            return true
                         } else {
                             try await self.joinByExternalCommit(groupID: mlsGroupID)
+                            return false
                         }
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
                             attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
                         )
+                        return false
                     }
                 }
             }
+
+            var needToSave = false
+            for await groupResult in group {
+                needToSave = needToSave || groupResult
+            }
+            return needToSave
         }
+        if needToSave {
+            await save(context)
+        }
+    }
+
+    private func save(_ context: NSManagedObjectContext) async {
+        _ = await context.perform { [context] in
+            context.saveOrRollback()
+        }
+    }
+
+    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
+        guard let context else { return }
+
+        let conversationInfo = fetchConversationInfo(with: groupID, in: context)
+
+        guard let conversationInfo else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        try await actionsProvider.syncConversation(
+            qualifiedID: conversationInfo.qualifiedID,
+            context: context.notificationContext
+        )
+
+        let (conversation, epoch, lastGroupID) = await context.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationInfo.qualifiedID.uuid,
+                domain: conversationInfo.qualifiedID.domain,
+                in: context
+            )
+            return (conversation, conversation?.epoch, conversation?.mlsGroupID)
+        }
+
+        guard let conversation, let lastGroupID, let epoch else {
+            throw MLSServiceError.conversationNotFound
+        }
+
+        let conversationExists = try await conversationExists(
+            groupID: lastGroupID
+        )
+
+        let shouldEstablishGroup = epoch == 0 && !conversationExists
+
+        if shouldEstablishGroup {
+            try await internalEstablishPendingGroup(groupID: lastGroupID, pendingGroup: conversation, context: context)
+        } else {
+            try await joinByExternalCommit(groupID: lastGroupID)
+        }
+
+        await save(context)
     }
 
     // MARK: - Out-of-sync conversations
@@ -1154,7 +1254,7 @@ public final class MLSService: MLSServiceInterface {
         })
     }
 
-    enum MLSSendExternalCommitError: Error {
+    enum MLSServiceError: Error {
         case conversationNotFound
     }
 
@@ -1177,7 +1277,7 @@ public final class MLSService: MLSServiceInterface {
                 with: parentID,
                 in: context
             ) else {
-                throw MLSSendExternalCommitError.conversationNotFound
+                throw MLSServiceError.conversationNotFound
             }
 
             let groupInfo = try await actionsProvider.fetchConversationGroupInfo(
@@ -1565,7 +1665,9 @@ public final class MLSService: MLSServiceInterface {
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                guard feature.status == .enabled,
+                      feature.config.mlsConversationReset == true
+                else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
@@ -1892,7 +1994,10 @@ public final class MLSService: MLSServiceInterface {
         for conversation in groupConversations {
 
             let (qualifiedID, members) = await context.perform {
-                (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0) })
+                (
+                    conversation.qualifiedID,
+                    conversation.localParticipants.map { MLSUser(from: $0, localDomain: self.localDomain) }
+                )
             }
 
             guard let qualifiedID else {
@@ -1953,7 +2058,7 @@ extension MLSService: EpochObserver {}
 
 // MARK: - Helper types
 
-public struct MLSUser: Equatable {
+public struct MLSUser: Equatable, Hashable {
 
     public let id: UUID
     public let domain: String
@@ -1978,9 +2083,12 @@ public struct MLSUser: Equatable {
         self.selfClientID = selfClientID
     }
 
-    public init(from user: ZMUser) {
+    public init(
+        from user: ZMUser,
+        localDomain: String?
+    ) {
         self.id = user.remoteIdentifier
-        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
+        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID

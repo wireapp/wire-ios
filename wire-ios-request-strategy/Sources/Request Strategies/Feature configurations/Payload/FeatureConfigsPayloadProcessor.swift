@@ -23,6 +23,11 @@ import WireLogging
 struct FeatureConfigsPayloadProcessor {
 
     private let decoder = JSONDecoder.defaultDecoder
+    private let apiVersion: WireTransport.APIVersion?
+
+    init(apiVersion: WireTransport.APIVersion?) {
+        self.apiVersion = apiVersion
+    }
 
     func processActionPayload(data: Data, repository: LegacyFeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayload.self, from: data)
@@ -91,15 +96,6 @@ struct FeatureConfigsPayloadProcessor {
                 Feature.SelfDeletingMessages(
                     status: selfDeletingMessages.status,
                     config: selfDeletingMessages.config
-                )
-            )
-        }
-
-        if let allowedGlobalOperations = payload.allowedGlobalOperations {
-            repository.storeAllowedGlobalOperations(
-                Feature.AllowedGlobalOperations(
-                    status: allowedGlobalOperations.status,
-                    config: allowedGlobalOperations.config
                 )
             )
         }
@@ -212,23 +208,6 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
-
-        if let channels = payload.channels {
-            repository.storeChannels(
-                Feature.Channels(
-                    status: channels.status,
-                    config: channels.config
-                )
-            )
-        }
-
-        if let consumableNotifications = payload.consumableNotifications {
-            repository.storeConsumableNotifications(
-                Feature.ConsumableNotifications(
-                    status: consumableNotifications.status
-                )
-            )
-        }
     }
 
     func processEventPayload(
@@ -240,8 +219,7 @@ struct FeatureConfigsPayloadProcessor {
     ) throws {
         switch featureName {
         case .conferenceCalling:
-            if let apiVersion = BackendInfo.apiVersion,
-               apiVersion >= .v6 {
+            if let apiVersion, apiVersion >= .v6 {
                 let response = try decoder.decode(
                     FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self,
                     from: data
@@ -260,22 +238,16 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
             repository.storeAppLock(.init(status: response.status, config: response.config))
 
+        case .apps:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            repository.storeApps(.init(status: response.status))
+
         case .selfDeletingMessages:
             let response = try decoder.decode(
                 FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self,
                 from: data
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
-
-        case .allowedGlobalOperations:
-            let response = try decoder.decode(
-                FeatureStatusWithConfig<Feature.AllowedGlobalOperations.Config>.self,
-                from: data
-            )
-            repository.storeAllowedGlobalOperations(.init(
-                status: response.status,
-                config: response.config
-            ))
 
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
@@ -312,13 +284,11 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
-        case .channels:
-            let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
-            repository.storeChannels(.init(status: response.status, config: response.config))
-
-        case .consumableNotifications:
-            let response = try decoder.decode(FeatureStatus.self, from: data)
-            repository.storeConsumableNotifications(.init(status: response.status))
+        case .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations, .cells, .assetAuditLog:
+            WireLogger.featureConfigs.warn(
+                "decoding unsupported feature config: \"\(featureName)\", this should not happen",
+                attributes: .safePublic
+            )
         }
     }
 
@@ -339,7 +309,8 @@ struct FeatureConfigsPayloadProcessor {
         await mlsClientManager.initializeMLSClientIfNeeded(
             for: qualifiedSelfClientID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
-            mlsFeature: mlsFeature
+            mlsFeature: mlsFeature,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
     }
 

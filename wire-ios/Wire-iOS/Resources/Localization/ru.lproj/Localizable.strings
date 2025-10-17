@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
+"conversation.action.files" = "Файлы";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -700,7 +701,7 @@
 "content.message.open" = "Открыть";
 "content.message.sign" = "Подписать";
 "content.message.copy" = "Скопировать";
-"content.message.download" = "Загрузить";
+"content.message.download" = "Скачать";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
 "content.message.collapse" = "Свернуть";
@@ -2144,3 +2145,11 @@
 "device.details.section.mls.thumbprint" = "Отпечаток MLS: %@";
 "device.details.certificate_details.title" = "Сведения о сертификате";
 "device.details.certificate_details.copy_to_clipboard" = "Скопировать в буфер обмена";
+
+"account_blocked.network_error.alert.title" = "Проблема с сетью";
+"account_blocked.network_error.alert.message" = "Проверьте подключение к интернету и повторите попытку.";
+"account_blocked.generic_error.alert.title" = "Что-то пошло не так";
+"account_blocked.generic_error.alert.message" = "Если ошибка повторяется, обратитесь в службу поддержки.";
+"account_blocked.generic_error.alert.switch_accounts" = "Сменить аккаунт";
+"account_blocked.generic_error.alert.send_logs" = "Отправить отладочный отчет";
+"account_blocked.generic_error.alert.retry" = "Повторить";

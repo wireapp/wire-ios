@@ -18,10 +18,11 @@
 
 import avs
 import Foundation
+import WireDataModel
 
 protocol CameraCellDelegate: AnyObject {
     func cameraCellWantsToOpenFullCamera(_ cameraCell: CameraCell)
-    func cameraCell(_ cameraCell: CameraCell, didPickImageData: Data)
+    func cameraCell(_ cameraCell: CameraCell, didPickImage image: SendableImage)
 }
 
 final class CameraCell: UICollectionViewCell {
@@ -159,8 +160,16 @@ final class CameraCell: UICollectionViewCell {
     @objc
     func shutterButtonPressed(_ sender: AnyObject) {
         cameraController?.capturePhoto { data, error in
-            if error == nil {
-                self.delegate?.cameraCell(self, didPickImageData: data!)
+            if error == nil, let data {
+                let image = SendableImage(
+                    name: nil,
+                    utType: .jpeg,
+                    data: data
+                )
+                self.delegate?.cameraCell(
+                    self,
+                    didPickImage: image,
+                )
             }
         }
     }

@@ -18,3 +18,11 @@
 
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+
+// MARK: Conversation Files View
+"conversation.wireCells.files.close" = "Dateien schließen";
+"conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
+"conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
+"conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
+"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
+"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";

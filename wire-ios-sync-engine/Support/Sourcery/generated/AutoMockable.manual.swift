@@ -178,21 +178,21 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
     // MARK: - appendImage
 
-    public var appendImage_Invocations: [(imageData: Data, nonce: UUID)] = []
+    public var appendImage_Invocations: [(image: SendableImage, nonce: UUID)] = []
     public var appendImage_MockError: Error?
-    public var appendImage_MockMethod: ((Data, UUID) throws -> any ZMConversationMessage)?
+    public var appendImage_MockMethod: ((SendableImage, UUID) throws -> any ZMConversationMessage)?
     public var appendImage_MockValue: (any ZMConversationMessage)?
 
     @discardableResult
-    public func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage {
-        appendImage_Invocations.append((imageData: imageData, nonce: nonce))
+    public func appendImage(_ image: SendableImage, nonce: UUID) throws -> any ZMConversationMessage {
+        appendImage_Invocations.append((image: image, nonce: nonce))
 
         if let error = appendImage_MockError {
             throw error
         }
 
         if let mock = appendImage_MockMethod {
-            return try mock(imageData, nonce)
+            return try mock(image, nonce)
         } else if let mock = appendImage_MockValue {
             return mock
         } else {
@@ -250,6 +250,15 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 }
 
 public class MockUserSession: UserSession {
+
+    public var isBuildBlacklisted = false
+    public var resolvedBackendMetadata = BackendMetadataProvider(
+        apiVersionOverride: .v0,
+        domainOverride: "wire.com",
+        isFederationEnabledOverride: false,
+        isBackendMLSEnabledOverride: false
+    )
+    public var isBackendMLSEnabled: Bool = false
 
     // MARK: - Life cycle
 
@@ -496,6 +505,14 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
+    // MARK: - chatBubblesSimpleFeature
+    
+    public var isChatBubbleSimpleEnabled: Bool = false
+    
+    public var isWireCellsEnabled: Bool = false
+    
+    public var isEnterpriseUser: Bool = false
+    
     // MARK: - mlsGroupVerification
 
     public var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
@@ -593,6 +610,15 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingSearchUsersCache: SearchUsersCache!
+
+    // MARK: - fileAssetCache
+
+    public var fileAssetCache: FileAssetCache {
+        get { return underlyingFileAssetCache }
+        set(value) { underlyingFileAssetCache = value }
+    }
+
+    public var underlyingFileAssetCache: FileAssetCache!
 
     // MARK: - unlockDatabase
 

@@ -18,6 +18,10 @@ on:
       distribute_externals:
         type: boolean
         default: false
+      produce_changelog:
+        type: boolean
+        default: true
+      
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -72,11 +76,13 @@ permissions:
 
 jobs:
   changelog:
+    if: ${{ inputs.produce_changelog }}
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
+    if: always()
     timeout-minutes: 60
     needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
@@ -205,6 +211,7 @@ jobs:
           base64: ${{ env.S3_PATHS }}
       - name: Notify on Wire if succeeded
         if: success()
+        continue-on-error: true
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
@@ -221,6 +228,7 @@ jobs:
             **SHA256:**  ${{ env.BUILD_SHA256 }}
       - name: Notify on Wire if failed
         if: failure()
+        continue-on-error: true
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}

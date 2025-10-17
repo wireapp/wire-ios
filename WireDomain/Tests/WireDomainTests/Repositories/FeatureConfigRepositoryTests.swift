@@ -200,6 +200,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     inactivityTimeoutInSeconds: 2_147_483_647
                 )
             ),
+            .apps(
+                .init(status: .disabled)
+            ),
             .classifiedDomains(
                 .init(
                     status: .enabled,
@@ -272,6 +275,14 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 ConsumableNotificationsFeatureConfig(
                     status: .enabled
                 )
+            ),
+            .chatBubblesSimple(
+                .init(
+                    status: .enabled
+                )
+            ),
+            .cells(
+                .init(status: .enabled)
             )
         ]
 

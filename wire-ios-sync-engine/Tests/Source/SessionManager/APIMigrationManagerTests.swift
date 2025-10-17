@@ -281,6 +281,7 @@ final class APIMigrationManagerTests: MessagingTest {
         let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
+            blacklistURL: backendEnvironment.blackListURL,
             pinnedKeys: [],
             proxySettings: nil
         )
@@ -335,6 +336,7 @@ final class APIMigrationManagerTests: MessagingTest {
 
         let userSession = builder.build()
         userSession.setup(
+            apiVersion: nil,
             eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,

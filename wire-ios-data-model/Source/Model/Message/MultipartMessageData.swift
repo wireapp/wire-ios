@@ -16,21 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import GenericMessageProtocol
 
 // TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
 public final class MultipartMessageData: NSObject {
 
     public struct Attachment {
-        public let fileName: String
+        public let nodeID: UUID
+        public let contentType: String?
+        public let initialName: String?
+        public let initialSize: Int?
     }
 
     public let attachments: [Attachment]
 
     init(multipart: Multipart) {
-        self.attachments = multipart.attachments.map { attachment in
-            Attachment(
-                fileName: URL(string: attachment.cellAsset.initialName)?.lastPathComponent ?? "Unknown file name"
+        self.attachments = multipart.attachments.compactMap { attachment in
+            let asset = attachment.cellAsset
+
+            guard let nodeID = UUID(uuidString: asset.uuid) else { return nil }
+
+            return Attachment(
+                nodeID: nodeID,
+                contentType: asset.hasContentType ? asset.contentType : nil,
+                initialName: asset.hasInitialName ? URL(string: asset.initialName)?.lastPathComponent : nil,
+                initialSize: asset.hasInitialSize ? Int(attachment.cellAsset.initialSize) : nil
             )
         }
     }

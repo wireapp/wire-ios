@@ -105,8 +105,10 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
 
             var cancellable: AnyCancellable?
             await withCheckedContinuation { continuation in
+                var resumed = false
                 cancellable = $decryptionState.sink { newDecryptionState in
-                    if newDecryptionState == .done {
+                    if newDecryptionState == .done, !resumed {
+                        resumed = true
                         continuation.resume()
                         cancellable?.cancel()
                     }

@@ -81,7 +81,7 @@ extension AvailabilityRequestStrategy: ZMEventConsumer {
         for event in events {
             guard
                 let senderUUID = event.senderUUID, event.isGenericMessageEvent,
-                let message = GenericMessage(from: event), message.hasAvailability
+                let message = GenericMessage(from: event, validate: true), message.hasAvailability
             else {
                 continue
             }

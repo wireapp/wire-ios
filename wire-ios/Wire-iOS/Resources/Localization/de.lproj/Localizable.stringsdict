@@ -397,5 +397,21 @@
         <string>%d Sonderzeichen</string>
       </dict>
     </dict>
+    <key>conversation.message.multipart_attachments.link</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@attachment_count@</string>
+      <key>attachment_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 angehängte Datei</string>
+        <key>other</key>
+        <string>%d angehängte Dateien</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

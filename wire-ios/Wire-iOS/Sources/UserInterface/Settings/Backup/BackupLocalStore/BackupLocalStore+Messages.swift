@@ -63,31 +63,63 @@ extension BackupLocalStore {
         }
     }
 
-    func addMessage(_ backupMessage: MessageBackupModel) async throws {
-        let conversationID = backupMessage.conversationID
-        let (conversation, lastReadServerTimeStamp) = await context.perform {
-            let conversation = ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
-            return (conversation, conversation?.lastReadServerTimeStamp)
-        }
-        guard
-            let conversation,
-            let nonce = UUID(transportString: backupMessage.id),
-            let genericMessage = GenericMessage(nonce: nonce, messageContent: backupMessage.content)
-        else { return }
+    func addMessages(_ backupMessages: [MessageBackupModel]) async throws {
 
-        try await processor.processProtobufMessage(
-            genericMessage,
-            conversation: conversation,
-            conversationID: conversationID,
-            senderID: backupMessage.senderUserID,
-            senderClientID: backupMessage.senderClientID,
-            date: backupMessage.creationDate,
-            eventMessage: ""
+        // Fetch conversations and last read timestamps related to backup messages
+        let conversationsAndTimestampsByID = await fetchConversationsAndTimestampByID(
+            conversationIDs: Set(backupMessages.map(\.conversationID))
         )
 
-        // restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
+        // Process all messages
+        for backupMessage in backupMessages {
+            guard
+                let tuple = conversationsAndTimestampsByID[backupMessage.conversationID],
+                let nonce = UUID(transportString: backupMessage.id),
+                let genericMessage = GenericMessage(nonce: nonce, messageContent: backupMessage.content)
+            else { continue }
+
+            try await processor.processProtobufMessage(
+                genericMessage,
+                conversation: tuple.conversation,
+                conversationID: backupMessage.conversationID,
+                senderID: backupMessage.senderUserID,
+                senderClientID: backupMessage.senderClientID,
+                date: backupMessage.creationDate,
+                eventMessage: ""
+            )
+
+        }
+
+        // Restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
         await context.perform {
-            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp ?? .now
+            conversationsAndTimestampsByID.forEach { entry in
+                entry.value.conversation.lastReadServerTimeStamp = entry.value.date
+            }
+        }
+    }
+
+    private func fetchConversationsAndTimestampByID(
+        conversationIDs: Set<WireFoundation.QualifiedID>
+    ) async -> [WireFoundation.QualifiedID: (conversation: ZMConversation, date: Date)] {
+        await context.perform {
+            var dictionary: [
+                WireFoundation.QualifiedID: (conversation: ZMConversation, date: Date)
+            ] = [:]
+
+            conversationIDs.forEach { conversationID in
+                if let conversation = ZMConversation.fetch(
+                    with: conversationID.id,
+                    domain: conversationID.domain,
+                    in: context
+                ) {
+                    dictionary[conversationID] = (
+                        conversation,
+                        conversation.lastReadServerTimeStamp ?? Date()
+                    )
+                }
+            }
+
+            return dictionary
         }
     }
 

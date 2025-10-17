@@ -30,10 +30,15 @@ final class RequestGeneratorStore {
     private var isTornDown = false
 
     private let strategies: [AnyObject]
+    private let apiVersion: WireTransport.APIVersion?
 
-    init(strategies: [AnyObject]) {
+    init(
+        strategies: [AnyObject],
+        apiVersion: WireTransport.APIVersion?
+    ) {
 
         self.strategies = strategies
+        self.apiVersion = apiVersion
 
         var requestGenerators: [ZMTransportRequestGenerator] = []
         var changeTrackers: [ZMContextChangeTracker] = []
@@ -42,7 +47,7 @@ final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append {
-                        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                        guard let apiVersion else { return nil }
                         return requestGenerator.nextRequest(for: apiVersion)
                     }
                 }
@@ -58,7 +63,7 @@ final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append {
-                    guard let apiVersion = BackendInfo.apiVersion else { return nil }
+                    guard let apiVersion else { return nil }
                     return requestStrategy.nextRequest(for: apiVersion)
                 }
             }

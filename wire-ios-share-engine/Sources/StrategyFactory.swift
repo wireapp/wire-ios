@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLinkPreview
+import WireNetwork
 import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 
@@ -28,6 +29,9 @@ final class StrategyFactory {
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
     let messageSender: MessageSenderInterface
     private(set) var strategies = [AnyObject]()
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
+    private let isCloudDomain: Bool
 
     private var tornDown = false
 
@@ -36,12 +40,15 @@ final class StrategyFactory {
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor,
         transportSession: TransportSessionType,
-        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
@@ -52,8 +59,18 @@ final class StrategyFactory {
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
             initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
-            featureRepository: LegacyFeatureRepository(context: syncContext)
+            featureRepository: featureRepository,
+            apiVersion: apiVersion
         )
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
+
+        if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain) {
+            self.isCloudDomain = true
+        } else {
+            self.isCloudDomain = false
+        }
+
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -90,11 +107,20 @@ final class StrategyFactory {
     }
 
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
-        VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        VerifyLegalHoldRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            localDomain: localDomain
+        )
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        FetchingClientRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus,
+            apiVersion: apiVersion,
+            localDomain: localDomain
+        )
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
@@ -114,7 +140,9 @@ final class StrategyFactory {
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
-            previewImagePreprocessor: nil
+            previewImagePreprocessor: nil,
+            localDomain: localDomain,
+            isCloudDomain: isCloudDomain
         )
     }
 
@@ -130,7 +158,9 @@ final class StrategyFactory {
     private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
         let strategy = AssetV3UploadRequestStrategy(
             withManagedObjectContext: syncContext,
-            applicationStatus: applicationStatus
+            applicationStatus: applicationStatus,
+            localDomain: localDomain,
+            isCloudDomain: isCloudDomain
         )
 
         // WORKAROUND:

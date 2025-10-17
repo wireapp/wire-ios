@@ -71,7 +71,9 @@ class DatabaseTest: ZMTBaseTest {
             account: account,
             applicationContainer: sharedContainerURL!,
             inMemoryStore: true,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await stack.load()

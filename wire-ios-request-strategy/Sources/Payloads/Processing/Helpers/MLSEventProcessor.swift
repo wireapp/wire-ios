@@ -82,22 +82,29 @@ public class MLSEventProcessor: MLSEventProcessing {
 
     private let conversationService: ConversationServiceInterface
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+    private let localDomain: String?
 
     // MARK: - Life cycle
 
-    convenience init(context: NSManagedObjectContext) {
+    convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
         self.init(
-            conversationService: ConversationService(context: context),
-            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context)
+            conversationService: ConversationService(context: context, localDomain: localDomain),
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
+            localDomain: localDomain
         )
     }
 
     init(
         conversationService: ConversationServiceInterface,
-        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
+        localDomain: String?
     ) {
         self.conversationService = conversationService
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
+        self.localDomain = localDomain
     }
 
     // MARK: - Update conversation
@@ -146,11 +153,15 @@ public class MLSEventProcessor: MLSEventProcessing {
                 .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
             conversationExists = false
         }
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
+        var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
             let previousStatus = conversation.mlsStatus
 
+            if previousStatus == .pendingJoinAfterReset {
+                // never override pendingJoinAferReset, this will be handle in re-establish group
+                newStatus = .pendingJoinAfterReset
+            }
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
@@ -227,7 +238,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             guard
                 let otherUser = conversation.localParticipantsExcludingSelf.first,
                 let otherUserID = otherUser.remoteIdentifier,
-                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+                let otherUserDomain = otherUser.domain ?? self.localDomain
             else {
                 WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
                 return nil

@@ -436,7 +436,7 @@ private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
     }
 
     var didReportFederationHasBeenEnabled: Bool = false
-    func apiVersionResolverDetectedFederationHasBeenEnabled() {
+    func apiVersionResolverDetectedFederationHasBeenEnabled(localDomain: String) {
         didReportFederationHasBeenEnabled = true
     }
 

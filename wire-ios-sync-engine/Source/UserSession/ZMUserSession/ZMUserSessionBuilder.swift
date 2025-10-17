@@ -139,6 +139,18 @@ struct ZMUserSessionBuilder {
         )
         webSocketNetworkService.configure(with: webSocketSession)
 
+        let blacklistNetworkService = NetworkService(
+            baseURL: wireAPIBackendEnvironment.blacklistURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let blacklistConfig = urlSessionConfigurationFactory.makeBlacklistSessionConfiguration()
+        let blacklistSession = URLSession(
+            configuration: blacklistConfig,
+            delegate: blacklistNetworkService,
+            delegateQueue: nil
+        )
+        blacklistNetworkService.configure(with: blacklistSession)
+
         let backendMetadata = ResolvedBackendMetadata(
             apiVersion: .init(rawValue: UInt(apiVersion.rawValue))!,
             domain: BackendInfo.domain!,
@@ -149,6 +161,7 @@ struct ZMUserSessionBuilder {
             userId: userId,
             restNetworkService: restNetworkService,
             websocketNetworkService: webSocketNetworkService,
+            blacklistNetworkService: blacklistNetworkService,
             backendMetadata: backendMetadata,
             transportSession: transportSession,
             mediaManager: mediaManager,
@@ -173,7 +186,8 @@ struct ZMUserSessionBuilder {
             recurringActionService: recurringActionService,
             dependencies: dependencies,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            cookieStorage: cookieStorage
         )
     }
 
@@ -228,7 +242,9 @@ struct ZMUserSessionBuilder {
             application: application,
             lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
-            isSyncV2Enabled: journal[.isSyncV2Enabled]
+            isSyncV2Enabled: journal[.isSyncV2Enabled],
+            localDomain: BackendInfo.domain,
+            isBackendMLSEnabled: BackendInfo.isMLSEnabled
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -255,11 +271,13 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            userID: coreDataStack.account.userIdentifier
+            userID: coreDataStack.account.userIdentifier,
+            localDomain: BackendInfo.domain
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
-            userID: userId
+            userID: userId,
+            apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
             storage: sharedUserDefaults,

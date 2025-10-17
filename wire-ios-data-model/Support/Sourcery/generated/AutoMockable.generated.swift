@@ -382,6 +382,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingWireCellName: String!
 
+    // MARK: - isCellsEnabled
+
+    public var isCellsEnabled: Bool {
+        get { return underlyingIsCellsEnabled }
+        set(value) { underlyingIsCellsEnabled = value }
+    }
+
+    public var underlyingIsCellsEnabled: Bool!
+
 
     // MARK: - localParticipantsContain
 
@@ -1802,46 +1811,94 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
 
     public init() {}
 
-    // MARK: - isMigrationNeeded
+    // MARK: - isMigrationToBytesNeeded
 
-    public var isMigrationNeeded: Bool {
-        get { return underlyingIsMigrationNeeded }
-        set(value) { underlyingIsMigrationNeeded = value }
+    public var isMigrationToBytesNeeded: Bool {
+        get { return underlyingIsMigrationToBytesNeeded }
+        set(value) { underlyingIsMigrationToBytesNeeded = value }
     }
 
-    public var underlyingIsMigrationNeeded: Bool!
+    public var underlyingIsMigrationToBytesNeeded: Bool!
+
+    // MARK: - isMigrationToScopedKeyNeeded
+
+    public var isMigrationToScopedKeyNeeded: Bool {
+        get { return underlyingIsMigrationToScopedKeyNeeded }
+        set(value) { underlyingIsMigrationToScopedKeyNeeded = value }
+    }
+
+    public var underlyingIsMigrationToScopedKeyNeeded: Bool!
+
+    // MARK: - isKeyRotationNeeded
+
+    public var isKeyRotationNeeded: Bool {
+        get { return underlyingIsKeyRotationNeeded }
+        set(value) { underlyingIsKeyRotationNeeded = value }
+    }
+
+    public var underlyingIsKeyRotationNeeded: Bool!
 
 
-    // MARK: - performMigrationIfNeeded
+    // MARK: - migrateDatabaseKeyToBytes
 
-    public var performMigrationIfNeededPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
-    public var performMigrationIfNeededPathOldKeyNewKey_MockError: Error?
-    public var performMigrationIfNeededPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_MockError: Error?
+    public var migrateDatabaseKeyToBytesPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
 
-    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
-        performMigrationIfNeededPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+    public func migrateDatabaseKeyToBytes(path: String, oldKey: String, newKey: Data) async throws {
+        migrateDatabaseKeyToBytesPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
 
-        if let error = performMigrationIfNeededPathOldKeyNewKey_MockError {
+        if let error = migrateDatabaseKeyToBytesPathOldKeyNewKey_MockError {
             throw error
         }
 
-        guard let mock = performMigrationIfNeededPathOldKeyNewKey_MockMethod else {
-            fatalError("no mock for `performMigrationIfNeededPathOldKeyNewKey`")
+        guard let mock = migrateDatabaseKeyToBytesPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `migrateDatabaseKeyToBytesPathOldKeyNewKey`")
         }
 
         try await mock(path, oldKey, newKey)
     }
 
-    // MARK: - markMigrationAsSkipped
+    // MARK: - markMigrationToBytesAsSkipped
 
-    public var markMigrationAsSkipped_Invocations: [Void] = []
-    public var markMigrationAsSkipped_MockMethod: (() -> Void)?
+    public var markMigrationToBytesAsSkipped_Invocations: [Void] = []
+    public var markMigrationToBytesAsSkipped_MockMethod: (() -> Void)?
 
-    public func markMigrationAsSkipped() {
-        markMigrationAsSkipped_Invocations.append(())
+    public func markMigrationToBytesAsSkipped() {
+        markMigrationToBytesAsSkipped_Invocations.append(())
 
-        guard let mock = markMigrationAsSkipped_MockMethod else {
-            fatalError("no mock for `markMigrationAsSkipped`")
+        guard let mock = markMigrationToBytesAsSkipped_MockMethod else {
+            fatalError("no mock for `markMigrationToBytesAsSkipped`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markMigrationToScopedKeyDone
+
+    public var markMigrationToScopedKeyDone_Invocations: [Void] = []
+    public var markMigrationToScopedKeyDone_MockMethod: (() -> Void)?
+
+    public func markMigrationToScopedKeyDone() {
+        markMigrationToScopedKeyDone_Invocations.append(())
+
+        guard let mock = markMigrationToScopedKeyDone_MockMethod else {
+            fatalError("no mock for `markMigrationToScopedKeyDone`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markKeyRotationAsDone
+
+    public var markKeyRotationAsDone_Invocations: [Void] = []
+    public var markKeyRotationAsDone_MockMethod: (() -> Void)?
+
+    public func markKeyRotationAsDone() {
+        markKeyRotationAsDone_Invocations.append(())
+
+        guard let mock = markKeyRotationAsDone_MockMethod else {
+            fatalError("no mock for `markKeyRotationAsDone`")
         }
 
         mock()
@@ -1970,26 +2027,6 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         }
 
         await mock(epochObserver)
-    }
-
-    // MARK: - updateDatabaseKey
-
-    public var updateDatabaseKey_Invocations: [Void] = []
-    public var updateDatabaseKey_MockError: Error?
-    public var updateDatabaseKey_MockMethod: (() async throws -> Void)?
-
-    public func updateDatabaseKey() async throws {
-        updateDatabaseKey_Invocations.append(())
-
-        if let error = updateDatabaseKey_MockError {
-            throw error
-        }
-
-        guard let mock = updateDatabaseKey_MockMethod else {
-            fatalError("no mock for `updateDatabaseKey`")
-        }
-
-        try await mock()
     }
 
 }
@@ -3321,6 +3358,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(appLock)
     }
 
+    // MARK: - fetchApps
+
+    public var fetchApps_Invocations: [Void] = []
+    public var fetchApps_MockMethod: (() -> Feature.Apps)?
+    public var fetchApps_MockValue: Feature.Apps?
+
+    public func fetchApps() -> Feature.Apps {
+        fetchApps_Invocations.append(())
+
+        if let mock = fetchApps_MockMethod {
+            return mock()
+        } else if let mock = fetchApps_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchApps`")
+        }
+    }
+
+    // MARK: - storeApps
+
+    public var storeApps_Invocations: [Feature.Apps] = []
+    public var storeApps_MockMethod: ((Feature.Apps) -> Void)?
+
+    public func storeApps(_ appLock: Feature.Apps) {
+        storeApps_Invocations.append(appLock)
+
+        guard let mock = storeApps_MockMethod else {
+            fatalError("no mock for `storeApps`")
+        }
+
+        mock(appLock)
+    }
+
     // MARK: - fetchConferenceCalling
 
     public var fetchConferenceCalling_Invocations: [Void] = []
@@ -3717,6 +3787,90 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(consumableNotifications)
     }
 
+    // MARK: - fetchChatBubblesSimple
+
+    public var fetchChatBubblesSimple_Invocations: [Void] = []
+    public var fetchChatBubblesSimple_MockMethod: (() -> Feature.ChatBubblesSimple)?
+    public var fetchChatBubblesSimple_MockValue: Feature.ChatBubblesSimple?
+
+    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
+        fetchChatBubblesSimple_Invocations.append(())
+
+        if let mock = fetchChatBubblesSimple_MockMethod {
+            return mock()
+        } else if let mock = fetchChatBubblesSimple_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChatBubblesSimple`")
+        }
+    }
+
+    // MARK: - storeChatBubblesSimple
+
+    public var storeChatBubblesSimple_Invocations: [Feature.ChatBubblesSimple] = []
+    public var storeChatBubblesSimple_MockMethod: ((Feature.ChatBubblesSimple) -> Void)?
+
+    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
+        storeChatBubblesSimple_Invocations.append(chatBubblesSimple)
+
+        guard let mock = storeChatBubblesSimple_MockMethod else {
+            fatalError("no mock for `storeChatBubblesSimple`")
+        }
+
+        mock(chatBubblesSimple)
+    }
+
+    // MARK: - fetchCells
+
+    public var fetchCells_Invocations: [Void] = []
+    public var fetchCells_MockMethod: (() -> Feature.Cells)?
+    public var fetchCells_MockValue: Feature.Cells?
+
+    public func fetchCells() -> Feature.Cells {
+        fetchCells_Invocations.append(())
+
+        if let mock = fetchCells_MockMethod {
+            return mock()
+        } else if let mock = fetchCells_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCells`")
+        }
+    }
+
+    // MARK: - storeCells
+
+    public var storeCells_Invocations: [Feature.Cells] = []
+    public var storeCells_MockMethod: ((Feature.Cells) -> Void)?
+
+    public func storeCells(_ cells: Feature.Cells) {
+        storeCells_Invocations.append(cells)
+
+        guard let mock = storeCells_MockMethod else {
+            fatalError("no mock for `storeCells`")
+        }
+
+        mock(cells)
+    }
+
+    // MARK: - fetchAssetAuditLog
+
+    public var fetchAssetAuditLog_Invocations: [Void] = []
+    public var fetchAssetAuditLog_MockMethod: (() -> Feature.AssetAuditLog)?
+    public var fetchAssetAuditLog_MockValue: Feature.AssetAuditLog?
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        fetchAssetAuditLog_Invocations.append(())
+
+        if let mock = fetchAssetAuditLog_MockMethod {
+            return mock()
+        } else if let mock = fetchAssetAuditLog_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAssetAuditLog`")
+        }
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
@@ -3994,17 +4148,17 @@ public class MockMLSClientManagerProtocol: MLSClientManagerProtocol {
 
     // MARK: - initializeMLSClientIfNeeded
 
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS)] = []
-    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod: ((QualifiedClientID, Bool, Feature.MLS) async -> Void)?
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations: [(qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool)] = []
+    public var initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod: ((QualifiedClientID, Bool, Feature.MLS, Bool) async -> Void)?
 
-    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS) async {
-        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature))
+    public func initializeMLSClientIfNeeded(for qualifiedClientID: QualifiedClientID, hasRegisteredMLSClient: Bool, mlsFeature: Feature.MLS, isBackendMLSEnabled: Bool) async {
+        initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_Invocations.append((qualifiedClientID: qualifiedClientID, hasRegisteredMLSClient: hasRegisteredMLSClient, mlsFeature: mlsFeature, isBackendMLSEnabled: isBackendMLSEnabled))
 
-        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod else {
-            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature`")
+        guard let mock = initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled_MockMethod else {
+            fatalError("no mock for `initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeatureIsBackendMLSEnabled`")
         }
 
-        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature)
+        await mock(qualifiedClientID, hasRegisteredMLSClient, mlsFeature, isBackendMLSEnabled)
     }
 
 }
@@ -4280,6 +4434,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `establishGroupForWithRemovalKeys`")
         }
+    }
+
+    // MARK: - establishPendingGroup
+
+    public var establishPendingGroupGroupID_Invocations: [MLSGroupID] = []
+    public var establishPendingGroupGroupID_MockError: Error?
+    public var establishPendingGroupGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func establishPendingGroup(groupID: MLSGroupID) async throws {
+        establishPendingGroupGroupID_Invocations.append(groupID)
+
+        if let error = establishPendingGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = establishPendingGroupGroupID_MockMethod else {
+            fatalError("no mock for `establishPendingGroupGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
     // MARK: - joinGroup
@@ -4728,6 +4902,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock()
+    }
+
+    // MARK: - reEstablishPendingGroup
+
+    public var reEstablishPendingGroupGroupID_Invocations: [MLSGroupID] = []
+    public var reEstablishPendingGroupGroupID_MockError: Error?
+    public var reEstablishPendingGroupGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
+        reEstablishPendingGroupGroupID_Invocations.append(groupID)
+
+        if let error = reEstablishPendingGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = reEstablishPendingGroupGroupID_MockMethod else {
+            fatalError("no mock for `reEstablishPendingGroupGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
     // MARK: - setSyncDelegate
@@ -5336,6 +5530,35 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
 }
 
+public class MockRemoveCoreCryptoKeysUseCaseProtocol: RemoveCoreCryptoKeysUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserID_Invocations: [UUID] = []
+    public var invokeUserID_MockError: Error?
+    public var invokeUserID_MockMethod: ((UUID) throws -> Void)?
+
+    public func invoke(userID: UUID) throws {
+        invokeUserID_Invocations.append(userID)
+
+        if let error = invokeUserID_MockError {
+            throw error
+        }
+
+        guard let mock = invokeUserID_MockMethod else {
+            fatalError("no mock for `invokeUserID`")
+        }
+
+        try mock(userID)
+    }
+
+}
+
 public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationDelegate {
 
     // MARK: - Life cycle
@@ -5356,6 +5579,78 @@ public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationD
         }
 
         await mock(groupID, epoch)
+    }
+
+}
+
+public class MockStaleCoreCryptoKeysTrackerProtocol: StaleCoreCryptoKeysTrackerProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - addKey
+
+    public var addKeyId_Invocations: [UUID] = []
+    public var addKeyId_MockMethod: ((UUID) -> Void)?
+
+    public func addKey(id: UUID) {
+        addKeyId_Invocations.append(id)
+
+        guard let mock = addKeyId_MockMethod else {
+            fatalError("no mock for `addKeyId`")
+        }
+
+        mock(id)
+    }
+
+    // MARK: - getAll
+
+    public var getAll_Invocations: [Void] = []
+    public var getAll_MockMethod: (() -> [UUID])?
+    public var getAll_MockValue: [UUID]?
+
+    public func getAll() -> [UUID] {
+        getAll_Invocations.append(())
+
+        if let mock = getAll_MockMethod {
+            return mock()
+        } else if let mock = getAll_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getAll`")
+        }
+    }
+
+    // MARK: - clear
+
+    public var clear_Invocations: [Void] = []
+    public var clear_MockMethod: (() -> Void)?
+
+    public func clear() {
+        clear_Invocations.append(())
+
+        guard let mock = clear_MockMethod else {
+            fatalError("no mock for `clear`")
+        }
+
+        mock()
+    }
+
+    // MARK: - removeKey
+
+    public var removeKeyId_Invocations: [UUID] = []
+    public var removeKeyId_MockMethod: ((UUID) -> Void)?
+
+    public func removeKey(id: UUID) {
+        removeKeyId_Invocations.append(id)
+
+        guard let mock = removeKeyId_MockMethod else {
+            fatalError("no mock for `removeKeyId`")
+        }
+
+        mock(id)
     }
 
 }

@@ -65,6 +65,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
+    var apiVersion: WireTransport.APIVersion?
 
     private let logger = WireLogger.mls
 
@@ -72,14 +73,16 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public convenience init(
         context: NSManagedObjectContext,
-        userID: UUID
+        userID: UUID,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.init(
             context: context,
             storage: ProteusToMLSMigrationStorage(
                 userID: userID,
                 userDefaults: .standard
-            )
+            ),
+            apiVersion: apiVersion
         )
     }
 
@@ -87,12 +90,14 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: LegacyFeatureRepositoryInterface? = nil,
-        actionsProvider: MLSActionsProviderProtocol? = nil
+        actionsProvider: MLSActionsProviderProtocol? = nil,
+        apiVersion: WireTransport.APIVersion?
     ) {
         self.context = context
         self.storage = storage
         self.featureRepository = featureRepository ?? LegacyFeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
+        self.apiVersion = apiVersion
     }
 
     // MARK: - Public Interface
@@ -168,7 +173,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Helpers (migration start)
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
-        if (BackendInfo.apiVersion ?? .v0) < .v5 {
+        if (apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
 

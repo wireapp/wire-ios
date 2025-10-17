@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Suche";
 "conversation.action.conversationDetails" = "Unterhaltungsdetails";
+"conversation.action.files" = "Dateien";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Bild";
@@ -2144,3 +2145,11 @@
 "device.details.section.mls.thumbprint" = "MLS-Daumenabdruck: %@";
 "device.details.certificate_details.title" = "Zertifikatsdetails";
 "device.details.certificate_details.copy_to_clipboard" = "In Zwischenablage kopieren";
+
+"account_blocked.network_error.alert.title" = "Netzwerkproblem";
+"account_blocked.network_error.alert.message" = "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+"account_blocked.generic_error.alert.title" = "Ein Fehler ist aufgetreten";
+"account_blocked.generic_error.alert.message" = "Bitte kontaktieren Sie den Support, falls dieser Fehler weiterhin auftritt.";
+"account_blocked.generic_error.alert.switch_accounts" = "Konto wechseln";
+"account_blocked.generic_error.alert.send_logs" = "Fehlerbericht senden";
+"account_blocked.generic_error.alert.retry" = "Wiederholen";

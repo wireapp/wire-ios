@@ -72,7 +72,9 @@ class ZMSnapshotTestCase: XCTestCase {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: documentsDirectory!,
-            inMemoryStore: true
+            inMemoryStore: true,
+            localDomain: "wire.com",
+            isFederationEnabled: false
         )
 
         try await coreDataStack.load()

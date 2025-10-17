@@ -24,7 +24,9 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
 import WireDomain
+import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -208,7 +210,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -232,6 +233,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = NSAttributedString.paragraphStyle
 
+        DeveloperOverrides.storage = .shared()
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
@@ -347,7 +349,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler(.noData)
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
         }
     }
@@ -362,7 +370,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        appRootRouter?.performWhenAuthenticated {
+        guard let appRootRouter else {
+            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
+            completionHandler()
+            return
+        }
+
+        appRootRouter.performWhenAuthenticated {
             ZMUserSession.shared()?.application(
                 application,
                 handleEventsForBackgroundURLSession: identifier,
@@ -412,6 +426,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
+            defaultEnvironment: fetchDefaultEnvironment(),
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
@@ -498,6 +513,23 @@ private extension AppDelegate {
 
     private func startAppRouter(launchOptions: LaunchOptions) {
         appRootRouter?.start(launchOptions: launchOptions)
+    }
+
+    private func fetchDefaultEnvironment() -> BackendEnvironment2 {
+        let env = ProcessInfo.processInfo.arguments.contains("--useEnvStaging") ? "staging" : "default"
+        guard let path = Bundle.backendBundle.path(
+            forResource: env,
+            ofType: "json"
+        ) else {
+            fatalError("\(env).json missing in Backend.bundle")
+        }
+
+        do {
+            let data = try Data(contentsOf: URL(filePath: path))
+            return try BackendEnvironment2.fromJSON(data, environmentType: .default)
+        } catch {
+            fatalError("unabled to fetch default environment: \(error)")
+        }
     }
 
 }

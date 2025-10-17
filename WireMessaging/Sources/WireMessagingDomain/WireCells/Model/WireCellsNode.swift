@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
     public let string: String
@@ -29,7 +30,7 @@ public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
 public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let id: UUID
     public let path: String
-    public let modified: UInt64?
+    public let modified: Date?
     public let size: UInt64?
     public let eTag: String?
     public let type: String?
@@ -39,14 +40,19 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let contentHash: String?
     public let mimeType: String?
     public let previews: [WireCellsNodePreview]
-    public let ownerUserID: String?
-    public let conversationID: WireCellsConversationID?
+    public let ownerUserID: QualifiedID?
+    public let ownerUserName: String?
+    public let conversationID: QualifiedID?
     public let publicLinkID: WireCellsPublicLinkID?
+
+    /// A pre-signed URL to download the file. Note that this URL will expire so shouldn't be stored long-term.
+
+    public let downloadURL: URL?
 
     package init(
         uuid: UUID,
         path: String,
-        modified: UInt64? = nil,
+        modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
         type: String? = nil,
@@ -56,9 +62,11 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         contentHash: String? = nil,
         mimeType: String? = nil,
         previews: [WireCellsNodePreview] = [],
-        ownerUserID: String? = nil,
-        conversationID: WireCellsConversationID? = nil,
-        publicLinkID: WireCellsPublicLinkID? = nil
+        ownerUserID: QualifiedID? = nil,
+        ownerUserName: String? = nil,
+        conversationID: QualifiedID? = nil,
+        publicLinkID: WireCellsPublicLinkID? = nil,
+        downloadURL: URL? = nil
     ) {
         self.id = uuid
         self.path = path
@@ -73,7 +81,9 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.mimeType = mimeType
         self.previews = previews
         self.ownerUserID = ownerUserID
+        self.ownerUserName = ownerUserName
         self.conversationID = conversationID
         self.publicLinkID = publicLinkID
+        self.downloadURL = downloadURL
     }
 }

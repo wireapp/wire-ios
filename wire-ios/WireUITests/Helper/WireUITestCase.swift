@@ -32,14 +32,17 @@ class WireUITestCase: XCTestCase {
 
         let launchArguments = [
             "-resetData",
-            "--BackendEnvironmentTypeOverrideKey=staging",
-            "--persist-backend-type",
+            "--useEnvStaging",
             "--preferred-api-version=8"
         ]
 
         app = XCUIApplication()
+        app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments
-        app.useWireAuthentication()
+        app.setDeveloperFlags([
+            .useWireAuthentication: true,
+            .multibackend: true
+        ])
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
@@ -51,4 +54,47 @@ class WireUITestCase: XCTestCase {
         await userHelper.deleteCreatedUsers()
     }
 
+    func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
+        XCTContext.runActivity(named: "Set custom backend via deeplink") { _ in
+            let deeplinkFullURL = "wire://access/?config=\(deeplink)"
+            guard let url = URL(string: deeplinkFullURL) else {
+                XCTFail("Invalid deeplink: \(deeplinkFullURL)")
+                return
+            }
+
+            XCUIDevice.shared.system.open(url)
+
+            let alert = springboard.alerts.firstMatch
+            if alert.waitForExistence(timeout: 2) {
+                let openButton = springboard.alerts.buttons
+                    .matching(NSPredicate(format: "label BEGINSWITH[c] 'Open'"))
+                    .firstMatch
+                if openButton.waitForExistence(timeout: 1) {
+                    openButton.tap()
+                }
+            }
+
+            XCTAssertTrue(
+                app.wait(for: .runningForeground, timeout: timeout),
+                "App did not return to foreground after opening deeplink"
+            )
+            guard let welcomePage = try? SetCustomBackendPage().tapOnProceedButton() else {
+                XCTFail("Failed to proceed to set custom backend")
+                return
+            }
+            let labeltext = welcomePage.setBackendLabel.label
+            XCTAssertTrue(
+                labeltext.contains(domainInfo),
+                "Expected domain missing from \(labeltext)"
+            )
+        }
+    }
+
+    func switchBackend(target: BackendTarget) throws {
+
+        let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
+        setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
+        // need to change for Inbucket
+        BackendContext.current = target
+    }
 }

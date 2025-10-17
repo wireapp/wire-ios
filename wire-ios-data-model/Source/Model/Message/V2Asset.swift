@@ -22,6 +22,17 @@ import MobileCoreServices
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
 
+    public var name: String? {
+        guard
+            let message = assetClientMessage.underlyingMessage,
+            let original = message.assetData?.original
+        else {
+            return nil
+        }
+
+        return original.name
+    }
+
     public var isDownloaded: Bool {
         hasDownloadedFile
     }

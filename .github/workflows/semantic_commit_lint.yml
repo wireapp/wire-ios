@@ -52,7 +52,7 @@ jobs:
           # to also validate the commit message for one commit PRs.
           validateSingleCommit: false
           
-          subjectPattern: ^(.*) - (WPB-\d+)$
+          subjectPattern: ^(.*) - (WPB-\d+)( 🍒)?$
           # If `subjectPattern` is configured, you can use this property to override
           # the default error message that is shown when the pattern doesn't match.
           # The variables `subject` and `title` can be used within the message.

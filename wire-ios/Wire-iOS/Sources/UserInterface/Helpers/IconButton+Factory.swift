@@ -50,7 +50,7 @@ extension IconButton {
 
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        return IconButton(
+        return .init(
             icon: .send,
             accessibilityId: "sendButton",
             backgroundColor: [
@@ -79,14 +79,7 @@ extension IconButton {
         setIcon(icon, size: size, for: .normal)
         accessibilityIdentifier = accessibilityId
         translatesAutoresizingMaskIntoConstraints = false
-
-        for (state, color) in backgroundColor {
-            setBackgroundImageColor(color, for: .init(rawValue: state))
-        }
-
-        for (state, color) in iconColor {
-            setIconColor(color, for: .init(rawValue: state))
-        }
+        updateIconAndBackgroundColor(backgroundColor: backgroundColor, iconColor: iconColor)
 
         borderWidth = 0
 
@@ -96,4 +89,34 @@ extension IconButton {
         }
     }
 
+    private func updateIconAndBackgroundColor(
+        backgroundColor: [UIControl.State.RawValue: UIColor],
+        iconColor: [UIControl.State.RawValue: UIColor]
+    ) {
+        for (state, color) in backgroundColor {
+            setBackgroundImageColor(color, for: .init(rawValue: state))
+        }
+
+        for (state, color) in iconColor {
+            setIconColor(color, for: .init(rawValue: state))
+        }
+    }
+
+    func updateSendButtonColor() {
+        let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
+        let backgroundColor = [
+            UIControl.State.normal.rawValue: UIColor.accent(),
+            UIControl.State.highlighted.rawValue: UIColor.accentDarken,
+            UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled
+        ]
+        let iconColor = [
+            UIControl.State.normal.rawValue: sendButtonIconColor,
+            UIControl.State.highlighted.rawValue: sendButtonIconColor,
+            UIControl.State.disabled.rawValue: sendButtonIconColor
+        ]
+        updateIconAndBackgroundColor(
+            backgroundColor: backgroundColor,
+            iconColor: iconColor
+        )
+    }
 }

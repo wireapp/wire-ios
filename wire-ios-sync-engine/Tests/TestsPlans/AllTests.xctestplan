@@ -52,7 +52,6 @@
         "EventProcessingPerformanceTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",
         "ZMMissingUpdateEventsTranscoderTests",
-        "ZMUserSessionTests\/testItSlowSyncsAfterRegisteringClient()",
         "ZMUserSessionTests\/testItSlowSyncsAfterRegisteringMLSClient()"
       ],
       "target" : {

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
@@ -25,6 +26,25 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
+        let userSession: UserSession?
+
+        init(
+            attributedText: NSAttributedString,
+            isObfuscated: Bool,
+            userSession: UserSession? = nil
+        ) {
+            self.attributedText = attributedText
+            self.isObfuscated = isObfuscated
+            self.userSession = userSession
+        }
+
+        static func == (
+            lhs: ConversationTextMessageCell.Configuration,
+            rhs: ConversationTextMessageCell.Configuration
+        ) -> Bool {
+            lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.attributedText.description == rhs.attributedText.description
+        }
     }
 
     private lazy var messageTextView: LinkInteractionTextView = {
@@ -56,7 +76,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, DeveloperFlag.chatBubblesSimple.isOn else { return }
+            guard let message, isChatBubbleSimpleEnabled else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -66,6 +86,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var selectionView: UIView? {
         messageTextView
@@ -78,7 +99,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        setupAccessibility()
     }
 
     @available(*, unavailable)
@@ -100,7 +120,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureConstraints() {
         let insets: UIEdgeInsets
-        if DeveloperFlag.chatBubblesSimple.isOn {
+        if isChatBubbleSimpleEnabled {
             insets = ConversationMessageContainerView.bubbleEdgeInsets
         } else {
             let margins = conversationHorizontalMargins
@@ -110,8 +130,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard DeveloperFlag.chatBubblesSimple.isOn else { return }
-
+        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
 
@@ -135,17 +154,49 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        messageTextView.attributedText = object.attributedText
+        if isChatBubbleSimpleEnabled {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.lineSpacing = 3
+
+            let attributes: [NSAttributedString.Key: AnyObject] = [
+                .paragraphStyle: paragraphStyle
+            ]
+
+            messageTextView.attributedText = object.attributedText.addAttributes(
+                attributes,
+                toSubstring: object.attributedText.string
+            )
+        } else {
+            messageTextView.attributedText = object.attributedText
+        }
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
         } else {
             messageTextView.accessibilityIdentifier = "Message"
         }
-        accessibilityLabel = messageTextView.attributedText.string
 
-        container?.isBubble = DeveloperFlag.chatBubblesSimple.isOn
+        container?.isBubble = isChatBubbleSimpleEnabled
+        updateContainerStyle()
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
+        addAccentColorChangeObserver(userSession: object.userSession)
+        setupAccessibility(accessibilityLabel: messageTextView.attributedText.string)
+    }
+
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard accentColorChangeHandler == nil, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.configureTextColor(forOwnMessage: self?.message?.isSentBySelfUser ?? false)
+            }
+    }
+
+    private func updateContainerStyle() {
+        guard let message, isChatBubbleSimpleEnabled else { return }
+        let isOwnMessage = message.isSentBySelfUser
+        let userColor = message.senderUser?.accentColor ?? .clear
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
@@ -183,14 +234,19 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private func setupAccessibility() {
+    private func setupAccessibility(accessibilityLabel: String) {
         typealias Conversation = L10n.Accessibility.Conversation
 
         isAccessibilityElement = false
         container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 
+    private var isChatBubbleSimpleEnabled: Bool {
+        // the additional DeveloperFlag check is needed for the snapshot test
+        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
+    }
 }
 
 // MARK: - Description
@@ -207,13 +263,21 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    let shouldAlignMessageContentForBubbles = DeveloperFlag.chatBubblesSimple.isOn
+    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+    init(
+        attributedString: NSAttributedString,
+        isObfuscated: Bool,
+        userSession: UserSession?
+    ) {
+        self.configuration = View.Configuration(
+            attributedText: attributedString,
+            isObfuscated: isObfuscated,
+            userSession: userSession,
+        )
     }
 }
 
@@ -293,7 +357,8 @@ extension ConversationTextMessageCellDescription {
         if !messageText.string.isEmpty {
             let textCell = ConversationTextMessageCellDescription(
                 attributedString: messageText,
-                isObfuscated: message.isObfuscated
+                isObfuscated: message.isObfuscated,
+                userSession: userSession
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -310,11 +375,21 @@ extension ConversationTextMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
-            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
+            let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(
+                message: message,
+                data: textMessageData
+            )
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 
         return cells
     }
 
+}
+
+extension URL {
+
+    // FIXME: [WPB-16311]: Remove once file previews are working in conversations.
+    /// A temporary means to open the Files View from a message cell link for Beta testing.
+    static let openFilesViewLink: URL = .init(string: "cells://open-files-view")!
 }

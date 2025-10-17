@@ -66,7 +66,7 @@ public struct CallEventContent: Codable {
     public init?(from event: ZMUpdateEvent) {
         guard
             event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]),
-            let message = GenericMessage(from: event),
+            let message = GenericMessage(from: event, validate: true),
             message.hasCalling,
             let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
         else {
@@ -87,8 +87,13 @@ public struct CallEventContent: Codable {
 
     // MARK: - Methods
 
-    public var callerID: AVSIdentifier? {
-        callerUserID.flatMap(AVSIdentifier.init(string:))
+    public func callerID(isFederationEnabled: Bool) -> AVSIdentifier? {
+        callerUserID.flatMap {
+            AVSIdentifier(
+                string: $0,
+                isFederationEnabled: isFederationEnabled
+            )
+        }
     }
 
     public var callState: LocalNotificationType.CallState? {

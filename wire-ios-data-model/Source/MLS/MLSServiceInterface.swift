@@ -77,6 +77,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/791412993/Use+case+join+self+conversation+MLS)
 
     func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite
+
     /// Creates a new group with the given ID and adds users to it
     ///
     /// - Parameters:
@@ -98,6 +99,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         with users: [MLSUser],
         removalKeys: BackendMLSPublicKeys?
     ) async throws -> MLSCipherSuite
+
+    /// Establishes group and sets its status to 'ready'
+    /// - Parameters:
+    ///   - groupID: The ID of the group to create
+    func establishPendingGroup(
+        groupID: MLSGroupID
+    ) async throws
 
     /// Joins a group by external commit, for the self client.
     ///
@@ -473,6 +481,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// documentation](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration)
 
     func startProteusToMLSMigration() async throws
+
+    /// Re-establish pending group
+    ///
+    /// Syncs the conversation metadata and join by external commit
+    /// or establish the group by adding all mls clients depending on the epoch
+    /// - Parameter groupID: the mls GroupID of the conversation to re-establish
+    func reEstablishPendingGroup(groupID: MLSGroupID) async throws
 
     // MARK: - Sync delegate
 

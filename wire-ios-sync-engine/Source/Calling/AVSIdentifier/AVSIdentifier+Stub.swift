@@ -20,6 +20,10 @@ import Foundation
 
 public extension AVSIdentifier {
     static var stub: AVSIdentifier {
-        AVSIdentifier(identifier: UUID(), domain: "domain.com")
+        AVSIdentifier(
+            identifier: UUID(),
+            domain: "domain.com",
+            isFederationEnabled: false
+        )
     }
 }

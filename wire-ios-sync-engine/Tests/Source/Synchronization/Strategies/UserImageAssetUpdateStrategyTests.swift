@@ -74,7 +74,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: self.syncMOC,
                 applicationStatus: mockApplicationStatus,
-                imageUploadStatus: updateStatus
+                imageUploadStatus: updateStatus,
+                localDomain: "wire.com",
+                isCloudDomain: false
             )
         }
 
@@ -164,6 +166,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: previewData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
         let completeData = Data("1111111".utf8)
@@ -171,6 +174,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             withData: completeData,
             shareable: true,
             retention: .eternal,
+            assetAuditLogMetaData: nil,
             apiVersion: .v0
         )
 
@@ -316,8 +320,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     func testThatItCreatesRequestForCorrectAssetIdentifier(for size: ProfileImageSize, apiVersion: APIVersion) throws {
         // GIVEN
-        let domain = "example.domain.com"
-        BackendInfo.domain = domain
+        let domain = "wire.com"
         let assetId = "foo-bar"
 
         let userObjectId = try syncMOC.performAndWait {
@@ -352,7 +355,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             "/assets/v3/\(assetId)"
         case .v1:
             "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 

@@ -50,6 +50,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 )
             case .exitFlowRequested:
                 self?.selectAccount()
+            case let .logoutRequested(deleteData):
+                authenticationCoordinator?.eventResponderChain.handleEvent(
+                    ofType: .logoutRequested(deleteData: deleteData)
+                )
             }
         }
         .store(in: &cancellables)

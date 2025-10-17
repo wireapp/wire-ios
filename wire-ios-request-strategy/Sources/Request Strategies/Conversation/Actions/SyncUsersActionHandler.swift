@@ -25,9 +25,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     required init(
         context: NSManagedObjectContext,
-        payloadProcessor: UserProfilePayloadProcessing? = nil
+        payloadProcessor: UserProfilePayloadProcessing? = nil,
+        isFederationEnabled: Bool
     ) {
-        self.payloadProcessor = payloadProcessor ?? UserProfilePayloadProcessor()
+        self
+            .payloadProcessor = payloadProcessor ??
+            UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
         super.init(context: context)
     }
 
@@ -60,7 +63,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             guard
                 let payloadData = RequestPayload(qualified_ids: action.qualifiedIDs).payloadString()
             else {
@@ -95,7 +98,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData,

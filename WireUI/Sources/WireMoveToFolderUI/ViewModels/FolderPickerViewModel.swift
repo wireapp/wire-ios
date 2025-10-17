@@ -29,16 +29,20 @@ public final class FolderPickerViewModel: ObservableObject {
     private let directory: any FolderDirectoryTypeProtocol
     private let updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
 
+    public let createFolderViewModel: CreateFolderViewModel
+
     // MARK: - Initialization
 
     public init(
         conversation: Conversation,
         directory: any FolderDirectoryTypeProtocol,
-        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
+        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol,
+        createFolderUseCase: any CreateConversationFolderUseCaseProtocol
     ) {
         self.conversation = conversation
         self.directory = directory
         self.updateConversationFolderUseCase = updateConversationFolderUseCase
+        self.createFolderViewModel = CreateFolderViewModel(useCase: createFolderUseCase)
         loadFolders()
     }
 

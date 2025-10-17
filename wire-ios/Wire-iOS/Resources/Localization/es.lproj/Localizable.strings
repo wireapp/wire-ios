@@ -36,7 +36,7 @@
 "general.on" = "En";
 "general.loading" = "Cargando...";
 "general.paste" = "Pegar";
-"general.or" = "or";
+"general.or" = "o";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -50,7 +50,7 @@
 "peoplepicker.navigation_header.title" = "Nueva conversación";
 "peoplepicker.search_placeholder" = "Buscar por nombre o usuario";
 "peoplepicker.header.top_people" = "Contactos favoritos";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Crear grupo";
 "peoplepicker.button.add_to_conversation" = "Añadir Participantes";
 "peoplepicker.header.conversations" = "Grupos";
 "peoplepicker.header.team_conversations" = "%@ grupos";
@@ -58,14 +58,14 @@
 "peoplepicker.header.contacts" = "Contactos";
 "peoplepicker.header.contacts_personal" = "Contactos personales";
 "peoplepicker.header.directory" = "Conectar";
-"peoplepicker.header.federation" = "Connect with other domain";
+"peoplepicker.header.federation" = "Conectar con otro dominio";
 
-"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
-"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
-"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+"peoplepicker.upgrade_banner.headline" = "Los canales están disponibles para los miembros del equipo.";
+"peoplepicker.upgrade_banner.subheadline" = "¡Crea un equipo y empieza a colaborar gratis!";
+"peoplepicker.upgrade_banner.button.title" = "Crear equipo de Wire";
 
-"peoplepicker.group.title.singular" = "Select Participants";
-"peoplepicker.group.title.plural" = "Select Participants (%d)";
+"peoplepicker.group.title.singular" = "";
+"peoplepicker.group.title.plural" = "";
 "peoplepicker.group.skip" = "Omitir";
 "peoplepicker.group.done" = "Listo";
 "peoplepicker.group.create" = "Crear";
@@ -395,6 +395,7 @@
 
 "conversation.action.search" = "Buscar";
 "conversation.action.conversationDetails" = "Conversation Details";
+"conversation.action.files" = "Ficheros";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Imágen";
@@ -2144,3 +2145,11 @@
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
 "device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";
+
+"account_blocked.network_error.alert.title" = "Network issue";
+"account_blocked.network_error.alert.message" = "Please check your internet connection and try again.";
+"account_blocked.generic_error.alert.title" = "Algo salió mal";
+"account_blocked.generic_error.alert.message" = "Please contact support if the error persists.";
+"account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
+"account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
+"account_blocked.generic_error.alert.retry" = "Retry";

@@ -46,6 +46,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private var cancellables = Set<AnyCancellable>()
 
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
+
     // MARK: - Internal Properties
 
     var callCenter: WireCallCenterV3?
@@ -57,12 +60,15 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         applicationStatus: ApplicationStatus,
         flowManager: FlowManagerType,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
-
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [
@@ -86,7 +92,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                     clientId: clientId,
                     uiMOC: managedObjectContext.zm_userInterface,
                     flowManager: flowManager,
-                    transport: self
+                    transport: self,
+                    localDomain: localDomain,
+                    isFederationEnabled: isFederationEnabled
                 )
             }
         }
@@ -139,7 +147,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return nil
             }
 
-            let factory = ClientMessageRequestFactory()
+            let factory = ClientMessageRequestFactory(localDomain: localDomain)
 
             return factory.upstreamRequestForFetchingClients(
                 conversationId: request.conversationId,
@@ -179,10 +187,17 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            guard let jsonData = response.rawData else { return }
+            guard
+                let jsonData = response.rawData,
+                let apiVersion = APIVersion(rawValue: response.apiVersion)
+            else {
+                return
+            }
 
-            let apiVersion = APIVersion(rawValue: response.apiVersion)!
-            decoder.userInfo = [ClientDiscoveryResponsePayload.apiVersionKey: apiVersion]
+            decoder.userInfo = [
+                ClientDiscoveryResponsePayload.apiVersionKey: apiVersion,
+                ClientDiscoveryResponsePayload.isFederationEnabledKey: isFederationEnabled
+            ]
 
             do {
                 let payload = try decoder.decode(ClientDiscoveryResponsePayload.self, from: jsonData)
@@ -223,7 +238,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                         clientId: clientId,
                         uiMOC: uiContext.zm_userInterface,
                         flowManager: self.flowManager,
-                        transport: self
+                        transport: self,
+                        localDomain: self.localDomain,
+                        isFederationEnabled: self.isFederationEnabled
                     )
                 }
                 break
@@ -242,7 +259,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
-        if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
+        if let genericMessage = GenericMessage(from: event, validate: true), genericMessage.hasCalling {
             Self.logger.debug("process call event", attributes: [.eventId: event.safeUUID])
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
@@ -294,12 +311,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         let conversationId = AVSIdentifier(
             identifier: identifier,
-            domain: domain
+            domain: domain,
+            isFederationEnabled: isFederationEnabled
         )
 
         let userId = AVSIdentifier(
             identifier: senderUUID,
-            domain: senderDomain
+            domain: senderDomain,
+            isFederationEnabled: isFederationEnabled
         )
 
         let callEvent = CallEvent(
@@ -328,7 +347,10 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         completionHandler: @escaping ((Int) -> Void)
     ) {
         let dataString = String(decoding: data, as: UTF8.self)
-        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
+        let callingContent = Calling(
+            content: dataString,
+            conversationId: conversationId.toQualifiedId(localDomain: localDomain)
+        )
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
@@ -450,8 +472,13 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             case .mls:
                 // With MLS we will fetch all clients for each group participant at once
                 // directly from the backend.
+                guard let localDomain else {
+                    completionHandler([])
+                    return
+                }
+
                 let userIDs = conversation.localParticipants.map { user in
-                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? BackendInfo.domain!)
+                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? localDomain)
                 }
 
                 Task {
@@ -463,7 +490,11 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
                         let avsClients = qualifiedClientIDs.map {
                             AVSClient(
-                                userId: AVSIdentifier(identifier: $0.userID, domain: $0.domain),
+                                userId: AVSIdentifier(
+                                    identifier: $0.userID,
+                                    domain: $0.domain,
+                                    isFederationEnabled: self.isFederationEnabled
+                                ),
                                 clientId: $0.clientID
                             )
                         }
@@ -522,7 +553,9 @@ extension CallingRequestStrategy {
     }
 
     struct ClientDiscoveryResponsePayload: Decodable {
-        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptions")!
+        static let apiVersionKey = CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsAPIVersion")!
+        static let isFederationEnabledKey =
+            CodingUserInfoKey(rawValue: "clientDiscoveryDecodingOptionsIsFederationEnabled")!
 
         let clients: [AVSClient]
 
@@ -553,7 +586,10 @@ extension CallingRequestStrategy {
         ///    ...
         /// }
         init(from decoder: Decoder) throws {
-            guard let apiVersion = decoder.userInfo[Self.apiVersionKey] as? APIVersion else {
+            guard
+                let apiVersion = decoder.userInfo[Self.apiVersionKey] as? APIVersion,
+                let isFederationEnabled = decoder.userInfo[Self.isFederationEnabledKey] as? Bool
+            else {
                 fatalError("missing api version")
             }
 
@@ -575,7 +611,8 @@ extension CallingRequestStrategy {
 
                         let identifier = AVSIdentifier(
                             identifier: UUID(uuidString: userIdKey.stringValue)!,
-                            domain: domain
+                            domain: domain,
+                            isFederationEnabled: isFederationEnabled
                         )
 
                         clients += clientIds.compactMap {
@@ -592,7 +629,7 @@ extension CallingRequestStrategy {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
                 allClients = try extractClientsFromContainer(nestedContainer, nil)
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in
@@ -656,7 +693,7 @@ private extension Calling {
 }
 
 private extension AVSIdentifier {
-    func toQualifiedId() -> QualifiedID {
-        QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
+    func toQualifiedId(localDomain: String?) -> QualifiedID {
+        QualifiedID(uuid: identifier, domain: domain ?? localDomain ?? "")
     }
 }

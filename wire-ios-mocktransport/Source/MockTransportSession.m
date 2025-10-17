@@ -145,6 +145,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return self;
 }
 
+- (void)dealloc {
+    self.managedObjectContext.dispatchGroupContext = nil;
+}
+
 - (void)enterBackground
 {
     

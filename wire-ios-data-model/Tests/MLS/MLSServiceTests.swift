@@ -49,9 +49,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     let groupID = MLSGroupID(.init([1, 2, 3]))
     let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
-    override func setUp() {
-        BackendInfo.domain = "example.com"
+    let localDomain = "example.com"
 
+    override func setUp() {
         super.setUp()
 
         mockCoreCrypto = MockCoreCryptoProtocol()
@@ -109,7 +109,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             delegate: self,
             userID: userIdentifier,
             featureRepository: mockLegacyFeatureRepository,
-            subconversationGroupIDRepository: mockSubconversationGroupIDRepository
+            subconversationGroupIDRepository: mockSubconversationGroupIDRepository,
+            localDomain: localDomain
         )
         sut.setSyncDelegate(mockSyncDelegate)
         sut.setResetBrokenMLSConversationDelegate(resetMLSConversationDelegate)
@@ -570,12 +571,93 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(mockAddMembersCalled)
     }
 
+    private func internalTestReEstablishGroup(epoch: UInt64) async throws {
+        // GIVEN
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let conversation = await uiMOC.perform {
+            let conversation = self.createConversation(
+                outOfSync: false,
+                currentEpoch: epoch,
+                groupID: groupID
+            ).conversation
+            conversation.mlsStatus = .pendingJoinAfterReset
+            return conversation
+        }
+
+        let mlsSelfUser = await uiMOC.perform {
+            MLSUser(from: self.selfUser, localDomain: self.localDomain)
+        }
+        let groupInfo = Data()
+        mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
+                groupInfo
+            }
+        mockMLSActionExecutor.mockJoinGroup = { mlsGroupID, mlsGroupInfo in
+            XCTAssertEqual(mlsGroupID, groupID)
+            XCTAssertEqual(mlsGroupInfo, groupInfo)
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+
+        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in }
+
+        // WHEN
+        try await sut.reEstablishPendingGroup(groupID: groupID)
+
+        // THEN
+        try XCTAssertCount(mockActionsProvider.syncConversationQualifiedIDContext_Invocations, count: 1)
+        await uiMOC.perform {
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+        }
+    }
+
+    func test_reEstablishGroup_joinViaExternalCommit() async throws {
+        // GIVEN
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
+
+        // WHEN
+        try await internalTestReEstablishGroup(epoch: 1)
+
+        // THEN
+        try XCTAssertCount(
+            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations,
+            count: 1
+        )
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 0)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
+    func test_reEstablishGroup_establishGroup() async throws {
+        // GIVEN
+        mockCoreCryptoContext.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [KeyPackage(
+            client: "123e",
+            domain: "qwer",
+            keyPackage: "qwer",
+            keyPackageRef: "asdf",
+            userID: UUID()
+        )]
+        mockMLSActionExecutor.mockAddMembers = { _, _ in }
+
+        // WHEN
+        try await internalTestReEstablishGroup(epoch: 0)
+
+        // THEN
+        XCTAssertEqual(mockMLSActionExecutor.mockAddMembersCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 0)
+    }
+
     func test_EstablishGroup_WipesGroupOnError() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
         let mlsSelfUser = await uiMOC.perform {
-            MLSUser(from: self.selfUser)
+            MLSUser(from: self.selfUser, localDomain: self.localDomain)
         }
         let users = [
             MLSUser(id: UUID(), domain: "example.com"),
@@ -612,8 +694,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
-        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
+
+        do {
             try await _ = sut.establishGroup(for: groupID, with: users)
+        } catch {
+            if case let MLSService.MLSAddMembersError.failedToClaimKeyPackages(users) = error {
+                XCTAssertEqual(Set(usersIncludingSelf), Set(users))
+            } else {
+                XCTFail("unexepected error  \(error)")
+            }
         }
 
         // Then
@@ -2973,7 +3062,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [.init(
             client: "123",
-            domain: BackendInfo.domain!,
+            domain: localDomain,
             keyPackage: "",
             keyPackageRef: "",
             userID: UUID()
@@ -3015,7 +3104,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = [.init(
             client: "123",
-            domain: BackendInfo.domain!,
+            domain: localDomain,
             keyPackage: "",
             keyPackageRef: "",
             userID: UUID()
@@ -3040,12 +3129,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let conversation = await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
-            selfUser.domain = BackendInfo.domain
+            selfUser.domain = localDomain
 
             let conversation = createConversation(in: uiMOC, with: [selfUser])
             conversation.mlsGroupID = mlsGroupID
             conversation.messageProtocol = .proteus
-            conversation.domain = BackendInfo.domain
+            conversation.domain = localDomain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
             return conversation
         }
@@ -3090,7 +3179,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider
             .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod =
             { [self] userID, domain, _, _, _ in
-                keyPackage = createKeyPackage(userID: userID, domain: domain ?? BackendInfo.domain!)
+                keyPackage = createKeyPackage(userID: userID, domain: domain ?? localDomain)
                 return [keyPackage]
             }
 
@@ -3127,12 +3216,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
-            selfUser.domain = BackendInfo.domain
+            selfUser.domain = localDomain
 
             let conversation = createConversation(in: uiMOC, with: [selfUser])
             conversation.mlsGroupID = mlsGroupID
             conversation.messageProtocol = .proteus
-            conversation.domain = BackendInfo.domain
+            conversation.domain = localDomain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
         }
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireDomain
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -32,7 +33,8 @@ final class ConversationViewController: UIViewController {
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
-    private let wireCellsFactory: WireCellsFactoryProtocol
+    let wireCellsFactory: WireCellsFactoryProtocol
+    private(set) var wireCellsState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -172,7 +174,8 @@ final class ConversationViewController: UIViewController {
                 mediaPlaybackManager: mediaPlaybackManager,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                wireCellsFactory: wireCellsFactory
             )
         }
 
@@ -203,6 +206,9 @@ final class ConversationViewController: UIViewController {
         )
 
         self.wireCellsFactory = wireCellsFactory
+        self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
+            conversation.cellsState
+        }
 
         super.init(nibName: nil, bundle: nil)
 
@@ -447,7 +453,8 @@ final class ConversationViewController: UIViewController {
     private func setupTitleViewTap() {
         var actions = [UIAction]()
 
-        if DeveloperFlag.wireCells.isOn {
+        // uncomment code when feature prod ready
+        if userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -873,9 +880,43 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
         let filesView = wireCellsFactory
-            .makeFilesView()
+            .makeFilesView(
+                cellName: conversation.wireCellName,
+                isCellsStatePending: wireCellsState == .pending,
+                nodeIDs: []
+            )
 
         filesView.presentOverAll(animated: true)
+    }
+
+    /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
+    /// as it might have been updated to either a `pending` or `ready` state.
+    func syncCellsState() {
+        guard wireCellsState != .ready else {
+            return
+        }
+
+        guard let conversationRepository = userSession.clientSessionComponent?.conversationRepository else {
+            return
+        }
+
+        let syncCellsStateUseCase = SyncCellsStateUseCase(
+            repository: conversationRepository,
+            context: userSession.contextProvider.newBackgroundContext(),
+            localDomain: userSession.resolvedBackendMetadata.domain
+        )
+
+        Task {
+            do {
+                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                    conversationObjectID: conversation.objectID
+                )
+            } catch {
+                WireLogger.conversation
+                    .error("could not sync cells state for conversation: \(String(describing: error))")
+            }
+        }
+
     }
 
 }

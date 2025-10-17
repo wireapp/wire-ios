@@ -16,15 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import Foundation
+
 // sourcery: AutoMockable
 /// A repository of `WireCellNode` objects.
 package protocol WireCellsNodesRepositoryProtocol: Sendable {
+
+    /// Fetches a node with the specified ID.
+    ///
+    /// - Parameter id: The UUID of the node to fetch.
+    /// - Returns: The `WireCellsNode` object with the specified ID, or `nil` if not found.
+    func getNode(id: UUID) async throws -> WireCellsNode?
 
     /// Fetches nodes based on the provided request.
     ///
     /// - Parameter request: The request containing the scope, filter, limit, and offset for fetching nodes.
     /// - Returns: A tuple containing an array of `WireCellsNode` objects and an optional next offset for pagination.
     func getNodes(_ request: WireCellsGetNodesRequest) async throws -> (nodes: [WireCellsNode], nextOffset: Int?)
+
+    /// Deletes nodes with the specified IDs.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to delete.
+    ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
 }
 
@@ -43,6 +58,13 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
         package let type: WireCellsNodeType
     }
 
+    /// The query to apply to the scope. `Query` is deprecated but it is necessary until we implement [WPB-16311].
+    package struct Query: Equatable, Sendable {
+
+        /// The IDs of the nodes to fetch. If provided, only nodes with these IDs will be returned.
+        package let nodeIDs: [UUID]?
+    }
+
     /// The scope of the request.
     package struct Scope: Equatable, Sendable {
 
@@ -56,6 +78,10 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The scope of the request.
     package let scope: Scope
 
+    // FIXME: [WPB-16311] Remove Query once previewing cells files in conversations is implemented.
+    /// The query to apply to the request.
+    package let query: Query?
+
     /// The filter to apply to the results.
     package let filter: Filter
 
@@ -65,8 +91,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The pagination offset to start the results from.
     package let offset: Int
 
-    package init(scope: Scope, filter: Filter, limit: Int, offset: Int) {
+    package init(scope: Scope, query: Query? = nil, filter: Filter, limit: Int, offset: Int) {
         self.scope = scope
+        self.query = query
         self.filter = filter
         self.limit = limit
         self.offset = offset

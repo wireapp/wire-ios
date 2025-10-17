@@ -19,6 +19,17 @@
 import Foundation
 
 class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
+
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?
+    ) {
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
+
     override func request(for action: UpdateRoleAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
@@ -41,10 +52,10 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
         switch apiVersion {
         case .v0, .v1, .v2, .v3, .v4, .v5, .v6:
             path = "/conversations/\(convID)/members/\(userID)"
-        case .v7, .v8, .v9, .v10, .v11:
+        case .v7, .v8, .v9, .v10, .v11, .v12:
             guard
-                let convDomain = conversation.domain ?? BackendInfo.domain,
-                let userDomain = participant.domain ?? BackendInfo.domain
+                let convDomain = conversation.domain ?? localDomain,
+                let userDomain = participant.domain ?? localDomain
             else {
                 var action = action
                 action.notifyResult(.failure(UpdateRoleError.missingDomains))

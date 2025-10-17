@@ -18,6 +18,7 @@
 
 import CellsSDK
 import Foundation
+import WireLogging
 import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
@@ -29,7 +30,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
-
+        static let deleteBackgroundActionName = "delete"
     }
 
     private let serverURL: URL
@@ -40,7 +41,7 @@ final class RestAPI: Sendable {
         self.accessTokenProvider = accessToken
     }
 
-    func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
+    func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
         let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
@@ -50,23 +51,28 @@ final class RestAPI: Sendable {
 
     func getNodes(
         _ request: WireCellsGetNodesRequest
-    ) async throws -> (nodes: [WireCellsNodeDTO], nextOffset: Int?) {
+    ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
         let request = RestLookupRequest(
             filters: RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
                     isDraft: false
                 ),
-                text: request.filter.text.map { LookupFilterTextSearch(searchIn: .baseName, term: $0) },
+                text: LookupFilterTextSearch(searchIn: .baseName, term: request.filter.text ?? "*"),
                 type: TreeNodeType(request.filter.type)
             ),
             flags: [.withPreSignedURLs],
             limit: "\(request.limit)",
             offset: "\(request.offset)",
+            query: request.query.map { query in
+                let nodeIDs = query.nodeIDs?.compactMap { $0.uuidString.lowercased() }
+                return TreeQuery(uUIDs: nodeIDs)
+            },
             scope: RestLookupScope(
                 recursive: request.scope.isRecursive,
                 root: request.scope.root.map { RestNodeLocator($0) }
             ),
+            sortDirDesc: true,
             sortField: Constants.sortedBy
         )
 
@@ -77,23 +83,31 @@ final class RestAPI: Sendable {
         return (nodes: nodes, nextOffset: nextOffset)
     }
 
-    func delete(uuid: UUID) async throws {
-        let parameters = RestActionParameters(nodes: [RestNodeLocator(uuid: uuid.uuidString)])
-        _ = try await NodeServiceAPI.performAction(
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            deleteOptions: RestActionOptionsDelete(permanentDelete: permanently),
+            nodes: nodes
+        )
+        let response = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
-    }
-
-    func delete(paths: [String]) async throws {
-        let nodes = paths.map { RestNodeLocator(path: $0) }
-        let parameters = RestActionParameters(nodes: nodes)
-        _ = try await NodeServiceAPI.performAction(
-            name: .delete,
-            parameters: parameters,
-            apiConfiguration: makeConfiguration()
-        )
+        guard
+            let actions = response.backgroundActions,
+            let deleteAction = actions.first(where: { $0.name == Constants.deleteBackgroundActionName }) else {
+            return false
+        }
+        return deleteAction.status == .finished
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
@@ -190,6 +204,7 @@ final class RestAPI: Sendable {
         let config = CellsSDKAPIConfiguration()
         config.basePath = serverURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
+        config.interceptor = LoggingIntercepter()
 
         return config
     }
@@ -235,5 +250,51 @@ private extension TreeNodeType {
         case .any:
             self = .unknown
         }
+    }
+}
+
+private struct LoggingIntercepter: OpenAPIInterceptor {
+
+    let interceptor = DefaultOpenAPIInterceptor()
+
+    func intercept(
+        urlRequest: URLRequest,
+        urlSession: any URLSessionProtocol,
+        requestBuilder: RequestBuilder<some Any>,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
+        WireLogger.wireCells.log(urlRequest)
+
+        interceptor.intercept(
+            urlRequest: urlRequest,
+            urlSession: urlSession,
+            requestBuilder: requestBuilder,
+            completion: completion
+        )
+    }
+
+    func retry(
+        urlRequest: URLRequest,
+        urlSession: any URLSessionProtocol,
+        requestBuilder: RequestBuilder<some Any>,
+        data: Data?,
+        response: URLResponse?,
+        error: any Error,
+        completion: @escaping (OpenAPIInterceptorRetry) -> Void
+    ) {
+        WireLogger.wireCells.warn("Wire cells node API request failed: \(error)")
+        if let response = response as? HTTPURLResponse {
+            WireLogger.wireCells.log(response: response)
+        }
+
+        interceptor.retry(
+            urlRequest: urlRequest,
+            urlSession: urlSession,
+            requestBuilder: requestBuilder,
+            data: data,
+            response: response,
+            error: error,
+            completion: completion
+        )
     }
 }

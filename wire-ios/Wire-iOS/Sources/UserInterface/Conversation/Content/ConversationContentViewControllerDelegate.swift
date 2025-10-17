@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import WireDataModel
 
 protocol ConversationContentViewControllerDelegate: AnyObject {
@@ -63,5 +64,12 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
     func didSwipeToReact(
         actionController: ConversationMessageActionController,
         popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    )
+
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        didDeleteMultipartMessage message: ZMConversationMessage,
+        withAttachments attachments: [MultipartMessageData.Attachment],
+        deletionType: DeletionType
     )
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CellsSDK
 package import Foundation
 package import WireMessagingDomain
 
@@ -63,12 +64,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
-    package func deleteFile(nodeID: UUID) async throws {
-        try await restAPI.delete(uuid: nodeID)
-    }
-
-    package func deleteFiles(paths: [String]) async throws {
-        try await restAPI.delete(paths: paths)
+    /// Deletes nodes by their `UUID`s.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
+    /// - Returns: Whether the deletion was successful.
+    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
+        try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
@@ -106,6 +109,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         return dto.toDomainModel()
     }
 
+    package func getNode(id: UUID) async throws -> WireCellsNode? {
+        do {
+            return try await getNode(nodeID: id)
+        } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 404 {
+            return nil
+        }
+    }
+
     package func getNodes(
         _ request: WireCellsGetNodesRequest
     ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
@@ -123,5 +134,15 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func deletePublicLink(linkUUID: UUID) async throws {
         try await restAPI.deletePublicLink(uuid: linkUUID)
+    }
+}
+
+private extension CellsSDK.ErrorResponse {
+
+    var httpStatusCode: Int? {
+        switch self {
+        case let .error(_, _, response, _):
+            (response as? HTTPURLResponse)?.statusCode
+        }
     }
 }

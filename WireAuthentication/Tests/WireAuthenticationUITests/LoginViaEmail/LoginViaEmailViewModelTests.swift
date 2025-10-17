@@ -21,6 +21,7 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireAuthenticationAPISupport
 import WireFoundation
+import WireNetwork
 import WireReusableUIComponentsSupport
 import WireTestingPackage
 import XCTest
@@ -53,7 +54,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendInfo: MockDependencies().backendInfo,
+            environment: MockDependencies().backendEnvironment,
             canCreateAccount: true,
             didDetectDomainConflict: false
         )
@@ -132,7 +133,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock
@@ -168,7 +171,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            backendMetadata: Fixture.backendMetadata,
+            proxyCredentials: nil
         )
 
         // mock

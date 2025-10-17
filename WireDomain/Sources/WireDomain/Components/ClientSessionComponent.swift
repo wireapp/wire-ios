@@ -135,7 +135,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    public lazy var mlsAPI = MLSAPIBuilder(
+    public lazy var mlsAPI: some MLSAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -155,7 +155,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
+    private lazy var updateEventsAPI: some UpdateEventsAPI = UpdateEventsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -187,17 +187,19 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    public lazy var conversationLocalStore = ConversationLocalStore(
+    public private(set) lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
-        messageLocalStore: messageLocalStore
+        messageLocalStore: messageLocalStore,
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
-    public lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
+    public private(set) lazy var featureConfigsLocalStore = FeatureConfigLocalStore(
         context: syncContext
     )
 
-    private lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
+    public private(set) lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
         context: syncContext
     )
 
@@ -213,12 +215,13 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    public lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
+    public private(set) lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
     private lazy var userConnectionsStore = ConnectionsLocalStore(
-        context: syncContext
+        context: syncContext,
+        isFederationEnabled: backendMetadata.isFederationEnabled
     )
 
     private lazy var userLocalStore = UserLocalStore(
@@ -229,10 +232,10 @@ public final class ClientSessionComponent {
 
     // MARK: - Pull syncs
 
-    public lazy var pullAllConversationsSync = PullAllConversationsSync(
+    public private(set) lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled,
-        isMLSEnabled: BackendInfo.isMLSEnabled,
+        isMLSEnabled: isMLSEnabled,
         api: conversationsAPI,
         store: conversationLocalStore,
         journal: journal
@@ -262,8 +265,8 @@ public final class ClientSessionComponent {
     private lazy var pullMLSOneOnOneSync = PullMLSOneOnOneSync(
         api: conversationsAPI,
         store: conversationLocalStore,
-        isFederationEnabled: BackendInfo.isFederationEnabled,
-        isMLSEnabled: BackendInfo.isMLSEnabled
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled
     )
 
     private lazy var pullMLSStatusSync = PullMLSStatusSync(
@@ -342,9 +345,9 @@ public final class ClientSessionComponent {
 
     // MARK: High level syncs
 
-    public lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
 
-    public lazy var initialSync = {
+    public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
             pullSelfUserClientsSync: pullSelfUserClientsSync,
@@ -380,7 +383,7 @@ public final class ClientSessionComponent {
         mlsService: mlsService
     )
 
-    public lazy var incrementalSync = IncrementalSync(
+    public private(set) lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
@@ -407,15 +410,23 @@ public final class ClientSessionComponent {
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
-            pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            mlsGroupRepairAgent: mlsGroupRepairAgent,
+            createPushChannelState: { [selfClientID] in
+                PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            }
         )
     } else {
         fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
     }
 
+    public private(set) lazy var mainAppPushChannelCoordinator = MainAppPushChannelCoordinator(
+        clientID: selfClientID
+    )
+
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
+            featureConfigRepository: featureConfigRepository,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,
@@ -433,21 +444,19 @@ public final class ClientSessionComponent {
         conversationLabelsLocalStore: conversationLabelsLocalStore
     )
 
-    public lazy var conversationRepository = ConversationRepository(
+    public private(set) lazy var conversationRepository = ConversationRepository(
         conversationsAPI: conversationsAPI,
         conversationsLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore,
         teamRepository: teamRepository,
         messageRepository: messageRepository,
-        backendInfo: .init(
-            domain: backendMetadata.domain,
-            isFederationEnabled: backendMetadata.isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
-        ),
+        localDomain: backendMetadata.domain,
+        isFederationEnabled: backendMetadata.isFederationEnabled,
+        isMLSEnabled: isMLSEnabled,
         mlsProvider: mlsProvider
     )
 
-    public lazy var featureConfigRepository = FeatureConfigRepository(
+    public private(set) lazy var featureConfigRepository = FeatureConfigRepository(
         featureConfigsAPI: featureConfigsAPI,
         featureConfigLocalStore: featureConfigsLocalStore
     )
@@ -742,10 +751,10 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled,
             isMLSEnabled: isMLSEnabled
         )
-
     }
 
     public func createChannelUseCase() -> some CreateChannelUseCaseProtocol {
@@ -754,13 +763,14 @@ public final class ClientSessionComponent {
             store: conversationLocalStore,
             mlsService: mlsService,
             context: syncContext,
+            localDomain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
         )
     }
 
     // MARK: - Other
 
-    private lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
+    public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
         messageLocalStore: messageLocalStore,
         conversationLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore

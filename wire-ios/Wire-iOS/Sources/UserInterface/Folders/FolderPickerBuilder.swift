@@ -40,7 +40,8 @@ struct FolderPickerBuilder {
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
-            updateConversationFolderUseCase: useCase
+            updateConversationFolderUseCase: useCase,
+            createFolderUseCase: createConversationFolderUseCase
         )
 
         return FolderPickerHostingController(

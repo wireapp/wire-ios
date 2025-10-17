@@ -39,18 +39,29 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let actionSync: EntityActionSync
 
     let oneOnOneResolver: any OneOnOneResolverInterface
+    private let apiVersion: WireTransport.APIVersion?
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
-        oneOnOneResolver: any OneOnOneResolverInterface
+        oneOnOneResolver: any OneOnOneResolverInterface,
+        apiVersion: WireTransport.APIVersion?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
-
         self.syncProgress = syncProgress
         self.oneOnOneResolver = oneOnOneResolver
-        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
-        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
+        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )
 
         self.userProfileByID = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
@@ -61,7 +72,13 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             transcoder: userProfileByQualifiedIDTranscoder
         )
 
-        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(
+            context: managedObjectContext,
+            isFederationEnabled: isFederationEnabled
+        )])
+        self.apiVersion = apiVersion
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -112,11 +129,11 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
-            } else if let domain = BackendInfo.domain {
-                let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: domain)
+            } else if let localDomain {
+                let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: localDomain)
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             }
         }
@@ -147,7 +164,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
+        guard let apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
             .compactMap { $0 as? ZMUser }
@@ -163,7 +180,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         guard
             let users = objects as? Set<ZMUser>,
-            let apiVersion = BackendInfo.apiVersion
+            let apiVersion
         else {
             return
         }
@@ -206,7 +223,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             in: managedObjectContext
         )
 
-        let processor = UserProfilePayloadProcessor()
+        let processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
         processor.updateUserProfile(
             from: userProfile,
             for: user,
@@ -277,10 +294,14 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = UserProfilePayloadProcessor()
+    private let processor: UserProfilePayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -341,10 +362,14 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    private let processor = UserProfilePayloadProcessor()
+    private let processor: UserProfilePayloadProcessor
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
+        self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -408,7 +433,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)

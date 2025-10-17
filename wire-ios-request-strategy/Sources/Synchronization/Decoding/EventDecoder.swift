@@ -59,16 +59,20 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
     unowned let eventMOC: NSManagedObjectContext
     unowned let syncMOC: NSManagedObjectContext
 
+    let isFederationEnabled: Bool
+
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
     public init(
         eventMOC: NSManagedObjectContext,
         syncMOC: NSManagedObjectContext,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        isFederationEnabled: Bool
     ) {
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
         self.lastEventIDRepository = lastEventIDRepository
+        self.isFederationEnabled = isFederationEnabled
         super.init()
     }
 
@@ -457,7 +461,7 @@ private extension EventDecoder {
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
             if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID,
-               let genericMessage = GenericMessage(from: event) {
+               let genericMessage = GenericMessage(from: event, validate: true) {
                 let included = genericMessage.hasAvailability
                 if !included {
                     WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)

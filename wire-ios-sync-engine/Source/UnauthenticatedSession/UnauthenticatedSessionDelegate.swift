@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 public protocol UnauthenticatedSessionDelegate: AnyObject {
 
@@ -28,12 +29,8 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
 
     func session(
         session: UnauthenticatedSession,
-        updatedProfileImage imageData: Data
-    )
-
-    func session(
-        session: UnauthenticatedSession,
-        createdAccount account: Account
+        createdAccount account: Account,
+        newEnvironment: NewEnvironment?
     )
 
     func session(

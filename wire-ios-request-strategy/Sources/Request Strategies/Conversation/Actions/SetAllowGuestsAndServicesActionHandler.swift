@@ -20,7 +20,22 @@ import WireDataModel
 
 final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
 
-    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+    private let eventProcessor: ConversationEventProcessor
+    private let localDomain: String?
+
+    init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
+        self.eventProcessor = ConversationEventProcessor(
+            context: context,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
+        )
+        self.localDomain = localDomain
+        super.init(context: context)
+    }
 
     // MARK: - Request Generation
 
@@ -60,8 +75,8 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
         let path: String
         switch apiVersion {
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 action.fail(with: .domainUnavailable)
                 return nil

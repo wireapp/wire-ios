@@ -18,6 +18,9 @@
 
 public import Foundation
 public import UIKit
+public import SwiftUI
+public import WireData
+import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 import WireMessagingUI
@@ -27,13 +30,31 @@ public struct WireCellsFactory {
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
+    private let fileCache: any FileCache
+    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
+    private let localAssetRepository: WireCellsLocalAssetRepository
+    private let filenameGenerator = FilenameGenerator()
+    private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeCache = WireCellsNodeCache()
 
-    public init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    @MainActor var lastOpenRequestNodeID: UUID?
+
+    @MainActor
+    public init(
+        serverURL: URL,
+        accessToken: any AccessTokenProvider,
+        fileCache: any FileCache,
+        contextProvider: any ManagedObjectContextProvider
+    ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
-        case "nginz-https.fulu.wire.link":
+        case "prod-nginz-https.wire.com": // Production
+            URL(string: "https://cells-beta.wire.com")!
+        case "staging-nginz-https.zinfra.io": // Staging
+            URL(string: "https://cells.staging.zinfra.io")!
+        case "nginz-https.fulu.wire.link": // Fulu
             URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link":
+        case "nginz-https.imai.wire.link": // Imai
             URL(string: "https://cells.imai.wire.link")!
         default:
             serverURL
@@ -42,6 +63,14 @@ public struct WireCellsFactory {
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
+        self.fileCache = fileCache
+        self.localAssetStore = WireCellsLocalAssetStore(contextProvider: contextProvider)
+        self.localAssetRepository = WireCellsLocalAssetRepository(
+            nodesAPI: nodesAPI,
+            fileCache: fileCache,
+            store: localAssetStore
+        )
+        self.lastOpenRequest = WireCellsLastOpenRequest()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -49,7 +78,9 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository(),
+            filenameGenerator: filenameGenerator
         )
     }
 
@@ -79,7 +110,17 @@ public struct WireCellsFactory {
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
-            nodesAPI: nodesAPI
+            nodesAPI: nodesAPI,
+            metadataRepository: WireCellsDraftMetadataRepository(),
+            filenameGenerator: filenameGenerator
+        )
+    }
+
+    public func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
+        WireCellsDeleteNodesUseCase(
+            repository: nodesAPI,
+            fileCache: fileCache,
+            localAssetStore: localAssetStore
         )
     }
 
@@ -88,11 +129,55 @@ public struct WireCellsFactory {
 public extension WireCellsFactory {
 
     @MainActor
-    func makeFilesView() -> UIViewController {
-        let viewModel = FilesViewModel()
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration =
+            nodeIDs.isEmpty ? .conversationFileView(root: .path(cellName)) : .nodesFileView(nodeIDs: nodeIDs)
+
+        let viewModel = FilesViewModel(
+            fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                configuration: configuration,
+                repository: nodesAPI
+            ),
+            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                repository: nodesAPI,
+                fileCache: fileCache,
+                localAssetStore: localAssetStore
+            ),
+            isCellsStatePending: isCellsStatePending,
+            localAssetRepository: localAssetRepository,
+            fileCache: fileCache
+        )
 
         return FilesHostingController(
             viewModel: viewModel
         )
     }
+
+    @MainActor
+    func makeAttachmentsPreviewView(
+        attachments: [WireCellsMessageAttachment],
+        alignment: HorizontalAlignment
+    ) -> UIViewController {
+        let viewController = UIHostingController(
+            rootView: WireCellsAttachmentsPreviewView(
+                viewModel: WireCellsAttachmentsPreviewViewModel(
+                    attachments: attachments,
+                    alignment: alignment,
+                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                        repository: nodesAPI,
+                        cache: nodeCache
+                    ),
+                    getAssetUseCase: WireCellsGetAssetUseCase(
+                        localAssetRepository: localAssetRepository,
+                        fileCache: fileCache
+                    ),
+                    localAssetRepository: localAssetRepository,
+                    lastOpenRequest: lastOpenRequest
+                )
+            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        )
+        viewController.view.backgroundColor = .clear
+        return viewController
+    }
+
 }

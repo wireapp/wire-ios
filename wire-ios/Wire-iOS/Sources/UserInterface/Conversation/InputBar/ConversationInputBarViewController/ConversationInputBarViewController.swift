@@ -172,7 +172,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons)
+        let inputBar = InputBar(buttons: inputBarButtons, isWireCellsEnabled: conversation.isCellsEnabled)
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -208,6 +208,7 @@ final class ConversationInputBarViewController: UIViewController,
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?
     var replyComposingView: ReplyComposingView?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     // MARK: feedback
 
@@ -658,8 +659,20 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func postImage(_ image: MediaAsset) {
-        guard let data = image.imageData else { return }
-        sendController.sendMessage(withImageData: data, userSession: userSession)
+        guard let data = image.imageData else {
+            return
+        }
+        // The image is a `UIImage` instances that came from
+        // the clipboard, so we don't have a name or UTType.
+        let image = SendableImage(
+            name: nil,
+            utType: nil,
+            data: data
+        )
+        sendController.sendMessage(
+            image: image,
+            userSession: userSession
+        )
     }
 
     func deallocateUnusedInputControllers() {
@@ -863,6 +876,16 @@ final class ConversationInputBarViewController: UIViewController,
 
             self?.updateViewsForSelfDeletingMessageChanges()
         }
+        guard accentColorChangeHandler == nil else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        sendButton.updateSendButtonColor()
+        inputBar.updateTextViewTintColor()
     }
 
     // MARK: - Keyboard Shortcuts
@@ -894,7 +917,7 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
                 messageText,
                 mentions: [],
                 userSession: self.userSession,
-                withImageData: imageData
+                withGIFImageData: imageData
             )
         }
     }
@@ -936,8 +959,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ??
                 info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image,
-               let jpegData = image.jpegData(compressionQuality: 0.9) {
+            if let image, let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
                         UIImageWriteToSavedPhotosAlbum(
@@ -949,15 +971,28 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
                         self.sendController.sendMessage(
-                            withImageData: jpegData,
+                            image: image,
                             userSession: self.userSession,
                             completion: nil
                         )
                     }
                 } else {
                     parent?.dismiss(animated: true) {
-                        self.showConfirmationForImage(jpegData, isFromCamera: false, uti: mediaType)
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .jpeg,
+                            data: jpegData
+                        )
+                        self.showConfirmationForImage(
+                            image,
+                            isFromCamera: false
+                        )
                     }
                 }
 
@@ -1215,7 +1250,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func useWireCells() -> Bool {
-        DeveloperFlag.wireCells.isOn
+        (userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn) && conversation.isCellsEnabled
     }
 
     private func observeDraftAttachments() {

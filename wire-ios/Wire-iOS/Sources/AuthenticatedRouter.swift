@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum NavigationDestination {
@@ -53,7 +54,7 @@ final class AuthenticatedRouter {
 
     private weak var _zClientViewController: ZClientViewController?
 
-    var zClientViewController: ZClientViewController {
+    @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
         _zClientViewController = zClientViewController
         return zClientViewController
@@ -65,7 +66,9 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
-        environment: BackendEnvironment,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: BackendEnvironment2?,
+        // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
@@ -81,7 +84,8 @@ final class AuthenticatedRouter {
             account: account,
             userSession: userSession,
             trackingManager: trackingManager,
-            environment: environment
+            legacyEnvironment: legacyEnvironment,
+            newEnvironment: newEnvironment
         )
 
         self.notificationCenter = notificationCenter

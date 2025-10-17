@@ -26,6 +26,9 @@ final class SectionFooterView: UIView {
         color: SemanticColors.Label.textSectionFooter
     )
 
+    // Hidden by default, used to make easily clickable links on an attributed text
+    let linkTextView = UITextView()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -43,6 +46,16 @@ final class SectionFooterView: UIView {
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = SemanticColors.Label.textSectionFooter
         addSubview(titleLabel)
+
+        linkTextView.translatesAutoresizingMaskIntoConstraints = false
+        linkTextView.isEditable = false
+        linkTextView.isScrollEnabled = false
+        linkTextView.backgroundColor = .clear
+        linkTextView.textContainerInset = .zero
+        linkTextView.textContainer.lineFragmentPadding = 0
+        linkTextView.adjustsFontForContentSizeCategory = true
+        linkTextView.isHidden = true
+        addSubview(linkTextView)
     }
 
     private func createConstraints() {
@@ -51,6 +64,13 @@ final class SectionFooterView: UIView {
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+        ])
+
+        NSLayoutConstraint.activate([
+            linkTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            linkTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            linkTextView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            linkTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
 

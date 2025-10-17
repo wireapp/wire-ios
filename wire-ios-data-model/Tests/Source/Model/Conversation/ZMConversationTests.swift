@@ -238,7 +238,10 @@ extension ZMConversationTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
-        conversation._appendImage(from: verySmallJPEGData())
+        try conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        )
 
         // then
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
@@ -270,7 +273,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = false
+            self.syncMOC.isFederationEnabled = false
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
 
             // then
@@ -287,7 +290,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedAndWait {
             // when
-            BackendInfo.isFederationEnabled = true
+            self.syncMOC.isFederationEnabled = true
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
 
             // then
@@ -297,9 +300,43 @@ extension ZMConversationTests {
 
             // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a
             // swift enum
-            BackendInfo.isFederationEnabled = false
+            self.syncMOC.isFederationEnabled = false
         }
     }
+
+    // MARK: - Appending image messages
+
+    func testThatAppendingAnImageMessageInAnArchivedConversationUnarchivesIt() throws {
+        try assertThatAppendingAMessageUnarchivesAConversation { conversation  in
+            try conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: UUID()
+            )
+        }
+    }
+
+    private func assertThatAppendingAMessageUnarchivesAConversation(
+        insertBlock: (ZMConversation) throws
+            -> Void
+    ) throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
+        conversation.isArchived = true
+        XCTAssertTrue(conversation.isArchived)
+
+        // when
+        try insertBlock(conversation)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertFalse(conversation.isArchived)
+    }
+
 }
 
 // MARK: - Helper Extension

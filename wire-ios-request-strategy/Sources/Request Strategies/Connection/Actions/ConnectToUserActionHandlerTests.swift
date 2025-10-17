@@ -26,7 +26,11 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        sut = ConnectToUserActionHandler(context: syncMOC)
+        sut = ConnectToUserActionHandler(
+            context: syncMOC,
+            localDomain: "wire.com",
+            isFederationEnabled: false
+        )
     }
 
     override func tearDown() {

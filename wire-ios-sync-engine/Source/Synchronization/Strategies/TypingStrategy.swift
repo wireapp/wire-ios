@@ -119,18 +119,27 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     fileprivate let typingEventQueue = TypingEventQueue()
     fileprivate var tornDown: Bool = false
     fileprivate var observers: [Any] = []
+    private let localDomain: String?
+    private let isFederationEnabled: Bool
 
     @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    public convenience init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
+    public convenience init(
+        applicationStatus: ApplicationStatus,
+        managedObjectContext: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             applicationStatus: applicationStatus,
             syncContext: managedObjectContext,
             uiContext: managedObjectContext.zm_userInterface,
-            typing: nil
+            typing: nil,
+            localDomain: localDomain,
+            isFederationEnabled: isFederationEnabled
         )
     }
 
@@ -138,9 +147,13 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         applicationStatus: ApplicationStatus,
         syncContext: NSManagedObjectContext,
         uiContext: NSManagedObjectContext,
-        typing: Typing?
+        typing: Typing?,
+        localDomain: String?,
+        isFederationEnabled: Bool
     ) {
         self.typing = typing ?? Typing(uiContext: uiContext, syncContext: syncContext)
+        self.localDomain = localDomain
+        self.isFederationEnabled = isFederationEnabled
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
@@ -224,8 +237,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
-            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
@@ -286,7 +299,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             else { return }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
         } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
-            if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
+            if let message = GenericMessage(from: event, validate: true), message.hasText || message.hasEdited {
                 typing.setIsTyping(false, for: user, in: conversation)
             }
         } else if event.type == .conversationMemberLeave {

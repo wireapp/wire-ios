@@ -70,14 +70,23 @@ public protocol SessionActivationObserver: AnyObject {
 
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
-    func sessionManagerDidFailToLogin(error: Error?)
-    func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?)
+    func sessionManagerWillLogout(
+        environment: BackendEnvironment2?,
+        error: Error?,
+        userSessionCanBeTornDown: (() -> Void)?
+    )
     func sessionManagerWillOpenAccount(
         _ account: Account,
         from selectedAccount: Account?,
         userSessionCanBeTornDown: @escaping () -> Void
     )
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
+
+    func sessionManagerDidFailToLoadSession(
+        for account: Account,
+        error: SessionManager.SessionLoadingFailure
+    )
+
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
@@ -261,6 +270,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
+    public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
     public internal(set) var activeUserSession: ZMUserSession? {
@@ -557,6 +567,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             currentAppVersion: currentAppVersion,
             directory: accountURLs.accounts
         )
+        self.environmentStore = try BackendEnvironmentStore(directory: accountURLs.accountData)
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
@@ -641,11 +652,18 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
         } else {
             createUnauthenticatedSession()
-            delegate?.sessionManagerDidFailToLogin(error: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: nil,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 
     private func configureBlacklistDownload() {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         if configuration.blacklistDownloadInterval > 0 {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
@@ -757,11 +775,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                             return
                         }
 
+                        accountManager.select(account)
                         let session = await loadSession(for: account)
                         isSelectingAccount = false
 
                         if let session {
-                            accountManager.select(account)
                             completion?(session)
                         } else {
                             completion?(nil)
@@ -776,9 +794,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-            self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
+            self?.delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error
+            ) { [weak self] in
                 self?.activeUserSession = nil
-            })
+            }
         }
     }
 
@@ -828,7 +849,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func logout(account: Account, error: Error? = nil) {
+    public func logout(account: Account, error: Error? = nil) {
         WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
@@ -886,7 +907,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
-            delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+            delegate?.sessionManagerWillLogout(
+                environment: nil,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
 
             if deleteAccount {
                 deleteAccountData(for: account)
@@ -896,7 +921,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
+        // TODO: [WPB-19941] Better error handling
+        let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+        delegate?.sessionManagerWillLogout(
+            environment: environment,
+            error: error
+        ) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
                     self?.deleteAccountData(for: account)
@@ -926,16 +957,26 @@ public final class SessionManager: NSObject, SessionManagerType {
                 userInfo: account.loginCredentials?.dictionaryRepresentation
             )
 
-            delegate?.sessionManagerDidFailToLogin(error: error)
+            let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
+
+            delegate?.sessionManagerWillLogout(
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
 
         return nil
     }
 
     @MainActor
-    fileprivate func activateSession(for account: Account) async -> ZMUserSession? {
+    fileprivate func activateSession(
+        for account: Account,
+        newEnvironment: NewEnvironment? = nil
+    ) async -> ZMUserSession? {
         guard let session = await withSession(
             for: account,
+            newEnvironment: newEnvironment,
             notifyAboutMigration: true
         ) else {
             return nil
@@ -950,8 +991,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
         configureUserNotifications()
-
-        // Completion was here.
 
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
@@ -991,6 +1030,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
+        newEnvironment: NewEnvironment? = nil,
         notifyAboutMigration: Bool = false
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
@@ -1001,6 +1041,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             do {
                 let loader = try UserSessionLoader(
                     account: account,
+                    accountManager: accountManager,
                     sharedContainerURL: sharedContainerURL,
                     legacyEnvironment: environment,
                     minTLSVersion: minTLSVersion,
@@ -1015,7 +1056,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     isDeveloperModeEnabled: isDeveloperModeEnabled
                 )
 
-                let userSession = try await loader.load()
+                let userSession = try await loader.load(newEnvironment: newEnvironment)
                 finishSettingUpUserSession(
                     account: account,
                     newSession: userSession,
@@ -1023,17 +1064,65 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return userSession
 
+            } catch UserSessionLoader.Failure.buildIsBlacklisted {
+                WireLogger.sessionManager.warn(
+                    "build is blacklisted: \(currentBuildNumber)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .buildIsBlacklisted
+                )
+                return nil
             } catch NetworkStackError.backendAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+                WireLogger.sessionManager.warn(
+                    "backend API version is obsolete",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .backendIsObsolete
+                )
                 return nil
             } catch NetworkStackError.clientAPIVersionObsolete {
-                delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+                WireLogger.sessionManager.warn(
+                    "client API version is obsolete",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .clientIsObsolete
+                )
                 return nil
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                // TODO: [WPB-19625] handle
-                fatalError()
+            } catch let error as URLError {
+                WireLogger.sessionManager.error(
+                    "failed to load user session due to url error code: \(error.errorCode)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .networkError(code: error.errorCode)
+                )
+                return nil
+            } catch let error as SafeForLoggingStringConvertible {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
+                return nil
             } catch {
-                // TODO: [WPB-19625] handle
+                WireLogger.sessionManager.error(
+                    "failed to load user session",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .genericError
+                )
                 return nil
             }
         } else {
@@ -1075,7 +1164,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         let coreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
+            dispatchGroup: dispatchGroup,
+            localDomain: BackendInfo.domain,
+            isFederationEnabled: BackendInfo.isFederationEnabled
         )
 
         if coreDataStack.needsMigration {
@@ -1435,12 +1526,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         activeUserSession != nil
     }
 
-    func updateProfileImage(imageData: Data) {
-        activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
-        }
-    }
-
     public var callNotificationStyle: CallNotificationStyle = .callKit {
         didSet {
             updateCallNotificationStyle()
@@ -1655,14 +1740,8 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(
         session: UnauthenticatedSession,
-        updatedProfileImage imageData: Data
-    ) {
-        updateProfileImage(imageData: imageData)
-    }
-
-    public func session(
-        session: UnauthenticatedSession,
-        createdAccount account: Account
+        createdAccount account: Account,
+        newEnvironment: NewEnvironment? = nil
     ) {
         let numberOfExistingAccounts = accountManager.numberOfAccounts
         let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
@@ -1678,15 +1757,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            guard let userSession = await activateSession(for: account) else {
+            guard let userSession = await activateSession(
+                for: account,
+                newEnvironment: newEnvironment
+            ) else {
                 return
             }
 
             updateCurrentAccount(in: userSession.managedObjectContext)
-
-            if let profileImageData = session.authenticationStatus.profileImageData {
-                updateProfileImage(imageData: profileImageData)
-            }
 
             switch session.backupImportDidSucceed {
             case true?:
@@ -1972,4 +2050,30 @@ public extension SessionManager {
     static func stopAVSLogging() {
         avsLogObserver = nil
     }
+}
+
+// MARK: - User session delegate
+
+extension SessionManager: UserSessionDelegate {
+
+    func userSessionDidDiscoverBuildIsBlacklisted() {
+        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
+    }
+
+}
+
+// MARK: - Failures
+
+public extension SessionManager {
+
+    enum SessionLoadingFailure: Error {
+
+        case buildIsBlacklisted
+        case backendIsObsolete
+        case clientIsObsolete
+        case networkError(code: Int)
+        case genericError
+
+    }
+
 }

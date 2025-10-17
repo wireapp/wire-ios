@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireFoundation
 import WireLogging
 
 // sourcery: AutoMockable
@@ -54,17 +55,15 @@ public protocol CoreCryptoProviderProtocol {
     ///   - epochObserver: observer which will be informed on epoch changes
     func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async
 
-    /// Update the CC database key
-    func updateDatabaseKey() async throws
-
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let selfUserID: UUID
     private let sharedContainerURL: URL
     private let accountDirectory: URL
+    private let sharedUserDefaults: UserDefaultsProtocol
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
+    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
     private let featureRespository: LegacyFeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
@@ -77,24 +76,29 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
     private nonisolated(unsafe) var mlsTransport: MlsTransport?
     private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
+    private let localDomain: String?
 
     public init(
         selfUserID: UUID,
         sharedContainerURL: URL,
         accountDirectory: URL,
+        sharedUserDefaults: UserDefaultsProtocol,
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
-        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?,
-        allowCreation: Bool = true
+        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
+        allowCreation: Bool = true,
+        localDomain: String?
     ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
         self.accountDirectory = accountDirectory
+        self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
+        self.localDomain = localDomain
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
@@ -142,19 +146,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         } catch {
             WireLogger.mls.error("Failed to register epoch observer: \(error)")
         }
-    }
-
-    public func updateDatabaseKey() async throws {
-        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
-        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
-        let configuration = try await provider.createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUserID,
-            createKeyIfNeeded: allowCreation
-        )
-
-        try await coreCryptoKeyProvider.updateDatabaseKey(path: configuration.path)
-        reset()
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
@@ -226,7 +217,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
         let configuration = try await provider.createInitialConfiguration(
@@ -265,7 +260,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             else {
                 return nil
             }
-            return MLSClientID(userClient: selfClient)
+            return MLSClientID(
+                userClient: selfClient,
+                localDomain: self.localDomain
+            )
         }
 
         // Initialise MLS if we have previously registered an MLS client

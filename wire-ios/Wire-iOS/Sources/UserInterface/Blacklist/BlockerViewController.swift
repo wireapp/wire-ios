@@ -19,14 +19,18 @@
 import MessageUI
 import UIKit
 import WireLogging
+import WireMultiBackendUI
 import WireSyncEngine
 
 enum BlockerViewControllerContext {
     case blacklist
     case jailbroken
     case databaseFailure
-    case backendNotSupported
+    case backendObsolete
+    case clientObsolete
     case pendingCertificateEnroll
+    case networkError(code: Int)
+    case genericError
 }
 
 final class BlockerViewController: LaunchImageViewController {
@@ -60,34 +64,164 @@ final class BlockerViewController: LaunchImageViewController {
 
     func showAlert() {
         switch context {
+        case .blacklist where DeveloperFlag.multibackend.isOn:
+            showClientObsoleteMessage()
+        case .backendObsolete:
+            showBackendObsoleteMessage()
+        case .clientObsolete:
+            showClientObsoleteMessage()
         case .blacklist:
             showBlacklistMessage()
         case .jailbroken:
             showJailbrokenMessage()
         case .databaseFailure:
             showDatabaseFailureMessage()
-        case .backendNotSupported:
-            showBackendNotSupportedMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
+        case let .networkError(code):
+            showNetworkErrorMessage(code: code)
+        case .genericError:
+            showGenericErrorMessage()
         }
     }
 
-    private func showBackendNotSupportedMessage() {
-        typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
-
-        presentOKAlert(
-            title: BackendNotSupported.title,
-            message: BackendNotSupported.message
+    private func showNetworkErrorMessage(code: Int) {
+        typealias Strings = L10n.Localizable.AccountBlocked.NetworkError.Alert
+        showErrorMessage(
+            title: Strings.title,
+            message: Strings.message,
+            debugLogMessage: "Account failed to load due to network error (code: \(code))"
         )
     }
 
+    private func showGenericErrorMessage() {
+        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
+        showErrorMessage(
+            title: Strings.title,
+            message: Strings.message,
+            debugLogMessage: "Account failed to load"
+        )
+    }
+
+    private func showErrorMessage(
+        title: String,
+        message: String,
+        debugLogMessage: String
+    ) {
+        typealias Strings = L10n.Localizable.AccountBlocked.GenericError.Alert
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+
+        if let switchAccountAction {
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.switchAccounts,
+                    style: .default
+                ) { _ in
+                    switchAccountAction()
+                }
+            )
+        }
+
+        alert.addAction(
+            UIAlertAction(
+                title: Strings.sendLogs,
+                style: .default
+            ) { [weak self] _ in
+                guard let self else {
+                    return
+                }
+                DebugLogSender.sendLogsByEmail(
+                    message: debugLogMessage,
+                    shareWithAVS: false,
+                    presentingViewController: self,
+                    fallbackActivityPopoverConfiguration: .sourceView(
+                        sourceView: view,
+                        sourceRect: .init(
+                            origin: view.safeAreaLayoutGuide.layoutFrame.origin,
+                            size: .zero
+                        )
+                    )
+                )
+            }
+        )
+
+        if let sessionManager, let account = sessionManager.accountManager.selectedAccount {
+            alert.addAction(
+                UIAlertAction(
+                    title: L10n.Localizable.Self.signOut,
+                    style: .default,
+                    handler: { _ in
+                        sessionManager.logout(account: account)
+                    }
+                )
+            )
+
+            alert.addAction(
+                UIAlertAction(
+                    title: Strings.retry,
+                    style: .cancel,
+                    handler: { _ in
+                        sessionManager.select(account)
+                    }
+                )
+            )
+        }
+
+        present(alert, animated: true)
+    }
+
+    private func showBackendObsoleteMessage() {
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteServer(
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
+
+            present(alert, animated: true)
+        } else {
+            typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
+
+            presentOKAlert(
+                title: BackendNotSupported.title,
+                message: BackendNotSupported.message
+            )
+        }
+    }
+
+    private func showClientObsoleteMessage() {
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteClient(
+                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
+
+            present(alert, animated: true)
+        } else {
+            showBlacklistMessage()
+        }
+    }
+
     private func showBlacklistMessage() {
-        presentOKAlert(
-            title: L10n.Localizable.Force.Update.title,
-            message: L10n.Localizable.Force.Update.message
-        ) { _ in
-            UIApplication.shared.open(WireURLs.shared.appOnItunes)
+        if DeveloperFlag.multibackend.isOn {
+            let alert = MultibackendAlertMainApp.obsoleteClient(
+                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+                switchAccountAction: switchAccountAction,
+                logoutAction: handleLogout
+            )
+
+            present(alert, animated: true)
+        } else {
+            presentOKAlert(
+                title: L10n.Localizable.Force.Update.title,
+                message: L10n.Localizable.Force.Update.message
+            ) { _ in
+                UIApplication.shared.open(WireURLs.shared.appOnItunes)
+            }
         }
     }
 
@@ -291,6 +425,80 @@ extension BlockerViewController {
             viewController.dismiss(animated: true)
         }
         successEnrollmentViewController.presentOverAll()
+    }
+
+}
+
+// MARK: - Account management
+
+extension BlockerViewController {
+
+    private var switchAccountAction: (() -> Void)? {
+        guard
+            let accountManager = sessionManager?.accountManager,
+            accountManager.numberOfAccounts > 1 else {
+            return nil
+        }
+
+        return { [weak self] in
+            self?.presentAccountSwitcher()
+        }
+    }
+
+    private func presentAccountSwitcher() {
+        guard let accountManager = sessionManager?.accountManager else {
+            return
+        }
+
+        let otherAccounts = accountManager.sortedAccounts()
+            .filter {
+                !$0.isEqual(accountManager.selectedAccount)
+            }
+            .map { account in
+                account.toUIModel(action: { [weak self] in
+                    self?.handleSwitch(to: account)
+                })
+            }
+
+        let accountSwitcher = AccountSwitcherHostingController(
+            otherAccounts: otherAccounts,
+            options: []
+        )
+
+        accountSwitcher.view.backgroundColor = .systemBackground
+
+        if let sheet = accountSwitcher.sheetPresentationController {
+            sheet.detents = [
+                .custom(resolver: { context in
+                    context.maximumDetentValue * 0.3
+                })
+            ]
+            sheet.prefersGrabberVisible = false
+            sheet.preferredCornerRadius = 24
+        }
+
+        // Present swipe to dismiss.
+        accountSwitcher.isModalInPresentation = true
+        present(accountSwitcher, animated: true)
+    }
+
+    private func handleSwitch(to account: Account) {
+        sessionManager?.switchTo(account: account)
+    }
+
+    private func handleLogout() {
+        guard
+            let sessionManager,
+            let account = sessionManager.currentAccount
+        else {
+            return
+        }
+
+        // TODO: [WPB-18071] allow user to choose whether to delete data
+        sessionManager.delete(
+            account: account,
+            eraseData: true
+        )
     }
 
 }

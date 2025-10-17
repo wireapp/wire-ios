@@ -4,6 +4,18 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.130.0
+
+* added `UnknownMessage` entity
+
+### 2.129.0
+
+* added `cellsState` attribute on the Conversation entity
+
+### 2.128.0
+
+* added `wireCellsLocalAssets` entity
+
 ### 2.127.0
 
 * renamed `asyncStreamCapable` attribute to `isConsumableNotificationsCapable` the UserClient entity

@@ -30,13 +30,15 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
     let sessionEstablisher: SessionEstablisherInterface
+    let metadata: BackendMetadataProvider
 
     // MARK: - Initialization
 
     init(
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding
+        proteusProvider: ProteusProviding,
+        metadata: BackendMetadataProvider
     ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
@@ -51,18 +53,21 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         self.init(
             proteusProvider: proteusProvider,
             sessionEstablisher: sessionEstablisher,
-            managedObjectContext: syncContext
+            managedObjectContext: syncContext,
+            metadata: metadata
         )
     }
 
     init(
         proteusProvider: ProteusProviding,
         sessionEstablisher: SessionEstablisherInterface,
-        managedObjectContext: NSManagedObjectContext
+        managedObjectContext: NSManagedObjectContext,
+        metadata: BackendMetadataProvider
     ) {
         self.proteusProvider = proteusProvider
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher
+        self.metadata = metadata
     }
 
     // MARK: - Methods
@@ -80,7 +85,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         let shouldEstablishSession = await existingClient.hasSessionWithSelfClient == false
 
         if shouldEstablishSession {
-            if let apiVersion = BackendInfo.apiVersion {
+            if let apiVersion = metadata.apiVersion {
                 do {
                     try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)
                 } catch {

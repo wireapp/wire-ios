@@ -49,9 +49,10 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
         // WHEN
         uiMOC.performAndWait { [uiMOC] in
             ZMClientMessage.updateButtonStates(
-                withConfirmation: confirmation,
-                forConversation: conversation,
-                inContext: uiMOC
+                buttonID: confirmation.buttonID,
+                referenceMessageID: confirmation.referenceMessageID,
+                for: conversation,
+                in: uiMOC
             )
             uiMOC.saveOrRollback()
         }
@@ -101,17 +102,18 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
         // WHEN
         uiMOC.performAndWait { [uiMOC] in
             ZMClientMessage.updateButtonStates(
-                withConfirmation: confirmation,
-                forConversation: conversation,
-                inContext: uiMOC
+                buttonID: confirmation.buttonID,
+                referenceMessageID: confirmation.referenceMessageID,
+                for: conversation,
+                in: uiMOC
             )
             uiMOC.saveOrRollback()
         }
 
         // THEN
-        XCTAssertEqual(buttonStates[0].state, WireDataModel.ButtonState.State.confirmed)
+        XCTAssertEqual(buttonStates[0].state, ButtonMessageState.confirmed)
         for buttonState in buttonStates[1 ... 3] {
-            XCTAssertEqual(buttonState.state, WireDataModel.ButtonState.State.unselected)
+            XCTAssertEqual(buttonState.state, ButtonMessageState.unselected)
         }
     }
 
@@ -132,14 +134,14 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         // WHEN
         ZMClientMessage.expireButtonState(
-            forButtonAction: buttonAction,
-            forConversation: conversation,
-            inContext: uiMOC
+            buttonAction: buttonAction,
+            for: conversation,
+            in: uiMOC
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
         XCTAssertEqual(buttonState.isExpired, true)
-        XCTAssertEqual(buttonState.state, WireDataModel.ButtonState.State.unselected)
+        XCTAssertEqual(buttonState.state, ButtonMessageState.unselected)
     }
 }

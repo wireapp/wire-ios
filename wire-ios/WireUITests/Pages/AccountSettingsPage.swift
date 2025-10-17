@@ -21,7 +21,11 @@ import XCTest
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        nameField
+        accountSettingsPageHeader
+    }
+
+    var accountSettingsPageHeader: XCUIElement {
+        app.staticTexts["Account"]
     }
 
     var nameField: XCUIElement {
@@ -36,8 +40,12 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)["EmailField"].firstMatch
     }
 
+    var domainField: XCUIElement {
+        app.descendants(matching: .any)["DomainFieldDisabled"].firstMatch
+    }
+
     var logoutButton: XCUIElement {
-        app.descendants(matching: .any)["Log OutField"].firstMatch
+        app.staticTexts["Log Out"]
     }
 
     var deleteAccountButtonOnAccount: XCUIElement {
@@ -46,6 +54,18 @@ class AccountSettingsPage: PageModel {
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
         app.buttons["OK"]
+    }
+
+    var backToSettingsButton: XCUIElement {
+        app.buttons["Settings"]
+    }
+
+    var backupOrRestoreButton: XCUIElement {
+        app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
+    }
+
+    var resetPasswordButton: XCUIElement {
+        app.descendants(matching: .any)["Reset Password"].firstMatch
     }
 
     func getAccountName() -> String? {
@@ -60,6 +80,20 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
+    func getDomainInfo() -> String {
+        domainField.value as! String
+    }
+
+    func backToSettings() throws -> SettingsPage {
+        backToSettingsButton.tap()
+        return try SettingsPage()
+    }
+
+    func tapEmailField() throws -> EmailUpdatePage {
+        emailField.tap()
+        return try EmailUpdatePage()
+    }
+
     @discardableResult
     func logout() throws -> LogOutPage {
         logoutButton.tap()
@@ -70,5 +104,21 @@ class AccountSettingsPage: PageModel {
         deleteAccountButtonOnAccount.tap()
         oKButtonOnDeleteAccountAlert.tap()
         return try ConversationsPage()
+    }
+
+    @discardableResult
+    func tapBackupOrRestore() throws -> BackupOrRestorePage {
+        backupOrRestoreButton.tap()
+        return try BackupOrRestorePage()
+    }
+
+    func goBackToSettingsPage() throws -> SettingsPage {
+        backToSettingsButton.tap()
+        return try SettingsPage()
+    }
+
+    func tapOnResetPasswordButton() throws -> WebViewPage {
+        resetPasswordButton.tap()
+        return try WebViewPage()
     }
 }

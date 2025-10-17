@@ -458,6 +458,9 @@ private enum JSONPayload {
                 "config": {
                     "enforcedTimeoutSeconds": 22
                 }
+            },
+            "assetAuditLog": {
+                "status": "enabled"
             }
         }
         """

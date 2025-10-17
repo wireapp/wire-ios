@@ -26,7 +26,7 @@ final class TeamManageTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        var userAccountPage = try  firstTimePage.acceptPopup()
+        var userAccountPage = try  firstTimePage.acceptPopup(with: self)
             .openUserAccountPageForUser(with: user.name)
 
         var conversationPage = try userAccountPage
@@ -71,7 +71,7 @@ final class TeamManageTests: WireUITestCase {
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
             .openUserAccountPageForUser(with: memberUser.username)
 
@@ -110,20 +110,20 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
 
-        let groupConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
+        let activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
             .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
             .doneSelectingMembers()
-            .sendMessage(input: messageFromOwner)
+            .sendMessage(messageFromOwner)
 
-        let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
+        let senderName = try XCTUnwrap(activeConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessages = try XCTUnwrap(groupConversationPage.getSentMessages())
+        let sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
         XCTAssertTrue(
             sentMessages.contains(messageFromOwner),
             "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
@@ -161,7 +161,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
             .openConversation()
             .openConversationDetails()

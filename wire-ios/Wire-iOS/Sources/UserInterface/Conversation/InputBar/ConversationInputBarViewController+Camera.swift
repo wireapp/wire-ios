@@ -102,11 +102,13 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
-        didSelectImageData imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        didSelectImage image: SendableImage,
+        isFromCamera: Bool
     ) {
-        showConfirmationForImage(imageData, isFromCamera: isFromCamera, uti: uti)
+        showConfirmationForImage(
+            image,
+            isFromCamera: isFromCamera
+        )
     }
 
     @objc
@@ -150,40 +152,46 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func showConfirmationForImage(
-        _ imageData: Data,
-        isFromCamera: Bool,
-        uti: String?
+        _ image: SendableImage,
+        isFromCamera: Bool
     ) {
-        let mediaAsset: MediaAsset = if uti == UTType.gif.identifier,
-                                        let gifImage = FLAnimatedImage(animatedGIFData: imageData),
-                                        gifImage.frameCount > 1 {
+        let mediaAsset: MediaAsset = if
+            image.utType == .gif,
+            let gifImage = FLAnimatedImage(animatedGIFData: image.data),
+            gifImage.frameCount > 1 {
             gifImage
         } else {
-            UIImage(data: imageData) ?? UIImage()
+            UIImage(data: image.data) ?? UIImage()
         }
 
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
-            onConfirm: { [weak self, uploadDraftUseCase] (editedImage: UIImage?) in
+            onConfirm: { [weak self] (editedImage: UIImage?) in
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
-                        imageData: imageData,
+                        imageData: image.data,
                         isFromCamera: isFromCamera
                     )
-                    let dataToSend = editedImage?.pngData() ?? imageData
-                    if DeveloperFlag.wireCells.isOn {
-                        Task.detached {
-                            // We don't care about the result of the operation here as we will be observing changes.
-                            do {
-                                try await uploadDraftUseCase.invoke(imageData: dataToSend)
-                            } catch {
-                                WireLogger.conversation.error("Failed to upload file: \(error)")
-                            }
-                        }
+
+                    let dataToSend = editedImage?.pngData() ?? image.data
+                    let utType: UTType = if editedImage != nil {
+                        .png
                     } else {
+                        image.utType ?? .image
+                    }
+
+                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                       self.conversation.isCellsEnabled {
+                        self.uploadDraft(data: dataToSend, type: utType)
+                    } else {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: utType,
+                            data: dataToSend
+                        )
                         self.sendController.sendMessage(
-                            withImageData: dataToSend,
+                            image: image,
                             userSession: self.userSession
                         )
                     }
@@ -290,18 +298,44 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
 
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
-    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+    func canvasViewController(
+        _ canvasViewController: CanvasViewController,
+        didExportImage image: UIImage
+    ) {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
+                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                       self.conversation.isCellsEnabled {
+                        self.uploadDraft(data: imageData, type: .png)
+                    } else {
+                        let image = SendableImage(
+                            name: nil,
+                            utType: .png,
+                            data: imageData
+                        )
+                        self.sendController.sendMessage(
+                            image: image,
+                            userSession: self.userSession
+                        )
+                    }
                 }
             }
         }
     }
 
+    private func uploadDraft(data: Data, type: UTType) {
+        Task.detached { [uploadDraftUseCase] in
+            // We don't care about the result of the operation here as we will be observing changes.
+            do {
+                try await uploadDraftUseCase.invoke(data: data, type: type)
+            } catch {
+                WireLogger.conversation.error("Failed to upload file: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - CameraViewController

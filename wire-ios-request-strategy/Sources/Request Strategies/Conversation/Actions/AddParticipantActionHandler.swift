@@ -41,10 +41,18 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: LegacyConversationEventProcessorProtocol
 
-    override convenience init(context: NSManagedObjectContext) {
+    convenience init(
+        context: NSManagedObjectContext,
+        localDomain: String?,
+        isFederationEnabled: Bool
+    ) {
         self.init(
             context: context,
-            eventProcessor: ConversationEventProcessor(context: context)
+            eventProcessor: ConversationEventProcessor(
+                context: context,
+                localDomain: localDomain,
+                isFederationEnabled: isFederationEnabled
+            )
         )
     }
 
@@ -62,7 +70,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             v0Request(for: action)
         case .v1:
             v1Request(for: action)
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
             v2Request(for: action, apiVersion: apiVersion)
         }
     }

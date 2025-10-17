@@ -70,7 +70,9 @@ public struct CallParticipant: Hashable {
     }
 
     init?(member: AVSCallMember, activeSpeakerState: ActiveSpeakerState = .inactive, context: NSManagedObjectContext) {
-        let userId = member.client.avsIdentifier
+        let userId = member.client.avsIdentifier(
+            isFederationEnabled: context.isFederationEnabled
+        )
 
         guard let user = ZMUser.fetch(with: userId.identifier, domain: userId.domain, in: context) else {
             return nil

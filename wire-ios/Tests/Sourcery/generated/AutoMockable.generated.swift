@@ -29,6 +29,7 @@ import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
+import SwiftUI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -1782,22 +1783,59 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
-    // MARK: - makeFilesView
+    // MARK: - makeDeleteNodesUseCase
 
-    var makeFilesView_Invocations: [Void] = []
-    var makeFilesView_MockMethod: (() -> UIViewController)?
-    var makeFilesView_MockValue: UIViewController?
+    var makeDeleteNodesUseCase_Invocations: [Void] = []
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
 
-    @MainActor
-    func makeFilesView() -> UIViewController {
-        makeFilesView_Invocations.append(())
+    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
+        makeDeleteNodesUseCase_Invocations.append(())
 
-        if let mock = makeFilesView_MockMethod {
+        if let mock = makeDeleteNodesUseCase_MockMethod {
             return mock()
-        } else if let mock = makeFilesView_MockValue {
+        } else if let mock = makeDeleteNodesUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesView`")
+            fatalError("no mock for `makeDeleteNodesUseCase`")
+        }
+    }
+
+    // MARK: - makeFilesView
+
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String, Bool, [UUID]) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, nodeIDs: nodeIDs))
+
+        if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod {
+            return mock(cellName, isCellsStatePending, nodeIDs)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+        }
+    }
+
+    // MARK: - makeAttachmentsPreviewView
+
+    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
+        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
+
+        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
+            return mock(attachments, alignment)
+        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
         }
     }
 
