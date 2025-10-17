@@ -23,10 +23,6 @@ class ConversationsPage: PageModel {
         plusButtonToCreateGroupOrSearch
     }
 
-//    var conversationsPageLabel: XCUIElement {
-//        app.staticTexts["Conversations"]
-//    }
-
     var settingsButton: XCUIElement {
         app.buttons["bottomBarSettingsButton"]
     }
