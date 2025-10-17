@@ -59,4 +59,27 @@ final class SidebarViewControllerSnapshotTests: XCTestCase {
                 )
         }
     }
+
+    @available(iOS 17, *) @MainActor
+    func testFilesItemUIFontDarkUserInterfaceStyle() {
+        let sut = SidebarViewControllerPreview(showFiles: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testFilesItemUIFontContentSize() {
+        let sut = SidebarViewControllerPreview(showFiles: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        sut.traitOverrides.preferredContentSizeCategory = .extraSmall
+        snapshotHelper
+            .verify(
+                matching: sut,
+                named: "\(UIContentSizeCategory.extraSmall)"
+            )
+    }
 }
