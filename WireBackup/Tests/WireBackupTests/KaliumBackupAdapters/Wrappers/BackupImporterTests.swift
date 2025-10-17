@@ -20,6 +20,7 @@ import Foundation
 import KaliumBackup
 import Testing
 import WireFoundation
+import WireUtilitiesPackage
 
 @testable import WireBackup
 
