@@ -93,9 +93,10 @@ final class UserSessionLoader {
 
     @MainActor
     func load(newEnvironment: NewEnvironment?) async throws -> ZMUserSession {
-        // Persist the new environment.
+        // Persist the new environment and metadata
         if let newEnvironment {
             try await storeNewEnvironment(newEnvironment)
+            try backendStore.storeBackendMetadata(newEnvironment.metadata, for: accountID)
         }
 
         // Get the environment for this account.
