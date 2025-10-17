@@ -130,7 +130,7 @@ public extension WireCellsFactory {
 
     @MainActor
     func makeFilesView(
-        cellName: String?,
+        cellName: String,
         isCellsStatePending: Bool,
         nodeIDs: [UUID]
     ) -> UIViewController {
