@@ -100,3 +100,40 @@ public extension AuthenticationAPIError {
     }
 
 }
+
+extension AuthenticationAPIError: Equatable {
+    public static func == (lhs: AuthenticationAPIError, rhs: AuthenticationAPIError) -> Bool {
+        switch (lhs, rhs) {
+        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion): true
+
+        case (.invalidDomain, .invalidDomain): true
+
+        case (.invalidRequestBody, .invalidRequestBody): true
+
+        case (.invalidResponse, .invalidResponse): true
+
+        case (.configNotFound, .configNotFound): true
+
+        case (.domainNotFound, .domainNotFound): true
+
+        case (.twoFactorAuthenticationRequired, .twoFactorAuthenticationRequired): true
+
+        case (.twoFactorAuthenticationFailed, .twoFactorAuthenticationFailed): true
+
+        case (.accountPendingActivation, .accountPendingActivation): true
+
+        case (.accountSuspended, .accountSuspended): true
+
+        case (.invalidCredentials, .invalidCredentials): true
+
+        case (.serviceUnavailable, .serviceUnavailable): true
+
+        case let (.tooManyRequests(lhsMessage, lhsRetyAfter), .tooManyRequests(rhsMessage, rhsRetyAfter)):
+            lhsMessage == rhsMessage && lhsRetyAfter == rhsRetyAfter
+
+        case (.invalidEmail, .invalidEmail): true
+
+        default: false
+        }
+    }
+}
