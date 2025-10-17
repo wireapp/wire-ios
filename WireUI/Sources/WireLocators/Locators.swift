@@ -16,18 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
-import WireNetwork
+import Foundation
 
-struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
+public enum Locators {
 
-    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        BackendEnvironment2.isCloudDomain(domain) || BackendEnvironment2.isStagingDomain(domain)
+    public enum WelcomePage: String {
+
+        case emailTextField
+        case nextButton
     }
 
-    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        environment.isCloudEnvironment || environment.isStagingEnvironment
+    public enum LoginPage: String {
 
+        case emailTextField
+        case passwordSecureTextField
+        case nextButton
     }
 
+    public enum FirstTimePage: String {
+
+        case okButton
+    }
+
+    public enum ConversationsPage: String {
+
+        case bottomBarRecentListButton
+        case bottomBarSettingsButton
+    }
+
+    public enum SettingsPage: String {
+
+        case accountCell
+        case optionsCell
+    }
 }

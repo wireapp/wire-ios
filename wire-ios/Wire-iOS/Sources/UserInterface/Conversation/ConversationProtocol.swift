@@ -78,7 +78,7 @@ extension ZMConversation: InputBarConversation {
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
         let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
-        return feature.config.enforcedTimeoutSeconds > 0
+        return feature.config.enforcedTimeoutSeconds > 0 && !isCellsEnabled
     }
 
     var participants: [UserType] {

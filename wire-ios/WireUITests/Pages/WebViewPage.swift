@@ -16,20 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-public extension LinkPreviewAssetUploadRequestStrategy {
+class WebViewPage: PageModel {
 
-    static func create(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
-    ) -> LinkPreviewAssetUploadRequestStrategy {
-        LinkPreviewAssetUploadRequestStrategy(
-            managedObjectContext: managedObjectContext,
-            applicationStatus: applicationStatus,
-            linkPreviewPreprocessor: nil,
-            previewImagePreprocessor: nil
-        )
+    override var pageMainElement: XCUIElement {
+        webViewLabel
     }
 
+    private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+
+    var webViewLabel: XCUIElement {
+        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
+    }
+
+    @discardableResult
+    func webViewOpened(timeout: TimeInterval = 5) -> Bool {
+        Self.safariApp.webViews.firstMatch.waitForExistence(timeout: timeout)
+    }
 }

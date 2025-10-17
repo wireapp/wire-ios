@@ -36,6 +36,7 @@ class SaveBackupFileBottomSheetPage: PageModel {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", "WireBackup-\(dateString)")
         let element = app.otherElements.matching(predicate).firstMatch
 
+        guard element.waitForExistence(timeout: 3) else { return nil }
         return element.exists ? element.label : nil
     }
 

@@ -275,7 +275,10 @@ extension ConversationTests {
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
-            let message = try! conversation.appendImage(from: self.verySmallJPEGData(), nonce: messageID)
+            let message = try! conversation.appendImage(
+                SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+                nonce: messageID
+            )
 
             // store asset data
             syncMOC.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)

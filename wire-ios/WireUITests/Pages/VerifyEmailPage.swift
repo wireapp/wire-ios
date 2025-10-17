@@ -16,36 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
 import XCTest
 
-class WelcomePage: PageModel {
+class VerifyEmailPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        emailTextField
+        verifyEmailPageLabel
     }
 
-    var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
+    var verifyEmailPageLabel: XCUIElement {
+        app.staticTexts["Verify email"]
     }
 
-    var emailTextField: XCUIElement {
-        app.textFields[Locators.WelcomePage.emailTextField.rawValue]
+    var backToEmailUpdatePage: XCUIElement {
+        app.buttons["Email"]
     }
 
-    var setBackendLabel: XCUIElement {
-        app.descendants(matching: .any)["onPremInfoButton"]
+    var backToAccountSetting: XCUIElement {
+        app.buttons["Account"]
     }
 
-    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
-        try typeEmailOrSSO(input)
-        nextButton.tap()
-        return try LoginPage()
+    func goBacktoAccountSetting() throws -> AccountSettingsPage {
+        backToEmailUpdatePage.tap()
+        backToAccountSetting.tap()
+        return try AccountSettingsPage()
     }
 
-    @discardableResult
-    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
-        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
-        return self
-    }
 }
