@@ -134,7 +134,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         }
     }
 
-    private func setupOneOnOne(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil) async {
+    private func setupOneOnOne(messageProtocol: WireDataModel.MessageProtocol, groupID: MLSGroupID? = nil) async {
         await syncMOC.perform { [self] in
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.messageProtocol = messageProtocol

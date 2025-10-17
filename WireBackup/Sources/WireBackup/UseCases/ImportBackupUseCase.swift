@@ -19,6 +19,7 @@
 public import Foundation
 public import WireLogging
 public import WireFoundation
+public import WireUtilitiesPackage
 
 @preconcurrency import KaliumBackup
 

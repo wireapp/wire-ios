@@ -27,6 +27,7 @@ import WireLogging
 import WireNetwork
 import WireSettingsUI
 import WireSyncEngine
+import WireUtilitiesPackage
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -407,7 +408,7 @@ extension SettingsCellDescriptorFactory {
                 url: url,
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
-                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                fileUnarchiver: ZIPFoundationFileUnarchiver(),
                 syncTrigger: {
                     Task {
                         await userSession.triggerResourcesSync()
