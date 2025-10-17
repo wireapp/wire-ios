@@ -17,10 +17,11 @@
 //
 
 package import Foundation
-package import WireCallingDomain
 import SwiftUI
+package import WireCallingDomain
 
 package struct MeetingState {
+    private typealias Strings = L10n.Localizable.WireMeetings.MeetingDetails
 
     let meeting: Meeting
     let currentDate: Date
@@ -46,50 +47,77 @@ package struct MeetingState {
 
     var backgroundColor: Color {
         if isPast || (!isOngoing && !isStartingSoon) {
-            return .gray
+            .gray
         } else if isStartingSoon {
-            return .green
+            .green
         } else {
-            return .blue
+            .blue
         }
     }
 
-    var startingInText: String? {
+        var startingInText: String {
+            if isStartingSoon {
+                let timeInterval = meeting.start.timeIntervalSince(currentDate)
+                let minutes = Int(timeInterval / 60)
+                let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
+                return "\(minutes):\(String(format: "%02d", seconds))"
+            }
+            return ""
+        }
+
+    //    var remainingText: String? {
+    //        if isOngoing {
+    //            let timeInterval = meeting.end.timeIntervalSince(currentDate)
+    //            let minutes = Int(timeInterval / 60)
+    //            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
+    //            return "\(minutes):\(String(format: "%02d", seconds))"
+    //        }
+    //        return nil
+    //    }
+
+    var dateText: String {
         if isStartingSoon {
-            let timeInterval = meeting.start.timeIntervalSince(currentDate)
-            let minutes = Int(timeInterval / 60)
-            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-            return "\(minutes):\(String(format: "%02d", seconds))"
+            timeRangeText
+        } else if isPast {
+            pastDateText
+        } else if isOngoing {
+            ongoingDateText
+        } else {
+            timeRangeText
         }
-        return nil
     }
 
-    var remainingText: String? {
-        if isOngoing {
-            let timeInterval = meeting.end.timeIntervalSince(currentDate)
-            let minutes = Int(timeInterval / 60)
-            let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-            return "\(minutes):\(String(format: "%02d", seconds))"
-        }
-        return nil
+    private var pastDateText: String {
+        let dayString = calendar
+            .isDate(meeting.start, inSameDayAs: currentDate) ? "" :
+            "\(DateFormatter.dayHeader.string(from: meeting.start)) • "
+        return "\(dayString)\(Strings.started) \(startTime) • \(durationString)"
     }
 
-    var pastText: String {
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateFormat = "EEEE, MMMM d"
-        let dayString = calendar.isDate(meeting.start, inSameDayAs: currentDate) ? "" : "\(dayFormatter.string(from: meeting.start)) - "
-        let timeString = timeRange(for: meeting)
-        return "\(dayString)Started \(timeString)"
+    private var ongoingDateText: String {
+        "\(Strings.startedAt) \(startTime) • \(durationString)"
     }
 
-    func timeRange(for meeting: Meeting) -> String {
-        return "\(DateFormatter.timeHeader.string(from: meeting.start))  -  \(DateFormatter.timeHeader.string(from: meeting.end))"
+    private var timeRangeText: String {
+        "\(startTime) - \(endTime)"
     }
 
-    func startTime(for meeting: Meeting) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: meeting.start)
+    private var startTime: String {
+        DateFormatter.timeHeader.string(from: meeting.start)
+    }
+
+    private var endTime: String {
+        DateFormatter.timeHeader.string(from: meeting.end)
+    }
+
+    private var durationString: String {
+        let durationSeconds = max(0, meeting.end.timeIntervalSince(meeting.start))
+        let duration = DateComponentsFormatter()
+        duration.allowedUnits = [.hour, .minute]
+        duration.unitsStyle = .positional
+        duration.zeroFormattingBehavior = [.pad]
+
+        return duration.string(from: durationSeconds) ?? "0:00"
     }
 
 }

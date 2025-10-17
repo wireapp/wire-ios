@@ -60,8 +60,8 @@ package extension MeetingsListViewModel {
             Meeting(
                 id: UUID(),
                 title: "Candidate interview",
-                start: day(0, hour: 16, min: 0),
-                end: day(0, hour: 16, min: 45),
+                start: day(0, hour: 17, min: 15),
+                end: day(0, hour: 17, min: 45),
                 participants: [
                     Participant(initials: "AF"),
                     Participant(initials: "WI"),
@@ -90,8 +90,8 @@ package extension MeetingsListViewModel {
             Meeting(
                 id: UUID(),
                 title: "Design review",
-                start: day(0, hour: 17),
-                end: day(0, hour: 18),
+                start: day(0, hour: 18),
+                end: day(0, hour: 19),
                 participants: [
                     Participant(initials: "AF"),
                     Participant(initials: "WI"),

@@ -19,6 +19,7 @@
 import Foundation
 package import SwiftUI
 import WireDesign
+package import WireFoundation
 
 package final class MeetingsListViewController: UIViewController {
 
@@ -27,9 +28,13 @@ package final class MeetingsListViewController: UIViewController {
     private let viewModel: MeetingsListViewModel
     private let hostingController: UIHostingController<MeetingsListView>
 
-    package init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsListViewModel, mapping: WireAccentColorMapping, color: WireAccentColor) {
         self.viewModel = viewModel
-        self.hostingController = UIHostingController(rootView: MeetingsListView(viewModel: viewModel))
+        self.hostingController = UIHostingController(rootView: MeetingsListView(
+            viewModel: viewModel,
+            mapping: mapping,
+            color: color
+        ))
         super.init(nibName: nil, bundle: nil)
     }
 

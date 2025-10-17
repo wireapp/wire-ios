@@ -85,3 +85,22 @@ private struct MappingTestView: View {
         }
     }
 }
+
+public extension WireAccentColor {
+    var primary: Color {
+        switch self {
+        case .amber:
+            UIColor(light: .amber50Light, dark: .amber50Dark).color
+        case .blue:
+            UIColor(light: .blue50Light, dark: .blue50Dark).color
+        case .green:
+            UIColor(light: .green50Light, dark: .green50Dark).color
+        case .red:
+            UIColor(light: .red50Light, dark: .red50Dark).color
+        case .turquoise:
+            UIColor(light: .turquoise50Light, dark: .turquoise50Dark).color
+        case .purple:
+            UIColor(light: .purple50Light, dark: .purple50Dark).color
+        }
+    }
+}

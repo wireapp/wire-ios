@@ -19,6 +19,7 @@
 import WireCallingAssembly
 import WireData
 @preconcurrency import WireDataModel
+import WireFoundation
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
@@ -65,7 +66,10 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory()
+        WireMeetingsFactory(
+            wireAccentColor: .init(rawValue: userSession.selfUser.accentColorValue) ?? .default,
+            wireAccentColorMapping: WireAccentColorMapping()
+        )
     }
 }
 

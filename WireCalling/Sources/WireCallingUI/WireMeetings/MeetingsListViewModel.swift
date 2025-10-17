@@ -160,13 +160,6 @@ extension DateFormatter {
         return formatter
     }()
 
-//    static let timeNoMeridiem: DateFormatter = {
-//        let formatter = DateFormatter()
-//        formatter.locale = .current
-//        formatter.dateFormat = "h:mm"
-//        return formatter
-//    }()
-
 }
 
 extension MeetingsListViewModel {

@@ -19,15 +19,20 @@
 package import SwiftUI
 import WireCallingDomain
 import WireDesign
+package import WireFoundation
 
 package struct MeetingsListView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @ObservedObject private var viewModel: MeetingsListViewModel
+    let mapping: WireAccentColorMapping
+    let color: WireAccentColor
 
-    package init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsListViewModel, mapping: WireAccentColorMapping, color: WireAccentColor) {
         self.viewModel = viewModel
+        self.mapping = mapping
+        self.color = color
     }
 
     package var body: some View {
@@ -46,6 +51,8 @@ package struct MeetingsListView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .environment(\.wireAccentColorMapping, mapping)
+        .environment(\.wireAccentColor, color)
     }
 
     @ViewBuilder private var content: some View {
@@ -54,11 +61,23 @@ package struct MeetingsListView: View {
                 if !viewModel.ongoingMeetings.isEmpty {
                     Section {
                         ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting in
-//                            MeetingRow2(meeting: meeting)
-                            MeetingRow2(state: MeetingState(
-                                meeting: meeting,
-                                currentDate: viewModel.currentDate)
+                            MeetingRow(
+                                state: MeetingState(
+                                    meeting: meeting,
+                                    currentDate: viewModel.currentDate
+                                )
                             )
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(color.primary)
+//                            .listRowBackground(
+//                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+//                                    .fill(Color.blue.opacity(0.12))
+//                                    .overlay(
+//                                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+//                                            .stroke(Color.blue.opacity(0.35), lineWidth: 1)
+//                                    )
+//                            )
                         }
                     } header: {
                         SectionTitle(Strings.Header.ongoing)
@@ -118,10 +137,11 @@ private struct GroupedSections: View {
                 ForEach(dayGroup.timeSlots, id: \.time) { slot in
                     Section {
                         ForEach(slot.meetings, id: \.id) { meeting in
-//                            MeetingRow2(meeting: meeting)
-                            MeetingRow2(state: MeetingState(
-                                meeting: meeting,
-                                currentDate: Date())
+                            MeetingRow(
+                                state: MeetingState(
+                                    meeting: meeting,
+                                    currentDate: Date()
+                                )
                             )
                         }
                     } header: {
@@ -137,60 +157,12 @@ private struct GroupedSections: View {
 
 // MARK: - Row
 
-private struct MeetingRow11: View {
-    let meeting: Meeting
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
+private struct MeetingRow: View {
+    private typealias Strings = L10n.Localizable.WireMeetings.MeetingDetails
 
-                Image(systemName: "video.fill").font(.system(size: 15))
-            }
+    @Environment(\.wireAccentColor) private var accentColor
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(.textStyle(.body2))
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
-
-                Text(
-                    "\(DateFormatter.timeHeader.string(from: meeting.start)) – \(DateFormatter.timeHeader.string(from: meeting.end))"
-                )
-                .font(.textStyle(.subline1))
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
-                        .font(.textStyle(.subline1))
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.top, 2)
-            }
-
-            Spacer()
-
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
-    }
-}
-
-#Preview {
-    MeetingsListView(viewModel: MeetingsListViewModel(meetings: []))
-}
-
-struct MeetingRow2: View {
     let state: MeetingState
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 12) {
@@ -211,83 +183,88 @@ struct MeetingRow2: View {
                         .font(.textStyle(.body2))
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
-                    if let startingIn = state.startingInText { //starting soon
-                        Text("Starting in \(startingIn)")
-                            .font(.textStyle(.subline1))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    } else if state.isPast {
-                        Text(state.pastText)
-                            .font(.textStyle(.subline1))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    } else if state.isOngoing {
-                        let startStr = state.startTime(for: state.meeting)
-                        if let remaining = state.remainingText {
-                            Text("Started at \(startStr) - \(remaining)")
-                                .font(.textStyle(.subline1))
-                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                        } else {
-                            Text(state.timeRange(for: state.meeting))
-                                .font(.textStyle(.subline1))
-                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    Text(state.dateText)
+                        .font(.textStyle(.subline1))
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    if !state.meeting.participants.isEmpty {
+                        HStack(spacing: -8) {
+                            let maxAvatars = min(5, state.meeting.participants.count)
+                            let displayed = Array(state.meeting.participants.prefix(maxAvatars))
+                            ForEach(displayed) { participant in
+                                ZStack {
+                                    Circle()
+                                        .fill(participant.color)
+                                        .frame(width: 30, height: 30)
+                                    Text(participant.initials)
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                }
+                            }
+                            if state.meeting.participants.count > 5 {
+                                let remaining = state.meeting.participants.count - 5
+                                Text("+\(remaining)")
+                                    .padding(.leading, 12)
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                            }
                         }
-                    } else {
-                        Text(state.timeRange(for: state.meeting))
-                            .font(.textStyle(.subline1))
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     }
+                    Group {
+                        if state.isStartingSoon {
+                            Text("\(Strings.startingIn) \(state.startingInText)")
+                                .font(.textStyle(.body2))
+                                .foregroundColor(Color(accentColor))
+                        } else if state.isOngoing {
+                            if state.meeting.isNew {
+                                Button {
+                                    } label: {
+                                        HStack(spacing: 8) {
+                                            Image(.videoCall)
+                                                .renderingMode(.template)
+                                            Text(Strings.join)
+                                                .font(.textStyle(.h4))
+                                        }
+                                        .foregroundStyle(ColorTheme.Base.onPrimary.color)
+                                        .padding(.horizontal, 16)
+                                        .frame(height: 36)
+                                        .background(Color(accentColor))
+                                        .clipShape(Capsule())
+                                    }
+                                    .buttonStyle(.plain)
+                            } else {
+                                HStack(spacing: 4) {
+                                    Image(.videoCall)
+                                        .renderingMode(.template)
+                                    Text(Strings.attending)
+                                        .font(.textStyle(.body2))
+                                }
+                                .foregroundStyle(Color(accentColor))
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
                 }
+
                 Spacer()
 
                 Image(systemName: "ellipsis")
                     .rotationEffect(.degrees(90))
                     .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                    .padding(.top, 12)
 
-//                Spacer()
-//
-//                if state.isOngoing {
-//                    if state.meeting.isNew {
-//                        Button("Join Channel") {
-//                        }
-//                        .buttonStyle(.borderedProminent)
-//                        .tint(.blue)
-//                    } else {
-//                        Text("Attending")
-//                            .foregroundColor(.blue)
-//                    }
-//                }
             }
 
-            if !state.meeting.participants.isEmpty {
-                HStack(spacing: -8) {
-                    let maxAvatars = min(5, state.meeting.participants.count)
-                    let displayed = Array(state.meeting.participants.prefix(maxAvatars))
-                    ForEach(displayed) { participant in
-                        ZStack {
-                            Circle()
-                                .fill(participant.color)
-                                .frame(width: 30, height: 30)
-                            Text(participant.initials)
-                                .foregroundColor(.white)
-                                .font(.caption)
-                        }
-                    }
-                    if state.meeting.participants.count > 5 {
-
-                        let remaining = state.meeting.participants.count - 5
-                            Text("+\(remaining)")
-                            .padding(.leading, 12)
-                            .foregroundColor(.gray)
-                            .font(.caption)
-                    }
-                }
-            }
         }
         .padding(.vertical, 4)
     }
 
 }
 
-//#Preview("Upcoming") {
+// #Preview {
+//    MeetingsListView(viewModel: MeetingsListViewModel(meetings: []))
+// }
+
+// #Preview("Upcoming") {
 //    let formatter = DateFormatter()
 //    formatter.dateFormat = "yyyy-MM-dd HH:mm"
 //    let currentDate = formatter.date(from: "2025-10-14 16:00")!
@@ -307,9 +284,9 @@ struct MeetingRow2: View {
 //        ]
 //    )
 //    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-//}
+// }
 //
-//#Preview("Starting Soon") {
+// #Preview("Starting Soon") {
 //    let formatter = DateFormatter()
 //    formatter.dateFormat = "yyyy-MM-dd HH:mm"
 //    let currentDate = formatter.date(from: "2025-10-14 16:00")!
@@ -321,9 +298,9 @@ struct MeetingRow2: View {
 //        participants: [Participant(initials: "AF"), Participant(initials: "WI")]
 //    )
 //    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-//}
+// }
 //
-//#Preview("Now (New)") {
+// #Preview("Now (New)") {
 //    let formatter = DateFormatter()
 //    formatter.dateFormat = "yyyy-MM-dd HH:mm"
 //    let currentDate = formatter.date(from: "2025-10-14 16:00")!
@@ -335,9 +312,9 @@ struct MeetingRow2: View {
 //        participants: [Participant(initials: "JO")]
 //    )
 //    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-//}
+// }
 //
-//#Preview("Participating (Ongoing)") {
+// #Preview("Participating (Ongoing)") {
 //    let formatter = DateFormatter()
 //    formatter.dateFormat = "yyyy-MM-dd HH:mm"
 //    let currentDate = formatter.date(from: "2025-10-14 16:00")!
@@ -354,9 +331,9 @@ struct MeetingRow2: View {
 //        ]
 //    )
 //    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-//}
+// }
 //
-//#Preview("Past") {
+// #Preview("Past") {
 //    let formatter = DateFormatter()
 //    formatter.dateFormat = "yyyy-MM-dd HH:mm"
 //    let currentDate = formatter.date(from: "2025-10-14 16:00")!
@@ -367,4 +344,5 @@ struct MeetingRow2: View {
 //        end: formatter.date(from: "2025-10-14 14:15")!,
 //        participants: Array(repeating: Participant(initials: "P"), count: 5))
 //    return MeetingRow2(meeting: meeting, currentDate: currentDate)
-//}
+// }
+

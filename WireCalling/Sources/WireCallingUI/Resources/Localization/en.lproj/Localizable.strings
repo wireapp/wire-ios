@@ -30,3 +30,8 @@
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.meetingDetails.startingIn" = "Starting in";
+"wireMeetings.meetingDetails.startedAt" = "Started at";
+"wireMeetings.meetingDetails.started" = "Started";
+"wireMeetings.meetingDetails.attending" = "Attending";
+"wireMeetings.meetingDetails.join" = "Join";

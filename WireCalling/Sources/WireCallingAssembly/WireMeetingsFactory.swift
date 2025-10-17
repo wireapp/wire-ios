@@ -19,17 +19,32 @@
 import Foundation
 import WireCallingDomain
 import WireCallingUI
+public import WireFoundation
 public import UIKit
 
 public struct WireMeetingsFactory {
+
+    let wireAccentColor: WireAccentColor
+    let wireAccentColorMapping: WireAccentColorMapping
+
     @MainActor
-    public init() {}
+    public init(
+        wireAccentColor: WireAccentColor,
+        wireAccentColorMapping: WireAccentColorMapping
+    ) {
+        self.wireAccentColor = wireAccentColor
+        self.wireAccentColorMapping = wireAccentColorMapping
+    }
 }
 
 public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsListView() -> UIViewController {
         let meetingsViewModel = MeetingsListViewModel.demo()
-        return MeetingsListViewController(viewModel: meetingsViewModel)
+        return MeetingsListViewController(
+            viewModel: meetingsViewModel,
+            mapping: wireAccentColorMapping,
+            color: wireAccentColor
+        )
     }
 }

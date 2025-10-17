@@ -40,7 +40,7 @@ public struct Meeting: Equatable, Sendable {
         title: String,
         start: Date,
         end: Date,
-        isNew: Bool = false,
+        isNew: Bool = true,
         participants: [Participant]
     ) {
         self.id = id
