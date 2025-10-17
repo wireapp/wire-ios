@@ -13,7 +13,8 @@ let package = Package(
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
-        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"])
+        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
+        .library(name: "WireUtilitiesPackageSupport", targets: ["WireUtilitiesPackageSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -58,11 +59,19 @@ let package = Package(
         ),
         .testTarget(
             name: "WireUtilitiesPackageTests",
-            dependencies: ["WireUtilitiesPackage"],
+            dependencies: [
+                "WireUtilitiesPackage",
+                "WireUtilitiesPackageSupport"
+            ],
             resources: [
                 .copy("Resources/single-file.zip"),
                 .copy("Resources/single-file-in-directory.zip")
             ]
+        ),
+        .target(
+            name: "WireUtilitiesPackageSupport",
+            dependencies: ["WireUtilitiesPackage"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
 
         .target(
