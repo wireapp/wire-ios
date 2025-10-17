@@ -99,6 +99,11 @@ public final class SidebarViewController: UIViewController {
         set { model.showMeetings = newValue }
     }
 
+    public var showFiles: Bool {
+        get { model.showFiles }
+        set { model.showFiles = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -182,6 +187,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
             selectedMenuItem: $model.selectedMenuItem,
             showUnreadFilters: model.showUnreadFilters,
             showMeetings: model.showMeetings,
+            showFiles: model.showFiles,
             accountImageAction: model.accountImageAction,
             foldersAction: model.foldersAction,
             supportAction: model.supportAction,

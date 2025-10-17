@@ -16,17 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import ZipArchive
+public import SwiftUI
 
-extension [URL] {
-    func zipFiles(filename: String = "archive.zip") -> URL? {
-        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+private typealias Strings = L10n.Localizable.Conversation.WireCells
 
-        let paths = map(\.path)
+// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
+public struct AllFilesView: View {
+    @State private var searchText = ""
 
-        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
+    public init() {}
 
-        return zipSucceded ? archiveURL : nil
+    public var body: some View {
+        Text("")
+            .navigationTitle(Strings.AllFiles.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, placement: .navigationBarDrawer)
     }
+}
+
+#Preview {
+    AllFilesView()
 }

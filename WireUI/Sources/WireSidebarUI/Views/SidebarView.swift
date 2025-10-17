@@ -28,6 +28,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
     public var showUnreadFilters: Bool
     public var showMeetings: Bool
+    public var showFiles: Bool
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
@@ -46,6 +47,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         showUnreadFilters: Bool,
         showMeetings: Bool,
+        showFiles: Bool,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         supportAction: @escaping () -> Void,
@@ -56,6 +58,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         _selectedMenuItem = selectedMenuItem
         self.showUnreadFilters = showUnreadFilters
         self.showMeetings = showMeetings
+        self.showFiles = showFiles
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
         self.supportAction = supportAction
@@ -145,6 +148,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             if showMeetings {
                 menuItemHeader(Strings.Meetings.title, addTopPadding: false)
                 selectableMenuItem(.meetings)
+            }
+
+            // Files
+            if showFiles {
+                menuItemHeader(Strings.Files.title, addTopPadding: false)
+                selectableMenuItem(.files)
             }
         }
         .padding(.horizontal, 16)
@@ -276,6 +285,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.Meetings.AllMeetings.title)
             icon = "video"
             accessibilityLabel = Text(Strings.Meetings.AllMeetings.title)
+
+        case .files:
+            text = Text(Strings.Files.AllFiles.title)
+            icon = "rectangle.stack"
+            accessibilityLabel = Text(Strings.Files.AllFiles.title)
 
         case .settings:
             text = Text(Strings.Settings.title)

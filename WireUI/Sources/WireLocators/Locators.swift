@@ -17,13 +17,36 @@
 //
 
 import Foundation
-import WireFoundation
-import ZIPFoundation
 
-struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
+public enum Locators {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
+    public enum WelcomePage: String {
+
+        case emailTextField
+        case nextButton
     }
 
+    public enum LoginPage: String {
+
+        case emailTextField
+        case passwordSecureTextField
+        case nextButton
+    }
+
+    public enum FirstTimePage: String {
+
+        case okButton
+    }
+
+    public enum ConversationsPage: String {
+
+        case bottomBarRecentListButton
+        case bottomBarSettingsButton
+    }
+
+    public enum SettingsPage: String {
+
+        case accountCell
+        case optionsCell
+    }
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class ConversationsPage: PageModel {
@@ -24,7 +25,7 @@ class ConversationsPage: PageModel {
     }
 
     var settingsButton: XCUIElement {
-        app.buttons["bottomBarSettingsButton"]
+        app.buttons[Locators.ConversationsPage.bottomBarSettingsButton.rawValue]
     }
 
     var plusButtonToCreateGroupOrSearch: XCUIElement {
