@@ -58,9 +58,10 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
     func appendV2ImageMessage(to conversation: ZMConversation) throws {
         let imageData = verySmallJPEGData()
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: imageData)
         let messageNonce = UUID.create()
 
-        message = try conversation.appendImage(from: imageData, nonce: messageNonce) as? ZMAssetClientMessage
+        message = try conversation.appendImage(image, nonce: messageNonce) as? ZMAssetClientMessage
 
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
@@ -90,8 +91,9 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
     func appendImageMessage(to conversation: ZMConversation, imageData: Data? = nil) -> ZMAssetClientMessage {
         let data = imageData ?? verySmallJPEGData()
+        let image = SendableImage(name: "picture.jpg", utType: .jpeg, data: data)
         let nonce = UUID.create()
-        let message = try! conversation.appendImage(from: data, nonce: nonce) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(image, nonce: nonce) as! ZMAssetClientMessage
 
         let uploaded = GenericMessageProtocol.Asset(
             withUploadedOTRKey: .randomEncryptionKey(),
@@ -531,8 +533,9 @@ extension ZMAssetClientMessageTests {
             sut.visibleInConversation = syncConversation
             let original = GenericMessage(
                 content: GenericMessageProtocol.Asset(
+                    name: "picture.jpg",
+                    mimeType: "image/jpeg",
                     imageSize: CGSize(width: 10, height: 10),
-                    mimeType: "text/plain",
                     size: 256
                 ),
                 nonce: sut.nonce!

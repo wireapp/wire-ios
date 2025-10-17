@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
-import WireNetwork
+/// A configuration for the *Apps* feature.
 
-struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
+public struct AppsFeatureConfig: Equatable, Sendable {
 
-    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        BackendEnvironment2.isCloudDomain(domain) || BackendEnvironment2.isStagingDomain(domain)
-    }
+    /// The feature's status.
 
-    func isAnalyticsTrackingAvailable(for environment: BackendEnvironment2) -> Bool {
-        environment.isCloudEnvironment || environment.isStagingEnvironment
+    public let status: FeatureConfigStatus
 
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
     }
 
 }
