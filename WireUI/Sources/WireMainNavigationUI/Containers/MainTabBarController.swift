@@ -75,7 +75,7 @@ public final class MainTabBarController<
 
     private weak var conversationListNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
-    private weak var meetingsNavigationController: UINavigationController!
+    private weak var meetingsNavigationController: UINavigationController?
     private weak var settingsNavigationController: UINavigationController!
 
     private weak var _conversationListUI: ConversationListUI?
@@ -111,10 +111,6 @@ public final class MainTabBarController<
         archiveNavigationController.navigationBar.isTranslucent = false
         self.archiveNavigationController = archiveNavigationController
 
-        let meetingsNavigationController = UINavigationController()
-        meetingsNavigationController.navigationBar.isTranslucent = false
-        self.meetingsNavigationController = meetingsNavigationController
-
         let settingsNavigationController = UINavigationController()
         settingsNavigationController.navigationBar.isTranslucent = false
         self.settingsNavigationController = settingsNavigationController
@@ -126,7 +122,13 @@ public final class MainTabBarController<
         ]
 
         if showMeetings {
+            let meetingsNavigationController = UINavigationController()
+            meetingsNavigationController.navigationBar.isTranslucent = false
+            self.meetingsNavigationController = meetingsNavigationController
+
             tabs.insert(meetingsNavigationController, at: 2)
+        } else {
+            meetingsNavigationController = nil
         }
         setViewControllers(tabs, animated: false)
 
@@ -188,7 +190,7 @@ public final class MainTabBarController<
                     table: "Accessibility",
                     bundle: .module
                 )
-                meetingsNavigationController.tabBarItem = tabBarItem
+                meetingsNavigationController?.tabBarItem = tabBarItem
 
             case .settings:
                 let tabBarItem = UITabBarItem(
@@ -253,6 +255,12 @@ public final class MainTabBarController<
     }
 
     private func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
+        guard
+            showMeetings,
+            let meetingsNavigationController
+        else {
+            return
+        }
         _meetingsUI = meetingsUI
 
         let viewControllers = [meetingsUI].compactMap(\.self)

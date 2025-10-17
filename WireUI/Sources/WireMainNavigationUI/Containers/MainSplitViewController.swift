@@ -181,6 +181,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
 
         let viewControllers = [meetingsUI].compactMap(\.self)
         splitLayoutContainer.primaryNavigationController.setViewControllers(viewControllers, animated: animated)
+        splitLayoutContainer.primaryColumnWidth = meetingsUI == nil ? preferredPrimaryColumnWidth : UIScreen.main.bounds.width
         splitLayoutContainer.primaryNavigationController.view.layoutIfNeeded()
     }
 
