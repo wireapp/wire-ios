@@ -16,30 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLocators
+import Foundation
 
-public enum SettingsTopLevelMenuItem: Sendable {
-    case account
-    case devices
-    case options
-    case advanced
-    case support
-    case about
-    case developerOptions
-}
+public enum Locators {
 
-// MARK: - Accessibility identifiers
+    public enum WelcomePage: String {
 
-public extension SettingsTopLevelMenuItem {
-    var accessibilityID: String {
-        switch self {
-        case .account: Locators.SettingsPage.accountCell.rawValue
-        case .devices: "devicesCell"
-        case .options: Locators.SettingsPage.optionsCell.rawValue
-        case .advanced: "advancedCell"
-        case .support: "supportCell"
-        case .about: "aboutCell"
-        case .developerOptions: "developerOptionsCell"
-        }
+        case emailTextField
+        case nextButton
+    }
+
+    public enum LoginPage: String {
+
+        case emailTextField
+        case passwordSecureTextField
+        case nextButton
+    }
+
+    public enum FirstTimePage: String {
+
+        case okButton
+    }
+
+    public enum ConversationsPage: String {
+
+        case bottomBarRecentListButton
+        case bottomBarSettingsButton
+    }
+
+    public enum SettingsPage: String {
+
+        case accountCell
+        case optionsCell
     }
 }
