@@ -51,7 +51,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 
     weak var viewController: UIViewController?
 
-    private let mailRecipient = WireEmail.shared.callingSupportEmail
+    private let mailRecipient = WireEmail.shared.supportEmail
     private let mainCoordinator: any MainCoordinatorProtocol
 
     init(mainCoordinator: any MainCoordinatorProtocol) {
