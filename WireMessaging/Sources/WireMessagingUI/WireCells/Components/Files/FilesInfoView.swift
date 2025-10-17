@@ -63,7 +63,7 @@ struct FilesInfoView: View {
             }
         }
 
-        var acessibilityIdentifiers: (title: String, message: String) {
+        var accessibilityIdentifiers: (title: String, message: String) {
             switch self {
             case .preparingFiles:
                 ("preparing-files-title", "preparing-files-message")
@@ -89,7 +89,7 @@ struct FilesInfoView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(SemanticColors.Label.textDefault.color)
                 .accessibilityLabel(info.accessibilityStrings.title)
-                .accessibilityIdentifier(info.acessibilityIdentifiers.title)
+                .accessibilityIdentifier(info.accessibilityIdentifiers.title)
 
             Text(info.localizedStrings.message)
                 .padding([.leading, .trailing], info == .preparingFiles ? 0 : 30)
@@ -98,7 +98,7 @@ struct FilesInfoView: View {
                 .foregroundStyle(SemanticColors.Label.baseSecondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel(info.accessibilityStrings.message)
-                .accessibilityIdentifier(info.acessibilityIdentifiers.message)
+                .accessibilityIdentifier(info.accessibilityIdentifiers.message)
 
             if info == .error {
                 Button {
@@ -118,6 +118,8 @@ struct FilesInfoView: View {
 
                         )
                 }
+                .accessibilityLabel(Strings.Files.Error.reload)
+                .accessibilityIdentifier("filesBrowser.reloadButton")
             }
         }
         .padding(20)

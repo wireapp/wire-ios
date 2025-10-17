@@ -26,7 +26,7 @@ import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
-/// Allows browsing files shared accross all conversations
+/// Allows browsing files shared across all conversations
 package struct FilesBrowserView: FilesViewProtocol {
     @ObservedObject package var viewModel: FilesViewModel
 

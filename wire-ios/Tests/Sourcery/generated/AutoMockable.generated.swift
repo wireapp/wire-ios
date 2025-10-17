@@ -1803,12 +1803,12 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String?, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String?, Bool, [UUID]) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
+    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String, Bool, [UUID]) -> UIViewController)?
     var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String?, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
         makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, nodeIDs: nodeIDs))
 
         if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod {
