@@ -249,6 +249,23 @@
         }
       }
     },
+    "tabBar.files.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers"
+          }
+        }
+      }
+    },
     "tabBar.meetings.title" : {
       "extractionState" : "manual",
       "localizations" : {
