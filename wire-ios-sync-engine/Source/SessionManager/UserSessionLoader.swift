@@ -93,9 +93,10 @@ final class UserSessionLoader {
 
     @MainActor
     func load(newEnvironment: NewEnvironment?) async throws -> ZMUserSession {
-        // Persist the new environment.
+        // Persist the new environment and metadata
         if let newEnvironment {
             try await storeNewEnvironment(newEnvironment)
+            try backendStore.storeBackendMetadata(newEnvironment.metadata, for: accountID)
         }
 
         // Get the environment for this account.
@@ -129,13 +130,10 @@ final class UserSessionLoader {
             proxyCredentials: proxyCredentials
         )
 
-        let metadata: ResolvedBackendMetadata
-        if let newMetadata = newEnvironment?.metadata {
-            metadata = newMetadata
-            // we store the metadata for NSE
-            try backendStore.storeBackendMetadata(metadata, for: accountID)
+        let metadata: ResolvedBackendMetadata = if let newMetadata = newEnvironment?.metadata {
+            newMetadata
         } else {
-            metadata = try await resolveBackendMetadata(with: networkStack)
+            try await resolveBackendMetadata(with: networkStack)
         }
 
         // Load persistence stack.
