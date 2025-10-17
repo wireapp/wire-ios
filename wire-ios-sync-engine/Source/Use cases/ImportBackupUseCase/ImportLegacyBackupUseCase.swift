@@ -23,6 +23,7 @@ import WireDomainPackage
 import WireFoundation
 import WireLogging
 import WireSystem
+import WireUtilitiesPackage
 
 struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 

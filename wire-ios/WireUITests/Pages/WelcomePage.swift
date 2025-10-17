@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class WelcomePage: PageModel {
@@ -25,13 +26,11 @@ class WelcomePage: PageModel {
     }
 
     var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
+        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
     }
 
     var emailTextField: XCUIElement {
-        let elementsQuery = app.textFields
-        return elementsQuery["Email or SSO code"]
+        app.textFields[Locators.WelcomePage.emailTextField.rawValue]
     }
 
     var setBackendLabel: XCUIElement {

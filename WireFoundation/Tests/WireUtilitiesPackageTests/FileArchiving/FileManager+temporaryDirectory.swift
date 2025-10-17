@@ -16,7 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// consider removing when removing SSZipArchive
-public enum FileArchivingError: Error {
-    case unknown
+import Foundation
+
+extension FileManager {
+
+    func temporaryDirectory(
+        appropriateFor: URL? = nil,
+        create: Bool = false
+    ) throws -> URL {
+
+        let appropriateFor = try appropriateFor ?? url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
+
+        return try url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: appropriateFor,
+            create: false
+        )
+
+    }
+
 }

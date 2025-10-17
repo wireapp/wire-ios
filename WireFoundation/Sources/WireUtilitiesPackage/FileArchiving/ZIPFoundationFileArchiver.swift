@@ -16,41 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireFoundation
+public import Foundation
+
 import ZIPFoundation
 
-struct ZIPFoundationFileArchiver: FileArchiverProtocol {
+public struct ZIPFoundationFileArchiver: FileArchiverProtocol {
 
-    func zipResources(
+    public init() {}
+
+    public func zipResources(
         at resourceURLs: [URL],
         into destinationURL: URL
     ) throws {
 
         // We need to pass a directory URL to ZIPFoundation. Therefore we first copy the target files into a separate,
-        // temporary directory representing the future zip content.
+        // temporary directory representing the content of the zip file.
 
         let fileManager = FileManager.default
-        let sourceURL = destinationURL
-            .deletingLastPathComponent()
-            .appending(path: destinationURL.deletingPathExtension().lastPathComponent, directoryHint: .isDirectory)
-        try fileManager.createDirectory(at: sourceURL, withIntermediateDirectories: false)
+        let tmpDestination = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: destinationURL,
+            create: true
+        )
+        defer { try? fileManager.removeItem(at: tmpDestination) }
+
         for resourceURL in resourceURLs {
             try fileManager.copyItem(
                 at: resourceURL,
-                to: sourceURL.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
+                to: tmpDestination.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
             )
-        }
-        defer {
-            try? fileManager.removeItem(at: sourceURL)
         }
 
         try fileManager.zipItem(
-            at: sourceURL,
+            at: tmpDestination,
             to: destinationURL,
             shouldKeepParent: false,
-            compressionMethod: .deflate,
-            progress: .none
+            compressionMethod: .deflate
         )
 
     }
