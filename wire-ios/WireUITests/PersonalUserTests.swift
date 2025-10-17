@@ -123,7 +123,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         var accountSettingsPage = try activeConversationPage.goBackToConversationPage()
             .longPressForMoreOptionOnConversation()
-            .blockUser()
+            .blockUser() // iPad crashes https://wearezeta.atlassian.net/browse/WPB-21169
             .openSettings()
             .openAccountSettings()
 

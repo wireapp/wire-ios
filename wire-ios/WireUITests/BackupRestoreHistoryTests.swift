@@ -110,7 +110,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         _ = try setPasswordPage.acceptHistoryrestoredAlert()
             .goBackToAccountPage()
             .goBackToSettingsPage()
-            .switchToConversationsTab()
+            .switchToAllConversations()
             .openConversation()
 
         sentMessages = try XCTUnwrap(activeConversationPage.fetchMessages())

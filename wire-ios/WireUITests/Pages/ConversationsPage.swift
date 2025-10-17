@@ -20,18 +20,18 @@ import XCTest
 
 class ConversationsPage: PageModel {
     override var pageMainElement: XCUIElement {
-        conversationsPageLabel
+        plusButtonToCreateGroupOrSearch
     }
 
-    var conversationsPageLabel: XCUIElement {
-        app.staticTexts["Conversations"]
-    }
+//    var conversationsPageLabel: XCUIElement {
+//        app.staticTexts["Conversations"]
+//    }
 
     var settingsButton: XCUIElement {
         app.buttons["bottomBarSettingsButton"]
     }
 
-    var plusButtonToCreateGroup: XCUIElement {
+    var plusButtonToCreateGroupOrSearch: XCUIElement {
         app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
     }
 
@@ -55,24 +55,44 @@ class ConversationsPage: PageModel {
         app.buttons["accept"]
     }
 
+    var closeSidePanel: XCUIElement {
+        app.otherElements["PopoverDismissRegion"]
+    }
+
+    var sideBarPanel: XCUIElement {
+        app.buttons["ToggleSidebar"]
+    }
+
     func openSettings() throws -> SettingsPage {
+        app.iPadOnlyFlow([sideBarPanel]) { el in
+            el.tap()
+        }
         settingsButton.tap()
         return try SettingsPage()
     }
 
     func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
+        app.iPadOnlyFlow([sideBarPanel]) { el in
+            el.tap()
+        }
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
+        let button = app.descendants(matching: .any).matching(predicate).firstMatch
         button.tap()
         return try UserAccountPage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
-        plusButtonToCreateGroup.tap()
+        app.iPadOnlyFlow([closeSidePanel]) { el in
+            el.tap()
+        }
+        plusButtonToCreateGroupOrSearch.tap()
         return try NewConversationPage()
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
+        app.iPadOnlyFlow([closeSidePanel]) { el in
+            el.tap()
+        }
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -88,6 +108,9 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
+        app.iPadOnlyFlow([closeSidePanel]) { el in
+            el.tap()
+        }
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -114,6 +137,9 @@ class ConversationsPage: PageModel {
     }
 
     func getNameLabel() -> String? {
-        conversationCell.label
+        app.iPadOnlyFlow([closeSidePanel]) { el in
+            el.tap()
+        }
+        return conversationCell.label
     }
 }

@@ -78,7 +78,9 @@ class ActiveConversationPage: PageModel {
     }
 
     func goBackToConversationPage() throws -> ConversationsPage {
-        conversationBackButton.tap()
+        if conversationBackButton.exists {
+            conversationBackButton.tap()
+        }
         return try ConversationsPage()
     }
 

@@ -35,4 +35,14 @@ extension XCUIApplication {
             .enterPassword(password)
             .acceptFirstTimeAlert()
     }
+
+    @discardableResult
+    func iPadOnlyFlow(_ elements: [XCUIElement], action: (XCUIElement) -> Void) -> Bool {
+        var didActionPerformed = false
+        for el in elements where el.exists {
+            action(el)
+            didActionPerformed = true
+        }
+        return didActionPerformed
+    }
 }

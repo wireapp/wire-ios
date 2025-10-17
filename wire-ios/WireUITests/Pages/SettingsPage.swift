@@ -38,6 +38,14 @@ class SettingsPage: PageModel {
         app.buttons["bottomBarRecentListButton"]
     }
 
+    var sideBarPanel: XCUIElement {
+        app.buttons["ToggleSidebar"]
+    }
+
+    var allConversations: XCUIElement {
+        app.buttons["All"]
+    }
+
     func openAccountSettings() throws -> AccountSettingsPage {
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
@@ -48,8 +56,12 @@ class SettingsPage: PageModel {
         return try OptionsOnSettingsPage()
     }
 
-    func switchToConversationsTab() throws -> ConversationsPage {
-        conversationsTab.tap()
+    func switchToAllConversations() throws -> ConversationsPage {
+        if conversationsTab.exists {
+            conversationsTab.tap()
+        } else {
+            _ = app.iPadOnlyFlow([sideBarPanel, allConversations]) { $0.tap() }
+        }
         return try ConversationsPage()
     }
 }

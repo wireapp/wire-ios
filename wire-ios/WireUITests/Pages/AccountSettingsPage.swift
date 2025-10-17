@@ -85,7 +85,9 @@ class AccountSettingsPage: PageModel {
     }
 
     func backToSettings() throws -> SettingsPage {
-        backToSettingsButton.tap()
+        if backToSettingsButton.exists {
+            backToSettingsButton.tap()
+        }
         return try SettingsPage()
     }
 
