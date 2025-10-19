@@ -31,6 +31,7 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     typealias SettingsContentUI = UIViewController
 
     typealias ConnectUI = UIViewController
+    typealias FilesUI = UIViewController
 
     var selectedContent: MainTabBarControllerContent = .conversations
 
@@ -38,6 +39,7 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     var archiveUI: ArchiveUI?
     var meetingsUI: MeetingsUI?
     var settingsUI: SettingsUI?
+    var filesUI: FilesUI?
 
     var conversationUI: ConversationUI?
     var settingsContentUI: SettingsContentUI?
@@ -63,6 +65,10 @@ final class MockTabBarController: UITabBarController, MainTabBarControllerProtoc
     }
 
     func setSettingsContentUI(_ settingsContentUI: SettingsContentUI?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 }

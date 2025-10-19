@@ -27,7 +27,8 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
         TabBarController.ConversationUI == ConversationUI,
         TabBarController.ArchiveUI == ArchiveUI,
         TabBarController.MeetingsUI == MeetingsUI,
-        TabBarController.SettingsUI == SettingsUI
+        TabBarController.SettingsUI == SettingsUI,
+        TabBarController.FilesUI == FilesUI
 
     /// Contains the reference to the view controller shown in the primary column.
     var sidebar: Sidebar! { get }

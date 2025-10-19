@@ -26,6 +26,7 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     typealias ArchiveUI = UIViewController
     typealias SettingsUI = UIViewController
     typealias MeetingsUI = UIViewController
+    typealias FilesUI = UIViewController
 
     typealias ConversationUI = MockConversationViewController<PreviewConversationModel>
     typealias SettingsContentUI = UIViewController
@@ -38,8 +39,9 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     var connectUI: ConnectUI?
     var settingsUI: SettingsUI?
     var conversationUI: ConversationUI?
-    var meetingsUI: UIViewController?
+    var meetingsUI: MeetingsUI?
     var settingsContentUI: SettingsContentUI?
+    var filesUI: FilesUI?
     var tabController: MockTabBarController!
 
     func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
@@ -67,6 +69,10 @@ final class MockSplitViewController: UISplitViewController, MainSplitViewControl
     }
 
     func setConnectUI(_ connectUI: ConnectUI?, animated: Bool) {
+        fatalError("mock method not implemented")
+    }
+
+    func setFilesUI(_ filesUI: FilesUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 

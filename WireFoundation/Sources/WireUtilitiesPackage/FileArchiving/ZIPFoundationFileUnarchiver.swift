@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import ZipArchive
+public import Foundation
 
-extension [URL] {
-    func zipFiles(filename: String = "archive.zip") -> URL? {
-        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+public struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-        let paths = map(\.path)
+    public init() {}
 
-        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
-
-        return zipSucceded ? archiveURL : nil
+    public func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
+
 }

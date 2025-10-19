@@ -26,7 +26,7 @@ public protocol MainContainerViewControllerProtocol: UIViewController {
     associatedtype ArchiveUI: UIViewController
     associatedtype SettingsUI: UIViewController
     associatedtype MeetingsUI: UIViewController
-
+    associatedtype FilesUI: UIViewController
     associatedtype ConversationUI: MainConversationUIProtocol
 
     // These three properties represent the tabs of the main tab bar controller.
@@ -34,6 +34,7 @@ public protocol MainContainerViewControllerProtocol: UIViewController {
     var archiveUI: ArchiveUI? { get set }
     var meetingsUI: MeetingsUI? { get set }
     var settingsUI: SettingsUI? { get set }
+    var filesUI: FilesUI? { get set }
 
     // These two represent the content, which will be pushed on the three main screens.
     var conversationUI: ConversationUI? { get set }

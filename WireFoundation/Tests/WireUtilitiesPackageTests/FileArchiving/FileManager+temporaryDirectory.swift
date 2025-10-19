@@ -16,25 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-final class ZipFileTests: XCTestCase {
+extension FileManager {
 
-    func testThatFileURLsCanBeZipped() {
-        // GIVEN
-        let urls = ["not_animated.gif", "0x0.pdf", "sample.pkpass"].map {
-            urlForResource(inTestBundleNamed: $0)
-        }
+    func temporaryDirectory(
+        appropriateFor: URL? = nil,
+        create: Bool = false
+    ) throws -> URL {
 
-        // WHEN
-        let zipURL = urls.zipFiles(filename: "test.zip")
+        let appropriateFor = try appropriateFor ?? url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
 
-        // THEN
-        XCTAssertNotNil(zipURL)
-        XCTAssertGreaterThan(zipURL!.fileSize!, 0)
+        return try url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: appropriateFor,
+            create: false
+        )
 
-        try! FileManager.default.removeItem(atPath: zipURL!.path)
-        XCTAssertNil(zipURL?.fileSize)
     }
+
 }

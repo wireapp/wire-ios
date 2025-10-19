@@ -19,6 +19,7 @@
 import Foundation
 import KaliumBackup
 import WireFoundation
+import WireUtilitiesPackage
 
 struct BackupImporter {
 

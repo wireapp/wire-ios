@@ -16,21 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import ZipArchive
+public import SwiftUI
 
-struct ZipArchiveFileUnarchiver: FileUnarchiverProtocol {
+private typealias Strings = L10n.Localizable.Conversation.WireCells
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
+public struct AllFilesView: View {
+    @State private var searchText = ""
 
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
+    public init() {}
 
-        guard success else {
-            throw FileArchivingError.unknown
-        }
-
+    public var body: some View {
+        Text("")
+            .navigationTitle(Strings.AllFiles.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, placement: .navigationBarDrawer)
     }
+}
+
+#Preview {
+    AllFilesView()
 }

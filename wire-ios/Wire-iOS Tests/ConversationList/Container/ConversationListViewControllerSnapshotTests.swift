@@ -95,20 +95,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         sut.mainSplitViewState = .collapsed
+        DeveloperFlag.wireCells.enable(false, storage: .temporary())
 
-        let tabBarController = ZClientViewController.MainCoordinator.TabBarController(showMeetings: false)
-        tabBarController.applyMainTabBarControllerAppearance()
-        tabBarController.conversationListUI = sut
-
-        window = .init(windowScene: windowScene)
-        window.backgroundColor = .systemBackground
-        window.overrideUserInterfaceStyle = .dark
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-
-        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
-        UIView.setAnimationsEnabled(false)
+        await setupTabBar()
     }
 
     override func tearDown() {
@@ -122,6 +111,27 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         coreDataFixture = nil
         window.isHidden = true
         window = nil
+        DeveloperFlag.wireCells.enable(false, storage: .temporary())
+    }
+
+    @MainActor
+    private func setupTabBar() async {
+        let tabBarController = ZClientViewController.MainCoordinator.TabBarController(
+            showMeetings: false,
+            showFiles: DeveloperFlag.wireCells.isOn
+        )
+        tabBarController.applyMainTabBarControllerAppearance()
+        tabBarController.conversationListUI = sut
+
+        window = .init(windowScene: windowScene)
+        window.backgroundColor = .systemBackground
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+
+        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
     }
 
     func testForNoConversations() {
@@ -537,6 +547,19 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    @MainActor
+    func testForShowingFilesTabWhenWireCellsEnabled() async {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        DeveloperFlag.wireCells.enable(true, storage: .temporary())
+        await setupTabBar()
+
+        // THEN, files tab should show up
         snapshotHelper.verify(matching: renderedImage())
     }
 
