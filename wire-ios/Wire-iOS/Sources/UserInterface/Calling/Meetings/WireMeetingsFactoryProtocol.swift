@@ -23,7 +23,7 @@ import WireCallingAssembly
 // sourcery: AutoMockable
 protocol WireMeetingsFactoryProtocol {
     @MainActor
-    func makeMeetingsListView() -> UIViewController
+    func makeMeetingsView() -> UIViewController
 }
 
 extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

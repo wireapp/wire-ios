@@ -1847,22 +1847,22 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
 
 
-    // MARK: - makeMeetingsListView
+    // MARK: - makeMeetingsView
 
-    var makeMeetingsListView_Invocations: [Void] = []
-    var makeMeetingsListView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsListView_MockValue: UIViewController?
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsListView() -> UIViewController {
-        makeMeetingsListView_Invocations.append(())
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
 
-        if let mock = makeMeetingsListView_MockMethod {
+        if let mock = makeMeetingsView_MockMethod {
             return mock()
-        } else if let mock = makeMeetingsListView_MockValue {
+        } else if let mock = makeMeetingsView_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsListView`")
+            fatalError("no mock for `makeMeetingsView`")
         }
     }
 

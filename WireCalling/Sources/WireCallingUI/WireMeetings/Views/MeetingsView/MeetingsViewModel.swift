@@ -23,13 +23,13 @@ package final class MeetingsViewModel: ObservableObject {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @Published var selectedTab: Tab = .next
-    @Published package var showAllNext: Bool = false
+    @Published var showAllNext: Bool = false
 
     private let repository: any MeetingsRepositoryProtocol
     private let grouper: MeetingsGrouper
     private let formatter: MeetingsFormatter
-    package let currentDate: Date
-    package let calendar = Calendar.current
+    private let currentDate: Date
+    private let calendar = Calendar.current
 
     package init(
         repository: any MeetingsRepositoryProtocol,
