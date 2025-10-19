@@ -16,11 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCallingDomain
+package import Foundation
+package import WireCallingDomain
 
-package extension MeetingsViewModel {
-    static func demo() -> MeetingsViewModel {
+package final class MeetingsRepository: MeetingsRepositoryProtocol {
+
+    private let meetingsSource: @Sendable () -> [Meeting]
+
+    package init(meetings: @Sendable @escaping () -> [Meeting]) {
+        self.meetingsSource = meetings
+    }
+
+    private func sorted(_ meetings: [Meeting]) -> [Meeting] {
+        meetings.sorted { $0.start < $1.start }
+    }
+
+    package func allMeetings() -> [Meeting] {
+        sorted(meetingsSource())
+    }
+
+    package func ongoingMeetings(at date: Date) -> [Meeting] {
+        sorted(meetingsSource().filter { $0.start <= date && $0.end > date })
+    }
+
+    package func futureMeetings(after date: Date) -> [Meeting] {
+        sorted(meetingsSource().filter { $0.start > date })
+    }
+
+    package func pastMeetings(until date: Date) -> [Meeting] {
+        sorted(meetingsSource().filter { $0.end <= date })
+    }
+}
+
+package extension MeetingsRepository {
+    static func demo() -> MeetingsRepository {
         let cal = Calendar.current
         let now = Date()
         func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
@@ -102,6 +131,6 @@ package extension MeetingsViewModel {
             )
         ]
 
-        return MeetingsViewModel(meetings: meetings)
+        return MeetingsRepository(meetings: { meetings })
     }
 }

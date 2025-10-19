@@ -29,10 +29,18 @@ let package = Package(
             ]
         ),
         .target(
+            name: "WireCallingData",
+            dependencies: [
+                "WireCallingDomain",
+                "WireLogging"
+            ]
+        ),
+        .target(
             name: "WireCallingAssembly",
             dependencies: [
                 "WireCallingDomain",
-                "WireCallingUI"
+                "WireCallingUI",
+                "WireCallingData"
             ]
         ),
         .target(
@@ -48,7 +56,8 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
-                "WireCallingDomain"
+                "WireCallingDomain",
+                "WireCallingData"
             ],
         ),
         .testTarget(

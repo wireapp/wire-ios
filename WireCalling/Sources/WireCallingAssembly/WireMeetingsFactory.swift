@@ -20,6 +20,7 @@ import Foundation
 import WireCallingDomain
 import WireCallingUI
 public import UIKit
+import WireCallingData
 
 public struct WireMeetingsFactory {
     @MainActor
@@ -29,7 +30,7 @@ public struct WireMeetingsFactory {
 public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsListView() -> UIViewController {
-        let meetingsViewModel = MeetingsViewModel.demo()
+        let meetingsViewModel = MeetingsViewModel(repository: MeetingsRepository.demo())
         return MeetingsViewController(viewModel: meetingsViewModel)
     }
 }

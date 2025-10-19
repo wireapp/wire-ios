@@ -53,7 +53,11 @@ package struct MeetingsView: View {
             if viewModel.selectedTab == .next {
                 if !viewModel.ongoingMeetings.isEmpty {
                     Section {
-                        ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting in
+//                        ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting
+//                        in
+//                            MeetingRow(meeting: meeting)
+//                        }
+                        ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
                             MeetingRow(meeting: meeting)
                         }
                     } header: {
@@ -177,5 +181,5 @@ private struct MeetingRow: View {
 }
 
 #Preview {
-    MeetingsView(viewModel: MeetingsViewModel(meetings: []))
+    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepository()))
 }
