@@ -19,8 +19,8 @@
 import Foundation
 import WireCallingDomain
 
-package extension MeetingsListViewModel {
-    static func demo() -> MeetingsListViewModel {
+package extension MeetingsViewModel {
+    static func demo() -> MeetingsViewModel {
         let cal = Calendar.current
         let now = Date()
         func day(_ offset: Int, hour: Int, min: Int = 0) -> Date {
@@ -102,6 +102,6 @@ package extension MeetingsListViewModel {
             )
         ]
 
-        return MeetingsListViewModel(meetings: meetings)
+        return MeetingsViewModel(meetings: meetings)
     }
 }

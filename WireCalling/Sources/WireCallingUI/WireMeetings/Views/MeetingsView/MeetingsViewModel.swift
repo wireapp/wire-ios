@@ -19,7 +19,7 @@
 package import Foundation
 package import WireCallingDomain
 
-package final class MeetingsListViewModel: ObservableObject {
+package final class MeetingsViewModel: ObservableObject {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @Published var selectedTab: Tab = .next
@@ -162,7 +162,7 @@ extension DateFormatter {
 
 }
 
-extension MeetingsListViewModel {
+extension MeetingsViewModel {
 
     enum Tab: Int, CaseIterable {
         case next

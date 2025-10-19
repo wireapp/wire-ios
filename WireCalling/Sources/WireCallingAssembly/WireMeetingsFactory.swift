@@ -29,7 +29,7 @@ public struct WireMeetingsFactory {
 public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsListView() -> UIViewController {
-        let meetingsViewModel = MeetingsListViewModel.demo()
-        return MeetingsListViewController(viewModel: meetingsViewModel)
+        let meetingsViewModel = MeetingsViewModel.demo()
+        return MeetingsViewController(viewModel: meetingsViewModel)
     }
 }

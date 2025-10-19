@@ -20,20 +20,20 @@ package import SwiftUI
 import WireCallingDomain
 import WireDesign
 
-package struct MeetingsListView: View {
+package struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @ObservedObject private var viewModel: MeetingsListViewModel
+    @ObservedObject private var viewModel: MeetingsViewModel
 
-    package init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
     }
 
     package var body: some View {
         VStack {
             Picker("", selection: $viewModel.selectedTab) {
-                ForEach(MeetingsListViewModel.Tab.allCases, id: \.self) { tab in
+                ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
                     Text(tab.title).tag(tab)
                 }
             }
@@ -177,5 +177,5 @@ private struct MeetingRow: View {
 }
 
 #Preview {
-    MeetingsListView(viewModel: MeetingsListViewModel(meetings: []))
+    MeetingsView(viewModel: MeetingsViewModel(meetings: []))
 }

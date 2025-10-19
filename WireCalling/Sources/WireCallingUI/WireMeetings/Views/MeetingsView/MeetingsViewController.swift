@@ -20,16 +20,16 @@ import Foundation
 package import SwiftUI
 import WireDesign
 
-package final class MeetingsListViewController: UIViewController {
+package final class MeetingsViewController: UIViewController {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
-    private let viewModel: MeetingsListViewModel
-    private let hostingController: UIHostingController<MeetingsListView>
+    private let viewModel: MeetingsViewModel
+    private let hostingController: UIHostingController<MeetingsView>
 
-    package init(viewModel: MeetingsListViewModel) {
+    package init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
-        self.hostingController = UIHostingController(rootView: MeetingsListView(viewModel: viewModel))
+        self.hostingController = UIHostingController(rootView: MeetingsView(viewModel: viewModel))
         super.init(nibName: nil, bundle: nil)
     }
 
