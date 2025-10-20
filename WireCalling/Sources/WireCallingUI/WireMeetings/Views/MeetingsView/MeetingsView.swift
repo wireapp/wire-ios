@@ -18,6 +18,7 @@
 
 package import SwiftUI
 import WireCallingDomain
+import WireCallingDomainSupport
 import WireDesign
 
 package struct MeetingsView: View {
@@ -181,5 +182,5 @@ private struct MeetingRow: View {
 }
 
 #Preview {
-    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepository()))
+    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepositoryProtocol()))
 }

@@ -29,6 +29,14 @@ let package = Package(
             ]
         ),
         .target(
+            name: "WireCallingDomainSupport",
+            dependencies: [
+                "WireCallingDomain",
+                "WireCallingData"
+            ],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+        .target(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
@@ -47,6 +55,7 @@ let package = Package(
             name: "WireCallingUI",
             dependencies: [
                 "WireCallingDomain",
+                "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireFoundation"
@@ -57,6 +66,7 @@ let package = Package(
             name: "WireCallingTests",
             dependencies: [
                 "WireCallingDomain",
+                "WireCallingDomainSupport",
                 "WireCallingData"
             ],
         ),
@@ -64,6 +74,7 @@ let package = Package(
             name: "WireCallingUITests",
             dependencies: [
                 "WireCallingUI",
+                "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI")
             ],
         ),
