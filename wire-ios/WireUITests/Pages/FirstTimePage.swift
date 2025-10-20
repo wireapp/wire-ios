@@ -75,7 +75,7 @@ class FirstTimePage: PageModel {
     }
 
     private func dismissSavePasswordAlertIfPresent() {
-        if savePasswordSheet.exists {
+        if savePasswordSheet.waitForExistence(timeout: 2) {
             notNowOptionOnSavePasswordSheet.tap()
             _ = savePasswordSheet.waitToDisappear(timeout: 2)
         }
