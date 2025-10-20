@@ -16,6 +16,60 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 final class UsersAPIV12: UsersAPIV11 {
     override var apiVersion: APIVersion { .v12 }
+}
+
+struct UserResponseV12: Decodable, ToAPIModelConvertible {
+
+    let id: QualifiedIDV0
+    let name: String
+    let handle: String?
+    let teamID: UUID?
+    let type: UserTypeV12?
+    let accentID: Int
+    let assets: [UserAssetV0]
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: UTCTime?
+    let service: ServiceResponseV0?
+    let legalholdStatus: LegalholdStatusV0
+
+    enum CodingKeys: String, CodingKey {
+
+        case id = "qualified_id"
+        case name
+        case handle
+        case teamID = "team"
+        case type
+        case accentID = "accent_id"
+        case assets
+        case deleted
+        case email
+        case expiresAt = "expires_at"
+        case service
+        case legalholdStatus = "legalhold_status"
+
+    }
+
+    func toAPIModel() -> User {
+        User(
+            id: id.toAPIModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            accentID: accentID,
+            type: type,
+            assets: assets.map { $0.toAPIModel() },
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt?.date,
+            service: service?.toAPIModel(),
+            supportedProtocols: [.proteus],
+            legalholdStatus: legalholdStatus.toAPIModel()
+        )
+    }
+
 }
