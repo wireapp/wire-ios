@@ -114,176 +114,6 @@ public final class NotificationSession {
 
     // MARK: - Life cycle
 
-    /// Initializes a new `SessionDirectory` to be used in an extension environment
-    /// - parameter databaseDirectory: The `NSURL` of the shared group container
-    /// - throws: `InitializationError.noAccount` in case the account does not exist
-    /// - returns: The initialized session object if no error is thrown
-
-    public convenience init(
-        currentAppVersion: String,
-        applicationGroupIdentifier: String,
-        accountIdentifier: UUID,
-        environment: BackendEnvironmentProvider,
-        sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?
-    ) async throws {
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accounURLs = AccountURLs(root: sharedContainerURL)
-        let accountManager = try AccountManager(
-            currentAppVersion: currentAppVersion,
-            directory: accounURLs.accounts
-        )
-
-        guard let account = accountManager.account(with: accountIdentifier) else {
-            throw InitializationError.noAccount
-        }
-
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL,
-            localDomain: BackendInfo.domain,
-            isFederationEnabled: BackendInfo.isFederationEnabled
-        )
-
-        guard coreDataStack.storesExists else {
-            throw InitializationError.coreDataMissingSharedContainer
-        }
-
-        guard !coreDataStack.needsMigration  else {
-            throw InitializationError.coreDataMigrationRequired
-        }
-
-        try await coreDataStack.load()
-
-        // Don't cache the cookie because if the user logs out and back in again in the main app
-        // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(
-            forServerName: environment.backendURL.host!,
-            userIdentifier: accountIdentifier,
-            useCache: false
-        )
-
-        let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
-
-        let selfClientID = coreDataStack.syncContext.performAndWait {
-            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
-        }
-
-        let transportSession = ZMTransportSession(
-            environment: environment,
-            proxyUsername: credentials?.username,
-            proxyPassword: credentials?.password,
-            cookieStorage: cookieStorage,
-            reachability: environment.reachability,
-            initialAccessToken: nil,
-            applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion,
-            selfClientID: selfClientID,
-            // This flag only concerns the push channel which isn't relevant
-            // in the notification session.
-            isSyncV2Enabled: false
-        )
-
-        try self.init(
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(
-                accountIdentifier: accountIdentifier,
-                applicationContainer: sharedContainerURL
-            ),
-            accountIdentifier: accountIdentifier,
-            sharedUserDefaults: sharedUserDefaults
-        )
-    }
-
-    convenience init(
-        coreDataStack: CoreDataStack,
-        transportSession: ZMTransportSession,
-        cachesDirectory: URL,
-        accountContainer: URL,
-        accountIdentifier: UUID,
-        sharedUserDefaults: UserDefaults
-    ) throws {
-        let lastEventIDRepository = LastEventIDRepository(
-            userID: accountIdentifier,
-            sharedUserDefaults: sharedUserDefaults
-        )
-
-        let applicationStatusDirectory = ApplicationStatusDirectory(
-            syncContext: coreDataStack.syncContext,
-            transportSession: transportSession,
-            lastEventIDRepository: lastEventIDRepository
-        )
-
-        let pushNotificationStrategy = PushNotificationStrategy(
-            syncContext: coreDataStack.syncContext,
-            applicationStatus: applicationStatusDirectory,
-            pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            lastEventIDRepository: lastEventIDRepository
-        )
-
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
-
-        let operationLoop = RequestGeneratingOperationLoop(
-            userContext: coreDataStack.viewContext,
-            syncContext: coreDataStack.syncContext,
-            callBackQueue: .main,
-            requestGeneratorStore: requestGeneratorStore,
-            transportSession: transportSession
-        )
-
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        let journal = Journal(
-            userID: accountIdentifier,
-            storage: sharedUserDefaults
-        )
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: accountIdentifier,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            sharedUserDefaults: sharedUserDefaults,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
-            allowCreation: false,
-            localDomain: BackendInfo.domain
-        )
-        let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
-        let mlsActionExecutor = MLSActionExecutor(
-            coreCryptoProvider: coreCryptoProvider,
-            featureRepository: featureRepository
-        )
-
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
-
-        let earService = EARService(
-            accountID: accountIdentifier,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: LAContextStorage())
-        )
-
-        try self.init(
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: cachesDirectory,
-            saveNotificationPersistence: saveNotificationPersistence,
-            applicationStatusDirectory: applicationStatusDirectory,
-            operationLoop: operationLoop,
-            accountIdentifier: accountIdentifier,
-            pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            earService: earService,
-            proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(
-                context: coreDataStack.syncContext,
-                mlsActionExecutor: mlsActionExecutor
-            ),
-            lastEventIDRepository: lastEventIDRepository
-        )
-    }
-
     init(
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
@@ -331,7 +161,6 @@ public final class NotificationSession {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }
         }
-
     }
 
     deinit {
@@ -374,7 +203,7 @@ public final class NotificationSession {
             return
         }
 
-        WireLogger.notifications.info("attempting to fetch events", attributes: .legacyNSE)
+        WireLogger.notifications.info("attempting to fetch events", attributes: .legacyNSE, .safePublic)
         applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce) { result in
             switch result {
             case .success:
@@ -569,7 +398,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
-        WireLogger.notifications.info("did finish processing events", attributes: .legacyNSE)
+        WireLogger.notifications.info("did finish processing events", attributes: .legacyNSE, .safePublic)
         processCallEvent()
         processLocalNotifications()
     }
@@ -589,7 +418,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         let notification: ZMLocalNotification?
 
         if localNotifications.count > 1 {
-            WireLogger.notifications.info("bundling \(localNotifications.count) notifications", attributes: .legacyNSE)
+            WireLogger.notifications.info(
+                "bundling \(localNotifications.count) notifications",
+                attributes: .legacyNSE,
+                .safePublic
+            )
             notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: context)
         } else {
             notification = localNotifications.first
