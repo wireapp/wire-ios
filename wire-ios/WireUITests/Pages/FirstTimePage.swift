@@ -46,7 +46,7 @@ class FirstTimePage: PageModel {
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
-    func acceptFirstTimeAlert() throws -> FirstTimePage {
+    func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
         return self
