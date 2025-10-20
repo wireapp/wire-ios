@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class LoginPage: PageModel {
@@ -30,16 +31,15 @@ class LoginPage: PageModel {
     }
 
     var nextButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"].firstMatch
+        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
     }
 
     var emailField: XCUIElement {
-        app.textFields["Enter email"]
+        app.textFields[Locators.LoginPage.emailTextField.rawValue]
     }
 
     var passwordField: XCUIElement {
-        app.secureTextFields["Enter password"]
+        app.secureTextFields[Locators.LoginPage.passwordSecureTextField.rawValue]
     }
 
     func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {

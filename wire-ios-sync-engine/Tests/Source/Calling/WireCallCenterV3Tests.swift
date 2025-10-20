@@ -2176,7 +2176,7 @@ extension WireCallCenterV3Tests {
     private func callSnapshot(
         conversationId: AVSIdentifier,
         clients: [AVSClient],
-        messageProtocol: MessageProtocol = .mls
+        messageProtocol: WireDataModel.MessageProtocol = .mls
     ) -> [AVSIdentifier: CallSnapshot] {
         [
             conversationId: CallSnapshotTestFixture.callSnapshot(

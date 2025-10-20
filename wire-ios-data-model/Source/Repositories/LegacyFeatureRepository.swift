@@ -55,6 +55,8 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple)
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
+    func fetchAssetAuditLog() -> Feature.AssetAuditLog
+
 }
 
 /// **Do not use it for new code, use FeatureConfigRepository instead**
@@ -570,6 +572,16 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         Feature.updateOrCreate(havingName: .cells, in: context) {
             $0.status = cells.status
         }
+    }
+
+    // MARK: - Asset audit log
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        guard let feature = Feature.fetch(name: .assetAuditLog, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
     }
 
     // MARK: - Methods

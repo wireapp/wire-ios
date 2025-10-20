@@ -30,7 +30,7 @@ final class ConversationInputBarSendController: NSObject {
     }
 
     func sendMessage(
-        withImageData imageData: Data,
+        image: SendableImage,
         userSession: UserSession,
         completion completionHandler: Completion? = nil
     ) {
@@ -41,7 +41,10 @@ final class ConversationInputBarSendController: NSObject {
         userSession.enqueue({
             do {
                 let useCase = userSession.makeAppendImageMessageUseCase()
-                try useCase.invoke(withImageData: imageData, in: conversation)
+                try useCase.invoke(
+                    image: image,
+                    in: conversation
+                )
                 self.feedbackGenerator.impactOccurred()
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
@@ -95,7 +98,7 @@ final class ConversationInputBarSendController: NSObject {
         _ text: String,
         mentions: [Mention],
         userSession: UserSession,
-        withImageData data: Data
+        withGIFImageData data: Data
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -112,7 +115,15 @@ final class ConversationInputBarSendController: NSObject {
                     in: conversation,
                     fetchLinkPreview: shouldFetchLinkPreview
                 )
-                try imageMessageUseCase.invoke(withImageData: data, in: conversation)
+                let image = SendableImage(
+                    name: nil,
+                    utType: nil,
+                    data: data
+                )
+                try imageMessageUseCase.invoke(
+                    image: image,
+                    in: conversation
+                )
             } catch {
                 Logging.messageProcessing
                     .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")

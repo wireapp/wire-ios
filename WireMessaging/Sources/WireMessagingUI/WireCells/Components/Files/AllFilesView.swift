@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import SwiftUI
 
-public extension LinkPreviewAssetUploadRequestStrategy {
+private typealias Strings = L10n.Localizable.Conversation.WireCells
 
-    static func create(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus
-    ) -> LinkPreviewAssetUploadRequestStrategy {
-        LinkPreviewAssetUploadRequestStrategy(
-            managedObjectContext: managedObjectContext,
-            applicationStatus: applicationStatus,
-            linkPreviewPreprocessor: nil,
-            previewImagePreprocessor: nil
-        )
+// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
+public struct AllFilesView: View {
+    @State private var searchText = ""
+
+    public init() {}
+
+    public var body: some View {
+        Text("")
+            .navigationTitle(Strings.AllFiles.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, placement: .navigationBarDrawer)
     }
+}
 
+#Preview {
+    AllFilesView()
 }

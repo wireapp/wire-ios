@@ -19,6 +19,7 @@
 import Foundation
 import KaliumBackup
 import WireFoundation
+import WireUtilitiesPackage
 
 /// Abstraction of the multi-platform framework, attempting to improve the interface by using proper types and Swift
 /// concurrency and hide the NSObject API.

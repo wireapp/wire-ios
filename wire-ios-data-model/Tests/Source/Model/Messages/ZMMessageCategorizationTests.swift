@@ -113,7 +113,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     func testThatItCategorizesAnImageMessage() {
 
         // GIVEN
-        let message = try! conversation.appendImage(from: verySmallJPEGData())
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        )
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.image)
@@ -122,7 +125,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     func testThatItCategorizesAnImageMessage_WithoutData() {
 
         // GIVEN
-        let message = try! conversation.appendImage(from: verySmallJPEGData())
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        )
         uiMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
 
         // THEN
@@ -133,7 +139,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         let data = data(forResource: "animated", extension: "gif")!
-        let message = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.gif", utType: .gif, data: data),
+            nonce: UUID()
+        ) as! ZMAssetClientMessage
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.image, MessageCategory.GIF])
@@ -229,7 +238,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     func testThatItCategorizesV3Images() {
 
         // GIVEN
-        let message = try! conversation.appendImage(from: verySmallJPEGData())
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: mediumJPEGData()),
+            nonce: UUID()
+        )
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.image)
@@ -628,7 +640,10 @@ extension ZMMessageCategorizationTests {
     func testThatItCategorizesAnImageMessageOnInsert() {
 
         // when
-        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
+        let message = try! conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()),
+            nonce: UUID()
+        ) as! ZMMessage
 
         // then
         XCTAssertEqual(

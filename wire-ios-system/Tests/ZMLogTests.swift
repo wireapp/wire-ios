@@ -404,13 +404,14 @@ extension ZMLogTests {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
-        let currentLog = ZMSLog.currentZipLog
+        let currentLogBefore = FileManager.default.zipData(from: ZMSLog.currentLogURL)
 
         // WHEN
         sut.error("PANIC")
 
         // THEN
-        XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
+        let currentLogAfter = FileManager.default.zipData(from: ZMSLog.currentLogURL)
+        XCTAssertEqual(currentLogBefore, currentLogAfter)
 
     }
 
@@ -435,5 +436,34 @@ extension ZMLogTests {
         }
 
         return lines
+    }
+}
+
+private extension FileManager {
+
+    func zipData(from url: URL?) -> Data? {
+        guard
+            let url,
+            fileExists(atPath: url.path)
+        else {
+            return nil
+        }
+
+        var tmpURL = url.deletingLastPathComponent()
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        try? zipItem(
+            at: url,
+            to: tmpURL,
+            shouldKeepParent: false,
+            compressionMethod: .deflate
+        )
+
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
     }
 }

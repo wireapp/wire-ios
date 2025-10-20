@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireFoundation
-import ZIPFoundation
+import XCTest
 
-struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
+class WebViewPage: PageModel {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
+    override var pageMainElement: XCUIElement {
+        webViewLabel
     }
 
+    private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+
+    var webViewLabel: XCUIElement {
+        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
+    }
+
+    @discardableResult
+    func webViewOpened(timeout: TimeInterval = 5) -> Bool {
+        Self.safariApp.webViews.firstMatch.waitForExistence(timeout: timeout)
+    }
 }
