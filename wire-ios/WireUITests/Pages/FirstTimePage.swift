@@ -34,10 +34,19 @@ class FirstTimePage: PageModel {
         app.buttons["OK"]
     }
 
+    var savePasswordSheet: XCUIElement {
+        app.staticTexts["Save Password?"]
+    }
+
+    var notNowOptionOnSavePasswordSheet: XCUIElement {
+        app.buttons["Not Now"]
+    }
+
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
+        dismissSavePasswordAlertIfPresent()
         okButton.tap()
         return self
     }
@@ -63,5 +72,12 @@ class FirstTimePage: PageModel {
                 return true
             }
         self.handler = (testCase, handler)
+    }
+
+    private func dismissSavePasswordAlertIfPresent() {
+        if savePasswordSheet.exists {
+            notNowOptionOnSavePasswordSheet.tap()
+            _ = savePasswordSheet.waitToDisappear(timeout: 2)
+        }
     }
 }
