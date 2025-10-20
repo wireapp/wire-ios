@@ -19,7 +19,66 @@
 import Foundation
 
 final class UsersAPIV12: UsersAPIV11 {
-    override var apiVersion: APIVersion { .v12 }
+
+    override var apiVersion: APIVersion {
+        .v12
+    }
+
+    override func getUser(for userID: UserID) async throws -> User {
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserResponseV12.self)
+            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    override func getUsers(userIDs: [UserID]) async throws -> UserList {
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
+        let path = "\(pathPrefix)/list-users"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserListResponseV12.self)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+struct UserListResponseV12: Decodable, ToAPIModelConvertible {
+
+    /// List of users which were found and successfully retrieved.
+
+    let found: [UserResponseV12]
+
+    /// List of user IDs for which a user couldn't be retrieved.
+    ///
+    let failed: [QualifiedIDV0]?
+
+    func toAPIModel() -> UserList {
+        UserList(
+            found: found.map { $0.toAPIModel() },
+            failed: failed?.map { $0.toAPIModel() } ?? []
+        )
+    }
 }
 
 struct UserResponseV12: Decodable, ToAPIModelConvertible {
