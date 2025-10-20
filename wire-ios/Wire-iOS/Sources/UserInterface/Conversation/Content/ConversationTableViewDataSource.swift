@@ -111,7 +111,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     private let wireCellsFactory: any WireCellsFactoryProtocol
 
-    private let cellProvider: ConversationCellProvider
+    private let cellProvider: ConversationCellProviderProtocol
 
     /// calculate cell sections
     ///
@@ -285,7 +285,8 @@ final class ConversationTableViewDataSource: NSObject {
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
         getUserByIDUseCase: GetUserByIDUseCaseProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireCellsFactory: any WireCellsFactoryProtocol,
+        conversationCellProvider: any ConversationCellProviderProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -295,7 +296,7 @@ final class ConversationTableViewDataSource: NSObject {
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
         self.wireCellsFactory = wireCellsFactory
-        self.cellProvider = ConversationCellProvider()
+        self.cellProvider = conversationCellProvider
 
         super.init()
 

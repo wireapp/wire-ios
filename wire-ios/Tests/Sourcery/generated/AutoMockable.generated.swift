@@ -25,11 +25,12 @@
 
 
 import CoreLocation
+import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
-import SwiftUI
+import WireMessagingUI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -287,6 +288,33 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
             return mock
         } else {
             fatalError("no mock for `build`")
+        }
+    }
+
+}
+
+class MockConversationCellProviderProtocol: ConversationCellProviderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - provideCell
+
+    var provideCellForTableViewIndexPath_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath)] = []
+    var provideCellForTableViewIndexPath_MockMethod: ((ConversationCellModel, UITableView, IndexPath) -> UITableViewCell)?
+    var provideCellForTableViewIndexPath_MockValue: UITableViewCell?
+
+    @MainActor
+    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        provideCellForTableViewIndexPath_Invocations.append((model: model, tableView: tableView, indexPath: indexPath))
+
+        if let mock = provideCellForTableViewIndexPath_MockMethod {
+            return mock(model, tableView, indexPath)
+        } else if let mock = provideCellForTableViewIndexPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideCellForTableViewIndexPath`")
         }
     }
 
@@ -1836,6 +1864,24 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
+        }
+    }
+
+    // MARK: - makeConversationCellProvider
+
+    var makeConversationCellProviderInsets_Invocations: [() -> ConversationCellInsets] = []
+    var makeConversationCellProviderInsets_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProvider)?
+    var makeConversationCellProviderInsets_MockValue: ConversationCellProvider?
+
+    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider {
+        makeConversationCellProviderInsets_Invocations.append(insets)
+
+        if let mock = makeConversationCellProviderInsets_MockMethod {
+            return mock(insets)
+        } else if let mock = makeConversationCellProviderInsets_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationCellProviderInsets`")
         }
     }
 

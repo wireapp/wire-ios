@@ -17,10 +17,30 @@
 //
 
 public import UIKit
+import SwiftUI
+package import WireMessagingDomain
 
 public final class ConversationCellProvider {
 
-    public init() {}
+    private let fetchNodeUseCase: WireCellsFetchNodeUseCase
+    private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let lastOpenRequest: WireCellsLastOpenRequest
+    private let insets: () -> ConversationCellInsets
+
+    package init(
+        fetchNodeUseCase: WireCellsFetchNodeUseCase,
+        getAssetUseCase: WireCellsGetAssetUseCase,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireCellsLastOpenRequest,
+        insets: @escaping () -> ConversationCellInsets
+    ) {
+        self.fetchNodeUseCase = fetchNodeUseCase
+        self.getAssetUseCase = getAssetUseCase
+        self.localAssetRepository = localAssetRepository
+        self.lastOpenRequest = lastOpenRequest
+        self.insets = insets
+    }
 
     @MainActor
     public func provideCell(
@@ -39,12 +59,42 @@ public final class ConversationCellProvider {
     private func configureCell(_ cell: UITableViewCell, with model: ConversationCellModel) {
         switch model {
 
-        case let .timeDivider(timeDivider):
+        case let .timeDivider(model):
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
-        }
+            cell.model = model
 
-        assertionFailure("unexpected cell: \(cell)")
+        case let .multipartAttachments(model):
+            guard let cell = cell as? MultipartAttachmentsConversationCell else { break }
+
+            let insets = insets().insets(
+                isChatBubblesEnabled: model.isChatBubblesEnabled,
+                isSentBySelfUser: model.isSentBySelfUser
+            )
+            let viewModel = WireCellsAttachmentsPreviewViewModel(
+                attachments: model.attachments,
+                alignment: model.isChatBubblesEnabled && model.isSentBySelfUser ? .trailing : .leading,
+                fetchNodeUseCase: fetchNodeUseCase,
+                getAssetUseCase: getAssetUseCase,
+                localAssetRepository: localAssetRepository,
+                lastOpenRequest: lastOpenRequest
+            )
+            cell.configure(
+                content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
+                insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing)
+            )
+        }
+    }
+
+}
+
+private extension ConversationCellInsets {
+
+    func insets(isChatBubblesEnabled: Bool, isSentBySelfUser: Bool) -> HorizontalInsets {
+        if isChatBubblesEnabled {
+            isSentBySelfUser ? trailingBubble : leadingBubble
+        } else {
+            legacy
+        }
     }
 
 }

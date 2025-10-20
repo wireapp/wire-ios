@@ -26,7 +26,6 @@ final class ConversationCellsPreview: UITableViewController {
 
     typealias ItemIdentifier = ConversationCellModel
 
-    private let cellProvider = ConversationCellProvider()
     private let itemIdentifiers: [ItemIdentifier]
     private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
 
@@ -59,10 +58,16 @@ final class ConversationCellsPreview: UITableViewController {
     }
 
     private func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(
-            tableView: tableView
-        ) { [cellProvider] tableView, indexPath, itemIdentifier in
-            cellProvider.provideCell(for: itemIdentifier, tableView: tableView, indexPath: indexPath)
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
+            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
+            switch itemIdentifier {
+            case let .timeDivider(timeDivider):
+                guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
+                cell.model = timeDivider
+            default:
+                assertionFailure("unexpected cell: \(cell)")
+            }
+            return cell
         }
     }
 

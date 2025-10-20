@@ -23,7 +23,7 @@ public import WireData
 import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
-import WireMessagingUI
+public import WireMessagingUI
 
 public struct WireCellsFactory {
 
@@ -178,6 +178,22 @@ public extension WireCellsFactory {
         )
         viewController.view.backgroundColor = .clear
         return viewController
+    }
+
+    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider {
+        ConversationCellProvider(
+            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                repository: nodesAPI,
+                cache: nodeCache
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetRepository,
+                fileCache: fileCache
+            ),
+            localAssetRepository: localAssetRepository,
+            lastOpenRequest: lastOpenRequest,
+            insets: insets
+        )
     }
 
 }

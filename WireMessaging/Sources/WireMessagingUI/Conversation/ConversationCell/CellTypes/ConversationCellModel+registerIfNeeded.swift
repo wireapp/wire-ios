@@ -28,6 +28,8 @@ public extension ConversationCellModel {
 
         case .timeDivider:
             ConversationCell<TimeDividerModel>.self
+        case .multipartAttachments:
+            MultipartAttachmentsConversationCell.self
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)

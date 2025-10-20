@@ -21,6 +21,7 @@ import SwiftUI
 import UIKit
 import WireMessagingAssembly
 import WireMessagingDomain
+import WireMessagingUI
 
 // sourcery: AutoMockable
 protocol WireCellsFactoryProtocol {
@@ -39,6 +40,22 @@ protocol WireCellsFactoryProtocol {
         attachments: [WireCellsMessageAttachment],
         alignment: HorizontalAlignment
     ) -> UIViewController
+    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider
+
+}
+
+// sourcery: AutoMockable
+protocol ConversationCellProviderProtocol {
+
+    @MainActor
+    func provideCell(
+        for model: ConversationCellModel,
+        tableView: UITableView,
+        indexPath: IndexPath
+    ) -> UITableViewCell
+
 }
 
 extension WireCellsFactory: WireCellsFactoryProtocol {}
+
+extension ConversationCellProvider: ConversationCellProviderProtocol {}

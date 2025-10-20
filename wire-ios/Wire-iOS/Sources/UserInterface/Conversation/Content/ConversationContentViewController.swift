@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
@@ -94,7 +95,17 @@ final class ConversationContentViewController: UIViewController {
         cellDelegate: self,
         userSession: userSession,
         getUserByIDUseCase: GetUserByIdUseCase(),
-        wireCellsFactory: wireCellsFactory
+        wireCellsFactory: wireCellsFactory,
+        conversationCellProvider: wireCellsFactory.makeConversationCellProvider(
+            insets: {
+                let margins = HorizontalMargins.conversationHorizontalMargins()
+                return ConversationCellInsets(
+                    legacy: .init(leading: margins.left, trailing: margins.right),
+                    leadingBubble: .init(leading: margins.left, trailing: margins.chatBubbleMinimumTrailing),
+                    trailingBubble: .init(leading: margins.chatBubbleMinimumLeading, trailing: margins.right)
+                )
+            }
+        )
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has

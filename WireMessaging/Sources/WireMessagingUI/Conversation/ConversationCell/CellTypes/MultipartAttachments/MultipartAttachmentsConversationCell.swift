@@ -16,12 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationCellModel: Hashable, Sendable {
+import SwiftUI
 
-    /// Used to group messages by time.
-    case timeDivider(TimeDividerModel)
+final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-    /// Attachments for a a multipart message.
-    case multipartAttachments(MultipartAttachmentsModel)
+    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets) {
+        contentConfiguration = UIHostingConfiguration {
+            content
+        }
+        .margins(.all, insets)
+        .minSize(width: 0, height: 0)
+        .background(.clear)
+    }
+
+    override func prepareForReuse() {
+        contentConfiguration = nil
+    }
 
 }
