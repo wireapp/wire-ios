@@ -24,58 +24,58 @@ public struct User: Equatable, Sendable {
 
     /// The unique id of the user
 
-    public let id: UserID
+    public var id: UserID
 
     /// The user's full name
 
-    public let name: String
+    public var name: String
 
     /// The users's unique handle
 
-    public let handle: String?
+    public var handle: String?
 
     /// Team ID if the user belongs to a team
 
-    public let teamID: UUID?
+    public var teamID: UUID?
 
     /// The type of a user: regular, app or bot.
     ///
     /// - returns: One of the three values `regular`, `app` or `bot` if talking to an API of version 12 or later, `nil` otherwise.
 
-    public let type: UserType?
+    public var type: UserType?
 
     /// Color accent of the user
 
-    public let accentID: Int
+    public var accentID: Int
 
     /// The user's profile image assets
 
-    public let assets: [UserAsset]
+    public var assets: [UserAsset]
 
     /// Deleted is `True` if the user has been deleted
 
-    public let deleted: Bool?
+    public var deleted: Bool?
 
     /// The email associated with this user
 
-    public let email: String?
+    public var email: String?
 
     /// The date when user will expire
     ///
     /// Only set of guest (ephemeral) users
 
-    public let expiresAt: Date?
+    public var expiresAt: Date?
 
     /// Service information associated with this user
 
-    public let service: Service?
+    public var service: Service?
 
     /// Messaging protocols which this user supports
 
-    public let supportedProtocols: Set<MessageProtocol>?
+    public var supportedProtocols: Set<MessageProtocol>?
 
     /// The user's legalhold status
 
-    public let legalholdStatus: LegalholdStatus
+    public var legalholdStatus: LegalholdStatus
 
 }

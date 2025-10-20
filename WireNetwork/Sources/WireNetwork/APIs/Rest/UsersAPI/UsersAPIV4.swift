@@ -66,7 +66,7 @@ class UsersAPIV4: UsersAPIV3 {
 
 struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
-    /// List of users which were found and succesfully retrieved.
+    /// List of users which were found and successfully retrieved.
 
     let found: [UserResponseV4]
 
