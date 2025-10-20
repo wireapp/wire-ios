@@ -38,7 +38,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
         }
     }
 
-    func test_itDoesntReturnMlsConversations_withMlsStatusNotReady() {
+    func test_itReturnsMlsConversations_withMlsStatusNotReady() {
         syncMOC.performAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -50,7 +50,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
 
             // then
-            XCTAssertFalse(sut.evaluate(with: conversation))
+            XCTAssertTrue(sut.evaluate(with: conversation))
         }
     }
 }
