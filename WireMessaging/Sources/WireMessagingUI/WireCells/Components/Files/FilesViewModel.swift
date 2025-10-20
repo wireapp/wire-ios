@@ -121,7 +121,7 @@ package final class FilesViewModel: ObservableObject {
         $searchText
             .removeDuplicates()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink { [weak self] values in
+            .sink { [weak self] _ in
                 Task { await self?.reload() }
             }
             .store(in: &subscriptions)
@@ -229,7 +229,7 @@ package final class FilesViewModel: ObservableObject {
                 // developer-driven error, discard
                 return
             }
-            
+
             if state.items.isEmpty {
                 state = .error
             } else {
@@ -237,7 +237,7 @@ package final class FilesViewModel: ObservableObject {
                 let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
                 alert = isNoInternetError ? .noInternet : .unknownError
             }
-            
+
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil

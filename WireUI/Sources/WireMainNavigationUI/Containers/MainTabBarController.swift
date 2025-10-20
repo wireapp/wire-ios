@@ -77,7 +77,8 @@ public final class MainTabBarController<
     private weak var archiveNavigationController: UINavigationController!
     private weak var meetingsNavigationController: UINavigationController!
     private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire cells is enabled.
+    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire cells is
+    // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
     private weak var _filesUI: FilesUI?
