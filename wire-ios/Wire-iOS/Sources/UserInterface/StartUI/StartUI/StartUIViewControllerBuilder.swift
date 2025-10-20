@@ -45,7 +45,12 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
-    func build() -> UIViewController {
+    func build(
+        isAppsTabVisible: Bool
+    ) -> UIViewController {
+
+        // TODO: isAppsTabVisible
+
         let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: mainCoordinator,

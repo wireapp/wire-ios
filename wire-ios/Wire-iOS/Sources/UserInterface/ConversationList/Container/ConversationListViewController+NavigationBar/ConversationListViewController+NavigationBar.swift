@@ -412,6 +412,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentConnectUI() {
         Task {
+            // TODO: isAppsTabVisible
             let connectUI = UINavigationController(rootViewController: connectViewControllerBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
