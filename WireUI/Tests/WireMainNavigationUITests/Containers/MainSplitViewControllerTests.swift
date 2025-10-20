@@ -65,6 +65,9 @@ final class MainSplitViewControllerTests: XCTestCase {
         )
         sut.conversationListUI = conversationListUI
         sut.conversationUI = conversationUI
+        if showFiles {
+            tabController.filesUI = .init()
+        }
     }
 
     @MainActor

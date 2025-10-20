@@ -70,7 +70,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireCellsEnabled: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+        isWireCellsEnabled: userSession.isWireCellsEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
@@ -93,7 +93,7 @@ final class ZClientViewController: UIViewController {
     lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
             showMeetings: DeveloperFlag.wireMeetings.isOn,
-            showFiles: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+            showFiles: userSession.isWireCellsEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
@@ -373,7 +373,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
-        if DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled {
+        if userSession.isWireCellsEnabled {
             let filesBrowserView = wireCellsFactory.makeFilesBrowserView()
             mainTabBarController.filesUI = filesBrowserView
         }
