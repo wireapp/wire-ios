@@ -592,7 +592,8 @@ final class ConversationListViewController: UIViewController {
 
     private func presentConnectUI() {
         Task {
-            let isAppsTabVisible = false // TODO: fix
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsTabVisible = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
             let rootViewController = connectViewControllerBuilder.build(isAppsTabVisible: isAppsTabVisible)
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet

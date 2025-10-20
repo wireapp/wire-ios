@@ -412,8 +412,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentConnectUI() {
         Task {
-            // TODO: isAppsTabVisible
-            let isAppsTabVisible = false
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsTabVisible = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
             let rootViewController = connectViewControllerBuilder.build(isAppsTabVisible: isAppsTabVisible)
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
@@ -443,7 +443,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     func presentCreateConversationUI() {
         Task {
-            let isAppsTabVisible = false // TODO: fix
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsTabVisible = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
             let rootViewController = connectViewControllerBuilder.build(isAppsTabVisible: isAppsTabVisible)
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
