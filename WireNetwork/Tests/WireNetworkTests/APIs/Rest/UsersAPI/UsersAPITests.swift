@@ -176,6 +176,7 @@ final class UsersAPITests: XCTestCase {
             name: "name",
             handle: "handle",
             teamID: teamID,
+            type: nil,
             accentID: 1,
             assets: [UserAsset(
                 key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",

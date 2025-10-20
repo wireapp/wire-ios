@@ -38,15 +38,15 @@ public struct User: Equatable, Sendable {
 
     public let teamID: UUID?
 
-    /// Color accent of the user
-
-    public let accentID: Int
-
     /// The type of a user: regular, app or bot.
     ///
     /// - returns: One of the three values `regular`, `app` or `bot` if talking to an API of version 12 or later, `nil` otherwise.
 
     public let type: UserType?
+
+    /// Color accent of the user
+
+    public let accentID: Int
 
     /// The user's profile image assets
 
@@ -77,4 +77,5 @@ public struct User: Equatable, Sendable {
     /// The user's legalhold status
 
     public let legalholdStatus: LegalholdStatus
+
 }

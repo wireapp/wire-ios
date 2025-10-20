@@ -35,6 +35,7 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
     let email: String?
     let expiresAt: UTCTime?
     let service: ServiceResponseV0?
+    let supportedProtocols: Set<MessageProtocolV0>?
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {
@@ -50,26 +51,47 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
         case email
         case expiresAt = "expires_at"
         case service
+        case supportedProtocols = "supported_protocols"
         case legalholdStatus = "legalhold_status"
 
     }
 
     func toAPIModel() -> User {
-        User(
+        let supportedProtocols = supportedProtocols?.map { $0.toAPIModel() }
+        return User(
             id: id.toAPIModel(),
             name: name,
             handle: handle,
             teamID: teamID,
+            type: type?.toAPIModel(),
             accentID: accentID,
-            type: type,
             assets: assets.map { $0.toAPIModel() },
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
-            supportedProtocols: [.proteus],
+            supportedProtocols: supportedProtocols.flatMap { Set($0) },
             legalholdStatus: legalholdStatus.toAPIModel()
         )
+    }
+
+}
+
+enum UserTypeV12: String, Decodable {
+
+    case regular
+    case app
+    case bot
+
+    func toAPIModel() -> UserType {
+        switch self {
+        case .regular:
+                .regular
+        case .app:
+                .app
+        case .bot:
+                .bot
+        }
     }
 
 }
