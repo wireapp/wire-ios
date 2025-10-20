@@ -21,7 +21,8 @@ let package = Package(
             dependencies: [
                 "KaliumBackup",
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                .product(name: "WireUtilitiesPackage", package: "WireFoundation")
             ]
         ),
         .target(

@@ -18,7 +18,7 @@
 
 import Foundation
 import WireSyncEngine
-import ZipArchive
+import ZIPFoundation
 
 final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate {
 
@@ -42,7 +42,13 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
             let fileURL = userSession.managedObjectContext.zm_storeURL!
             let archiveURL = fileURL.appendingPathExtension("zip")
 
-            SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: [fileURL.path])
+            try? FileManager.default.removeItem(at: archiveURL)
+            try? FileManager.default.zipItem(
+                at: fileURL,
+                to: archiveURL,
+                shouldKeepParent: false,
+                compressionMethod: .deflate
+            )
 
             let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
             shareDatabaseDocumentController.delegate = documentDelegate
@@ -63,11 +69,19 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
 
         super.init(title: "Share Cryptobox", isDestructive: false) { _ in
             guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent()
-                .deletingLastPathComponent().appendingPathComponent("otr")
+            let fileURL = userSession.managedObjectContext.zm_storeURL!
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .appending(path: "otr", directoryHint: .isDirectory)
             let archiveURL = fileURL.appendingPathExtension("zip")
 
-            SSZipArchive.createZipFile(atPath: archiveURL.path, withContentsOfDirectory: fileURL.path)
+            try? FileManager.default.removeItem(at: archiveURL)
+            try? FileManager.default.zipItem(
+                at: fileURL,
+                to: archiveURL,
+                shouldKeepParent: false,
+                compressionMethod: .deflate
+            )
 
             let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
             shareDatabaseDocumentController.delegate = documentDelegate

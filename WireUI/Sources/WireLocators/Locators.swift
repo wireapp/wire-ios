@@ -17,16 +17,36 @@
 //
 
 import Foundation
-import ZipArchive
 
-extension [URL] {
-    func zipFiles(filename: String = "archive.zip") -> URL? {
-        let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
+public enum Locators {
 
-        let paths = map(\.path)
+    public enum WelcomePage: String {
 
-        let zipSucceded = SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: paths)
+        case emailTextField
+        case nextButton
+    }
 
-        return zipSucceded ? archiveURL : nil
+    public enum LoginPage: String {
+
+        case emailTextField
+        case passwordSecureTextField
+        case nextButton
+    }
+
+    public enum FirstTimePage: String {
+
+        case okButton
+    }
+
+    public enum ConversationsPage: String {
+
+        case bottomBarRecentListButton
+        case bottomBarSettingsButton
+    }
+
+    public enum SettingsPage: String {
+
+        case accountCell
+        case optionsCell
     }
 }

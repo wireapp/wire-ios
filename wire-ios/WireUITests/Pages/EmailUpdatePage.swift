@@ -16,21 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import ZipArchive
+import XCTest
 
-struct ZipArchiveFileUnarchiver: FileUnarchiverProtocol {
+class EmailUpdatePage: PageModel {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
-
-        guard success else {
-            throw FileArchivingError.unknown
-        }
-
+    override var pageMainElement: XCUIElement {
+        emailField
     }
+
+    var emailField: XCUIElement {
+        app.descendants(matching: .any)["EmailField"].firstMatch
+    }
+
+    var saveButton: XCUIElement {
+        app.buttons["Save"]
+    }
+
+    func clearTextField(_ textfield: XCUIElement) {
+        textfield.doubleTap()
+        textfield.typeText("\u{8}")
+    }
+
+    func updateEmailAndSave(with newEmail: String) throws -> VerifyEmailPage {
+        clearTextField(emailField)
+        emailField.typeText(newEmail)
+        saveButton.tap()
+        return try VerifyEmailPage()
+    }
+
 }
