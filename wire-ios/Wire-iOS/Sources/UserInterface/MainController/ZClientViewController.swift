@@ -27,6 +27,7 @@ import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingDomain
+import WireMessagingUI
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
@@ -67,7 +68,10 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
+    private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
+        isWireCellsEnabled: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+    )
+
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
@@ -85,8 +89,11 @@ final class ZClientViewController: UIViewController {
     // TODO: [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
-    let mainTabBarController = {
-        let tabBarController = MainCoordinator.TabBarController(showMeetings: DeveloperFlag.wireMeetings.isOn)
+    lazy var mainTabBarController = {
+        let tabBarController = MainCoordinator.TabBarController(
+            showMeetings: DeveloperFlag.wireMeetings.isOn,
+            showFiles: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+        )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
@@ -345,6 +352,9 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
+        if DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled {
+            mainTabBarController.filesUI = UIHostingController(rootView: AllFilesView())
+        }
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator

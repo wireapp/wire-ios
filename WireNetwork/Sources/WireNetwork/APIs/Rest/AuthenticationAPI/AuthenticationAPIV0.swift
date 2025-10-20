@@ -73,40 +73,50 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             for: responseURL
         )
 
-        let accessToken = try ResponseParser()
-            .success(
-                code: .ok,
-                type: AccessTokenV0.self
-            )
-            .failure(
-                code: .forbidden,
-                label: "code-authentication-required",
-                error: AuthenticationAPIError.twoFactorAuthenticationRequired
-            )
-            .failure(
-                code: .forbidden,
-                label: "code-authentication-failed",
-                error: AuthenticationAPIError.twoFactorAuthenticationFailed
-            )
-            .failure(
-                code: .forbidden,
-                label: "pending-activation",
-                error: AuthenticationAPIError.accountPendingActivation
-            )
-            .failure(
-                code: .forbidden,
-                label: "suspended",
-                error: AuthenticationAPIError.accountSuspended
-            )
-            .failure(
-                code: .forbidden,
-                label: "invalid-credentials",
-                error: AuthenticationAPIError.invalidCredentials
-            )
-            .parse(
-                code: response.statusCode,
-                data: data
-            )
+        let accessToken: AccessToken
+        do {
+            accessToken = try ResponseParser()
+                .success(
+                    code: .ok,
+                    type: AccessTokenV0.self
+                )
+                .failure(
+                    code: .forbidden,
+                    label: "code-authentication-required",
+                    error: AuthenticationAPIError.twoFactorAuthenticationRequired
+                )
+                .failure(
+                    code: .forbidden,
+                    label: "code-authentication-failed",
+                    error: AuthenticationAPIError.twoFactorAuthenticationFailed
+                )
+                .failure(
+                    code: .forbidden,
+                    label: "pending-activation",
+                    error: AuthenticationAPIError.accountPendingActivation
+                )
+                .failure(
+                    code: .forbidden,
+                    label: "suspended",
+                    error: AuthenticationAPIError.accountSuspended
+                )
+                .failure(
+                    code: .forbidden,
+                    label: "invalid-credentials",
+                    error: AuthenticationAPIError.invalidCredentials
+                )
+                .failure(code: .tooManyRequests, decodableError: FailureResponseV0.self)
+                .parse(
+                    code: response.statusCode,
+                    data: data
+                )
+        } catch let error as FailureResponseV0 {
+            if error.code == HTTPStatusCode.tooManyRequests.rawValue, error.label == "client-error" {
+                let retryAfter = responseHeaders["retry-after"].flatMap { TimeInterval($0) }
+                throw AuthenticationAPIError.tooManyRequests(error.message, retyAfter: retryAfter)
+            }
+            throw error
+        }
 
         return (cookies, accessToken)
     }
