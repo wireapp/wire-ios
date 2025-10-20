@@ -47,13 +47,11 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
     init(
         multipartMessage: MultipartMessageData,
         isSimpleChatBubblesEnabled: Bool,
-        isSentBySelfUser: Bool,
-        wireMessagingFactory: WireMessagingFactoryProtocol
+        isSentBySelfUser: Bool
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
-            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading,
-            factory: wireMessagingFactory
+            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading
         )
 
         let attachments = multipartMessage.attachments.map {
@@ -82,7 +80,6 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
         let alignment: HorizontalAlignment
-        let factory: WireMessagingFactoryProtocol
     }
 
     weak var delegate: ConversationMessageCellDelegate?

@@ -372,8 +372,7 @@ final class ConversationTableViewDataSource: NSObject {
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled,
-            wireMessagingFactory: wireMessagingFactory
+            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
