@@ -134,12 +134,15 @@ public extension WireCellsFactory {
         isCellsStatePending: Bool,
         nodeIDs: [UUID]
     ) -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration = nodeIDs
+            .isEmpty ? .conversationFileView(root: .path(cellName)) :
+            .nodesFileView(nodeIDs: nodeIDs)
+
         let filesView: UIHostingController<FilesView>
 
         filesView = makeFilesHostingController(
-            cellName: cellName,
-            isCellsStatePending: isCellsStatePending,
-            nodeIDs: nodeIDs
+            configuration: configuration,
+            isCellsStatePending: isCellsStatePending
         )
 
         return filesView
@@ -147,22 +150,19 @@ public extension WireCellsFactory {
 
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration = .filesBrowserView()
         let filesBrowserView: UIHostingController<FilesBrowserView>
-        filesBrowserView = makeFilesHostingController()
+        filesBrowserView = makeFilesHostingController(
+            configuration: configuration
+        )
         return filesBrowserView
     }
 
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
-        cellName: String? = nil,
-        isCellsStatePending: Bool = false,
-        nodeIDs: [UUID] = []
+        configuration: WireCellsFetchNodesUseCase.Configuration,
+        isCellsStatePending: Bool = false
     ) -> UIHostingController<T> {
-        let configuration: WireCellsFetchNodesUseCase.Configuration =
-            nodeIDs
-                .isEmpty ? .conversationFileView(root: cellName.flatMap { .path($0) }) :
-                .nodesFileView(nodeIDs: nodeIDs)
-
         let viewModel = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: configuration,

@@ -53,6 +53,17 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             )
         }
 
+        /// A `Configuration` suitable for the files browser view.
+        package static func filesBrowserView() -> Configuration {
+            Configuration(
+                root: nil,
+                nodeIDs: nil,
+                isRecursive: true,
+                nodeType: .leaf,
+                deletionStatus: .notDeleted
+            )
+        }
+
         /// A `Configuration` for showing only specific nodes in the file view.
         package static func nodesFileView(nodeIDs: [UUID]) -> Configuration {
             Configuration(
