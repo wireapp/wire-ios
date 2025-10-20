@@ -54,12 +54,6 @@ public protocol UserSession: AnyObject {
 
     var requiresScreenCurtain: Bool { get }
 
-    /// Convenience accessor to `clientSessionComponent?.featureConfigRepository.isFeatureEnabled(_:)`.
-
-    func isFeatureEnabled(
-        feature: Feature
-    ) async -> Bool
-
     /// Whether the app lock on.
 
     var isAppLockActive: Bool { get set }
@@ -322,15 +316,5 @@ public protocol UserSession: AnyObject {
     var resolvedBackendMetadata: BackendMetadataProvider { get }
 
     var isBackendMLSEnabled: Bool { get }
-
-}
-
-public extension UserSession {
-
-    func isFeatureEnabled(
-        _ feature: Feature.Name
-    ) async -> Bool? {
-        await clientSessionComponent?.featureConfigRepository.isFeatureEnabled(feature)
-    }
 
 }
