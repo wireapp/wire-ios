@@ -86,6 +86,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
+    let isAppsTabVisible: Bool
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -107,7 +108,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        isAppsTabVisible && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
@@ -117,12 +118,14 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
+        isAppsTabVisible: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
+        self.isAppsTabVisible = isAppsTabVisible
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),

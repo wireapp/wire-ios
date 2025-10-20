@@ -48,10 +48,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     func build(
         isAppsTabVisible: Bool
     ) -> UIViewController {
-
-        // TODO: isAppsTabVisible
-
         let rootViewController = StartUIViewController(
+            isAppsTabVisible: isAppsTabVisible,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,
