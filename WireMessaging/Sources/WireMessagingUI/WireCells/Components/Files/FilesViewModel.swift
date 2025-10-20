@@ -119,12 +119,13 @@ package final class FilesViewModel: ObservableObject {
 
     private func bindSearch() {
         $searchText
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task {
-                    await self?.loadItems()
-                }
-            }.store(in: &subscriptions)
+            .removeDuplicates()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] values in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+
     }
 
     /// Reloads the items, clearing any previously loaded items.
@@ -139,7 +140,7 @@ package final class FilesViewModel: ObservableObject {
         state = .loading
         hasMore = true
 
-        await loadItems()
+        await loadMore()
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -152,7 +153,7 @@ package final class FilesViewModel: ObservableObject {
     func loadMoreIfNeeded(index: Int) async {
         let remaining = state.items.count - index - 1
         if remaining < Constants.loadMoreThreshold, hasMore {
-            await loadItems(loadMore: true)
+            await loadMore()
         }
     }
 
@@ -212,20 +213,31 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadItems(loadMore: Bool = false) async {
+    private func loadMore() async {
         guard loadMoreTask == nil else { return }
 
-        let offset = loadMore ? state.items.count : 0
+        let offset = state.items.count
         let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            let items = Self.processItems(loadMore ? state.items + newItems : newItems)
-            state = .received(items: items)
+            state = .received(items: Self.processItems(state.items + newItems))
             hasMore = !isLastPage
         } catch {
-            state = .error
+            if Task.isCancelled {
+                // developer-driven error, discard
+                return
+            }
+            
+            if state.items.isEmpty {
+                state = .error
+            } else {
+                let urlError = (error as? URLError)?.code
+                let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
+                alert = isNoInternetError ? .noInternet : .unknownError
+            }
+            
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
