@@ -62,6 +62,10 @@ enum HTTPStatusCode: Int {
 
     case conflict = 409
 
+    // too many requests - 429
+
+    case tooManyRequests = 429
+
     /// domain blocked - 451
 
     case domainBlocked = 451
