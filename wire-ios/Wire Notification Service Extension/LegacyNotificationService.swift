@@ -111,8 +111,8 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             } catch {
                 WireLogger.notifications
                     .error(
-                        "failed to process process request: could not create session: \(error.localizedDescription)",
-                        attributes: .legacyNSE
+                        "failed to process process request: could not create session: \(String(describing: error))",
+                        attributes: .legacyNSE, .safePublic
                     )
                 return finishWithoutShowingNotification()
             }
@@ -122,12 +122,12 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     override func serviceExtensionTimeWillExpire() {
-        WireLogger.notifications.warn("legacy service extension will expire")
+        WireLogger.notifications.warn("legacy service extension will expire", attributes: .safePublic, .legacyNSE)
         finishWithoutShowingNotification()
     }
 
     private func finishWithoutShowingNotification() {
-        WireLogger.notifications.info("finishing without showing notification")
+        WireLogger.notifications.info("finishing without showing notification", attributes: .safePublic, .legacyNSE)
         contentHandler?(.empty)
         tearDown()
     }
@@ -137,7 +137,11 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            WireLogger.notifications.info("session did not generate a notification")
+            WireLogger.notifications.info(
+                "session did not generate a notification",
+                attributes: .legacyNSE,
+                .safePublic
+            )
             return finishWithoutShowingNotification()
         }
 
@@ -168,7 +172,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         WireLogger.notifications.info(
             "showing notification to user",
             attributes: notification.logAttributes,
-            .legacyNSE
+            .legacyNSE, .safePublic
         )
         contentHandler(content)
     }
@@ -228,30 +232,17 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     @MainActor
     private func createSession(accountID: UUID) async throws -> NotificationSession {
-        if DeveloperFlag.multibackend.isOn {
-            let loader = try LegacyNotificationSessionLoader(
-                account: Account(userName: "", userIdentifier: accountID),
-                appContainerURL: appContainerURL,
-                appGroupID: appGroupID,
-                buildNumber: currentBuildNumber,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            let session = try await loader.load()
-            session.delegate = self
-            return session
-        } else {
-            let session = try await NotificationSession(
-                currentAppVersion: currentAppVersion,
-                applicationGroupIdentifier: appGroupID,
-                accountIdentifier: accountID,
-                environment: BackendEnvironment.shared,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            session.delegate = self
-            return session
-        }
+        let loader = try LegacyNotificationSessionLoader(
+            account: Account(userName: "", userIdentifier: accountID),
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: currentBuildNumber,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+        let session = try await loader.load()
+        session.delegate = self
+        return session
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
