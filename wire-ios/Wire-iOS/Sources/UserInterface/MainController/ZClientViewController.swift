@@ -17,6 +17,7 @@
 //
 
 import avs
+import Combine
 import SwiftUI
 import UIKit
 import WireAccountImageUI
@@ -174,6 +175,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
     var userDidViewSelfProfileToken: SelfUnregisteringNotificationCenterToken?
+    private var subscription: AnyCancellable?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -249,6 +251,7 @@ final class ZClientViewController: UIViewController {
                 self?.sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
             }
 
+        observeCellsFeatureChange()
         createLegalHoldDisclosureController()
     }
 
@@ -259,6 +262,24 @@ final class ZClientViewController: UIViewController {
 
     deinit {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
+    }
+
+    /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
+    /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
+    private func observeCellsFeatureChange() {
+        subscription = userSession.clientSessionComponent?.featureConfigRepository
+            .observeFeatureStates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] featureState in
+                guard let self else { return }
+                switch featureState.name {
+                case .cells where featureState.isEnabled:
+                    guard mainTabBarController.filesUI == nil else { break }
+                    mainTabBarController.filesUI = wireCellsFactory.makeFilesBrowserView()
+                default:
+                    break
+                }
+            }
     }
 
     @discardableResult
