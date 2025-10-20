@@ -109,7 +109,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     private let isChatBubbleSimpleEnabled: Bool
 
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private let cellProvider: ConversationCellProviderProtocol
 
@@ -285,7 +285,7 @@ final class ConversationTableViewDataSource: NSObject {
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
         getUserByIDUseCase: GetUserByIDUseCaseProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol,
+        wireMessagingFactory: any WireMessagingFactoryProtocol,
         conversationCellProvider: any ConversationCellProviderProtocol
     ) {
         self.messageActionResponder = actionResponder
@@ -295,7 +295,7 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
         self.cellProvider = conversationCellProvider
 
         super.init()
@@ -373,7 +373,7 @@ final class ConversationTableViewDataSource: NSObject {
             useInvertedIndices: true,
             contentWidth: contentWidth,
             isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self

@@ -1697,7 +1697,7 @@ class MockTrackingInterface: TrackingInterface {
 
 }
 
-class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
+class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - Life cycle
 

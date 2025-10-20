@@ -108,7 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
     private let isChatBubbleSimpleEnabled: Bool
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -127,7 +127,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         contentWidth: CGFloat,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         isChatBubbleSimpleEnabled: Bool,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.message = message
         self.context = context
@@ -144,7 +144,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         // We need to provide isChatBubbleEnabled as Bool on init() because can't use
         // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
         self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init()
 
@@ -263,7 +263,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             multipartMessage: message.multipartMessageData!,
             isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
             isSentBySelfUser: message.isSentBySelfUser,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
     }

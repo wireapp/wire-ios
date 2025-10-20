@@ -24,7 +24,7 @@ import WireMessagingDomain
 import WireMessagingUI
 
 // sourcery: AutoMockable
-protocol WireCellsFactoryProtocol {
+protocol WireMessagingFactoryProtocol {
 
     func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol
     func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol
@@ -56,6 +56,6 @@ protocol ConversationCellProviderProtocol {
 
 }
 
-extension WireCellsFactory: WireCellsFactoryProtocol {}
+extension WireMessagingFactory: WireMessagingFactoryProtocol {}
 
 extension ConversationCellProvider: ConversationCellProviderProtocol {}

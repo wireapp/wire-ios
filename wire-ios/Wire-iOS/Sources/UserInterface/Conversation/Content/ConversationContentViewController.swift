@@ -95,8 +95,8 @@ final class ConversationContentViewController: UIViewController {
         cellDelegate: self,
         userSession: userSession,
         getUserByIDUseCase: GetUserByIdUseCase(),
-        wireCellsFactory: wireCellsFactory,
-        conversationCellProvider: wireCellsFactory.makeConversationCellProvider(
+        wireMessagingFactory: wireMessagingFactory,
+        conversationCellProvider: wireMessagingFactory.makeConversationCellProvider(
             insets: {
                 let margins = HorizontalMargins.conversationHorizontalMargins()
                 return ConversationCellInsets(
@@ -134,7 +134,7 @@ final class ConversationContentViewController: UIViewController {
 
     private let logger: WireLogger
     private var accentColorChangeHandler: AccentColorChangeHandler?
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     init(
         conversation: ZMConversation,
@@ -144,7 +144,7 @@ final class ConversationContentViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -157,7 +157,7 @@ final class ConversationContentViewController: UIViewController {
             userID: userSession.selfUser.remoteIdentifier,
             storage: userDefaults
         )
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
 

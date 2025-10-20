@@ -25,7 +25,7 @@ public import WireMessagingDomain
 import WireMessagingData
 public import WireMessagingUI
 
-public struct WireCellsFactory {
+public struct WireMessagingFactory {
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
@@ -126,7 +126,7 @@ public struct WireCellsFactory {
 
 }
 
-public extension WireCellsFactory {
+public extension WireMessagingFactory {
 
     @MainActor
     func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
