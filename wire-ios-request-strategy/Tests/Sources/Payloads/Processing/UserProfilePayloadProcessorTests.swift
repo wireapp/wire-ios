@@ -276,12 +276,11 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    /*
     func testUpdateUserProfile_UpdatesType() throws {
         syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let type = TypeOfUser.regular
+            let type = Payload.UserType.app
             let userProfile = Payload.UserProfile(x: (), qualifiedID: qualifiedID, type: type)
 
             // when
@@ -292,10 +291,9 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(self.otherUser.emailAddress, email)
+            XCTAssertEqual(self.otherUser.type, .app)
         }
     }
-     */
 
     func testUpdateUserProfile_UpdatesEmail() throws {
         syncMOC.performGroupedAndWait {
