@@ -180,7 +180,9 @@ public extension WireMessagingFactory {
         return viewController
     }
 
-    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider {
+    func makeConversationCellProvider(
+        insetsProvider: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProvider {
         ConversationCellProvider(
             fetchNodeUseCase: WireCellsFetchNodeUseCase(
                 repository: nodesAPI,
@@ -192,7 +194,7 @@ public extension WireMessagingFactory {
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
-            insets: insets
+            insetsProvider: insetsProvider
         )
     }
 

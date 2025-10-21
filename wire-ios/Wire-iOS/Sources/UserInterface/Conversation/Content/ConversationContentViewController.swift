@@ -97,7 +97,7 @@ final class ConversationContentViewController: UIViewController {
         getUserByIDUseCase: GetUserByIdUseCase(),
         wireMessagingFactory: wireMessagingFactory,
         conversationCellProvider: wireMessagingFactory.makeConversationCellProvider(
-            insets: {
+            insetsProvider: {
                 let margins = HorizontalMargins.conversationHorizontalMargins()
                 return ConversationCellInsets(
                     legacy: .init(leading: margins.left, trailing: margins.right),

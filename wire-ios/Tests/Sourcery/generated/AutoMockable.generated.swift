@@ -1869,19 +1869,19 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeConversationCellProvider
 
-    var makeConversationCellProviderInsets_Invocations: [() -> ConversationCellInsets] = []
-    var makeConversationCellProviderInsets_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol)?
-    var makeConversationCellProviderInsets_MockValue: ConversationCellProviderProtocol?
+    var makeConversationCellProviderInsetsProvider_Invocations: [() -> ConversationCellInsets] = []
+    var makeConversationCellProviderInsetsProvider_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol)?
+    var makeConversationCellProviderInsetsProvider_MockValue: ConversationCellProviderProtocol?
 
-    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol {
-        makeConversationCellProviderInsets_Invocations.append(insets)
+    func makeConversationCellProvider(insetsProvider: @escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol {
+        makeConversationCellProviderInsetsProvider_Invocations.append(insetsProvider)
 
-        if let mock = makeConversationCellProviderInsets_MockMethod {
-            return mock(insets)
-        } else if let mock = makeConversationCellProviderInsets_MockValue {
+        if let mock = makeConversationCellProviderInsetsProvider_MockMethod {
+            return mock(insetsProvider)
+        } else if let mock = makeConversationCellProviderInsetsProvider_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeConversationCellProviderInsets`")
+            fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
         }
     }
 

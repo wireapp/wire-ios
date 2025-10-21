@@ -26,20 +26,20 @@ public final class ConversationCellProvider {
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let insets: () -> ConversationCellInsets
+    private let insetsProvider: () -> ConversationCellInsets
 
     package init(
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
-        insets: @escaping () -> ConversationCellInsets
+        insetsProvider: @escaping () -> ConversationCellInsets
     ) {
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
-        self.insets = insets
+        self.insetsProvider = insetsProvider
     }
 
     @MainActor
@@ -66,7 +66,7 @@ public final class ConversationCellProvider {
         case let .multipartAttachments(model):
             guard let cell = cell as? MultipartAttachmentsConversationCell else { break }
 
-            let insets = insets().insets(
+            let insets = insetsProvider().insets(
                 isChatBubblesEnabled: model.isChatBubblesEnabled,
                 isSentBySelfUser: model.isSentBySelfUser
             )
