@@ -36,9 +36,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The "@name" handle
     var handle: String? { get }
 
-    /// Whether the user is a regular user, an app or a bot.
-    var type: TypeOfUser? { get }
-
     /// The initials e.g. "JS" for "John Smith"
     var initials: String? { get }
 
