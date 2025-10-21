@@ -77,7 +77,7 @@
 "conversation.creationForm.readReceipts.toggle" = "Read receipts";
 "conversation.creationForm.readReceipts.description" = "When this is on, people can see when their messages in this conversation are read.";
  
-"conversation.creationForm.wireCells.toggle" = "File management";
+"conversation.creationForm.wireCells.toggle" = "File collaboration";
 "conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
 "conversation.creationForm.wireCells.learnMore" = "Learn more";
 

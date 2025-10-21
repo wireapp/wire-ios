@@ -119,6 +119,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         )
         tabBarController.applyMainTabBarControllerAppearance()
         tabBarController.conversationListUI = sut
+        if showFiles {
+            tabBarController.filesUI = .init()
+        }
 
         window = .init(windowScene: windowScene)
         window.backgroundColor = .systemBackground
