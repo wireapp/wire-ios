@@ -97,32 +97,10 @@ jobs:
   trigger_tests_pr:
     needs: detect-changes
     name: PR Tests
-    if: ${{ github.event_name == 'pull_request' }} # run only on PR (not required on develop)
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
-      test_dependencies: ${{ startsWith(github.base_ref, 'release/cycle') }} # run only on release branch PRs
-      run_critical_flows: ${{ startsWith(github.base_ref, 'release/cycle') }} # run only on release branch PRs
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
+      run_critical_flows: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
     secrets: inherit
-    
-  trigger_tests_merge_queue:
-    needs: detect-changes
-    if: ${{ github.event_name != 'pull_request' }} #skipped during PR but run in merge queue
-    name: Merge Queue Tests
-    uses: ./.github/workflows/_reusable_run_tests.yml
-    with:
-      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
-      notify_secret: WIRE_IOS_CI_WEBHOOK
-      test_dependencies: true # run on merge_queue or release branch PRs
-      run_critical_flows: true # run on merge_queue or release branch PRs
-    secrets: inherit
-    
-  no_tests_pr:
-    needs: detect-changes
-    if: ${{ github.event_name == 'pull_request' }}
-    name: Merge Queue Tests # run empty check so PR can be added to merge queue
-    runs-on: ubuntu-latest
-    steps:
-      - name: Skip on pull_request
-        run: echo "Skipped for pull_request"
