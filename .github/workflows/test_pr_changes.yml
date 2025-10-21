@@ -3,6 +3,8 @@ name: Test Pull Request Changes
 on: 
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
+  merge_group:
+    types: [checks_requested]
 
 # This is what will cancel the workflow
 concurrency:
@@ -95,6 +97,7 @@ jobs:
   trigger_tests_pr:
     needs: detect-changes
     name: PR Tests
+    if: ${{ github.event_name == 'pull_request' }} # run only on PR (not required on develop)
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
@@ -109,4 +112,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Skip on pull_request
+        if: ${{ github.event_name == 'pull_request' }}
         run: echo "Skipped for pull_request"
+
+      - name: Run tests
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: ./.github/workflows/_reusable_run_tests.yml
+        with:
+          folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+          notify_secret: WIRE_IOS_CI_WEBHOOK
+          test_dependencies: true
+          run_critical_flows: true
