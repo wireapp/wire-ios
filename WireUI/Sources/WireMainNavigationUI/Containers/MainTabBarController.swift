@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -31,6 +32,7 @@ public final class MainTabBarController<
 
     public typealias ArchiveUI = UIViewController
     public typealias SettingsUI = UIViewController
+    public typealias FilesUI = UIViewController
 
     // MARK: - Public Properties
 
@@ -59,6 +61,11 @@ public final class MainTabBarController<
         set { setSettingsContentUI(newValue, animated: false) }
     }
 
+    public var filesUI: UIViewController? {
+        get { _filesUI }
+        set { setFilesUI(newValue, animated: false) }
+    }
+
     public var selectedContent: MainTabBarControllerContent {
         get { .init(rawValue: selectedIndex) ?? .conversations }
         set { selectedIndex = newValue.rawValue }
@@ -70,8 +77,10 @@ public final class MainTabBarController<
     private weak var archiveNavigationController: UINavigationController!
     private weak var meetingsNavigationController: UINavigationController!
     private weak var settingsNavigationController: UINavigationController!
+    private weak var filesNavigationController: UINavigationController!
 
     private weak var _conversationListUI: ConversationListUI?
+    private weak var _filesUI: FilesUI?
     private weak var _archiveUI: ArchiveUI?
     private weak var _settingsUI: SettingsUI?
     private weak var _conversationUI: ConversationUI?
@@ -79,11 +88,13 @@ public final class MainTabBarController<
     /// We should use DeveloperFlag 'wireMeetings' after moving it to WireFoundation:
     /// https://wearezeta.atlassian.net/browse/WPB-19065
     private var showMeetings: Bool
+    private var showFiles: Bool
 
     // MARK: - Life Cycle
 
-    public init(showMeetings: Bool) {
+    public init(showMeetings: Bool, showFiles: Bool) {
         self.showMeetings = showMeetings
+        self.showFiles = showFiles
         super.init(nibName: nil, bundle: nil)
         setupTabs()
         setupAppearance()
@@ -98,6 +109,10 @@ public final class MainTabBarController<
         let conversationListNavigationController = UINavigationController()
         conversationListNavigationController.navigationBar.isTranslucent = false
         self.conversationListNavigationController = conversationListNavigationController
+
+        let filesNavigationController = UINavigationController()
+        filesNavigationController.navigationBar.isTranslucent = false
+        self.filesNavigationController = filesNavigationController
 
         let archiveNavigationController = UINavigationController()
         archiveNavigationController.navigationBar.isTranslucent = false
@@ -117,6 +132,10 @@ public final class MainTabBarController<
             settingsNavigationController
         ]
 
+        if showFiles {
+            tabs.insert(filesNavigationController, at: 1)
+        }
+
         if showMeetings {
             tabs.insert(meetingsNavigationController, at: 2)
         }
@@ -130,7 +149,8 @@ public final class MainTabBarController<
                     image: .init(systemName: "text.bubble"),
                     selectedImage: .init(systemName: "text.bubble.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
+                tabBarItem
+                    .accessibilityIdentifier = Locators.ConversationsPage.bottomBarRecentListButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.conversations.description",
                     table: "Accessibility",
@@ -187,7 +207,8 @@ public final class MainTabBarController<
                     image: .init(systemName: "gearshape"),
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
+                tabBarItem
+                    .accessibilityIdentifier = Locators.ConversationsPage.bottomBarSettingsButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.settings.description",
                     table: "Accessibility",
@@ -199,6 +220,25 @@ public final class MainTabBarController<
                     bundle: .module
                 )
                 settingsNavigationController.tabBarItem = tabBarItem
+
+            case .files:
+                let tabBarItem = UITabBarItem(
+                    title: String(localized: "tabBar.files.title", bundle: .module),
+                    image: .init(systemName: "rectangle.stack"),
+                    selectedImage: .init(systemName: "rectangle.stack.fill")
+                )
+                tabBarItem.accessibilityIdentifier = "bottomBarFilesButton"
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.files.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.files.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                filesNavigationController.tabBarItem = tabBarItem
             }
         }
         selectedContent = .conversations
@@ -277,6 +317,17 @@ public final class MainTabBarController<
         let viewControllers = [settingsUI, settingsContentUI].compactMap(\.self)
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
+    }
+
+    private func setFilesUI(
+        _ filesUI: UIViewController?,
+        animated: Bool
+    ) {
+        _filesUI = filesUI
+
+        let viewControllers = [filesUI].compactMap(\.self)
+        filesNavigationController.setViewControllers(viewControllers, animated: animated)
+        filesNavigationController.view.layoutIfNeeded()
     }
 }
 

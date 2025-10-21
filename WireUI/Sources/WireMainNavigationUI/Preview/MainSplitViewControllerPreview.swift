@@ -23,7 +23,7 @@ func MainSplitViewControllerPreview() -> UISplitViewController {
     let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewTabBarController>(
         sidebar: PreviewSidebarViewController("sidebar"),
         noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
-        tabController: .init(showMeetings: false)
+        tabController: .init(showMeetings: false, showFiles: true)
     )
     splitViewController.conversationListUI = PreviewConversationListViewController("conversation list")
     return splitViewController

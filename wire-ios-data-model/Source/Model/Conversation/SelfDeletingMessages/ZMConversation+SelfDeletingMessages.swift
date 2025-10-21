@@ -108,7 +108,7 @@ public extension ZMConversation {
     // MARK: - Helpers
 
     private var hasForcedMessageDestructionTimeout: Bool {
-        guard let feature = selfDeletingMessagesFeature else { return false }
+        guard let feature = selfDeletingMessagesFeature, !isWireCellsEnabled else { return false }
         return feature.isForcedOff || feature.isForcedOn
     }
 
@@ -126,6 +126,12 @@ public extension ZMConversation {
     private var selfDeletingMessagesFeature: Feature.SelfDeletingMessages? {
         guard let context = managedObjectContext else { return nil }
         return LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
+    }
+
+    private var isWireCellsEnabled: Bool {
+        guard let context = managedObjectContext else { return false }
+        let cellsFeature = LegacyFeatureRepository(context: context).fetchCells()
+        return cellsFeature.status == .enabled
     }
 
 }

@@ -32,6 +32,7 @@ public enum MainSidebarMenuItem: Sendable, Equatable {
     case archive
     case folders
     case meetings
+    case files
     // bottom
     case settings
 }

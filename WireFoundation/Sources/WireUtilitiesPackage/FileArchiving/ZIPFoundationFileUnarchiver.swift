@@ -16,25 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+public import Foundation
 
-final class ZipFileTests: XCTestCase {
+public struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-    func testThatFileURLsCanBeZipped() {
-        // GIVEN
-        let urls = ["not_animated.gif", "0x0.pdf", "sample.pkpass"].map {
-            urlForResource(inTestBundleNamed: $0)
-        }
+    public init() {}
 
-        // WHEN
-        let zipURL = urls.zipFiles(filename: "test.zip")
-
-        // THEN
-        XCTAssertNotNil(zipURL)
-        XCTAssertGreaterThan(zipURL!.fileSize!, 0)
-
-        try! FileManager.default.removeItem(atPath: zipURL!.path)
-        XCTAssertNil(zipURL?.fileSize)
+    public func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
+
 }

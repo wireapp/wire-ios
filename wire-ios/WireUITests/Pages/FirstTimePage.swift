@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 /// Page for popup on first time user login
@@ -31,7 +32,7 @@ class FirstTimePage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.FirstTimePage.okButton.rawValue]
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?
