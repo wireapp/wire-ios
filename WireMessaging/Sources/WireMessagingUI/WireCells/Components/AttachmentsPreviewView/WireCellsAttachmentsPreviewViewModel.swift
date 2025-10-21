@@ -27,6 +27,13 @@ import WireMessagingDomainSupport
 /// An item in the `WireCellsAttachmentsPreviewView`.
 struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
 
+    enum Kind: Hashable {
+        case image(size: CGSize?)
+        case video(size: CGSize?, duration: Int?)
+        case audio(duration: Int?, normalizedLoudness: Data?)
+        case document
+    }
+
     var id: UUID { nodeID }
 
     /// Identifier of this item on the wire cells backend.
@@ -45,6 +52,12 @@ struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
 
     /// Whether the item is deleted or in the recycle bin.
     let isDeleted: Bool
+
+    /// A remove URL for a preview image of the attachment, if available.
+    let imagePreviewURL: URL?
+
+    /// The kind of attachment.
+    let kind: Kind
 
 }
 
@@ -82,11 +95,13 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(
             item: items[index],
+            initialMetadata: attachments[index].initialMetadata,
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: lastOpenRequest
+            lastOpenRequest: lastOpenRequest,
+            isSmall: attachments.count > 1
         )
     }
 
@@ -105,6 +120,29 @@ private extension WireCellsAttachmentsPreviewViewItem {
         self.fileExtension = fileExtension
         self.fileSize = value.initialSize
         self.isDeleted = isDeleted
+        self.imagePreviewURL = nil
+        self.kind = Kind(fileType: fileType, initialMetadata: value.initialMetadata)
+    }
+
+}
+
+extension WireCellsAttachmentsPreviewViewItem.Kind {
+
+    init(fileType: UTType?, initialMetadata: WireCellsMessageAttachment.Metadata?) {
+        guard let fileType else {
+            self = .document
+            return
+        }
+
+        if fileType.conforms(to: .image) {
+            self = .image(size: initialMetadata?.dimension)
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio(duration: initialMetadata?.duration, normalizedLoudness: initialMetadata?.normalizedLoudness)
+        } else if fileType.conforms(to: .audiovisualContent) {
+            self = .video(size: initialMetadata?.dimension, duration: initialMetadata?.duration)
+        } else {
+            self = .document
+        }
     }
 
 }

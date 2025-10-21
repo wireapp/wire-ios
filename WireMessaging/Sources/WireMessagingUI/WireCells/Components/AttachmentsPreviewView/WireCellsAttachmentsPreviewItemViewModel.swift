@@ -26,9 +26,21 @@ import WireMessagingDomain
 @MainActor
 final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
+    enum Kind {
+        case smallImage
+        case largeImage(aspectRatio: Double, maxWidth: Double)
+        case smallVideo
+        case largeVideo(aspectRatio: Double)
+        case smallDocument
+        case largeDocument
+        case audio
+    }
+
+    private let initialMetadata: WireCellsMessageAttachment.Metadata?
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let isSmall: Bool
     private var cancellables = Set<AnyCancellable>()
 
     let alignment: HorizontalAlignment
@@ -39,21 +51,58 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     init(
         item: WireCellsAttachmentsPreviewViewItem,
+        initialMetadata: WireCellsMessageAttachment.Metadata?,
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest
+        lastOpenRequest: WireCellsLastOpenRequest,
+        isSmall: Bool
     ) {
         self.item = item
+        self.initialMetadata = initialMetadata
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
+        self.isSmall = isSmall
 
         localAssetRepository.observeAsset(nodeID: item.nodeID).sink { [self] asset in
             self.asset = asset
         }.store(in: &cancellables)
+    }
+
+    var kind: Kind {
+        switch item.kind {
+        case let .image(size):
+            if isSmall {
+                .smallImage
+            } else {
+                if let size, size.width > 0, size.height > 0 {
+                    .largeImage(aspectRatio: size.width / size.height, maxWidth: size.width)
+                } else {
+                    .largeImage(aspectRatio: 1, maxWidth: 200)
+                }
+            }
+        case let .video(size, _):
+            if isSmall {
+                .smallVideo
+            } else {
+                if let size, size.width > 0, size.height > 0 {
+                    .largeVideo(aspectRatio: size.width / size.height)
+                } else {
+                    .largeVideo(aspectRatio: 16/9)
+                }
+            }
+        case .document:
+            if isSmall {
+                .smallDocument
+            } else {
+                .largeDocument
+            }
+        case .audio:
+            .audio
+        }
     }
 
     var headerText: String {
@@ -71,6 +120,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     var icon: ImageResource {
         item.isDeleted ? .fileIconNotAvailable : item.fileIcon.resource
+    }
+
+    var imagePreviewURL: URL? {
+        item.imagePreviewURL
     }
 
     var progress: Double {
@@ -97,7 +150,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: item.nodeID) {
                 if let node {
-                    item = WireCellsAttachmentsPreviewViewItem(node)
+                    item = WireCellsAttachmentsPreviewViewItem(node, initialMetadata: initialMetadata)
                 } else {
                     item = WireCellsAttachmentsPreviewViewItem(
                         nodeID: item.nodeID,
@@ -105,7 +158,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
                         fileName: item.fileName,
                         fileExtension: item.fileExtension,
                         fileSize: item.fileSize,
-                        isDeleted: true
+                        isDeleted: true,
+                        imagePreviewURL: item.imagePreviewURL,
+                        kind: item.kind
                     )
                 }
             }
@@ -143,20 +198,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
 private extension WireCellsAttachmentsPreviewViewItem {
 
-    init(_ value: WireCellsMessageAttachment, isDeleted: Bool) {
-        let url = value.initialName.flatMap { URL(string: $0) }
-        let fileType = value.contentType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
-
-        self.nodeID = value.nodeID
-        self.fileIcon = .make(type: fileType, fileExtension: fileExtension)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.initialSize
-        self.isDeleted = isDeleted
-    }
-
-    init(_ value: WireCellsNode) {
+    init(_ value: WireCellsNode, initialMetadata: WireCellsMessageAttachment.Metadata?) {
         let url = URL(string: value.path)
         let fileType = value.mimeType.flatMap { UTType(mimeType: $0) }
         let fileExtension = url?.pathExtension
@@ -167,6 +209,8 @@ private extension WireCellsAttachmentsPreviewViewItem {
         self.fileExtension = fileExtension
         self.fileSize = value.size.map { Int($0) }
         self.isDeleted = value.isRecycled
+        self.imagePreviewURL = value.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
+        self.kind = Kind(fileType: fileType, initialMetadata: initialMetadata)
     }
 
 }
