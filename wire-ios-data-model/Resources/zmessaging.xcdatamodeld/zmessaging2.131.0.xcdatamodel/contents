@@ -347,7 +347,7 @@
         <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="teamIdentifier" optional="YES" transient="YES"/>
         <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary"/>
-        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <relationship name="addressBookEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressBookEntry" inverseName="user" inverseEntity="AddressBookEntry"/>
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient"/>

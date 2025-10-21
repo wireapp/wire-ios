@@ -1260,10 +1260,13 @@ extension ZMUserTests_Swift {
         let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
         let viewContext = coreDataStack.viewContext
         let syncContext = coreDataStack.syncContext
+        let userID = QualifiedID(uuid: UUID(), domain: "wire.com")
 
         try await syncContext.perform { [syncContext] in
             // Given
             let user = ZMUser(context: syncContext)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
 
             // When
             user.type = .bot
@@ -1272,8 +1275,8 @@ extension ZMUserTests_Swift {
 
         await viewContext.perform { [viewContext] in
             // Then
-            let user = ZMUser(context: viewContext)
-            XCTAssertEqual(user.type, .bot)
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: viewContext)
+            XCTAssertEqual(user?.type, .bot)
         }
     }
 
