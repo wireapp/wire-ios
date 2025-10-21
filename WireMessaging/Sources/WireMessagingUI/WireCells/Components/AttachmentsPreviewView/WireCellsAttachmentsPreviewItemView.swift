@@ -31,15 +31,80 @@ struct WireCellsAttachmentsPreviewItemView: View {
     }
 
     var body: some View {
-        WireCellsDocumentAttachmentPreview(
-            headerIcon: Image(viewModel.icon),
-            headerText: viewModel.headerText,
-            labelText: viewModel.fileName,
-            progress: viewModel.progress,
-            isError: viewModel.isError,
-        )
-        .frame(height: 74)
-        .frame(idealWidth: 288)
+        Group {
+            switch viewModel.kind {
+            case .smallImage:
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .largeImage(let aspectRatio, let maxWidth):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .smallVideo:
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .largeVideo(let aspectRatio):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .smallDocument:
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .largeDocument:
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case .audio:
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            }
+        }
         .onAppear(perform: refresh)
         .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)
