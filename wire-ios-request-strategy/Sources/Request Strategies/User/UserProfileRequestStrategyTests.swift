@@ -449,7 +449,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             self.sut = self.createSUT(apiVersion: .v0)
             let updatedName = "123"
             let event = self.userUpdateEvent(userProfile: Payload.UserProfile(
-                x: (),
                 id: self.otherUser.remoteIdentifier,
                 qualifiedID: nil,
                 teamID: nil,
@@ -573,7 +572,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {
         Payload.UserProfile(
-            x: (),
             id: uuid,
             qualifiedID: nil,
             teamID: nil,
