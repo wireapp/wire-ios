@@ -23,9 +23,9 @@ public import WireData
 import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
-import WireMessagingUI
+public import WireMessagingUI
 
-public struct WireCellsFactory {
+public struct WireMessagingFactory {
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
@@ -126,7 +126,7 @@ public struct WireCellsFactory {
 
 }
 
-public extension WireCellsFactory {
+public extension WireMessagingFactory {
 
     @MainActor
     func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
@@ -178,6 +178,24 @@ public extension WireCellsFactory {
         )
         viewController.view.backgroundColor = .clear
         return viewController
+    }
+
+    func makeConversationCellProvider(
+        insetsProvider: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProvider {
+        ConversationCellProvider(
+            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                repository: nodesAPI,
+                cache: nodeCache
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetRepository,
+                fileCache: fileCache
+            ),
+            localAssetRepository: localAssetRepository,
+            lastOpenRequest: lastOpenRequest,
+            insetsProvider: insetsProvider
+        )
     }
 
 }

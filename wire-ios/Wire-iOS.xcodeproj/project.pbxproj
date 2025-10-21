@@ -733,7 +733,7 @@
 				MessageReplyPreviewViewTests.swift,
 				MessageTests.swift,
 				MockPhotoPermissionsController.swift,
-				"Mocks/MockWireCellsFactoryProtocol+Convenience.swift",
+				"Mocks/MockWireMessagingFactoryProtocol+Convenience.swift",
 				"Mocks/QualifiedID+Mock.swift",
 				Mocks/WireCells/WireCellsClearPublishedDraftsUseCaseProtocolMock.swift,
 				Mocks/WireCells/WireCellsDeleteDraftUseCaseProtocolMock.swift,

@@ -16,12 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationCellModel: Hashable, Sendable {
+public struct ConversationCellInsets {
 
-    /// Used to group messages by time.
-    case timeDivider(TimeDividerModel)
+    public struct HorizontalInsets {
+        let leading: Double
+        let trailing: Double
 
-    /// Attachments for a a multipart message.
-    case multipartAttachments(MultipartAttachmentsModel)
+        public init(leading: Double, trailing: Double) {
+            self.leading = leading
+            self.trailing = trailing
+        }
+    }
+
+    let legacy: HorizontalInsets
+    let leadingBubble: HorizontalInsets
+    let trailingBubble: HorizontalInsets
+
+    public init(
+        legacy: HorizontalInsets,
+        leadingBubble: HorizontalInsets,
+        trailingBubble: HorizontalInsets
+    ) {
+        self.legacy = legacy
+        self.leadingBubble = leadingBubble
+        self.trailingBubble = trailingBubble
+    }
 
 }

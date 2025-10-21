@@ -16,20 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+import SwiftUI
 
-public extension ConversationCellModel {
+final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
-
-        case let .timeDivider(timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
+    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets) {
+        contentConfiguration = UIHostingConfiguration {
+            content
         }
+        .margins(.all, insets)
+        .minSize(width: 0, height: 0)
+        .background(.clear)
+    }
 
-        assertionFailure("unexpected cell: \(cell)")
+    override func prepareForReuse() {
+        contentConfiguration = nil
     }
 
 }
