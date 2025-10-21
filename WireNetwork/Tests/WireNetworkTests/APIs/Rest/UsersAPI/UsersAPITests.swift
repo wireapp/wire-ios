@@ -250,11 +250,28 @@ final class UsersAPITests: XCTestCase {
             supportedProtocols: [.proteus],
             legalholdStatus: .enabled
         )
-        static let userV12 = {
-            var user = userV0
-            user.type = .regular
-            return user
-        }()
+        static let userV12 = User(
+            id: userID,
+            name: "name",
+            handle: "handle",
+            teamID: teamID,
+            type: .regular, // added in v12
+            accentID: 1,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "john.doe@example.com",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            service: Service(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+            ),
+            supportedProtocols: [.proteus],
+            legalholdStatus: .enabled
+        )
     }
 
 }

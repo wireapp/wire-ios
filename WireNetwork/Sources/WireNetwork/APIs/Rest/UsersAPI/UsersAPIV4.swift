@@ -71,7 +71,7 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
     let found: [UserResponseV4]
 
     /// List of user IDs for which a user couldn't be retrieved.
-    ///
+
     let failed: [QualifiedIDV0]?
 
     func toAPIModel() -> UserList {
@@ -132,4 +132,5 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             legalholdStatus: legalholdStatus.toAPIModel()
         )
     }
+
 }

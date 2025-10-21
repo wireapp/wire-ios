@@ -70,7 +70,7 @@ struct UserListResponseV12: Decodable, ToAPIModelConvertible {
     let found: [UserResponseV12]
 
     /// List of user IDs for which a user couldn't be retrieved.
-    ///
+
     let failed: [QualifiedIDV0]?
 
     func toAPIModel() -> UserList {
@@ -87,7 +87,7 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
     let name: String
     let handle: String?
     let teamID: UUID?
-    let type: UserTypeV12?
+    let type: UserTypeV12? // introduced in v12
     let accentID: Int
     let assets: [UserAssetV0]
     let deleted: Bool?
