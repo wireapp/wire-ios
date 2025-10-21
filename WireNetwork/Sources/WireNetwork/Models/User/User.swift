@@ -40,7 +40,8 @@ public struct User: Equatable, Sendable {
 
     /// The type of a user: regular, app or bot.
     ///
-    /// - returns: One of the three values `regular`, `app` or `bot` if talking to an API of version 12 or later, `nil` otherwise.
+    /// - returns: One of the three values `regular`, `app` or `bot` if talking to an API of version 12 or later, `nil`
+    /// otherwise.
 
     public let type: UserType?
 

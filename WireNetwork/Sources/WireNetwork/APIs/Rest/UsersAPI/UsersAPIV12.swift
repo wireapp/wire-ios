@@ -145,11 +145,11 @@ enum UserTypeV12: String, Decodable {
     func toAPIModel() -> UserType {
         switch self {
         case .regular:
-                .regular
+            .regular
         case .app:
-                .app
+            .app
         case .bot:
-                .bot
+            .bot
         }
     }
 
