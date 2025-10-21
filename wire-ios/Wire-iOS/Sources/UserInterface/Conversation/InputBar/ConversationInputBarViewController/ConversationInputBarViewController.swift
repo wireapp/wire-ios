@@ -769,8 +769,8 @@ final class ConversationInputBarViewController: UIViewController,
             let conversation = conversation as? ZMConversation
         else { return }
 
-        presentMLSPrivacyWarningIfNeeded {
-            self.showGiphy(for: conversation)
+        presentMLSPrivacyWarningIfNeeded { [weak self] in
+            self?.showGiphy(for: conversation)
         }
     }
 
@@ -783,7 +783,6 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func showGiphy(for conversation: ZMConversation) {
-        inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(
             searchTerm: "",
             conversation: conversation,
