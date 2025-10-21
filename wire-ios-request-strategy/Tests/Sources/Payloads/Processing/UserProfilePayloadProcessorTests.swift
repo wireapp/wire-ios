@@ -276,6 +276,25 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateUserProfile_UpdatesType() throws {
+        syncMOC.performGroupedAndWait {
+            // given
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
+            let type = UserType.regular
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, type: 0)
+
+            // when
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
+
+            // then
+            XCTAssertEqual(self.otherUser.emailAddress, email)
+        }
+    }
+
     func testUpdateUserProfile_UpdatesEmail() throws {
         syncMOC.performGroupedAndWait {
             // given

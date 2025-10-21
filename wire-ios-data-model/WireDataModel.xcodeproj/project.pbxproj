@@ -251,6 +251,7 @@
 		55C40BD722B0F78500EFD8BD /* ZMUserLegalHoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */; };
 		5902AC752DA92365000A8F7F /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 5902AC742DA92365000A8F7F /* WireFoundationSupport */; };
 		5904070A2C258C810009542C /* ConversationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590407092C258C810009542C /* ConversationList.swift */; };
+		590726672EA788C4002F3F8A /* TypeOfUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590726662EA788C2002F3F8A /* TypeOfUser.swift */; };
 		591362E62B70F45C000B210C /* MLSVerificationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */; };
 		591942B62B6A4B4D0000B390 /* UserObserving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591942B52B6A4B4D0000B390 /* UserObserving.swift */; };
 		591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A66E1CAD77930039E10C /* CoreData.framework */; };
@@ -1063,6 +1064,7 @@
 		55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+LegalHoldRequest.swift"; sourceTree = "<group>"; };
 		55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserLegalHoldTests.swift; sourceTree = "<group>"; };
 		590407092C258C810009542C /* ConversationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationList.swift; sourceTree = "<group>"; };
+		590726662EA788C2002F3F8A /* TypeOfUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeOfUser.swift; sourceTree = "<group>"; };
 		59085C5C2E8569D800882DD1 /* zmessaging2.130.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.130.0.xcdatamodel; sourceTree = "<group>"; };
 		591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSVerificationStatusTests.swift; sourceTree = "<group>"; };
 		591942B52B6A4B4D0000B390 /* UserObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserObserving.swift; sourceTree = "<group>"; };
@@ -2591,6 +2593,7 @@
 		F9A706031CAEE01D00C2F5FE /* User */ = {
 			isa = PBXGroup;
 			children = (
+				590726662EA788C2002F3F8A /* TypeOfUser.swift */,
 				597A3BB52B6418090020E337 /* Availability */,
 				1687ABAB20EBE0770007C240 /* UserType.swift */,
 				6393EE7E2BC961150068A6D1 /* UserType+QualifiedID.swift */,
@@ -3836,6 +3839,7 @@
 				54E3EE451F61A53C00A261E3 /* ZMAssetClientMessage+Ephemeral.swift in Sources */,
 				F9A706B01CAEE01D00C2F5FE /* MessageChangeInfo.swift in Sources */,
 				F9A706A71CAEE01D00C2F5FE /* AnyClassTuple.swift in Sources */,
+				590726672EA788C4002F3F8A /* TypeOfUser.swift in Sources */,
 				5451DE351F5FFF8B00C82E75 /* NotificationInContext.swift in Sources */,
 				F179B5DA2062B77300C13DFD /* CoreDataStack+Backup.swift in Sources */,
 				F9A706A41CAEE01D00C2F5FE /* ConversationChangeInfo.swift in Sources */,

@@ -54,6 +54,10 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// The "@name" handle
 @property (nonatomic, readonly, nullable) NSString *handle;
 
+/// Whether the user is a regular user, an app or a bot.
+
+@property (nonatomic, readonly, nullable) ZMTypeOfUser *type;
+
 ///// Is YES if we can send a connection request to this user.
 @property (nonatomic, readonly) BOOL canBeConnected;
 
