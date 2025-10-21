@@ -1526,12 +1526,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         activeUserSession != nil
     }
 
-    func updateProfileImage(imageData: Data) {
-        activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
-        }
-    }
-
     public var callNotificationStyle: CallNotificationStyle = .callKit {
         didSet {
             updateCallNotificationStyle()
@@ -1746,13 +1740,6 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
     public func session(
         session: UnauthenticatedSession,
-        updatedProfileImage imageData: Data
-    ) {
-        updateProfileImage(imageData: imageData)
-    }
-
-    public func session(
-        session: UnauthenticatedSession,
         createdAccount account: Account,
         newEnvironment: NewEnvironment? = nil
     ) {
@@ -1778,10 +1765,6 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             }
 
             updateCurrentAccount(in: userSession.managedObjectContext)
-
-            if let profileImageData = session.authenticationStatus.profileImageData {
-                updateProfileImage(imageData: profileImageData)
-            }
 
             switch session.backupImportDidSucceed {
             case true?:

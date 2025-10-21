@@ -29,6 +29,7 @@ import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
+import SwiftUI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -1782,6 +1783,24 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeDeleteNodesUseCase
+
+    var makeDeleteNodesUseCase_Invocations: [Void] = []
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
+
+    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
+        makeDeleteNodesUseCase_Invocations.append(())
+
+        if let mock = makeDeleteNodesUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeDeleteNodesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteNodesUseCase`")
+        }
+    }
+
     // MARK: - makeFilesView
 
     var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
@@ -1798,6 +1817,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+        }
+    }
+
+    // MARK: - makeAttachmentsPreviewView
+
+    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
+    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
+
+    @MainActor
+    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
+        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
+
+        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
+            return mock(attachments, alignment)
+        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
         }
     }
 

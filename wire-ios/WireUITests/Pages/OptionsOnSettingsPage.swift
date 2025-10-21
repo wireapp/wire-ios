@@ -55,7 +55,12 @@ class OptionsOnSettingsPage: PageModel {
     func enterPasscode(_ pass: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         try springboard.secureTextFields["Passcode field"].tapIfKeyboardNotFocused().typeText(pass)
-        springboard.keyboards.buttons["Done"].tap()
+
+        if springboard.keyboards.buttons["Done"].exists {
+            springboard.keyboards.buttons["Done"].tap()
+        } else {
+            springboard.typeText(XCUIKeyboardKey.return.rawValue)
+        }
         return try ConversationsPage()
     }
 

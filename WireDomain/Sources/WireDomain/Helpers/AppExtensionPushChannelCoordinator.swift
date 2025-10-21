@@ -37,6 +37,7 @@ public final class AppExtensionPushChannelCoordinator {
 
     private var observingNotificationName: String
     private var postingNotificationName: String
+    private var _onCancel: (() -> Void)?
 
     public init(
         clientID: String
@@ -50,16 +51,37 @@ public final class AppExtensionPushChannelCoordinator {
     }
 
     public func listenForYieldRequests() async -> YieldRequest {
-        await withCheckedContinuation { continuation in
-            var resumed = false
-            startMonitoring {
-                guard !resumed else { return }
-                resumed = true
-                continuation.resume()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                var resumed = false
+                func finish() {
+                    guard !resumed else { return }
+                    resumed = true
+                    // stop observing when we finish (either by notification or by cancellation)
+                    self.stopMonitoring()
+                    // clear stored cancel hook to avoid retaining the continuation
+                    self._onCancel = nil
+                    continuation.resume(returning: YieldRequest {
+                        self.notify()
+                    })
+                }
+
+                // Store a cancel hook so the outer cancellation handler can finish the continuation
+                self._onCancel = { finish() }
+
+                // Begin monitoring for the yield request; when it arrives, finish
+                startMonitoring {
+                    finish()
+                }
+
+                // If the task was already cancelled before we installed the hook, finish now
+                if Task.isCancelled {
+                    finish()
+                }
             }
-        }
-        return YieldRequest {
-            self.notify()
+        } onCancel: {
+            // Cancellation should complete the continuation just like a notification
+            _onCancel?()
         }
     }
 

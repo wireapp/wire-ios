@@ -2226,13 +2226,6 @@
     }];
 }
 
-- (void)testThatAppendingAnImageMessageInAnArchivedConversationUnarchivesIt
-{
-    [self assertThatAppendingAMessageUnarchivesAConversation:^(ZMConversation *conversation) {
-        [conversation appendMessageWithImageData:self.verySmallJPEGData];
-    }];
-}
-
 - (void)testThatAppendingALocationMessageInAnArchivedConversationUnarchivesIt
 {
     [self assertThatAppendingAMessageUnarchivesAConversation:^(ZMConversation *conversation) {

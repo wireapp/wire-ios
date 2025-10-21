@@ -27,13 +27,14 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var attachments: [MultipartMessageData.Attachment]
+        let alignment: HorizontalAlignment
+        let factory: WireCellsFactoryProtocol
     }
 
     private var containerView = UIView()
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
-
     var isSelected: Bool = false
 
     override init(frame: CGRect) {
@@ -48,13 +49,7 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        let cornerRadius: CGFloat = 12
-
-        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        containerView.layer.cornerRadius = cornerRadius
-        containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        containerView.clipsToBounds = true
+        containerView.backgroundColor = .clear
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(containerView)
@@ -83,26 +78,26 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
+
         let attachments = object.attachments.map {
             WireCellsMessageAttachment(
                 nodeID: $0.nodeID,
-                contentType: nil,
-                initialName: $0.fileName,
-                initialSize: nil,
+                contentType: $0.contentType,
+                initialName: $0.initialName,
+                initialSize: $0.initialSize,
                 initialMetadata: nil
             )
         }
-        let viewModel = WireCellsAttachmentsPreviewViewModel(attachments: attachments)
-        let wireCellsAttachmentsPreviewView = WireCellsAttachmentsPreviewView(viewModel: viewModel)
-        let wireCellsAttachmentsPreviewViewController = UIHostingController(rootView: wireCellsAttachmentsPreviewView)
 
-        setupWireCellsAttachmentsView(hostingController: wireCellsAttachmentsPreviewViewController)
+        let viewController = object.factory.makeAttachmentsPreviewView(
+            attachments: attachments,
+            alignment: object.alignment
+        )
+        setupWireCellsAttachmentsView(viewController: viewController)
     }
 
-    private func setupWireCellsAttachmentsView(hostingController: UIHostingController<
-        WireCellsAttachmentsPreviewView
-    >) {
-        let view: UIView = hostingController.view
+    private func setupWireCellsAttachmentsView(viewController: UIViewController) {
+        let view: UIView = viewController.view
         containerView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -124,6 +119,10 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
     var selectionRect: CGRect {
         containerView.bounds
     }
+
+    func prepareForReuse() {
+        containerView.removeSubviews()
+    }
 }
 
 final class ConversationMultipartMessageCellDescription: ConversationMessageCellDescription {
@@ -139,12 +138,18 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
+    var supportsActions: Bool = true
 
     init(
-        multipartMessage: MultipartMessageData
+        multipartMessage: MultipartMessageData,
+        isSimpleChatBubblesEnabled: Bool,
+        isSentBySelfUser: Bool,
+        wireCellsFactory: WireCellsFactoryProtocol
     ) {
         self.configuration = View.Configuration(
-            attachments: multipartMessage.attachments
+            attachments: multipartMessage.attachments,
+            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading,
+            factory: wireCellsFactory
         )
     }
 }

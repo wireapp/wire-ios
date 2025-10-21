@@ -33,6 +33,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
                 )
             )
+        case let .apps(config):
+            .apps(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
         case let .assetAuditLog(config):
             .assetAuditLog(
                 StorableBasicFeatureConfig(
@@ -129,8 +137,6 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: StorableFeatureConfigStatus(config.status)
                 )
             )
-        case let .unknown(featureName):
-            .unknown(featureName: featureName)
         case let .consumableNotifications(config):
             .consumableNotifications(
                 StorableBasicFeatureConfig(
@@ -139,6 +145,16 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
             )
+        case let .cells(config):
+            .cells(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(
+                        config.status
+                    )
+                )
+            )
+        case let .unknown(featureName):
+            .unknown(featureName: featureName)
         }
     }
 
@@ -151,6 +167,10 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     isMandatory: config.isMandatory,
                     inactivityTimeoutInSeconds: config.inactivityTimeoutInSeconds
                 )
+            )
+        case let .apps(config):
+            .apps(
+                .init(status: config.status.toAPIModel())
             )
         case let .assetAuditLog(config):
             .assetAuditLog(
@@ -253,6 +273,10 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
+        case let .cells(config):
+            .cells(
+                .init(status: config.status.toAPIModel())
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -270,6 +294,7 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
     case appLock(StorableAppLockFeatureConfig)
+    case apps(StorableBasicFeatureConfig)
     case assetAuditLog(StorableBasicFeatureConfig)
     case classifiedDomains(StorableClassifiedDomainsFeatureConfig)
     case conferenceCalling(StorableConferenceCallingFeatureConfig)
@@ -284,6 +309,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
     case chatBubblesSimple(StorableBasicFeatureConfig)
+    case cells(StorableBasicFeatureConfig)
     case unknown(featureName: String)
 
 }

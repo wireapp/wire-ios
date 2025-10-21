@@ -26,7 +26,7 @@ final class TeamManageTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        var userAccountPage = try  firstTimePage.acceptPopup()
+        var userAccountPage = try  firstTimePage.acceptPopup(with: self)
             .openUserAccountPageForUser(with: user.name)
 
         var conversationPage = try userAccountPage
@@ -71,7 +71,7 @@ final class TeamManageTests: WireUITestCase {
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
             .openUserAccountPageForUser(with: memberUser.username)
 
@@ -110,7 +110,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
 
         let activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
@@ -161,7 +161,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup()
+            .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamOwner.username)
             .openConversation()
             .openConversationDetails()
@@ -187,38 +187,5 @@ final class TeamManageTests: WireUITestCase {
                 .exists,
             "User \(teamMembers[0].name) is not present in group"
         )
-    }
-
-    @MainActor
-    func test_Account_Management_Lock_With_Passcode() async throws {
-        let passcode = UserGenerator.generateAppPasscode()
-
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
-        let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup()
-            .setUsername(teamMember.username)
-            .openSettings()
-            .openOptionsMenu()
-            .enableLockWithPasscode()
-            .SetPasscode(passcode)
-            .backgroundAndResume(app: app, forDelay: 2)
-
-        XCTAssertFalse(
-            page.conversationsPageLabel.exists,
-            "App incorrectly showing conversations page without app passcode"
-        )
-
-        _ = try page.enterPasscode(passcode)
     }
 }

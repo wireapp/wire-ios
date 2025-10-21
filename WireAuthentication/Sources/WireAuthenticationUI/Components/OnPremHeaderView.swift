@@ -51,6 +51,7 @@ package struct OnPremHeaderView: View {
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
         })
+        .accessibilityIdentifier("onPremInfoButton")
         .multilineTextAlignment(.center)
         .font(.textStyle(.h2))
         .lineLimit(nil)

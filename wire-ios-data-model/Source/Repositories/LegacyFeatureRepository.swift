@@ -24,6 +24,8 @@ public protocol LegacyFeatureRepositoryInterface {
 
     func fetchAppLock() -> Feature.AppLock
     func storeAppLock(_ appLock: Feature.AppLock)
+    func fetchApps() -> Feature.Apps
+    func storeApps(_ appLock: Feature.Apps)
     func fetchConferenceCalling() -> Feature.ConferenceCalling
     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
     func fetchFileSharing() -> Feature.FileSharing
@@ -51,6 +53,10 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
     func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple
     func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple)
+    func fetchCells() -> Feature.Cells
+    func storeCells(_ cells: Feature.Cells)
+    func fetchAssetAuditLog() -> Feature.AssetAuditLog
+
 }
 
 /// **Do not use it for new code, use FeatureConfigRepository instead**
@@ -111,6 +117,22 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             }
         } catch {
             logger.error("failed to encode Feautre.AppLock.Config: \(error)")
+        }
+    }
+
+    // MARK: Apps
+
+    public func fetchApps() -> Feature.Apps {
+        guard let feature = Feature.fetch(name: .apps, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
+    }
+
+    public func storeApps(_ apps: Feature.Apps) {
+        Feature.updateOrCreate(havingName: .apps, in: context) {
+            $0.status = apps.status
         }
     }
 
@@ -254,8 +276,8 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
     }
 
     public func fetchAllowedGlobalOperations() async -> Feature.AllowedGlobalOperations {
-        let (featureStatus, featureConfig) = await context.perform {
-            let feature = Feature.fetch(name: .allowedGlobalOperations, context: self.context)
+        let (featureStatus, featureConfig) = await context.perform { [context] in
+            let feature = Feature.fetch(name: .allowedGlobalOperations, context: context)
             return (feature?.status, feature?.config)
         }
 
@@ -356,8 +378,8 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
     // MARK: - MLS
 
     public func fetchMLS() async -> Feature.MLS {
-        let (status, configData) = await context.perform {
-            let feature = Feature.fetch(name: .mls, context: self.context)
+        let (status, configData) = await context.perform { [context] in
+            let feature = Feature.fetch(name: .mls, context: context)
             return (feature?.status, feature?.config)
         }
 
@@ -536,6 +558,32 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         }
     }
 
+    // MARK: Cells
+
+    public func fetchCells() -> Feature.Cells {
+        guard let feature = Feature.fetch(name: .cells, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
+    }
+
+    public func storeCells(_ cells: Feature.Cells) {
+        Feature.updateOrCreate(havingName: .cells, in: context) {
+            $0.status = cells.status
+        }
+    }
+
+    // MARK: - Asset audit log
+
+    public func fetchAssetAuditLog() -> Feature.AssetAuditLog {
+        guard let feature = Feature.fetch(name: .assetAuditLog, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -543,6 +591,9 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             switch name {
             case .appLock:
                 storeAppLock(.init())
+
+            case .apps:
+                storeApps(.init())
 
             case .conferenceCalling:
                 storeConferenceCalling(.init())
@@ -582,6 +633,13 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .chatBubblesSimple:
                 storeChatBubblesSimple(.init())
+
+            case .cells:
+                storeCells(.init())
+
+            case .assetAuditLog:
+                // No op: not supported in legacy repository.
+                break
             }
         }
     }

@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+import WireDataModel
 import WireNetwork
 
 /// The purpose of this protocol is sharing code between `ConversationMLSMessageAddEventProcessor` and
@@ -26,15 +28,50 @@ protocol ConversationMessageAddEventProcessorProtocol {
 
     var messageLocalStore: any MessageLocalStoreProtocol { get }
 
+    /// Due to the protobuf declaration being extended we might receive a generic message where `content` cannot be
+    /// deserialized.
+    /// This method adds a system message to the conversation in order to inform the user.
+
+    func addUnknownContentTypeSystemMessage(
+        senderID: UserID,
+        conversationID: ConversationID,
+        date: Date
+    ) async
+
     func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
         date: Date
     ) async
 
+    func handleMessageContentNil(
+        messageID: String,
+        payload: Data,
+        senderID: WireNetwork.QualifiedID,
+        conversationID: WireNetwork.QualifiedID,
+        unknownStrategy: GenericMessage.UnknownStrategy,
+        date: Date
+    ) async
+
 }
 
 extension ConversationMessageAddEventProcessorProtocol {
+
+    func addUnknownContentTypeSystemMessage(
+        senderID: UserID,
+        conversationID: ConversationID,
+        date: Date
+    ) async {
+        let systemMessageType: SystemMessageType = .unknownMessageContentTypeReceived(
+            sender: (senderID.id, senderID.domain),
+            date: date
+        )
+        await messageLocalStore.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: conversationID.id,
+            conversationDomain: conversationID.domain
+        )
+    }
 
     func addInvalidSystemMessage(
         senderID: UserID,
@@ -50,6 +87,36 @@ extension ConversationMessageAddEventProcessorProtocol {
             conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
+    }
+
+    func handleMessageContentNil(
+        messageID: String,
+        payload: Data,
+        senderID: WireNetwork.QualifiedID,
+        conversationID: WireNetwork.QualifiedID,
+        unknownStrategy: GenericMessage.UnknownStrategy,
+        date: Date
+    ) async {
+        switch unknownStrategy {
+        case .ignore:
+            return
+        case .discardAndWarn:
+            await addUnknownContentTypeSystemMessage(
+                senderID: senderID,
+                conversationID: conversationID,
+                date: date
+            )
+        case .warnUserAllowRetry:
+            await messageLocalStore.addUnknownMessage(
+                messageID: UUID(transportString: messageID) ?? UUID(),
+                conversationID: conversationID.id,
+                conversationDomain: conversationID.domain,
+                senderID: senderID.id,
+                senderDomain: senderID.domain,
+                payload: payload,
+                date: date
+            )
+        }
     }
 
 }

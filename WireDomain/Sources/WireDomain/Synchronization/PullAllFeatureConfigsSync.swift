@@ -53,9 +53,18 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+        case let .apps(config):
+            await storeFeature(
+                name: .apps,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .assetAuditLog(config):
-            // TODO: [WPB-20713]
-            assertionFailure("not implemented")
+            await storeFeature(
+                name: .assetAuditLog,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .classifiedDomains(config):
             await storeFeature(
                 name: .classifiedDomains,
@@ -131,6 +140,12 @@ extension FeatureConfigLocalStoreProtocol {
         case let .chatBubblesSimple(config):
             await storeFeature(
                 name: .chatBubblesSimple,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
+        case let .cells(config):
+            await storeFeature(
+                name: .cells,
                 isEnabled: config.status == .enabled,
                 config: nil
             )

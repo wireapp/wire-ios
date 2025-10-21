@@ -39,14 +39,7 @@ final class MainSplitViewControllerTests: XCTestCase {
         conversationListUI = .init("Conversation List", .purple)
         conversationUI = .init()
         noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
-        tabController = PreviewTabBarController(showMeetings: false)
-        sut = .init(
-            sidebar: sidebar,
-            noConversationPlaceholder: noConversationPlaceholder,
-            tabController: tabController
-        )
-        sut.conversationListUI = conversationListUI
-        sut.conversationUI = conversationUI
+        setupTabBar()
 
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
@@ -60,6 +53,18 @@ final class MainSplitViewControllerTests: XCTestCase {
         conversationUI = nil
         conversationListUI = nil
         sidebar = nil
+    }
+
+    @MainActor
+    private func setupTabBar(showFiles: Bool = false) {
+        tabController = PreviewTabBarController(showMeetings: false, showFiles: showFiles)
+        sut = .init(
+            sidebar: sidebar,
+            noConversationPlaceholder: noConversationPlaceholder,
+            tabController: tabController
+        )
+        sut.conversationListUI = conversationListUI
+        sut.conversationUI = conversationUI
     }
 
     @MainActor
@@ -130,6 +135,18 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     func testCompactAppearance() {
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
+    }
+
+    @MainActor
+    func testCompactAppearanceWithFilesTab() {
+        setupTabBar(showFiles: true)
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: sut, named: "light")

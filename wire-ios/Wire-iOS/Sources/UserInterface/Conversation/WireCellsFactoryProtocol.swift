@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 import UIKit
 import WireMessagingAssembly
 import WireMessagingDomain
@@ -30,8 +31,14 @@ protocol WireCellsFactoryProtocol {
     func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol
     func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
+    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
     @MainActor
     func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController
+    @MainActor
+    func makeAttachmentsPreviewView(
+        attachments: [WireCellsMessageAttachment],
+        alignment: HorizontalAlignment
+    ) -> UIViewController
 }
 
 extension WireCellsFactory: WireCellsFactoryProtocol {}

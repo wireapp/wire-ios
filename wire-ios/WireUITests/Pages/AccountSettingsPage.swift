@@ -21,7 +21,11 @@ import XCTest
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        nameField
+        accountSettingsPageHeader
+    }
+
+    var accountSettingsPageHeader: XCUIElement {
+        app.staticTexts["Account"]
     }
 
     var nameField: XCUIElement {
@@ -36,6 +40,10 @@ class AccountSettingsPage: PageModel {
         app.descendants(matching: .any)["EmailField"].firstMatch
     }
 
+    var domainField: XCUIElement {
+        app.descendants(matching: .any)["DomainFieldDisabled"].firstMatch
+    }
+
     var logoutButton: XCUIElement {
         app.staticTexts["Log Out"]
     }
@@ -48,8 +56,16 @@ class AccountSettingsPage: PageModel {
         app.buttons["OK"]
     }
 
+    var backToSettingsButton: XCUIElement {
+        app.buttons["Settings"]
+    }
+
     var backupOrRestoreButton: XCUIElement {
         app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
+    }
+
+    var resetPasswordButton: XCUIElement {
+        app.descendants(matching: .any)["Reset Password"].firstMatch
     }
 
     func getAccountName() -> String? {
@@ -64,8 +80,18 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
-    var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
+    func getDomainInfo() -> String {
+        domainField.value as! String
+    }
+
+    func backToSettings() throws -> SettingsPage {
+        backToSettingsButton.tap()
+        return try SettingsPage()
+    }
+
+    func tapEmailField() throws -> EmailUpdatePage {
+        emailField.tap()
+        return try EmailUpdatePage()
     }
 
     @discardableResult
@@ -89,5 +115,10 @@ class AccountSettingsPage: PageModel {
     func goBackToSettingsPage() throws -> SettingsPage {
         backToSettingsButton.tap()
         return try SettingsPage()
+    }
+
+    func tapOnResetPasswordButton() throws -> WebViewPage {
+        resetPasswordButton.tap()
+        return try WebViewPage()
     }
 }

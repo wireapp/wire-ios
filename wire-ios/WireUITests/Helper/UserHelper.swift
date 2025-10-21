@@ -39,9 +39,10 @@ class UserHelper {
     private let authenticationManager = MockAuthManager()
 
     init(apiVersion: APIVersion = .v8) {
+
         self.createdUsers = []
         self.networkStack = NetworkStack(
-            backendEnvironment: .staging,
+            backendEnvironment: BackendContext.backendEnvironment,
             minTLSVersion: .v1_2,
             cookieEncryptionKey: Data(),
             authenticationManager: authenticationManager
@@ -53,6 +54,22 @@ class UserHelper {
         self.teamsAPI = TeamsAPIBuilder(apiService: networkStack.apiService)
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+    }
+
+    func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
+        switch backend {
+        case .staging:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"] else {
+                fatalError("Missing BASIC_AUTH environment variable")
+            }
+            return auth
+
+        case .anta:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
+                fatalError("Missing BASIC_AUTH_ANTA environment variable")
+            }
+            return auth
+        }
     }
 
     func createPersonalUser() async throws -> UserInfo {
@@ -67,7 +84,10 @@ class UserHelper {
         try await cookieStorage.storeCookies(cookies)
 
         // Get activation code
-        let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
+            forEmail: user.email,
+            basicAuth: basicAuth()
+        )
 
         // Activate user
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
@@ -153,7 +173,10 @@ class UserHelper {
     }
 
     func fetchAccessToken(email: String, password: String) async throws -> String {
-        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(forEmail: email)
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
+            forEmail: email,
+            basicAuth: basicAuth()
+        )
 
         try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
 
@@ -258,12 +281,21 @@ class UserHelper {
     }
 }
 
-private extension BackendEnvironment {
+extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
+    static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
         webSocketURL: URL(string: backendURL)!,
         blacklistURL: URL(string: backendURL)!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+
+    static let anta = BackendEnvironment(
+        url: URL(string: backendURLAnta)!,
+        webSocketURL: URL(string: backendURLAnta)!,
+        blacklistURL: URL(string: backendURLAnta)!,
         pinnedKeys: [],
         proxySettings: nil
     )

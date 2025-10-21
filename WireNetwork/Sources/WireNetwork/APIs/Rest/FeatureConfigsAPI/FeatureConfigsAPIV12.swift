@@ -43,6 +43,7 @@ final class FeatureConfigsAPIV12: FeatureConfigsAPIV11 {
 struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
 
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
+    let apps: FeatureWithoutConfig
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithConfig<FeatureConfigResponse.ConferenceCallingV6>
     let conversationGuestLinks: FeatureWithoutConfig
@@ -53,6 +54,7 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
     let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
+    let cells: FeatureWithoutConfig
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
     let chatBubbles: FeatureWithoutConfig
@@ -65,6 +67,9 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
 
         let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
+
+        let appsFeatureConfig = AppsFeatureConfig(status: apps.status.toAPIModel())
+        featureConfigs.append(.apps(appsFeatureConfig))
 
         let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
@@ -146,6 +151,9 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))
+
+        let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
+        featureConfigs.append(.cells(cellsFeatureConfig))
 
         return featureConfigs
     }

@@ -106,6 +106,27 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String
     ) async
 
+    /// Adds a placeholder for an unknown message to the conversation.
+    /// This allows the message to be processed later when the app is updated with support for new message types.
+    /// - Parameters:
+    ///   - messageID: The unique identifier of the message
+    ///   - conversationID: The ID of the conversation the message belongs to
+    ///   - conversationDomain: The domain of the conversation (nil for local conversations)
+    ///   - senderID: The ID of the user who sent the message
+    ///   - senderDomain: The domain of the sender
+    ///   - payload: The raw protobuf data that couldn't be decoded
+    ///   - date: The timestamp when the message was received
+
+    func addUnknownMessage(
+        messageID: UUID,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String,
+        payload: Data,
+        date: Date
+    ) async
+
     /// Checks whether a message can be added to the conversation.
     /// - Parameters:
     ///     - conversation: The conversation to add the message to.
@@ -181,14 +202,18 @@ public protocol MessageLocalStoreProtocol {
 
     /// Updates button states.
     /// - Parameters:
-    ///     - buttonActionConfirmation: The button action confirmation protobuf object.
+    ///     - buttonID: The id of the button.
+    ///     - referenceMessageID: The id of the parent message.
     ///     - conversation: The related conversation.
+    ///     - senderID: The message sender id.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
 
     func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
+        buttonID: String?,
+        referenceMessageID: String,
+        in conversation: ZMConversation,
+        senderID: UUID
     ) async
 
     /// Edits a previously sent message.

@@ -31,7 +31,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sut = MainTabBarController(showMeetings: false)
+        sut = MainTabBarController(showMeetings: false, showFiles: false)
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
@@ -134,6 +134,39 @@ final class MainTabBarControllerTests: XCTestCase {
         XCTAssertNil(weakSettings)
     }
 
+    @MainActor
+    func testFilesIsInstalled() throws {
+        // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
+        let filesUI = UIViewController()
+
+        // When
+        sut.filesUI = filesUI
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [filesUI])
+    }
+
+    @MainActor
+    func testFilesIsReleased() async throws {
+        // Given
+        sut = MainTabBarController(showMeetings: false, showFiles: true)
+        weak var weakSettings: UIViewController?
+        sut.filesUI = {
+            let settings = UIViewController()
+            weakSettings = settings
+            return settings
+        }()
+
+        // When
+        sut.filesUI = nil
+        await Task.yield()
+
+        // Then
+        XCTAssertNil(weakSettings)
+    }
+
     // MARK: - Snapshot Tests
 
     @MainActor
@@ -144,5 +177,15 @@ final class MainTabBarControllerTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut, named: "dark", testName: "dark")
+    }
+
+    @MainActor
+    func testAppearanceWithFilesTab() {
+        let sut = MainTabBarControllerPreview(showFiles: true)
+        snapshotHelper
+            .verify(matching: sut, named: "light", testName: "tabBarWithFilesTabItem")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark", testName: "tabBarWithFilesTabItem")
     }
 }

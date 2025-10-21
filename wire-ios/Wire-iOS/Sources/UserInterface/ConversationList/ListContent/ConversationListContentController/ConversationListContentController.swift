@@ -50,13 +50,14 @@ final class ConversationListContentController: UICollectionViewController {
     private var token: NSObjectProtocol?
 
     let userSession: UserSession
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     init<ConversationListCoordinator>(
         userSession: UserSession,
         conversationListCoordinator: ConversationListCoordinator,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        zClientViewController: ZClientViewController?
+        zClientViewController: ZClientViewController
     ) where
         ConversationListCoordinator: ConversationListCoordinatorProtocol,
         ConversationListCoordinator.ConversationModel == ZMConversation,
@@ -67,6 +68,7 @@ final class ConversationListContentController: UICollectionViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.zClientViewController = zClientViewController
+        self.wireCellsFactory = zClientViewController.wireCellsFactory
 
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
@@ -252,17 +254,6 @@ final class ConversationListContentController: UICollectionViewController {
 
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
             return nil
-        }
-
-        let previewProvider: UIContextMenuContentPreviewProvider = {
-            ConversationPreviewViewController(
-                conversation: conversation,
-                presentingViewController: self,
-                sourceView: collectionView.cellForItem(at: indexPath)!,
-                userSession: self.userSession,
-                mainCoordinator: self.mainCoordinator,
-                selfProfileUIBuilder: self.selfProfileUIBuilder
-            )
         }
 
         let actionProvider: UIContextMenuActionProvider = { _ in
@@ -453,7 +444,8 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             sourceView: collectionView.cellForItem(at: indexPath)!,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            wireCellsFactory: wireCellsFactory
         )
     }
 }

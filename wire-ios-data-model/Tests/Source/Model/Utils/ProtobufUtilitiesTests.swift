@@ -267,8 +267,9 @@ extension ProtobufUtilitiesTests {
         // given
         let (assetId, token, domain) = ("id", "token", "domain")
         let asset = GenericMessageProtocol.Asset(
-            imageSize: CGSize(width: 42, height: 12),
+            name: "picture.jpg",
             mimeType: "image/jpeg",
+            imageSize: CGSize(width: 42, height: 12),
             size: 123
         )
         var sut = GenericMessage(content: asset, nonce: UUID.create())
@@ -288,8 +289,9 @@ extension ProtobufUtilitiesTests {
         // given
         let (assetId, token, domain) = ("id", "token", "domain")
         let asset = GenericMessageProtocol.Asset(
-            imageSize: CGSize(width: 42, height: 12),
+            name: "picture.jpg",
             mimeType: "image/jpeg",
+            imageSize: CGSize(width: 42, height: 12),
             size: 123
         )
         var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
