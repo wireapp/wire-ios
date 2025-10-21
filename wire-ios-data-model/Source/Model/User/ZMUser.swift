@@ -39,6 +39,7 @@ extension ZMUser: UserType {
             didChangeValue(forKey: typeKey)
         }
     }
+
     private var typeKey: String { "type" }
 
     @objc public var hasTeam: Bool {
