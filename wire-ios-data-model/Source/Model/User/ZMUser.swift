@@ -25,6 +25,7 @@ import WireUtilities
 extension ZMUser: UserType {
 
     /// Whether the user is a regular user, an app or a bot.
+
     public var type: TypeOfUser? {
         get {
             willAccessValue(forKey: typeKey)
@@ -41,7 +42,7 @@ extension ZMUser: UserType {
     private var typeKey: String { "type" }
 
     @objc public var hasTeam: Bool {
-        /// Other users won't have a team object, but a teamIdentifier.
+        // Other users won't have a team object, but a teamIdentifier.
         team != nil || teamIdentifier != nil
     }
 
