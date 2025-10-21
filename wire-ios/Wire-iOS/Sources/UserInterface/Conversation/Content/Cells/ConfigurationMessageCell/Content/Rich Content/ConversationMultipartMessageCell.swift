@@ -88,6 +88,8 @@ final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    func configure(with object: Configuration, animated: Bool) {}
+    func configure(with object: Configuration, animated: Bool) {
+        assertionFailure("This cell should not be used.")
+    }
 
 }
