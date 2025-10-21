@@ -24,6 +24,11 @@ import WireUtilities
 
 extension ZMUser: UserType {
 
+    /// Whether the user is a regular user, an app or a bot.
+    public var type: TypeOfUser? {
+        nil
+    }
+
     @objc public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
         team != nil || teamIdentifier != nil

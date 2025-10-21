@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class MockUser;
-@class ZMTFailureRecorder;
-#import "ZMUser.h"
-
-@interface ZMUser (Testing)
-
-- (void)assertMatchesUser:(MockUser *)user failureRecorder:(ZMTFailureRecorder *)failureRecorder;
-
-@end
+@objc(ZMTypeOfUser)
+public enum TypeOfUser: Int, CaseIterable, Sendable {
+    case regular
+    case app
+    case bot
+}
