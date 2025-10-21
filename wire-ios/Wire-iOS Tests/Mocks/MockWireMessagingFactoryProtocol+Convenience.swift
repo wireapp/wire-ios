@@ -26,7 +26,7 @@ extension MockWireMessagingFactoryProtocol {
         mock.makePublishDraftsUseCaseCellName_MockValue = WireCellsPublishDraftsUseCaseProtocolMock()
         mock.makeRetryUploadDraftUseCaseCellName_MockValue = WireCellsRetryUploadDraftUseCaseProtocolMock()
         mock.makeUploadDraftUseCaseCellName_MockValue = WireCellsUploadDraftUseCaseProtocolMock()
-        mock.makeConversationCellProviderInsets_MockValue = MockConversationCellProviderProtocol()
+        mock.makeConversationCellProviderInsetsProvider_MockValue = MockConversationCellProviderProtocol()
         return mock
     }
 
