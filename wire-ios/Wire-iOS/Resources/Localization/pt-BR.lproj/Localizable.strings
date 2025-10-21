@@ -368,6 +368,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (padrão)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (padrão)";
+"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Chamada em curso";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Você não pode gravar uma mensagem de áudio durante uma chamada.";
@@ -602,6 +604,8 @@
 "content.system.message_timer_off" = "%@ desligou o tempo da mensagem";
 "content.system.message_timer_off-you" = "%@ desligou o tempo da mensagem";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**Seu backend** parou de federar com **%@**. [Saiba mais](%@)";
 "content.system.backends_stop_federating.other_backends" = "Os backends **%@** e **%@** pararam de federar. [Saiba mais](%@)";
 
@@ -664,6 +668,7 @@
 "content.system.session_reset.self" = "Você não conseguiu descriptografar algumas de suas mensagens, mas resolveu o problema. Isso afetou todas as conversas.";
 
 "content.system.unknown_message.body" = "Esta mensagem não pode ser exibida. Você pode estar usando uma versão antiga do Wire.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "This user is no longer available";

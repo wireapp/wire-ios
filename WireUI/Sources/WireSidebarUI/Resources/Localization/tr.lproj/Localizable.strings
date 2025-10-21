@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "Dosyalar";
+"sidebar.files.all_files.title" = "Hepsi";
+
 "sidebar.contacts.title" = "Kişiler";
 "sidebar.contacts.connect.title" = "Bağlan";
 

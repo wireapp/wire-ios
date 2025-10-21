@@ -16,51 +16,51 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"backup.export.action" = "Back Up Now";
-"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
+"backup.export.action" = "Realizar copia de seguridad ahora";
+"backup.export.description" = "Crea una copia de seguridad para preservar tu historial de conversaciones. De esta manera, puedes restaurar el historial si pierdes tu dispositivo o cambias a uno nuevo. El archivo de copia de seguridad no está cifrado de extremo a extremo. Por favor, guárdalo de forma segura.";
 
-"backup.import.action" = "Restore from Backup";
-"backup.import.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
+"backup.import.action" = "Restaurar desde la copia de seguridad";
+"backup.import.description" = "El historial existente en este dispositivo permanece y será completado por la nueva copia de seguridad. Puedes restaurar el historial de todos tus dispositivos y diferentes plataformas, pero no de otra cuenta.";
 
 "exportBackup.title" = "Establecer contraseña";
-"exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";
-"exportBackup.button" = "Back Up Now";
-"exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
-"exportBackup.setBackupPassword.placeholder" = "Enter password";
-"exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"exportBackup.description" = "La copia de seguridad se comprimirá. Si usas una contraseña, Wire también cifrará el archivo de copia de seguridad. Asegúrate de guardar la contraseña en un lugar seguro.";
+"exportBackup.button" = "Realizar copia de seguridad ahora";
+"exportBackup.setBackupPassword.title" = "Contraseña (OPCIONAL)";
+"exportBackup.setBackupPassword.placeholder" = "Introducir contraseña";
+"exportBackup.setBackupPassword.rules" = "Utilice al menos 8 caracteres, con una letra minúscula, una letra mayúscula, un número y un carácter especial.";
 
 "exportBackup.cancel.title" = "Cancelar";
 "exportBackup.errorAlert.title" = "Algo salió mal";
-"exportBackup.errorAlert.message" = "The backup could not be created. Please try again or contact Wire support.";
+"exportBackup.errorAlert.message" = "No se pudo crear la copia de seguridad. Por favor, inténtalo de nuevo o contacta con el soporte de Wire.";
 "exportBackup.errorAlert.ok" = "OK";
 
-"exportBackup.creatingBackup.title" = "Creating Backup";
-"exportBackup.creatingBackup.saving" = "Saving conversation history…";
-"exportBackup.creatingBackup.success" = "Backup successfully created.";
-"exportBackup.creatingBackup.saveButton.title" = "Save File";
+"exportBackup.creatingBackup.title" = "Creando copia de seguridad";
+"exportBackup.creatingBackup.saving" = "Guardando historial de conversación…";
+"exportBackup.creatingBackup.success" = "Copia de seguridad creada correctamente.";
+"exportBackup.creatingBackup.saveButton.title" = "Guardar archivo";
 
 "importBackup.cancel.title" = "Cancelar";
 
-"importBackup.overwriteConfirmation.title" = "File overwrites your history";
-"importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
+"importBackup.overwriteConfirmation.title" = "El archivo sobrescribe tu historial";
+"importBackup.overwriteConfirmation.message" = "El contenido de la copia de seguridad reemplazará el historial de conversaciones actual en este dispositivo.";
 "importBackup.overwriteConfirmation.cancel" = "Cancelar";
-"importBackup.overwriteConfirmation.proceed" = "Proceed";
+"importBackup.overwriteConfirmation.proceed" = "Continuar";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.message" = "Your history is restored.";
+"importBackup.alert.success.message" = "Tu historial ha sido restaurado.";
 "importBackup.alert.genericError.title" = "Algo salió mal";
-"importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
-"importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
-"importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
-"importBackup.alert.wrongFileError.title" = "Wrong backup file";
-"importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+"importBackup.alert.genericError.message" = "No se ha podido restaurar tu historial. Por favor, inténtalo de nuevo o ponte en contacto con el servicio de atención al cliente de Wire.";
+"importBackup.alert.incompatibleBackupError.title" = "Copia de seguridad incompatible";
+"importBackup.alert.incompatibleBackupError.message" = "Esta copia de seguridad fue creada por una versión más reciente o obsoleta de Wire y no puede ser restaurada aquí.";
+"importBackup.alert.wrongFileError.title" = "Copia de seguridad incorrecta";
+"importBackup.alert.wrongFileError.message" = "No se puede restaurar el historial de una cuenta diferente.";
 
-"importBackup.enterPassword.title" = "Enter password";
-"importBackup.enterPassword.description" = "This backup is password protected.";
+"importBackup.enterPassword.title" = "Introduzca la contraseña";
+"importBackup.enterPassword.description" = "Esta copia de seguridad está protegida por contraseña.";
 "importBackup.enterPassword.textField.title" = "Contraseña";
-"importBackup.enterPassword.textField.placeholder" = "Enter password";
-"importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
+"importBackup.enterPassword.textField.placeholder" = "Introduzca la contraseña";
+"importBackup.enterPassword.wrongPassword" = "Contraseña incorrecta. Por favor verifique y vuelva a intentarlo";
 "importBackup.enterPassword.button.title" = "Continuar";
 
-"importBackup.restoringHistory.title" = "Restoring history…";
-"importBackup.restoringHistory.message" = "Loading conversations…";
+"importBackup.restoringHistory.title" = "Restaurando historial…";
+"importBackup.restoringHistory.message" = "Cargando conversaciones…";
