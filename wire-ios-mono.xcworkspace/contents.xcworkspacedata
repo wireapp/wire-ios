@@ -71,6 +71,9 @@
          location = "group:stale.yml">
       </FileRef>
       <FileRef
+         location = "group:merge_queue.yml">
+      </FileRef>
+      <FileRef
          location = "group:swiftformat.yml">
       </FileRef>
       <FileRef
