@@ -275,7 +275,7 @@ final class ZClientViewController: UIViewController {
                 switch featureState.name {
                 case .cells where featureState.isEnabled:
                     guard mainTabBarController.filesUI == nil else { break }
-                    mainTabBarController.filesUI = wireCellsFactory.makeFilesBrowserView()
+                    mainTabBarController.filesUI = wireMessagingFactory.makeFilesBrowserView()
                 default:
                     break
                 }
@@ -374,7 +374,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
         if userSession.isWireCellsEnabled {
-            let filesBrowserView = wireCellsFactory.makeFilesBrowserView()
+            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
             mainTabBarController.filesUI = filesBrowserView
         }
 
