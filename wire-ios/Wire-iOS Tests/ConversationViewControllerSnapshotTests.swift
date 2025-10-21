@@ -210,7 +210,7 @@ extension ConversationViewControllerSnapshotTests {
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
             getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
-            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
 

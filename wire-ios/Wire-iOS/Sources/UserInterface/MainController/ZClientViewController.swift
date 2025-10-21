@@ -103,7 +103,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         mediaPlaybackManager: mediaPlaybackManager,
-        wireCellsFactory: wireCellsFactory
+        wireMessagingFactory: wireMessagingFactory
     )
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
@@ -186,7 +186,7 @@ final class ZClientViewController: UIViewController {
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
-    let wireCellsFactory: any WireCellsFactoryProtocol
+    let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -201,14 +201,14 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
 
