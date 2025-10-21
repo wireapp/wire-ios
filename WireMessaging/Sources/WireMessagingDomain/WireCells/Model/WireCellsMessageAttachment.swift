@@ -54,6 +54,15 @@ public struct WireCellsMessageAttachment: Hashable, Sendable {
             }
         }
 
+        package var normalizedLoudness: Data? {
+            switch self {
+            case let .audio(_, normalizedLoudness):
+                return normalizedLoudness
+            default:
+                return nil
+            }
+        }
+
     }
 
     /// The `nodeID` of the attachment.
