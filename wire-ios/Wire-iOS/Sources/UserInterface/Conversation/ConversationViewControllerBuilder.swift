@@ -31,7 +31,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
-    var wireCellsFactory: any WireCellsFactoryProtocol
+    var wireMessagingFactory: any WireMessagingFactoryProtocol
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,
@@ -46,7 +46,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileUIBuilder,
             mediaPlaybackManager: mediaPlaybackManager,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

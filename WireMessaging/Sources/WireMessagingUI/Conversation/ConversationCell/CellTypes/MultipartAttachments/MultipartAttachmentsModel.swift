@@ -16,12 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationCellModel: Hashable, Sendable {
+public import WireMessagingDomain
 
-    /// Used to group messages by time.
-    case timeDivider(TimeDividerModel)
+public struct MultipartAttachmentsModel: Hashable, Sendable {
 
-    /// Attachments for a a multipart message.
-    case multipartAttachments(MultipartAttachmentsModel)
+    let attachments: [WireCellsMessageAttachment]
+    let isSentBySelfUser: Bool
+    let isChatBubblesEnabled: Bool
+
+    public init(
+        attachments: [WireCellsMessageAttachment],
+        isSentBySelfUser: Bool,
+        isChatBubblesEnabled: Bool
+    ) {
+        self.attachments = attachments
+        self.isSentBySelfUser = isSentBySelfUser
+        self.isChatBubblesEnabled = isChatBubblesEnabled
+    }
 
 }
