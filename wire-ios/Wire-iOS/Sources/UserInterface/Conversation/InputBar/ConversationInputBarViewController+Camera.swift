@@ -181,7 +181,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         image.utType ?? .image
                     }
 
-                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                    if self.userSession.isWireCellsEnabled,
                        self.conversation.isCellsEnabled {
                         self.uploadDraft(data: dataToSend, type: utType)
                     } else {
@@ -307,7 +307,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    if self.userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn,
+                    if self.userSession.isWireCellsEnabled,
                        self.conversation.isCellsEnabled {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
