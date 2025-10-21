@@ -36,6 +36,8 @@ protocol WireMessagingFactoryProtocol {
     @MainActor
     func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController
     @MainActor
+    func makeFilesBrowserView() -> UIViewController
+    @MainActor
     func makeAttachmentsPreviewView(
         attachments: [WireCellsMessageAttachment],
         alignment: HorizontalAlignment

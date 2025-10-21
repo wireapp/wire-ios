@@ -1848,6 +1848,25 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
+    // MARK: - makeFilesBrowserView
+
+    var makeFilesBrowserView_Invocations: [Void] = []
+    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
+    var makeFilesBrowserView_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesBrowserView() -> UIViewController {
+        makeFilesBrowserView_Invocations.append(())
+
+        if let mock = makeFilesBrowserView_MockMethod {
+            return mock()
+        } else if let mock = makeFilesBrowserView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesBrowserView`")
+        }
+    }
+
     // MARK: - makeAttachmentsPreviewView
 
     var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []

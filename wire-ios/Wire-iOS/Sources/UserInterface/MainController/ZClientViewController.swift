@@ -17,6 +17,7 @@
 //
 
 import avs
+import Combine
 import SwiftUI
 import UIKit
 import WireAccountImageUI
@@ -69,7 +70,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireCellsEnabled: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+        isWireCellsEnabled: userSession.isWireCellsEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
@@ -92,7 +93,7 @@ final class ZClientViewController: UIViewController {
     lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
             showMeetings: DeveloperFlag.wireMeetings.isOn,
-            showFiles: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+            showFiles: userSession.isWireCellsEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
@@ -174,6 +175,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
     var userDidViewSelfProfileToken: SelfUnregisteringNotificationCenterToken?
+    private var subscription: AnyCancellable?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -249,6 +251,7 @@ final class ZClientViewController: UIViewController {
                 self?.sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
             }
 
+        observeCellsFeatureChange()
         createLegalHoldDisclosureController()
     }
 
@@ -259,6 +262,24 @@ final class ZClientViewController: UIViewController {
 
     deinit {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
+    }
+
+    /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
+    /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
+    private func observeCellsFeatureChange() {
+        subscription = userSession.clientSessionComponent?.featureConfigRepository
+            .observeFeatureStates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] featureState in
+                guard let self else { return }
+                switch featureState.name {
+                case .cells where featureState.isEnabled:
+                    guard mainTabBarController.filesUI == nil else { break }
+                    mainTabBarController.filesUI = wireMessagingFactory.makeFilesBrowserView()
+                default:
+                    break
+                }
+            }
     }
 
     @discardableResult
@@ -352,8 +373,9 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
-        if DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled {
-            mainTabBarController.filesUI = UIHostingController(rootView: AllFilesView())
+        if userSession.isWireCellsEnabled {
+            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+            mainTabBarController.filesUI = filesBrowserView
         }
 
         mainTabBarController.delegate = mainCoordinator
