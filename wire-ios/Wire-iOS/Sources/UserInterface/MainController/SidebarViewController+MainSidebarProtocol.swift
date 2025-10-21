@@ -33,6 +33,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .unread: self = .unread
         case .mentions: self = .mentions
         case .meetings: self = .meetings
+        case .files: self = .files
         case .replies: self = .replies
         case .drafts: self = .drafts
         case .folders: self = .folders
@@ -51,6 +52,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .unread: .unread
         case .mentions: .mentions
         case .meetings: .meetings
+        case .files: .files
         case .replies: .replies
         case .drafts: .drafts
         case .folders: .folders

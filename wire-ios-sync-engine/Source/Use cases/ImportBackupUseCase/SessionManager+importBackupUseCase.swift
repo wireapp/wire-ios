@@ -19,6 +19,7 @@
 public import Foundation
 
 import WireFoundation
+import WireUtilitiesPackage
 
 public extension SessionManager {
 
