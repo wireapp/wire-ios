@@ -124,7 +124,7 @@
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
-"conversation.wireCells.files.search.title" = "Search files and folders";
+"conversation.wireCells.files.search.title" = "Search files";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
