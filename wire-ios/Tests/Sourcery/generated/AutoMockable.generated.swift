@@ -1870,10 +1870,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeConversationCellProvider
 
     var makeConversationCellProviderInsets_Invocations: [() -> ConversationCellInsets] = []
-    var makeConversationCellProviderInsets_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProvider)?
-    var makeConversationCellProviderInsets_MockValue: ConversationCellProvider?
+    var makeConversationCellProviderInsets_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol)?
+    var makeConversationCellProviderInsets_MockValue: ConversationCellProviderProtocol?
 
-    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider {
+    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol {
         makeConversationCellProviderInsets_Invocations.append(insets)
 
         if let mock = makeConversationCellProviderInsets_MockMethod {

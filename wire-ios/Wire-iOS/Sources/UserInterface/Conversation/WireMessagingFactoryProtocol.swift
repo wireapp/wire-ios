@@ -40,7 +40,9 @@ protocol WireMessagingFactoryProtocol {
         attachments: [WireCellsMessageAttachment],
         alignment: HorizontalAlignment
     ) -> UIViewController
-    func makeConversationCellProvider(insets: @escaping () -> ConversationCellInsets) -> ConversationCellProvider
+    func makeConversationCellProvider(
+        insets: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProviderProtocol
 
 }
 
@@ -56,6 +58,16 @@ protocol ConversationCellProviderProtocol {
 
 }
 
-extension WireMessagingFactory: WireMessagingFactoryProtocol {}
+extension WireMessagingFactory: WireMessagingFactoryProtocol {
+
+    func makeConversationCellProvider(
+        insets: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProviderProtocol {
+        // swiftformat:disable:next redundantProperty
+        let provider: ConversationCellProvider = makeConversationCellProvider(insets: insets)
+        return provider
+    }
+
+}
 
 extension ConversationCellProvider: ConversationCellProviderProtocol {}
