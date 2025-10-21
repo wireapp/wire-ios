@@ -386,7 +386,6 @@
 		882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */; };
 		882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */; };
 		882B86BE2E8441AA008A50CA /* RemoveCoreCryptoKeysUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */; };
-		884371642EB8DC50003DA083 /* ZMMessage+Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884371632EB8DC49003DA083 /* ZMMessage+Backup.swift */; };
 		884371662EB8E9F3003DA083 /* store2-132-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
@@ -1154,7 +1153,6 @@
 		882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCaseTests.swift; sourceTree = "<group>"; };
 		882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCase.swift; sourceTree = "<group>"; };
 		884371622EB8DB58003DA083 /* zmessaging2.132.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.132.0.xcdatamodel; sourceTree = "<group>"; };
-		884371632EB8DC49003DA083 /* ZMMessage+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Backup.swift"; sourceTree = "<group>"; };
 		884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-132-0.wiredatabase"; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };

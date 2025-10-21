@@ -24,14 +24,49 @@ import WireDomain
 struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
     /// The context to call `perform(schedule:_:)` on if needed.
-    let context: NSManagedObjectContext
-    let processor: any ConversationProtobufMessageProcessorProtocol
+    let backupContext: NSManagedObjectContext
+    let contextProvider: ContextProvider
+    let assetTransferStateResolver: AssetTransferStateResolverProtocol
+    var clientMessageEntityDescription: NSEntityDescription?
+    var assetMessageEntityDescription: NSEntityDescription?
+
+    init(
+        contextProvider: ContextProvider,
+        assetTransferStateResolver: AssetTransferStateResolverProtocol = AssetTransferStateResolver()
+    ) {
+        self.contextProvider = contextProvider
+        self.assetTransferStateResolver = assetTransferStateResolver
+        self.backupContext = contextProvider.newBackgroundContext()
+
+        setupBackupContext()
+        
+        clientMessageEntityDescription = NSEntityDescription.entity(
+            forEntityName: ZMClientMessage.entityName(),
+            in: backupContext
+        )
+        assetMessageEntityDescription = NSEntityDescription.entity(
+            forEntityName: ZMAssetClientMessage.entityName(),
+            in: backupContext
+        )
+    }
+
+    private func setupBackupContext() {
+
+        // Ensures imported data overwrites existing values without validation conflicts.
+        backupContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        // Prevents automatic UI context merges that could slow down the import.
+        backupContext.automaticallyMergesChangesFromParent = false
+
+        // Turns off undo manager (Core Data otherwise tracks diffs, which is expensive).
+        backupContext.undoManager = nil
+    }
 
     func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
-        try await context.perform { [context] in
-            let userCount = try context.count(for: ZMUser.fetchRequest())
-            let conversationCount = try context.count(for: ZMConversation.fetchRequest())
-            let messageCount = try context.count(for: ZMMessage.fetchRequest())
+        try await backupContext.perform { [backupContext] in
+            let userCount = try backupContext.count(for: ZMUser.fetchRequest())
+            let conversationCount = try backupContext.count(for: ZMConversation.fetchRequest())
+            let messageCount = try backupContext.count(for: ZMMessage.fetchRequest())
             return (userCount, conversationCount, messageCount)
         }
     }
