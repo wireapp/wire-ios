@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMTypeOfUser)
-public enum TypeOfUser: Int, CaseIterable, Sendable {
-    case regular
-    case app
-    case bot
-}
+typedef NS_ENUM(NSInteger, ZMTypeOfUser) {
+    ZMTypeOfUserUnknown = -1,
+    ZMTypeOfUserRegular,
+    ZMTypeOfUserApp,
+    ZMTypeOfUserBot
+} NS_SWIFT_NAME(TypeOfUser);

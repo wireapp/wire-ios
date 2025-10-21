@@ -17,6 +17,7 @@
 //
 
 #import <WireDataModel/ZMManagedObject.h>
+#import <WireDataModel/ZMTypeOfUser.h>
 @import WireUtilities;
 
 @class ZMConversation;
@@ -56,7 +57,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 /// Whether the user is a regular user, an app or a bot.
 
-@property (nonatomic, readonly, nullable) ZMTypeOfUser *type;
+@property (nonatomic) ZMTypeOfUser type;
 
 ///// Is YES if we can send a connection request to this user.
 @property (nonatomic, readonly) BOOL canBeConnected;
