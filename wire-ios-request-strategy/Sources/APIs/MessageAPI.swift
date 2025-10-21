@@ -418,4 +418,8 @@ class MessageAPIV11: MessageAPIV10 {
 
 final class MessageAPIV12: MessageAPIV11 {
     override var apiVersion: APIVersion { .v12 }
+
+    // TODO: new error: 409 out-of-sync
+    // Parse the response to get a list of users.
+
 }
