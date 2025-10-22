@@ -625,7 +625,7 @@ extension UserClientRequestStrategyTests {
 
 extension UserClientRequestStrategyTests {
 
-    func  payloadForClients() -> ZMTransportData {
+    func payloadForClients() -> ZMTransportData {
         let payload = [
             [
                 "id": UUID.create().transportString(),

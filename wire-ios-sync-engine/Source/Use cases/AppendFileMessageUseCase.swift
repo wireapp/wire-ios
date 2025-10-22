@@ -21,9 +21,9 @@ import WireDataModel
 import WireFoundation
 
 public protocol AppendFileMessageUseCaseProtocol {
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         with fileMetadata: ZMFileMetadata,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws
 }
 

@@ -45,7 +45,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     private let conversation: ZMConversation
     private var items: [Item] = []
     private let userSession: ZMUserSession
-    private var observerToken: Any! = nil
+    private var observerToken: Any!
 
     private let collectionViewLayout = UICollectionViewFlowLayout()
 

@@ -25,9 +25,9 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
     var observerToken: Any?
 
-    var sut: UserProfileUpdateStatus! = nil
+    var sut: UserProfileUpdateStatus!
 
-    fileprivate var observer: TestUserProfileUpdateObserver! = nil
+    fileprivate var observer: TestUserProfileUpdateObserver!
 
     fileprivate var newRequestObserver: OperationLoopNewRequestObserver!
 
