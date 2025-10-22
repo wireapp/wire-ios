@@ -23,13 +23,8 @@ import WireMainNavigationUI
 protocol ConnectViewControllerBuilderProtocol {
 
     /// Returns the view controller that displays the interface for connecting to other users or apps.
-    ///
-    /// - parameter isAppsTabVisible: If `true`, there will be the option to look for apps, if `false` only other users
-    /// can be searched for.
 
     @MainActor
-    func build(
-        isAppsTabVisible: Bool
-    ) async -> UIViewController
+    func build() async -> UIViewController
 
 }

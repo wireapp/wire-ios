@@ -48,13 +48,11 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     }
 
     @MainActor
-    func build(
-        isAppsTabVisible: Bool // TODO: delete
-    ) async -> UIViewController {
+    func build() async -> UIViewController {
         let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
         let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
         let rootViewController = StartUIViewController(
-            isAppsTabVisible: isAppsFeatureEnabled,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,

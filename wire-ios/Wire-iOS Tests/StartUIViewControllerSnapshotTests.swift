@@ -64,7 +64,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
-            isAppsTabVisible: true,
+            isAppsFeatureEnabled: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),

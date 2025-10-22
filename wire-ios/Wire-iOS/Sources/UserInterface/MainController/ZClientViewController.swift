@@ -439,9 +439,7 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
-            let isAppsTabVisible = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
-            let rootViewController = await connectBuilder.build(isAppsTabVisible: isAppsTabVisible)
+            let rootViewController = await connectBuilder.build()
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)

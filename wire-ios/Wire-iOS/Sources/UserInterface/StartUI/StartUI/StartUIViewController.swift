@@ -86,7 +86,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-    let isAppsTabVisible: Bool // TODO: rename `isAppsFeatureEnabled`
+    let isAppsFeatureEnabled: Bool
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -108,7 +108,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        isAppsTabVisible && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
@@ -118,14 +118,14 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
-        isAppsTabVisible: Bool,
+        isAppsFeatureEnabled: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
-        self.isAppsTabVisible = isAppsTabVisible
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
