@@ -28,7 +28,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     enum Kind {
         case smallImage
-        case largeImage(aspectRatio: Double, maxWidth: Double)
+        case largeImage(aspectRatio: Double, imageWidth: Double)
         case smallVideo
         case largeVideo(aspectRatio: Double)
         case smallDocument
@@ -79,9 +79,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
                 .smallImage
             } else {
                 if let size, size.width > 0, size.height > 0 {
-                    .largeImage(aspectRatio: size.width / size.height, maxWidth: size.width)
+                    .largeImage(aspectRatio: size.width / size.height, imageWidth: size.width)
                 } else {
-                    .largeImage(aspectRatio: 1, maxWidth: 200)
+                    .largeImage(aspectRatio: 1, imageWidth: 288)
                 }
             }
         case let .video(size, _):

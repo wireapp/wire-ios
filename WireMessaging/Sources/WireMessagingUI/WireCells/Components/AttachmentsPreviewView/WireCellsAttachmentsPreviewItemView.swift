@@ -24,6 +24,11 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 
 struct WireCellsAttachmentsPreviewItemView: View {
+
+    private enum Constants {
+        static let maxImageHeight: Double = 400
+    }
+
     @StateObject private var viewModel: WireCellsAttachmentsPreviewItemViewModel
 
     init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewItemViewModel) {
@@ -41,7 +46,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     noPreviewMessage: nil
                 )
                 .frame(width: 74, height: 74)
-            case let .largeImage(aspectRatio, maxWidth):
+            case let .largeImage(aspectRatio, imageWidth):
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
@@ -49,7 +54,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     noPreviewMessage: L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable
                 )
                 .aspectRatio(aspectRatio, contentMode: .fit)
-                .frame(idealWidth: 288, maxWidth: maxWidth)
+                .frame(idealWidth: min(288, imageWidth, Constants.maxImageHeight * aspectRatio))
             case .smallVideo:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
