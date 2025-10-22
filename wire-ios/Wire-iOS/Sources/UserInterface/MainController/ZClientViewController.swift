@@ -446,7 +446,8 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectBuilder.build())
+            let rootViewController = await connectBuilder.build()
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
