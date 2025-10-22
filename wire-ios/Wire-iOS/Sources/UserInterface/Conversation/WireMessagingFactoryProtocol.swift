@@ -21,9 +21,10 @@ import SwiftUI
 import UIKit
 import WireMessagingAssembly
 import WireMessagingDomain
+import WireMessagingUI
 
 // sourcery: AutoMockable
-protocol WireCellsFactoryProtocol {
+protocol WireMessagingFactoryProtocol {
 
     func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol
     func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol
@@ -35,10 +36,40 @@ protocol WireCellsFactoryProtocol {
     @MainActor
     func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController
     @MainActor
+    func makeFilesBrowserView() -> UIViewController
+    @MainActor
     func makeAttachmentsPreviewView(
         attachments: [WireCellsMessageAttachment],
         alignment: HorizontalAlignment
     ) -> UIViewController
+    func makeConversationCellProvider(
+        insetsProvider: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProviderProtocol
+
 }
 
-extension WireCellsFactory: WireCellsFactoryProtocol {}
+// sourcery: AutoMockable
+protocol ConversationCellProviderProtocol {
+
+    @MainActor
+    func provideCell(
+        for model: ConversationCellModel,
+        tableView: UITableView,
+        indexPath: IndexPath
+    ) -> UITableViewCell
+
+}
+
+extension WireMessagingFactory: WireMessagingFactoryProtocol {
+
+    func makeConversationCellProvider(
+        insetsProvider: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProviderProtocol {
+        // swiftformat:disable:next redundantProperty
+        let provider: ConversationCellProvider = makeConversationCellProvider(insetsProvider: insetsProvider)
+        return provider
+    }
+
+}
+
+extension ConversationCellProvider: ConversationCellProviderProtocol {}

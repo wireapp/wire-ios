@@ -16,25 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
-import WireDesign
+import SwiftUI
 
-package final class FilesHostingController: UIHostingController<FilesView> {
+final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-    private typealias Strings = L10n.Localizable.Conversation.WireCells
-    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
-
-    private let viewModel: FilesViewModel
-
-    public init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
-        super.init(rootView: FilesView(viewModel: viewModel))
+    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets) {
+        contentConfiguration = UIHostingConfiguration {
+            content
+        }
+        .margins(.all, insets)
+        .minSize(width: 0, height: 0)
+        .background(.clear)
     }
 
-    @available(*, unavailable)
-    @MainActor @objc
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func prepareForReuse() {
+        contentConfiguration = nil
     }
 
 }

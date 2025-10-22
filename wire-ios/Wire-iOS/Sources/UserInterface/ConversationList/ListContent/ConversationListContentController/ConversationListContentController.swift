@@ -50,7 +50,7 @@ final class ConversationListContentController: UICollectionViewController {
     private var token: NSObjectProtocol?
 
     let userSession: UserSession
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     init<ConversationListCoordinator>(
         userSession: UserSession,
@@ -68,7 +68,7 @@ final class ConversationListContentController: UICollectionViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.zClientViewController = zClientViewController
-        self.wireCellsFactory = zClientViewController.wireCellsFactory
+        self.wireMessagingFactory = zClientViewController.wireMessagingFactory
 
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
@@ -445,7 +445,7 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
     }
 }
