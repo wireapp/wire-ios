@@ -185,7 +185,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         switch deletionType {
         case .everywhere:
             Task {
-                let deleteNodesUseCase = wireCellsFactory.makeDeleteNodesUseCase()
+                let deleteNodesUseCase = wireMessagingFactory.makeDeleteNodesUseCase()
                 do {
                     try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
                     WireLogger.conversation.info(

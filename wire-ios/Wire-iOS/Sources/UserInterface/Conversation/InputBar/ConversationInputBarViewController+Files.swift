@@ -51,7 +51,7 @@ extension ConversationInputBarViewController {
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
-        if userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
+        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
             for url in urls {
                 Task.detached { [uploadDraftUseCase] in
                     // We don't care about the result of the operation here as we will be observing changes.

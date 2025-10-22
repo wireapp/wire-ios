@@ -47,6 +47,7 @@ class BaseTest: ZMTBaseTest {
     var mockProteusService: MockProteusServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
     var lastEventIDRepository: LastEventIDRepository!
+    var apiVersion = WireTransport.APIVersion.v5
 
     override func setUp() async throws {
         try await super.setUp()
@@ -86,7 +87,7 @@ class BaseTest: ZMTBaseTest {
 
         saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: cachesDirectory)
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [])
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [], apiVersion: apiVersion)
         let registrationStatus = ClientRegistrationStatus(context: coreDataStack.syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
 

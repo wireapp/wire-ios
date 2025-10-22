@@ -68,7 +68,7 @@ struct SidebarViewControllerBuilder {
         // Configure unread filters visibility based on feature flag
         sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
         sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
-        sidebarViewController.showFiles = DeveloperFlag.wireCells.isOn || isWireCellsEnabled
+        sidebarViewController.showFiles = isWireCellsEnabled
 
         return sidebarViewController
     }
