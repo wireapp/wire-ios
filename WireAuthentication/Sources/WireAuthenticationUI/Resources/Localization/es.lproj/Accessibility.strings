@@ -16,5 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"account_type_selector.close.label" = "Close account selection";
-"create_personal_account.close.label" = "Close personal account creation";
+"account_type_selector.close.label" = "Cerrar selección de cuenta";
+"create_personal_account.close.label" = "Cerrar la creación de cuenta personal";

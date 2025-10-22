@@ -33,7 +33,7 @@ final class ConversationViewController: UIViewController {
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
-    let wireCellsFactory: WireCellsFactoryProtocol
+    let wireMessagingFactory: WireMessagingFactoryProtocol
     private(set) var wireCellsState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
@@ -143,7 +143,7 @@ final class ConversationViewController: UIViewController {
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
         getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
@@ -166,7 +166,7 @@ final class ConversationViewController: UIViewController {
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
-                wireCellsFactory: wireCellsFactory
+                wireMessagingFactory: wireMessagingFactory
             )
         }
 
@@ -179,7 +179,7 @@ final class ConversationViewController: UIViewController {
             userSession: userSession,
             classificationProvider: classificationProvider,
             networkStatusObservable: networkStatusObservable,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
 
         self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
@@ -196,7 +196,7 @@ final class ConversationViewController: UIViewController {
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
 
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
         self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
             conversation.cellsState
         }
@@ -445,7 +445,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn, conversation.isCellsEnabled {
+        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -870,7 +870,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
-        let filesView = wireCellsFactory
+        let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
                 isCellsStatePending: wireCellsState == .pending,

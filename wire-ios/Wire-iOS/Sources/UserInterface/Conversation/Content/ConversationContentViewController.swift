@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
@@ -94,7 +95,17 @@ final class ConversationContentViewController: UIViewController {
         cellDelegate: self,
         userSession: userSession,
         getUserByIDUseCase: GetUserByIdUseCase(),
-        wireCellsFactory: wireCellsFactory
+        wireMessagingFactory: wireMessagingFactory,
+        conversationCellProvider: wireMessagingFactory.makeConversationCellProvider(
+            insetsProvider: {
+                let margins = HorizontalMargins.conversationHorizontalMargins()
+                return ConversationCellInsets(
+                    legacy: .init(leading: margins.left, trailing: margins.right),
+                    leadingBubble: .init(leading: margins.left, trailing: margins.chatBubbleMinimumTrailing),
+                    trailingBubble: .init(leading: margins.chatBubbleMinimumLeading, trailing: margins.right)
+                )
+            }
+        )
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
@@ -123,7 +134,7 @@ final class ConversationContentViewController: UIViewController {
 
     private let logger: WireLogger
     private var accentColorChangeHandler: AccentColorChangeHandler?
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     init(
         conversation: ZMConversation,
@@ -133,7 +144,7 @@ final class ConversationContentViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -146,7 +157,7 @@ final class ConversationContentViewController: UIViewController {
             userID: userSession.selfUser.remoteIdentifier,
             storage: userDefaults
         )
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
 

@@ -33,7 +33,7 @@ final class ConversationPreviewViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.actionController = ConversationActionController(
@@ -49,7 +49,7 @@ final class ConversationPreviewViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
-            wireCellsFactory: wireCellsFactory
+            wireMessagingFactory: wireMessagingFactory
         )
         DeveloperToolsViewModel.context.currentConversation = conversation
 

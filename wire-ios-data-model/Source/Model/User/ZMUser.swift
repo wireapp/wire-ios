@@ -24,6 +24,10 @@ import WireUtilities
 
 extension ZMUser: UserType {
 
+    @NSManaged private var typeValue: Int16
+
+    private var typeKey: String { "typeValue" }
+
     /// Whether the user is a regular user, an app or a bot.
 
     public var type: TypeOfUser? {
@@ -39,8 +43,6 @@ extension ZMUser: UserType {
             didChangeValue(forKey: typeKey)
         }
     }
-
-    private var typeKey: String { "type" }
 
     @objc public var hasTeam: Bool {
         // Other users won't have a team object, but a teamIdentifier.
