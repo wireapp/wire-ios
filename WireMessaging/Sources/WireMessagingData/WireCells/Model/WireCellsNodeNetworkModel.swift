@@ -173,7 +173,7 @@ package struct PreviewDTO: Equatable, Hashable, Sendable {
             let urlString = value.preSignedGET?.url,
             let contentType = value.contentType,
             let url = URL(string: urlString),
-            let type = UTType(contentType),
+            let type = UTType(mimeType: contentType),
             type.conforms(to: .image) else
         {
             return nil

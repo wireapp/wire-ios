@@ -31,28 +31,25 @@ struct WireCellsAttachmentsPreviewItemView: View {
     }
 
     var body: some View {
-        Group {
+        HStack {
             switch viewModel.kind {
             case .smallImage:
-                WireCellsDocumentAttachmentPreview(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
+                WireCellsImageConversationAttachmentPreview(
+                    thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isError: viewModel.isError,
+                    noPreviewMessage: nil
                 )
-                .frame(height: 74)
-                .frame(idealWidth: 288)
+                .frame(width: 74, height: 74)
             case .largeImage(let aspectRatio, let maxWidth):
-                WireCellsDocumentAttachmentPreview(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
+                WireCellsImageConversationAttachmentPreview(
+                    thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isError: viewModel.isError,
+                    noPreviewMessage: L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable
                 )
-                .frame(height: 74)
-                .frame(idealWidth: 288)
+                .aspectRatio(aspectRatio, contentMode: .fit)
+                .frame(idealWidth: 288, maxWidth: maxWidth)
             case .smallVideo:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
@@ -105,6 +102,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 .frame(idealWidth: 288)
             }
         }
+        .contentShape(Rectangle()) // Constrains the tappable content area of the view.
         .onAppear(perform: refresh)
         .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)

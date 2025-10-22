@@ -32,7 +32,7 @@ package struct WireCellsAttachmentsPreviewView: View {
     }
 
     package var body: some View {
-        FlowLayout {
+        FlowLayout(alignment: viewModel.alignment) {
             ForEach(Array(viewModel.items.enumerated()), id: \.element) { index, _ in
                 itemRow(index: index)
             }
