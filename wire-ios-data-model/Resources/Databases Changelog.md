@@ -4,12 +4,14 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-### 2.131.0
+### 2.132.0
 
 * added `senderID` attribute on the Message entity
 * added `senderDomain` attribute on the Message entity
 * added `conversationID` attribute on the Message entity
 * added `conversationDomain` attribute on the Message entity
+
+### 2.131.0
 
 ### 2.130.0
 
