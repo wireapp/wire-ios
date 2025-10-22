@@ -86,6 +86,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
+    let isAppsFeatureEnabled: Bool
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -107,9 +108,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        SearchGroup.all.count > 1 &&
-            userSession.selfUser.canSeeServices &&
-            userSession.defaultProtocol != .mls
+        isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
@@ -119,12 +118,14 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
+        isAppsFeatureEnabled: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
