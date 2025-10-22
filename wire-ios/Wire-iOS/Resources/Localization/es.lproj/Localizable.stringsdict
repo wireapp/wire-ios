@@ -13,9 +13,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ could not be added to the group.</string>
+        <string>No se pudo agregar a %2$@ al grupo.</string>
         <key>other</key>
-        <string>%2$@ could not be added to the group.</string>
+        <string>No se pudo agregar a %2$@ al grupo.</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_never_get_message</key>
@@ -29,9 +29,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ won’t get your message.</string>
+        <string>%2$@ no recibirá tu mensaje.</string>
         <key>other</key>
-        <string>%2$@ won’t get your message.</string>
+        <string>%2$@ no recibirá tu mensaje.</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_get_message_later</key>
@@ -45,9 +45,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ will get your message later.</string>
+        <string>%2$@ recibirá tu mensaje más tarde.</string>
         <key>other</key>
-        <string>%2$@ will get your message later.</string>
+        <string>%2$@ recibirá tu mensaje más tarde.</string>
       </dict>
     </dict>
     <key>self.new_device_alert.title_prefix.devices</key>
@@ -184,9 +184,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>1 participant</string>
+        <string>1 participante</string>
         <key>other</key>
-        <string>%lu participants</string>
+        <string>%lu participantes</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.generic_message</key>
@@ -200,9 +200,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 message</string>
+        <string>1 mensaje</string>
         <key>other</key>
-        <string>%d messages</string>
+        <string>%d mensajes</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.mention</key>
@@ -216,9 +216,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 mention</string>
+        <string>1 mención</string>
         <key>other</key>
-        <string>%d mentions</string>
+        <string>%d menciones</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.reply</key>
@@ -232,9 +232,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 reply</string>
+        <string>1 respuesta</string>
         <key>other</key>
-        <string>%d replies</string>
+        <string>%d respuestas</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.knock</key>
@@ -264,7 +264,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 missed call</string>
+        <string>1 llamada perdida</string>
         <key>other</key>
         <string>%d llamadas perdidas</string>
       </dict>
@@ -282,7 +282,7 @@
         <key>one</key>
         <string>Llamada perdida</string>
         <key>other</key>
-        <string>Missed calls</string>
+        <string>Llamadas perdidas</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -296,9 +296,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ was removed from the conversation</string>
+        <string>Se eliminó a %2$@ del chat</string>
         <key>other</key>
-        <string>%2$@ were removed from the conversation</string>
+        <string>Se eliminaron a %2$@ del chat</string>
       </dict>
     </dict>
     <key>content.system.call.missed-call.groups</key>
@@ -314,13 +314,13 @@
         <key>one</key>
         <string>Llamada perdida de %2$@</string>
         <key>other</key>
-        <string>Missed calls from %2$@</string>
+        <string>Llamadas perdidas de %2$@</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>at least %#@character_count@</string>
+      <string>al menos %#@character_count@</string>
       <key>character_count</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
@@ -328,9 +328,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>one character</string>
+        <string>un carácter</string>
         <key>other</key>
-        <string>%d characters</string>
+        <string>%d caracteres</string>
       </dict>
     </dict>
     <key>registration.password.rules.lowercase</key>
@@ -344,9 +344,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>one lowercase letter</string>
+        <string>una letra minúscula</string>
         <key>other</key>
-        <string>%d lowercase letters</string>
+        <string>%d letras minúsculas</string>
       </dict>
     </dict>
     <key>registration.password.rules.uppercase</key>
@@ -360,9 +360,9 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>one</key>
-        <string>one capital letter</string>
+        <string>una letra mayúscula</string>
         <key>other</key>
-        <string>%d capital letters</string>
+        <string>%d mayúsculas</string>
       </dict>
     </dict>
     <key>registration.password.rules.number</key>
@@ -376,9 +376,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>a number</string>
+        <string>un número</string>
         <key>other</key>
-        <string>%d numbers</string>
+        <string>%d números</string>
       </dict>
     </dict>
     <key>registration.password.rules.special</key>
@@ -392,9 +392,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>a special character</string>
+        <string>un carácter especial</string>
         <key>other</key>
-        <string>%d special characters</string>
+        <string>%d caracteres especiales</string>
       </dict>
     </dict>
     <key>conversation.message.multipart_attachments.link</key>
@@ -408,9 +408,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 attached file</string>
+        <string>1 archivo adjunto</string>
         <key>other</key>
-        <string>%d attached files</string>
+        <string>%d archivos adjuntos</string>
       </dict>
     </dict>
   </dict>

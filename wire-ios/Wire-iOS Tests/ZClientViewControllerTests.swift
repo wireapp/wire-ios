@@ -40,7 +40,7 @@ final class ZClientViewControllerTests: XCTestCase {
             selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             userSession: userSession,
             trackingManager: nil,
-            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
 

@@ -16,20 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+public struct ConversationCellInsets {
 
-public extension ConversationCellModel {
+    public struct HorizontalInsets {
+        let leading: Double
+        let trailing: Double
 
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
-
-        case let .timeDivider(timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
+        public init(leading: Double, trailing: Double) {
+            self.leading = leading
+            self.trailing = trailing
         }
+    }
 
-        assertionFailure("unexpected cell: \(cell)")
+    let legacy: HorizontalInsets
+    let leadingBubble: HorizontalInsets
+    let trailingBubble: HorizontalInsets
+
+    public init(
+        legacy: HorizontalInsets,
+        leadingBubble: HorizontalInsets,
+        trailingBubble: HorizontalInsets
+    ) {
+        self.legacy = legacy
+        self.leadingBubble = leadingBubble
+        self.trailingBubble = trailingBubble
     }
 
 }

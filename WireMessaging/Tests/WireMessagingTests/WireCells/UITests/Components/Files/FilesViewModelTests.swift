@@ -274,7 +274,7 @@ final class FilesViewModelTests {
         await sut.reload()
 
         // then
-        #expect(sut.alert == expectedAlert)
+        #expect(sut.state == .error)
         #expect(sut.isLoading == false)
     }
 

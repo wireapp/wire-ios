@@ -517,8 +517,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             useInvertedIndices: useInvertedIndices,
             contentWidth: 0,
             userDefaults: mockUserDefaults,
-            isChatBubbleSimpleEnabled: false,
-            wireCellsFactory: MockWireCellsFactoryProtocol()
+            isChatBubbleSimpleEnabled: false
         )
 
         trackForMemoryLeaks(section)

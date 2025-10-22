@@ -24,5 +24,9 @@
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.pendingCells.title" = "Files are loading";
+"conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
+"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.error.title" = "Can't load files";
+"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
+"conversation.wireCells.files.error.reload" = "Reload";

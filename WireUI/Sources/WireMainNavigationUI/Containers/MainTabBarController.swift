@@ -77,7 +77,8 @@ public final class MainTabBarController<
     private weak var archiveNavigationController: UINavigationController!
     private weak var meetingsNavigationController: UINavigationController!
     private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController!
+    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire cells is
+    // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
     private weak var _filesUI: FilesUI?
@@ -110,9 +111,11 @@ public final class MainTabBarController<
         conversationListNavigationController.navigationBar.isTranslucent = false
         self.conversationListNavigationController = conversationListNavigationController
 
-        let filesNavigationController = UINavigationController()
-        filesNavigationController.navigationBar.isTranslucent = false
-        self.filesNavigationController = filesNavigationController
+        if showFiles {
+            let filesNavigationController = UINavigationController()
+            filesNavigationController.navigationBar.isTranslucent = false
+            self.filesNavigationController = filesNavigationController
+        }
 
         let archiveNavigationController = UINavigationController()
         archiveNavigationController.navigationBar.isTranslucent = false
@@ -132,7 +135,7 @@ public final class MainTabBarController<
             settingsNavigationController
         ]
 
-        if showFiles {
+        if showFiles, let filesNavigationController {
             tabs.insert(filesNavigationController, at: 1)
         }
 
@@ -222,23 +225,7 @@ public final class MainTabBarController<
                 settingsNavigationController.tabBarItem = tabBarItem
 
             case .files:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.files.title", bundle: .module),
-                    image: .init(systemName: "rectangle.stack"),
-                    selectedImage: .init(systemName: "rectangle.stack.fill")
-                )
-                tabBarItem.accessibilityIdentifier = "bottomBarFilesButton"
-                tabBarItem.accessibilityLabel = String(
-                    localized: "tabBar.files.description",
-                    table: "Accessibility",
-                    bundle: .module
-                )
-                tabBarItem.accessibilityHint = String(
-                    localized: "tabBar.files.hint",
-                    table: "Accessibility",
-                    bundle: .module
-                )
-                filesNavigationController.tabBarItem = tabBarItem
+                setupFilesTabBarItem()
             }
         }
         selectedContent = .conversations
@@ -319,15 +306,45 @@ public final class MainTabBarController<
         settingsNavigationController.view.layoutIfNeeded()
     }
 
+    // MARK: - Files
+
     private func setFilesUI(
         _ filesUI: UIViewController?,
         animated: Bool
     ) {
+        if filesNavigationController == nil {
+            let filesNavigationController = UINavigationController()
+            filesNavigationController.navigationBar.isTranslucent = false
+            self.filesNavigationController = filesNavigationController
+            viewControllers?.insert(filesNavigationController, at: 1)
+            setupFilesTabBarItem()
+        }
+
         _filesUI = filesUI
 
         let viewControllers = [filesUI].compactMap(\.self)
-        filesNavigationController.setViewControllers(viewControllers, animated: animated)
-        filesNavigationController.view.layoutIfNeeded()
+        filesNavigationController?.setViewControllers(viewControllers, animated: animated)
+        filesNavigationController?.view.layoutIfNeeded()
+    }
+
+    private func setupFilesTabBarItem() {
+        let tabBarItem = UITabBarItem(
+            title: String(localized: "tabBar.files.title", bundle: .module),
+            image: .init(systemName: "rectangle.stack"),
+            selectedImage: .init(systemName: "rectangle.stack.fill")
+        )
+        tabBarItem.accessibilityIdentifier = "bottomBarFilesButton"
+        tabBarItem.accessibilityLabel = String(
+            localized: "tabBar.files.description",
+            table: "Accessibility",
+            bundle: .module
+        )
+        tabBarItem.accessibilityHint = String(
+            localized: "tabBar.files.hint",
+            table: "Accessibility",
+            bundle: .module
+        )
+        filesNavigationController?.tabBarItem = tabBarItem
     }
 }
 
