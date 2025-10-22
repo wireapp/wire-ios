@@ -293,11 +293,11 @@ final class CallViewController: UIViewController {
     private func acceptDegradedCall() {
         guard let userSession = userSession as? ZMUserSession else { return }
 
-        userSession.enqueue({
+        userSession.enqueue {
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
-        }, completionHandler: {
+        } completionHandler: {
             self.conversation?.joinCall()
-        })
+        }
     }
 
     @available(*, unavailable)

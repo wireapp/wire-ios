@@ -22,9 +22,9 @@ import WireDataModel
 
 public protocol AppendLocationMessagekUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         withLocationData locationData: LocationData,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws
 
 }

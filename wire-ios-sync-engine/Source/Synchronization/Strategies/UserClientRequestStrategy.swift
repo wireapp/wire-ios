@@ -41,10 +41,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     weak var clientRegistrationStatus: ZMClientRegistrationStatus?
     weak var clientUpdateStatus: ClientUpdateStatus?
 
-    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
-    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
-    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
+    fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync!
+    fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync!
+    fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync!
+    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync!
     fileprivate var didRetryUpdatingCapabilities: Bool = false
     let prekeyGenerator: PrekeyGenerator
 

@@ -241,8 +241,10 @@ extension MockUser {
 
             if let providerIdentifier,
                let serviceIdentifier {
-                payload["service"] = ["provider": providerIdentifier,
-                                      "id": serviceIdentifier]
+                payload["service"] = [
+                    "provider": providerIdentifier,
+                    "id": serviceIdentifier
+                ]
             }
 
             if let team = memberships?.first?.team {

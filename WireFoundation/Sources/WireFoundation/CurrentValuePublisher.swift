@@ -43,4 +43,5 @@ public final class CurrentValuePublisher<Output>: Publisher {
     public func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, Output == S.Input {
         subject.receive(subscriber: subscriber)
     }
+
 }

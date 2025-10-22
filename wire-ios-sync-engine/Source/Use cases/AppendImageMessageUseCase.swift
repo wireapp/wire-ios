@@ -23,9 +23,9 @@ import WireDataModel
 
 public protocol AppendImageMessageUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke(
         image: SendableImage,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws
 }
 

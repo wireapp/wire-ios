@@ -74,7 +74,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?({})
+        sut.scheduledPostCallAction? {}
         XCTAssertTrue(executed)
     }
 
