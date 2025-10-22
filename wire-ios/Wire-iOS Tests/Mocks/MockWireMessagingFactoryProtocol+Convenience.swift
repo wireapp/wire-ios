@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension MockWireCellsFactoryProtocol {
+extension MockWireMessagingFactoryProtocol {
 
-    static func makeDefault() -> MockWireCellsFactoryProtocol {
-        let mock = MockWireCellsFactoryProtocol()
+    static func makeDefault() -> MockWireMessagingFactoryProtocol {
+        let mock = MockWireMessagingFactoryProtocol()
         mock.makeClearPublishedDraftsUseCaseCellName_MockValue = WireCellsClearPublishedDraftsUseCaseProtocolMock()
         mock.makeDeleteDraftUseCaseCellName_MockValue = WireCellsDeleteDraftUseCaseProtocolMock()
         mock.makeObserveDraftsUseCaseCellName_MockValue = WireCellsObserveDraftsUseCaseProtocolMock()
         mock.makePublishDraftsUseCaseCellName_MockValue = WireCellsPublishDraftsUseCaseProtocolMock()
         mock.makeRetryUploadDraftUseCaseCellName_MockValue = WireCellsRetryUploadDraftUseCaseProtocolMock()
         mock.makeUploadDraftUseCaseCellName_MockValue = WireCellsUploadDraftUseCaseProtocolMock()
+        mock.makeConversationCellProviderInsetsProvider_MockValue = MockConversationCellProviderProtocol()
         return mock
     }
 
