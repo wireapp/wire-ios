@@ -368,6 +368,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (Standard)";
+"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien zu verwalten. Verwenden Sie Ordner, Tags und Filter, um effizienter zu arbeiten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -602,6 +604,8 @@
 "content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
 "content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
 "content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
 
@@ -664,6 +668,7 @@
 "content.system.session_reset.self" = " Sie konnten einige Ihrer Nachrichten nicht entschlüsseln, haben das Problem aber gelöst. Dies betraf alle Unterhaltungen.";
 
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";

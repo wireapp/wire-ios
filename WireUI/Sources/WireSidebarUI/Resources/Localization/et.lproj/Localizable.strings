@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "Failid";
+"sidebar.files.all_files.title" = "Kõik";
+
 "sidebar.contacts.title" = "Kontaktid";
 "sidebar.contacts.connect.title" = "Lisa kontakt";
 

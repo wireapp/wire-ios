@@ -16,23 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.legalHold.title" = "Legal hold";
+"sidebar.legalHold.title" = "Retención legal";
 
 "sidebar.conversation_filter.title" = "Conversaciones";
 "sidebar.conversation_filter.all.title" = "Todas";
 "sidebar.conversation_filter.favorites.title" = "Favoritos";
 "sidebar.conversation_filter.groups.title" = "Grupos";
-"sidebar.conversation_filter.channels.title" = "Channels";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
-"sidebar.conversation_filter.unread.title" = "Unread";
-"sidebar.conversation_filter.mentions.title" = "Mentions";
-"sidebar.conversation_filter.replies.title" = "Replies";
-"sidebar.conversation_filter.drafts.title" = "Drafts";
-"sidebar.conversation_filter.folders.title" = "Folders";
-"sidebar.conversation_filter.archived.title" = "Archivar";
+"sidebar.conversation_filter.channels.title" = "Canales";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "Conversaciones 1:1";
+"sidebar.conversation_filter.unread.title" = "No leído";
+"sidebar.conversation_filter.mentions.title" = "Menciones";
+"sidebar.conversation_filter.replies.title" = "Respuestas";
+"sidebar.conversation_filter.drafts.title" = "Borradores";
+"sidebar.conversation_filter.folders.title" = "Carpetas";
+"sidebar.conversation_filter.archived.title" = "Archivo";
 
-"sidebar.meetings.title" = "Meetings";
-"sidebar.meetings.all_meetings.title" = "All Meetings";
+"sidebar.meetings.title" = "Reuniones";
+"sidebar.meetings.all_meetings.title" = "Todas las reuniones";
+
+"sidebar.files.title" = "Ficheros";
+"sidebar.files.all_files.title" = "Todas";
 
 "sidebar.contacts.title" = "Contactos";
 "sidebar.contacts.connect.title" = "Conectar";
