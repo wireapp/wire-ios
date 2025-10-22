@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDomain
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireSyncEngine
@@ -36,7 +37,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        isAppsFeatureEnabled: Bool = true
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
@@ -45,8 +47,12 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
-    func build() -> UIViewController {
+    @MainActor
+    func build() async -> UIViewController {
+        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
+        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
         let rootViewController = StartUIViewController(
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,

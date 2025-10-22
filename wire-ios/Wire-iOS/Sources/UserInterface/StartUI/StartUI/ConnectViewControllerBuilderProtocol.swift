@@ -21,6 +21,10 @@ import WireMainNavigationUI
 
 // sourcery: AutoMockable
 protocol ConnectViewControllerBuilderProtocol {
+
+    /// Returns the view controller that displays the interface for connecting to other users or apps.
+
     @MainActor
-    func build() -> UIViewController
+    func build() async -> UIViewController
+
 }
