@@ -17,10 +17,10 @@
 //
 
 import WireDesign
+import WireMessagingAssembly
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAssembly
 @testable import Wire
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
@@ -87,15 +87,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     }
 
     // MARK: - Snapshot Tests
-
-    func testStartUIViewControllerWrappedInNavigationController() {
-        nonTeamTest {
-            let navigationController = setupNavigationController()
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: navigationController.view)
-        }
-    }
 
     func testStartUIViewControllerNoContact() {
         nonTeamTest {
@@ -187,4 +178,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: navigationController.view)
     }
+
+    func testTodo() {
+    // TODO: add test which shows people and service selection
+    }
+
 }

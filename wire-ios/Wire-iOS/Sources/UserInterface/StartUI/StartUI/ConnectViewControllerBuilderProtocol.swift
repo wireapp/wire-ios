@@ -30,6 +30,6 @@ protocol ConnectViewControllerBuilderProtocol {
     @MainActor
     func build(
         isAppsTabVisible: Bool
-    ) -> UIViewController
+    ) async -> UIViewController
 
 }

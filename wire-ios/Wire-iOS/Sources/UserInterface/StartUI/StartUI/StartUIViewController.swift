@@ -86,7 +86,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-    let isAppsTabVisible: Bool
+    let isAppsTabVisible: Bool // TODO: rename `isAppsFeatureEnabled`
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator

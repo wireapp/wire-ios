@@ -274,15 +274,15 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var buildIsAppsTabVisible_Invocations: [Bool] = []
-    var buildIsAppsTabVisible_MockMethod: ((Bool) -> UIViewController)?
+    var buildIsAppsTabVisible_MockMethod: ((Bool) async -> UIViewController)?
     var buildIsAppsTabVisible_MockValue: UIViewController?
 
     @MainActor
-    func build(isAppsTabVisible: Bool) -> UIViewController {
+    func build(isAppsTabVisible: Bool) async -> UIViewController {
         buildIsAppsTabVisible_Invocations.append(isAppsTabVisible)
 
         if let mock = buildIsAppsTabVisible_MockMethod {
-            return mock(isAppsTabVisible)
+            return await mock(isAppsTabVisible)
         } else if let mock = buildIsAppsTabVisible_MockValue {
             return mock
         } else {
