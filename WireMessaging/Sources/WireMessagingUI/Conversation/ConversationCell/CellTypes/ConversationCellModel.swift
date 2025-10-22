@@ -21,4 +21,7 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// Used to group messages by time.
     case timeDivider(TimeDividerModel)
 
+    /// Attachments for a a multipart message.
+    case multipartAttachments(MultipartAttachmentsModel)
+
 }

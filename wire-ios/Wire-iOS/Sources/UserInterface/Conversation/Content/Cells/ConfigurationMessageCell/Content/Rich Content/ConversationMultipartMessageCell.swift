@@ -23,108 +23,6 @@ import WireDesign
 import WireMessagingDomain
 import WireMessagingUI
 
-final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
-
-    struct Configuration {
-        var attachments: [MultipartMessageData.Attachment]
-        let alignment: HorizontalAlignment
-        let factory: WireCellsFactoryProtocol
-    }
-
-    private var containerView = UIView()
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-    weak var actionController: ConversationMessageActionController?
-    var isSelected: Bool = false
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubview()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func configureSubview() {
-        containerView.backgroundColor = .clear
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(containerView)
-    }
-
-    private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let constraints = [
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            containerView.trailingAnchor.constraint(
-                equalTo: trailingAnchor,
-                constant: -margins.right
-            )
-        ]
-
-        NSLayoutConstraint.activate([
-            // containerView
-            containerView.topAnchor.constraint(equalTo: topAnchor),
-            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-        ])
-
-        NSLayoutConstraint.activate(constraints)
-    }
-
-    func configure(
-        with object: Configuration,
-        animated: Bool
-    ) {
-
-        let attachments = object.attachments.map {
-            WireCellsMessageAttachment(
-                nodeID: $0.nodeID,
-                contentType: $0.contentType,
-                initialName: $0.initialName,
-                initialSize: $0.initialSize,
-                initialMetadata: nil
-            )
-        }
-
-        let viewController = object.factory.makeAttachmentsPreviewView(
-            attachments: attachments,
-            alignment: object.alignment
-        )
-        setupWireCellsAttachmentsView(viewController: viewController)
-    }
-
-    private func setupWireCellsAttachmentsView(viewController: UIViewController) {
-        let view: UIView = viewController.view
-        containerView.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: containerView.topAnchor),
-            view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-        ])
-
-    }
-
-    override var tintColor: UIColor! {
-        didSet {
-            containerView.tintColor = tintColor
-        }
-    }
-
-    var selectionRect: CGRect {
-        containerView.bounds
-    }
-
-    func prepareForReuse() {
-        containerView.removeSubviews()
-    }
-}
-
 final class ConversationMultipartMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMultipartMessageCell
 
@@ -140,16 +38,58 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
     let accessibilityLabel: String? = nil
     var supportsActions: Bool = true
 
+    private let model: MultipartAttachmentsModel
+
+    @MainActor var conversationCellModel: ConversationCellModel? {
+        .multipartAttachments(model)
+    }
+
     init(
         multipartMessage: MultipartMessageData,
         isSimpleChatBubblesEnabled: Bool,
-        isSentBySelfUser: Bool,
-        wireCellsFactory: WireCellsFactoryProtocol
+        isSentBySelfUser: Bool
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
-            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading,
-            factory: wireCellsFactory
+            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading
         )
+
+        let attachments = multipartMessage.attachments.map {
+            WireCellsMessageAttachment(
+                nodeID: $0.nodeID,
+                contentType: $0.contentType,
+                initialName: $0.initialName,
+                initialSize: $0.initialSize,
+                initialMetadata: nil
+            )
+        }
+
+        self.model = MultipartAttachmentsModel(
+            attachments: attachments,
+            isSentBySelfUser: isSentBySelfUser,
+            isChatBubblesEnabled: isSimpleChatBubblesEnabled
+        )
+
     }
+}
+
+// This cell is not used. It exists only to fulfill protocol requirements of
+// `ConversationMultipartMessageCellDescription`. Instead, for multipart cells, we use SwiftUI views.
+final class ConversationMultipartMessageCell: UIView, ConversationMessageCell {
+
+    struct Configuration {
+        var attachments: [MultipartMessageData.Attachment]
+        let alignment: HorizontalAlignment
+    }
+
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
+
+    var isSelected: Bool = false
+
+    func configure(with object: Configuration, animated: Bool) {
+        assertionFailure("This cell should not be used.")
+    }
+
 }

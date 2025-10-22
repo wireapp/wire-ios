@@ -22,9 +22,10 @@ public extension ConversationCellModel {
 
     var cellReuseIdentifier: String {
         switch self {
-
         case .timeDivider:
             "timeDivider"
+        case .multipartAttachments:
+            "multipartAttachments"
         }
     }
 

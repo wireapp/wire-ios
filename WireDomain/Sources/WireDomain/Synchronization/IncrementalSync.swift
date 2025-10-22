@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireLogging
 import WireNetwork
+import WireSystem
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -123,10 +124,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.debug("handling live event stream", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
-                await processLiveEvents(
-                    liveEventStream: liveEventStream,
-                    processedEnvelopeIDs: processedEnvelopeIDs
-                )
+                do {
+                    // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
+                    // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
+                    try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
+                        await processLiveEvents(
+                            liveEventStream: liveEventStream,
+                            processedEnvelopeIDs: processedEnvelopeIDs
+                        )
+                    }
+                } catch {
+                    // if we expire, close everything
+                    WireLogger.sync.debug(
+                        "Error while processing live stream, close push channel",
+                        attributes: .incrementalSyncV2
+                    )
+                    await pushChannel.close()
+                }
 
                 logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.finished))

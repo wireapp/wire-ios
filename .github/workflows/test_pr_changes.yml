@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'merge_group' }}
+        if: ${{ github.event_name == 'merge_group' }} # on PR, paths-filter can access list of changed files from event payload
         with:
           lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
       - uses: dorny/paths-filter@v3

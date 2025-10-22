@@ -58,7 +58,7 @@ extension ConversationCreateFileManagementSectionController {
 
         addAttributedText(to: sectionFooter)
 
-        sectionFooter.linkTextView.isHidden = false
+//        sectionFooter.linkTextView.isHidden = false
 
         return sectionFooter
     }
@@ -79,20 +79,22 @@ extension ConversationCreateFileManagementSectionController {
         let fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
         let attributedText = NSMutableAttributedString(string: fullText)
 
-        guard let learnMoreRange = fullText.range(of: "Learn more", options: .caseInsensitive) else {
-            assertionFailure(
-                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
-            )
-            return
-        }
+        // TODO: [WPB-20191] "Learn more" not shown until we get the proper URL, uncomment code below and replace `https://wire.com` by proper link.
+//        guard let learnMoreRange = fullText.range(of: "Learn more", options: .caseInsensitive) else {
+//            assertionFailure(
+//                "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
+//            )
+//            return
+//        }
+//
+//        let linkRange = NSRange(learnMoreRange, in: fullText)
+//        let fullRange = NSRange(location: 0, length: fullText.count)
+//        attributedText
+//            .addAttribute(.link, value: "https://wire.com", range: linkRange) // TODO: [WPB-16736] URL to be defined
+//        attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
+//        attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
 
-        let linkRange = NSRange(learnMoreRange, in: fullText)
-        let fullRange = NSRange(location: 0, length: fullText.count)
-        attributedText
-            .addAttribute(.link, value: "https://wire.com", range: linkRange) // TODO: [WPB-16736] URL to be defined
-        attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
-        attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
-
-        footer.linkTextView.attributedText = attributedText
+        // footer.linkTextView.attributedText = attributedText
+        footer.titleLabel.text = fullText
     }
 }
