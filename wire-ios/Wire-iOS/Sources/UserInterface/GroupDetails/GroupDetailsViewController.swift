@@ -288,6 +288,14 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             if optionsSectionController.hasOptions {
                 sections.append(optionsSectionController)
             }
+            
+            if conversation.isCellsEnabled {
+                let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
+                    conversation: conversation,
+                    collectionView: collectionViewController.collectionView!
+                )
+                sections.append(selfDeletingMessagesDisabledSectionController)
+            }
 
             if conversation.teamRemoteIdentifier != nil,
                user.canModifyReadReceiptSettings(in: conversation),

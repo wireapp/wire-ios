@@ -311,5 +311,27 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+    
+    func testWireCellsEnabled() throws {
+        // GIVEN
+        setSelfUserInTeam()
+        mockSelfUser.teamRole = .admin
+        mockSelfUser.canModifyEphemeralSettingsInConversation = true
+        mockSelfUser.canModifyTitleInConversation = true
+
+        mockConversation.sortedOtherParticipants = [mockSelfUser]
+        mockConversation.displayName = "Empty group conversation"
+        mockConversation.isCellsEnabled = true
+
+        sut = GroupDetailsViewController(
+            conversation: mockConversation,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
+
+        snapshotHelper.verify(matching: sut)
+    }
 
 }

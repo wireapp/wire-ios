@@ -604,6 +604,7 @@
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
 				ConversationDetail/ConversationDetailsTests.swift,
+				ConversationDetail/GroupDetailsFileCollaborationCellTests.swift,
 				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,
