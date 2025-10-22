@@ -13,6 +13,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.131.0
 
+* added `type` to the `User` entity
+
 ### 2.130.0
 
 * added `UnknownMessage` entity
