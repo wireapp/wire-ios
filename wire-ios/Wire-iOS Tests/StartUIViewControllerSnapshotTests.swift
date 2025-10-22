@@ -116,6 +116,23 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         }
     }
 
+    func testStartUIViewControllerShowsUsersAppsSelector() {
+        teamTest {
+
+            // user is in a team, it's a requirement for apps
+            let mockUserType = MockUserType()
+            mockUserType.hasTeam = true
+            mockUserType.teamRole = .member
+            userSession.selfUser = mockUserType
+
+            // selfUser.membership?.setTeamRole(.partner)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
     func testStartUIViewControllerDoesNotShowNewChannelOptionForPersonalUser() {
         // Given, channels are supported and user is a personal user
         // Note this has been changed for WPB-20233
@@ -177,10 +194,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: navigationController.view)
-    }
-
-    func testTodo() {
-    // TODO: add test which shows people and service selection
     }
 
 }
