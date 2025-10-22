@@ -58,7 +58,7 @@ public protocol UserSession: AnyObject {
 
     var isAppLockActive: Bool { get set }
 
-    /// Whether the app lock feature is availble to the user.
+    /// Whether the app lock feature is available to the user.
 
     var isAppLockAvailable: Bool { get }
 
