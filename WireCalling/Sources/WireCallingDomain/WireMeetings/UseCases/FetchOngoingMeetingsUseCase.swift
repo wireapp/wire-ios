@@ -16,22 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
+package import WireFoundation
 
-// sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+package struct FetchOngoingMeetingsUseCase: FetchOngoingMeetingsUseCaseProtocol {
 
-    func fetchOngoingMeetings(at date: Date) -> [Meeting]
+    private let repository: any MeetingsRepositoryProtocol
+    private let currentDateProvider: any CurrentDateProviding
 
-    func fetchPastMeetings(until date: Date) -> [Meeting]
+    package init(
+        repository: any MeetingsRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
+    ) {
+        self.repository = repository
+        self.currentDateProvider = currentDateProvider
+    }
 
-    func fetchFutureMeetings(
-        after date: Date,
-        limit: Int,
-        offset: Int
-    ) -> [Meeting]
-
-    func totalCountFutureMeetings(after date: Date) -> Int
+    /// Fetches ongoing meetings
+    package func invoke() -> [Meeting] {
+        repository.fetchOngoingMeetings(at: currentDateProvider.now)
+    }
 
 }

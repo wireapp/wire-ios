@@ -54,10 +54,6 @@ package struct MeetingsView: View {
             if viewModel.selectedTab == .next {
                 if !viewModel.ongoingMeetings.isEmpty {
                     Section {
-//                        ForEach(viewModel.groupedOngoing.first?.timeSlots.first?.meetings ?? [], id: \.id) { meeting
-//                        in
-//                            MeetingRow(meeting: meeting)
-//                        }
                         ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
                             MeetingRow(meeting: meeting)
                         }
@@ -71,9 +67,9 @@ package struct MeetingsView: View {
                     formatTime: viewModel.formatTime(_:)
                 )
 
-                if viewModel.hasMoreNext {
+                if viewModel.showMoreButton {
                     Button {
-                        viewModel.showAllNext = true
+                        viewModel.showAll = true
                     } label: {
                         Text(Strings.Actions.showAll)
                             .font(.textStyle(.buttonBig))
@@ -83,7 +79,7 @@ package struct MeetingsView: View {
                 }
             } else {
                 GroupedSections(
-                    groups: viewModel.groupedPast,
+                    groups: viewModel.groupedPastMeetings,
                     formatDay: viewModel.formatDay(_:),
                     formatTime: viewModel.formatTime(_:)
                 )
@@ -112,7 +108,6 @@ private struct GroupedSections: View {
     let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
     let formatDay: (Date) -> String
     let formatTime: (Date) -> String
-
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
@@ -181,6 +176,6 @@ private struct MeetingRow: View {
     }
 }
 
-#Preview {
-    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepositoryProtocol()))
-}
+// #Preview {
+//    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepositoryProtocol()))
+// }

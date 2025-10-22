@@ -16,22 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
 // sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+package protocol FetchUpcomingMeetingsUseCaseProtocol {
 
-    func fetchOngoingMeetings(at date: Date) -> [Meeting]
+    ///
 
-    func fetchPastMeetings(until date: Date) -> [Meeting]
-
-    func fetchFutureMeetings(
-        after date: Date,
-        limit: Int,
-        offset: Int
-    ) -> [Meeting]
-
-    func totalCountFutureMeetings(after date: Date) -> Int
-
+    func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings
 }

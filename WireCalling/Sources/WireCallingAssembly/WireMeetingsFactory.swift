@@ -31,7 +31,22 @@ public struct WireMeetingsFactory {
 public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsView() -> UIViewController {
-        let meetingsViewModel = MeetingsViewModel(repository: MeetingsRepository.demo())
+        let meetingsViewModel = MeetingsViewModel(
+            repository: MeetingsRepository.demo(), currentDateProvider: .system,
+            pastMeetingsUseCase: FetchPastMeetingsUseCase(
+                repository: MeetingsRepository.demo(),
+                currentDateProvider: .system
+            ),
+            ongoingMeetingsUseCase: FetchOngoingMeetingsUseCase(
+                repository: MeetingsRepository.demo(),
+                currentDateProvider: .system
+            ),
+            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
+                repository: MeetingsRepository.demo(),
+                currentDateProvider: .system
+            )
+        )
+
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
     }
 }

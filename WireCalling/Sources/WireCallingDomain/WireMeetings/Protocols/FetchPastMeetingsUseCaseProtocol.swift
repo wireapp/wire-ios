@@ -18,20 +18,13 @@
 
 package import Foundation
 
+package typealias MeetingTimeSlot = (time: Date, meetings: [Meeting])
+package typealias GroupedMeetings = [(day: Date, timeSlots: [MeetingTimeSlot])]
+
 // sourcery: AutoMockable
-/// Repository for accessing Meetings
-package protocol MeetingsRepositoryProtocol: Sendable {
+package protocol FetchPastMeetingsUseCaseProtocol {
 
-    func fetchOngoingMeetings(at date: Date) -> [Meeting]
+    ///
 
-    func fetchPastMeetings(until date: Date) -> [Meeting]
-
-    func fetchFutureMeetings(
-        after date: Date,
-        limit: Int,
-        offset: Int
-    ) -> [Meeting]
-
-    func totalCountFutureMeetings(after date: Date) -> Int
-
+    func invoke() -> GroupedMeetings
 }
