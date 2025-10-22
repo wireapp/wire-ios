@@ -34,7 +34,7 @@ final class GroupDetailsFileCollaborationCell: GroupDetailsDisclosureOptionsCell
         status = L10n.Localizable.GroupDetails.FileCollaborationCell.subtitle
         accessory = nil
     }
-    
+
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted

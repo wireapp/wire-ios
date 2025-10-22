@@ -311,7 +311,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-    
+
     func testWireCellsEnabled() throws {
         // GIVEN
         setSelfUserInTeam()

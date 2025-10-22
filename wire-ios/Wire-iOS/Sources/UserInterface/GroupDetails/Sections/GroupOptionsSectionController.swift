@@ -180,7 +180,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         guard conversation.isCellsEnabled else {
             return .zero
         }
-        
+
         footerView.titleLabel.text = L10n.Localizable.GroupDetails.FileCollaborationCell.footer
         footerView.size(fittingWidth: collectionView.bounds.width)
         return footerView.bounds.size
@@ -204,9 +204,10 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             withReuseIdentifier: "SectionFooter",
             for: indexPath
         )
-        (view as? SectionFooter)?.titleLabel.text = conversation.isCellsEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell.footer : nil
+        (view as? SectionFooter)?.titleLabel.text = conversation.isCellsEnabled ? L10n.Localizable.GroupDetails
+            .FileCollaborationCell.footer : nil
         return view
-        
+
     }
 
 }
