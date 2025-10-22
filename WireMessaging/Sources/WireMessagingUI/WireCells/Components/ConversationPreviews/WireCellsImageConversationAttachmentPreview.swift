@@ -53,7 +53,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
                                     .scaledToFill()
                                     .frame(width: geometry.size.width, height: geometry.size.height)
                             }
-                        case let .failure(error) where !error.isURLErrorCancelled:
+                        case let .failure(error) where !error.isURLErrorCancelled && !isError:
                             noPreviewMessageView
                         default:
                             EmptyView()
