@@ -362,10 +362,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 user.handle = handle
             }
 
-            if let type = userUpdateInfo.type {
-                user.type = type
-            }
-
             if let accentColor = userUpdateInfo.accentColorID {
                 user.accentColorValue = Int16(accentColor)
             }
