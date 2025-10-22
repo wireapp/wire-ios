@@ -40,29 +40,27 @@ struct WireCellsImageConversationAttachmentPreview: View {
             progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
         ) {
             ZStack {
-                AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
-                    switch phase {
-                    case .empty where !isError && thumbnailURL != nil:
-                        ProgressView()
-                            .tint(ColorTheme.Backgrounds.surface.color)
-                    case .success(let image):
-                        GeometryReader { geometry in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                        }
-                    default:
-                        if let noPreviewMessage, !isError {
-                            Text(noPreviewMessage)
-                                .wireTextStyle(.subline1)
-                                .foregroundColor(ColorTheme.Backgrounds.surface.color)
-                                .multilineTextAlignment(.center)
-                                .padding()
-                        } else {
+                if let thumbnailURL {
+                    AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
+                        switch phase {
+                        case .empty where !isError:
+                            ProgressView()
+                                .tint(ColorTheme.Backgrounds.surface.color)
+                        case .success(let image):
+                            GeometryReader { geometry in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: geometry.size.width, height: geometry.size.height)
+                            }
+                        case .failure(let error) where !error.isURLErrorCancelled:
+                            noPreviewMessageView
+                        default:
                             EmptyView()
                         }
                     }
+                } else {
+                    noPreviewMessageView
                 }
 
                 if isError {
@@ -73,6 +71,22 @@ struct WireCellsImageConversationAttachmentPreview: View {
             .background(ColorTheme.Backdrop.background.color)
         }
     }
+
+    // MARK: Helpers
+
+    @ViewBuilder
+    private var noPreviewMessageView: some View {
+        if let noPreviewMessage {
+            Text(noPreviewMessage)
+                .wireTextStyle(.subline1)
+                .foregroundColor(ColorTheme.Backgrounds.surface.color)
+                .multilineTextAlignment(.center)
+                .padding()
+        } else {
+            EmptyView()
+        }
+    }
+
 }
 
 // MARK: - Preview
