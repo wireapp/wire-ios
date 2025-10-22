@@ -46,14 +46,14 @@ struct WireCellsImageConversationAttachmentPreview: View {
                         case .empty where !isError:
                             ProgressView()
                                 .tint(ColorTheme.Backgrounds.surface.color)
-                        case .success(let image):
+                        case let .success(image):
                             GeometryReader { geometry in
                                 image
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: geometry.size.width, height: geometry.size.height)
                             }
-                        case .failure(let error) where !error.isURLErrorCancelled:
+                        case let .failure(error) where !error.isURLErrorCancelled:
                             noPreviewMessageView
                         default:
                             EmptyView()
@@ -74,8 +74,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
 
     // MARK: Helpers
 
-    @ViewBuilder
-    private var noPreviewMessageView: some View {
+    @ViewBuilder private var noPreviewMessageView: some View {
         if let noPreviewMessage {
             Text(noPreviewMessage)
                 .wireTextStyle(.subline1)

@@ -91,7 +91,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
                 if let size, size.width > 0, size.height > 0 {
                     .largeVideo(aspectRatio: size.width / size.height)
                 } else {
-                    .largeVideo(aspectRatio: 16/9)
+                    .largeVideo(aspectRatio: 16 / 9)
                 }
             }
         case .document:

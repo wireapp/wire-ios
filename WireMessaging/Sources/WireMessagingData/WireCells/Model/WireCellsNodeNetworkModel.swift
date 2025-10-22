@@ -174,8 +174,7 @@ package struct PreviewDTO: Equatable, Hashable, Sendable {
             let contentType = value.contentType,
             let url = URL(string: urlString),
             let type = UTType(mimeType: contentType),
-            type.conforms(to: .image) else
-        {
+            type.conforms(to: .image) else {
             return nil
         }
 

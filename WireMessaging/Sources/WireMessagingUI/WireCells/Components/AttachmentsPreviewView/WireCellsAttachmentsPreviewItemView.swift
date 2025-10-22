@@ -41,7 +41,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     noPreviewMessage: nil
                 )
                 .frame(width: 74, height: 74)
-            case .largeImage(let aspectRatio, let maxWidth):
+            case let .largeImage(aspectRatio, maxWidth):
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
@@ -60,7 +60,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
-            case .largeVideo(let aspectRatio):
+            case let .largeVideo(aspectRatio):
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,

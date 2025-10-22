@@ -62,11 +62,11 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
                 initialSize: $0.initialSize,
                 initialMetadata: $0.initialMetadata.map { metadata in
                     switch metadata {
-                    case .image(width: let width, height: let height):
+                    case let .image(width: width, height: height):
                         .image(width: width, height: height)
-                    case .video(width: let width, height: let height, duration: let duration):
+                    case let .video(width: width, height: height, duration: duration):
                         .video(width: width, height: height, duration: duration)
-                    case .audio(duration: let duration, normalizedLoudness: let normalizedLoudness):
+                    case let .audio(duration: duration, normalizedLoudness: normalizedLoudness):
                         .audio(duration: duration, normalizedLoudness: normalizedLoudness)
                     }
                 }

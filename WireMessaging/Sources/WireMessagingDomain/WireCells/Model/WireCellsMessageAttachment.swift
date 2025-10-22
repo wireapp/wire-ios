@@ -48,18 +48,18 @@ public struct WireCellsMessageAttachment: Hashable, Sendable {
         package var duration: Int? {
             switch self {
             case let .video(_, _, duration), let .audio(duration, _):
-                return duration
+                duration
             default:
-                return nil
+                nil
             }
         }
 
         package var normalizedLoudness: Data? {
             switch self {
             case let .audio(_, normalizedLoudness):
-                return normalizedLoudness
+                normalizedLoudness
             default:
-                return nil
+                nil
             }
         }
 

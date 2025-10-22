@@ -58,7 +58,7 @@ public final class MultipartMessageData: NSObject {
                 contentType: asset.hasContentType ? asset.contentType : nil,
                 initialName: asset.hasInitialName ? URL(string: asset.initialName)?.lastPathComponent : nil,
                 initialSize: asset.hasInitialSize ? Int(attachment.cellAsset.initialSize) : nil,
-                initialMetadata:  asset.initialMetaData?.metadata
+                initialMetadata: asset.initialMetaData?.metadata
             )
         }
     }
@@ -70,18 +70,18 @@ private extension CellAsset.OneOf_InitialMetaData {
     var metadata: MultipartMessageData.Metadata {
         switch self {
         case let .image(image):
-            return .image(
+            .image(
                 width: image.hasWidth ? Int(image.width) : nil,
                 height: image.hasHeight ? Int(image.height) : nil
             )
         case let .video(video):
-            return .video(
+            .video(
                 width: video.hasWidth ? Int(video.width) : nil,
                 height: video.hasHeight ? Int(video.height) : nil,
                 duration: video.hasDurationInMillis ? Int(video.durationInMillis) : nil
             )
         case let .audio(audio):
-            return .audio(
+            .audio(
                 duration: audio.hasDurationInMillis ? Int(audio.durationInMillis) : nil,
                 normalizedLoudness: audio.hasNormalizedLoudness ? audio.normalizedLoudness : nil
             )
