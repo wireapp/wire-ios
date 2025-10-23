@@ -22,5 +22,6 @@ public enum TypeOfUser: Int16, CaseIterable, Sendable {
     case regular
     /// Apps
     case app
+    /// Old style bots (services)
     case bot
 }
