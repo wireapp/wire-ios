@@ -1241,7 +1241,7 @@ extension ZMUserTests_Swift {
         }
     }
 
-    func testTypeDefaultsToNil() async throws {
+    func testTypeDefaultsToRegular() async throws {
         let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
         let context = coreDataStack.syncContext
         try await context.perform { [context] in
@@ -1252,7 +1252,7 @@ extension ZMUserTests_Swift {
             try context.save()
 
             // Then
-            XCTAssertNil(user.type)
+            XCTAssertEqual(user.type, .regular)
         }
     }
 
