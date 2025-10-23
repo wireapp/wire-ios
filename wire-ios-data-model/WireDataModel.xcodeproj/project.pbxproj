@@ -1625,6 +1625,7 @@
 		596B91912EA7956C0010C93D /* UserClient */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (596B919C2EA7956C0010C93D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = UserClient; sourceTree = "<group>"; };
 		5991D76C2DAD037F00EF63C7 /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5991D77C2DAD038000EF63C7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		59AE1CA22E9D3A1900AF053A /* FeatureConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FeatureConfig; sourceTree = "<group>"; };
+		59B705A92EAA611F0075ACE1 /* Migration */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Migration; sourceTree = "<group>"; };
 		59B74DA92EAA1D230075ACE1 /* 130-131 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "130-131"; sourceTree = "<group>"; };
 		59D2642C2CF7249D0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
@@ -2641,6 +2642,7 @@
 		F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */ = {
 			isa = PBXGroup;
 			children = (
+				59B705A92EAA611F0075ACE1 /* Migration */,
 				166E47BC255A98D900C161C8 /* CoreDataStackTests+Migration.swift */,
 				F16F8EBE2063E9CC009A9D6F /* CoreDataStackTests+Backup.swift */,
 				167BCC91260DB5FA00E9D7E3 /* CoreDataStackTests+ClearStorage.swift */,
@@ -2673,8 +2675,8 @@
 				E6C4B37F2B6B87B1008BF384 /* CoreDataStackTestError.swift */,
 			);
 			name = ManagedObjectContext;
-			path = Tests/Source/ManagedObjectContext;
-			sourceTree = SOURCE_ROOT;
+			path = Source/ManagedObjectContext;
+			sourceTree = "<group>";
 		};
 		F9A7080A1CAEEB7400C2F5FE /* Model */ = {
 			isa = PBXGroup;
@@ -3333,6 +3335,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				594C4E382CCAAB9B00F13D03 /* AccountImageSource */,
+				59B705A92EAA611F0075ACE1 /* Migration */,
 				CB5273202D9C0FA000CF8099 /* Channels */,
 				CB9615DC2D47B0E10016389E /* EntityValidation */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
