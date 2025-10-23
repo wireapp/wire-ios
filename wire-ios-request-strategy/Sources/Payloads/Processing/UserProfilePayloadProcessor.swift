@@ -120,7 +120,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         }
 
         if (payload.type != nil || authoritative) && !user.isAccountDeleted {
-            user.type = payload.type.map(TypeOfUser.init)
+            let fallbackType: TypeOfUser = payload.serviceID == nil ? .regular : .bot
+            user.type = payload.type.map(TypeOfUser.init) ?? fallbackType
         }
 
         if payload.managedBy != nil || authoritative {
