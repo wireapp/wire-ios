@@ -45,9 +45,11 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     let alignment: HorizontalAlignment
 
-    @Published private var item: WireCellsAttachmentsPreviewViewItem
+    @Published private var item_: WireCellsAttachmentsPreviewViewItem
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
+    @Published private var node: WireCellsNode?
+    @Published private var isDeleted: Bool
 
     init(
         item: WireCellsAttachmentsPreviewViewItem,
@@ -59,71 +61,96 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         lastOpenRequest: WireCellsLastOpenRequest,
         isSmall: Bool
     ) {
-        self.item = item
+        self.item_ = item
         self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
         self.isSmall = isSmall
+        self.isDeleted = false
 
         localAssetRepository.observeAsset(nodeID: item.nodeID).sink { [self] asset in
             self.asset = asset
         }.store(in: &cancellables)
     }
 
-    var kind: Kind {
-        switch item.kind {
-        case let .image(size):
-            if isSmall {
-                .smallImage
-            } else {
-                if let size, size.width > 0, size.height > 0 {
-                    .largeImage(aspectRatio: size.width / size.height, imageWidth: size.width)
-                } else {
-                    .largeImage(aspectRatio: 1, imageWidth: 288)
-                }
-            }
-        case let .video(size, _):
-            if isSmall {
-                .smallVideo
-            } else {
-                if let size, size.width > 0, size.height > 0 {
-                    .largeVideo(aspectRatio: size.width / size.height)
-                } else {
-                    .largeVideo(aspectRatio: 16 / 9)
-                }
-            }
-        case .document:
-            if isSmall {
-                .smallDocument
-            } else {
-                .largeDocument
-            }
-        case .audio:
-            .audio
-        }
+//    var kind: Kind {
+//        switch item.kind {
+//        case let .image(size):
+//            if isSmall {
+//                .smallImage
+//            } else {
+//                if let size, size.width > 0, size.height > 0 {
+//                    .largeImage(aspectRatio: size.width / size.height, imageWidth: size.width)
+//                } else {
+//                    .largeImage(aspectRatio: 1, imageWidth: 288)
+//                }
+//            }
+//        case let .video(size, _):
+//            if isSmall {
+//                .smallVideo
+//            } else {
+//                if let size, size.width > 0, size.height > 0 {
+//                    .largeVideo(aspectRatio: size.width / size.height)
+//                } else {
+//                    .largeVideo(aspectRatio: 16 / 9)
+//                }
+//            }
+//        case .document:
+//            if isSmall {
+//                .smallDocument
+//            } else {
+//                .largeDocument
+//            }
+//        case .audio:
+//            .audio
+//        }
+//    }
+
+    var fileCategory: WireCellsFileCategory {
+        let fileType = contentType.flatMap { UTType(mimeType: $0) }
+        return WireCellsFileCategory(fileType)
     }
 
     var headerText: String {
-        if item.isDeleted {
+        if isDeleted {
             return ""
         } else {
-            let fileSize = (item.fileSize?.formatted(.byteCount(style: .decimal)) as String?).map { "(\($0))" }
-            return [item.fileExtension?.uppercased(), fileSize].compactMap(\.self).joined(separator: " ")
+            let fileSizeString = fileSize.map { "(\($0))" }
+            let fileExtension = pathURL?.pathExtension.uppercased()
+            return [fileExtension, fileSize].compactMap(\.self).joined(separator: " ")
         }
     }
 
     var fileName: String {
-        item.isDeleted ? L10n.Localizable.Conversation.Message.Attachment.notAvailable : item.fileName ?? ""
+        if isDeleted {
+            L10n.Localizable.Conversation.Message.Attachment.notAvailable
+        } else {
+            pathURL?.deletingPathExtension().lastPathComponent ?? ""
+        }
     }
 
     var icon: ImageResource {
-        item.isDeleted ? .fileIconNotAvailable : item.fileIcon.resource
+        if isDeleted {
+            return .fileIconNotAvailable
+        } else {
+            let fileType = contentType.flatMap { UTType(mimeType: $0) }
+            let fileExtension = pathURL?.pathExtension
+            return FileIcon.make(type: fileType, fileExtension: fileExtension).resource
+        }
+    }
+
+    var displaySmall: Bool {
+        isSmall
+    }
+
+    var displayLarge: Bool {
+        !isSmall
     }
 
     var imagePreviewURL: URL? {
-        item.imagePreviewURL
+        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
     }
 
     var progress: Double {
@@ -148,46 +175,72 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     func refresh() async {
         do {
-            for try await node in fetchNodeUseCase.invoke(nodeID: item.nodeID) {
+            for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
+                self.node = node
+
                 if let node {
-                    item = WireCellsAttachmentsPreviewViewItem(node, initialMetadata: attachment.initialMetadata)
+                    self.isDeleted = node.isRecycled
                 } else {
-                    item = WireCellsAttachmentsPreviewViewItem(
-                        nodeID: item.nodeID,
-                        fileIcon: item.fileIcon,
-                        fileName: item.fileName,
-                        fileExtension: item.fileExtension,
-                        fileSize: item.fileSize,
-                        isDeleted: true,
-                        imagePreviewURL: item.imagePreviewURL,
-                        kind: item.kind
-                    )
+                    self.isDeleted = true
                 }
             }
         } catch {
-            WireLogger.wireCells.info("Failed to refresh node with ID: \(item.nodeID), error: \(error)")
+            WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
     }
 
     func open() async {
-        guard !item.isDeleted, !isDownloading else { return }
+        guard !isDeleted, !isDownloading else { return }
 
-        lastOpenRequest.nodeID = item.nodeID
+        lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: item.nodeID)
-            if lastOpenRequest.nodeID == item.nodeID {
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }
         } catch {
-            WireLogger.wireCells.error("Failed to open file with node ID: \(item.nodeID), error: \(error)")
+            WireLogger.wireCells.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
+    }
+
+    private var previewSize: CGSize? {
+        guard let size = attachment.initialMetadata?.dimension, size.width > 0, size.height > 0 else {
+            return nil
+        }
+
+        return size
+    }
+
+    var previewAspectRatio: Double {
+        guard let size = previewSize else { return 1 }
+
+        return size.width / size.height
+    }
+
+    var previewWidth: Double? {
+        previewSize?.width as? Double // Explicit conversion necessary due to compiler bug
     }
 
     // MARK: - Private
 
+    private var nodeID: UUID {
+        node?.id ?? attachment.nodeID
+    }
+
+    private var pathURL: URL? {
+        let path = node?.path ?? attachment.initialName
+        return path.flatMap { URL(string: $0) }
+
+    }
+
+    private var contentType: String? {
+        node?.mimeType ?? attachment.contentType
+    }
+
     private var fileSize: String? {
-        item.fileSize.map { Int($0).formatted(.byteCount(style: .decimal)) }
+        let fileSize = node?.size.map { Int($0) } ?? attachment.initialSize
+        return fileSize.map { $0.formatted(.byteCount(style: .decimal)) }
     }
 
     private var isDownloading: Bool {
@@ -214,3 +267,30 @@ private extension WireCellsAttachmentsPreviewViewItem {
     }
 
 }
+
+enum WireCellsFileCategory {
+
+    case image
+    case video
+    case audio
+    case document
+
+    init(_ fileType: UTType?) {
+        guard let fileType else {
+            self = .document
+            return
+        }
+
+        if fileType.conforms(to: .image) {
+            self = .image
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio
+        } else if fileType.conforms(to: .audiovisualContent) {
+            self = .video
+        } else {
+            self = .document
+        }
+    }
+
+}
+

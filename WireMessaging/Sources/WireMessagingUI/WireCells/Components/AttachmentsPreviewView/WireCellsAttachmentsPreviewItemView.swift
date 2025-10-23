@@ -37,8 +37,8 @@ struct WireCellsAttachmentsPreviewItemView: View {
 
     var body: some View {
         HStack {
-            switch viewModel.kind {
-            case .smallImage:
+            switch viewModel.fileCategory {
+            case .image where viewModel.displaySmall:
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
@@ -46,16 +46,22 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     noPreviewMessage: nil
                 )
                 .frame(width: 74, height: 74)
-            case let .largeImage(aspectRatio, imageWidth):
+            case .image where viewModel.displayLarge:
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isError: viewModel.isError,
                     noPreviewMessage: L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable
                 )
-                .aspectRatio(aspectRatio, contentMode: .fit)
-                .frame(idealWidth: min(288, imageWidth, Constants.maxImageHeight * aspectRatio))
-            case .smallVideo:
+                .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
+                .frame(
+                    idealWidth: min(
+                        288,
+                        viewModel.previewWidth ?? .infinity,
+                        Constants.maxImageHeight * viewModel.previewAspectRatio
+                    )
+                )
+            case .video where viewModel.displaySmall:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
@@ -65,7 +71,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
-            case let .largeVideo(aspectRatio):
+            case .video where viewModel.displayLarge:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
@@ -75,7 +81,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
-            case .smallDocument:
+            case .document where viewModel.displaySmall:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
@@ -85,7 +91,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
-            case .largeDocument:
+            case .document where viewModel.displayLarge:
                 WireCellsDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
@@ -105,6 +111,8 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
+            default:
+                unsupportedPreview()
             }
         }
         .contentShape(Rectangle()) // Constrains the tappable content area of the view.
@@ -119,6 +127,11 @@ struct WireCellsAttachmentsPreviewItemView: View {
 
     private func open() {
         Task { await viewModel.open() }
+    }
+
+    private func unsupportedPreview() -> some View {
+        assertionFailure("Unsupported file category")
+        return EmptyView()
     }
 
 }
