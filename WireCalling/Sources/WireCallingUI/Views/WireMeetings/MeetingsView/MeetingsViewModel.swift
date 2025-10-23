@@ -151,12 +151,6 @@ package extension MeetingsViewModel {
         }
     }
 
-    enum SortOrder {
-        case none
-        case ascending
-        case descending
-    }
-
 }
 
 private extension Sequence where Element == MeetingTimeSlot {

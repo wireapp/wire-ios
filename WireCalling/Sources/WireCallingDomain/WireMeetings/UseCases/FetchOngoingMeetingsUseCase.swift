@@ -32,7 +32,6 @@ package struct FetchOngoingMeetingsUseCase: FetchOngoingMeetingsUseCaseProtocol 
         self.currentDateProvider = currentDateProvider
     }
 
-    /// Fetches ongoing meetings
     package func invoke() -> [Meeting] {
         repository.fetchOngoingMeetings(at: currentDateProvider.now)
     }

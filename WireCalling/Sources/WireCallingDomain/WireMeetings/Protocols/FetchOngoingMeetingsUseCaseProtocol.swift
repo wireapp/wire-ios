@@ -19,9 +19,9 @@
 import Foundation
 
 // sourcery: AutoMockable
+/// Fetches ongoing meetings
 package protocol FetchOngoingMeetingsUseCaseProtocol {
 
-    ///
-
     func invoke() -> [Meeting]
+
 }

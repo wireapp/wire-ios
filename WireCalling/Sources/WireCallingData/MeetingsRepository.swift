@@ -95,8 +95,8 @@ package extension MeetingsRepository {
             Meeting(
                 id: UUID(),
                 title: "Design review",
-                start: day(0, hour: 9),
-                end: day(0, hour: 10)
+                start: day(0, hour: 18),
+                end: day(0, hour: 19)
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group
