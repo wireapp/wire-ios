@@ -13,7 +13,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.131.0
 
-* added `type` to the `User` entity
+* added `typeValue` to the `User` entity with default value -1
 
 ### 2.130.0
 

@@ -30,16 +30,16 @@ extension ZMUser: UserType {
 
     /// Whether the user is a regular user, an app or a bot.
 
-    public var type: TypeOfUser? {
+    public var type: TypeOfUser {
         get {
             willAccessValue(forKey: typeKey)
-            let rawValue = primitiveValue(forKey: typeKey) as? Int16
+            let rawValue = primitiveValue(forKey: typeKey) as? Int16 ?? 0
             didAccessValue(forKey: typeKey)
-            return TypeOfUser(rawValue: rawValue ?? -1)
+            return TypeOfUser(rawValue: rawValue) ?? .regular
         }
         set {
             willChangeValue(forKey: typeKey)
-            setPrimitiveValue(newValue?.rawValue ?? -1, forKey: typeKey)
+            setPrimitiveValue(newValue.rawValue, forKey: typeKey)
             didChangeValue(forKey: typeKey)
         }
     }
