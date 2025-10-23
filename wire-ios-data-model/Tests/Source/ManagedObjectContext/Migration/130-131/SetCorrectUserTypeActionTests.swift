@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
+import XCTest
 import WireDataModelSupport
 
 @testable import WireDataModel
 
-struct SetCorrectUserTypeActionTests {
+final class SetCorrectUserTypeActionTests: XCTestCase {
 
-    @Test func setValueForUserType() async throws {
+    func testSettingValueForUserType() async throws {
         // Given
         let stack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
         let syncContext = stack.syncContext
@@ -45,9 +45,9 @@ struct SetCorrectUserTypeActionTests {
 
             // Then
             let regularUser = ZMUser.fetch(with: regularID.uuid, domain: regularID.domain, in: syncContext)
-            #expect(regularUser?.type == .regular)
+            XCTAssertEqual(regularUser?.type, .regular)
             let serviceUser = ZMUser.fetch(with: serviceID.uuid, domain: serviceID.domain, in: syncContext)
-            #expect(serviceUser?.type == .bot)
+            XCTAssertEqual(serviceUser?.type, .bot)
         }
 
     }
