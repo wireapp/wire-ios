@@ -59,7 +59,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         view.isUserInteractionEnabled = true
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
-        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
+        view.dataDetectorTypes = [.link, .address, .phoneNumber]
         view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
