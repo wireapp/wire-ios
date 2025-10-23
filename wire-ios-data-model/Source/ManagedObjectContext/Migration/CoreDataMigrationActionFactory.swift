@@ -53,6 +53,9 @@ enum CoreDataMigrationActionFactory {
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
         -> CoreDataMigrationAction? {
         switch destinationVersion {
+        case .v131:
+            SetCorrectUserTypeAction()
+
         case .v111:
             RemoveDuplicatePreAction()
 
