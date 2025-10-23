@@ -26,16 +26,6 @@ import WireMessagingDomain
 @MainActor
 final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
-    enum Kind {
-        case smallImage
-        case largeImage(aspectRatio: Double, imageWidth: Double)
-        case smallVideo
-        case largeVideo(aspectRatio: Double)
-        case smallDocument
-        case largeDocument
-        case audio
-    }
-
     private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
@@ -45,14 +35,12 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     let alignment: HorizontalAlignment
 
-    @Published private var item_: WireCellsAttachmentsPreviewViewItem
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
     @Published private var node: WireCellsNode?
     @Published private var isDeleted: Bool
 
     init(
-        item: WireCellsAttachmentsPreviewViewItem,
         attachment: WireCellsMessageAttachment,
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
@@ -61,7 +49,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         lastOpenRequest: WireCellsLastOpenRequest,
         isSmall: Bool
     ) {
-        self.item_ = item
         self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
@@ -70,43 +57,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.isSmall = isSmall
         self.isDeleted = false
 
-        localAssetRepository.observeAsset(nodeID: item.nodeID).sink { [self] asset in
+        localAssetRepository.observeAsset(nodeID: nodeID).sink { [self] asset in
             self.asset = asset
         }.store(in: &cancellables)
     }
-
-//    var kind: Kind {
-//        switch item.kind {
-//        case let .image(size):
-//            if isSmall {
-//                .smallImage
-//            } else {
-//                if let size, size.width > 0, size.height > 0 {
-//                    .largeImage(aspectRatio: size.width / size.height, imageWidth: size.width)
-//                } else {
-//                    .largeImage(aspectRatio: 1, imageWidth: 288)
-//                }
-//            }
-//        case let .video(size, _):
-//            if isSmall {
-//                .smallVideo
-//            } else {
-//                if let size, size.width > 0, size.height > 0 {
-//                    .largeVideo(aspectRatio: size.width / size.height)
-//                } else {
-//                    .largeVideo(aspectRatio: 16 / 9)
-//                }
-//            }
-//        case .document:
-//            if isSmall {
-//                .smallDocument
-//            } else {
-//                .largeDocument
-//            }
-//        case .audio:
-//            .audio
-//        }
-//    }
 
     var fileCategory: WireCellsFileCategory {
         let fileType = contentType.flatMap { UTType(mimeType: $0) }
@@ -119,7 +73,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         } else {
             let fileSizeString = fileSize.map { "(\($0))" }
             let fileExtension = pathURL?.pathExtension.uppercased()
-            return [fileExtension, fileSize].compactMap(\.self).joined(separator: " ")
+            return [fileExtension, fileSizeString].compactMap(\.self).joined(separator: " ")
         }
     }
 
@@ -245,25 +199,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var isDownloading: Bool {
         asset?.downloadState.isDownloading == true
-    }
-
-}
-
-private extension WireCellsAttachmentsPreviewViewItem {
-
-    init(_ value: WireCellsNode, initialMetadata: WireCellsMessageAttachment.Metadata?) {
-        let url = URL(string: value.path)
-        let fileType = value.mimeType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
-
-        self.nodeID = value.id
-        self.fileIcon = .make(type: fileType, fileExtension: value.path)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.size.map { Int($0) }
-        self.isDeleted = value.isRecycled
-        self.imagePreviewURL = value.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
-        self.kind = Kind(fileType: fileType, initialMetadata: initialMetadata)
     }
 
 }
