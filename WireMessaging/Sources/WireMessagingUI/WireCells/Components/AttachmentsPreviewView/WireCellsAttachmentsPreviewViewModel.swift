@@ -95,7 +95,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(
             item: items[index],
-            initialMetadata: attachments[index].initialMetadata,
+            attachment: attachments[index],
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,

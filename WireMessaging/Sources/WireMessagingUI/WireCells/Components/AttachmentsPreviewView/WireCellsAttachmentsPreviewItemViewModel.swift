@@ -36,7 +36,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         case audio
     }
 
-    private let initialMetadata: WireCellsMessageAttachment.Metadata?
+    private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
@@ -51,7 +51,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     init(
         item: WireCellsAttachmentsPreviewViewItem,
-        initialMetadata: WireCellsMessageAttachment.Metadata?,
+        attachment: WireCellsMessageAttachment,
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
@@ -60,7 +60,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         isSmall: Bool
     ) {
         self.item = item
-        self.initialMetadata = initialMetadata
+        self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
@@ -150,7 +150,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: item.nodeID) {
                 if let node {
-                    item = WireCellsAttachmentsPreviewViewItem(node, initialMetadata: initialMetadata)
+                    item = WireCellsAttachmentsPreviewViewItem(node, initialMetadata: attachment.initialMetadata)
                 } else {
                     item = WireCellsAttachmentsPreviewViewItem(
                         nodeID: item.nodeID,
