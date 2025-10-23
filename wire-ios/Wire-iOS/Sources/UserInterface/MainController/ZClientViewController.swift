@@ -274,8 +274,15 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells where featureState.isEnabled:
-                    guard mainTabBarController.filesUI == nil else { break }
-                    mainTabBarController.filesUI = wireMessagingFactory.makeFilesBrowserView()
+                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        guard !sidebarViewController.showFiles else { break }
+                        sidebarViewController.showFiles = true
+                        mainTabBarController.filesUI = filesBrowserView
+                    } else {
+                        guard mainTabBarController.filesUI == nil else { break }
+                        mainTabBarController.filesUI = filesBrowserView
+                    }
                 default:
                     break
                 }
