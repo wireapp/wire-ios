@@ -18,7 +18,10 @@
 
 @objc(ZMTypeOfUser)
 public enum TypeOfUser: Int16, CaseIterable, Sendable {
+    /// Regular users
     case regular
+    /// Apps
     case app
+    /// Old style bots (services)
     case bot
 }
