@@ -26,14 +26,19 @@ import WireMessagingDomain
 @MainActor
 final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
+    enum DisplayStyle {
+        case small
+        case large
+    }
+
     private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let isSmall: Bool
     private var cancellables = Set<AnyCancellable>()
 
     let alignment: HorizontalAlignment
+    let displayStyle: DisplayStyle
 
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
@@ -47,14 +52,14 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
-        isSmall: Bool
+        displayStyle: DisplayStyle
     ) {
         self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
-        self.isSmall = isSmall
+        self.displayStyle = displayStyle
         self.isDeleted = false
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [self] asset in
@@ -93,14 +98,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
             let fileExtension = pathURL?.pathExtension
             return FileIcon.make(type: fileType, fileExtension: fileExtension).resource
         }
-    }
-
-    var displaySmall: Bool {
-        isSmall
-    }
-
-    var displayLarge: Bool {
-        !isSmall
     }
 
     var imagePreviewURL: URL? {

@@ -58,7 +58,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
-            isSmall: attachments.count > 1
+            displayStyle: attachments.count > 1 ? .small : .large
         )
     }
 
