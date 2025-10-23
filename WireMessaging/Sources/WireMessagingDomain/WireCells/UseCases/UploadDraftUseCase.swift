@@ -143,15 +143,16 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
     }
 
     private func metadata(for fileURL: URL, fileType: UTType?) async throws -> WireCellsDraft.Metadata? {
-        guard let fileType else { return nil }
+        let category = WireCellsFileCategory(fileType)
 
-        if fileType.conforms(to: .image) {
+        switch category {
+        case .image:
             return try await metadataRepository.imageMetadata(fileURL: fileURL)
-        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
-            return try await metadataRepository.audioMetadata(fileURL: fileURL)
-        } else if fileType.conforms(to: .audiovisualContent) {
+        case .video:
             return try await metadataRepository.videoMetadata(fileURL: fileURL)
-        } else {
+        case .audio:
+            return try await metadataRepository.audioMetadata(fileURL: fileURL)
+        case .document:
             return nil
         }
     }
