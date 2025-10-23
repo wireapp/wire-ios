@@ -45,9 +45,9 @@ struct SetCorrectUserTypeActionTests {
 
             // Then
             let regularUser = ZMUser.fetch(with: regularID.uuid, domain: regularID.domain, in: syncContext)
-            XCTAssertEqual(regularUser?.type, .regular)
+            #expect(regularUser?.type == .regular)
             let serviceUser = ZMUser.fetch(with: serviceID.uuid, domain: serviceID.domain, in: syncContext)
-            XCTAssertEqual(serviceUser?.type, .bot)
+            #expect(serviceUser?.type == .bot)
         }
 
     }
