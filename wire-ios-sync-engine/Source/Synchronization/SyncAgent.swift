@@ -68,6 +68,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
+    private let conversationsMonitor: ConversationUpdatesGeneratorProtocol
 
     private var subscription: AnyCancellable?
 
@@ -94,7 +95,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         legacySyncStatus: any SyncStatusProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
+        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
+        conversationsMonitor: any ConversationUpdatesGeneratorProtocol
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -105,6 +107,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
+        self.conversationsMonitor = conversationsMonitor
         super.init()
 
         setupBindings()
@@ -154,7 +157,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-
+        conversationsMonitor.stop()
         ongoingSyncTask?.cancel()
         ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
@@ -221,6 +224,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
+        Task {
+            await conversationsMonitor.start()
+        }
 
         if isSyncV2Enabled {
 

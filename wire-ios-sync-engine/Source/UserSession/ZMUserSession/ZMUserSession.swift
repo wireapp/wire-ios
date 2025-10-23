@@ -650,7 +650,8 @@ public final class ZMUserSession: NSObject {
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
-            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator
+            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
+            conversationsMonitor: clientSessionComponent.conversationMonitor
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -677,6 +678,9 @@ public final class ZMUserSession: NSObject {
                 metadata: resolvedBackendMetadata
             )
             syncStrategy?.updateClientContextChangeTrackers()
+        }
+        Task {
+            await clientSessionComponent.workAgent.start()
         }
     }
 
@@ -711,6 +715,8 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !isTornDown else { return }
+
+        clientSessionComponent?.workAgent.stop()
 
         tearDownMLSGroupVerification()
 

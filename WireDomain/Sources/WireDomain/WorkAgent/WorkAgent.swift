@@ -127,7 +127,7 @@ actor WorkAgent {
         task = nil
     }
 
-    func stop() {
+    public func stop() {
         WireLogger.workAgent.info(
             "stopping",
             attributes: .safePublic
@@ -138,7 +138,7 @@ actor WorkAgent {
 
 }
 
-private extension LogAttributes {
+extension LogAttributes {
 
     init(_ item: any WorkItem) {
         self = [
