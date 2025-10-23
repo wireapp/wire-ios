@@ -133,9 +133,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
                 self.node = node
 
                 if let node {
-                    self.isDeleted = node.isRecycled
+                    isDeleted = node.isRecycled
                 } else {
-                    self.isDeleted = true
+                    isDeleted = true
                 }
             }
         } catch {
