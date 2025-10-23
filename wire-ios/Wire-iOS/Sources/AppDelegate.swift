@@ -90,7 +90,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // When running production code, this should always be true to ensure that we set the self user provider
     // on the `SelfUser` helper. The `TestingAppDelegate` subclass should override this with `false` in order
-    // to require explict configuration of the self user.
+    // to require explicit configuration of the self user.
 
     var shouldConfigureSelfUserProvider: Bool {
         true
