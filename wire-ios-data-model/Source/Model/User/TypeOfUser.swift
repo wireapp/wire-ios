@@ -32,3 +32,18 @@ public enum TypeOfUser: Int16, CaseIterable, Sendable {
     case bot
 
 }
+
+extension TypeOfUser: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        switch self {
+        case .regular:
+            "regular"
+        case .app:
+            "app"
+        case .bot:
+            "bot"
+        }
+    }
+
+}
