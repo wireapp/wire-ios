@@ -36,6 +36,8 @@ final class SetCorrectUserTypeActionTests: XCTestCase {
                 regularUser.type = .app // must be `.regular` later
                 let serviceUser = ZMUser.fetchOrCreate(with: serviceID.uuid, domain: serviceID.domain, in: syncContext)
                 serviceUser.type = .app // must be `.bot` later
+                serviceUser.providerIdentifier = "lorem"
+                serviceUser.serviceIdentifier = "ipsum"
                 try syncContext.save()
             }
 
