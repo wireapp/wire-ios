@@ -37,7 +37,7 @@ final class GroupDetailsFileCollaborationCell: GroupDetailsDisclosureOptionsCell
 
     override var isHighlighted: Bool {
         didSet {
-            backgroundColor = SemanticColors.View.backgroundUserCell
+            backgroundColor = ColorTheme.Backgrounds.surface
         }
     }
 
