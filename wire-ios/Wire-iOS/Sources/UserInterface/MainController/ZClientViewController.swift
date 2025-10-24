@@ -189,6 +189,7 @@ final class ZClientViewController: UIViewController {
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
+    private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
     let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -204,6 +205,7 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
+        wireMeetingsFactory: any WireMeetingsFactoryProtocol,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
@@ -211,6 +213,8 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
+
+        self.wireMeetingsFactory = wireMeetingsFactory
         self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)

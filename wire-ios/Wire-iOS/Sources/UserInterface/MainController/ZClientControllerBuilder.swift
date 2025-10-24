@@ -40,6 +40,7 @@ struct ZClientControllerBuilder {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
+            wireMeetingsFactory: buildWireMeetingsFactory(),
             wireMessagingFactory: buildWireMessagingFactory()
         )
         viewController.router = router

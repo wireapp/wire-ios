@@ -1697,6 +1697,33 @@ class MockTrackingInterface: TrackingInterface {
 
 }
 
+class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeMeetingsView
+
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
+
+    @MainActor
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
+
+        if let mock = makeMeetingsView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeMeetingsView`")
+        }
+    }
+
+}
+
 class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - Life cycle
@@ -1901,33 +1928,6 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
-        }
-    }
-
-}
-
-class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - makeMeetingsView
-
-    var makeMeetingsView_Invocations: [Void] = []
-    var makeMeetingsView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsView_MockValue: UIViewController?
-
-    @MainActor
-    func makeMeetingsView() -> UIViewController {
-        makeMeetingsView_Invocations.append(())
-
-        if let mock = makeMeetingsView_MockMethod {
-            return mock()
-        } else if let mock = makeMeetingsView_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `makeMeetingsView`")
         }
     }
 
