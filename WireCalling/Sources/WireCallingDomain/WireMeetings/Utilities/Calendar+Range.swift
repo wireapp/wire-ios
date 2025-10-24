@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
+import WireFoundation
 
-// sourcery: AutoMockable
-/// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol {
+package extension Calendar {
 
-    func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings
+    var todayAndTomorrowRange: (todayStart: Date, tomorrowEnd: Date?) {
+        let dateProvider: any CurrentDateProviding = .system
+        let todayStart = startOfDay(for: dateProvider.now)
+        let tomorrowEnd = date(byAdding: .day, value: 2, to: todayStart)
+        return (todayStart, tomorrowEnd)
+    }
 
 }

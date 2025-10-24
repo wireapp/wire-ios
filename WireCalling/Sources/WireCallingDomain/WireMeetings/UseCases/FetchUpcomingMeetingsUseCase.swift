@@ -28,25 +28,24 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
 
     package init(
         repository: any MeetingsRepositoryProtocol,
-        currentDateProvider: any CurrentDateProviding
+        currentDateProvider: any CurrentDateProviding,
+        grouper: MeetingsGrouper = MeetingsGrouper()
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
-        self.grouper = MeetingsGrouper()
+        self.grouper = grouper
     }
 
-    ///
     package func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
         let now = currentDateProvider.now
-        var meetings = repository.fetchFutureMeetings(
+        var meetings = repository.fetchUpcomingMeetings(
             after: now,
             limit: pageSize,
             offset: offset
         )
 
         if limitToTwoDays {
-            let todayStart = calendar.startOfDay(for: now)
-            guard let tomorrowEnd = calendar.date(byAdding: .day, value: 2, to: todayStart) else {
+            guard let tomorrowEnd = calendar.todayAndTomorrowRange.tomorrowEnd else {
                 return PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: offset)
             }
             meetings = meetings.filter { $0.start < tomorrowEnd }
@@ -62,10 +61,4 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         )
     }
 
-}
-
-package struct PaginatedGroupedMeetings {
-    package let groups: GroupedMeetings
-    package let hasMore: Bool
-    package let nextOffset: Int
 }

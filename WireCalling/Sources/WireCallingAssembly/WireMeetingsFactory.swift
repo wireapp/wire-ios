@@ -32,7 +32,8 @@ public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsView() -> UIViewController {
         let meetingsViewModel = MeetingsViewModel(
-            repository: MeetingsRepository.demo(), currentDateProvider: .system,
+            repository: MeetingsRepository.demo(),
+            currentDateProvider: .system,
             pastMeetingsUseCase: FetchPastMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system

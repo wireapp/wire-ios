@@ -34,6 +34,7 @@ package final class MeetingsViewModel: ObservableObject {
             }
         }
     }
+
     @Published var futureMeetings: GroupedMeetings = []
     @Published var showMoreButton: Bool = false
 
@@ -44,11 +45,9 @@ package final class MeetingsViewModel: ObservableObject {
     private let ongoingMeetingsUseCase: any FetchOngoingMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
 
-    @Published var hasMoreFutureMeetings: Bool = false
     private var futureOffset: Int = 0
     private let pageSize: Int = 50
-    private let offset: Int = 0
-
+    private let calendar = Calendar.current
 
     package init(
         repository: any MeetingsRepositoryProtocol,
@@ -93,10 +92,9 @@ package final class MeetingsViewModel: ObservableObject {
 
     private func loadFutureMeetings() {
         let isLimited = !showAll
-        let currentPageSize = isLimited ? Int.max : pageSize
         let result = upcomingMeetingsUseCase.invoke(
             limitToTwoDays: isLimited,
-            pageSize: currentPageSize,
+            pageSize: pageSize,
             offset: futureOffset
         )
 
@@ -106,14 +104,13 @@ package final class MeetingsViewModel: ObservableObject {
             futureMeetings = mergeGroups(existing: futureMeetings, new: result.groups)
         }
 
-        hasMoreFutureMeetings = result.hasMore
         futureOffset = result.nextOffset
 
         if isLimited {
-            let total = repository.totalCountFutureMeetings(after: currentDateProvider.now)
-            showMoreButton = total > futureMeetings.meetingCount
+            showMoreButton = calendar.todayAndTomorrowRange.tomorrowEnd
+                .map { repository.hasUpcomingMeetings(after: $0) } ?? false
         } else {
-            showMoreButton = false
+            showMoreButton = result.hasMore
         }
     }
 
@@ -153,13 +150,13 @@ package extension MeetingsViewModel {
 
 }
 
-private extension Sequence where Element == MeetingTimeSlot {
+private extension Sequence<MeetingTimeSlot> {
     var meetingCount: Int {
         reduce(0) { $0 + $1.meetings.count }
     }
 }
 
-private extension Sequence where Element == (day: Date, timeSlots: [MeetingTimeSlot]) {
+private extension Sequence<(day: Date, timeSlots: [MeetingTimeSlot])> {
     var meetingCount: Int {
         reduce(0) { $0 + $1.timeSlots.meetingCount }
     }

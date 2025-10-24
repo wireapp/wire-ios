@@ -26,12 +26,12 @@ package protocol MeetingsRepositoryProtocol: Sendable {
 
     func fetchPastMeetings(until date: Date) -> [Meeting]
 
-    func fetchFutureMeetings(
+    func fetchUpcomingMeetings(
         after date: Date,
         limit: Int,
         offset: Int
     ) -> [Meeting]
 
-    func totalCountFutureMeetings(after date: Date) -> Int
+    func hasUpcomingMeetings(after date: Date) -> Bool
 
 }

@@ -30,38 +30,38 @@ package struct MeetingsGrouper {
         let sortMeetings: ([Meeting]) -> [Meeting] = { meetings in
             meetings.sorted {
                 if $0.start != $1.start {
-                    return $0.start < $1.start
+                    $0.start < $1.start
                 } else {
-                    return $0.title < $1.title
+                    $0.title < $1.title
                 }
             }
         }
-        
+
         let groupedByDay = Dictionary(grouping: meetings) { calendar.startOfDay(for: $0.start) }
             .map { (day: $0.key, meetings: sortMeetings($0.value)) }
-        
+
         let sortedDays: [(day: Date, meetings: [Meeting])] = switch sort {
         case .ascending:  groupedByDay.sorted { $0.day < $1.day }
         case .descending: groupedByDay.sorted { $0.day > $1.day }
         case .none:       groupedByDay
         }
-        
+
         guard byHours else {
             return sortedDays.map { (day: $0.day, timeSlots: [(time: $0.day, meetings: $0.meetings)]) }
         }
-        
+
         return sortedDays.map { dayGroup in
-            let slots = Dictionary(grouping: dayGroup.meetings) { m in
+            let slots = Dictionary(grouping: dayGroup.meetings) { meeting in
                 calendar.date(
-                    bySettingHour: calendar.component(.hour, from: m.start),
+                    bySettingHour: calendar.component(.hour, from: meeting.start),
                     minute: 0,
                     second: 0,
-                    of: m.start
-                ) ?? m.start
+                    of: meeting.start
+                ) ?? meeting.start
             }
-                .map { (time: $0.key, meetings: sortMeetings($0.value)) }
-                .sorted { $0.time < $1.time }
-            
+            .map { (time: $0.key, meetings: sortMeetings($0.value)) }
+            .sorted { $0.time < $1.time }
+
             return (day: dayGroup.day, timeSlots: slots)
         }
     }

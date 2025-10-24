@@ -16,15 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
-package typealias MeetingTimeSlot = (time: Date, meetings: [Meeting])
-package typealias GroupedMeetings = [(day: Date, timeSlots: [MeetingTimeSlot])]
+import Foundation
 
 // sourcery: AutoMockable
+/// Fetches past meetings
 package protocol FetchPastMeetingsUseCaseProtocol {
-
-    ///
 
     func invoke() -> GroupedMeetings
 }

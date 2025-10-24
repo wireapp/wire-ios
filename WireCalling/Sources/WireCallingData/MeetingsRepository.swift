@@ -35,12 +35,17 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         meetingsSource().filter { $0.end <= date }
     }
 
-    package func fetchFutureMeetings(after date: Date, limit: Int, offset: Int) -> [Meeting] {
-        meetingsSource().filter { $0.start > date }
+    package func fetchUpcomingMeetings(after date: Date, limit: Int, offset: Int) -> [Meeting] {
+        let allFuture = meetingsSource().filter { $0.start > date }
+        let start = min(offset, allFuture.count)
+        let end = min(offset + limit, allFuture.count)
+        return Array(allFuture[start ..< end])
+
+        //        meetingsSource().filter { $0.start > date }
     }
 
-    package func totalCountFutureMeetings(after date: Date) -> Int {
-        meetingsSource().filter { $0.start > date }.count
+    package func hasUpcomingMeetings(after date: Date) -> Bool {
+        meetingsSource().contains { $0.start > date }
     }
 
 }
@@ -95,8 +100,8 @@ package extension MeetingsRepository {
             Meeting(
                 id: UUID(),
                 title: "Design review",
-                start: day(0, hour: 18),
-                end: day(0, hour: 19)
+                start: day(0, hour: 14),
+                end: day(0, hour: 15)
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group
