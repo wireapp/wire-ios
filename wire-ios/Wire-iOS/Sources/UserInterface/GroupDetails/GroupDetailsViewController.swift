@@ -289,13 +289,22 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
+            if conversation.isCellsEnabled, let collectionView = collectionViewController.collectionView {
+                let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
+                    conversation: conversation,
+                    collectionView: collectionView
+                )
+                sections.append(selfDeletingMessagesDisabledSectionController)
+            }
+
             if conversation.teamRemoteIdentifier != nil,
                user.canModifyReadReceiptSettings(in: conversation),
-               conversation.messageProtocol != .mls { // TODO: [WPB-16771] Remove when read receipts supported on MLS
+               conversation.messageProtocol != .mls, // TODO: [WPB-16771] Remove when read receipts supported on MLS
+               let collectionView = collectionViewController.collectionView {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
-                    collectionView: collectionViewController.collectionView!,
+                    collectionView: collectionView,
                     presentingViewController: self
                 )
                 sections.append(receiptOptionsSectionController)
