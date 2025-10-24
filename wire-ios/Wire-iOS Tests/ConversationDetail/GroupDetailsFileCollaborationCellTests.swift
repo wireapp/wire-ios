@@ -52,7 +52,7 @@ final class GroupDetailsFileCollaborationCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCell_Light() {
         // GIVEN & WHEN
-        cell.configure(with: (conversation as Any) as! ZMConversation)
+        cell.configure(with: conversation)
 
         // THEN
         snapshotHelper.verify(matching: cell)
@@ -60,7 +60,7 @@ final class GroupDetailsFileCollaborationCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCell_Dark() {
         // GIVEN & WHEN
-        cell.configure(with: (conversation as Any) as! ZMConversation)
+        cell.configure(with: conversation)
 
         // THEN
         snapshotHelper

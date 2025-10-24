@@ -127,10 +127,11 @@ final class SelfDeletingMessagesDisabledSectionController: GroupDetailsSectionCo
 
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: "SectionFooter",
+            withReuseIdentifier: SectionFooter.reuseIdentifier,
             for: indexPath
-        )
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.GroupDetails.TimeoutOptionsDisabled.footer
+        ) as! SectionFooter
+
+        view.titleLabel.text = L10n.Localizable.GroupDetails.TimeoutOptionsDisabled.footer
         return view
     }
 

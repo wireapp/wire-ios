@@ -97,6 +97,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
         self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
+
     }
 
     // MARK: - Collection View
@@ -114,6 +115,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
         collectionView.flatMap(GroupDetailsChannelHistoryOptionsCell.register)
         collectionView.flatMap(GroupDetailsFileCollaborationCell.register)
+        collectionView.flatMap(SectionFooter.register)
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -201,11 +203,13 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
 
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: "SectionFooter",
+            withReuseIdentifier: SectionFooter.reuseIdentifier,
             for: indexPath
-        )
-        (view as? SectionFooter)?.titleLabel.text = conversation.isCellsEnabled ? L10n.Localizable.GroupDetails
-            .FileCollaborationCell.footer : nil
+        ) as! SectionFooter
+
+        view.titleLabel.text = conversation.isCellsEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell
+            .footer : nil
+
         return view
 
     }
