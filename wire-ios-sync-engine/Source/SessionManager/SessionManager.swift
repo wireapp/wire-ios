@@ -1055,7 +1055,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled
                 )
-
+                
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
                 finishSettingUpUserSession(
                     account: account,
@@ -1063,7 +1063,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     coreDataStack: userSession.coreDataStack
                 )
                 return userSession
-
+                
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
                 WireLogger.sessionManager.warn(
                     "build is blacklisted: \(currentBuildNumber)",
@@ -1102,6 +1102,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                 delegate?.sessionManagerDidFailToLoadSession(
                     for: account,
                     error: .networkError(code: error.errorCode)
+                )
+                return nil
+            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .databaseError(error)
                 )
                 return nil
             } catch let error as SafeForLoggingStringConvertible {
@@ -2073,6 +2083,7 @@ public extension SessionManager {
         case clientIsObsolete
         case networkError(code: Int)
         case genericError
+        case databaseError(Error)
 
     }
 
