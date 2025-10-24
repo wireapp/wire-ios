@@ -3842,6 +3842,14 @@ internal enum L10n {
         /// Verified (Proteus)
         internal static let proteus = L10n.tr("Localizable", "group_details.conversation_verification_status.proteus", fallback: "Verified (Proteus)")
       }
+      internal enum FileCollaborationCell {
+        /// Permanently on for this conversation
+        internal static let footer = L10n.tr("Localizable", "group_details.file_collaboration_cell.footer", fallback: "Permanently on for this conversation")
+        /// On
+        internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
+        /// File collaboration (Cells)
+        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "File collaboration (Cells)")
+      }
       internal enum GuestOptionsCell {
         /// Off
         internal static let disabled = L10n.tr("Localizable", "group_details.guest_options_cell.disabled", fallback: "Off")
@@ -3873,6 +3881,10 @@ internal enum L10n {
       internal enum TimeoutOptionsCell {
         /// Self-deleting messages
         internal static let title = L10n.tr("Localizable", "group_details.timeout_options_cell.title", fallback: "Self-deleting messages")
+      }
+      internal enum TimeoutOptionsDisabled {
+        /// The feature is not available for conversations with Cells.
+        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with Cells.")
       }
     }
     internal enum GuestRoom {
