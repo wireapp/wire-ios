@@ -1190,7 +1190,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         @"name",
         @"availability",
         @"readReceiptsEnabled",
-        @"supportedProtocols"
+        @"supportedProtocols",
+        @"typeValue"
     ]];
     
     // when

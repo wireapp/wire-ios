@@ -68,7 +68,7 @@ class CoreDataMigrationAction {
     }
 
     func execute(in context: NSManagedObjectContext) throws {
-        // to be overriden by subclasses
+        // to be overridden by subclasses
     }
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
