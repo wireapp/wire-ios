@@ -17,12 +17,14 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
     // add version with actions here - aka custom migration
     let excludedVersions: [CoreDataMessagingMigrationVersion] = [
+        .v131,
         .v120,
         .v119,
         .v116,
@@ -30,6 +32,20 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         .v111,
         .v107
     ]
+
+    // MARK: - Version 131
+
+    func test_createPostMigrationAction_ReturnsPostActionForVersion131() {
+        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .v131)
+
+        XCTAssertNotNil(action)
+    }
+
+    func test_createPostMigrationAction_ReturnsNoPreActionForVersion131() {
+        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .v131)
+
+        XCTAssertNil(action)
+    }
 
     // MARK: - Version 120
 

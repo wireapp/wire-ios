@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.131.0
+
+* added `typeValue` to the `User` entity with default value -1
+
 ### 2.130.0
 
 * added `UnknownMessage` entity

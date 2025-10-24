@@ -1240,4 +1240,44 @@ extension ZMUserTests_Swift {
             XCTAssertEqual(domain, created.domain)
         }
     }
+
+    func testTypeDefaultsToRegular() async throws {
+        let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
+        let context = coreDataStack.syncContext
+        try await context.perform { [context] in
+            // Given
+            let user = ZMUser(context: context)
+
+            // When
+            try context.save()
+
+            // Then
+            XCTAssertEqual(user.type, .regular)
+        }
+    }
+
+    func testTypeIsStoredAndRetrieved() async throws {
+        let coreDataStack = try await CoreDataStackHelper().createStack(inMemoryStore: true)
+        let viewContext = coreDataStack.viewContext
+        let syncContext = coreDataStack.syncContext
+        let userID = QualifiedID(uuid: UUID(), domain: "wire.com")
+
+        try await syncContext.perform { [syncContext] in
+            // Given
+            let user = ZMUser(context: syncContext)
+            user.remoteIdentifier = userID.uuid
+            user.domain = userID.domain
+
+            // When
+            user.type = .bot
+            try syncContext.save()
+        }
+
+        await viewContext.perform { [viewContext] in
+            // Then
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: viewContext)
+            XCTAssertEqual(user?.type, .bot)
+        }
+    }
+
 }
