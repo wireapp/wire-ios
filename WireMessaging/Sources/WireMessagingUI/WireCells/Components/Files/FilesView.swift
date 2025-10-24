@@ -38,7 +38,7 @@ package struct FilesView: FilesViewProtocol {
     package var body: some View {
         NavigationStack {
             ZStack {
-                ColorTheme.Backgrounds.surface.color
+                ColorTheme.Backgrounds.background.color
                     .ignoresSafeArea(.all)
 
                 Group {
@@ -72,7 +72,7 @@ package struct FilesView: FilesViewProtocol {
                 .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
-                .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+                .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
                 .toolbar { toolbarContent }
                 .onAppear { reloadTask() }
                 .alert(
