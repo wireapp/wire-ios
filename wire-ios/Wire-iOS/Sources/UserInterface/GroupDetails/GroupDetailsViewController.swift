@@ -374,7 +374,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
 
-    func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
+    func presentParticipantsDetails(
+        with users: [WireDataModel.UserType],
+        selectedUsers: [WireDataModel.UserType],
+        animated: Bool
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let detailsViewController = GroupParticipantsDetailViewController(
@@ -503,7 +507,7 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
-    func presentDetails(for user: UserType) {
+    func presentDetails(for user: WireDataModel.UserType) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
@@ -518,7 +522,10 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(viewController, animated: true)
     }
 
-    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
+    func presentFullParticipantsList(
+        for users: [WireDataModel.UserType],
+        in conversation: GroupDetailsConversationType
+    ) {
         presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
 
