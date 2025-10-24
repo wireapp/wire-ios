@@ -43,9 +43,20 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         let pageSize: Int = 30
 
         /// A `Configuration` suitable for the conversation file view.
-        package static func conversationFileView(root: WireCellsNodeLocator) -> Configuration {
+        package static func conversationFileView(root: WireCellsNodeLocator?) -> Configuration {
             Configuration(
                 root: root,
+                nodeIDs: nil,
+                isRecursive: true,
+                nodeType: .leaf,
+                deletionStatus: .notDeleted
+            )
+        }
+
+        /// A `Configuration` suitable for the files browser view.
+        package static func filesBrowserView() -> Configuration {
+            Configuration(
+                root: nil,
                 nodeIDs: nil,
                 isRecursive: true,
                 nodeType: .leaf,

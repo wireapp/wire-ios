@@ -30,8 +30,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Cerrar vista del equipo creado"
           }
         },
         "et" : {
@@ -155,8 +155,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Cerrar la confirmación"
           }
         },
         "et" : {
@@ -280,8 +280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Cerrar resumen de cuenta de equipo"
           }
         },
         "et" : {
@@ -405,8 +405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Cerrar vista del nombre del equipo"
           }
         },
         "et" : {

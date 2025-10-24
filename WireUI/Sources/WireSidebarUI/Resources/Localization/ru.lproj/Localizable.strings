@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Встречи";
 "sidebar.meetings.all_meetings.title" = "Все встречи";
 
+"sidebar.files.title" = "Файлы";
+"sidebar.files.all_files.title" = "Все";
+
 "sidebar.contacts.title" = "Контакты";
 "sidebar.contacts.connect.title" = "Связаться";
 

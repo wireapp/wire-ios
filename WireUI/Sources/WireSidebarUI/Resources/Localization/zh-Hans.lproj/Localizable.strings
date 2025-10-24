@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "文件";
+"sidebar.files.all_files.title" = "所有";
+
 "sidebar.contacts.title" = "联络人";
 "sidebar.contacts.connect.title" = "新增好友";
 

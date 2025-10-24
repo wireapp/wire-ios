@@ -76,6 +76,10 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
+"conversation.creationForm.wireCells.toggle" = "File collaboration";
+"conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien zu verwalten. Verwenden Sie Ordner, Tags und Filter, um effizienter zu arbeiten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
+"conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
+
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
@@ -100,8 +104,9 @@
 "conversation.draft.attachmentMenu.retry" = "Wiederholen";
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
-// MARK: Conversation Files View
+// MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Dokumente";
+"conversation.wireCells.allFiles.navigationTitle" = "Alle Dateien";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
@@ -111,6 +116,14 @@
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
-"conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
+"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
+"conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
+"conversation.wireCells.files.error.title" = "Can't load files";
+"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
+"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.search.title" = "Search files";
+
+// MARK: - Conversation
+"conversation.message.attachment.notAvailable" = "Datei nicht verfügbar";

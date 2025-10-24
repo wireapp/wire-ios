@@ -23,9 +23,9 @@ public import WireData
 import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
-import WireMessagingUI
+public import WireMessagingUI
 
-public struct WireCellsFactory {
+public struct WireMessagingFactory {
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
@@ -126,13 +126,43 @@ public struct WireCellsFactory {
 
 }
 
-public extension WireCellsFactory {
+public extension WireMessagingFactory {
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration =
-            nodeIDs.isEmpty ? .conversationFileView(root: .path(cellName)) : .nodesFileView(nodeIDs: nodeIDs)
+    func makeFilesView(
+        cellName: String,
+        isCellsStatePending: Bool,
+        nodeIDs: [UUID]
+    ) -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration = nodeIDs
+            .isEmpty ? .conversationFileView(root: .path(cellName)) :
+            .nodesFileView(nodeIDs: nodeIDs)
 
+        let filesView: UIHostingController<FilesView>
+
+        filesView = makeFilesHostingController(
+            configuration: configuration,
+            isCellsStatePending: isCellsStatePending
+        )
+
+        return filesView
+    }
+
+    @MainActor
+    func makeFilesBrowserView() -> UIViewController {
+        let configuration: WireCellsFetchNodesUseCase.Configuration = .filesBrowserView()
+        let filesBrowserView: UIHostingController<FilesBrowserView>
+        filesBrowserView = makeFilesHostingController(
+            configuration: configuration
+        )
+        return filesBrowserView
+    }
+
+    @MainActor
+    private func makeFilesHostingController<T: FilesViewProtocol>(
+        configuration: WireCellsFetchNodesUseCase.Configuration,
+        isCellsStatePending: Bool = false
+    ) -> UIHostingController<T> {
         let viewModel = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: configuration,
@@ -148,9 +178,7 @@ public extension WireCellsFactory {
             fileCache: fileCache
         )
 
-        return FilesHostingController(
-            viewModel: viewModel
-        )
+        return UIHostingController(rootView: T(viewModel: viewModel))
     }
 
     @MainActor
@@ -178,6 +206,24 @@ public extension WireCellsFactory {
         )
         viewController.view.backgroundColor = .clear
         return viewController
+    }
+
+    func makeConversationCellProvider(
+        insetsProvider: @escaping () -> ConversationCellInsets
+    ) -> ConversationCellProvider {
+        ConversationCellProvider(
+            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+                repository: nodesAPI,
+                cache: nodeCache
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetRepository,
+                fileCache: fileCache
+            ),
+            localAssetRepository: localAssetRepository,
+            lastOpenRequest: lastOpenRequest,
+            insetsProvider: insetsProvider
+        )
     }
 
 }

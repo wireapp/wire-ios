@@ -133,10 +133,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             mlsService: mlsService
         )
 
-        let assetAuditLog = featureRepository.fetchAssetAuditLog()
-
         var isCloudDomain = false
-        if let localDomain = metadata.domain, !BackendEnvironment2.isCloudDomain(localDomain) {
+        if let localDomain = metadata.domain, BackendEnvironment2.isCloudDomain(localDomain) {
             isCloudDomain = true
         }
 

@@ -530,8 +530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone added you"
+            "state" : "translated",
+            "value" : "Alguien te ha añadido"
           }
         },
         "et" : {
@@ -655,8 +655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming call"
+            "state" : "translated",
+            "value" : "Llamada entrante"
           }
         },
         "et" : {
@@ -780,8 +780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling"
+            "state" : "translated",
+            "value" : "Llamada a %@"
           }
         },
         "et" : {
@@ -905,8 +905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ new messages"
+            "state" : "translated",
+            "value" : "%@ mensajes nuevos"
           }
         },
         "et" : {
@@ -1655,8 +1655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone created a conversation"
+            "state" : "translated",
+            "value" : "Alguien creó una conversación"
           }
         },
         "et" : {
@@ -1780,8 +1780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone deleted the group"
+            "state" : "translated",
+            "value" : "Alguien eliminó el grupo"
           }
         },
         "et" : {
@@ -2280,8 +2280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Pinged you"
+            "state" : "translated",
+            "value" : "Te ha hecho ping"
           }
         },
         "et" : {
@@ -2405,8 +2405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone removed you"
+            "state" : "translated",
+            "value" : "Alguien te eliminó"
           }
         },
         "et" : {
@@ -2530,8 +2530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone replied to you"
+            "state" : "translated",
+            "value" : "Alguien te respondió"
           }
         },
         "et" : {
@@ -2905,8 +2905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ created a conversation"
+            "state" : "translated",
+            "value" : "%@ creó un chat"
           }
         },
         "et" : {
@@ -3030,8 +3030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ deleted the group"
+            "state" : "translated",
+            "value" : "%@ eliminó el grupo"
           }
         },
         "et" : {
@@ -3155,8 +3155,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ pinged you"
+            "state" : "translated",
+            "value" : "%@ te hizo ping"
           }
         },
         "et" : {
@@ -3405,8 +3405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ turned off the message timer"
+            "state" : "translated",
+            "value" : "%@ apagó el temporizador de mensajes"
           }
         },
         "et" : {
@@ -3530,8 +3530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ set the message timer to %@"
+            "state" : "translated",
+            "value" : "%@ estableció el temporizador de mensajes a %@"
           }
         },
         "et" : {
@@ -3655,8 +3655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared an audio message"
+            "state" : "translated",
+            "value" : "%@ envió un mensaje de audio"
           }
         },
         "et" : {
@@ -3780,8 +3780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a file"
+            "state" : "translated",
+            "value" : "%@ envió un archivo"
           }
         },
         "et" : {
@@ -3905,8 +3905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a location"
+            "state" : "translated",
+            "value" : "%@ envió una ubicación"
           }
         },
         "et" : {
@@ -4030,8 +4030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a picture"
+            "state" : "translated",
+            "value" : "%@ envió una foto"
           }
         },
         "et" : {
@@ -4155,8 +4155,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a video"
+            "state" : "translated",
+            "value" : "%@ envió un vídeo"
           }
         },
         "et" : {
@@ -4405,8 +4405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone turned off the timer"
+            "state" : "translated",
+            "value" : "Alguien apagó el temporizador"
           }
         },
         "et" : {
@@ -4530,8 +4530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone set the timer to %@"
+            "state" : "translated",
+            "value" : "Alguien estableció el temporizador a %@"
           }
         },
         "et" : {
@@ -5280,8 +5280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention: %@"
+            "state" : "translated",
+            "value" : "Mención: %@"
           }
         },
         "et" : {
@@ -5405,8 +5405,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention from %@: %@"
+            "state" : "translated",
+            "value" : "Mención de %@: %@"
           }
         },
         "et" : {
@@ -5530,8 +5530,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply: %@"
+            "state" : "translated",
+            "value" : "Respuesta: %@"
           }
         },
         "et" : {
@@ -5655,8 +5655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply from %@: %@"
+            "state" : "translated",
+            "value" : "Respuesta de %@: %@"
           }
         },
         "et" : {
@@ -5780,8 +5780,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming video call"
+            "state" : "translated",
+            "value" : "Videollamada entrante"
           }
         },
         "et" : {
@@ -5905,8 +5905,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling with video"
+            "state" : "translated",
+            "value" : "Llamada %@ con vídeo"
           }
         },
         "et" : {
@@ -6030,8 +6030,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ in %@"
+            "state" : "translated",
+            "value" : "%@ en %@"
           }
         },
         "et" : {

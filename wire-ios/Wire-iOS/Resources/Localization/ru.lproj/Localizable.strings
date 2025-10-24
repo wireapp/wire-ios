@@ -368,6 +368,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (по умолчанию)";
+"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.subtitle" = "Предоставьте пользователям возможность управлять своими документами и медиафайлами. Используйте папки, теги и фильтры для более эффективной работы. Это невозможно отменить.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -602,6 +604,8 @@
 "content.system.message_timer_off" = "%@ отключил(-а) таймер сообщения";
 "content.system.message_timer_off-you" = "%@ отключил таймер сообщения";
 
+"content.system.message_timer_unavailable" = "Самоудаление сообщений отключено для разговоров с Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
 "content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
 
@@ -664,6 +668,7 @@
 "content.system.session_reset.self" = "Вам не смогли расшифровать некоторые из ваших сообщений, но проблема была решена. Это затронуло все беседы.";
 
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
+"content.system.unknown_message_received.body" = "Вы получили сообщение, которое не может быть показано. Возможно, вы используете старую версию Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "Этот пользователь больше не доступен";

@@ -16,5 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.9.0
+WIRE_SHORT_VERSION = 4.10.0
 MAJOR_VERSION = 4

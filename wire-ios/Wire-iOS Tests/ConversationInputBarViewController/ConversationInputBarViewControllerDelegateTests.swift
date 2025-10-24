@@ -55,7 +55,7 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
             userSession: userSession,
             classificationProvider: mockClassificationProvider,
             networkStatusObservable: MockNetworkStatusObservable(),
-            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
 
         mockDelegate = MockDelegate()

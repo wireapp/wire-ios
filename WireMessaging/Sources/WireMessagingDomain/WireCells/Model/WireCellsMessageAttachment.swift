@@ -19,9 +19,9 @@
 public import Foundation
 
 /// Data for a single attachment sent with a message
-public struct WireCellsMessageAttachment {
+public struct WireCellsMessageAttachment: Hashable, Sendable {
 
-    public enum Metadata {
+    public enum Metadata: Hashable, Sendable {
 
         /// Image metadata, containing width and height in pixels.
         case image(width: Int, height: Int)

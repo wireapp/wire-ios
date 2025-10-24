@@ -16,25 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
-import WireDesign
+@objc(ZMTypeOfUser)
+public enum TypeOfUser: Int16, CaseIterable, Sendable {
+    /// Regular users
+    case regular
+    /// Apps
+    case app
+    /// Old style bots (services)
+    case bot
+}
 
-package final class FilesHostingController: UIHostingController<FilesView> {
+extension TypeOfUser: CustomDebugStringConvertible {
 
-    private typealias Strings = L10n.Localizable.Conversation.WireCells
-    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
-
-    private let viewModel: FilesViewModel
-
-    public init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
-        super.init(rootView: FilesView(viewModel: viewModel))
-    }
-
-    @available(*, unavailable)
-    @MainActor @objc
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    public var debugDescription: String {
+        switch self {
+        case .regular:
+            "regular"
+        case .app:
+            "app"
+        case .bot:
+            "bot"
+        }
     }
 
 }

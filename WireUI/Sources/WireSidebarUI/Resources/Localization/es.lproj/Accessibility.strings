@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.settings.description" = "Open your settings";
-"sidebar.support.description" = "Open support";
-"sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
-"sidebar.conversation_filter.unread.description" = "Show unread conversations";
-"sidebar.conversation_filter.mentions.description" = "Show conversations with mentions";
-"sidebar.conversation_filter.replies.description" = "Show conversations with replies";
-"sidebar.conversation_filter.drafts.description" = "Show conversations with drafts";
-"sidebar.name.description" = "Profile name";
+"sidebar.settings.description" = "Abre tu configuración";
+"sidebar.support.description" = "Abrir soporte";
+"sidebar.conversation_filter.oneOnOneConversations.description" = "Canales individuales";
+"sidebar.conversation_filter.unread.description" = "Mostrar conversaciones no leídas";
+"sidebar.conversation_filter.mentions.description" = "Mostrar conversaciones con menciones";
+"sidebar.conversation_filter.replies.description" = "Mostrar conversaciones con respuestas";
+"sidebar.conversation_filter.drafts.description" = "Mostrar conversaciones con borradores";
+"sidebar.name.description" = "Nombre de perfil";
 "sidebar.handle.description" = "Nombre de usuario";

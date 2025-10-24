@@ -54,7 +54,7 @@ struct FilesViewItemView: View {
                         .wireTextStyle(.subline1)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
+                }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
                 Spacer()
 
@@ -81,7 +81,7 @@ struct FilesViewItemView: View {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                         .frame(minHeight: 24)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 16)
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
@@ -96,7 +96,6 @@ struct FilesViewItemView: View {
                         action: confirmDelete
                     )
                 }
-                .tint(.black)
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar

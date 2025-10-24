@@ -30,8 +30,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
+            "state" : "translated",
+            "value" : "Añade tus conversaciones a carpetas para mantenerte organizado."
           }
         },
         "et" : {
@@ -280,8 +280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Carpetas"
           }
         },
         "et" : {

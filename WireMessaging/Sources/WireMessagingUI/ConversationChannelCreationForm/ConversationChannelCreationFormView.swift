@@ -199,8 +199,9 @@ public struct ConversationChannelCreationForm: View {
         Section(content: {
             Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
         }, footer: {
-            Text(Strings.CreationForm.WireCells.description) +
-                Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-16736] URL to be defined
+            Text(Strings.CreationForm.WireCells.description)
+            // Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-20191] URL to be
+            // defined, uncomment when we have the URL
         })
     }
 }

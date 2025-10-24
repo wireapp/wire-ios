@@ -17,6 +17,7 @@
 //
 
 import avs
+import Combine
 import SwiftUI
 import UIKit
 import WireAccountImageUI
@@ -72,7 +73,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireCellsEnabled: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+        isWireCellsEnabled: userSession.isWireCellsEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
@@ -95,7 +96,7 @@ final class ZClientViewController: UIViewController {
     lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
             showMeetings: DeveloperFlag.wireMeetings.isOn,
-            showFiles: DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled
+            showFiles: userSession.isWireCellsEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
@@ -105,7 +106,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         mediaPlaybackManager: mediaPlaybackManager,
-        wireCellsFactory: wireCellsFactory
+        wireMessagingFactory: wireMessagingFactory
     )
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
@@ -177,6 +178,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
     var userDidViewSelfProfileToken: SelfUnregisteringNotificationCenterToken?
+    private var subscription: AnyCancellable?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -187,8 +189,7 @@ final class ZClientViewController: UIViewController {
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
-    private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
-    let wireCellsFactory: any WireCellsFactoryProtocol
+    let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -203,16 +204,14 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
-        wireCellsFactory: any WireCellsFactoryProtocol,
-        wireMeetingsFactory: any WireMeetingsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-        self.wireCellsFactory = wireCellsFactory
-        self.wireMeetingsFactory = wireMeetingsFactory
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
 
@@ -255,6 +254,7 @@ final class ZClientViewController: UIViewController {
                 self?.sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
             }
 
+        observeCellsFeatureChange()
         createLegalHoldDisclosureController()
     }
 
@@ -265,6 +265,31 @@ final class ZClientViewController: UIViewController {
 
     deinit {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
+    }
+
+    /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
+    /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
+    private func observeCellsFeatureChange() {
+        subscription = userSession.clientSessionComponent?.featureConfigRepository
+            .observeFeatureStates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] featureState in
+                guard let self else { return }
+                switch featureState.name {
+                case .cells where featureState.isEnabled:
+                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        guard !sidebarViewController.showFiles else { break }
+                        sidebarViewController.showFiles = true
+                        mainTabBarController.filesUI = filesBrowserView
+                    } else {
+                        guard mainTabBarController.filesUI == nil else { break }
+                        mainTabBarController.filesUI = filesBrowserView
+                    }
+                default:
+                    break
+                }
+            }
     }
 
     @discardableResult
@@ -361,8 +386,9 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
-        if DeveloperFlag.wireCells.isOn || userSession.isWireCellsEnabled {
-            mainTabBarController.filesUI = UIHostingController(rootView: AllFilesView())
+        if userSession.isWireCellsEnabled {
+            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+            mainTabBarController.filesUI = filesBrowserView
         }
 
         mainTabBarController.delegate = mainCoordinator
@@ -426,7 +452,8 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectBuilder.build())
+            let rootViewController = await connectBuilder.build()
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
