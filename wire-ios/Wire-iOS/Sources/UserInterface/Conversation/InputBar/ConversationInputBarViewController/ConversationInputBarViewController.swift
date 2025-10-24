@@ -1127,7 +1127,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func addAttachmentsCarousel() {
-        guard useWireCells() else { return }
+        guard conversation.isCellsEnabled else { return }
 
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
