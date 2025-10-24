@@ -80,7 +80,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
-    @Published var fileManagementEnabled: Bool = true
+    @Published var fileManagementEnabled: Bool = false
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
