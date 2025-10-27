@@ -25,13 +25,13 @@ struct WireCellsImageConversationAttachmentPreview: View {
     let thumbnailURL: URL?
     let progress: Double?
     let isError: Bool
-    let noPreviewMessage: String?
+    let canShowNoPreviewMessage: Bool
 
-    init(thumbnailURL: URL?, progress: Double?, isError: Bool, noPreviewMessage: String?) {
+    init(thumbnailURL: URL?, progress: Double?, isError: Bool, canShowNoPreviewMessage: Bool) {
         self.thumbnailURL = thumbnailURL
         self.progress = progress
         self.isError = isError
-        self.noPreviewMessage = noPreviewMessage
+        self.canShowNoPreviewMessage = canShowNoPreviewMessage
     }
 
     var body: some View {
@@ -75,8 +75,8 @@ struct WireCellsImageConversationAttachmentPreview: View {
     // MARK: Helpers
 
     @ViewBuilder private var noPreviewMessageView: some View {
-        if let noPreviewMessage {
-            Text(noPreviewMessage)
+        if canShowNoPreviewMessage {
+            Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
                 .wireTextStyle(.subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
                 .multilineTextAlignment(.center)
@@ -95,7 +95,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
         thumbnailURL: nil,
         progress: 0.5,
         isError: false,
-        noPreviewMessage: "No preview available"
+        canShowNoPreviewMessage: true
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

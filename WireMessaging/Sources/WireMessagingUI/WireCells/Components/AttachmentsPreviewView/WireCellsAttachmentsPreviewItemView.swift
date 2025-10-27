@@ -43,7 +43,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isError: viewModel.isError,
-                    noPreviewMessage: nil
+                    canShowNoPreviewMessage: false
                 )
                 .frame(width: 74, height: 74)
             case (.image, .large):
@@ -51,7 +51,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isError: viewModel.isError,
-                    noPreviewMessage: L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable
+                    canShowNoPreviewMessage: true
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
                 .frame(
