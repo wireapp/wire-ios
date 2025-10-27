@@ -146,7 +146,7 @@ final class UserConnectionView: UIView, Copyable {
 
     private func updateGuestAccountViews() {
         if let viewer = SelfUser.provider?.providedSelfUser {
-            let isGuest = viewer.isTeamMember && !viewer.canAccessCompanyInformation(of: user)
+            let isGuest = viewer.hasTeam && !user.isTeamMember
             guestIndicator.isHidden = !isGuest
         } else {
             // show guest indicator
