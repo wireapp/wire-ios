@@ -42,7 +42,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isAssetDownloadError: viewModel.isAssetDownloadError,
                     canShowNoPreviewMessage: false
                 )
                 .frame(width: 74, height: 74)
@@ -50,7 +50,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isAssetDownloadError: viewModel.isAssetDownloadError,
                     canShowNoPreviewMessage: true
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
@@ -67,7 +67,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isError: viewModel.isAssetDownloadError,
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
@@ -77,7 +77,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isError: viewModel.isAssetDownloadError,
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
@@ -87,7 +87,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isError: viewModel.isAssetDownloadError,
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
@@ -97,7 +97,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isError: viewModel.isAssetDownloadError,
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
@@ -107,7 +107,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isError,
+                    isError: viewModel.isAssetDownloadError,
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)

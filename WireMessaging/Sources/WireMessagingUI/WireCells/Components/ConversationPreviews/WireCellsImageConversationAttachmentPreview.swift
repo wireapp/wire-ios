@@ -24,26 +24,26 @@ struct WireCellsImageConversationAttachmentPreview: View {
 
     let thumbnailURL: URL?
     let progress: Double?
-    let isError: Bool
+    let isAssetDownloadError: Bool
     let canShowNoPreviewMessage: Bool
 
-    init(thumbnailURL: URL?, progress: Double?, isError: Bool, canShowNoPreviewMessage: Bool) {
+    init(thumbnailURL: URL?, progress: Double?, isAssetDownloadError: Bool, canShowNoPreviewMessage: Bool) {
         self.thumbnailURL = thumbnailURL
         self.progress = progress
-        self.isError = isError
+        self.isAssetDownloadError = isAssetDownloadError
         self.canShowNoPreviewMessage = canShowNoPreviewMessage
     }
 
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+            progressColor: isAssetDownloadError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
         ) {
             ZStack {
                 if let thumbnailURL {
                     AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
                         switch phase {
-                        case .empty where !isError:
+                        case .empty where !isAssetDownloadError:
                             ProgressView()
                                 .tint(ColorTheme.Backgrounds.surface.color)
                         case let .success(image):
@@ -53,7 +53,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
                                     .scaledToFill()
                                     .frame(width: geometry.size.width, height: geometry.size.height)
                             }
-                        case let .failure(error) where !error.isURLErrorCancelled && !isError:
+                        case let .failure(error) where !error.isURLErrorCancelled && !isAssetDownloadError:
                             noPreviewMessageView
                         default:
                             EmptyView()
@@ -63,7 +63,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
                     noPreviewMessageView
                 }
 
-                if isError {
+                if isAssetDownloadError {
                     WireCellsAttachmentPreviewErrorCircle()
                 }
             }
@@ -94,7 +94,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
     WireCellsImageConversationAttachmentPreview(
         thumbnailURL: nil,
         progress: 0.5,
-        isError: false,
+        isAssetDownloadError: false,
         canShowNoPreviewMessage: true
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())

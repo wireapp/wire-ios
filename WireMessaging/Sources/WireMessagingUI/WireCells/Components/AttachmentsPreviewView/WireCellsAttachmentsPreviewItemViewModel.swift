@@ -115,7 +115,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
-    var isError: Bool {
+    var isAssetDownloadError: Bool {
         switch asset?.downloadState {
         case .failed:
             true
