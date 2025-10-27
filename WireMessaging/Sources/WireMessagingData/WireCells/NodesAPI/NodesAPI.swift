@@ -99,9 +99,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func getPreviews(nodeID: UUID) async throws -> [WireCellsNodePreview] {
         let dto = try await restAPI.getNode(uuid: nodeID)
-        return dto.previews.map {
-            WireCellsNodePreview(url: $0.url, dimension: $0.dimension ?? 0)
-        }
+        return dto.previews.compactMap { $0.toModel() }
     }
 
     package func getNode(nodeID: UUID) async throws -> WireCellsNode {
