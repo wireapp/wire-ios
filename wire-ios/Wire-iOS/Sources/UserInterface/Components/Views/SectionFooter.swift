@@ -22,6 +22,7 @@ import WireDesign
 final class SectionFooter: UICollectionReusableView {
 
     private let footerView = SectionFooterView()
+    static let reuseIdentifier = "SectionFooter"
 
     var titleLabel: UILabel {
         footerView.titleLabel
@@ -47,7 +48,7 @@ final class SectionFooter: UICollectionReusableView {
         collectionView.register(
             SectionFooter.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: "SectionFooter"
+            withReuseIdentifier: reuseIdentifier
         )
     }
 }
