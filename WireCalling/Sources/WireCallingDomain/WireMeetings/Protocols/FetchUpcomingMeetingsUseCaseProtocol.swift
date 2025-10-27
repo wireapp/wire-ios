@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Fetches upcoming meetings
-package protocol FetchUpcomingMeetingsUseCaseProtocol {
+package protocol FetchUpcomingMeetingsUseCaseProtocol: Sendable {
 
     func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings
 

@@ -24,19 +24,21 @@ package final class MeetingsViewModel: ObservableObject {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published var selectedTab: Tab = .next
-    @Published var showAll: Bool = false {
+    @Published package var selectedTab: Tab = .next
+    @Published package var showAll: Bool = false {
         didSet {
             if oldValue != showAll {
                 futureOffset = 0
-                futureMeetings = []
-                loadFutureMeetings()
+                upcomingMeetings = []
+                loadUpcomingMeetings()
             }
         }
     }
 
-    @Published var futureMeetings: GroupedMeetings = []
-    @Published var showMoreButton: Bool = false
+    @Published private(set) var showMoreButton: Bool = false
+    @Published private(set) var upcomingMeetings: GroupedMeetings = []
+    @Published private(set) var cachedOngoingMeetings: [Meeting] = []
+    @Published private(set) var cachedPastMeetings: GroupedMeetings = []
 
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
@@ -63,34 +65,54 @@ package final class MeetingsViewModel: ObservableObject {
         self.pastMeetingsUseCase = pastMeetingsUseCase
         self.ongoingMeetingsUseCase = ongoingMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
-
-        loadFutureMeetings()
     }
 
+    // MARK: - Public Interface
+
     package var ongoingMeetings: [Meeting] {
-        ongoingMeetingsUseCase.invoke()
+        cachedOngoingMeetings
     }
 
     package var groupedPastMeetings: GroupedMeetings {
-        pastMeetingsUseCase.invoke()
+        cachedPastMeetings
     }
 
     package var groupedNext: GroupedMeetings {
-        futureMeetings
+        upcomingMeetings
+    }
+
+    package func loadInitialData() {
+        refreshOngoingMeetings()
+        refreshPastMeetings()
+        loadUpcomingMeetings()
+    }
+
+    package func loadMoreUpcomingMeetings() {
+        loadUpcomingMeetings()
+    }
+
+    package func refreshOngoingMeetings() {
+        cachedOngoingMeetings = ongoingMeetingsUseCase.invoke()
+    }
+
+    package func refreshPastMeetings() {
+        cachedPastMeetings = pastMeetingsUseCase.invoke()
     }
 
     package func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
 
-    func formatTime(_ date: Date) -> String {
+    package func formatTime(_ date: Date) -> String {
         formatter.timeHeader(for: date)
     }
 
-    func meetNowTapped() {}
-    func scheduleMeetingTapped() {}
+    package func meetNowTapped() {}
+    package func scheduleMeetingTapped() {}
 
-    private func loadFutureMeetings() {
+    // MARK: - Private Methods
+
+    private func loadUpcomingMeetings() {
         let isLimited = !showAll
         let result = upcomingMeetingsUseCase.invoke(
             limitToTwoDays: isLimited,
@@ -99,15 +121,15 @@ package final class MeetingsViewModel: ObservableObject {
         )
 
         if futureOffset == 0 {
-            futureMeetings = result.groups
+            upcomingMeetings = result.groups
         } else {
-            futureMeetings = mergeGroups(existing: futureMeetings, new: result.groups)
+            upcomingMeetings = mergeGroups(existing: upcomingMeetings, new: result.groups)
         }
 
         futureOffset = result.nextOffset
 
         if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange.tomorrowEnd
+            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider).tomorrowEnd
                 .map { repository.hasUpcomingMeetings(after: $0) } ?? false
         } else {
             showMoreButton = result.hasMore
@@ -121,7 +143,8 @@ package final class MeetingsViewModel: ObservableObject {
             var slots = mergedDict[group.day] ?? []
             for newSlot in group.timeSlots {
                 if let index = slots.firstIndex(where: { $0.time == newSlot.time }) {
-                    slots[index].meetings.append(contentsOf: newSlot.meetings)
+                    let mergedMeetings = slots[index].meetings + newSlot.meetings
+                    slots[index] = (time: newSlot.time, meetings: mergedMeetings)
                 } else {
                     slots.append(newSlot)
                 }

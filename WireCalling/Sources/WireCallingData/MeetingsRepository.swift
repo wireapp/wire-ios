@@ -40,8 +40,6 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         let start = min(offset, allFuture.count)
         let end = min(offset + limit, allFuture.count)
         return Array(allFuture[start ..< end])
-
-        //        meetingsSource().filter { $0.start > date }
     }
 
     package func hasUpcomingMeetings(after date: Date) -> Bool {
@@ -100,8 +98,8 @@ package extension MeetingsRepository {
             Meeting(
                 id: UUID(),
                 title: "Design review",
-                start: day(0, hour: 16),
-                end: day(0, hour: 17)
+                start: day(0, hour: 11),
+                end: day(0, hour: 12)
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group

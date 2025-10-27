@@ -22,6 +22,8 @@ package struct MeetingsGrouper {
 
     private let calendar = Calendar.current
 
+    package init() {}
+
     package func group(
         _ meetings: [Meeting],
         byHours: Bool,

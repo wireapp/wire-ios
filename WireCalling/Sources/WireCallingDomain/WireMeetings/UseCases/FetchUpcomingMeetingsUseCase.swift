@@ -45,7 +45,7 @@ package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtoco
         )
 
         if limitToTwoDays {
-            guard let tomorrowEnd = calendar.todayAndTomorrowRange.tomorrowEnd else {
+            guard let tomorrowEnd = calendar.todayAndTomorrowRange(using: currentDateProvider).tomorrowEnd else {
                 return PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: offset)
             }
             meetings = meetings.filter { $0.start < tomorrowEnd }

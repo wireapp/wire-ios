@@ -27,6 +27,8 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    package init() {}
+
     package func dayHeader(for date: Date, now: Date) -> String {
         let calendar = Calendar.current
 

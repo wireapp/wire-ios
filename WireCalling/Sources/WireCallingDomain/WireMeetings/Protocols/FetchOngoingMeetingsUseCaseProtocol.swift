@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Fetches ongoing meetings
-package protocol FetchOngoingMeetingsUseCaseProtocol {
+package protocol FetchOngoingMeetingsUseCaseProtocol: Sendable {
 
     func invoke() -> [Meeting]
 

@@ -17,12 +17,11 @@
 //
 
 package import Foundation
-import WireFoundation
+package import WireFoundation
 
 package extension Calendar {
 
-    var todayAndTomorrowRange: (todayStart: Date, tomorrowEnd: Date?) {
-        let dateProvider: any CurrentDateProviding = .system
+    func todayAndTomorrowRange(using dateProvider: any CurrentDateProviding) -> (todayStart: Date, tomorrowEnd: Date?) {
         let todayStart = startOfDay(for: dateProvider.now)
         let tomorrowEnd = date(byAdding: .day, value: 2, to: todayStart)
         return (todayStart, tomorrowEnd)

@@ -47,6 +47,16 @@ package struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .onAppear {
+            viewModel.loadInitialData()
+        }
+        .onChange(of: viewModel.selectedTab) { newValue in
+            if newValue == .past {
+                viewModel.refreshPastMeetings()
+            } else {
+                viewModel.refreshOngoingMeetings()
+            }
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -88,6 +98,14 @@ package struct MeetingsView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
+        .refreshable {
+            if viewModel.selectedTab == .next {
+                viewModel.refreshOngoingMeetings()
+                viewModel.showAll = false
+            } else {
+                viewModel.refreshPastMeetings()
+            }
+        }
     }
 }
 
@@ -177,5 +195,12 @@ private struct MeetingRow: View {
 }
 
 // #Preview {
-//    MeetingsView(viewModel: MeetingsViewModel(repository: MockMeetingsRepositoryProtocol()))
+//    MeetingsView(viewModel: MeetingsViewModel(
+//        repository: MockMeetingsRepositoryProtocol(),
+//        currentDateProvider: CurrentDateProvidingMock(),
+//        formatter: MeetingsFormatter(),
+//        pastMeetingsUseCase: FetchPastMeetingsUseCaseProtocolMock(),
+//        ongoingMeetingsUseCase: FetchOngoingMeetingsUseCaseProtocolMock(),
+//        upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock())
+//    )
 // }
