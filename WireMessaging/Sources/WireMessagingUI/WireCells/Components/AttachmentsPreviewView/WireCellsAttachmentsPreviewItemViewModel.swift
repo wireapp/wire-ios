@@ -62,8 +62,8 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.displayStyle = displayStyle
         self.isDeleted = false
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [self] asset in
-            self.asset = asset
+        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
+            self?.asset = asset
         }.store(in: &cancellables)
     }
 
