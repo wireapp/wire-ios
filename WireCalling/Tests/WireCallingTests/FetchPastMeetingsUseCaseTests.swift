@@ -166,7 +166,7 @@ struct FetchPastMeetingsUseCaseTests {
 
     // MARK: - Helpers
 
-    func createMeeting(
+    private func createMeeting(
         id: UUID = UUID(),
         title: String,
         start: Date,

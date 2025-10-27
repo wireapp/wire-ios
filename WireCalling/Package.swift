@@ -75,8 +75,10 @@ let package = Package(
             name: "WireCallingUITests",
             dependencies: [
                 "WireCallingUI",
+                "WireCallingDomain",
                 "WireCallingDomainSupport",
-                .product(name: "WireDesign", package: "WireUI")
+                .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireFoundationSupport", package: "WireFoundation")
             ],
         ),
     ]

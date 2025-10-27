@@ -194,13 +194,14 @@ private struct MeetingRow: View {
     }
 }
 
-// #Preview {
-//    MeetingsView(viewModel: MeetingsViewModel(
-//        repository: MockMeetingsRepositoryProtocol(),
-//        currentDateProvider: CurrentDateProvidingMock(),
-//        formatter: MeetingsFormatter(),
-//        pastMeetingsUseCase: FetchPastMeetingsUseCaseProtocolMock(),
-//        ongoingMeetingsUseCase: FetchOngoingMeetingsUseCaseProtocolMock(),
-//        upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocolMock())
-//    )
-// }
+#Preview {
+    MeetingsView(viewModel: MeetingsViewModel(
+        repository: MockMeetingsRepositoryProtocol(),
+        currentDateProvider: .system,
+        formatter: MeetingsFormatter(),
+        pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
+        ongoingMeetingsUseCase: MockFetchOngoingMeetingsUseCaseProtocol(),
+        upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
+    )
+    )
+}
