@@ -24,6 +24,30 @@ let appDelegateClass: AnyClass = NSClassFromString("TestingAppDelegate") ?? AppD
 UIApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
-    NSStringFromClass(WireApplication.self),
-    NSStringFromClass(appDelegateClass)
+    NSStringFromClass(UIApplication.self),
+    NSStringFromClass(TempAppDelegate.self)
 )
+
+final class TempAppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+
+        guard let windowScene = application.connectedScenes.first as? UIWindowScene else { fatalError() }
+
+        window = UIWindow(windowScene: windowScene)
+
+        let tempVC = UIViewController()
+        tempVC.view.backgroundColor = .green
+        tempVC.navigationItem.title = "Temporary"
+        let tempNC = UINavigationController(rootViewController: tempVC)
+
+        window?.rootViewController = tempNC
+        window?.makeKeyAndVisible()
+
+        return true
+
+    }
+
+}
