@@ -73,6 +73,10 @@ struct FilesViewItemView: View {
 //                    Button(action: rename) {
 //                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
 //                    }
+                    
+                    Button(action: editTags) {
+                        Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+                    }
 
                     Button(role: .destructive, action: delete) {
                         Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
@@ -119,6 +123,10 @@ struct FilesViewItemView: View {
 
     private func rename() {
         // FIXME: [WPB-19393] Implement
+    }
+    
+    private func editTags() {
+        //TODO: ...
     }
 
     private func delete() {
