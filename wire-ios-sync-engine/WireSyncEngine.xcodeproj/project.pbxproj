@@ -175,6 +175,7 @@
 		34BD6E002DB26C4100DFA11A /* UpdateEventMigratorDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD6DFF2DB26C4100DFA11A /* UpdateEventMigratorDAO.swift */; };
 		34BF35D42E54841D002C2E6F /* UserSessionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF35D32E54841D002C2E6F /* UserSessionLoader.swift */; };
 		34DC44B12E01C1FC004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B02E01C1FC004D5DD5 /* WireNetwork */; };
+		34E0BAFD2EB0DC1C00CA5D0F /* WorkAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E0BAFC2EB0DC1C00CA5D0F /* WorkAgent.swift */; };
 		34F8CA982E02BFEB000FE4E0 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA972E02BFEB000FE4E0 /* WireNetwork */; };
 		3E05F252192A4FBD00F22D80 /* UserSessionErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */; };
 		3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */; };
@@ -756,6 +757,7 @@
 		34BBF7692E57220C00491987 /* NewEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEnvironment.swift; sourceTree = "<group>"; };
 		34BD6DFF2DB26C4100DFA11A /* UpdateEventMigratorDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventMigratorDAO.swift; sourceTree = "<group>"; };
 		34BF35D32E54841D002C2E6F /* UserSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionLoader.swift; sourceTree = "<group>"; };
+		34E0BAFC2EB0DC1C00CA5D0F /* WorkAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkAgent.swift; sourceTree = "<group>"; };
 		3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSyncStrategyTests.swift; sourceTree = "<group>"; };
 		3E05F247192A4F8900F22D80 /* NSError+ZMUserSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+ZMUserSession.h"; sourceTree = "<group>"; };
 		3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSessionErrorTests.m; sourceTree = "<group>"; };
@@ -1228,6 +1230,9 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		34E0BB062EB0E2A800CA5D0F /* WorkScheduler */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WorkScheduler; sourceTree = "<group>"; };
+		34E0BB072EB0E2DB00CA5D0F /* Worker */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Worker; sourceTree = "<group>"; };
+		34E0BB082EB0E5B500CA5D0F /* WorkTicket */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WorkTicket; sourceTree = "<group>"; };
 		591E5E252D28084200284F11 /* WireCallCenterNotifications */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCallCenterNotifications; sourceTree = "<group>"; };
 		598410982D3EC1980062D022 /* Use cases */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Use cases"; sourceTree = "<group>"; };
 		5993EA532DAD078300F08A0E /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5993EA5B2DAD078300F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
@@ -1427,6 +1432,17 @@
 				169BA25125EF778E00374343 /* TestUserProfileUpdateObserver.swift */,
 			);
 			path = Recorders;
+			sourceTree = "<group>";
+		};
+		34E0BAFB2EB0DC0900CA5D0F /* WorkAgent */ = {
+			isa = PBXGroup;
+			children = (
+				34E0BAFC2EB0DC1C00CA5D0F /* WorkAgent.swift */,
+				34E0BB082EB0E5B500CA5D0F /* WorkTicket */,
+				34E0BB072EB0E2DB00CA5D0F /* Worker */,
+				34E0BB062EB0E2A800CA5D0F /* WorkScheduler */,
+			);
+			path = WorkAgent;
 			sourceTree = "<group>";
 		};
 		3E18605A191A4EF8000FE027 /* Resources */ = {
@@ -1645,6 +1661,7 @@
 		5423B98C191A49CD0044347D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				34E0BAFB2EB0DC0900CA5D0F /* WorkAgent */,
 				59D0583B2D158D0D00B687F2 /* Analytics */,
 				060C06662B7619C600B484C6 /* E2EI */,
 				EFF9403C2240FE12004F3115 /* DeepLink */,
@@ -2582,6 +2599,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				34E0BB062EB0E2A800CA5D0F /* WorkScheduler */,
+				34E0BB072EB0E2DB00CA5D0F /* Worker */,
+				34E0BB082EB0E5B500CA5D0F /* WorkTicket */,
 				591E5E252D28084200284F11 /* WireCallCenterNotifications */,
 				59A9D3C62E86BB49002FCE03 /* AppVersionMigrations */,
 				59D0583B2D158D0D00B687F2 /* Analytics */,
@@ -3088,6 +3108,7 @@
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				E623B6382BD688D400F91B37 /* Caches.swift in Sources */,
+				34E0BAFD2EB0DC1C00CA5D0F /* WorkAgent.swift in Sources */,
 				E6BB79542C36B36E003B821B /* NetworkState.swift in Sources */,
 				546392721D79D5210094EC66 /* Application.swift in Sources */,
 				EFC8281C1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift in Sources */,
