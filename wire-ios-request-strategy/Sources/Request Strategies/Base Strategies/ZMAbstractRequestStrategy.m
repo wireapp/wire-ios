@@ -19,6 +19,7 @@
 #import <Foundation/Foundation.h>
 #import <WireRequestStrategy/WireRequestStrategy-Swift.h>
 #import "ZMAbstractRequestStrategy.h"
+#import "ZMSLogging.h"
 
 static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 

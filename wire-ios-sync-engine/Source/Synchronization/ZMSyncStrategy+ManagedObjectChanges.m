@@ -20,6 +20,7 @@
 #import "ZMSyncStrategy+ManagedObjectChanges.h"
 #import "WireSyncEngineLogs.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
+#import "ZMSLogging.h"
 
 @implementation ZMSyncStrategy (ManagedObjectChanges)
 

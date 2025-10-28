@@ -26,6 +26,7 @@
 #import "ZMLocallyModifiedObjectSet.h"
 #import "ZMUpstreamTranscoder.h"
 #import "ZMUpstreamRequest.h"
+#import "ZMSLogging.h"
 
 @interface ZMUpstreamInsertedObjectSync ()
 

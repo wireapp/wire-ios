@@ -260,6 +260,7 @@
 		594C0FCE2D541643003D8183 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 594C0FCD2D541643003D8183 /* WireDomainPackage */; };
 		594EAA002EA23E73009BC0EB /* WireUtilitiesPackageSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 594EA9FF2EA23E73009BC0EB /* WireUtilitiesPackageSupport */; };
 		59537D892CFF9E7700920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D882CFF9E7700920B59 /* WireLogging */; };
+		596224E62EB12CAA00683C3F /* ZMSLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 596224E52EB12CAA00683C3F /* ZMSLogging.h */; };
 		596A19EA2E9E523100E190AE /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 596A19E92E9E523100E190AE /* ZIPFoundation */; };
 		5972B0D92E9EAB78005E6417 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5972B0D82E9EAB78005E6417 /* WireUtilitiesPackage */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
@@ -845,6 +846,7 @@
 		59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassificationProviding.swift; sourceTree = "<group>"; };
 		59271BE92B908E150019B726 /* SecurityClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassification.swift; sourceTree = "<group>"; };
 		5943E9BB2D11CB3300D39FFF /* CallEndedReason+initWithCallClosedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallEndedReason+initWithCallClosedReason.swift"; sourceTree = "<group>"; };
+		596224E52EB12CAA00683C3F /* ZMSLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1660,6 +1662,7 @@
 				EE88B0522BF62B430013F0BD /* Services */,
 				59DBECA72D3965570069C64C /* Use cases */,
 				3E18605B191A4F28000FE027 /* Public */,
+				596224E52EB12CAA00683C3F /* ZMSLogging.h */,
 				3E18605C191A4F3B000FE027 /* WireSyncEngine-iOS.pch */,
 				E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */,
 				E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */,
@@ -2471,6 +2474,7 @@
 				1602B4611F3B04150061C135 /* ZMBlacklistVerificator.h in Headers */,
 				5430E9251BAA0D9F00395E05 /* WireSyncEngineLogs.h in Headers */,
 				06DE14CF24B85CA0006CB6B3 /* ZMClientRegistrationStatusDelegate.h in Headers */,
+				596224E62EB12CAA00683C3F /* ZMSLogging.h in Headers */,
 				09531F161AE960E300B8556A /* ZMLoginCodeRequestTranscoder.h in Headers */,
 				EE0CAEB12AAF306000BD2DB7 /* ZMBlacklistDownloader.h in Headers */,
 				544BA1271A433DE400D3B852 /* NSError+ZMUserSession.h in Headers */,

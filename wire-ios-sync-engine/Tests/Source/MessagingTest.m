@@ -38,6 +38,7 @@
 #import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
+#import "ZMSLogging.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
 

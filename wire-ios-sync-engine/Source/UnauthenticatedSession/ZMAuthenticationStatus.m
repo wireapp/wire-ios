@@ -27,6 +27,7 @@
 #import "ZMUserSessionRegistrationNotification.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "ZMAuthenticationStatus_Internal.h"
+#import "ZMSLogging.h"
 
 static NSString *const TimerInfoOriginalCredentialsKey = @"credentials";
 static NSString *const AuthenticationCenterDataChangeNotificationName = @"ZMAuthenticationStatusDataChangeNotificationName";

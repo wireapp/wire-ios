@@ -195,6 +195,7 @@
 		59271BF02B90D2510019B726 /* MockOTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BEE2B90D24A0019B726 /* MockOTREntity.swift */; };
 		59537D852CFF9D1600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D842CFF9D1600920B59 /* WireLogging */; };
 		59537D872CFF9DF600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D862CFF9DF600920B59 /* WireLogging */; };
+		596224E42EB12C0800683C3F /* ZMSLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 596224E32EB12C0800683C3F /* ZMSLogging.h */; };
 		597B70C92B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */; };
 		597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */; };
 		598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042F2C89C67E00B64D71 /* WireFoundation */; };
@@ -700,6 +701,7 @@
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientRegistrationDelegate.swift; sourceTree = "<group>"; };
 		59271BEE2B90D24A0019B726 /* MockOTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockOTREntity.swift; sourceTree = "<group>"; };
+		596224E32EB12C0800683C3F /* ZMSLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
 		597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandler.swift; sourceTree = "<group>"; };
 		597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandlerTests.swift; sourceTree = "<group>"; };
 		598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1356,6 +1358,7 @@
 				F1CD5D822024C1A0008C574E /* Request Syncs */,
 				E69A021F2B85095F00126FF6 /* Services */,
 				06474D4824AF6825002C695D /* Synchronization */,
+				596224E32EB12C0800683C3F /* ZMSLogging.h */,
 				1669016D1D707509000FE4AF /* WireRequestStrategy.h */,
 			);
 			path = Sources;
@@ -2135,6 +2138,7 @@
 				166901DF1D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.h in Headers */,
 				166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */,
 				166901E51D7081C7000FE4AF /* ZMSyncOperationSet.h in Headers */,
+				596224E42EB12C0800683C3F /* ZMSLogging.h in Headers */,
 				166901F31D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync+Testing.h in Headers */,
 				166901D01D7081C7000FE4AF /* ZMContextChangeTracker.h in Headers */,
 				166901E31D7081C7000FE4AF /* ZMSingleRequestSync.h in Headers */,

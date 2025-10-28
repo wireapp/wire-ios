@@ -23,7 +23,7 @@
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "WireSyncEngineLogs.h"
-
+#import "ZMSLogging.h"
 
 static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 static NSString * const NotificationsKey = @"notifications";

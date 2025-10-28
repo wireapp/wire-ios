@@ -23,6 +23,7 @@
 
 #import "ZMBlacklistDownloader+Testing.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
+#import "ZMSLogging.h"
 
 static NSString *ZMLogTag ZM_UNUSED = @"Blacklist";
 
