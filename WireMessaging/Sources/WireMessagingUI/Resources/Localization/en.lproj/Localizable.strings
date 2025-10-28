@@ -20,6 +20,8 @@
 "general.loading" = "Loading…";
 "general.confirm" = "OK";
 "general.failure" = "Something went wrong";
+"general.close" = "Close";
+"general.save" = "Save";
 "general.error.unknown.title." = "Something went wrong";
 "general.error.unknown.message." = "Please retry later.";
 "general.error.noInternet.title." = "No internet connection";
@@ -126,6 +128,18 @@
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Add or remove tags";
+"conversation.wireCells.tags.headline" = "All members of your team can see and use the tags you create.";
+"conversation.wireCells.tags.addedTagsSection" = "Added tags";
+"conversation.wireCells.tags.addedTagsSectionEmpty" = "No tags were added yet.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Suggested tags";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "No tags were created yet.";
+"conversation.wireCells.tags.fextFieldPlaceholder" = "Enter tag name";
+"conversation.wireCells.tags.addTagButton" = "Add tag";
+"conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
+"conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

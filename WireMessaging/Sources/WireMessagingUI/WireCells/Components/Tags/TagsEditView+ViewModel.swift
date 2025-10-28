@@ -23,8 +23,21 @@ extension TagsEditView {
     final class ViewModel: ObservableObject {
         private let fileItem: FilesViewItem
         
+        let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
+        
         init(fileItem: FilesViewItem) {
             self.fileItem = fileItem
+        }
+        
+        var invalidCharactersErrorMessage: String {
+            let message = L10n.Localizable.Conversation.WireCells.Tags.Error.specialCharacters
+            let nonBreakingSpace = "\u{A0}"
+            let invalidCharactersFormatted = invalidCharacters.map { String($0) }.joined(separator: nonBreakingSpace)
+            return message.replacing("{0}", with: invalidCharactersFormatted)
+        }
+        
+        func save() {
+            //TODO: ...
         }
     }
 }

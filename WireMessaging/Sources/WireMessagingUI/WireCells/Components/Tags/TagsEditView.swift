@@ -19,6 +19,8 @@
 import SwiftUI
 
 struct TagsEditView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @StateObject private var viewModel: ViewModel
     
     init(fileItem: FilesViewItem) {
@@ -26,7 +28,47 @@ struct TagsEditView: View {
     }
     
     var body: some View {
-        Text("Edit tags")
+        NavigationStack {
+            content()
+                .navigationTitle(Text(L10n.Localizable.Conversation.WireCells.Tags.title))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text(L10n.Localizable.General.close)
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            viewModel.save()
+                        } label: {
+                            Text(L10n.Localizable.General.save)
+                                .bold()
+                        }
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder private func content() -> some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                Text(L10n.Localizable.Conversation.WireCells.Tags.headline)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Spacer()
+                
+                Text(viewModel.invalidCharactersErrorMessage)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+        }
     }
 }
 
