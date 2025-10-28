@@ -516,7 +516,10 @@ extension WireCallCenterV3 {
                     let snapshot = callSnapshots[conversationId],
                     let groupIDs = snapshot.groupIDs
                 else {
-                    Self.logger.error("Cannot get group IDs for MLS conference", attributes: [.conversationId: conversationId.safeForLogging)
+                    Self.logger.error(
+                        "Cannot get group IDs for MLS conference",
+                        attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                    )
                     return
                 }
 
@@ -579,13 +582,19 @@ extension WireCallCenterV3 {
                     }
 
                     guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
-                        Self.logger.error("Could not encode MLS client list to JSON")
+                        Self.logger.error(
+                            "Could not encode MLS client list to JSON",
+                            attributes: [.mlsGroupID: parentGroupID.safeForLoggingDescription]
+                        )
                         return
                     }
 
                     completion(json)
                 } catch {
-                    Self.logger.error("Failed to generate conference info: \(String(reflecting: error))")
+                    Self.logger.error(
+                        "Failed to generate conference info: \(String(reflecting: error))",
+                        attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                    )
                 }
             }
         }
@@ -604,7 +613,10 @@ extension WireCallCenterV3 {
 
         transport?.requestClientsList(conversationId: conversationId) { clients in
             guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
-                Self.logger.error("Could not encode client list to JSON")
+                Self.logger.error(
+                    "Could not encode client list to JSON",
+                    attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                )
                 return
             }
 
@@ -729,4 +741,12 @@ extension WireCallCenterV3 {
             }
         }
     }
+}
+
+extension AVSIdentifier: @retroactive SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        "\(identifier.safeForLoggingDescription) - \(String(describing: domain?.readableHash))"
+    }
+
 }
