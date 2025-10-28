@@ -55,20 +55,68 @@ struct TagsEditView: View {
     
     @ViewBuilder private func content() -> some View {
         ScrollView {
-            VStack(alignment: .leading) {
-                Text(L10n.Localizable.Conversation.WireCells.Tags.headline)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 10) {
+                normalText(L10n.Localizable.Conversation.WireCells.Tags.headline)
                 
-                Spacer()
+                tagNameInputArea()
                 
-                Text(viewModel.invalidCharactersErrorMessage)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Spacer(minLength: 6)
+                
+                addedTagsArea()
+                
+                Spacer(minLength: 28)
+
+                suggestedTagsArea()
             }
             .frame(maxWidth: .infinity)
             .padding()
         }
+    }
+    
+    @ViewBuilder private func tagNameInputArea() -> some View {
+        VStack {
+            HStack {
+                Text("(TODO)")
+            }
+            
+            validationText(viewModel.invalidCharactersErrorMessage)
+        }
+    }
+    
+    @ViewBuilder private func addedTagsArea() -> some View {
+        VStack(spacing: 16) {
+            sectionText(L10n.Localizable.Conversation.WireCells.Tags.addedTagsSection)
+            
+            normalText(L10n.Localizable.Conversation.WireCells.Tags.addedTagsSectionEmpty)
+        }
+    }
+    
+    @ViewBuilder private func suggestedTagsArea() -> some View {
+        VStack(spacing: 16) {
+            sectionText(L10n.Localizable.Conversation.WireCells.Tags.suggestedTagsSection)
+            
+            normalText(L10n.Localizable.Conversation.WireCells.Tags.suggestedTagsSectionEmpty)
+        }
+    }
+    
+    @ViewBuilder private func normalText(_ text: String) -> some View {
+        Text(text)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    @ViewBuilder private func sectionText(_ text: String) -> some View {
+        Text(text)
+            .textCase(.uppercase)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    @ViewBuilder private func validationText(_ text: String) -> some View {
+        Text(text)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(.red) //TODO: use darker red
     }
 }
 
