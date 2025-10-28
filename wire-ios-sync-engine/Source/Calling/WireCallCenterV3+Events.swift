@@ -516,7 +516,7 @@ extension WireCallCenterV3 {
                     let snapshot = callSnapshots[conversationId],
                     let groupIDs = snapshot.groupIDs
                 else {
-                    Self.logger.error("Cannot get group IDs for MLS conference")
+                    Self.logger.error("Cannot get group IDs for MLS conference", attributes: [.conversationId: conversationId.safeForLogging)
                     return
                 }
 
