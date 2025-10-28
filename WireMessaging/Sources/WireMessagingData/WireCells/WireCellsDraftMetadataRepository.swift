@@ -34,7 +34,10 @@ package struct WireCellsDraftMetadataRepository: WireCellsDraftMetadataRepositor
             return nil
         }
 
-        return .image(width: width, height: height)
+        let orientation = getOrientation(from: properties)
+        let needsRotation = [.left, .leftMirrored, .right, .rightMirrored].contains(orientation)
+
+        return needsRotation ? .image(width: height, height: width) : .image(width: width, height: height)
     }
 
     package func videoMetadata(fileURL: URL) async throws -> WireCellsDraft.Metadata? {
@@ -43,8 +46,13 @@ package struct WireCellsDraftMetadataRepository: WireCellsDraftMetadataRepositor
 
         let dimensions = try await track.load(.naturalSize)
         let milliseconds = try await asset.load(.duration).seconds * 1000
+        let preferredTransform = try await track.load(.preferredTransform)
 
-        return .video(width: Int(dimensions.width), height: Int(dimensions.height), duration: Int(milliseconds))
+        let needsRotation = abs(preferredTransform.b) == 1.0 && abs(preferredTransform.c) == 1.0
+        let width = needsRotation ? dimensions.height : dimensions.width
+        let height = needsRotation ? dimensions.width : dimensions.height
+
+        return .video(width: Int(width), height: Int(height), duration: Int(milliseconds))
     }
 
     package func audioMetadata(fileURL: URL) async throws -> WireCellsDraft.Metadata? {
@@ -52,6 +60,19 @@ package struct WireCellsDraftMetadataRepository: WireCellsDraftMetadataRepositor
         let milliseconds = try await asset.load(.duration).seconds * 1000
 
         return .audio(duration: Int(milliseconds))
+    }
+
+    // MARK: - Private Helpers
+
+    private func getOrientation(from properties: [CFString: Any]) -> CGImagePropertyOrientation {
+        if
+            let value = properties[kCGImagePropertyOrientation] ?? properties[kCGImagePropertyTIFFOrientation],
+            let numberValue = value as? UInt32,
+            let orientation = CGImagePropertyOrientation(rawValue: numberValue) {
+            orientation
+        } else {
+            .up
+        }
     }
 
 }
