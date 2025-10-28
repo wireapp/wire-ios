@@ -107,6 +107,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: nil,
             accentID: accentID,
             assets: assets.map { $0.toAPIModel() },
             deleted: deleted,

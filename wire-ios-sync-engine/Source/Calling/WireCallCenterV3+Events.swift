@@ -507,28 +507,120 @@ extension WireCallCenterV3 {
         conversationId: AVSIdentifier,
         completion: @escaping (_ clients: String) -> Void
     ) {
-        handleEventInContext("request-clients") { [weak self, encoder] _ in
+        handleEventInContext("request-clients") { [weak self, encoder] context in
+            guard let self else { return }
+
+            // Check if this is an MLS conference call
+            if conversationType(from: conversationId) == .mlsConference {
+                guard
+                    let snapshot = callSnapshots[conversationId],
+                    let groupIDs = snapshot.groupIDs
+                else {
+                    Self.logger.error(
+                        "Cannot get group IDs for MLS conference",
+                        attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                    )
+                    return
+                }
+
+                handleMLSConferenceClientsRequest(
+                    conversationId: conversationId,
+                    parentGroupID: groupIDs.parent,
+                    subconversationGroupID: groupIDs.subconversation,
+                    context: context,
+                    encoder: encoder,
+                    completion: completion
+                )
+            } else {
+                handleNonMLSConferenceClientsRequest(
+                    conversationId: conversationId,
+                    encoder: encoder,
+                    completion: completion
+                )
+            }
+        }
+    }
+
+    private func handleMLSConferenceClientsRequest(
+        conversationId: AVSIdentifier,
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID,
+        context: NSManagedObjectContext,
+        encoder: JSONEncoder,
+        completion: @escaping (_ clients: String) -> Void
+    ) {
+        guard let syncContext = context.zm_sync else {
+            Self.logger.error("Cannot get sync context for MLS conference")
+            return
+        }
+
+        syncContext.perform { [weak self] in
             guard
                 let self,
-                conversationType(from: conversationId) != .mlsConference
+                let mlsService = syncContext.mlsService
             else {
                 return
             }
 
-            // This handler is called once per call, but the participants may be
-            // added or removed from the conversation during this time. Therefore
-            // we store the completion so that it can be re-invoked with an updated
-            // client list.
-            clientsRequestCompletionsByConversationId[conversationId] = completion
+            Task {
+                do {
+                    let conferenceInfo = try await mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subconversationGroupID
+                    )
 
-            transport?.requestClientsList(conversationId: conversationId) { clients in
-                guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
-                    Self.logger.error("Could not encode client list to JSON")
-                    return
+                    self.avsWrapper.setMLSConferenceInfo(
+                        conversationId: conversationId,
+                        info: conferenceInfo
+                    )
+
+                    let clients = conferenceInfo.members.compactMap {
+                        AVSClient(
+                            member: $0,
+                            isFederationEnabled: self.isFederationEnabled
+                        )
+                    }
+
+                    guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
+                        Self.logger.error(
+                            "Could not encode MLS client list to JSON",
+                            attributes: [.mlsGroupID: parentGroupID.safeForLoggingDescription]
+                        )
+                        return
+                    }
+
+                    completion(json)
+                } catch {
+                    Self.logger.error(
+                        "Failed to generate conference info: \(String(reflecting: error))",
+                        attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                    )
                 }
-
-                completion(json)
             }
+        }
+    }
+
+    private func handleNonMLSConferenceClientsRequest(
+        conversationId: AVSIdentifier,
+        encoder: JSONEncoder,
+        completion: @escaping (_ clients: String) -> Void
+    ) {
+        // This handler is called once per call, but the participants may be
+        // added or removed from the conversation during this time. Therefore
+        // we store the completion so that it can be re-invoked with an updated
+        // client list.
+        clientsRequestCompletionsByConversationId[conversationId] = completion
+
+        transport?.requestClientsList(conversationId: conversationId) { clients in
+            guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
+                Self.logger.error(
+                    "Could not encode client list to JSON",
+                    attributes: [.conversationId: conversationId.safeForLoggingDescription]
+                )
+                return
+            }
+
+            completion(json)
         }
     }
 
@@ -649,4 +741,12 @@ extension WireCallCenterV3 {
             }
         }
     }
+}
+
+extension AVSIdentifier: @retroactive SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        "\(identifier.safeForLoggingDescription) - \(String(describing: domain?.readableHash))"
+    }
+
 }

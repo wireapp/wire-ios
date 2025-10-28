@@ -82,13 +82,13 @@ final class RestAPI: Sendable {
             let nextOffset = collection.pagination?.nextOffset
 
             return (nodes: nodes, nextOffset: nextOffset)
-        } catch let error as CellsSDK.ErrorResponse {
-            switch error {
+        } catch let sdkError as CellsSDK.ErrorResponse {
+            switch sdkError {
             case let .error(_, _, _, error):
                 if let urlError = error as? URLError, urlError.code == .cancelled {
                     throw CancellationError()
                 } else {
-                    throw error
+                    throw sdkError
                 }
             }
         } catch {

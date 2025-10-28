@@ -339,6 +339,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
             persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]
             persistedUser.needsToBeUpdatedFromBackend = false
+            // `type` only exists in v12 or later
+            let fallbackType: TypeOfUser = persistedUser.serviceIdentifier != nil ? .bot : .regular
+            persistedUser.type = userInfo.type ?? fallbackType
         }
     }
 
