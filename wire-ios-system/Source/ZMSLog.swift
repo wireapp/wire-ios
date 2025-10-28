@@ -118,7 +118,7 @@ public extension ZMSLog {
 
 // MARK: - Conditional execution
 
-// These let us run code only if the log level is set correspondingly. That can be usefull when creating the logging is
+// These let us run code only if the log level is set correspondingly. That can be useful when creating the logging is
 // expensive.
 //
 // zmLog.ifError {

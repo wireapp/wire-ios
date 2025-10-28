@@ -124,7 +124,6 @@
 				5953DD242CF0CA900069ABC8 /* Source */,
 				5939CB872CEBB2BA000F6FAD /* Support */,
 				5953DE452CF0CD2A0069ABC8 /* Tests */,
-				E66EC68A2B21D179003052F7 /* Frameworks */,
 				3ECC34E61AD433520089FD4B /* Products */,
 			);
 			indentWidth = 4;
@@ -141,13 +140,6 @@
 				598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		E66EC68A2B21D179003052F7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
