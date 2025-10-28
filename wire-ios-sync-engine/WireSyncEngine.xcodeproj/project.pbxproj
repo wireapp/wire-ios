@@ -1216,6 +1216,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		34E0BB102EB0F35900CA5D0F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WorkAgentTests.swift,
+			);
+			target = 3E1860C2191A649D000FE027 /* UnitTests */;
+		};
 		5993EA5B2DAD078300F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -1233,6 +1240,7 @@
 		34E0BB062EB0E2A800CA5D0F /* WorkScheduler */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WorkScheduler; sourceTree = "<group>"; };
 		34E0BB072EB0E2DB00CA5D0F /* Worker */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Worker; sourceTree = "<group>"; };
 		34E0BB082EB0E5B500CA5D0F /* WorkTicket */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WorkTicket; sourceTree = "<group>"; };
+		34E0BB0D2EB0F31100CA5D0F /* WorkAgent */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (34E0BB102EB0F35900CA5D0F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WorkAgent; sourceTree = "<group>"; };
 		591E5E252D28084200284F11 /* WireCallCenterNotifications */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCallCenterNotifications; sourceTree = "<group>"; };
 		598410982D3EC1980062D022 /* Use cases */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Use cases"; sourceTree = "<group>"; };
 		5993EA532DAD078300F08A0E /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5993EA5B2DAD078300F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
@@ -1734,6 +1742,7 @@
 				87AEA67B1EFBD27700C94BF3 /* DiskDatabaseTest.swift */,
 				5E0EB1F82100A46F00B5DC2B /* MockCompanyLoginRequesterDelegate.swift */,
 				CBD3AECF2C4A742B007643A0 /* TestSetup.swift */,
+				34E0BB0D2EB0F31100CA5D0F /* WorkAgent */,
 			);
 			path = Source;
 			sourceTree = "<group>";

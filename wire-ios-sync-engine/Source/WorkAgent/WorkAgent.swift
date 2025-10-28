@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 
 final class WorkAgent {
@@ -29,17 +30,21 @@ final class WorkAgent {
         task != nil
     }
 
+    /// Whether dequeuing should begin after ticket submission.
+
+    var shouldAutoStart = false
+
     // MARK: - Life cycle
 
     private var task: Task<Void, Never>?
     private let scheduler: any WorkScheduler
-    private var workers: [any Worker]
+    private var workers: [any Worker] = []
+    private let nonReentrantTaskManager = NonReentrantTaskManager()
 
     private let logger = WireLogger(tag: "work-agent")
 
-    init() {
-        scheduler = ThreeTierWorkScheduler()
-        workers = []
+    init(scheduler: any WorkScheduler) {
+        self.scheduler = scheduler
     }
 
     deinit {
@@ -55,12 +60,21 @@ final class WorkAgent {
     func submitTicket(_ ticket: any WorkTicket) {
         logger.debug("ticket submitted: \(ticket)", attributes: .safePublic)
         scheduler.enqueueTicket(ticket)
-        Task {
-            await start()
+
+        if shouldAutoStart {
+            Task {
+                await start()
+            }
         }
     }
 
     func start() async {
+        try? await nonReentrantTaskManager.performIfNeeded { [weak self] in
+            await self?.internalStart()
+        }
+    }
+
+    private func internalStart() async {
         guard task == nil else {
             return
         }
