@@ -56,11 +56,11 @@ package final class FilesViewModel: ObservableObject {
     }
     
     enum SheetNavigation: Identifiable {
-        case editTags(item: FilesViewItem)
+        case editTags(fileItem: FilesViewItem)
         
         var id: String {
             switch self {
-            case .editTags(item: let item):
+            case .editTags(fileItem: let item):
                 "editTags(\(item.id))"
             }
         }
@@ -181,7 +181,7 @@ package final class FilesViewModel: ObservableObject {
                 await self?.deleteItem(item)
             },
             onEditTagsSelected: { [weak self] item in
-                self?.sheetNavigation = .editTags(item: item)
+                self?.sheetNavigation = .editTags(fileItem: item)
             }
         )
     }
