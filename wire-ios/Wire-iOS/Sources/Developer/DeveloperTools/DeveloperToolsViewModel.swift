@@ -339,7 +339,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.text(TextItem(title: "Name", value: environment.title)))
         items.append(.text(TextItem(title: "Domain", value: metadata.domain)))
         items.append(.text(TextItem(title: "API version", value: String(describing: metadata.apiVersion))))
-        
+
 
         if let userSession {
             items.append(.destination(DestinationItem(title: "Feature configs", makeView: {
