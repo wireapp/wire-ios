@@ -274,7 +274,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .blacklisted(reason: .networkError(code: code)))
         case .genericError:
             transition(to: .blacklisted(reason: .genericError))
-        case .databaseError(let error):
+        case let .databaseError(error):
             transition(to: .databaseFailure(reason: error))
         }
     }

@@ -1055,7 +1055,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled
                 )
-                
+
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
                 finishSettingUpUserSession(
                     account: account,
@@ -1063,7 +1063,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     coreDataStack: userSession.coreDataStack
                 )
                 return userSession
-                
+
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
                 WireLogger.sessionManager.warn(
                     "build is blacklisted: \(currentBuildNumber)",
