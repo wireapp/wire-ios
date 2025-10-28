@@ -21,8 +21,8 @@ import Testing
 
 struct WorkAgentTests {
 
-    let scheduler: MockScheduler
-    let sut: WorkAgent
+    private let scheduler: MockScheduler
+    private let sut: WorkAgent
 
     init() {
         scheduler = MockScheduler()
