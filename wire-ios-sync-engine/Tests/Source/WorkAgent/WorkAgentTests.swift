@@ -25,8 +25,8 @@ struct WorkAgentTests {
     private let sut: WorkAgent
 
     init() {
-        scheduler = MockScheduler()
-        sut = WorkAgent(scheduler: scheduler)
+        self.scheduler = MockScheduler()
+        self.sut = WorkAgent(scheduler: scheduler)
         sut.shouldAutoStart = false
     }
 
