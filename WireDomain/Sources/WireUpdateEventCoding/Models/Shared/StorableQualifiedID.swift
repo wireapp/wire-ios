@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import WireFoundation
 
 struct StorableQualifiedID: Codable, Hashable, Equatable, Sendable {
 
