@@ -16,12 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class MockUser;
-@class ZMTFailureRecorder;
-#import "ZMUser.h"
+@objc(ZMTypeOfUser)
+public enum TypeOfUser: Int16, CaseIterable, Sendable {
 
-@interface ZMUser (Testing)
+    /// (default) for regular users
 
-- (void)assertMatchesUser:(MockUser *)user failureRecorder:(ZMTFailureRecorder *)failureRecorder;
+    case regular
 
-@end
+    /// apps (new services)
+
+    case app
+
+    /// old-style bots (services)
+
+    case bot
+
+}
+
+extension TypeOfUser: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        switch self {
+        case .regular:
+            "regular"
+        case .app:
+            "app"
+        case .bot:
+            "bot"
+        }
+    }
+
+}

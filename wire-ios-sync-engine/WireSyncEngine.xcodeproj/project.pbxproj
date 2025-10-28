@@ -621,7 +621,6 @@
 		06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+RecurringActions.swift"; sourceTree = "<group>"; };
 		06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureRequestStrategyTests.swift; sourceTree = "<group>"; };
 		06FBF22E2CFD84FC00DA13EC /* UserSession+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSession+Federation.swift"; sourceTree = "<group>"; };
-		06FC8DC72E150AA000D5629D /* AppVersionMigration_4_1_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_1_1.swift; sourceTree = "<group>"; };
 		0920833C1BA84F3100F82B29 /* UserClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientRequestStrategyTests.swift; sourceTree = "<group>"; };
 		0920833F1BA95EE100F82B29 /* UserClientRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientRequestFactory.swift; sourceTree = "<group>"; };
 		0920C4D81B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSessionGiphyRequestStateTests.swift; sourceTree = "<group>"; };
@@ -1430,14 +1429,6 @@
 			path = Recorders;
 			sourceTree = "<group>";
 		};
-		34B4477E2E1FB62D00A5BC07 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				06FC8DC72E150AA000D5629D /* AppVersionMigration_4_1_1.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		3E18605A191A4EF8000FE027 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1614,7 +1605,6 @@
 				5993EA532DAD078300F08A0E /* Support */,
 				540029B61918CA8500578793 /* Frameworks */,
 				540029B51918CA8500578793 /* Products */,
-				34B4477E2E1FB62D00A5BC07 /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

@@ -24,8 +24,28 @@ import WireUtilities
 
 extension ZMUser: UserType {
 
+    @NSManaged private var typeValue: Int16
+
+    private var typeKey: String { "typeValue" }
+
+    /// Whether the user is a regular user, an app or a bot.
+
+    public var type: TypeOfUser {
+        get {
+            willAccessValue(forKey: typeKey)
+            let rawValue = primitiveValue(forKey: typeKey) as? Int16 ?? 0
+            didAccessValue(forKey: typeKey)
+            return TypeOfUser(rawValue: rawValue) ?? .regular
+        }
+        set {
+            willChangeValue(forKey: typeKey)
+            setPrimitiveValue(newValue.rawValue, forKey: typeKey)
+            didChangeValue(forKey: typeKey)
+        }
+    }
+
     @objc public var hasTeam: Bool {
-        /// Other users won't have a team object, but a teamIdentifier.
+        // Other users won't have a team object, but a teamIdentifier.
         team != nil || teamIdentifier != nil
     }
 

@@ -24,6 +24,8 @@ import WireAnalytics
 
 @testable import WireSyncEngine
 
+public typealias UserType = WireDataModel.UserType
+
 public class MockMessageSenderInterface: MessageSenderInterface {
 
     // MARK: - Life cycle

@@ -25,7 +25,7 @@ import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
-    case userProfile(UserType)
+    case userProfile(WireDataModel.UserType)
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
 }

@@ -119,6 +119,11 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.handle = payload.handle
         }
 
+        if (payload.type != nil || authoritative) && !user.isAccountDeleted {
+            let fallbackType: TypeOfUser = payload.serviceID == nil ? .regular : .bot
+            user.type = payload.type.map(TypeOfUser.init) ?? fallbackType
+        }
+
         if payload.managedBy != nil || authoritative {
             user.managedBy = payload.managedBy
         }
@@ -191,4 +196,17 @@ private extension Payload.UserProfile.MessageProtocol {
         }
     }
 
+}
+
+private extension TypeOfUser {
+    init(_ type: Payload.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
 }

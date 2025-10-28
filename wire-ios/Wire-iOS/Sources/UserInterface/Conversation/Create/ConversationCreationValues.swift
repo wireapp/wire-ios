@@ -79,7 +79,7 @@ final class ConversationCreationValues {
         allowGuests: Bool = true,
         allowServices: Bool = true,
         enableReceipts: Bool = true,
-        enableFileManagement: Bool = true,
+        enableFileManagement: Bool = false,
         encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
