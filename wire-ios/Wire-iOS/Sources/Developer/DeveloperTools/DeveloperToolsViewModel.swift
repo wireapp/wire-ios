@@ -314,7 +314,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
-        
+
         defer {
             sections.append(
                 Section(
