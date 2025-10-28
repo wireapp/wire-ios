@@ -26,6 +26,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 #import "MockTransportSessionTests.h"
 #import <libkern/OSAtomic.h>
 #import <WireMockTransport/WireMockTransport-Swift.h>
+#import "ZMSLogging.h"
 
 @interface TestPushChannelEvent()
 

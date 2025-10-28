@@ -254,6 +254,7 @@
 		5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0342E2EA1070051B07A /* GenericMessageProtocol */; };
 		5950B0372E2EA1220051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0362E2EA1220051B07A /* GenericMessageProtocol */; };
 		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
+		596224E22EB12B4600683C3F /* ZMSLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 596224E12EB12B4600683C3F /* ZMSLogging.h */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
 		5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */; };
@@ -1019,6 +1020,7 @@
 		591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		5930D9C22D43BC33009E3514 /* zmessaging2.121.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.121.0.xcdatamodel; sourceTree = "<group>"; };
 		5947923C2EA7A576006BEC0A /* store2-131-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-131-0.wiredatabase"; sourceTree = "<group>"; };
+		596224E12EB12B4600683C3F /* ZMSLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogging.h; sourceTree = "<group>"; };
 		5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalization.swift; sourceTree = "<group>"; };
 		5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizer.swift; sourceTree = "<group>"; };
 		5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizerTests.swift; sourceTree = "<group>"; };
@@ -2999,6 +3001,7 @@
 				F9A7061B1CAEE01D00C2F5FE /* Notifications */,
 				F9A706421CAEE01D00C2F5FE /* Utilis */,
 				F9C9A60C1CAD76A50039E10C /* WireDataModel.h */,
+				596224E12EB12B4600683C3F /* ZMSLogging.h */,
 				F9C9A7371CAE6D890039E10C /* ConversationList */,
 				599EA3D12C246897009319D4 /* ConversationSearch */,
 				F9C9A6A01CAD7C7F0039E10C /* Public */,
@@ -3219,6 +3222,7 @@
 			files = (
 				F9A706C81CAEE01D00C2F5FE /* ZMUpdateEvent+WireDataModel.h in Headers */,
 				F9331C871CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h in Headers */,
+				596224E22EB12B4600683C3F /* ZMSLogging.h in Headers */,
 				F9A706561CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h in Headers */,
 				59EC73F72C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h in Headers */,
 				F9A706801CAEE01D00C2F5FE /* ZMMessage+Internal.h in Headers */,

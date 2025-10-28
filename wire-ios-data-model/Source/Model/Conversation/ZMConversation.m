@@ -38,6 +38,7 @@
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"
+#import "ZMSLogging.h"
 
 static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 

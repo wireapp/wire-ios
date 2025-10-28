@@ -61,11 +61,13 @@
 		};
 		5953DD4A2CF0CA900069ABC8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ZMSLogging.h,
+			);
 			publicHeaders = (
 				WireSystem.h,
 				ZMSAsserts.h,
 				ZMSDefines.h,
-				ZMSLogging.h,
 			);
 			target = 3ECC350F1AD436750089FD4B /* WireSystem */;
 		};

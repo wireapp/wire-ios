@@ -29,6 +29,7 @@
 
 #import "ZMConversation+UnreadCount.h"
 #import "ZMUpdateEvent+WireDataModel.h"
+#import "ZMSLogging.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
 #import <WireCryptobox/cbox.h>

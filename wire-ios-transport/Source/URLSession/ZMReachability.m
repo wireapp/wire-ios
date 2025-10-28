@@ -23,6 +23,7 @@
 #import "ZMReachability.h"
 #import <libkern/OSAtomic.h>
 #import <WireTransport/WireTransport-Swift.h>
+#import "ZMSLogging.h"
 #import "ZMTLogging.h"
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;

@@ -25,6 +25,7 @@
 #import "ZMPersistentCookieStorage.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import "ZMKeychain.h"
+#import "ZMSLogging.h"
 
 static NSString * const CookieName = @"zuid";
 static NSString * const LegacyAccountName = @"User";

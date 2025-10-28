@@ -19,6 +19,7 @@
 @import WireSystem;
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "ZMTaskIdentifierMap.h"
+#import "ZMSLogging.h"
 
 static NSString * const TemporaryDirectoryName = @"com.wire.zmessaging.ZMTemporaryFileListForBackgroundRequests";
 

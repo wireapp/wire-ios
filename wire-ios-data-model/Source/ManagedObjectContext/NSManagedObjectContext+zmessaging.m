@@ -25,6 +25,7 @@
 #import "ZMManagedObject.h"
 #import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
+#import "ZMSLogging.h"
 
 #import <objc/runtime.h>
 #import <libkern/OSAtomic.h>

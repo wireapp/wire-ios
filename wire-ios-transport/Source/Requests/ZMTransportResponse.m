@@ -27,6 +27,7 @@
 #import "ZMTransportCodec.h"
 #import "ZMTransportSession.h"
 #import "Collections+ZMTSafeTypes.h"
+#import "ZMSLogging.h"
 #import "ZMTLogging.h"
 #import <WireTransport/WireTransport-Swift.h>
 

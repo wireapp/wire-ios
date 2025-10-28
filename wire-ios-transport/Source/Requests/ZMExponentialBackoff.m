@@ -17,6 +17,7 @@
 //
 
 #import "ZMExponentialBackoff.h"
+#import "ZMSLogging.h"
 #import "ZMTLogging.h"
 
 @import WireSystem;

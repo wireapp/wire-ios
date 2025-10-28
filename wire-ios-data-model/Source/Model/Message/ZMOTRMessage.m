@@ -19,7 +19,7 @@
 #import "ZMOTRMessage.h"
 #import "ZMConversation+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>
-
+#import "ZMSLogging.h"
 
 @import WireTransport;
 

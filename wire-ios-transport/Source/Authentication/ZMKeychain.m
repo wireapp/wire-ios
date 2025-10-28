@@ -21,6 +21,7 @@
 @import WireUtilities;
 
 #import "ZMKeychain.h"
+#import "ZMSLogging.h"
 
 static char* const ZMLogTag ZM_UNUSED = "Keychain";
 

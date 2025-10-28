@@ -24,6 +24,7 @@
 #import "ZMTaskIdentifierMap.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "ZMTransportRequest+Internal.h"
+#import "ZMSLogging.h"
 #import "ZMTLogging.h"
 #import "ZMTransportResponse.h"
 #import <WireTransport/WireTransport-Swift.h>

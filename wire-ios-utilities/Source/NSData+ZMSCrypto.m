@@ -19,6 +19,7 @@
 @import WireSystem;
 #import "NSData+ZMSCrypto.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import "ZMSLogging.h"
 
 static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
 

@@ -22,6 +22,7 @@
 #import "ZMEncodedNSUUIDWithTimestamp.h"
 #import "NSUUID+Data.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import "ZMSLogging.h"
 
 static const uint8_t RANDOM_DATA_SIZE = 14;
 static const uint8_t TIME_DATA_SIZE = 2;
