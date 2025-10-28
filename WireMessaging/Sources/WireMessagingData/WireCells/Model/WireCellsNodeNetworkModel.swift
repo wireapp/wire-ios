@@ -17,6 +17,7 @@
 //
 
 import CellsSDK
+import UniformTypeIdentifiers
 import WireFoundation
 package import WireMessagingDomain
 package import Foundation
@@ -143,9 +144,7 @@ package extension RestNode {
             contentHash: contentHash,
             mimeType: contentType,
             previews: previews?.compactMap { preview -> PreviewDTO? in
-                guard let urlString = preview.preSignedGET?.url else { return nil }
-                guard let url = URL(string: urlString) else { return nil }
-                return PreviewDTO(url: url, dimension: preview.dimension ?? 0)
+                PreviewDTO(preview)
             } ?? [],
             ownerUserId: userMetadata?
                 .first(where: { $0.namespace == "usermeta-owner-uuid" })?
@@ -163,6 +162,26 @@ package extension RestNode {
 package struct PreviewDTO: Equatable, Hashable, Sendable {
     package let url: URL
     package let dimension: Int?
+
+    init(url: URL, dimension: Int?) {
+        self.url = url
+        self.dimension = dimension
+    }
+
+    init?(_ value: RestFilePreview) {
+        guard
+            let urlString = value.preSignedGET?.url,
+            let contentType = value.contentType,
+            let url = URL(string: urlString),
+            let type = UTType(mimeType: contentType),
+            type.conforms(to: .image) else {
+            return nil
+        }
+
+        self.url = url
+        self.dimension = value.dimension
+    }
+
 }
 
 package extension PreviewDTO {

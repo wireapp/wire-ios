@@ -60,8 +60,8 @@ final class FilesItemViewModel: ObservableObject {
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [self] asset in
-            self.asset = asset
+        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
+            self?.asset = asset
         }.store(in: &cancellables)
     }
 

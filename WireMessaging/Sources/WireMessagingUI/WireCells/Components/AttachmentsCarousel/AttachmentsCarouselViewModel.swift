@@ -135,18 +135,16 @@ private extension AttachmentsCarouselItem {
 private extension AttachmentsCarouselItem.Kind {
 
     init(_ value: UTType?, thumbnail: UIImage?) {
-        guard let value else {
-            self = .document
-            return
-        }
+        let category = WireCellsFileCategory(value)
 
-        if value.conforms(to: .image) {
+        switch category {
+        case .image:
             self = .image(thumbnail: thumbnail)
-        } else if value.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
-            self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
-        } else if value.conforms(to: .audiovisualContent) {
+        case .video:
             self = .video(thumbnail: thumbnail)
-        } else {
+        case .audio:
+            self = .audio(samples: []) // FIXME: [WPB-19268] Set audio sample data
+        case .document:
             self = .document
         }
     }
