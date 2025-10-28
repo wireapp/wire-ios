@@ -39,6 +39,7 @@ package final class MeetingsViewModel: ObservableObject {
     @Published private(set) var upcomingMeetings: GroupedMeetings = []
     @Published private(set) var cachedOngoingMeetings: [Meeting] = []
     @Published private(set) var cachedPastMeetings: GroupedMeetings = []
+    @Published private(set) var avatarViewModel: AccountAvatarViewModel?
 
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
@@ -57,7 +58,8 @@ package final class MeetingsViewModel: ObservableObject {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         ongoingMeetingsUseCase: any FetchOngoingMeetingsUseCaseProtocol,
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        avatarViewModel: AccountAvatarViewModel? = nil
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
@@ -65,6 +67,7 @@ package final class MeetingsViewModel: ObservableObject {
         self.pastMeetingsUseCase = pastMeetingsUseCase
         self.ongoingMeetingsUseCase = ongoingMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
+        self.avatarViewModel = avatarViewModel
     }
 
     // MARK: - Public Interface

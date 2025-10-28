@@ -19,11 +19,12 @@
 import Foundation
 import UIKit
 import WireCallingAssembly
+import WireCallingUI
 
 // sourcery: AutoMockable
 protocol WireMeetingsFactoryProtocol {
     @MainActor
-    func makeMeetingsView() -> UIViewController
+    func makeMeetingsView(avatarViewModelBuilder: (() -> AccountAvatarViewModel?)?) -> UIViewController
 }
 
 extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

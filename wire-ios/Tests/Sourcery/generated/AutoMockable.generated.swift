@@ -1705,20 +1705,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsView_Invocations: [Void] = []
-    var makeMeetingsView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsView_MockValue: UIViewController?
+    var makeMeetingsViewAvatarViewModelBuilder_Invocations: [(() -> AccountAvatarViewModel?)?] = []
+    var makeMeetingsViewAvatarViewModelBuilder_MockMethod: (((() -> AccountAvatarViewModel?)?) -> UIViewController)?
+    var makeMeetingsViewAvatarViewModelBuilder_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView() -> UIViewController {
-        makeMeetingsView_Invocations.append(())
+    func makeMeetingsView(avatarViewModelBuilder: (() -> AccountAvatarViewModel?)?) -> UIViewController {
+        makeMeetingsViewAvatarViewModelBuilder_Invocations.append(avatarViewModelBuilder)
 
-        if let mock = makeMeetingsView_MockMethod {
-            return mock()
-        } else if let mock = makeMeetingsView_MockValue {
+        if let mock = makeMeetingsViewAvatarViewModelBuilder_MockMethod {
+            return mock(avatarViewModelBuilder)
+        } else if let mock = makeMeetingsViewAvatarViewModelBuilder_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsView`")
+            fatalError("no mock for `makeMeetingsViewAvatarViewModelBuilder`")
         }
     }
 

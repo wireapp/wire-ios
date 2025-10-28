@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCallingDomain
-import WireCallingUI
+public import WireCallingUI
 public import UIKit
 import SwiftUI
 import WireCallingData
@@ -26,11 +26,14 @@ import WireCallingData
 public struct WireMeetingsFactory {
     @MainActor
     public init() {}
-}
 
-public extension WireMeetingsFactory {
+    // MARK: - Factory Method
     @MainActor
-    func makeMeetingsView() -> UIViewController {
+    public func makeMeetingsView(
+        avatarViewModelBuilder: (() -> AccountAvatarViewModel?)?
+    ) -> UIViewController {
+        let avatarViewModel = avatarViewModelBuilder?()
+
         let meetingsViewModel = MeetingsViewModel(
             repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
@@ -45,7 +48,8 @@ public extension WireMeetingsFactory {
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            )
+            ),
+            avatarViewModel: avatarViewModel
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

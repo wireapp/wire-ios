@@ -19,6 +19,7 @@
 import Foundation
 package import SwiftUI
 import WireDesign
+import WireAccountImageUI
 
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
@@ -34,6 +35,11 @@ package struct AllMeetingsView: View {
             .navigationTitle(L10n.Localizable.WireMeetings.List.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if let avatarViewModel = viewModel.avatarViewModel {
+                    ToolbarItem(placement: .topBarLeading) {
+                        makeAccountImageView(with: avatarViewModel)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
@@ -57,4 +63,54 @@ package struct AllMeetingsView: View {
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
     }
+
+    // MARK: - Private Methods
+
+    @ViewBuilder
+    private func makeAccountImageView(with avatarViewModel: AccountAvatarViewModel) -> some View {
+        Button {
+            avatarViewModel.handleAvatarTap()
+        } label: {
+            AccountImageViewRepresentable(
+                source: convertAccountImageSource(avatarViewModel.accountImageSource),
+                availability: convertAvailability(avatarViewModel.availability),
+                showNotificationsBadge: avatarViewModel.showNotificationsBadge
+            )
+            .frame(width: 28, height: 28)
+            .accountImageBorderWidth(1)
+            .accountImageViewBorderColor(ColorTheme.Strokes.outline)
+            .availabilityIndicatorAvailableColor(ColorTheme.Base.positive)
+            .availabilityIndicatorBusyColor(ColorTheme.Base.warning)
+            .availabilityIndicatorAwayColor(ColorTheme.Base.error)
+            .availabilityIndicatorBackgroundViewColor(ColorTheme.Backgrounds.surface)
+        }
+        .accessibilityLabel("Account Profile")
+        //.accessibilityHint(L10n.Accessibility.ConversationsList.AccountButton.hint)
+        .accessibilityIdentifier("account_profile_image_view")
+    }
+
+    private func convertAccountImageSource(_ source: AccountImageSource) -> WireAccountImageUI.AccountImageSource {
+        switch source {
+        case .image(let image):
+            return .image(image)
+        case .text(let initials):
+            return .text(initials)
+        }
+    }
+
+    private func convertAvailability(_ availability: Availability?) -> WireAccountImageUI.Availability? {
+        guard let availability = availability else { return nil }
+
+        switch availability {
+        case .available:
+            return .available
+        case .away:
+            return .away
+        case .busy:
+            return .busy
+        case .none:
+            return .none
+        }
+    }
+
 }

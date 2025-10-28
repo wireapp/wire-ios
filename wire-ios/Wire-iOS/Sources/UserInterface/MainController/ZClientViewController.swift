@@ -22,6 +22,7 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCallingAssembly
+import WireCallingUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -48,6 +49,7 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
             sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
+            updateMeetingsAvatarImage()
         }
     }
 
@@ -75,6 +77,10 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
         isWireCellsEnabled: userSession.isWireCellsEnabled
     )
+
+    private lazy var accountAvatarViewModelBuilder = AccountAvatarViewModelBuilder()
+
+    private var meetingsAvatarViewModel: AccountAvatarViewModel?
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
@@ -386,7 +392,45 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(
+            avatarViewModelBuilder: { [weak self] in
+                guard let self else { return nil }
+
+                // Extract image and initials from cachedAccountImage
+                let (avatarImage, initials): (UIImage?, String) = switch self.cachedAccountImage {
+                case .image(let image):
+                    (image, "")
+                case .text(let initials):
+                    (nil, initials)
+                }
+
+                // Map WireDataModel.Availability to WireCallingUI.Availability
+                let availability: WireCallingUI.Availability? = switch self.userSession.selfUser.availability {
+                case .available:
+                    .available
+                case .away:
+                    .away
+                case .busy:
+                    .busy
+                case .none:
+                    .none
+                }
+
+                let avatarViewModel = self.accountAvatarViewModelBuilder.build(
+                    avatarImage: avatarImage,
+                    initials: initials,
+                    availability: availability,
+                    showNotificationsBadge: false,
+                    onAvatarTapped: { [weak self] in
+                        self?.presentProfile()
+                    }
+                )
+
+                self.meetingsAvatarViewModel = avatarViewModel
+                return avatarViewModel
+            }
+        )
+
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
@@ -860,6 +904,38 @@ final class ZClientViewController: UIViewController {
         }
     }
 
+    private func updateMeetingsAvatarImage() {
+        guard let avatarViewModel = meetingsAvatarViewModel else { return }
+
+        let (avatarImage, initials): (UIImage?, String) = switch cachedAccountImage {
+        case .image(let image):
+            (image, "")
+        case .text(let initials):
+            (nil, initials)
+        }
+
+        avatarViewModel.accountImageSource = if let avatarImage {
+            .image(avatarImage)
+        } else {
+            .text(initials)
+        }
+    }
+
+    private func updateMeetingsAvatarAvailability() {
+        guard let avatarViewModel = meetingsAvatarViewModel else { return }
+
+        avatarViewModel.availability = switch userSession.selfUser.availability {
+        case .available:
+            .available
+        case .away:
+            .away
+        case .busy:
+            .busy
+        case .none:
+            .none
+        }
+    }
+
     private func updateCachedAccountInfo() async {
         do {
             let user = userSession.selfUser
@@ -904,6 +980,10 @@ extension ZClientViewController: UserObserving {
                 sidebarUpdateNeeded = true
             }
 
+            if changeInfo.availabilityChanged {
+                updateMeetingsAvatarAvailability()
+            }
+
             if changeInfo.accentColorValueChanged {
                 sidebarUpdateNeeded = true
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -941,5 +1021,17 @@ extension ZClientViewController {
             }
         }
         userDidViewSelfProfileToken = SelfUnregisteringNotificationCenterToken(token)
+    }
+}
+
+extension ZClientViewController {
+    private func presentProfile() {
+//        Task {
+//            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+//            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
+//            selfProfileUI.modalPresentationStyle = .formSheet
+//            selfProfileUI.presentationController?.delegate = rootViewController
+//            await mainCoordinator.presentViewController(selfProfileUI)
+//        }
     }
 }
