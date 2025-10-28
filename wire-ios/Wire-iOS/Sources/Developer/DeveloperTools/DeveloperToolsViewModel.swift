@@ -311,7 +311,18 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func setupBackenInfo() {
         let header = "Backend info"
         var items = [Item]()
-
+        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
+            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
+        })))
+        
+        defer {
+            sections.append(
+                Section(
+                    header: header,
+                    items: items
+                )
+            )
+        }
         guard
             let sessionManager = SessionManager.shared,
             let accountID = selfUser?.remoteIdentifier,
@@ -328,9 +339,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.text(TextItem(title: "Name", value: environment.title)))
         items.append(.text(TextItem(title: "Domain", value: metadata.domain)))
         items.append(.text(TextItem(title: "API version", value: String(describing: metadata.apiVersion))))
-        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
-            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
-        })))
+        
 
         if let userSession {
             items.append(.destination(DestinationItem(title: "Feature configs", makeView: {
@@ -357,13 +366,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: { [weak self] in
             self?.stopBellaFomaFederating()
         })))
-
-        sections.append(
-            Section(
-                header: header,
-                items: items
-            )
-        )
     }
 
     private lazy var debugViewSection: Section = {
