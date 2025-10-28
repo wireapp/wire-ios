@@ -54,6 +54,17 @@ package final class FilesViewModel: ObservableObject {
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
     }
+    
+    enum SheetNavigation: Identifiable {
+        case editTags(item: FilesViewItem)
+        
+        var id: String {
+            switch self {
+            case .editTags(item: let item):
+                "editTags(\(item.id))"
+            }
+        }
+    }
 
     enum State: Equatable {
 
@@ -95,6 +106,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var sheetNavigation: SheetNavigation?
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
@@ -167,6 +179,9 @@ package final class FilesViewModel: ObservableObject {
             },
             onDelete: { [weak self] item in
                 await self?.deleteItem(item)
+            },
+            onEditTagsSelected: { [weak self] item in
+                self?.sheetNavigation = .editTags(item: item)
             }
         )
     }

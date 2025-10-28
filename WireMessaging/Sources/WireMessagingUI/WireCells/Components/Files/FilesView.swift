@@ -82,6 +82,12 @@ package struct FilesView: FilesViewProtocol {
                     actions: { _ in confirmButton }
                 )
             }
+            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
+                switch navigationItem {
+                case .editTags(item: let fileItem):
+                    Text("\(fileItem.filename)")
+                }
+            }
         }
     }
 }

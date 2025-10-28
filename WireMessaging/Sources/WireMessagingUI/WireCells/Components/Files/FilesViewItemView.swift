@@ -126,7 +126,7 @@ struct FilesViewItemView: View {
     }
     
     private func editTags() {
-        //TODO: ...
+        viewModel.onEditTagsSelected()
     }
 
     private func delete() {
