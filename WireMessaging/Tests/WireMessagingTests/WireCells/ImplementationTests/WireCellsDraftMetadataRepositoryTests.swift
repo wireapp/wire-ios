@@ -20,33 +20,51 @@ import Foundation
 import Testing
 
 @testable import WireMessagingData
+@testable import WireMessagingDomain
 
 struct WireCellsDraftMetadataRepositoryTests {
 
+    typealias Metadata = WireCellsDraft.Metadata
+
     private let sut = WireCellsDraftMetadataRepository()
 
-    @Test
-    func testImageMetadata() async throws {
+    @Test(arguments: [
+        (name: "animated.gif", expected: Metadata.image(width: 640, height: 400)),
+        (name: "orientation_1.png", expected: Metadata.image(width: 400, height: 250)),
+        (name: "orientation_2.png", expected: Metadata.image(width: 400, height: 250)),
+        (name: "orientation_3.png", expected: Metadata.image(width: 400, height: 250)),
+        (name: "orientation_4.png", expected: Metadata.image(width: 400, height: 250)),
+        (name: "orientation_5.png", expected: Metadata.image(width: 250, height: 400)),
+        (name: "orientation_6.png", expected: Metadata.image(width: 250, height: 400)),
+        (name: "orientation_7.png", expected: Metadata.image(width: 250, height: 400)),
+        (name: "orientation_8.png", expected: Metadata.image(width: 250, height: 400))
+    ])
+    func testImageMetadata(name: String, expected: Metadata) async throws {
         // given
-        let fileURL = try #require(Bundle.module.url(forResource: "animated", withExtension: "gif"))
+        let fileURL = try #require(Bundle.module.url(forResource: name, withExtension: nil))
 
         // when
         let metadata = try await sut.imageMetadata(fileURL: fileURL)
 
         // then
-        #expect(metadata == .image(width: 640, height: 400))
+        #expect(metadata == expected)
     }
 
-    @Test
-    func testVideoMetadata() async throws {
+    @Test(arguments: [
+        (name: "video_portrait.mp4", expected: Metadata.video(width: 360, height: 480, duration: 1623)),
+        (name: "video_portrait_upside_down.mp4", expected: Metadata.video(width: 360, height: 480, duration: 1208)),
+        (name: "video_landscape_left.mp4", expected: Metadata.video(width: 480, height: 360, duration: 1083)),
+        (name: "video_landscape_right.mp4", expected: Metadata.video(width: 480, height: 360, duration: 1123))
+    ])
+    func testVideoMetadata(name: String, expected: Metadata) async throws {
         // given
-        let fileURL = try #require(Bundle.module.url(forResource: "video", withExtension: "mp4"))
+        let fileURL = try #require(Bundle.module.url(forResource: name, withExtension: nil))
 
         // when
         let metadata = try await sut.videoMetadata(fileURL: fileURL)
 
         // then
-        #expect(metadata == .video(width: 568, height: 320, duration: 3003))
+        #expect(metadata == expected)
     }
 
     @Test
