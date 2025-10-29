@@ -206,7 +206,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             extraMetaData = .init(
                 conversationID: conversationID,
                 fileName: image.name,
-                mimeType: image.utType?.preferredMIMEType ?? ""
+                mimeType: image.utType?.preferredMIMEType
             )
         }
 
