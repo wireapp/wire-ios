@@ -75,7 +75,7 @@ final class ConversationTableViewDataSource: NSObject {
     weak var messageActionResponder: MessageActionResponder?
     private let getUserByIDUseCase: GetUserByIDUseCaseProtocol
 
-    let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
+    let debouncer = LeadingTrailingDebouncer(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
@@ -241,17 +241,6 @@ final class ConversationTableViewDataSource: NSObject {
               let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
 
-        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
-            // workaround: this loop might add a status view to a message, which is removed again later, so skip
-            if description.instance is ConversationMessageToolboxCellDescription {
-                continue
-            }
-            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
-                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
-                description.configureCell(cell, animated: true)
-            }
-        }
-
         let messages = allMessages
 
         let context = context(
@@ -263,6 +252,17 @@ final class ConversationTableViewDataSource: NSObject {
         )
 
         sectionController.recreateCellDescriptions(in: context)
+
+        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
+            // workaround: this loop might add a status view to a message, which is removed again later, so skip
+            if description.instance is ConversationMessageToolboxCellDescription {
+                continue
+            }
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
+                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
+                description.configureCell(cell, animated: true)
+            }
+        }
 
         var updatedSections = currentSections
         updatedSections[section] = ArraySection(
