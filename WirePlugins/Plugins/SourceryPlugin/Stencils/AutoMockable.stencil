@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// This stencil file is copied from https://github.com/krzysztofzablocki/Sourcery (commit 645c16e9bf3cff2d268fb1a161ff88b0ba1a54bc) and slightly adjusted.
+
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
