@@ -73,8 +73,8 @@ extension FileRenameViewModel {
             ),
             fileRenameModel: FileRenameModel(
                 nodeID: .init(),
-                currentFilename: "foo.jpg",
-                currentFilepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
+                filename: "foo.jpg",
+                filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
             )
         )
     }

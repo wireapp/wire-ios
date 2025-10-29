@@ -29,8 +29,8 @@ final class FileRenameViewModel: ObservableObject {
 
     struct FileRenameModel {
         let nodeID: UUID
-        let currentFilename: String
-        let currentFilepath: String
+        let filename: String
+        let filepath: String
     }
 
     @Published var filenameInput: String
@@ -48,27 +48,10 @@ final class FileRenameViewModel: ObservableObject {
         fileRenameModel: FileRenameModel
     ) {
         self.renameNodeUseCase = renameNodeUseCase
-        self.filenameInput = Self.removeFileExtension(from: fileRenameModel.currentFilename)
+        self.filenameInput = Self.removeFileExtension(from: fileRenameModel.filename)
         self.fileRenameModel = fileRenameModel
 
         bindTextInput()
-    }
-
-    private func bindTextInput() {
-        $filenameInput
-            .sink { [weak self] input in
-                self?.validateInput(input)
-            }.store(in: &subscriptions)
-    }
-
-    private func validateInput(_ input: String) {
-        if input.count > 64 {
-            errorMessage = Strings.Files.RenameFile.filenameTooLongError
-        } else if input.contains("/") {
-            errorMessage = Strings.Files.RenameFile.wrongCharacterError
-        } else {
-            errorMessage = nil
-        }
     }
 
     func save() async -> Bool {
@@ -77,7 +60,7 @@ final class FileRenameViewModel: ObservableObject {
         do {
             isLoading = true
             let nodeID = fileRenameModel.nodeID
-            let nodeFilePath = fileRenameModel.currentFilepath
+            let nodeFilePath = fileRenameModel.filepath
 
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
@@ -103,6 +86,25 @@ final class FileRenameViewModel: ObservableObject {
             isLoading = false
             WireLogger.wireCells.error("Renaming file failed: \(error)")
             return false
+        }
+    }
+    
+    // MARK: - Private
+    
+    private func bindTextInput() {
+        $filenameInput
+            .sink { [weak self] input in
+                self?.validateTextInput(input)
+            }.store(in: &subscriptions)
+    }
+
+    private func validateTextInput(_ textInput: String) {
+        if textInput.count > 64 {
+            errorMessage = Strings.Files.RenameFile.filenameTooLongError
+        } else if textInput.contains("/") {
+            errorMessage = Strings.Files.RenameFile.wrongCharacterError
+        } else {
+            errorMessage = nil
         }
     }
 

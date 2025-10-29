@@ -351,8 +351,8 @@ package final class FilesViewModel: ObservableObject {
             renameNodeUseCase: renameNodeUseCase,
             fileRenameModel: .init(
                 nodeID: item.id,
-                currentFilename: item.filename,
-                currentFilepath: item.filePath,
+                filename: item.filename,
+                filepath: item.filePath,
             )
         )
 
