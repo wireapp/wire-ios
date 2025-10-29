@@ -13,7 +13,7 @@ jobs:
   clear-cache:
     runs-on: ubuntu-latest
     permissions:
-      actions: write  # Needed to delete caches
+      actions: write
       contents: read
 
     steps:
@@ -24,14 +24,19 @@ jobs:
             const key = core.getInput('cache-key');
             const per_page = 100;
             let deleted = 0;
+            let totalFound = 0;
 
-            // Paginate through all cache pages
             for await (const response of github.paginate.iterator(
               github.rest.actions.getActionsCachesList,
-              { owner: context.repo.owner, repo: context.repo.repo, per_page }
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page,
+                ref: '*' // include all branches
+              }
             )) {
-              const caches = response.data.actions_caches || response.data.cache_list || [];
-              if (!Array.isArray(caches)) continue;
+              const caches = response.data.actions_caches || [];
+              totalFound += caches.length;
 
               for (const cache of caches) {
                 if (!key || cache.key.includes(key)) {
@@ -46,4 +51,5 @@ jobs:
               }
             }
 
+            core.info(`🔍 Found ${totalFound} total caches`);
             core.info(`✅ Deleted ${deleted} cache(s)`);
