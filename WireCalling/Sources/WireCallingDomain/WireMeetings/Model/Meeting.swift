@@ -18,7 +18,12 @@
 
 public import Foundation
 
-/// Represents the meeting entity
+/// Represents a scheduled meeting.
+///
+/// A `Meeting` captures the essential information about a scheduled meeting,
+/// including its unique identifier, title, and time range. Meetings can be
+/// categorized as past, ongoing, or upcoming based on their start and end times
+/// relative to the current time.
 
 public struct Meeting: Equatable, Sendable {
 

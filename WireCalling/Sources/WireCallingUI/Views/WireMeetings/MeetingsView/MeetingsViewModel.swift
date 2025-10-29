@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 package import WireCallingDomain
 package import WireFoundation
 
@@ -24,8 +24,8 @@ package final class MeetingsViewModel: ObservableObject {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published package var selectedTab: Tab = .next
-    @Published package var showAll: Bool = false {
+    @Published var selectedTab: Tab = .next
+    @Published var showAll: Bool = false {
         didSet {
             if oldValue != showAll {
                 futureOffset = 0
@@ -69,46 +69,46 @@ package final class MeetingsViewModel: ObservableObject {
 
     // MARK: - Public Interface
 
-    package var ongoingMeetings: [Meeting] {
+    var ongoingMeetings: [Meeting] {
         cachedOngoingMeetings
     }
 
-    package var groupedPastMeetings: GroupedMeetings {
+    var groupedPastMeetings: GroupedMeetings {
         cachedPastMeetings
     }
 
-    package var groupedNext: GroupedMeetings {
+    var groupedNextMeetings: GroupedMeetings {
         upcomingMeetings
     }
 
-    package func loadInitialData() {
+    func loadInitialData() {
         refreshOngoingMeetings()
         refreshPastMeetings()
         loadUpcomingMeetings()
     }
 
-    package func loadMoreUpcomingMeetings() {
+    func loadMoreUpcomingMeetings() {
         loadUpcomingMeetings()
     }
 
-    package func refreshOngoingMeetings() {
+    func refreshOngoingMeetings() {
         cachedOngoingMeetings = ongoingMeetingsUseCase.invoke()
     }
 
-    package func refreshPastMeetings() {
+    func refreshPastMeetings() {
         cachedPastMeetings = pastMeetingsUseCase.invoke()
     }
 
-    package func formatDay(_ date: Date) -> String {
+    func formatDay(_ date: Date) -> String {
         formatter.dayHeader(for: date, now: currentDateProvider.now)
     }
 
-    package func formatTime(_ date: Date) -> String {
+    func formatTime(_ date: Date) -> String {
         formatter.timeHeader(for: date)
     }
 
-    package func meetNowTapped() {}
-    package func scheduleMeetingTapped() {}
+    func meetNowTapped() {}
+    func scheduleMeetingTapped() {}
 
     // MARK: - Private Methods
 
@@ -157,7 +157,7 @@ package final class MeetingsViewModel: ObservableObject {
 
 }
 
-package extension MeetingsViewModel {
+extension MeetingsViewModel {
 
     enum Tab: Int, CaseIterable {
         case next

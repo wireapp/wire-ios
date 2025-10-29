@@ -59,7 +59,7 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
 // MARK: - Helpers
 
-extension DateFormatter {
+private extension DateFormatter {
 
     static let dayHeader: DateFormatter = {
         let formatter = DateFormatter()

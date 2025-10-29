@@ -60,7 +60,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.showMoreButton == false)
         #expect(viewModel.ongoingMeetings.isEmpty)
         #expect(viewModel.groupedPastMeetings.isEmpty)
-        #expect(viewModel.groupedNext.isEmpty)
+        #expect(viewModel.groupedNextMeetings.isEmpty)
     }
 
     @Test("loadInitialData calls all use cases")
@@ -175,7 +175,7 @@ struct MeetingsViewModelTests {
         viewModel.loadInitialData()
 
         // Then
-        #expect(viewModel.groupedNext.count == 1)
+        #expect(viewModel.groupedNextMeetings.count == 1)
     }
 
     // MARK: - Show More Button Tests
@@ -252,8 +252,8 @@ struct MeetingsViewModelTests {
         viewModel.loadMoreUpcomingMeetings()
 
         // Then
-        #expect(viewModel.groupedNext[0].day == date1)
-        #expect(viewModel.groupedNext[1].day == date2)
+        #expect(viewModel.groupedNextMeetings[0].day == date1)
+        #expect(viewModel.groupedNextMeetings[1].day == date2)
     }
 
     @Test("merging groups combines meetings from same day different times")
@@ -285,8 +285,8 @@ struct MeetingsViewModelTests {
         viewModel.loadMoreUpcomingMeetings()
 
         // Then
-        #expect(viewModel.groupedNext.count == 1)
-        #expect(viewModel.groupedNext[0].timeSlots.count == 2)
+        #expect(viewModel.groupedNextMeetings.count == 1)
+        #expect(viewModel.groupedNextMeetings[0].timeSlots.count == 2)
     }
 
     @Test("merging groups combines meetings at same time")
@@ -324,9 +324,9 @@ struct MeetingsViewModelTests {
         viewModel.loadMoreUpcomingMeetings()
 
         // Then
-        #expect(viewModel.groupedNext.count == 1)
-        #expect(viewModel.groupedNext[0].timeSlots.count == 1)
-        #expect(viewModel.groupedNext[0].timeSlots[0].meetings.count == 2)
+        #expect(viewModel.groupedNextMeetings.count == 1)
+        #expect(viewModel.groupedNextMeetings[0].timeSlots.count == 1)
+        #expect(viewModel.groupedNextMeetings[0].timeSlots[0].meetings.count == 2)
     }
 
 }

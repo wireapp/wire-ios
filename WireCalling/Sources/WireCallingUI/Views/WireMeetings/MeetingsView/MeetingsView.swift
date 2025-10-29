@@ -72,7 +72,7 @@ package struct MeetingsView: View {
                     }
                 }
                 GroupedSections(
-                    groups: viewModel.groupedNext,
+                    groups: viewModel.groupedNextMeetings,
                     formatDay: viewModel.formatDay(_:),
                     formatTime: viewModel.formatTime(_:)
                 )
@@ -116,12 +116,6 @@ private func SectionTitle(_ text: String) -> some View {
         .textCase(nil)
 }
 
-private func TimeHeader(_ text: String) -> some View {
-    Text(text)
-        .font(.textStyle(.subline1))
-        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-}
-
 private struct GroupedSections: View {
     let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
     let formatDay: (Date) -> String
@@ -135,7 +129,9 @@ private struct GroupedSections: View {
                             MeetingRow(meeting: meeting)
                         }
                     } header: {
-                        TimeHeader(formatTime(slot.time))
+                        Text(formatTime(slot.time))
+                            .font(.textStyle(.subline1))
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
             } header: {
@@ -169,9 +165,7 @@ private struct MeetingRow: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .lineLimit(2)
 
-                Text(
-                    "\(DateFormatter.timeHeader.string(from: meeting.start)) – \(DateFormatter.timeHeader.string(from: meeting.end))"
-                )
+                Text("Meeting date")
                 .font(.textStyle(.subline1))
                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
