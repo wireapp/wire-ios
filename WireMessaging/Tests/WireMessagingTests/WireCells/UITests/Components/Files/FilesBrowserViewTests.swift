@@ -34,6 +34,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     @MainActor
@@ -48,6 +49,12 @@ final class FilesBrowserViewTests: XCTestCase {
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        
+        renameNodeUseCase = WireCellsRenameNodeUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -130,6 +137,7 @@ final class FilesBrowserViewTests: XCTestCase {
         let filesViewModel = FilesViewModel(
             fetchNodesUseCase: fetchNodesUseCase,
             deleteNodesUseCase: deleteNodeUseCase,
+            renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             fileCache: MockFileCache()

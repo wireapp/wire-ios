@@ -34,6 +34,7 @@ final class FilesViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var renameNodeUseCase: WireCellsRenameNodeUseCase!
 
     @MainActor
     override func setUp() async throws {
@@ -46,6 +47,11 @@ final class FilesViewTests: XCTestCase {
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        renameNodeUseCase = WireCellsRenameNodeUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -64,6 +70,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             filename: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -86,6 +93,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             filename: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -108,6 +116,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             filename: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -131,6 +140,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             filename: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -161,6 +171,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             filename: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -241,6 +252,7 @@ final class FilesViewTests: XCTestCase {
         let filesViewModel = FilesViewModel(
             fetchNodesUseCase: fetchNodesUseCase,
             deleteNodesUseCase: deleteNodeUseCase,
+            renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache()

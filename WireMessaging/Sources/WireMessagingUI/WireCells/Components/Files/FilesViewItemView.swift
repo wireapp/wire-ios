@@ -34,7 +34,7 @@ struct FilesViewItemView: View {
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        canRenameFile: Bool
+        canRenameFile: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile

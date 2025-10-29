@@ -64,7 +64,7 @@ extension FilesViewProtocol {
     func itemRow(index: Int) -> some View {
         FilesViewItemView(
             viewModel: viewModel.itemViewModel(index: index),
-            canRenameFile: !isBrowsing
+            canRenameFile: !isBrowsing // action not allowed when browsing files
         )
     }
 
