@@ -21,10 +21,12 @@ package import WireFoundation
 
 package extension Calendar {
 
-    func todayAndTomorrowRange(using dateProvider: any CurrentDateProviding) -> (todayStart: Date, tomorrowEnd: Date?) {
+    func todayAndTomorrowRange(using dateProvider: any CurrentDateProviding) -> DateInterval? {
         let todayStart = startOfDay(for: dateProvider.now)
-        let tomorrowEnd = date(byAdding: .day, value: 2, to: todayStart)
-        return (todayStart, tomorrowEnd)
+        guard let tomorrowEnd = date(byAdding: .day, value: 2, to: todayStart) else {
+            return nil
+        }
+        return DateInterval(start: todayStart, end: tomorrowEnd)
     }
 
 }

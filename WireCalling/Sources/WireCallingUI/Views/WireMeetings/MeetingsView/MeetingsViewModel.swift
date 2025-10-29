@@ -44,7 +44,6 @@ package final class MeetingsViewModel: ObservableObject {
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol
-    private let ongoingMeetingsUseCase: any FetchOngoingMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
 
     private var futureOffset: Int = 0
@@ -56,14 +55,12 @@ package final class MeetingsViewModel: ObservableObject {
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
-        ongoingMeetingsUseCase: any FetchOngoingMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
         self.pastMeetingsUseCase = pastMeetingsUseCase
-        self.ongoingMeetingsUseCase = ongoingMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
     }
 
@@ -92,7 +89,7 @@ package final class MeetingsViewModel: ObservableObject {
     }
 
     func refreshOngoingMeetings() {
-        cachedOngoingMeetings = ongoingMeetingsUseCase.invoke()
+        cachedOngoingMeetings = repository.fetchOngoingMeetings(at: currentDateProvider.now)
     }
 
     func refreshPastMeetings() {
@@ -129,7 +126,7 @@ package final class MeetingsViewModel: ObservableObject {
         futureOffset = result.nextOffset
 
         if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider).tomorrowEnd
+            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)?.end
                 .map { repository.hasUpcomingMeetings(after: $0) } ?? false
         } else {
             showMoreButton = result.hasMore

@@ -31,11 +31,11 @@ package final class MeetingsRepository: MeetingsRepositoryProtocol {
         meetingsSource().filter { $0.start <= date && $0.end > date }
     }
 
-    package func fetchPastMeetings(until date: Date) -> [Meeting] {
+    package func fetchMeetingsEnding(before date: Date) -> [Meeting] {
         meetingsSource().filter { $0.end <= date }
     }
 
-    package func fetchUpcomingMeetings(after date: Date, limit: Int, offset: Int) -> [Meeting] {
+    package func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting] {
         let allFuture = meetingsSource().filter { $0.start > date }
         let start = min(offset, allFuture.count)
         let end = min(offset + limit, allFuture.count)

@@ -24,13 +24,9 @@ package protocol MeetingsRepositoryProtocol: Sendable {
 
     func fetchOngoingMeetings(at date: Date) -> [Meeting]
 
-    func fetchPastMeetings(until date: Date) -> [Meeting]
+    func fetchMeetingsEnding(before date: Date) -> [Meeting]
 
-    func fetchUpcomingMeetings(
-        after date: Date,
-        limit: Int,
-        offset: Int
-    ) -> [Meeting]
+    func fetchMeetingsStarting(after date: Date, offset: Int, limit: Int) -> [Meeting]
 
     func hasUpcomingMeetings(after date: Date) -> Bool
 

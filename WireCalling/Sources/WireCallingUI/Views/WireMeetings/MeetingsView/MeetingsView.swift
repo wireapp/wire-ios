@@ -194,7 +194,6 @@ private struct MeetingRow: View {
         currentDateProvider: .system,
         formatter: MeetingsFormatter(),
         pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
-        ongoingMeetingsUseCase: MockFetchOngoingMeetingsUseCaseProtocol(),
         upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
     )
     )

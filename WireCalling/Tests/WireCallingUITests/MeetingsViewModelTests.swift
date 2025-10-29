@@ -31,7 +31,6 @@ struct MeetingsViewModelTests {
     private let mockDateProvider: CurrentDateProvidingMock
     private let formatter: MeetingsFormatter
     private let pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol
-    private let ongoingMeetingsUseCase: MockFetchOngoingMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol
     private let viewModel: MeetingsViewModel
 
@@ -41,14 +40,12 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.pastMeetingsUseCase = MockFetchPastMeetingsUseCaseProtocol()
-        self.ongoingMeetingsUseCase = MockFetchOngoingMeetingsUseCaseProtocol()
         self.upcomingMeetingsUseCase = MockFetchUpcomingMeetingsUseCaseProtocol()
         self.viewModel = MeetingsViewModel(
             repository: mockRepository,
             currentDateProvider: mockDateProvider,
             formatter: formatter,
             pastMeetingsUseCase: pastMeetingsUseCase,
-            ongoingMeetingsUseCase: ongoingMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
     }
@@ -66,12 +63,10 @@ struct MeetingsViewModelTests {
     @Test("loadInitialData calls all use cases")
     func loadInitialData() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
 
         let date1 = Date()
@@ -87,7 +82,7 @@ struct MeetingsViewModelTests {
         viewModel.loadInitialData()
 
         // Then
-        #expect(ongoingMeetingsUseCase.invoke_Invocations.count == 1)
+        #expect(mockRepository.fetchOngoingMeetingsAt_Invocations.count == 1)
         #expect(pastMeetingsUseCase.invoke_Invocations.count == 1)
         #expect(upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_Invocations.count == 1)
     }
@@ -97,7 +92,7 @@ struct MeetingsViewModelTests {
         // Given
         let meeting1 = Meeting.fixture(title: "Ongoing 1", start: Date())
         let meeting2 = Meeting.fixture(title: "Ongoing 2", start: Date())
-        ongoingMeetingsUseCase.invoke_MockValue = [meeting1, meeting2]
+        mockRepository.fetchOngoingMeetingsAt_MockValue = [meeting1, meeting2]
 
         // When
         viewModel.refreshOngoingMeetings()
@@ -111,7 +106,7 @@ struct MeetingsViewModelTests {
     @Test("refreshOngoingMeetings with empty result")
     func refreshOngoingMeetings_EmptyResult() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockValue = []
+        mockRepository.fetchOngoingMeetingsAt_MockValue = []
 
         // When
         viewModel.refreshOngoingMeetings()
@@ -154,12 +149,10 @@ struct MeetingsViewModelTests {
     @Test("loadUpcomingMeetings loads first page")
     func loadUpcomingMeetingsFirstPage() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date = Date()
         let meeting = Meeting.fixture(title: "Upcoming 1", start: date)
@@ -183,12 +176,10 @@ struct MeetingsViewModelTests {
     @Test("showMoreButton is false when no more meetings in limited view")
     func showMoreButton_False_WhenNoMore() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
             PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: 0)
@@ -204,12 +195,10 @@ struct MeetingsViewModelTests {
     @Test("showMoreButton is true when more meetings exist beyond tomorrow in limited view")
     func showMoreButton_True_WhenMoreExist() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in true }
         upcomingMeetingsUseCase.invokeLimitToTwoDaysPageSizeOffset_MockMethod = { _, _, _ in
             PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: 0)
@@ -227,12 +216,10 @@ struct MeetingsViewModelTests {
     @Test("merging groups combines meetings from different days")
     func mergeGroups_DifferentDays() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date1 = Date()
         let date2 = date1.addingTimeInterval(86_400)
@@ -259,12 +246,10 @@ struct MeetingsViewModelTests {
     @Test("merging groups combines meetings from same day different times")
     func mergeGroups_SameDay_DifferentTimes() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date = Date()
         let time1 = date
@@ -292,12 +277,10 @@ struct MeetingsViewModelTests {
     @Test("merging groups combines meetings at same time")
     func mergeGroups_SameTime() {
         // Given
-        ongoingMeetingsUseCase.invoke_MockMethod = {
-            []
-        }
         pastMeetingsUseCase.invoke_MockMethod = {
             []
         }
+        mockRepository.fetchOngoingMeetingsAt_MockMethod = { _ in [] }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date = Date()
         let meeting1 = Meeting.fixture(title: "Meeting 1", start: date)

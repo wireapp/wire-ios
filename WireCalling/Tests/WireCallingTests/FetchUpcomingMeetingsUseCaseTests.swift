@@ -36,7 +36,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
 
         let meeting1 = Meeting.fixture(title: "Meeting 1", start: mockDateProvider.now.addingTimeInterval(3600))
         let meeting2 = Meeting.fixture(title: "Meeting 2", start: mockDateProvider.now.addingTimeInterval(7200))
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = [meeting1, meeting2]
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = [meeting1, meeting2]
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -56,7 +56,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     @Test("invoke returns empty result when no upcoming meetings")
     func invoke_WithNoMeetings() throws {
         // Given
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = []
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = []
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
@@ -85,7 +85,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
         }
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = meetings
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = meetings
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -113,7 +113,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
         }
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = meetings
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = meetings
 
         let useCase = FetchUpcomingMeetingsUseCase(
             repository: repository,
@@ -157,7 +157,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
             start: afterTomorrowStart.addingTimeInterval(3600)
         )
 
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = [
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = [
             todayMeeting,
             tomorrowMeeting,
             afterTomorrowMeeting
@@ -199,7 +199,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let meeting2 = Meeting.fixture(title: "Meeting 2", start: currentDate.addingTimeInterval(3900))
         let meeting3 = Meeting.fixture(title: "Meeting 3", start: currentDate.addingTimeInterval(7200))
 
-        repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = [meeting1, meeting2, meeting3]
+        repository.fetchMeetingsStartingAfterOffsetLimit_MockValue = [meeting1, meeting2, meeting3]
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = currentDate
 

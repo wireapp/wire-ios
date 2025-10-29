@@ -51,7 +51,7 @@ struct FetchPastMeetingsUseCaseTests {
         let meeting1 = Meeting.fixture(title: "Yesterday Meeting", start: yesterdayMeeting)
         let meeting2 = Meeting.fixture(title: "Today Past Meeting", start: todayMeeting)
 
-        repository.fetchPastMeetingsUntil_MockValue = [meeting1, meeting2]
+        repository.fetchMeetingsEndingBefore_MockValue = [meeting1, meeting2]
 
         let useCase = FetchPastMeetingsUseCase(
             repository: repository,
@@ -88,7 +88,7 @@ struct FetchPastMeetingsUseCaseTests {
         let oldMeeting = Meeting.fixture(title: "Old Meeting", start: twoDaysAgo)
         let recentMeeting = Meeting.fixture(title: "Yesterday Meeting", start: yesterdayMeeting)
 
-        repository.fetchPastMeetingsUntil_MockValue = [oldMeeting, recentMeeting]
+        repository.fetchMeetingsEndingBefore_MockValue = [oldMeeting, recentMeeting]
 
         let useCase = FetchPastMeetingsUseCase(
             repository: repository,
@@ -107,7 +107,7 @@ struct FetchPastMeetingsUseCaseTests {
     @Test("invoke returns empty array when no past meetings in range")
     func invoke_WithNoPastMeetings() throws {
         // Given
-        repository.fetchPastMeetingsUntil_MockValue = []
+        repository.fetchMeetingsEndingBefore_MockValue = []
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
@@ -147,7 +147,7 @@ struct FetchPastMeetingsUseCaseTests {
         let meeting2 = Meeting.fixture(title: "Meeting 2", start: meeting2Time)
         let meeting3 = Meeting.fixture(title: "Meeting 3", start: meeting3Time)
 
-        repository.fetchPastMeetingsUntil_MockValue = [meeting1, meeting2, meeting3]
+        repository.fetchMeetingsEndingBefore_MockValue = [meeting1, meeting2, meeting3]
 
         let useCase = FetchPastMeetingsUseCase(
             repository: repository,
