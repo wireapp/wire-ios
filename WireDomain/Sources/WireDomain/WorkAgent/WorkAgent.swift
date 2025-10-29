@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDomain
 import WireLogging
 
 final class WorkAgent {

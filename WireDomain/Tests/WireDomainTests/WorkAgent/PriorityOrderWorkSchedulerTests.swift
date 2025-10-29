@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
-@testable import WireSyncEngine
+@testable import WireDomain
 
 struct PriorityOrderWorkSchedulerTests {
 
@@ -130,6 +131,6 @@ private struct MockWorkTicket: WorkTicket, Equatable {
 
     let id = UUID()
     let workerID = UUID()
-    var priority: WireSyncEngine.WorkTicketPriority
+    var priority: WorkTicketPriority
 
 }
