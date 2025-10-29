@@ -157,15 +157,12 @@ public enum Payload {
         let scimExternalID: String?
     }
 
-<<<<<<< HEAD
-=======
     enum UserType: String, Codable {
         case regular
         case app
         case bot
     }
 
->>>>>>> 7b7b3ce2ff (revert: disable critical flows temporarily - WPB-21303 (#3801))
     enum LegalholdStatus: String, Codable {
         case enabled
         case pending
@@ -202,6 +199,7 @@ public enum Payload {
             case SSOID = "sso_id"
             case name
             case handle
+            case type
             case phone
             case email
             case assets
@@ -220,6 +218,7 @@ public enum Payload {
         let SSOID: SSOID?
         let name: String?
         let handle: String?
+        let type: UserType? // added in v12
         let phone: String?
         let email: String?
         let assets: [Asset]?
@@ -245,6 +244,7 @@ public enum Payload {
             SSOID: SSOID? = nil,
             name: String? = nil,
             handle: String? = nil,
+            type: UserType? = nil,
             phone: String? = nil,
             email: String? = nil,
             assets: [Asset] = [],
@@ -264,6 +264,7 @@ public enum Payload {
             self.SSOID = SSOID
             self.name = name
             self.handle = handle
+            self.type = type
             self.phone = phone
             self.email = email
             self.assets = assets
@@ -285,6 +286,7 @@ public enum Payload {
             self.SSOID = try container.decodeIfPresent(Payload.SSOID.self, forKey: .SSOID)
             self.name = try container.decodeIfPresent(String.self, forKey: .name)
             self.handle = try container.decodeIfPresent(String.self, forKey: .handle)
+            self.type = try container.decodeIfPresent(UserType.self, forKey: .type)
             self.phone = try container.decodeIfPresent(String.self, forKey: .phone)
             self.email = try container.decodeIfPresent(String.self, forKey: .email)
             self.assets = try container.decodeIfPresent([Payload.Asset].self, forKey: .assets)
