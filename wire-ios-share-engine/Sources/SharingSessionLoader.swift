@@ -249,7 +249,7 @@ public struct SharingSessionLoader {
 
     // TODO: [WPB-17732] de-duplicate when implementing NSE
     private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .minimumLegacySyncVersion
+        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         return isAvailable && !isAlreadyEnabled
     }

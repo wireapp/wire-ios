@@ -353,7 +353,7 @@ final class UserSessionLoader {
         metadata: ResolvedBackendMetadata,
         eventContext: NSManagedObjectContext
     ) async throws {
-        let isAvailable = metadata.apiVersion >= .minimumLegacySyncVersion
+        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         let shouldEnable = isAvailable && !isAlreadyEnabled
 
