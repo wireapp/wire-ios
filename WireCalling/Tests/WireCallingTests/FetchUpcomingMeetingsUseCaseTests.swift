@@ -34,8 +34,8 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
-        let meeting1 = createMeeting(title: "Meeting 1", start: mockDateProvider.now.addingTimeInterval(3600))
-        let meeting2 = createMeeting(title: "Meeting 2", start: mockDateProvider.now.addingTimeInterval(7200))
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: mockDateProvider.now.addingTimeInterval(7200))
         repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = [meeting1, meeting2]
 
         let useCase = FetchUpcomingMeetingsUseCase(
@@ -80,7 +80,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
         let meetings = (0 ... 10).map { index in
-            createMeeting(
+            Meeting.fixture(
                 title: "Meeting \(index)",
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
@@ -108,7 +108,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
         let meetings = (0 ..< 10).map { index in
-            createMeeting(
+            Meeting.fixture(
                 title: "Meeting \(index)",
                 start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
             )
@@ -150,9 +150,9 @@ struct FetchUpcomingMeetingsUseCaseTests {
             return
         }
 
-        let todayMeeting = createMeeting(title: "Today Meeting", start: currentDate.addingTimeInterval(3600))
-        let tomorrowMeeting = createMeeting(title: "Tomorrow Meeting", start: tomorrowStart.addingTimeInterval(3600))
-        let afterTomorrowMeeting = createMeeting(
+        let todayMeeting = Meeting.fixture(title: "Today Meeting", start: currentDate.addingTimeInterval(3600))
+        let tomorrowMeeting = Meeting.fixture(title: "Tomorrow Meeting", start: tomorrowStart.addingTimeInterval(3600))
+        let afterTomorrowMeeting = Meeting.fixture(
             title: "After Tomorrow Meeting",
             start: afterTomorrowStart.addingTimeInterval(3600)
         )
@@ -195,9 +195,9 @@ struct FetchUpcomingMeetingsUseCaseTests {
             return
         }
 
-        let meeting1 = createMeeting(title: "Meeting 1", start: currentDate.addingTimeInterval(3600))
-        let meeting2 = createMeeting(title: "Meeting 2", start: currentDate.addingTimeInterval(3900))
-        let meeting3 = createMeeting(title: "Meeting 3", start: currentDate.addingTimeInterval(7200))
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: currentDate.addingTimeInterval(3600))
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: currentDate.addingTimeInterval(3900))
+        let meeting3 = Meeting.fixture(title: "Meeting 3", start: currentDate.addingTimeInterval(7200))
 
         repository.fetchUpcomingMeetingsAfterLimitOffset_MockValue = [meeting1, meeting2, meeting3]
         let mockDateProvider = CurrentDateProvidingMock()
@@ -216,22 +216,6 @@ struct FetchUpcomingMeetingsUseCaseTests {
         if let dayGroup = result.groups.first {
             #expect(dayGroup.timeSlots.count >= 1)
         }
-    }
-
-    // MARK: - Helpers
-
-    private func createMeeting(
-        id: UUID = UUID(),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
     }
 
 }

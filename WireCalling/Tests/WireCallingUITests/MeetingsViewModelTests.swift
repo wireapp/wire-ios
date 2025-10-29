@@ -75,7 +75,7 @@ struct MeetingsViewModelTests {
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
 
         let date1 = Date()
-        let meeting1 = createMeeting(title: "Past 1", start: date1)
+        let meeting1 = Meeting.fixture(title: "Past 1", start: date1)
         let groupedMeetings: GroupedMeetings = [
             (day: date1, timeSlots: [(time: date1, meetings: [meeting1])])
         ]
@@ -95,8 +95,8 @@ struct MeetingsViewModelTests {
     @Test("refreshOngoingMeetings fetches and updates ongoing meetings")
     func refreshOngoingMeetings() {
         // Given
-        let meeting1 = createMeeting(title: "Ongoing 1", start: Date())
-        let meeting2 = createMeeting(title: "Ongoing 2", start: Date())
+        let meeting1 = Meeting.fixture(title: "Ongoing 1", start: Date())
+        let meeting2 = Meeting.fixture(title: "Ongoing 2", start: Date())
         ongoingMeetingsUseCase.invoke_MockValue = [meeting1, meeting2]
 
         // When
@@ -124,7 +124,7 @@ struct MeetingsViewModelTests {
     func refreshPastMeetings() {
         // Given
         let date1 = Date()
-        let meeting1 = createMeeting(title: "Past 1", start: date1)
+        let meeting1 = Meeting.fixture(title: "Past 1", start: date1)
         let groupedMeetings: GroupedMeetings = [
             (day: date1, timeSlots: [(time: date1, meetings: [meeting1])])
         ]
@@ -162,7 +162,7 @@ struct MeetingsViewModelTests {
         }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date = Date()
-        let meeting = createMeeting(title: "Upcoming 1", start: date)
+        let meeting = Meeting.fixture(title: "Upcoming 1", start: date)
         let groups: GroupedMeetings = [
             (day: date, timeSlots: [(time: date, meetings: [meeting])])
         ]
@@ -236,8 +236,8 @@ struct MeetingsViewModelTests {
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date1 = Date()
         let date2 = date1.addingTimeInterval(86_400)
-        let meeting1 = createMeeting(title: "Meeting 1", start: date1)
-        let meeting2 = createMeeting(title: "Meeting 2", start: date2)
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: date1)
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: date2)
 
         let groups: GroupedMeetings = [
             (day: date1, timeSlots: [(time: date1, meetings: [meeting1])]),
@@ -269,8 +269,8 @@ struct MeetingsViewModelTests {
         let date = Date()
         let time1 = date
         let time2 = date.addingTimeInterval(3600)
-        let meeting1 = createMeeting(title: "Meeting 1", start: time1)
-        let meeting2 = createMeeting(title: "Meeting 2", start: time2)
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: time1)
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: time2)
 
         let groups: GroupedMeetings = [
             (day: date, timeSlots: [(time: time1, meetings: [meeting1])]),
@@ -300,8 +300,8 @@ struct MeetingsViewModelTests {
         }
         mockRepository.hasUpcomingMeetingsAfter_MockMethod = { _ in false }
         let date = Date()
-        let meeting1 = createMeeting(title: "Meeting 1", start: date)
-        let meeting2 = createMeeting(title: "Meeting 2", start: date)
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: date)
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: date)
 
         let firstPageGroups: GroupedMeetings = [
             (day: date, timeSlots: [(time: date, meetings: [meeting1])])
@@ -327,22 +327,6 @@ struct MeetingsViewModelTests {
         #expect(viewModel.groupedNext.count == 1)
         #expect(viewModel.groupedNext[0].timeSlots.count == 1)
         #expect(viewModel.groupedNext[0].timeSlots[0].meetings.count == 2)
-    }
-
-    // MARK: - Helpers
-
-    private func createMeeting(
-        id: UUID = UUID(),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
     }
 
 }

@@ -155,24 +155,6 @@ struct MeetingsGrouperTests {
         #expect(result[1].day > result[2].day)
     }
 
-    @Test("group meetings with no sort order")
-    func testNoSort() {
-        let now = Date()
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) else {
-            Issue.record("Failed to create tomorrow date")
-            return
-        }
-
-        let meetings = [
-            createMeeting(title: "Tomorrow", start: tomorrow),
-            createMeeting(title: "Today", start: now)
-        ]
-
-        let result = grouper.group(meetings, byHours: false, sort: .none)
-
-        #expect(result.count == 2)
-    }
-
     // MARK: - Meeting Sorting Within Groups
 
     @Test("meetings are sorted by start time within groups")

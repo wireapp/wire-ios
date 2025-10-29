@@ -45,7 +45,6 @@ package struct MeetingsGrouper {
         let sortedDays: [(day: Date, meetings: [Meeting])] = switch sort {
         case .ascending:  groupedByDay.sorted { $0.day < $1.day }
         case .descending: groupedByDay.sorted { $0.day > $1.day }
-        case .none:       groupedByDay
         }
 
         guard byHours else {
@@ -69,7 +68,6 @@ package struct MeetingsGrouper {
     }
 
     package enum SortOrder {
-        case none
         case ascending
         case descending
     }

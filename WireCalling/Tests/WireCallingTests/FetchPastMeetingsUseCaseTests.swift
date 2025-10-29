@@ -48,8 +48,8 @@ struct FetchPastMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = currentDate
 
-        let meeting1 = createMeeting(title: "Yesterday Meeting", start: yesterdayMeeting)
-        let meeting2 = createMeeting(title: "Today Past Meeting", start: todayMeeting)
+        let meeting1 = Meeting.fixture(title: "Yesterday Meeting", start: yesterdayMeeting)
+        let meeting2 = Meeting.fixture(title: "Today Past Meeting", start: todayMeeting)
 
         repository.fetchPastMeetingsUntil_MockValue = [meeting1, meeting2]
 
@@ -85,8 +85,8 @@ struct FetchPastMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = currentDate
 
-        let oldMeeting = createMeeting(title: "Old Meeting", start: twoDaysAgo)
-        let recentMeeting = createMeeting(title: "Yesterday Meeting", start: yesterdayMeeting)
+        let oldMeeting = Meeting.fixture(title: "Old Meeting", start: twoDaysAgo)
+        let recentMeeting = Meeting.fixture(title: "Yesterday Meeting", start: yesterdayMeeting)
 
         repository.fetchPastMeetingsUntil_MockValue = [oldMeeting, recentMeeting]
 
@@ -143,9 +143,9 @@ struct FetchPastMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = currentDate
 
-        let meeting1 = createMeeting(title: "Meeting 1", start: meeting1Time)
-        let meeting2 = createMeeting(title: "Meeting 2", start: meeting2Time)
-        let meeting3 = createMeeting(title: "Meeting 3", start: meeting3Time)
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: meeting1Time)
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: meeting2Time)
+        let meeting3 = Meeting.fixture(title: "Meeting 3", start: meeting3Time)
 
         repository.fetchPastMeetingsUntil_MockValue = [meeting1, meeting2, meeting3]
 
@@ -164,19 +164,4 @@ struct FetchPastMeetingsUseCaseTests {
         }
     }
 
-    // MARK: - Helpers
-
-    private func createMeeting(
-        id: UUID = UUID(),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
-    }
 }

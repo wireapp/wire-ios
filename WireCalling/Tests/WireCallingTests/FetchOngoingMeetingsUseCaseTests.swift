@@ -35,8 +35,8 @@ struct FetchOngoingMeetingsUseCaseTests {
     @Test("invoke fetches ongoing meetings from repository")
     func invokeFetchesMeetings() {
         // Given
-        let meeting1 = createMeeting(title: "Meeting 1", start: mockDateProvider.now)
-        let meeting2 = createMeeting(title: "Meeting 2", start: mockDateProvider.now)
+        let meeting1 = Meeting.fixture(title: "Meeting 1", start: mockDateProvider.now)
+        let meeting2 = Meeting.fixture(title: "Meeting 2", start: mockDateProvider.now)
         repository.fetchOngoingMeetingsAt_MockValue = [meeting1, meeting2]
 
         let useCase = FetchOngoingMeetingsUseCase(
@@ -70,19 +70,4 @@ struct FetchOngoingMeetingsUseCaseTests {
         #expect(result.isEmpty)
     }
 
-    // MARK: - Helpers
-
-    private func createMeeting(
-        id: UUID = UUID(),
-        title: String,
-        start: Date,
-        duration: TimeInterval = 3600
-    ) -> Meeting {
-        Meeting(
-            id: id,
-            title: title,
-            start: start,
-            end: start.addingTimeInterval(duration)
-        )
-    }
 }
