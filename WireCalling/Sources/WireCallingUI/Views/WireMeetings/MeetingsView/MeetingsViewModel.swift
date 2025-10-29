@@ -104,9 +104,6 @@ package final class MeetingsViewModel: ObservableObject {
         formatter.timeHeader(for: date)
     }
 
-    func meetNowTapped() {}
-    func scheduleMeetingTapped() {}
-
     // MARK: - Private Methods
 
     private func loadUpcomingMeetings() {
@@ -126,8 +123,8 @@ package final class MeetingsViewModel: ObservableObject {
         futureOffset = result.nextOffset
 
         if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)?.end
-                .map { repository.hasUpcomingMeetings(after: $0) } ?? false
+            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)
+                .map { repository.hasUpcomingMeetings(after: $0.end) } ?? false
         } else {
             showMoreButton = result.hasMore
         }

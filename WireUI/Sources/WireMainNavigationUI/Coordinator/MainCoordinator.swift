@@ -224,6 +224,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
+        dismissFilesIfNeeded()
 
         if let meetingsUI = tabBarController.meetingsUI {
             tabBarController.meetingsUI = nil

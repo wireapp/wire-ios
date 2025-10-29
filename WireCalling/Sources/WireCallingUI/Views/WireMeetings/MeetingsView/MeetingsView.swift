@@ -166,8 +166,8 @@ private struct MeetingRow: View {
                     .lineLimit(2)
 
                 Text("Meeting date")
-                .font(.textStyle(.subline1))
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    .font(.textStyle(.subline1))
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 HStack(spacing: 6) {
                     Label("Design", systemImage: "person.3.fill")

@@ -23,14 +23,14 @@ import WireDesign
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @ObservedObject private var viewModel: AllMeetingsViewModel
 
-    package init(viewModel: MeetingsViewModel) {
+    package init(viewModel: AllMeetingsViewModel) {
         self.viewModel = viewModel
     }
 
     package var body: some View {
-        MeetingsView(viewModel: viewModel)
+        MeetingsView(viewModel: viewModel.meetingsViewModel)
             .navigationTitle(L10n.Localizable.WireMeetings.List.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

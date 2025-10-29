@@ -31,14 +31,10 @@ public struct WireMeetingsFactory {
 public extension WireMeetingsFactory {
     @MainActor
     func makeMeetingsView() -> UIViewController {
-        let meetingsViewModel = MeetingsViewModel(
+        let meetingsViewModel = AllMeetingsViewModel(
             repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
             pastMeetingsUseCase: FetchPastMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
-                currentDateProvider: .system
-            ),
-            ongoingMeetingsUseCase: FetchOngoingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
             ),
