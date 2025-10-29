@@ -55,7 +55,10 @@ final class WorkAgent {
     }
 
     func submitTicket(_ ticket: any WorkTicket) {
-        WireLogger.workAgent.debug("ticket submitted: \(ticket)", attributes: .safePublic)
+        WireLogger.workAgent.debug(
+            "ticket submitted: \(ticket)",
+            attributes: .init(ticket)
+        )
         scheduler.enqueueTicket(ticket)
 
         if shouldAutoStart {
@@ -76,28 +79,43 @@ final class WorkAgent {
             return
         }
 
-        WireLogger.workAgent.info("starting", attributes: .safePublic)
+        WireLogger.workAgent.info(
+            "starting",
+            attributes: .safePublic
+        )
 
         task = Task {
             let startTime = Date()
             var completedTickets = 0
 
             while let ticket = scheduler.dequeueNextTicket() {
-                WireLogger.workAgent.debug("dequeued ticket: \(ticket)", attributes: .safePublic)
+                WireLogger.workAgent.debug(
+                    "dequeued ticket",
+                    attributes: .init(ticket)
+                )
 
                 guard let worker = workers.first(where: {
                     $0.id == ticket.workerID
                 }) else {
-                    WireLogger.workAgent.warn("didn't find worker for ticket: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.warn(
+                        "didn't find worker for ticket",
+                        attributes: .init(ticket)
+                    )
                     continue
                 }
 
                 do {
                     try await worker.performWork(for: ticket)
                     completedTickets += 1
-                    WireLogger.workAgent.debug("ticket complete: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.debug(
+                        "ticket complete",
+                        attributes: .init(ticket)
+                    )
                 } catch {
-                    WireLogger.workAgent.error("ticket failed, dorpping: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.error(
+                        "ticket failed, dropping",
+                        attributes: .init(ticket)
+                    )
                     continue
                 }
             }
@@ -115,9 +133,23 @@ final class WorkAgent {
     }
 
     func stop() {
-        WireLogger.workAgent.info("stopping", attributes: .safePublic)
+        WireLogger.workAgent.info(
+            "stopping",
+            attributes: .safePublic
+        )
         task?.cancel()
         task = nil
+    }
+
+}
+
+private extension LogAttributes {
+
+    init(_ ticket: any WorkTicket) {
+        self = [
+            .public: true,
+            .workTicketID: "\(ticket.id)"
+        ]
     }
 
 }
