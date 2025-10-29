@@ -18,19 +18,18 @@
 
 import Foundation
 import WireFoundation
-import WireNetwork
 
 struct StorableQualifiedID: Codable, Hashable, Equatable, Sendable {
 
     let id: UUID
     let domain: String
 
-    init(_ value: WireNetwork.QualifiedID) {
+    init(_ value: QualifiedID) {
         self.id = value.id
         self.domain = value.domain
     }
 
-    func toAPIModel() -> WireNetwork.QualifiedID {
+    func toAPIModel() -> QualifiedID {
         .init(id: id, domain: domain)
     }
 
