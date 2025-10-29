@@ -33,6 +33,9 @@ struct FilesViewItem: Identifiable, Hashable {
     /// The filename of the file including its extension.
     let filename: String
 
+    /// The filepath of the file.
+    let filePath: String
+
     /// The name of the user who owns (uploaded) this file.
     let ownedBy: String?
 
@@ -84,6 +87,7 @@ package final class FilesViewModel: ObservableObject {
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
+    private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
@@ -95,16 +99,20 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var fileRenameView: FileRenameView?
+    var didRenameFile: Bool = false
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         deleteNodesUseCase: WireCellsDeleteNodesUseCase,
+        renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
         self.deleteNodesUseCase = deleteNodesUseCase
+        self.renameNodeUseCase = renameNodeUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
@@ -167,6 +175,9 @@ package final class FilesViewModel: ObservableObject {
             },
             onDelete: { [weak self] item in
                 await self?.deleteItem(item)
+            },
+            onRename: { [weak self] item in
+                self?.fileRenameView = self?.makeFileRenameView(item: item)
             }
         )
     }
@@ -253,6 +264,7 @@ package final class FilesViewModel: ObservableObject {
             return FilesViewItem(
                 id: node.id,
                 filename: url?.lastPathComponent ?? node.path,
+                filePath: node.path,
                 ownedBy: node.ownerUserName,
                 modifiedAt: node.modified,
                 icon: .make(
@@ -330,6 +342,27 @@ package final class FilesViewModel: ObservableObject {
         }
 
         return results
+    }
+
+    private func makeFileRenameView(
+        item: FilesViewItem
+    ) -> FileRenameView {
+        let viewModel = FileRenameViewModel(
+            renameNodeUseCase: renameNodeUseCase,
+            fileRenameModel: .init(
+                nodeID: item.id,
+                currentFilename: item.filename,
+                currentFilepath: item.filePath,
+            )
+        )
+
+        // to know whether we need to reload items.
+        viewModel.$didRename
+            .sink { [weak self] didRename in
+                self?.didRenameFile = didRename
+            }.store(in: &subscriptions)
+
+        return FileRenameView(viewModel: viewModel)
     }
 
 }
