@@ -16,13 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
+public import Foundation
 
-struct Test {
+/// Represents a scheduled meeting.
+///
+/// A `Meeting` captures the essential information about a scheduled meeting,
+/// including its unique identifier, title, and time range. Meetings can be
+/// categorized as past, ongoing, or upcoming based on their start and end times
+/// relative to the current time.
 
-    @Test
-    func myNewTest() async throws {
-        #expect(true)
+public struct Meeting: Equatable, Sendable {
+
+    public let id: UUID
+
+    public let title: String
+
+    public let start: Date
+
+    public let end: Date
+
+    public init(
+        id: UUID,
+        title: String,
+        start: Date,
+        end: Date
+    ) {
+        self.id = id
+        self.title = title
+        self.start = start
+        self.end = end
     }
 
 }
