@@ -38,5 +38,3 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMAccentColor.h>
 #import <WireUtilities/ZMAtomicInteger.h>
 #import <WireUtilities/ZMObjectValidationError.h>
-#import <WireUtilities/ZMSAsserts.h>
-#import <WireUtilities/ZMSDefines.h>
