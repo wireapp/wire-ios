@@ -64,6 +64,8 @@ struct WorkAgentTests {
         await sut.start()
 
         // Then
+        #expect(sut.isRunning == false)
+
         // All tickets were enqueued and dequeued.
         let allTicketIDs = [ticket1, ticket2, ticket3].map(\.id)
         #expect(scheduler.enqueuedTickets.map(\.id) == allTicketIDs)
@@ -103,6 +105,8 @@ struct WorkAgentTests {
         }
 
         // Then
+        #expect(sut.isRunning == false)
+
         // The ticket was enqueued, dequeued, and performed only once.
         #expect(scheduler.enqueuedTickets.map(\.id) == [ticket1.id])
         #expect(scheduler.dequeuedTickets.map(\.id) == [ticket1.id])
