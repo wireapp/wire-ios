@@ -30,7 +30,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
 
     @MainActor
     func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration) {
-        let mailRecipient = WireEmail.shared.callingSupportEmail
+        let mailRecipient = WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
             // we will be stuck on the blocker screen after that

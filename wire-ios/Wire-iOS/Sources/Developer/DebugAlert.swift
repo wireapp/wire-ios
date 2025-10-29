@@ -40,19 +40,9 @@ enum DebugAlert {
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
-        let action1 = Action(text: "Send to Devs", type: .destructive) {
+        let action = Action(text: "Send to Devs", type: .destructive) {
             DebugLogSender.sendLogsByEmail(
                 message: message,
-                shareWithAVS: false,
-                presentingViewController: presentingViewController,
-                fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
-            )
-        }
-
-        let action2 = Action(text: "Send to Devs & AVS", type: .destructive) {
-            DebugLogSender.sendLogsByEmail(
-                message: message,
-                shareWithAVS: true,
                 presentingViewController: presentingViewController,
                 fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration
             )
@@ -60,7 +50,7 @@ enum DebugAlert {
 
         show(
             message: message,
-            actions: [action1, action2],
+            actions: [action],
             title: "Send debug logs"
         )
     }
@@ -159,7 +149,6 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     /// Sends recorded logs by email
     static func sendLogsByEmail(
         message: String,
-        shareWithAVS: Bool,
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
@@ -170,7 +159,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
-        let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
+        let mail = WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
             return DebugAlert.displayFallbackActivityController(

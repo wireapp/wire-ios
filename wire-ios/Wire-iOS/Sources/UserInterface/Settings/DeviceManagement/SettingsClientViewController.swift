@@ -186,15 +186,15 @@ final class SettingsClientViewController: UIViewController,
     func onVerifiedChanged(_ sender: UISwitch!) {
         let selfClient = userSession.selfUserClient
 
-        userSession.enqueue({
+        userSession.enqueue {
             if sender.isOn {
                 selfClient?.trustClient(self.userClient)
             } else {
                 selfClient?.ignoreClient(self.userClient)
             }
-        }, completionHandler: {
+        } completionHandler: {
             sender.isOn = self.userClient.verified
-        })
+        }
     }
 
     // MARK: - UITableViewDelegate, UITableViewDataSource

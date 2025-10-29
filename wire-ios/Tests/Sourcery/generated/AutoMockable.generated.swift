@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.3.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -25,11 +25,12 @@
 
 
 import CoreLocation
+import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
-import SwiftUI
+import WireMessagingUI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -274,19 +275,46 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
+    var build_MockMethod: (() async -> UIViewController)?
     var build_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
             fatalError("no mock for `build`")
+        }
+    }
+
+}
+
+class MockConversationCellProviderProtocol: ConversationCellProviderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - provideCell
+
+    var provideCellForTableViewIndexPath_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath)] = []
+    var provideCellForTableViewIndexPath_MockMethod: ((ConversationCellModel, UITableView, IndexPath) -> UITableViewCell)?
+    var provideCellForTableViewIndexPath_MockValue: UITableViewCell?
+
+    @MainActor
+    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        provideCellForTableViewIndexPath_Invocations.append((model: model, tableView: tableView, indexPath: indexPath))
+
+        if let mock = provideCellForTableViewIndexPath_MockMethod {
+            return mock(model, tableView, indexPath)
+        } else if let mock = provideCellForTableViewIndexPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideCellForTableViewIndexPath`")
         }
     }
 
@@ -1669,7 +1697,7 @@ class MockTrackingInterface: TrackingInterface {
 
 }
 
-class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
+class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - Life cycle
 
@@ -1820,6 +1848,25 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
         }
     }
 
+    // MARK: - makeFilesBrowserView
+
+    var makeFilesBrowserView_Invocations: [Void] = []
+    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
+    var makeFilesBrowserView_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesBrowserView() -> UIViewController {
+        makeFilesBrowserView_Invocations.append(())
+
+        if let mock = makeFilesBrowserView_MockMethod {
+            return mock()
+        } else if let mock = makeFilesBrowserView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesBrowserView`")
+        }
+    }
+
     // MARK: - makeAttachmentsPreviewView
 
     var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
@@ -1836,6 +1883,24 @@ class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
+        }
+    }
+
+    // MARK: - makeConversationCellProvider
+
+    var makeConversationCellProviderInsetsProvider_Invocations: [() -> ConversationCellInsets] = []
+    var makeConversationCellProviderInsetsProvider_MockMethod: ((@escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol)?
+    var makeConversationCellProviderInsetsProvider_MockValue: ConversationCellProviderProtocol?
+
+    func makeConversationCellProvider(insetsProvider: @escaping () -> ConversationCellInsets) -> ConversationCellProviderProtocol {
+        makeConversationCellProviderInsetsProvider_Invocations.append(insetsProvider)
+
+        if let mock = makeConversationCellProviderInsetsProvider_MockMethod {
+            return mock(insetsProvider)
+        } else if let mock = makeConversationCellProviderInsetsProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
         }
     }
 

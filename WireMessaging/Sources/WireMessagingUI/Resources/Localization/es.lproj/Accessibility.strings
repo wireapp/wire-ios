@@ -16,13 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+"conversation.create.channel.back" = "Volver al nuevo resumen de la conversación";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Cerrar banner de actualización ahora";
 
 // MARK: Conversation Files View
-"conversation.wireCells.files.close" = "Close files";
-"conversation.wireCells.files.loadMore.title" = "Load more";
-"conversation.wireCells.files.noData.title" = "There are no files or folders yet";
-"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.close" = "Cerrar archivos";
+"conversation.wireCells.files.loadMore.title" = "Cargar más";
+"conversation.wireCells.files.noData.title" = "Aún no hay archivos o carpetas";
+"conversation.wireCells.files.noData.message" = "Encontrarás todos los archivos y carpetas compartidos en esta conversación aquí";
+"conversation.wireCells.files.pendingCells.title" = "Los archivos están cargando";
+"conversation.wireCells.files.pendingCells.message" = "Tus documentos y archivos multimedia estarán disponibles aquí una vez que hayamos subido todos los archivos y carpetas.";
+"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.error.title" = "Can't load files";
+"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
+"conversation.wireCells.files.error.reload" = "Reload";

@@ -31,7 +31,7 @@ protocol ShareDestination: Hashable {
 
 protocol Shareable {
     associatedtype I: ShareDestination
-    func share<I>(to: [I])
+    func share(to: [some Any])
     func previewView() -> UIView?
 }
 

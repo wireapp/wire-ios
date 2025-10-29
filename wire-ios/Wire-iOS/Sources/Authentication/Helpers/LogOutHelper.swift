@@ -72,7 +72,7 @@ final class LogOutHelper {
         return viewController
     }
 
-    private func logout(password: String? = nil) {
+    func logout(password: String? = nil) {
         guard let selfUser = ZMUser.selfUser() else { return }
 
         if selfUser.usesCompanyLogin || password != nil {

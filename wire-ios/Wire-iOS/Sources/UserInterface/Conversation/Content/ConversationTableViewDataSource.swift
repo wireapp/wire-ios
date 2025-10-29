@@ -20,6 +20,7 @@ import DifferenceKit
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireMessagingUI
 import WireSyncEngine
 
 extension Int: Differentiable {}
@@ -108,7 +109,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     private let isChatBubbleSimpleEnabled: Bool
 
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
+
+    private let cellProvider: ConversationCellProviderProtocol
 
     /// calculate cell sections
     ///
@@ -282,7 +285,8 @@ final class ConversationTableViewDataSource: NSObject {
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
         getUserByIDUseCase: GetUserByIDUseCaseProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol,
+        conversationCellProvider: any ConversationCellProviderProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -291,7 +295,8 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
+        self.cellProvider = conversationCellProvider
 
         super.init()
 
@@ -367,8 +372,7 @@ final class ConversationTableViewDataSource: NSObject {
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled,
-            wireCellsFactory: wireCellsFactory
+            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
@@ -719,10 +723,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
 
-            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-            model.configureCell(cell)
-            return cell
+            return cellProvider.provideCell(for: model, tableView: tableView, indexPath: indexPath)
 
         } else {
 

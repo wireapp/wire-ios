@@ -17,10 +17,10 @@
 //
 
 import WireDesign
+import WireMessagingAssembly
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAssembly
 @testable import Wire
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
@@ -64,6 +64,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
+            isAppsFeatureEnabled: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
@@ -87,15 +88,6 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - Snapshot Tests
 
-    func testStartUIViewControllerWrappedInNavigationController() {
-        nonTeamTest {
-            let navigationController = setupNavigationController()
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: navigationController.view)
-        }
-    }
-
     func testStartUIViewControllerNoContact() {
         nonTeamTest {
             let navigationController = setupNavigationController()
@@ -117,6 +109,23 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     func testStartUIViewControllerNoContactWhenSelfIsPartner() {
         teamTest {
             selfUser.membership?.setTeamRole(.partner)
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
+    func testStartUIViewControllerShowsUsersAppsSelector() {
+        teamTest {
+
+            // user is in a team, it's a requirement for apps
+            let mockUserType = MockUserType()
+            mockUserType.hasTeam = true
+            mockUserType.teamRole = .member
+            userSession.selfUser = mockUserType
+
+            // selfUser.membership?.setTeamRole(.partner)
             let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
@@ -186,4 +195,5 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: navigationController.view)
     }
+
 }

@@ -280,8 +280,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
+            "state" : "translated",
+            "value" : "Mover la conversación %@ a una nueva carpeta"
           }
         },
         "et" : {
@@ -655,8 +655,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
+            "state" : "translated",
+            "value" : "Mover a"
           }
         },
         "et" : {

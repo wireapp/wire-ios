@@ -29,8 +29,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "Explora las características adicionales de forma gratuita con el mismo nivel de seguridad."
           }
         },
         "et" : {
@@ -153,8 +153,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "Crear equipo de Wire"
           }
         },
         "et" : {
@@ -277,8 +277,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "Disfruta de los beneficios de un equipo"
           }
         },
         "et" : {
@@ -652,8 +652,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "Cuando te sales ahora, pierdes tu progreso y necesitas reiniciar la creación del equipo."
           }
         },
         "et" : {
@@ -777,8 +777,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "Continuar con la creación del equipo"
           }
         },
         "et" : {
@@ -902,8 +902,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "Salir sin guardar"
           }
         },
         "et" : {
@@ -1027,8 +1027,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "¿Salir sin guardar?"
           }
         },
         "et" : {
@@ -1152,8 +1152,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Ahora eres el dueño del equipo %@.\n\nVe a Administración de Equipos a: \n• Invitar a los primeros miembros del equipo y empezar a trabajar juntos\n• Personalizar la configuración de tu equipo"
           }
         },
         "et" : {
@@ -1277,8 +1277,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "Volver a Wire"
           }
         },
         "et" : {
@@ -1402,8 +1402,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "Ir a Gestión de Equipos"
           }
         },
         "et" : {
@@ -1526,8 +1526,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Cerrar vista del equipo creado"
           }
         },
         "et" : {
@@ -1651,8 +1651,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "Ahora eres el dueño del equipo %@."
           }
         },
         "et" : {
@@ -1776,8 +1776,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "¡Enhorabuena %@!"
           }
         },
         "et" : {
@@ -1900,8 +1900,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "Usted crea un equipo y transfiere su cuenta personal a una cuenta de equipo"
           }
         },
         "et" : {
@@ -2024,8 +2024,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "Este cambio es permanente e irrevocable"
           }
         },
         "et" : {
@@ -2148,8 +2148,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "Como propietario del equipo puedes invitar y eliminar miembros del equipo y administrar la configuración del equipo"
           }
         },
         "et" : {
@@ -2272,8 +2272,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Cerrar la confirmación"
           }
         },
         "et" : {
@@ -2647,8 +2647,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "Entiendo que esta migración de Personal a Equipo es permanente y no se puede deshacer."
           }
         },
         "et" : {
@@ -2772,8 +2772,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "Acepte nuestros [Términos y condiciones](%@) y [Política de privacidad](%@)."
           }
         },
         "et" : {
@@ -2897,8 +2897,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "Confirmación"
           }
         },
         "et" : {
@@ -3022,7 +3022,7 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3147,8 +3147,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "Has creado o unido un equipo con esta dirección de correo electrónico en otro dispositivo."
           }
         },
         "et" : {
@@ -3272,8 +3272,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Ya forma parte de un equipo"
           }
         },
         "et" : {
@@ -3397,8 +3397,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Inténtalo de nuevo"
           }
         },
         "et" : {
@@ -3522,8 +3522,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "Wire no pudo completar la creación de tu equipo debido a un error desconocido."
           }
         },
         "et" : {
@@ -3647,8 +3647,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Equipo no creado"
           }
         },
         "et" : {
@@ -3896,8 +3896,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Transforma tu cuenta personal en una cuenta de equipo para obtener más de tu colaboración."
           }
         },
         "et" : {
@@ -4020,8 +4020,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Cerrar resumen de cuenta de equipo"
           }
         },
         "et" : {
@@ -4145,8 +4145,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Consola de administración**: Invita a los miembros del equipo y gestiona la configuración."
           }
         },
         "et" : {
@@ -4270,8 +4270,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Colaboración sin esfuerzo**: comuníquese con los huéspedes y grupos externos."
           }
         },
         "et" : {
@@ -4395,8 +4395,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Actualice a empresa**: Obtenga características adicionales y soporte premium."
           }
         },
         "et" : {
@@ -4520,8 +4520,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Reuniones grandes**: Únete a las videoconferencias de hasta 150 participantes."
           }
         },
         "et" : {
@@ -4645,8 +4645,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Estado de disponibilidad**: Indica a tu equipo si estás disponible, ocupado o ausente."
           }
         },
         "et" : {
@@ -4770,8 +4770,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Cuenta de equipo"
           }
         },
         "et" : {
@@ -4895,8 +4895,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Más información sobre los planes de Wire"
           }
         },
         "et" : {
@@ -5020,8 +5020,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Paso %d de %d"
           }
         },
         "et" : {
@@ -5145,8 +5145,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Selecciona un nombre para tu equipo. Puedes cambiarlo en cualquier momento."
           }
         },
         "et" : {
@@ -5269,8 +5269,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Cerrar vista del nombre del equipo"
           }
         },
         "et" : {
@@ -5394,8 +5394,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Tu equipo"
           }
         },
         "et" : {
@@ -5519,8 +5519,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "Nombre del equipo"
           }
         },
         "et" : {
@@ -5644,8 +5644,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nombre del equipo"
           }
         },
         "et" : {

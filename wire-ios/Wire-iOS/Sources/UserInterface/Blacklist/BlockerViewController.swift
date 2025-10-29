@@ -136,7 +136,6 @@ final class BlockerViewController: LaunchImageViewController {
                 }
                 DebugLogSender.sendLogsByEmail(
                     message: debugLogMessage,
-                    shareWithAVS: false,
                     presentingViewController: self,
                     fallbackActivityPopoverConfiguration: .sourceView(
                         sourceView: view,

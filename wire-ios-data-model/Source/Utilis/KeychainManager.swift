@@ -23,7 +23,7 @@ protocol KeychainItemProtocol {
 
     var id: String { get }
     var getQuery: [CFString: Any] { get }
-    func setQuery<T>(value: T) -> [CFString: Any]
+    func setQuery(value: some Any) -> [CFString: Any]
 
 }
 

@@ -361,29 +361,29 @@ final class ConversationInputBarViewController: UIViewController,
         userSession: UserSession,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.uploadDraftUseCase = wireCellsFactory.makeUploadDraftUseCase(
+        self.uploadDraftUseCase = wireMessagingFactory.makeUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
-        self.observeDraftsUseCase = wireCellsFactory.makeObserveDraftsUseCase(
+        self.observeDraftsUseCase = wireMessagingFactory.makeObserveDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.clearPublishedDraftsUseCase = wireCellsFactory.makeClearPublishedDraftsUseCase(
+        self.clearPublishedDraftsUseCase = wireMessagingFactory.makeClearPublishedDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.publishDraftsUseCase = wireCellsFactory.makePublishDraftsUseCase(
+        self.publishDraftsUseCase = wireMessagingFactory.makePublishDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.deleteDraftUseCase = wireCellsFactory.makeDeleteDraftUseCase(
+        self.deleteDraftUseCase = wireMessagingFactory.makeDeleteDraftUseCase(
             cellName: conversation.wireCellName
         )
-        self.retryUploadDraftUseCase = wireCellsFactory.makeRetryUploadDraftUseCase(
+        self.retryUploadDraftUseCase = wireMessagingFactory.makeRetryUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
 
@@ -769,8 +769,8 @@ final class ConversationInputBarViewController: UIViewController,
             let conversation = conversation as? ZMConversation
         else { return }
 
-        presentMLSPrivacyWarningIfNeeded {
-            self.showGiphy(for: conversation)
+        presentMLSPrivacyWarningIfNeeded { [weak self] in
+            self?.showGiphy(for: conversation)
         }
     }
 
@@ -783,7 +783,6 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func showGiphy(for conversation: ZMConversation) {
-        inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(
             searchTerm: "",
             conversation: conversation,
@@ -1127,7 +1126,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func addAttachmentsCarousel() {
-        guard useWireCells() else { return }
+        guard conversation.isCellsEnabled else { return }
 
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
@@ -1250,7 +1249,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func useWireCells() -> Bool {
-        (userSession.isWireCellsEnabled || DeveloperFlag.wireCells.isOn) && conversation.isCellsEnabled
+        userSession.isWireCellsEnabled && conversation.isCellsEnabled
     }
 
     private func observeDraftAttachments() {

@@ -16,12 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class MockUser;
-@class ZMTFailureRecorder;
-#import "ZMUser.h"
+import SwiftUI
 
-@interface ZMUser (Testing)
+final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-- (void)assertMatchesUser:(MockUser *)user failureRecorder:(ZMTFailureRecorder *)failureRecorder;
+    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets) {
+        contentConfiguration = UIHostingConfiguration {
+            content
+        }
+        .margins(.all, insets)
+        .minSize(width: 0, height: 0)
+        .background(.clear)
+    }
 
-@end
+    override func prepareForReuse() {
+        contentConfiguration = nil
+    }
+
+}

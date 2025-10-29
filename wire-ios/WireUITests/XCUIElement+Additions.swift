@@ -35,4 +35,13 @@ extension XCUIElement {
         }
         return self
     }
+
+    @discardableResult
+    func waitToDisappear(timeout: TimeInterval = 2) -> Bool {
+        let exp = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"),
+            object: self
+        )
+        return XCTWaiter().wait(for: [exp], timeout: timeout) == .completed
+    }
 }

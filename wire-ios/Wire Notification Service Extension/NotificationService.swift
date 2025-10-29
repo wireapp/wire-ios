@@ -56,6 +56,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 withContentHandler: contentHandler
             )
         } else {
+            WireLogger.notifications.warn("no notification service loaded", attributes: .safePublic)
             contentHandler(.empty)
         }
     }
@@ -106,6 +107,7 @@ final class NotificationService: UNNotificationServiceExtension {
             for: request,
             appContainerURL: appContainerURL
         ) else {
+            WireLogger.notifications.warn("no last known api version", attributes: .safePublic)
             return nil
         }
 

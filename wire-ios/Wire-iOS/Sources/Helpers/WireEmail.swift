@@ -20,7 +20,6 @@ import Foundation
 
 struct WireEmail: Codable {
     let supportEmail: String
-    let callingSupportEmail: String
 
     static var shared: WireEmail = .init(forResource: "email", withExtension: "json")!
 

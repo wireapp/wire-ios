@@ -66,15 +66,21 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 {
     if ([self.tornDownFlag setValueWithEqualityCondition:NO newValue:YES]) {
         NSArray *refs = self.reachabilityReferences;
+
+        // Disable callbacks synchronously on the same queue they run on
+        dispatch_sync(self.workQueue, ^{
+            for (id obj in refs) {
+                SCNetworkReachabilityRef ref = (__bridge SCNetworkReachabilityRef)obj;
+                // Clear the dispatch queue first to stop any further callbacks
+                Require(SCNetworkReachabilitySetDispatchQueue(ref, NULL));
+                // Clear the callback and context to release the retained `info`
+                Require(SCNetworkReachabilitySetCallback(ref, NULL, NULL));
+            }
+        });
+
+        // Now it's safe to drop our references
         self.reachabilityReferences = nil;
         self.referenceToFlag = nil;
-        [self.group asyncOnQueue:self.workQueue block:^{
-            for (id obj in refs) {
-                SCNetworkReachabilityRef ref = (__bridge SCNetworkReachabilityRef) obj;
-                // Setting the queue to NULL disables the callbacks:
-                Require(SCNetworkReachabilitySetDispatchQueue(ref, NULL));
-            }
-        }];
     } else {
         ZMLogWarn(@"Tearing down <%@: %p> when it's already torn down.", self.class, self);
     }
@@ -135,9 +141,9 @@ static CFStringRef copyDescription(const void *info)
                 [self.referenceToName setObject:name forKey:obj];
                 SCNetworkReachabilityContext context = {
                     0,
-                    (__bridge void *) self,
-                    NULL,
-                    NULL,
+                    (__bridge void *)self,
+                    CFRetain,
+                    CFRelease,
                     copyDescription,
                 };
                 Require(SCNetworkReachabilitySetCallback(ref, networkReachabilityCallBack, &context));
@@ -239,7 +245,7 @@ static CFStringRef copyDescription(const void *info)
         if ((flags & kSCNetworkReachabilityFlagsIsDirect) != 0) {
             [flagNames addObject:@"IsDirect"];
         }
-#if	TARGET_OS_IPHONE
+#if    TARGET_OS_IPHONE
         if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0) {
             [flagNames addObject:@"IsWWAN"];
         }

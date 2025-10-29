@@ -60,7 +60,13 @@ final class ConversationCellsPreview: UITableViewController {
     private func setupDataSource() {
         dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
             let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
-            itemIdentifier.configureCell(cell)
+            switch itemIdentifier {
+            case let .timeDivider(timeDivider):
+                guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
+                cell.model = timeDivider
+            default:
+                assertionFailure("unexpected cell: \(cell)")
+            }
             return cell
         }
     }

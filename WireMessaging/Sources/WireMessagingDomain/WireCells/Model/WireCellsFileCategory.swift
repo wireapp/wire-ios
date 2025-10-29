@@ -16,25 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
-import WireDesign
+package import UniformTypeIdentifiers
 
-package final class FilesHostingController: UIHostingController<FilesView> {
+package enum WireCellsFileCategory {
 
-    private typealias Strings = L10n.Localizable.Conversation.WireCells
-    private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+    case image
+    case video
+    case audio
+    case document
 
-    private let viewModel: FilesViewModel
+    package init(_ fileType: UTType?) {
+        guard let fileType else {
+            self = .document
+            return
+        }
 
-    public init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
-        super.init(rootView: FilesView(viewModel: viewModel))
-    }
-
-    @available(*, unavailable)
-    @MainActor @objc
-    dynamic required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        if fileType.conforms(to: .image) {
+            self = .image
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio
+        } else if fileType.conforms(to: .audiovisualContent) {
+            self = .video
+        } else {
+            self = .document
+        }
     }
 
 }

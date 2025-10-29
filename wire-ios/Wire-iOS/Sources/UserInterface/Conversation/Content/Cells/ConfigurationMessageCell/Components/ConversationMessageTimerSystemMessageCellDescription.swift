@@ -77,9 +77,10 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
             updateText = NSAttributedString(
                 string: L10n.Localizable.Content.System.messageTimerUnavailable,
                 attributes: baseAttributes
-            )
+            ).adding(font: .mediumSemiboldFont, to: "off")
         }
 
+        typealias LabelColors = SemanticColors.Label
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
         self.configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
         self.accessibilityLabel = updateText?.string

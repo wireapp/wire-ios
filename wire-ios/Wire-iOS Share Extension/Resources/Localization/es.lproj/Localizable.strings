@@ -37,13 +37,13 @@
 "share_extension.not_signed_in.close_button" = "Cerrar";
 
 // Custom app lock - unlock
-"share_extension.unlock.title_label" = "Enter passcode to unlock Wire";
-"share_extension.unlock.submit_button.title" = "unlock";
-"share_extension.unlock.textfield.placeholder" = "Enter your passcode";
+"share_extension.unlock.title_label" = "Introducir contraseña para desbloquear Wire";
+"share_extension.unlock.submit_button.title" = "desbloquear";
+"share_extension.unlock.textfield.placeholder" = "Introduce tu contraseña";
 "share_extension.unlock.hint_label" = "Contraseña";
-"share_extension.unlock.error_label" = "Wrong passcode";
-"share_extension.unlock.alert.message" = "Open Wire to create a passcode";
-"share_extension.unlock.reveal_passcode" = "Reveal passcode";
+"share_extension.unlock.error_label" = "Contraseña incorrecta";
+"share_extension.unlock.alert.message" = "Abrir Wire para crear una contraseña";
+"share_extension.unlock.reveal_passcode" = "Mostrar contraseña";
 
 // Timeout
 "share_extension.timeout.title" = "La conexión expiró.";
@@ -51,37 +51,37 @@
 
 // Content
 "share_extension.content.file.too_big" = "Puedes enviar archivos de hasta %@";
-"share_extension.content.file.unsupported_attachment" = "Unsupported attachment";
+"share_extension.content.file.unsupported_attachment" = "Adjunto no soportado";
 
-"share_extension.error.conversation_does_not_exist.message" = "Please select a conversation for sharing";
+"share_extension.error.conversation_does_not_exist.message" = "Por favor, seleccione una conversación para compartir";
 
 "share_extension.privacy_security.lock_app.description" = "Desbloquear Wire";
-"share_extension.logged_out.title" = "You've been logged out from this account.";
-"share_extension.logged_out.message" = "Please choose another account.";
+"share_extension.logged_out.title" = "Has cerrado sesión en esta cuenta.";
+"share_extension.logged_out.message" = "Por favor, elija otra cuenta.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
+"share_extension.conversation.displayname.emptygroup" = "Chat vacío";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ comenzó a utilizar un dispositivo nuevo.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ comenzó a utilizar dispositivos nuevos.";
 "share_extension.meta.degraded.dialog_message" = "¿Todavía deseas enviar el mensaje?";
-"share_extension.meta.degraded.cancel_sending_button" = "Do not send";
-"share_extension.meta.degraded.send_anyway_button" = "Send anyway";
+"share_extension.meta.degraded.cancel_sending_button" = "No enviar";
+"share_extension.meta.degraded.send_anyway_button" = "Enviar de todos modos";
 
 "share_extension.meta.legalhold.send_alert_title" = "La conversación está ahora sujeta a una retención legal.";
 
 //Feature flag - File sharing
-"share_extension.feature.flag.file_sharing.alert.title" = "File sharing restrictions";
-"share_extension.feature.flag.file_sharing.alert.message" = "You can not share this file because this feature is disabled.";
+"share_extension.feature.flag.file_sharing.alert.title" = "Restricciones para compartir archivos";
+"share_extension.feature.flag.file_sharing.alert.message" = "No puede compartir este archivo porque esta característica está desactivada.";
 
 // Share Extension - Voice Over
-"share_extension.voiceover.conversation_under_legal_hold" = "Under legal hold.";
-"share_extension.voiceover.conversation_secure" = "All clients verified.";
-"share_extension.voiceover.conversation_secure_with_ignored" = "Not all clients verified.";
+"share_extension.voiceover.conversation_under_legal_hold" = "Bajo retención legal";
+"share_extension.voiceover.conversation_secure" = "Todos los clientes verificados.";
+"share_extension.voiceover.conversation_secure_with_ignored" = "No todos los clientes verificados.";
 
 // Update required
-"share_extension.error.update_required.title" = "Update required";
-"share_extension.error.update_required.obsolete_client" = "You are missing out on new features. Get the latest version of Wire to continue using the app with this account.";
-"share_extension.error.update_required.obsolete_backend" = "Your Wire server needs to be updated. Please notify your system administrator.";
+"share_extension.error.update_required.title" = "Actualización necesaria";
+"share_extension.error.update_required.obsolete_client" = "Te estás perdiendo nuevas funciones. Obtén la última versión de Wire para seguir usando la aplicación con esta cuenta.";
+"share_extension.error.update_required.obsolete_backend" = "Su servidor Wire necesita ser actualizado. Por favor, notifíquelo al administrador del sistema.";
 
-"share_extension.error.open_app.title" = "Open app";
-"share_extension.error.open_app.message" = "Open this account in the Wire app then try again.";
+"share_extension.error.open_app.title" = "Abrir app";
+"share_extension.error.open_app.message" = "Abre esta cuenta en la aplicación Wire y vuelve a intentarlo.";

@@ -368,6 +368,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS（默认）";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus（默认）";
+"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "正在呼叫";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通话时不能录制语音讯息。";
@@ -602,6 +604,8 @@
 "content.system.message_timer_off" = "%@关闭了消息计时器";
 "content.system.message_timer_off-you" = "%@关闭了消息计时器";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**您的后端**已停止与 **%@** 联合。[进一步了解](%@)";
 "content.system.backends_stop_federating.other_backends" = "后端 **%@** 和 **%@** 已停止联合。[进一步了解](%@)";
 
@@ -664,6 +668,7 @@
 "content.system.session_reset.self" = "您无法解密部分消息，但您已解决了该问题。这影响了所有对话。";
 
 "content.system.unknown_message.body" = "此消息无法显示，您可能在使用旧版本Wire。";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "此用户不再可用";

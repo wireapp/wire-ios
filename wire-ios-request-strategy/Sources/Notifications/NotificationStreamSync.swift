@@ -113,7 +113,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         let source = ZMUpdateEventSource.pushNotification
 
         guard let eventsDictionaries = eventDictionariesFrom(payload: payload) else {
-            WireLogger.notifications.warn("failed to decode events from response")
+            WireLogger.notifications.warn("failed to decode events from response", attributes: .safePublic)
             return nil
         }
 

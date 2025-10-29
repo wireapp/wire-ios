@@ -16,20 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+@objc(ZMTypeOfUser)
+public enum TypeOfUser: Int16, CaseIterable, Sendable {
+    /// Regular users
+    case regular
+    /// Apps
+    case app
+    /// Old style bots (services)
+    case bot
+}
 
-public extension ConversationCellModel {
+extension TypeOfUser: CustomDebugStringConvertible {
 
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
+    public var debugDescription: String {
         switch self {
-
-        case let .timeDivider(timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
+        case .regular:
+            "regular"
+        case .app:
+            "app"
+        case .bot:
+            "bot"
         }
-
-        assertionFailure("unexpected cell: \(cell)")
     }
 
 }
