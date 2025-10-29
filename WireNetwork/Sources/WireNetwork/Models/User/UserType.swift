@@ -16,34 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMTypeOfUser)
-public enum TypeOfUser: Int16, CaseIterable, Sendable {
+public enum UserType: Hashable, Sendable {
 
-    /// (default) for regular users
+    /// Regular (default) for regular users.
 
     case regular
 
-    /// apps (new services)
+    /// Apps.
 
     case app
 
-    /// old-style bots (services)
+    /// Old-style bots (services).
 
     case bot
-
-}
-
-extension TypeOfUser: CustomDebugStringConvertible {
-
-    public var debugDescription: String {
-        switch self {
-        case .regular:
-            "regular"
-        case .app:
-            "app"
-        case .bot:
-            "bot"
-        }
-    }
 
 }
