@@ -76,3 +76,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 }
 
 // swiftlint:enable identifier_name
+
+extension APIVersion {
+    public static let minimumLegacySyncVersion: APIVersion = .v7
+}
