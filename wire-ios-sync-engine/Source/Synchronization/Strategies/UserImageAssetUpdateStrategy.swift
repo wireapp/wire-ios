@@ -281,7 +281,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
                 extraMetaData = .init(
                     conversationID: QualifiedID(uuid: nullID, domain: localDomain),
                     fileName: image.name,
-                    mimeType: image.utType?.preferredMIMEType ?? ""
+                    mimeType: image.utType?.preferredMIMEType
                 )
             }
 
