@@ -184,10 +184,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
 
         var extraMetaData: AssetRequestFactory.AssetAuditLogMetaData?
         if shouldUploadExtraMetaData {
-            guard
-                let original = managedObjectContext.zm_fileAssetCache.originalImageData(for: message),
-                let domain = conversation.domain ?? localDomain
-            else {
+            guard let domain = conversation.domain ?? localDomain else {
                 WireLogger.assets.warn(
                     "should include extra metadata for link preview but not able to",
                     attributes: logAttributes
