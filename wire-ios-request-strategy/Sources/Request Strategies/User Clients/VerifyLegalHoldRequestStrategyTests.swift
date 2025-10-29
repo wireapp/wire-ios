@@ -117,7 +117,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             var expectedPath = switch apiVersion {
             case .v0:
                 "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
             }
 
@@ -177,7 +177,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
                 Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
@@ -238,7 +238,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
                 Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
@@ -297,7 +297,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 ClientUpdateResponse(missing: ClientListByUser()).transportData
             case .v1, .v2, .v3:
                 Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
-            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
             }
 
@@ -347,7 +347,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
                 Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
-            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
             }
 
