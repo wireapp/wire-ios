@@ -157,6 +157,15 @@ public enum Payload {
         let scimExternalID: String?
     }
 
+<<<<<<< HEAD
+=======
+    enum UserType: String, Codable {
+        case regular
+        case app
+        case bot
+    }
+
+>>>>>>> 7b7b3ce2ff (revert: disable critical flows temporarily - WPB-21303 (#3801))
     enum LegalholdStatus: String, Codable {
         case enabled
         case pending
