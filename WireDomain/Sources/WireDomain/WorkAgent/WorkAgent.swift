@@ -40,8 +40,6 @@ final class WorkAgent {
     private var workers: [any Worker] = []
     private let nonReentrantTaskManager = NonReentrantTaskManager()
 
-    private let logger = WireLogger(tag: "work-agent")
-
     init(scheduler: any WorkScheduler) {
         self.scheduler = scheduler
     }
@@ -57,7 +55,7 @@ final class WorkAgent {
     }
 
     func submitTicket(_ ticket: any WorkTicket) {
-        logger.debug("ticket submitted: \(ticket)", attributes: .safePublic)
+        WireLogger.workAgent.debug("ticket submitted: \(ticket)", attributes: .safePublic)
         scheduler.enqueueTicket(ticket)
 
         if shouldAutoStart {
@@ -78,35 +76,35 @@ final class WorkAgent {
             return
         }
 
-        logger.info("starting", attributes: .safePublic)
+        WireLogger.workAgent.info("starting", attributes: .safePublic)
 
         task = Task {
             let startTime = Date()
             var completedTickets = 0
 
             while let ticket = scheduler.dequeueNextTicket() {
-                logger.debug("dequeued ticket: \(ticket)", attributes: .safePublic)
+                WireLogger.workAgent.debug("dequeued ticket: \(ticket)", attributes: .safePublic)
 
                 guard let worker = workers.first(where: {
                     $0.id == ticket.workerID
                 }) else {
-                    logger.warn("didn't find worker for ticket: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.warn("didn't find worker for ticket: \(ticket)", attributes: .safePublic)
                     continue
                 }
 
                 do {
                     try await worker.performWork(for: ticket)
                     completedTickets += 1
-                    logger.debug("ticket complete: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.debug("ticket complete: \(ticket)", attributes: .safePublic)
                 } catch {
-                    logger.error("ticket failed, dorpping: \(ticket)", attributes: .safePublic)
+                    WireLogger.workAgent.error("ticket failed, dorpping: \(ticket)", attributes: .safePublic)
                     continue
                 }
             }
 
             let duration = Date().timeIntervalSince(startTime)
             let durationString = String(format: "%.2f seconds", duration)
-            logger.info(
+            WireLogger.workAgent.info(
                 "completed \(completedTickets) tickets in \(durationString)",
                 attributes: .safePublic
             )
@@ -117,7 +115,7 @@ final class WorkAgent {
     }
 
     func stop() {
-        logger.info("stopping", attributes: .safePublic)
+        WireLogger.workAgent.info("stopping", attributes: .safePublic)
         task?.cancel()
         task = nil
     }
