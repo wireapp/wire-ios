@@ -25,6 +25,8 @@ extension TagsEditView {
         
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
         
+        @Published var currentTags: [String] = ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"] //TODO: initializing with mock data for now.
+        
         init(fileItem: FilesViewItem) {
             self.fileItem = fileItem
         }
@@ -34,6 +36,15 @@ extension TagsEditView {
             let nonBreakingSpace = "\u{A0}"
             let invalidCharactersFormatted = invalidCharacters.map { String($0) }.joined(separator: nonBreakingSpace)
             return message.replacing("{0}", with: invalidCharactersFormatted)
+        }
+        
+        func addTag(_ tag: String) {
+            //TODO: normalize
+            currentTags.append(tag)
+        }
+        
+        func removeTag(_ tag: String) {
+            currentTags.removeAll { $0 == tag }
         }
         
         func save() {

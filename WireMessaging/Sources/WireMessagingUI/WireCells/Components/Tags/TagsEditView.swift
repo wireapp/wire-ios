@@ -17,6 +17,11 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct TagsEditView: View {
     @Environment(\.dismiss) private var dismiss
@@ -30,7 +35,7 @@ struct TagsEditView: View {
     var body: some View {
         NavigationStack {
             content()
-                .navigationTitle(Text(L10n.Localizable.Conversation.WireCells.Tags.title))
+                .navigationTitle(Text(Strings.Tags.title))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -50,13 +55,15 @@ struct TagsEditView: View {
                         }
                     }
                 }
+                .background(ColorTheme.Backgrounds.background.color)
+                .tint(ColorTheme.Base.primary.color)
         }
     }
     
     @ViewBuilder private func content() -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                normalText(L10n.Localizable.Conversation.WireCells.Tags.headline)
+                normalText(Strings.Tags.headline)
                 
                 tagNameInputArea()
                 
@@ -85,38 +92,81 @@ struct TagsEditView: View {
     
     @ViewBuilder private func addedTagsArea() -> some View {
         VStack(spacing: 16) {
-            sectionText(L10n.Localizable.Conversation.WireCells.Tags.addedTagsSection)
+            sectionText(Strings.Tags.addedTagsSection)
             
-            normalText(L10n.Localizable.Conversation.WireCells.Tags.addedTagsSectionEmpty)
+            let currentTags = viewModel.currentTags
+            
+            if currentTags.isEmpty {
+                normalText(Strings.Tags.addedTagsSectionEmpty)
+            } else {
+                FlowLayout(spacing: 10) {
+                    ForEach(currentTags, id: \.self) { tag in
+                        currentTagBubble(tag: tag)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
     
     @ViewBuilder private func suggestedTagsArea() -> some View {
         VStack(spacing: 16) {
-            sectionText(L10n.Localizable.Conversation.WireCells.Tags.suggestedTagsSection)
+            sectionText(Strings.Tags.suggestedTagsSection)
             
-            normalText(L10n.Localizable.Conversation.WireCells.Tags.suggestedTagsSectionEmpty)
+            normalText(Strings.Tags.suggestedTagsSectionEmpty)
         }
     }
     
     @ViewBuilder private func normalText(_ text: String) -> some View {
         Text(text)
+            .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     @ViewBuilder private func sectionText(_ text: String) -> some View {
         Text(text)
+            .wireTextStyle(.h4)
             .textCase(.uppercase)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
     
     @ViewBuilder private func validationText(_ text: String) -> some View {
         Text(text)
+            .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .foregroundStyle(.red) //TODO: use darker red
+            .foregroundStyle(ColorTheme.Base.error.color)
+    }
+    
+    @ViewBuilder private func currentTagBubble(tag: String) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        
+        HStack {
+            Text(tag)
+            
+            Button {
+                withAnimation {
+                    viewModel.removeTag(tag)
+                }
+            } label: {
+                Image(systemName: "xmark")
+                    .imageScale(.small)
+            }
+            .accessibilityLabel(Text(Accessibility.Tags.removeTag))
+        }
+        .fontWeight(.medium)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .background {
+            shape.stroke(ColorTheme.Base.primary.color, lineWidth: 1)
+        }
+        .background {
+            shape.fill(ColorTheme.Base.primaryVariant.color)
+        }
+        .foregroundStyle(ColorTheme.Base.primary.color)
     }
 }
 
@@ -130,4 +180,5 @@ struct TagsEditView: View {
     )
     
     TagsEditView(fileItem: item)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
