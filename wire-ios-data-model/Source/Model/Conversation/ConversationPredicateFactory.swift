@@ -188,14 +188,8 @@ public final class ConversationPredicateFactory: NSObject {
 
         // MLS
         let isMLS = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)")
-        let isMLSStatusReady = NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)")
-        let isMLSStatusPendingJoinAfterReset =
-            NSPredicate(format: "\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.pendingJoinAfterReset.rawValue)")
 
-        let isValidMLSStatus = NSPredicate.any(of: [isMLSStatusReady, isMLSStatusPendingJoinAfterReset])
-        let isMLSAndReady = NSPredicate.all(of: [isMLS, isValidMLSStatus])
-
-        return .any(of: [isProteus, isMixed, isMLSAndReady])
+        return .any(of: [isProteus, isMixed, isMLS])
     }
 
     private func isValidConversation() -> NSPredicate {
