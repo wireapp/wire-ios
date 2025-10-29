@@ -123,9 +123,23 @@ final class FilesViewModelTests {
         // then
         #expect(itemsUpdates == [
             [], // Clears items
-            [FilesViewItem(id: node.id, filename: "a.jpg", filePath: "some-cell/a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)],
+            [FilesViewItem(
+                id: node.id,
+                filename: "a.jpg",
+                filePath: "some-cell/a.jpg",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            )],
             [], // Clears items
-            [FilesViewItem(id: node.id, filename: "a.jpg", filePath: "some-cell/a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)]
+            [FilesViewItem(
+                id: node.id,
+                filename: "a.jpg",
+                filePath: "some-cell/a.jpg",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            )]
         ])
     }
 
@@ -164,8 +178,22 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: node1.id, filename: "a.jpg", filePath: "some-cell/a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .image),
-            FilesViewItem(id: node2.id, filename: "b.jpg", filePath: "some-cell/b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
+            FilesViewItem(
+                id: node1.id,
+                filename: "a.jpg",
+                filePath: "some-cell/a.jpg",
+                ownedBy: "Emel",
+                modifiedAt: now,
+                icon: .image
+            ),
+            FilesViewItem(
+                id: node2.id,
+                filename: "b.jpg",
+                filePath: "some-cell/b.jpg",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            )
         ])
     }
 
@@ -194,9 +222,30 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: node1.id, filename: "a.jpg", filePath: "some-cell/a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
-            FilesViewItem(id: node2.id, filename: "b.jpg", filePath: "some-cell/b.jpg", ownedBy: nil, modifiedAt: now - 60, icon: .other),
-            FilesViewItem(id: node3.id, filename: "c.jpg", filePath: "some-cell/c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
+            FilesViewItem(
+                id: node1.id,
+                filename: "a.jpg",
+                filePath: "some-cell/a.jpg",
+                ownedBy: "Emel",
+                modifiedAt: now,
+                icon: .other
+            ),
+            FilesViewItem(
+                id: node2.id,
+                filename: "b.jpg",
+                filePath: "some-cell/b.jpg",
+                ownedBy: nil,
+                modifiedAt: now - 60,
+                icon: .other
+            ),
+            FilesViewItem(
+                id: node3.id,
+                filename: "c.jpg",
+                filePath: "some-cell/c.jpg",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            )
         ])
     }
 
@@ -309,11 +358,46 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: nodeA.id, filename: "aa.xyz", filePath: "foo/aa.xyz", ownedBy: nil, modifiedAt: now, icon: .other), // V2 node
-            FilesViewItem(id: nodeB.id, filename: "bb.xyz", filePath: "foo/bb.xyz", ownedBy: nil, modifiedAt: now - 60, icon: .other),
-            FilesViewItem(id: nodeC.id, filename: "cc.xyz", filePath: "foo/cc.xyz", ownedBy: nil, modifiedAt: now - 120, icon: .other),
-            FilesViewItem(id: nodeD.id, filename: "cd.xyz", filePath: "foo/cd.xyz", ownedBy: nil, modifiedAt: nil, icon: .other), // V2 node
-            FilesViewItem(id: nodeE.id, filename: "ee.xyz", filePath: "foo/ee.xyz", ownedBy: nil, modifiedAt: nil, icon: .other)
+            FilesViewItem(
+                id: nodeA.id,
+                filename: "aa.xyz",
+                filePath: "foo/aa.xyz",
+                ownedBy: nil,
+                modifiedAt: now,
+                icon: .other
+            ), // V2 node
+            FilesViewItem(
+                id: nodeB.id,
+                filename: "bb.xyz",
+                filePath: "foo/bb.xyz",
+                ownedBy: nil,
+                modifiedAt: now - 60,
+                icon: .other
+            ),
+            FilesViewItem(
+                id: nodeC.id,
+                filename: "cc.xyz",
+                filePath: "foo/cc.xyz",
+                ownedBy: nil,
+                modifiedAt: now - 120,
+                icon: .other
+            ),
+            FilesViewItem(
+                id: nodeD.id,
+                filename: "cd.xyz",
+                filePath: "foo/cd.xyz",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            ), // V2 node
+            FilesViewItem(
+                id: nodeE.id,
+                filename: "ee.xyz",
+                filePath: "foo/ee.xyz",
+                ownedBy: nil,
+                modifiedAt: nil,
+                icon: .other
+            )
         ])
     }
 

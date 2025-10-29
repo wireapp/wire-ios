@@ -53,7 +53,7 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
-        
+
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
