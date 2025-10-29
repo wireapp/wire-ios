@@ -168,7 +168,6 @@ final class PrekeyAPIV13: PrekeyAPIV12 {
     override var apiVersion: APIVersion { .v13 }
 }
 
-
 extension Collection<QualifiedClientID> {
 
     var clientListByUserID: Payload.ClientListByUserID {
