@@ -31,17 +31,14 @@ struct PriorityOrderWorkSchedulerTests {
         let mediumPriorityTicket = MockWorkTicket(priority: .medium)
         let highPriorityTicket = MockWorkTicket(priority: .high)
         let blockerPriorityTicket = MockWorkTicket(priority: .blocker)
-        let criticalPriorityTicket = MockWorkTicket(priority: .critical)
 
         // When
         sut.enqueueTicket(lowPriorityTicket)
         sut.enqueueTicket(mediumPriorityTicket)
         sut.enqueueTicket(highPriorityTicket)
         sut.enqueueTicket(blockerPriorityTicket)
-        sut.enqueueTicket(criticalPriorityTicket)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == criticalPriorityTicket.id)
         try #require(sut.dequeueNextTicket()?.id == blockerPriorityTicket.id)
         try #require(sut.dequeueNextTicket()?.id == highPriorityTicket.id)
         try #require(sut.dequeueNextTicket()?.id == mediumPriorityTicket.id)
@@ -56,12 +53,10 @@ struct PriorityOrderWorkSchedulerTests {
         let ticket2 = MockWorkTicket(priority: .high)
         let ticket3 = MockWorkTicket(priority: .medium)
         let ticket4 = MockWorkTicket(priority: .low)
-        let ticket5 = MockWorkTicket(priority: .critical)
-        let ticket6 = MockWorkTicket(priority: .medium)
-        let ticket7 = MockWorkTicket(priority: .critical)
+        let ticket5 = MockWorkTicket(priority: .medium)
+        let ticket6 = MockWorkTicket(priority: .blocker)
+        let ticket7 = MockWorkTicket(priority: .high)
         let ticket8 = MockWorkTicket(priority: .blocker)
-        let ticket9 = MockWorkTicket(priority: .high)
-        let ticket10 = MockWorkTicket(priority: .blocker)
 
         // When
         sut.enqueueTicket(ticket1)
@@ -72,20 +67,17 @@ struct PriorityOrderWorkSchedulerTests {
         sut.enqueueTicket(ticket6)
         sut.enqueueTicket(ticket7)
         sut.enqueueTicket(ticket8)
-        sut.enqueueTicket(ticket9)
-        sut.enqueueTicket(ticket10)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == ticket5.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket7.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket8.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket10.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket2.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket9.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket3.id)
         try #require(sut.dequeueNextTicket()?.id == ticket6.id)
+        try #require(sut.dequeueNextTicket()?.id == ticket8.id)
+        try #require(sut.dequeueNextTicket()?.id == ticket2.id)
+        try #require(sut.dequeueNextTicket()?.id == ticket7.id)
+        try #require(sut.dequeueNextTicket()?.id == ticket3.id)
+        try #require(sut.dequeueNextTicket()?.id == ticket5.id)
         try #require(sut.dequeueNextTicket()?.id == ticket1.id)
         try #require(sut.dequeueNextTicket()?.id == ticket4.id)
+        #expect(sut.dequeueNextTicket() == nil)
     }
 
     @Test("Dequeuing considers newly enqueued tickets")
@@ -95,7 +87,7 @@ struct PriorityOrderWorkSchedulerTests {
         let high1 = MockWorkTicket(priority: .high)
         let low1 = MockWorkTicket(priority: .low)
         let low2 = MockWorkTicket(priority: .low)
-        let critical1 = MockWorkTicket(priority: .critical)
+        let blocker1 = MockWorkTicket(priority: .blocker)
 
         // When
         sut.enqueueTicket(medium1)
@@ -117,10 +109,10 @@ struct PriorityOrderWorkSchedulerTests {
         try #require(sut.dequeueNextTicket()?.id == low1.id)
 
         // When
-        sut.enqueueTicket(critical1)
+        sut.enqueueTicket(blocker1)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == critical1.id)
+        try #require(sut.dequeueNextTicket()?.id == blocker1.id)
         try #require(sut.dequeueNextTicket()?.id == low2.id)
         #expect(sut.dequeueNextTicket() == nil)
     }

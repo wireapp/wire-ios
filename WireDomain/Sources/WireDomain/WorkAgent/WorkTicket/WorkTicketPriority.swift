@@ -70,16 +70,4 @@ enum WorkTicketPriority: Sendable {
 
     case blocker
 
-    /// Critical priority.
-    ///
-    /// Reserved for **urgent, must-run-now operations** that are essential
-    /// to app stability or correctness.
-    ///
-    /// These tasks should run immediately, even if that means preempting
-    /// other work. Use sparingly—for example, to recover from a failed
-    /// database write, handle an urgent network retry, or persist critical
-    /// user data before termination.
-
-    case critical
-
 }

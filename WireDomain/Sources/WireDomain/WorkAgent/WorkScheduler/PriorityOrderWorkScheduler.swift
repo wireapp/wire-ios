@@ -22,7 +22,6 @@ import Foundation
 
 final class PriorityOrderWorkScheduler: WorkScheduler {
 
-    private var criticalQueue: [any WorkTicket] = []
     private var blockerQueue: [any WorkTicket] = []
     private var highQueue: [any WorkTicket] = []
     private var mediumQueue: [any WorkTicket] = []
@@ -38,15 +37,11 @@ final class PriorityOrderWorkScheduler: WorkScheduler {
             highQueue.append(ticket)
         case .blocker:
             blockerQueue.append(ticket)
-        case .critical:
-            criticalQueue.append(ticket)
         }
     }
 
     func dequeueNextTicket() -> (any WorkTicket)? {
-        if !criticalQueue.isEmpty {
-            criticalQueue.removeFirst()
-        } else if !blockerQueue.isEmpty {
+        if !blockerQueue.isEmpty {
             blockerQueue.removeFirst()
         } else if !highQueue.isEmpty {
             highQueue.removeFirst()
