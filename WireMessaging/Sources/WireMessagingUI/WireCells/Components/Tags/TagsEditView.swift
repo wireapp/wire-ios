@@ -28,6 +28,9 @@ struct TagsEditView: View {
     
     @StateObject private var viewModel: ViewModel
     
+    private let horizontalPadding: CGFloat = 16
+    private let tagBubbleSpacing: CGFloat = 10
+
     init(fileItem: FilesViewItem) {
         _viewModel = .init(wrappedValue: .init(fileItem: fileItem))
     }
@@ -76,7 +79,8 @@ struct TagsEditView: View {
                 suggestedTagsArea()
             }
             .frame(maxWidth: .infinity)
-            .padding()
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical)
         }
     }
     
@@ -86,7 +90,9 @@ struct TagsEditView: View {
                 Text("(TODO)")
             }
             
-            validationText(viewModel.invalidCharactersErrorMessage)
+            if let message = viewModel.validationErrorMessage(for: .invalidCharacters) {
+                validationText(message)
+            }
         }
     }
     
@@ -99,7 +105,7 @@ struct TagsEditView: View {
             if currentTags.isEmpty {
                 normalText(Strings.Tags.addedTagsSectionEmpty)
             } else {
-                FlowLayout(spacing: 10) {
+                FlowLayout(spacing: tagBubbleSpacing) {
                     ForEach(currentTags, id: \.self) { tag in
                         currentTagBubble(tag: tag)
                     }
@@ -113,7 +119,22 @@ struct TagsEditView: View {
         VStack(spacing: 16) {
             sectionText(Strings.Tags.suggestedTagsSection)
             
-            normalText(Strings.Tags.suggestedTagsSectionEmpty)
+            let suggestedTags = viewModel.suggestedTags
+            
+            if suggestedTags.isEmpty {
+                normalText(Strings.Tags.suggestedTagsSectionEmpty)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: tagBubbleSpacing) {
+                        ForEach(suggestedTags, id: \.self) { tag in
+                            suggestedTagBubble(tag: tag)
+                        }
+                    }
+                    //.padding(1)
+                    .padding(.horizontal, horizontalPadding)
+                }
+                .padding(.horizontal, -horizontalPadding)
+            }
         }
     }
     
@@ -155,7 +176,7 @@ struct TagsEditView: View {
                 Image(systemName: "xmark")
                     .imageScale(.small)
             }
-            .accessibilityLabel(Text(Accessibility.Tags.removeTag))
+            .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
         }
         .fontWeight(.medium)
         .padding(.vertical, 4)
@@ -167,6 +188,31 @@ struct TagsEditView: View {
             shape.fill(ColorTheme.Base.primaryVariant.color)
         }
         .foregroundStyle(ColorTheme.Base.primary.color)
+    }
+    
+    @ViewBuilder private func suggestedTagBubble(tag: String) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        
+        Button {
+            withAnimation {
+                viewModel.addTag(tag)
+            }
+        } label: {
+            HStack {
+                Text(tag)
+                
+                Image(systemName: "plus")
+                    .imageScale(.small)
+            }
+            .fontWeight(.medium)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background {
+                shape.fill(ColorTheme.Backgrounds.backgroundVariant.color)
+            }
+        }
+        .accessibilityLabel(Text(Accessibility.Tags.addTag.replacingOccurrences(of: "{0}", with: tag)))
+        .foregroundStyle(.primary)
     }
 }
 

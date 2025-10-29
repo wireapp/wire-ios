@@ -32,4 +32,5 @@
 "conversation.wireCells.files.error.reload" = "Reload";
 
 // MARK: - File Tags View
-"conversation.wireCells.tags.removeTag" = "Remove tag";
+"conversation.wireCells.tags.removeTag" = "Remove tag {0}";
+"conversation.wireCells.tags.addTag" = "Add tag {0}";

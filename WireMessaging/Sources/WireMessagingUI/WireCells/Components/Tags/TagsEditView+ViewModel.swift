@@ -25,22 +25,67 @@ extension TagsEditView {
         
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
         
-        @Published var currentTags: [String] = ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"] //TODO: initializing with mock data for now.
+        @Published var enteredTag = ""
+        
+        //TODO: replace by real server data
+        static private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
+        
+        //TODO: initializing with mock data for now.
+        @Published var currentTags: [String] = ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
+        
+        var suggestedTags: [String] {
+            Self.serverTags.filter { tag in
+                !currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+            }
+        }
+        
+        enum ValidationState {
+            case valid
+            case empty
+            case tooLong
+            case invalidCharacters
+        }
         
         init(fileItem: FilesViewItem) {
             self.fileItem = fileItem
         }
         
-        var invalidCharactersErrorMessage: String {
-            let message = L10n.Localizable.Conversation.WireCells.Tags.Error.specialCharacters
-            let nonBreakingSpace = "\u{A0}"
-            let invalidCharactersFormatted = invalidCharacters.map { String($0) }.joined(separator: nonBreakingSpace)
-            return message.replacing("{0}", with: invalidCharactersFormatted)
+        var validationState: ValidationState {
+            let isEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            let tooLong = enteredTag.count > 30
+            let containsInvalidCharacters = enteredTag.contains { invalidCharacters.contains($0) }
+            
+            return if isEmpty {
+                .empty
+            } else if tooLong {
+                .tooLong
+            } else if containsInvalidCharacters {
+                .invalidCharacters
+            } else {
+                .valid
+            }
+        }
+        
+        func validationErrorMessage(for validationState: ValidationState) -> String? {
+            switch validationState {
+            case .tooLong:
+                return L10n.Localizable.Conversation.WireCells.Tags.Error.nameTooLong
+            case .invalidCharacters:
+                let message = L10n.Localizable.Conversation.WireCells.Tags.Error.specialCharacters
+                let nonBreakingSpace = "\u{A0}"
+                let invalidCharactersFormatted = invalidCharacters.map { String($0) }.joined(separator: nonBreakingSpace)
+                return message.replacing("{0}", with: invalidCharactersFormatted)
+            default:
+                return nil
+            }
         }
         
         func addTag(_ tag: String) {
-            //TODO: normalize
-            currentTags.append(tag)
+            let trimmedTag = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+            let alreadyExists = currentTags.contains { $0.localizedCaseInsensitiveCompare(trimmedTag) == .orderedSame }
+            if !alreadyExists {
+                currentTags.append(trimmedTag)
+            }
         }
         
         func removeTag(_ tag: String) {
