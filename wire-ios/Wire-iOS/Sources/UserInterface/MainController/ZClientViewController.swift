@@ -734,7 +734,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) {
+    func openClientListScreen(for user: WireDataModel.UserType) {
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -866,7 +866,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
+    private func shouldShowNotificationsBadge(user: any WireDataModel.UserType) -> Bool {
         !user.isTeamMember && userSession.resolvedBackendMetadata.apiVersion
             .map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
     }

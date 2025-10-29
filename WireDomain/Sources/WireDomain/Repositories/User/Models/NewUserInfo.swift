@@ -23,6 +23,7 @@ public struct NewUserInfo: Equatable, Sendable {
     let name: String
     let handle: String?
     let teamID: UUID?
+    let type: WireDataModel.TypeOfUser?
     let accentID: Int
     let previewAssetKey: String?
     let completeAssetKey: String?
