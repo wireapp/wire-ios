@@ -37,7 +37,6 @@
 			publicHeaders = (
 				"Public/Mock Data Model/ZMMockEntity.h",
 				"Public/Mock Data Model/ZMMockEntity2.h",
-				"Public/NSData+WireTesting.h",
 				"Public/NSOperationQueue+WireTesting.h",
 				"Public/NSUUID+WireTesting.h",
 				Public/WireTesting.h,

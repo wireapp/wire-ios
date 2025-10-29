@@ -97,6 +97,8 @@
 				Public/ZMObjectValidationError.h,
 				Public/ZMTimer.h,
 				ZMAtomicInteger.h,
+				ZMSAsserts.h,
+				ZMSDefines.h,
 			);
 			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
 		};
