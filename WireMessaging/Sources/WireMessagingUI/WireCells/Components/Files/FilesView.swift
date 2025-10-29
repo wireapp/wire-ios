@@ -88,9 +88,8 @@ package struct FilesView: FilesViewProtocol {
                     onDismiss: {
                         if viewModel.didRenameFile {
                             reloadTask()
+                            viewModel.didRenameFile = false
                         }
-
-                        viewModel.didRenameFile = false
                     },
                     content: { $0 }
                 )
