@@ -81,16 +81,28 @@ struct TagsEditView: View {
             .frame(maxWidth: .infinity)
             .padding(.horizontal, horizontalPadding)
             .padding(.vertical)
+            .animation(.easeInOut, value: viewModel.enteredTag)
         }
     }
     
     @ViewBuilder private func tagNameInputArea() -> some View {
         VStack {
             HStack {
-                Text("(TODO)")
+                let prompt = L10n.Localizable.Conversation.WireCells.Tags.textFieldPlaceholder
+                TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
+                    .textFieldStyle(.roundedBorder)
+                    .textInputAutocapitalization(.never)
+                    .onSubmit {
+                        if viewModel.validationState == .valid {
+                            withAnimation {
+                                viewModel.addTag(viewModel.enteredTag)
+                                viewModel.enteredTag = ""
+                            }
+                        }
+                    }
             }
             
-            if let message = viewModel.validationErrorMessage(for: .invalidCharacters) {
+            if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
                 validationText(message)
             }
         }
@@ -130,7 +142,6 @@ struct TagsEditView: View {
                             suggestedTagBubble(tag: tag)
                         }
                     }
-                    //.padding(1)
                     .padding(.horizontal, horizontalPadding)
                 }
                 .padding(.horizontal, -horizontalPadding)
