@@ -88,7 +88,7 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
         // Updates the node cache.
         await nodeCache.setItem(.init(node: node), for: nodeID)
 
-        // Node is up-to-date everywhere, notifies observers.
+        // Node is up-to-date, notifies observers.
         await nodeRenameNotifier.send(nodeID)
     }
 

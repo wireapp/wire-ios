@@ -48,9 +48,11 @@ struct FileRenameView: View, Identifiable {
                         isFocused: $viewModel.isFocused
                     )
                     .padding()
-                    .submitLabel(.done)
+                    .submitLabel(.send)
                     .onSubmit {
-                        save()
+                        if !isSaveDisabled() {
+                            save()
+                        }
                     }
 
                     Spacer()
@@ -70,6 +72,10 @@ struct FileRenameView: View, Identifiable {
                 dismiss()
             }
         }
+    }
+
+    private func isSaveDisabled() -> Bool {
+        viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty
     }
 
 }
@@ -109,7 +115,7 @@ private extension FileRenameView {
                         Text(L10n.Localizable.General.save)
                     }
                 )
-                .disabled(viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty)
+                .disabled(isSaveDisabled())
                 .accessibilityLabel(L10n.Accessibility.General.save)
                 .accessibilityIdentifier("save")
             }
