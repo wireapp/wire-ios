@@ -62,6 +62,21 @@ extension WireNetwork.MessageProtocol {
     }
 }
 
+extension WireNetwork.UserType {
+
+    func toDomainModel() -> WireDataModel.TypeOfUser {
+        switch self {
+        case .regular:
+            .regular
+        case .app:
+            .app
+        case .bot:
+            .bot
+        }
+    }
+
+}
+
 extension WireNetwork.UserClientType {
 
     func toDomainModel() -> WireDataModel.DeviceType {
@@ -135,6 +150,7 @@ extension WireNetwork.User {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: type?.toDomainModel(),
             accentID: accentID,
             previewAssetKey: assets
                 .first(where: { $0.size == .preview })
@@ -162,6 +178,7 @@ extension WireNetwork.SelfUser {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: .regular,
             accentID: accentID,
             previewAssetKey: assets?
                 .first(where: { $0.size == .preview })
