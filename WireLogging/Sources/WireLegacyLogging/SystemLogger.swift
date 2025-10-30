@@ -81,11 +81,11 @@ public class SystemLogger: LoggerProtocol {
         }
 
         var finalMessage = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
-#if DEBUG
-        os_log(osLogType, log: logger, "%{public}@", finalMessage)
-#else
-        os_log(osLogType, log: logger, "\(finalMessage)")
-#endif
+        #if DEBUG
+            os_log(osLogType, log: logger, "%{public}@", finalMessage)
+        #else
+            os_log(osLogType, log: logger, "\(finalMessage)")
+        #endif
     }
 
 }

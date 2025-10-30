@@ -20,7 +20,6 @@ import CocoaLumberjackSwift
 import Foundation
 import WireLogging
 import WireSystem
-import WireLogging
 
 struct NewCocoaLumberjackLogger: WireLoggingProvider {
 

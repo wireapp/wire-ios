@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
-    public mutating func appendInterpolation<E: Error>(_ error: E, skipObfuscation: Bool = false) {
+    mutating func appendInterpolation(_ error: some Error, skipObfuscation: Bool = false) {
         if !skipObfuscation, isObfuscationRequired {
             writeText(String(describing: type(of: error)))
         } else {

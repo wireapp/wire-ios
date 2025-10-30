@@ -26,7 +26,7 @@ public struct OSLogLoggingProvider: WireLoggingProvider {
 
     public init(tag: Tag, subsystem: String) {
         self.tag = tag
-        logger = .init(subsystem: subsystem, category: tag.rawValue)
+        self.logger = .init(subsystem: subsystem, category: tag.rawValue)
     }
 
     public func log(level: Level, message: WireLogMessage) {
@@ -38,31 +38,29 @@ public struct OSLogLoggingProvider: WireLoggingProvider {
     }
 }
 
-extension WireLogLevel {
+private extension WireLogLevel {
 
-    fileprivate func mappedToOSLogType() -> OSLogType {
-        /*
-         Note:
-         - levels are `default`, `info`, `debug`, `error` and `fault`
-         - `trace` is an alias for `debug`
-         - `notice` is an alias for `default`
-         - `warning` is an alias for `error`
-         - `critical` is an alias for `fault`
-         */
+    func mappedToOSLogType() -> OSLogType {
+        // Note:
+        // - levels are `default`, `info`, `debug`, `error` and `fault`
+        // - `trace` is an alias for `debug`
+        // - `notice` is an alias for `default`
+        // - `warning` is an alias for `error`
+        // - `critical` is an alias for `fault`
 
         switch self {
         case .debug:
-                .debug
+            .debug
         case .info:
-                .info
+            .info
         case .notice:
-                .default
+            .default
         case .warn:
-                .error
+            .error
         case .error:
-                .error
+            .error
         case .critical:
-                .fault
+            .fault
         }
     }
 }

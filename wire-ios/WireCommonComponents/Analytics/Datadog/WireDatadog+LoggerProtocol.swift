@@ -20,7 +20,6 @@ import WireAnalytics
 import WireDatadog
 import WireLogging
 import WireSystem
-import WireLogging
 
 struct NewWireDatadogLogger: WireLoggingProvider {
 

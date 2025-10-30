@@ -95,7 +95,8 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
 
         // Then
         XCTAssertEqual(mockLogger.error_Invocations.count, 1)
-        XCTAssert(mockLogger.error_Invocations.first?.content.contains("CustomError.wrapping(Error Domain=NSFileProviderErrorDomain Code=-1007") == true)
+        XCTAssert(mockLogger.error_Invocations.first?.content
+            .contains("CustomError.wrapping(Error Domain=NSFileProviderErrorDomain Code=-1007") == true)
     }
 
     func testContainerErrorIsLoggedWithObfuscation() {

@@ -28,10 +28,10 @@ public struct PubliclyLoggedString {
     }
 }
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
     @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-    public mutating func appendInterpolation(_ publiclyLoggedString: PubliclyLoggedString) {
+    mutating func appendInterpolation(_ publiclyLoggedString: PubliclyLoggedString) {
         writeText(publiclyLoggedString.value)
     }
 }
@@ -40,10 +40,10 @@ extension WireLogInterpolation {
 
 // The following extension ensures no WireLogging consuming code needs to be changed for now.
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
     @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-    public mutating func appendInterpolation(_ value: String) {
+    mutating func appendInterpolation(_ value: String) {
         writeText(value)
     }
 }

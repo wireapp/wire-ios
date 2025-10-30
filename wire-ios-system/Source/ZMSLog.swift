@@ -20,7 +20,6 @@ import Foundation
 import os.log
 import WireLogging
 import ZIPFoundation
-import WireLogging
 
 /// Represents an entry to be logged.
 @objcMembers

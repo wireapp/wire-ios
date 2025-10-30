@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk of leaking sensible information.
+/// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk
+/// of leaking sensible information.
 /// Each custom type which can be logged must define how it should appear in the logs.
 /// Query the property `isObfuscationRequired` in order to know, if the value should be obfuscated or not.
 /// Use `addText(_:)` and `addAttribute(_:)` to create the content to be logged.
@@ -38,7 +39,8 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     }
 
     /// Allows for adding additional tags to a log message.
-    /// Depending on the logging system the attributes might for example be prepended in brackets or appended separately.
+    /// Depending on the logging system the attributes might for example be prepended in brackets or appended
+    /// separately.
     public mutating func writeAttribute(_ attribute: WireLoggerAttribute) {
         attributes += [attribute]
     }
@@ -50,12 +52,12 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
 }
 
 // TODO: remove this example
-//public struct SensibleInformationModel {
+// public struct SensibleInformationModel {
 //    var content: String
-//}
+// }
 //
-//extension WireLogInterpolation {
-//    
+// extension WireLogInterpolation {
+//
 //    /// Construct the log message content for ``SensibleInformationModel`` values.
 //    mutating func appendInterpolation(_ mySensibleInformation: SensibleInformationModel) {
 //        let content: String
@@ -72,4 +74,4 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
 //            writeAttribute(relevantAttribute)
 //        }
 //    }
-//}
+// }

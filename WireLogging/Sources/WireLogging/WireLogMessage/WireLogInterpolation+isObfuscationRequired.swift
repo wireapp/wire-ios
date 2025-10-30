@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
-#if DEBUG
-    nonisolated(unsafe) public internal(set) static var isObfuscationRequired = false
-    public var isObfuscationRequired: Bool { Self.isObfuscationRequired }
-#else
-    public var isObfuscationRequired: Bool { true }
-#endif
+    #if DEBUG
+        internal(set) nonisolated(unsafe) static var isObfuscationRequired = false
+        var isObfuscationRequired: Bool { Self.isObfuscationRequired }
+    #else
+        var isObfuscationRequired: Bool { true }
+    #endif
 }

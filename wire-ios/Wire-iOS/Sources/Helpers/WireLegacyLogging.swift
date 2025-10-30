@@ -21,5 +21,5 @@ import WireLegacyLogging
 typealias Flow = WireLegacyLogging.Flow
 typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
 typealias LoggerProtocol = WireLegacyLogging.LoggerProtocol
-//typealias SystemLogger = WireLegacyLogging.SystemLogger
+// typealias SystemLogger = WireLegacyLogging.SystemLogger
 typealias WireLogger = WireLegacyLogging.WireLogger
