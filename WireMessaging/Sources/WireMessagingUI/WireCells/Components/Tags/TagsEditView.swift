@@ -88,22 +88,34 @@ struct TagsEditView: View {
     @ViewBuilder private func tagNameInputArea() -> some View {
         VStack {
             HStack {
-                let prompt = L10n.Localizable.Conversation.WireCells.Tags.textFieldPlaceholder
+                let prompt = Strings.Tags.textFieldPlaceholder
                 TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
                     .textFieldStyle(.roundedBorder)
                     .textInputAutocapitalization(.never)
                     .onSubmit {
-                        if viewModel.validationState == .valid {
-                            withAnimation {
-                                viewModel.addTag(viewModel.enteredTag)
-                                viewModel.enteredTag = ""
-                            }
-                        }
+                        addEnteredTag()
                     }
+                
+                Button {
+                    addEnteredTag()
+                } label: {
+                    Text(Strings.Tags.addTagButton)
+                }
+                .disabled(viewModel.validationState != .valid)
+                .animation(nil, value: viewModel.enteredTag)
             }
             
             if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
                 validationText(message)
+            }
+        }
+    }
+    
+    private func addEnteredTag() {
+        if viewModel.validationState == .valid {
+            withAnimation {
+                viewModel.addTag(viewModel.enteredTag)
+                viewModel.enteredTag = ""
             }
         }
     }
