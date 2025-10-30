@@ -24,6 +24,7 @@ public class SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")
     private var tags = [LogAttributesKey: String]()
 
+<<<<<<< HEAD:WireLogging/Sources/WireLogging/SystemLogger.swift
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval
@@ -33,12 +34,16 @@ public class SystemLogger: LoggerProtocol {
         set {
             UserDefaults.standard.set(newValue?.timeIntervalSince1970, forKey: "com.wire.log.lastReportTime")
         }
+=======
+    public var logFiles: [URL] {
+        []
+>>>>>>> 1f47bea48a (refactor: logging using string interpolation - WPB-14297 squashed):WireLogging/Sources/WireLegacyLogging/SystemLogger.swift
     }
 
     public init() {}
 
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, osLogType: .debug)
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+        log(message, attributes: [attributes], osLogType: .debug)
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {

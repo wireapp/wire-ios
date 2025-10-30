@@ -32,10 +32,18 @@ final class AggregatedLogger: LoggerProtocol {
 
     // MARK: - LoggerProtocol
 
+<<<<<<< HEAD:WireLogging/Sources/WireLogging/AggregatedLogger.swift
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
+=======
+    var logFiles: [URL] {
+        loggers.reduce(into: []) { $0 += $1.logFiles }
+    }
+
+    func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+>>>>>>> 1f47bea48a (refactor: logging using string interpolation - WPB-14297 squashed):WireLogging/Sources/WireLegacyLogging/AggregatedLogger.swift
         loggers.forEach {
-            $0.debug(message, attributes: mergedAttributes)
+            $0.debug(message, attributes: attributes)
         }
     }
 

@@ -7,13 +7,18 @@ let package = Package(
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireLogging", targets: ["WireLogging"]),
-        .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"])
+        .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"]),
+        .library(name: "WireLegacyLogging", targets: ["WireLegacyLogging"])
     ],
     dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(name: "WireLogging"),
+        .target(
+            name: "WireLogging",
+            dependencies: ["WireLegacyLogging"]
+        ),
         .target(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
@@ -21,8 +26,10 @@ let package = Package(
         ),
         .testTarget(
             name: "WireLoggingTests",
-            dependencies: ["WireLogging"]
-        )
+            dependencies: ["WireLogging", "WireLoggingSupport"]
+        ),
+
+        .target(name: "WireLegacyLogging")
     ]
 )
 

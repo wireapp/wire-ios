@@ -260,6 +260,7 @@
 		594C0FCE2D541643003D8183 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 594C0FCD2D541643003D8183 /* WireDomainPackage */; };
 		594EAA002EA23E73009BC0EB /* WireUtilitiesPackageSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 594EA9FF2EA23E73009BC0EB /* WireUtilitiesPackageSupport */; };
 		59537D892CFF9E7700920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D882CFF9E7700920B59 /* WireLogging */; };
+		5974760E2D019FAA005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5974760D2D019FAA005E891A /* WireLegacyLogging.swift */; };
 		596A19EA2E9E523100E190AE /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 596A19E92E9E523100E190AE /* ZIPFoundation */; };
 		5972B0D92E9EAB78005E6417 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5972B0D82E9EAB78005E6417 /* WireUtilitiesPackage */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
@@ -845,6 +846,7 @@
 		59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassificationProviding.swift; sourceTree = "<group>"; };
 		59271BE92B908E150019B726 /* SecurityClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassification.swift; sourceTree = "<group>"; };
 		5943E9BB2D11CB3300D39FFF /* CallEndedReason+initWithCallClosedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallEndedReason+initWithCallClosedReason.swift"; sourceTree = "<group>"; };
+		5974760D2D019FAA005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2166,6 +2168,7 @@
 		A9EADFFF19DBF20A00FD386C /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				5974760D2D019FAA005E891A /* WireLegacyLogging.swift */,
 				5430E9231BAA0D9F00395E05 /* WireSyncEngineLogs.h */,
 				546392711D79D5210094EC66 /* Application.swift */,
 				1645ECF72448A0A3007A82D6 /* Decodable+JSON.swift */,
@@ -3214,6 +3217,8 @@
 				554FEE2122AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift in Sources */,
 				EE5D9B60290A7CEE007D78D6 /* VoIPPushManager.swift in Sources */,
 				EE5AAF3A2874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift in Sources */,
+				5974760E2D019FAA005E891A /* WireLegacyLogging.swift in Sources */,
+				1634958B1F0254CB004E80DB /* ServerConnection.swift in Sources */,
 				54034F381BB1A6D900F4ED62 /* ZMUserSession+Logs.swift in Sources */,
 				549816471A432BC800A7CE2E /* ZMSyncStrategy.m in Sources */,
 				54BFDF681BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift in Sources */,
