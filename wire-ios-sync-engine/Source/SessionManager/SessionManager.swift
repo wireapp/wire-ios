@@ -148,11 +148,11 @@ public protocol SessionManagerType: AnyObject {
         in session: ZMUserSession
     )
 
-    /// Switch account and and ask UI to navigate to the conversatio list
+    /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
     /// ask UI to open the profile of a user
-    func showUserProfile(user: UserType)
+    func showUserProfile(user: WireDataModel.UserType)
 
     /// Needs to be called before we try to register another device because API requires password
     func update(credentials: UserCredentials) -> Bool
@@ -1902,7 +1902,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
     public func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
-        caller: UserType,
+        caller: WireDataModel.UserType,
         timestamp: Date?,
         previousCallState: CallState?
     ) {

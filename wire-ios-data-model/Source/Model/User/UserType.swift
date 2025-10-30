@@ -21,7 +21,7 @@ import Foundation
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
 
-    /// The identifier which uniquely idenitifies the user in its domain
+    /// The identifier which uniquely identifies the user in its domain
     var remoteIdentifier: UUID! { get }
 
     /// Any as type eraser to hide NSManagedObjectID behind it
@@ -66,7 +66,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Returns `true` if the user is part of any team.
     @objc var hasTeam: Bool { get }
 
-    /// Whether the PDF digial signature is enable
+    /// Whether the PDF digital signature is enable
     var hasDigitalSignatureEnabled: Bool { get }
 
     /// The role (and permissions) e.g. partner, member, admin, owner
