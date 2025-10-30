@@ -35,10 +35,9 @@ final class AggregatedLogger: LoggerProtocol {
         loggers.reduce(into: []) { $0 += $1.logFiles }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        let mergedAttributes = flattenArray(attributes)
+    func debug(_ message: any LogConvertible, attributes: LogAttributes) {
         loggers.forEach {
-            $0.debug(message, attributes: mergedAttributes)
+            $0.debug(message, attributes: attributes)
         }
     }
 

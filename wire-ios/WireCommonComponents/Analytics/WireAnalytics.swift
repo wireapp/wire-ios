@@ -19,9 +19,14 @@
 import Foundation
 import WireLogging
 import WireSystem
+import WireLogging
+import WireLegacyLogging
 
 /// Namespace for analytics tools.
 public enum WireAnalytics {
+
+    private typealias WireLogger = WireLogging.WireLogger
+    private typealias LegacyLogger = WireLegacyLogging.WireLogger
 
     private static let isSetUpLock = NSLock()
     private static var isSetUp = false
@@ -39,16 +44,34 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
-        WireLogger.initialize(
+        let cocoaLumberjackLogger = CocoaLumberjackLogger()
+        let subsystem = Bundle.main.bundleIdentifier!
+        WireLogger.setup { tag in
+            var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
+            if tag == WireLogger.system.tag {
+                datadogLogger.additionalAttributes = [
+                    .processId: "\(ProcessInfo.processInfo.processIdentifier)",
+                    .processName: ProcessInfo.processInfo.processName
+                ]
+            }
+            return [
+                OSLogLoggingProvider(tag: tag, subsystem: subsystem),
+                NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
+                datadogLogger
+            ]
+        }
+
+        // TODO: clean up
+        LegacyLogger.initialize(
             loggers: [
                 SystemLogger(),
-                CocoaLumberjackLogger(),
+                cocoaLumberjackLogger,
                 WireAnalytics.Datadog.shared
             ]
         )
 
         // pass tags to Datadog through WireLogger
-        WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
-        WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
+        LegacyLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        LegacyLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
 }

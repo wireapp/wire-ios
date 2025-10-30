@@ -20,9 +20,33 @@ import CocoaLumberjackSwift
 import Foundation
 import WireLogging
 import WireSystem
+import WireLogging
+
+struct NewCocoaLumberjackLogger: WireLoggingProvider {
+
+    var tag: Tag
+    var logger: CocoaLumberjackLogger
+
+    func log(level: Level, message: WireLogMessage) {
+        switch level {
+        case .debug:
+            logger.debug(message.content, attributes: [.tag: tag.rawValue])
+        case .info:
+            logger.info(message.content, attributes: [.tag: tag.rawValue])
+        case .notice:
+            logger.notice(message.content, attributes: [.tag: tag.rawValue])
+        case .warn:
+            logger.warn(message.content, attributes: [.tag: tag.rawValue])
+        case .error:
+            logger.error(message.content, attributes: [.tag: tag.rawValue])
+        case .critical:
+            logger.critical(message.content, attributes: [.tag: tag.rawValue])
+        }
+    }
+}
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
     private var tags = [LogAttributesKey: String]()
@@ -38,8 +62,8 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .debug)
+    func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+        log(message, attributes: [attributes], level: .debug)
     }
 
     func info(_ message: any LogConvertible, attributes: LogAttributes...) {

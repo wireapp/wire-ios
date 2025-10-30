@@ -20,13 +20,42 @@ import WireAnalytics
 import WireDatadog
 import WireLogging
 import WireSystem
+import WireLogging
+
+struct NewWireDatadogLogger: WireLoggingProvider {
+
+    var tag: Tag
+    var additionalAttributes = LogAttributes()
+    var logger: WireDatadog
+
+    func log(level: Level, message: WireLogMessage) {
+
+        var attributes = additionalAttributes
+        attributes[.tag] = tag.rawValue
+
+        switch level {
+        case .debug:
+            logger.debug(message.content, attributes: attributes)
+        case .info:
+            logger.info(message.content, attributes: attributes)
+        case .notice:
+            logger.notice(message.content, attributes: attributes)
+        case .warn:
+            logger.warn(message.content, attributes: attributes)
+        case .error:
+            logger.error(message.content, attributes: attributes)
+        case .critical:
+            logger.critical(message.content, attributes: attributes)
+        }
+    }
+}
 
 extension WireDatadog: LoggerProtocol {
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes) {
         log(
             level: .debug,
             message: message,
-            attributes: attributes
+            attributes: [attributes]
         )
     }
 

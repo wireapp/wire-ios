@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireLogging/Sources/WireLogging/WireLogMessage/WireLogLevel.swift
-public enum WireLogLevel {
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
-========
-import XCTest
+/// Abstraction of a convenience interface to the Wire logging systems.
+public protocol WireLoggerProtocol: Sendable {
+    typealias Tag = WireLoggerTag
 
-final class WireCanvasTests: XCTestCase {
+    var tag: Tag { get }
 
-    func testExample() throws {
-        throw XCTSkip("Placeholder for tests")
-    }
-
->>>>>>>> d03ca9769515b6088f45cf81b5b29526e6739a94:wire-ios-canvas/WireCanvasTests/WireCanvasTests.swift
+    func debug(_ message: WireLogMessage)
+    func info(_ message: WireLogMessage)
+    func notice(_ message: WireLogMessage)
+    func warn(_ message: WireLogMessage)
+    func error(_ message: WireLogMessage)
+    func critical(_ message: WireLogMessage)
 }

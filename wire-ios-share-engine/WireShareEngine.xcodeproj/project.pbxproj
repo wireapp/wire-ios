@@ -16,6 +16,7 @@
 		591B6E352C8B0991009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6E504512BC58ACD004948E7 /* WireDataModelSupport.framework */; };
 		591B6E382C8B0995009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */; };
 		59537D8B2CFF9F8F00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8A2CFF9F8F00920B59 /* WireLogging */; };
+		597476102D01A080005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5974760F2D01A080005E891A /* WireLegacyLogging.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CB79791D2C748580006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791C2C748580006FBA58 /* TestSetup.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
@@ -70,6 +71,7 @@
 		5470D4121D76E2A400FDE440 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5470D4151D76E2A400FDE440 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		5974760F2D01A080005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CB79791C2C748580006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 		F1DABF961E9B8B6100AD2324 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5974760F2D01A080005E891A /* WireLegacyLogging.swift */,
 				F1DABF971E9B8B6100AD2324 /* AuthenticationStatusProvider.swift */,
 				F1DABF981E9B8B6100AD2324 /* Conversation.swift */,
 				F1DABF991E9B8B6100AD2324 /* OperationLoop.swift */,
@@ -417,6 +420,7 @@
 				F1DABFA81E9B8B6100AD2324 /* SharingTarget.swift in Sources */,
 				F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */,
 				F1DABFA61E9B8B6100AD2324 /* SendableBatchObserver.swift in Sources */,
+				597476102D01A080005E891A /* WireLegacyLogging.swift in Sources */,
 				F1DABFA51E9B8B6100AD2324 /* Sendable.swift in Sources */,
 				F1DABFA71E9B8B6100AD2324 /* SharingSession.swift in Sources */,
 			);

@@ -20,6 +20,7 @@ import Foundation
 import os.log
 import WireLogging
 import ZipArchive
+import WireLogging
 
 /// Represents an entry to be logged.
 @objcMembers
@@ -367,7 +368,7 @@ public extension ZMSLog {
         do {
             assertionFile = try AssertionDumpFile.url
         } catch {
-            WireLogger.system.warn("AssertionDumpFile.url threw error: \(String(reflecting: error))")
+            WireLogger.system.warn("AssertionDumpFile.url threw error: \(error)")
             assertionFile = nil
         }
         if let assertionFile, FileManager.default.fileExists(atPath: assertionFile.path) {

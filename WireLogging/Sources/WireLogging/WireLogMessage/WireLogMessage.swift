@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireLogging/Sources/WireLogging/WireLogMessage/WireLogLevel.swift
-public enum WireLogLevel {
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
-========
-import XCTest
+public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
 
-final class WireCanvasTests: XCTestCase {
+    public var content: String { interpolation.content }
+    public var attributes: [WireLoggerAttribute] { interpolation.attributes }
 
-    func testExample() throws {
-        throw XCTSkip("Placeholder for tests")
+    let interpolation: WireLogInterpolation
+
+    public init(stringLiteral value: StaticString) {
+        var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+        interpolation.appendLiteral(value)
+        self.interpolation = interpolation
     }
 
->>>>>>>> d03ca9769515b6088f45cf81b5b29526e6739a94:wire-ios-canvas/WireCanvasTests/WireCanvasTests.swift
+    public init(stringInterpolation interpolation: WireLogInterpolation) {
+        self.interpolation = interpolation
+    }
 }
