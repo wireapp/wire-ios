@@ -47,9 +47,10 @@ final class FilesViewModelTests {
                 localAssetStore: localAssetStore
             ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
-                repository: nodesRepository,
-                fileCache: MockFileCache(),
-                localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+                nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireCellsNodeCacheProtocol(),
+                nodeRenameNotifier: WireCellsNodeRenameNotifier()
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,

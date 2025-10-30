@@ -18,6 +18,7 @@
 
 public import Foundation
 
+// sourcery: AutoMockable
 public protocol WireCellsRenameNodeUseCaseProtocol: Sendable {
 
     func invoke(
