@@ -450,9 +450,10 @@ public final class MessageSender: MessageSenderInterface {
                         groupID: groupID,
                         epoch: Int64(epoch ?? 0)
                     )
+            case let .groupOutOfSync(missingUsers):
+                // TODO: use mls service to add them, then retry.
+                fatalError()
             default:
-                // TODO: catch missing users error,
-                // use mls service to add them, then retry.
                 throw error
             }
         }
