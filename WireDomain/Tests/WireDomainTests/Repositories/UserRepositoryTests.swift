@@ -464,6 +464,7 @@ final class UserRepositoryTests: XCTestCase {
             name: "user1",
             handle: "handle1",
             teamID: nil,
+            type: .regular,
             accentID: 1,
             assets: [],
             deleted: false,

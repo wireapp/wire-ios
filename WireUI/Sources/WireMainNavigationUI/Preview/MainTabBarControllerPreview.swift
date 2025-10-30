@@ -19,11 +19,17 @@
 import SwiftUI
 
 @MainActor
-func MainTabBarControllerPreview(showFiles: Bool = false) -> some MainTabBarControllerProtocol {
-    let tabBarController = PreviewTabBarController(showMeetings: false, showFiles: showFiles)
+func MainTabBarControllerPreview(
+    showMeetings: Bool = false,
+    showFiles: Bool = false
+) -> some MainTabBarControllerProtocol {
+    let tabBarController = PreviewTabBarController(showMeetings: showMeetings, showFiles: showFiles)
     tabBarController.conversationListUI = .init("conversationList")
     tabBarController.archiveUI = PlaceholderViewController()
     tabBarController.settingsUI = .init()
+    if showMeetings {
+        tabBarController.meetingsUI = .init()
+    }
     if showFiles {
         tabBarController.filesUI = .init()
     }
