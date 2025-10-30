@@ -88,9 +88,9 @@ final class FileRenameViewModel: ObservableObject {
             return false
         }
     }
-    
+
     // MARK: - Private
-    
+
     private func bindTextInput() {
         $filenameInput
             .sink { [weak self] input in

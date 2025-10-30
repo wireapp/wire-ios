@@ -72,7 +72,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     @MainActor
     package func refreshAssetMetadata(
         nodeID: UUID
-    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset)  {
+    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
         try await _refreshAssetMetadata(nodeID: nodeID)
     }
 
