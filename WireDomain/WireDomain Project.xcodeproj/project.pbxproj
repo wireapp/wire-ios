@@ -17,6 +17,7 @@
 		591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */; };
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
 		59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59202AD12D54D3D500143413 /* WireDomainPackage */; };
+		596A633C2EB3B2800017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A633B2EB3B2800017C3CA /* WireLegacyLogging */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
@@ -96,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				596A633C2EB3B2800017C3CA /* WireLegacyLogging in Frameworks */,
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
 				34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */,
 				CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */,
@@ -227,6 +229,7 @@
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 				CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */,
 				34DC44B22E01C206004D5DD5 /* WireNetwork */,
+				596A633B2EB3B2800017C3CA /* WireLegacyLogging */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -800,6 +803,10 @@
 		59202AD12D54D3D500143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
+		};
+		596A633B2EB3B2800017C3CA /* WireLegacyLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLegacyLogging;
 		};
 		598D042C2C89C63100B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;

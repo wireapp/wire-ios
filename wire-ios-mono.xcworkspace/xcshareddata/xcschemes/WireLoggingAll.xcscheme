@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1640"
+   LastUpgradeVersion = "2600"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,10 +15,38 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLegacyLogging"
+               BuildableName = "WireLegacyLogging"
+               BlueprintName = "WireLegacyLogging"
+               ReferencedContainer = "container:WireLogging">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireLogging"
                BuildableName = "WireLogging"
                BlueprintName = "WireLogging"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireLogging">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLoggingSupport"
+               BuildableName = "WireLoggingSupport"
+               BlueprintName = "WireLoggingSupport"
+               ReferencedContainer = "container:WireLogging">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,10 +58,22 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:WireLogging/Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLoggingTests"
+               BuildableName = "WireLoggingTests"
+               BlueprintName = "WireLoggingTests"
+               ReferencedContainer = "container:WireLogging">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -55,10 +95,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireLogging"
-            BuildableName = "WireLogging"
-            BlueprintName = "WireLogging"
-            ReferencedContainer = "container:">
+            BlueprintIdentifier = "WireLegacyLogging"
+            BuildableName = "WireLegacyLogging"
+            BlueprintName = "WireLegacyLogging"
+            ReferencedContainer = "container:WireLogging">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

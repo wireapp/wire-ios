@@ -65,7 +65,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         self.syncMarkerGenerator = syncMarkerGenerator
     }
 
-    private var logAttributes: WireLogging.LogAttributes {
+    private var logAttributes: LogAttributes {
         .incrementalSyncV3 + .newNSE
     }
 

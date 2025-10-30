@@ -117,6 +117,7 @@ let package = Package(
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 "WireReusableUIComponents",
                 "WireLocators"
             ],
