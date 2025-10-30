@@ -45,9 +45,10 @@ extension FilesViewModel {
                 localAssetStore: localAssetStore
             ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
-                repository: previewNodesRepository(),
-                fileCache: cache,
-                localAssetStore: localAssetStore
+                nodesRepository: previewNodesRepository(),
+                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireCellsNodeCacheProtocol(),
+                nodeRenameNotifier: WireCellsNodeRenameNotifier()
             ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
@@ -67,9 +68,10 @@ extension FileRenameViewModel {
 
         return FileRenameViewModel(
             renameNodeUseCase: WireCellsRenameNodeUseCase(
-                repository: previewNodesRepository(),
-                fileCache: cache,
-                localAssetStore: localAssetStore
+                nodesRepository: previewNodesRepository(),
+                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireCellsNodeCacheProtocol(),
+                nodeRenameNotifier: WireCellsNodeRenameNotifier()
             ),
             fileRenameModel: FileRenameModel(
                 nodeID: .init(),
@@ -146,7 +148,22 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         publishers[nodeID]?.value
     }
 
-    func refreshAssetMetadata(nodeID: UUID) async throws {}
+    func refreshAssetMetadata(
+        nodeID: UUID
+    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
+        let node = WireCellsNode(uuid: .init(), path: "")
+
+        let localAsset = WireCellsLocalAsset(
+            nodeID: nodeID,
+            eTag: "something",
+            path: "some/path.jpg",
+            contentType: nil,
+            size: nil,
+            downloadState: .pending
+        )
+
+        return (node, localAsset)
+    }
 
     func downloadAsset(nodeID: UUID) async throws {
         failIndex += 1

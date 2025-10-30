@@ -36,6 +36,7 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -71,6 +72,7 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
+        self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -126,9 +128,10 @@ public struct WireMessagingFactory {
 
     public func makeRenameNodeUseCase() -> any WireCellsRenameNodeUseCaseProtocol {
         WireCellsRenameNodeUseCase(
-            repository: nodesAPI,
-            fileCache: fileCache,
-            localAssetStore: localAssetStore
+            nodesRepository: nodesAPI,
+            localAssetsRepository: localAssetRepository,
+            nodeCache: nodeCache,
+            nodeRenameNotifier: nodeRenameNotifier
         )
     }
 
@@ -209,7 +212,8 @@ public extension WireMessagingFactory {
                         fileCache: fileCache
                     ),
                     localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest
+                    lastOpenRequest: lastOpenRequest,
+                    nodeRenameNotifier: nodeRenameNotifier
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
@@ -231,6 +235,7 @@ public extension WireMessagingFactory {
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             insetsProvider: insetsProvider
         )
     }

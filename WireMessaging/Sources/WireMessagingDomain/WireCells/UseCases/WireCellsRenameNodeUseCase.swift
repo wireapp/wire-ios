@@ -17,6 +17,7 @@
 //
 
 package import Foundation
+package import Combine
 
 package enum WireCellsRenameNodeError: Error {
     case serverFailedToRenameNode
@@ -24,21 +25,26 @@ package enum WireCellsRenameNodeError: Error {
     case invalidPath
 }
 
+package typealias WireCellsNodeRenameNotifier = WireCellsRenameNodeUseCase.WireCellsNodeRenameNotifier
+
 /// Renames a `WireCellNode` on the server.
 package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
 
-    private let repository: any WireCellsNodesRepositoryProtocol
-    private let fileCache: any FileCache
-    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
+    private let nodesRepository: any WireCellsNodesRepositoryProtocol
+    private let localAssetsRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodeCache: any WireCellsNodeCacheProtocol
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     package init(
-        repository: any WireCellsNodesRepositoryProtocol,
-        fileCache: any FileCache,
-        localAssetStore: any WireCellsLocalAssetStoreProtocol
+        nodesRepository: any WireCellsNodesRepositoryProtocol,
+        localAssetsRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodeCache: any WireCellsNodeCacheProtocol,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier
     ) {
-        self.repository = repository
-        self.fileCache = fileCache
-        self.localAssetStore = localAssetStore
+        self.nodesRepository = nodesRepository
+        self.localAssetsRepository = localAssetsRepository
+        self.nodeCache = nodeCache
+        self.nodeRenameNotifier = nodeRenameNotifier
     }
 
     package func invoke(
@@ -54,8 +60,8 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
         let directory = url.deletingLastPathComponent()
         let targetPath = directory.appendingPathComponent("\(newFilename).\(pathExtension)")
 
-        // Checks whether a file doesn't already exist at this path.
-        let preCheckResult = try await repository.preCheck(
+        // Checks whether the path doesn't already exist.
+        let preCheckResult = try await nodesRepository.preCheck(
             path: targetPath.absoluteString,
             findAvailablePath: false
         )
@@ -64,8 +70,8 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
             throw WireCellsRenameNodeError.fileAlreadyExists
         }
 
-        // Renames the file.
-        let didRenameFile = try await repository.renameNode(
+        // Renames the file on the server.
+        let didRenameFile = try await nodesRepository.renameNode(
             nodeID: nodeID,
             targetPath: targetPath.absoluteString
         )
@@ -74,14 +80,34 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
             throw WireCellsRenameNodeError.serverFailedToRenameNode
         }
 
-        // Updates the local asset with the new path.
-        guard var modifiedAsset = try await localAssetStore.asset(nodeID: nodeID) else {
-            return
-        }
+        // Refreshes the node metadata and updates the local asset.
+        let (node, _) = try await localAssetsRepository.refreshAssetMetadata(
+            nodeID: nodeID
+        )
 
-        modifiedAsset.path = targetPath.absoluteString
+        // Updates the node cache.
+        await nodeCache.setItem(.init(node: node), for: nodeID)
 
-        try await localAssetStore.upsertAsset(modifiedAsset)
+        // Node is up-to-date everywhere, notifies observers.
+        await nodeRenameNotifier.send(nodeID)
     }
 
 }
+
+package extension WireCellsRenameNodeUseCase {
+    @MainActor
+    struct WireCellsNodeRenameNotifier {
+        private let subject = PassthroughSubject<UUID, Never>()
+
+        package init() {}
+
+        package var publisher: AnyPublisher<UUID, Never> {
+            subject.eraseToAnyPublisher()
+        }
+
+        func send(_ nodeID: UUID) {
+            subject.send(nodeID)
+        }
+    }
+}
+

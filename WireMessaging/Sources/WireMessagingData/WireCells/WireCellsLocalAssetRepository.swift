@@ -70,8 +70,10 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
     @MainActor
-    package func refreshAssetMetadata(nodeID: UUID) async throws {
-        _ = try await _refreshAssetMetadata(nodeID: nodeID)
+    package func refreshAssetMetadata(
+        nodeID: UUID
+    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset)  {
+        try await _refreshAssetMetadata(nodeID: nodeID)
     }
 
     /// Downloads the asset for the given `nodeID`.

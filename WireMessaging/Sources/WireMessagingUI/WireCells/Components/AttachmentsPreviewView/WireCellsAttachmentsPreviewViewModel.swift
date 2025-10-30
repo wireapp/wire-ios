@@ -56,6 +56,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     let alignment: HorizontalAlignment
     @Published var items: [WireCellsAttachmentsPreviewViewItem]
@@ -66,7 +67,8 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest
+        lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier
     ) {
         self.attachments = attachments
         self.alignment = alignment
@@ -74,6 +76,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         self.getAssetUseCase = getAssetUseCase
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
+        self.nodeRenameNotifier = nodeRenameNotifier
 
         self.items = attachments.map { WireCellsAttachmentsPreviewViewItem($0, isDeleted: false) }
     }
@@ -86,7 +89,8 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: lastOpenRequest
+            lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier
         )
     }
 
@@ -164,7 +168,8 @@ extension WireCellsAttachmentsPreviewViewModel {
                 fileCache: fileCache
             ),
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: WireCellsLastOpenRequest()
+            lastOpenRequest: WireCellsLastOpenRequest(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
     }
 

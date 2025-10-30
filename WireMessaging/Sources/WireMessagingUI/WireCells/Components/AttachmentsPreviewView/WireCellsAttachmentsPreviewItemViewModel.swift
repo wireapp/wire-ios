@@ -29,6 +29,8 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     let alignment: HorizontalAlignment
@@ -43,17 +45,18 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest
+        lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier
     ) {
         self.item = item
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
+        self.nodeRenameNotifier = nodeRenameNotifier
+        self.localAssetRepository = localAssetRepository
 
-        localAssetRepository.observeAsset(nodeID: item.nodeID).sink { [self] asset in
-            self.asset = asset
-        }.store(in: &cancellables)
+        setupBindings()
     }
 
     var headerText: String {
@@ -130,6 +133,21 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func setupBindings() {
+        nodeRenameNotifier.publisher
+            .sink { [self] _ in
+                Task {
+                    // a node has been renamed, refresh
+                    await self.refresh()
+                }
+            }.store(in: &cancellables)
+
+        localAssetRepository.observeAsset(nodeID: item.nodeID)
+            .sink { [self] asset in
+                self.asset = asset
+            }.store(in: &cancellables)
+    }
 
     private var fileSize: String? {
         item.fileSize.map { Int($0).formatted(.byteCount(style: .decimal)) }
