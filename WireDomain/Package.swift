@@ -1,5 +1,4 @@
-// swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -49,8 +48,10 @@ let package = Package(
 )
 
 for target in package.targets {
-    target.swiftSettings = [
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("ExistentialAny")
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("StrictMemorySafety"),
     ]
 }
