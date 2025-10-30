@@ -76,11 +76,24 @@ final class RestAPI: Sendable {
             sortField: Constants.sortedBy
         )
 
-        let collection = try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration())
-        let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
-        let nextOffset = collection.pagination?.nextOffset
+        do {
+            let collection = try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration())
+            let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
+            let nextOffset = collection.pagination?.nextOffset
 
-        return (nodes: nodes, nextOffset: nextOffset)
+            return (nodes: nodes, nextOffset: nextOffset)
+        } catch let sdkError as CellsSDK.ErrorResponse {
+            switch sdkError {
+            case let .error(_, _, _, error):
+                if let urlError = error as? URLError, urlError.code == .cancelled {
+                    throw CancellationError()
+                } else {
+                    throw sdkError
+                }
+            }
+        } catch {
+            throw error
+        }
     }
 
     /// Deletes nodes by their `UUID`s.

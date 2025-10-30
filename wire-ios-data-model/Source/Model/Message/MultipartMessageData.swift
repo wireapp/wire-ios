@@ -22,11 +22,27 @@ import GenericMessageProtocol
 // TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
 public final class MultipartMessageData: NSObject {
 
+    public enum Metadata {
+
+        /// Image metadata, containing width and height in pixels.
+        case image(width: Int?, height: Int?)
+
+        /// Video metadata, containing width and height in pixels, and duration in milliseconds.
+        case video(width: Int?, height: Int?, duration: Int?)
+
+        /// Audio metadata, containing duration in milliseconds and normalized loudness data.
+        ///
+        /// - note: Currently, normalized loudness is not sent.
+        case audio(duration: Int?, normalizedLoudness: Data?)
+
+    }
+
     public struct Attachment {
         public let nodeID: UUID
         public let contentType: String?
         public let initialName: String?
         public let initialSize: Int?
+        public let initialMetadata: Metadata?
     }
 
     public let attachments: [Attachment]
@@ -41,7 +57,33 @@ public final class MultipartMessageData: NSObject {
                 nodeID: nodeID,
                 contentType: asset.hasContentType ? asset.contentType : nil,
                 initialName: asset.hasInitialName ? URL(string: asset.initialName)?.lastPathComponent : nil,
-                initialSize: asset.hasInitialSize ? Int(attachment.cellAsset.initialSize) : nil
+                initialSize: asset.hasInitialSize ? Int(attachment.cellAsset.initialSize) : nil,
+                initialMetadata: asset.initialMetaData?.metadata
+            )
+        }
+    }
+
+}
+
+private extension CellAsset.OneOf_InitialMetaData {
+
+    var metadata: MultipartMessageData.Metadata {
+        switch self {
+        case let .image(image):
+            .image(
+                width: image.hasWidth ? Int(image.width) : nil,
+                height: image.hasHeight ? Int(image.height) : nil
+            )
+        case let .video(video):
+            .video(
+                width: video.hasWidth ? Int(video.width) : nil,
+                height: video.hasHeight ? Int(video.height) : nil,
+                duration: video.hasDurationInMillis ? Int(video.durationInMillis) : nil
+            )
+        case let .audio(audio):
+            .audio(
+                duration: audio.hasDurationInMillis ? Int(audio.durationInMillis) : nil,
+                normalizedLoudness: audio.hasNormalizedLoudness ? audio.normalizedLoudness : nil
             )
         }
     }

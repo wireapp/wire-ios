@@ -769,8 +769,8 @@ final class ConversationInputBarViewController: UIViewController,
             let conversation = conversation as? ZMConversation
         else { return }
 
-        presentMLSPrivacyWarningIfNeeded {
-            self.showGiphy(for: conversation)
+        presentMLSPrivacyWarningIfNeeded { [weak self] in
+            self?.showGiphy(for: conversation)
         }
     }
 
@@ -783,7 +783,6 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func showGiphy(for conversation: ZMConversation) {
-        inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(
             searchTerm: "",
             conversation: conversation,
@@ -1127,7 +1126,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func addAttachmentsCarousel() {
-        guard useWireCells() else { return }
+        guard conversation.isCellsEnabled else { return }
 
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(

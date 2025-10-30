@@ -51,6 +51,8 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		065CDA952E9E58B90080799B /* WireCallingAssembly in Frameworks */ = {isa = PBXBuildFile; productRef = 065CDA942E9E58B90080799B /* WireCallingAssembly */; };
+		06EF6B552E8EBEF200A131A7 /* WireCallingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 06EF6B542E8EBEF200A131A7 /* WireCallingUI */; };
 		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
 		3431F08B2E795BD0007BA692 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3431F08A2E795BD0007BA692 /* WireNetwork */; };
 		3438C5592E5C518900D6FB5C /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3438C5582E5C518900D6FB5C /* WireNetwork */; };
@@ -590,6 +592,7 @@
 				ConversationCell/BurstTimestampSenderMessageCellDescriptionTests.swift,
 				ConversationCell/CompositeMessageCellTests.swift,
 				ConversationCell/ConversationChannelHistoryAvailableCellSnapshotTests.swift,
+				ConversationCell/ConversationFileCollaborationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationRenamedCellTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
@@ -603,6 +606,7 @@
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
 				ConversationDetail/ConversationDetailsTests.swift,
+				ConversationDetail/GroupDetailsFileCollaborationCellTests.swift,
 				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,
@@ -947,11 +951,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				065CDA952E9E58B90080799B /* WireCallingAssembly in Frameworks */,
 				C9954F8E2E38D08D00A5EB01 /* WireMessagingDomain in Frameworks */,
 				0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */,
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
 				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
+				06EF6B552E8EBEF200A131A7 /* WireCallingUI in Frameworks */,
 				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
 				CBE5BB862E2D4A9200AC731F /* WireMessagingAssembly in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
@@ -1399,6 +1405,8 @@
 				34DC44AC2E01C1E6004D5DD5 /* WireNetwork */,
 				CBE5BB852E2D4A9200AC731F /* WireMessagingAssembly */,
 				C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */,
+				06EF6B542E8EBEF200A131A7 /* WireCallingUI */,
+				065CDA942E9E58B90080799B /* WireCallingAssembly */,
 				76EF748D2E9E6366006A1579 /* WireLocators */,
 				5972B0DA2E9EABC8005E6417 /* WireUtilitiesPackage */,
 			);
@@ -2846,6 +2854,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
 			productName = AppAuthCore;
+		};
+		065CDA942E9E58B90080799B /* WireCallingAssembly */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingAssembly;
+		};
+		06EF6B542E8EBEF200A131A7 /* WireCallingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCallingUI;
 		};
 		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
 			isa = XCSwiftPackageProductDependency;

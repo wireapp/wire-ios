@@ -395,8 +395,10 @@ extension LocalNotificationDispatcherTests {
                 "time": Date().transportString(),
                 "data": [
                     "user_ids": [self.selfUser.remoteIdentifier.transportString()],
-                    "users": ["id": self.selfUser.remoteIdentifier.transportString(),
-                              "conversation_role": "wire_admin"]
+                    "users": [
+                        "id": self.selfUser.remoteIdentifier.transportString(),
+                        "conversation_role": "wire_admin"
+                    ]
                 ],
                 "type": "conversation.member-join"
             ]
@@ -426,8 +428,10 @@ extension LocalNotificationDispatcherTests {
                 "time": Date().transportString(),
                 "data": [
                     "user_ids": [self.user2.remoteIdentifier.transportString()],
-                    "users": ["id": self.user2.remoteIdentifier.transportString(),
-                              "conversation_role": "wire_admin"]
+                    "users": [
+                        "id": self.user2.remoteIdentifier.transportString(),
+                        "conversation_role": "wire_admin"
+                    ]
                 ],
                 "type": "conversation.member-join"
             ]

@@ -75,6 +75,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil,
+            wireMeetingsFactory: MockWireMeetingsFactoryProtocol(),
             wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
         sut = .init(

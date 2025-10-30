@@ -16,4 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import UniformTypeIdentifiers
+
+package enum WireCellsFileCategory {
+
+    case image
+    case video
+    case audio
+    case document
+
+    package init(_ fileType: UTType?) {
+        guard let fileType else {
+            self = .document
+            return
+        }
+
+        if fileType.conforms(to: .image) {
+            self = .image
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio
+        } else if fileType.conforms(to: .audiovisualContent) {
+            self = .video
+        } else {
+            self = .document
+        }
+    }
+
+}

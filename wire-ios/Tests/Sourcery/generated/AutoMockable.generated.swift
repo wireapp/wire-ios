@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.3.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -275,15 +275,15 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
+    var build_MockMethod: (() async -> UIViewController)?
     var build_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
@@ -1693,6 +1693,33 @@ class MockTrackingInterface: TrackingInterface {
         }
 
         try await mock()
+    }
+
+}
+
+class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeMeetingsView
+
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
+
+    @MainActor
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
+
+        if let mock = makeMeetingsView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsView_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeMeetingsView`")
+        }
     }
 
 }

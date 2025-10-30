@@ -48,10 +48,12 @@ public final class ClientMessageRequestFactory: NSObject {
         switch apiVersion {
 
         case .v0:
-            path = "/" + ["conversations",
-                          conversationId.transportString(),
-                          "otr",
-                          "messages"].joined(separator: "/")
+            path = "/" + [
+                "conversations",
+                conversationId.transportString(),
+                "otr",
+                "messages"
+            ].joined(separator: "/")
 
             // In wire protos this is annotated as deprecated, and recommended to use QualifiedNewOtrMessage
             // So, not sure if we should use it with v0 on non-federated endpoints

@@ -422,11 +422,11 @@ final class ConversationListViewModel: NSObject {
         if indexPath(for: itemToSelect) == nil {
             guard let conversation = itemToSelect as? ZMConversation else { return false }
 
-            ZMUserSession.shared()?.enqueue({
+            ZMUserSession.shared()?.enqueue {
                 conversation.isArchived = false
-            }, completionHandler: {
+            } completionHandler: {
                 self.internalSelect(itemToSelect: itemToSelect)
-            })
+            }
         } else {
             internalSelect(itemToSelect: itemToSelect)
         }

@@ -24,6 +24,11 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 
 struct WireCellsAttachmentsPreviewItemView: View {
+
+    private enum Constants {
+        static let maxImageHeight: Double = 400
+    }
+
     @StateObject private var viewModel: WireCellsAttachmentsPreviewItemViewModel
 
     init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewItemViewModel) {
@@ -31,15 +36,84 @@ struct WireCellsAttachmentsPreviewItemView: View {
     }
 
     var body: some View {
-        WireCellsDocumentAttachmentPreview(
-            headerIcon: Image(viewModel.icon),
-            headerText: viewModel.headerText,
-            labelText: viewModel.fileName,
-            progress: viewModel.progress,
-            isError: viewModel.isError,
-        )
-        .frame(height: 74)
-        .frame(idealWidth: 288)
+        HStack {
+            switch (viewModel.fileCategory, viewModel.displayStyle) {
+            case (.image, .small):
+                WireCellsImageConversationAttachmentPreview(
+                    thumbnailURL: viewModel.imagePreviewURL,
+                    progress: viewModel.progress,
+                    isAssetDownloadError: viewModel.isAssetDownloadError,
+                    canShowNoPreviewMessage: false
+                )
+                .frame(width: 74, height: 74)
+            case (.image, .large):
+                WireCellsImageConversationAttachmentPreview(
+                    thumbnailURL: viewModel.imagePreviewURL,
+                    progress: viewModel.progress,
+                    isAssetDownloadError: viewModel.isAssetDownloadError,
+                    canShowNoPreviewMessage: true
+                )
+                .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
+                .frame(
+                    idealWidth: min(
+                        288,
+                        viewModel.previewWidth ?? .infinity,
+                        Constants.maxImageHeight * viewModel.previewAspectRatio
+                    )
+                )
+            case (.video, .small):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isAssetDownloadError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case (.video, .large):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isAssetDownloadError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case (.document, .small):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isAssetDownloadError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case (.document, .large):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isAssetDownloadError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            case (.audio, .small), (.audio, .large):
+                WireCellsDocumentAttachmentPreview(
+                    headerIcon: Image(viewModel.icon),
+                    headerText: viewModel.headerText,
+                    labelText: viewModel.fileName,
+                    progress: viewModel.progress,
+                    isError: viewModel.isAssetDownloadError,
+                )
+                .frame(height: 74)
+                .frame(idealWidth: 288)
+            }
+        }
+        .contentShape(Rectangle()) // Constrains the tappable content area of the view.
         .onAppear(perform: refresh)
         .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)

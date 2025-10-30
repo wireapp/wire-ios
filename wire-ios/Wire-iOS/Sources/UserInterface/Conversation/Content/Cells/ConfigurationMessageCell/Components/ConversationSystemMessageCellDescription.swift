@@ -187,11 +187,16 @@ enum ConversationSystemMessageCellDescription {
                 )
             }
             if conversation.isOpenGroup {
-                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
+                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
+                    isWireCellsEnabled: conversation.isCellsEnabled
+                )
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
             if conversation.isCellsEnabled {
+                let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
+                cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
+
                 let timerCell = ConversationMessageTimerSystemMessageCellDescription(
                     state: .unavailable
                 )

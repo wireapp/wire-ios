@@ -23,7 +23,7 @@ import WireDataModel
 
 public protocol AppendKnockMessageUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(in conversation: Conversation) throws
+    func invoke(in conversation: some MessageAppendableConversation) throws
 }
 
 public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {

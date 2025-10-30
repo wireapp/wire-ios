@@ -38,7 +38,7 @@ final class ConversationInputBarSendController: NSObject {
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
-        userSession.enqueue({
+        userSession.enqueue {
             do {
                 let useCase = userSession.makeAppendImageMessageUseCase()
                 try useCase.invoke(
@@ -49,9 +49,9 @@ final class ConversationInputBarSendController: NSObject {
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
+        } completionHandler: {
             completionHandler?()
-        })
+        }
     }
 
     func sendTextMessage(

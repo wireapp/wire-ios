@@ -21,6 +21,7 @@ import Combine
 import SwiftUI
 import UIKit
 import WireAccountImageUI
+import WireCallingAssembly
 import WireCommonComponents
 import WireDesign
 import WireFoundation
@@ -45,7 +46,9 @@ final class ZClientViewController: UIViewController {
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
-        didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
+        didSet {
+            sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
+        }
     }
 
     private(set) var cachedAccountInfo = SidebarAccountInfo() {
@@ -186,6 +189,7 @@ final class ZClientViewController: UIViewController {
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
+    private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
     let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -201,6 +205,7 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
+        wireMeetingsFactory: any WireMeetingsFactoryProtocol,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
@@ -208,6 +213,8 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
+
+        self.wireMeetingsFactory = wireMeetingsFactory
         self.wireMessagingFactory = wireMessagingFactory
 
         super.init(nibName: nil, bundle: nil)
@@ -274,8 +281,15 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells where featureState.isEnabled:
-                    guard mainTabBarController.filesUI == nil else { break }
-                    mainTabBarController.filesUI = wireMessagingFactory.makeFilesBrowserView()
+                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        guard !sidebarViewController.showFiles else { break }
+                        sidebarViewController.showFiles = true
+                        mainTabBarController.filesUI = filesBrowserView
+                    } else {
+                        guard mainTabBarController.filesUI == nil else { break }
+                        mainTabBarController.filesUI = filesBrowserView
+                    }
                 default:
                     break
                 }
@@ -371,6 +385,9 @@ final class ZClientViewController: UIViewController {
 
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
+
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
+        mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
         if userSession.isWireCellsEnabled {
@@ -439,7 +456,8 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let connectUI = UINavigationController(rootViewController: connectBuilder.build())
+            let rootViewController = await connectBuilder.build()
+            let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
@@ -726,7 +744,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) {
+    func openClientListScreen(for user: WireDataModel.UserType) {
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -858,7 +876,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    private func shouldShowNotificationsBadge(user: any UserType) -> Bool {
+    private func shouldShowNotificationsBadge(user: any WireDataModel.UserType) -> Bool {
         !user.isTeamMember && userSession.resolvedBackendMetadata.apiVersion
             .map { $0 >= .v7 } ?? false && !hasSeenSelfProfile
     }

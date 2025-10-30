@@ -289,13 +289,22 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
+            if conversation.isCellsEnabled, let collectionView = collectionViewController.collectionView {
+                let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
+                    conversation: conversation,
+                    collectionView: collectionView
+                )
+                sections.append(selfDeletingMessagesDisabledSectionController)
+            }
+
             if conversation.teamRemoteIdentifier != nil,
                user.canModifyReadReceiptSettings(in: conversation),
-               conversation.messageProtocol != .mls { // TODO: [WPB-16771] Remove when read receipts supported on MLS
+               conversation.messageProtocol != .mls, // TODO: [WPB-16771] Remove when read receipts supported on MLS
+               let collectionView = collectionViewController.collectionView {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
-                    collectionView: collectionViewController.collectionView!,
+                    collectionView: collectionView,
                     presentingViewController: self
                 )
                 sections.append(receiptOptionsSectionController)
@@ -374,7 +383,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
 
-    func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
+    func presentParticipantsDetails(
+        with users: [WireDataModel.UserType],
+        selectedUsers: [WireDataModel.UserType],
+        animated: Bool
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let detailsViewController = GroupParticipantsDetailViewController(
@@ -503,7 +516,7 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
-    func presentDetails(for user: UserType) {
+    func presentDetails(for user: WireDataModel.UserType) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
@@ -518,7 +531,10 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(viewController, animated: true)
     }
 
-    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
+    func presentFullParticipantsList(
+        for users: [WireDataModel.UserType],
+        in conversation: GroupDetailsConversationType
+    ) {
         presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
 

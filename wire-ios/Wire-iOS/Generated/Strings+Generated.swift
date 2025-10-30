@@ -2031,8 +2031,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
-        /// Self-deleting messages are disabled for the conversations with Cells
-        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are disabled for the conversations with Cells")
+        /// Self-deleting messages are off for conversations with Cells
+        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are off for conversations with Cells")
         /// You haven’t used this device for a while. Some messages may not appear here.
         internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
@@ -2359,6 +2359,10 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.federation_termination.participants_removed", p1, fallback: "Plural format key: \"%#@lu_number_of_participants@\"")
           }
         }
+        internal enum FileCollaboration {
+          /// File collaboration (Cells) is on
+          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "File collaboration (Cells) is on")
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
@@ -2579,6 +2583,10 @@ internal enum L10n {
         internal static let inAddressBook = L10n.tr("Localizable", "conversation.connection_view.in_address_book", fallback: "in Contacts")
         /// Please still be careful with who you share sensitive information.
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
+        internal enum WireCells {
+          /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
+          internal static let encryptionInfo = L10n.tr("Localizable", "conversation.connection_view.wire_cells.encryption_info", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.")
+        }
       }
       internal enum Create {
         internal enum Apps {
@@ -3834,6 +3842,14 @@ internal enum L10n {
         /// Verified (Proteus)
         internal static let proteus = L10n.tr("Localizable", "group_details.conversation_verification_status.proteus", fallback: "Verified (Proteus)")
       }
+      internal enum FileCollaborationCell {
+        /// Permanently on for this conversation
+        internal static let footer = L10n.tr("Localizable", "group_details.file_collaboration_cell.footer", fallback: "Permanently on for this conversation")
+        /// On
+        internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
+        /// File collaboration (Cells)
+        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "File collaboration (Cells)")
+      }
       internal enum GuestOptionsCell {
         /// Off
         internal static let disabled = L10n.tr("Localizable", "group_details.guest_options_cell.disabled", fallback: "Off")
@@ -3865,6 +3881,10 @@ internal enum L10n {
       internal enum TimeoutOptionsCell {
         /// Self-deleting messages
         internal static let title = L10n.tr("Localizable", "group_details.timeout_options_cell.title", fallback: "Self-deleting messages")
+      }
+      internal enum TimeoutOptionsDisabled {
+        /// The feature is not available for conversations with Cells.
+        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with Cells.")
       }
     }
     internal enum GuestRoom {
