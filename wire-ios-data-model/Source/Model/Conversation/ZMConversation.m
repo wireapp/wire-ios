@@ -584,6 +584,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMMessage *lastMessageCanBeMarkedUnread = [self lastMessageCanBeMarkedUnread];
     
     if (lastMessageCanBeMarkedUnread == nil) {
+TODO: get rid of everything around ZM(S)Log, in production code log to WireLogger, in tests use printing to console, make sure that tests still fail (see hook)
         ZMLogError(@"Cannot mark as read: no message to mark in %@", self);
         return;
     }
