@@ -919,7 +919,7 @@ public final class MLSService: MLSServiceInterface {
     public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
         guard let context else { return }
 
-        let conversationInfo = fetchConversationInfo(with: groupID, in: context)
+        let conversationInfo = await fetchConversationInfo(with: groupID, in: context)
 
         guard let conversationInfo else {
             throw MLSServiceError.conversationNotFound
@@ -1023,7 +1023,7 @@ public final class MLSService: MLSServiceInterface {
                 try await mlsSyncDelegate?.recoverWithIncrementalSync()
             }
 
-            guard let conversationInfo = fetchConversationInfo(
+            guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
                 in: context
             ) else {
@@ -1093,7 +1093,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
 
-            guard let conversationInfo = fetchConversationInfo(
+            guard let conversationInfo = await fetchConversationInfo(
                 with: parentGroupID,
                 in: context
             ) else {
@@ -1273,7 +1273,7 @@ public final class MLSService: MLSServiceInterface {
 
             guard let context else { return }
 
-            guard let parentConversationInfo = fetchConversationInfo(
+            guard let parentConversationInfo = await fetchConversationInfo(
                 with: parentID,
                 in: context
             ) else {
@@ -1314,14 +1314,15 @@ public final class MLSService: MLSServiceInterface {
     private func fetchConversationInfo(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID)? {
+    ) async -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID, epoch: UInt64)?  {
 
         var conversation: ZMConversation?
         var qualifiedID: QualifiedID?
-
-        context.performAndWait {
+        var epoch: UInt64 = 0
+        await context.perform {
             conversation = ZMConversation.fetch(with: groupID, in: context)
             qualifiedID = conversation?.qualifiedID
+            epoch = conversation?.epoch ?? 0
         }
 
         guard
@@ -1331,7 +1332,7 @@ public final class MLSService: MLSServiceInterface {
             return nil
         }
 
-        return (conversation, qualifiedID, groupID)
+        return (conversation, qualifiedID, groupID, epoch)
     }
 
     // MARK: - Encrypt message
@@ -1680,12 +1681,9 @@ public final class MLSService: MLSServiceInterface {
                     "Handling reset broken MLS conversation recovery strategy...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
-                var epoch: Int64 = 0
-                if let context, let conversation = fetchConversationInfo(
-                    with: groupID,
-                    in: context
-                )?.conversation {
-                    epoch = Int64(conversation.epoch)
+                var epoch: UInt64 = 0
+                if let context {
+                    epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
                 brokenGroupIDs.remove(groupID)
