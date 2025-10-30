@@ -149,7 +149,7 @@ final class UserConnectionView: UIView, Copyable {
         if let viewer = SelfUser.provider?.providedSelfUser {
             if viewer.hasTeam {
                 if user.hasTeam {
-                    let isSameTeam = user.isOnSameTeam(otherUser: viewer) 
+                    let isSameTeam = user.isOnSameTeam(otherUser: viewer)
                     guestIndicator.isHidden = isSameTeam
                 } else {
                     guestIndicator.isHidden = false
