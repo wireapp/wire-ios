@@ -29,7 +29,7 @@ import WireMessagingDomain
 final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
-    private let item: FilesViewItem
+    let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem) async -> Void
     let onEditTagsSelected: () -> Void

@@ -44,16 +44,43 @@ struct FilesViewItemView: View {
                     .frame(width: 56, height: imageHeight)
                     .padding(.horizontal, 4)
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
                         .wireTextStyle(.body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                    Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    HStack(spacing: 5) {
+                        if let firstTag = viewModel.item.tags.first {
+                            Text(firstTag)
+                                .wireTextStyle(.subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 5)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(ColorTheme.Base.primaryVariant.color)
+                                }
+                        }
+                        
+                        let numberOfTags = viewModel.item.tags.count
+                        
+                        if numberOfTags > 1 {
+                            Text("+\(numberOfTags - 1)")
+                                .wireTextStyle(.subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .padding(.trailing, 2)
+                        }
+                        
+                        Text(viewModel.subtitle ?? "")
+                            .wireTextStyle(.subline1)
+                            .lineLimit(1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
                 }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
                 Spacer()
@@ -144,6 +171,10 @@ struct FilesViewItemView: View {
 }
 
 #Preview {
-    FilesViewItemView(viewModel: .preview())
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    VStack(spacing: 0) {
+        FilesViewItemView(viewModel: .preview())
+        FilesViewItemView(viewModel: .preview(tags: ["urgent"]))
+        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+    }
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

@@ -41,6 +41,9 @@ struct FilesViewItem: Identifiable, Hashable {
 
     /// The icon representing the file type.
     let icon: FileIcon
+    
+    /// The tags that users have added for that file.
+    let tags: [String]
 }
 
 @MainActor
@@ -273,7 +276,8 @@ package final class FilesViewModel: ObservableObject {
                 icon: .make(
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
-                )
+                ),
+                tags: [] //TODO: map tags
             )
         }
 

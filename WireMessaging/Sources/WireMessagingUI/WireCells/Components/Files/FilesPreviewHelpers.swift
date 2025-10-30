@@ -55,14 +55,15 @@ extension FilesViewModel {
 extension FilesItemViewModel {
 
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
-    static func preview() -> FilesItemViewModel {
+    static func preview(tags: [String] = []) -> FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
                 filename: "foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
-                icon: .image
+                icon: .image,
+                tags: tags
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },

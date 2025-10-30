@@ -245,7 +245,8 @@ struct TagsEditView: View {
         filename: "Hello World",
         ownedBy: nil,
         modifiedAt: nil,
-        icon: .document
+        icon: .document,
+        tags: []
     )
     
     TagsEditView(fileItem: item)
