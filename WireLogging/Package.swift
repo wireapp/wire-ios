@@ -8,28 +8,35 @@ let package = Package(
     products: [
         .library(name: "WireLogging", targets: ["WireLogging"]),
         .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"]),
-        .library(name: "WireLegacyLogging", targets: ["WireLegacyLogging"])
+        .library(name: "WireLegacyLogging", targets: ["WireLegacyLogging"]),
+        .library(name: "WireLegacyLoggingSupport", targets: ["WireLegacyLoggingSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(
-            name: "WireLogging",
-            dependencies: ["WireLegacyLogging"]
-        ),
+        .target(name: "WireLogging"),
         .target(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
         .testTarget(
             name: "WireLoggingTests",
             dependencies: ["WireLogging", "WireLoggingSupport"]
         ),
 
-        .target(name: "WireLegacyLogging")
+        .target(name: "WireLegacyLogging"),
+        .target(
+            name: "WireLegacyLoggingSupport",
+            dependencies: ["WireLegacyLogging"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        )
     ]
 )
 

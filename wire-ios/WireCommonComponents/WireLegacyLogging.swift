@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 import WireLegacyLogging
 
-typealias FileLoggerDestination = WireLegacyLogging.FileLoggerDestination
 public typealias LogAttributes = WireLegacyLogging.LogAttributes
 public typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
-typealias LoggerProtocol = WireLegacyLogging.LoggerProtocol
 public typealias LogConvertible = WireLegacyLogging.LogConvertible
+public typealias LogTarget = WireLegacyLogging.LogTarget
+
+typealias LoggerProtocol = WireLegacyLogging.LoggerProtocol
 typealias SystemLogger = WireLegacyLogging.SystemLogger
 typealias WireLogger = WireLegacyLogging.WireLogger

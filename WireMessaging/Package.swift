@@ -29,7 +29,8 @@ let package = Package(
             dependencies: [
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),
         .target(
@@ -38,6 +39,7 @@ let package = Package(
                 "WireData",
                 "WireMessagingDomain",
                 "WireLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 .product(name: "AWSS3", package: "aws-sdk-swift"),
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 .product(name: "Collections", package: "swift-collections")

@@ -64,6 +64,7 @@ let package = Package(
             name: "WireAuthenticationUI",
             dependencies: [
                 "WireLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 "WireFoundation",
                 "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),

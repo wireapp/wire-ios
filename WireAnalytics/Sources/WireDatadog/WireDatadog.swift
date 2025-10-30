@@ -26,7 +26,7 @@ import DatadogLogs
 import DatadogRUM
 import DatadogTrace
 import UIKit
-
+x
 public final class WireDatadog {
 
     private let applicationID: String

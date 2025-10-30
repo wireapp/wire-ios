@@ -22,6 +22,7 @@ let package = Package(
             dependencies: [
                 "WireFoundation",
                 "WireLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),
