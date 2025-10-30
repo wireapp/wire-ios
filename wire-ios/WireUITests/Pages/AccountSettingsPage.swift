@@ -115,6 +115,9 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
+        if app.onPad() {
+            return try SettingsPage()
+        }
         backToSettingsButton.tap()
         return try SettingsPage()
     }

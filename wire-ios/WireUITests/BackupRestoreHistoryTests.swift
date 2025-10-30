@@ -79,7 +79,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         let backupFileName = try XCTUnwrap(saveBackupFileBottomSheetPage.getBackupFileName())
 
         _ = try saveBackupFileBottomSheetPage.tapSaveToFilesOnBottomSheet()
-            .tapSaveButtonOnMyiPhonePage()
+            .tapSaveButton()
             .goBackToAccountPage()
             .logout()
             .enterPassword(teamOwner.password)

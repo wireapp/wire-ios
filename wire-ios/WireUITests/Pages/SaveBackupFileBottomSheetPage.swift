@@ -40,9 +40,9 @@ class SaveBackupFileBottomSheetPage: PageModel {
         return element.exists ? element.label : nil
     }
 
-    func tapSaveToFilesOnBottomSheet() throws -> OnMyiPhonePage {
+    func tapSaveToFilesOnBottomSheet() throws -> OnMyDevicePage {
         saveToFilesOption.tap()
-        return try OnMyiPhonePage()
+        return try OnMyDevicePage()
     }
 
 }

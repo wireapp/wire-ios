@@ -18,30 +18,19 @@
 
 import XCTest
 
-class OnMyiPhonePage: PageModel {
+class OnMyDevicePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        onMyiPhonePageLabel
+        onMyDevicePageLabel
     }
 
-    var onMyiPhonePageLabel: XCUIElement {
-        app.staticTexts["On My iPhone"]
+    var onMyDevicePageLabel: XCUIElement {
+        let expected = UIDevice.current.userInterfaceIdiom == .pad ? "On My iPad" : "On My iPhone"
+        return app.staticTexts[expected]
     }
 
     var saveButton: XCUIElement {
         app.buttons["Save"]
-    }
-
-    var searchField: XCUIElement {
-        app.searchFields["Search"]
-    }
-
-    var moreButton: XCUIElement {
-        app.buttons["More"]
-    }
-
-    var sortByDateButton: XCUIElement {
-        app.buttons["Date"]
     }
 
     var backupFile: (String) -> XCUIElement {
@@ -51,14 +40,12 @@ class OnMyiPhonePage: PageModel {
         }
     }
 
-    func tapSaveButtonOnMyiPhonePage() throws -> BackupOrRestorePage {
+    func tapSaveButton() throws -> BackupOrRestorePage {
         saveButton.tap()
         return try BackupOrRestorePage()
     }
 
     func selectBackupFile(withName name: String) throws -> SetPasswordPage {
-        moreButton.tap()
-        sortByDateButton.tap()
         backupFile(name).tap()
         return try SetPasswordPage()
     }

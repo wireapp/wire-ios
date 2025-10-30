@@ -37,12 +37,9 @@ extension XCUIApplication {
     }
 
     @discardableResult
-    func iPadOnlyFlow(_ elements: [XCUIElement], action: (XCUIElement) -> Void) -> Bool {
-        var didActionPerformed = false
-        for el in elements where el.exists {
-            action(el)
-            didActionPerformed = true
-        }
-        return didActionPerformed
+    func onPad(_ block: (() -> Void)? = nil) -> Bool {
+        guard UIDevice.current.userInterfaceIdiom == .pad else { return false }
+        block?()
+        return true
     }
 }

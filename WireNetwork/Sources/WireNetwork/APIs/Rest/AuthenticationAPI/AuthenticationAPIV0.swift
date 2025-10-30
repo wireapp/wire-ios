@@ -213,8 +213,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         let (data, response) = try await networkService.executeRequest(request)
 
         guard
-            let responseURL = response.url,
-            let responseHeaders = response.allHeaderFields as? [String: String]
+            response.allHeaderFields is [String: String]
         else {
             throw AuthenticationAPIError.invalidResponse
         }
@@ -239,7 +238,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (_, response) = try await networkService.executeRequest(request)
 
         guard
             let responseURL = response.url,
@@ -271,9 +270,9 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (_, _) = try await networkService.executeRequest(request)
 
-        try ResponseParser()
+        _ = ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
     }

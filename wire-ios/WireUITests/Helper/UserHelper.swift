@@ -81,7 +81,7 @@ class UserHelper {
             email: user.email,
             password: user.password
         )
-        cookieStorage.cookies = cookies
+        try await cookieStorage.storeCookies(cookies)
 
         // Get activation code
         let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
@@ -306,8 +306,8 @@ enum FilterConversationsByCriteria {
     case conversationType(ConversationType?)
 }
 
-private final class MockCookieStorage: CookieStorageProtocol {
-    var cookies: [HTTPCookie]
+private actor MockCookieStorage: CookieStorageProtocol {
+    private var cookies: [HTTPCookie]
 
     init() {
         self.cookies = []
