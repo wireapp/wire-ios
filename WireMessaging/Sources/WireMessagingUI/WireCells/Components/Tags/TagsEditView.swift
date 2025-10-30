@@ -56,6 +56,7 @@ struct TagsEditView: View {
                             Text(L10n.Localizable.General.save)
                                 .bold()
                         }
+                        .disabled(!viewModel.hasChanges)
                     }
                 }
                 .background(ColorTheme.Backgrounds.background.color)
@@ -246,7 +247,7 @@ struct TagsEditView: View {
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,
-        tags: []
+        tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
     )
     
     TagsEditView(fileItem: item)

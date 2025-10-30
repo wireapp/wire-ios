@@ -30,14 +30,7 @@ extension TagsEditView {
         //TODO: replace by real server data
         static private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
         
-        //TODO: initializing with mock data for now.
-        @Published var currentTags: [String] = ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
-        
-        var suggestedTags: [String] {
-            Self.serverTags.filter { tag in
-                !currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
-            }
-        }
+        @Published var currentTags: [String] = []
         
         enum ValidationState {
             case valid
@@ -48,6 +41,13 @@ extension TagsEditView {
         
         init(fileItem: FilesViewItem) {
             self.fileItem = fileItem
+            self.currentTags = fileItem.tags
+        }
+        
+        var suggestedTags: [String] {
+            Self.serverTags.filter { tag in
+                !currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+            }
         }
         
         var validationState: ValidationState {
@@ -78,6 +78,10 @@ extension TagsEditView {
             default:
                 return nil
             }
+        }
+        
+        var hasChanges: Bool {
+            Set(fileItem.tags) != Set(currentTags)
         }
         
         func addTag(_ tag: String) {
