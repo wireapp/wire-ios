@@ -272,10 +272,10 @@
 		599EA3D72C247A6B009319D4 /* FilterableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D62C247A6B009319D4 /* FilterableConversation.swift */; };
 		599EA3D92C247ABF009319D4 /* ZMFilterableConversationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D82C247ABF009319D4 /* ZMFilterableConversationAdapter.swift */; };
 		599EA3DB2C2485AE009319D4 /* FilterableConversationParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3DA2C2485AE009319D4 /* FilterableConversationParticipant.swift */; };
-		59A09F092EB3BA3300CE0458 /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A09F082EB3BA3300CE0458 /* WireLegacyLogging.swift */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
 		59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5B2C89CBBD00EA7999 /* WireFoundation */; };
 		59BAE1102C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE10F2C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift */; };
+		59BAE29D2EB3D99000CA529B /* WireLegacyLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE29C2EB3D99000CA529B /* WireLegacyLogger.swift */; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D398D02D552573001C9C5F /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59D398CF2D552573001C9C5F /* WireTestingPackage */; };
@@ -1039,9 +1039,9 @@
 		599EA3D62C247A6B009319D4 /* FilterableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterableConversation.swift; sourceTree = "<group>"; };
 		599EA3D82C247ABF009319D4 /* ZMFilterableConversationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMFilterableConversationAdapter.swift; sourceTree = "<group>"; };
 		599EA3DA2C2485AE009319D4 /* FilterableConversationParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterableConversationParticipant.swift; sourceTree = "<group>"; };
-		59A09F082EB3BA3300CE0458 /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolTests.swift; sourceTree = "<group>"; };
 		59BAE10F2C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterConversationsUseCaseTests.swift; sourceTree = "<group>"; };
+		59BAE29C2EB3D99000CA529B /* WireLegacyLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogger.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E1081E2E99149200D8BA62 /* store2-130-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-130-0.wiredatabase"; sourceTree = "<group>"; };
 		59EC73F62C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+executeFetchRequestOrAssert.h"; sourceTree = "<group>"; };
@@ -2591,6 +2591,7 @@
 		F9A706421CAEE01D00C2F5FE /* Utilis */ = {
 			isa = PBXGroup;
 			children = (
+				59BAE29C2EB3D99000CA529B /* WireLegacyLogger.swift */,
 				EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */,
 				F963E9671D9ADD5A00098AD3 /* Protos */,
 				F9331C851CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h */,
@@ -3006,7 +3007,6 @@
 				F9C9A7371CAE6D890039E10C /* ConversationList */,
 				599EA3D12C246897009319D4 /* ConversationSearch */,
 				F9C9A6A01CAD7C7F0039E10C /* Public */,
-				59A09F082EB3BA3300CE0458 /* WireLegacyLogging.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -3562,7 +3562,6 @@
 				F9A706AE1CAEE01D00C2F5FE /* SetSnapshot.swift in Sources */,
 				162A81DD202DA4BC00F6200C /* AssetCache.swift in Sources */,
 				EE9AEC822BD1570E00F7853F /* WireDataModel.docc in Sources */,
-				59A09F092EB3BA3300CE0458 /* WireLegacyLogging.swift in Sources */,
 				599EA3D92C247ABF009319D4 /* ZMFilterableConversationAdapter.swift in Sources */,
 				638805652410FE920043B641 /* ButtonState.swift in Sources */,
 				63B1335A29A503D100009D84 /* MLSActionExecutor.swift in Sources */,
@@ -3856,6 +3855,7 @@
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
+				59BAE29D2EB3D99000CA529B /* WireLegacyLogger.swift in Sources */,
 				5473CC731E14245C00814C03 /* NSManagedObjectContext+Debugging.swift in Sources */,
 				BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */,
 				CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */,
