@@ -22,7 +22,7 @@ let package = Package(
         .package(path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
-        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0"),
     ],
     targets: [
         .target(

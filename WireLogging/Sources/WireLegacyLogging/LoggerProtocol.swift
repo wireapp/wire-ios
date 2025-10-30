@@ -18,8 +18,7 @@
 
 public protocol LoggerProtocol {
 
-    func debug(_ message: any LogConvertible)
-    func debug(_ message: any LogConvertible, attributes: LogAttributes)
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...)
     func info(_ message: any LogConvertible, attributes: LogAttributes...)
     func notice(_ message: any LogConvertible, attributes: LogAttributes...)
     func warn(_ message: any LogConvertible, attributes: LogAttributes...)
@@ -28,13 +27,10 @@ public protocol LoggerProtocol {
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
+
 }
 
 public extension LoggerProtocol {
-
-    func debug(_ message: any LogConvertible) {
-        debug(message, attributes: [:])
-    }
 
     func attributesDescription(from attributes: LogAttributes) -> String {
         var logAttributes = attributes

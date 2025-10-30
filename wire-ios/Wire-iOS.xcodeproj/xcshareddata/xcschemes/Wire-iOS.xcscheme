@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8F42C537199244A700288E4D"
-               BuildableName = "Wire.app"
+               BuildableName = ".app"
                BlueprintName = "Wire-iOS"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = "Wire.app"
+            BuildableName = ".app"
             BlueprintName = "Wire-iOS"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
@@ -59,7 +59,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BACB88501AF7C48900DDCDB0"
-               BuildableName = "Wire-iOS-Tests.xctest"
+               BuildableName = ".xctest"
                BlueprintName = "Wire-iOS-Tests"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
@@ -82,7 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = "Wire.app"
+            BuildableName = ".app"
             BlueprintName = "Wire-iOS"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
@@ -207,7 +207,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = "Wire.app"
+            BuildableName = ".app"
             BlueprintName = "Wire-iOS"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>

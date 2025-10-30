@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F1FEA14921DCEB1700790A54"
-               BuildableName = "WireCommonComponents.framework"
+               BuildableName = ".framework"
                BlueprintName = "WireCommonComponents"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F1FEA14921DCEB1700790A54"
-            BuildableName = "WireCommonComponents.framework"
+            BuildableName = ".framework"
             BlueprintName = "WireCommonComponents"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>

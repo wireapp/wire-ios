@@ -50,14 +50,20 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
+
 }
 
 public extension LogAttributes {
+
     static let safePublic = [LogAttributesKey.public: true]
+
     /// PushChannelV2 (consumable notications sync)
     static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
+
     /// PushChannel V1 (regular sync)
     static let pushChannelV1 = [LogAttributesKey.pushChannelVersion: "v1"]
+
     /// legacy pushChannel (Starscream)
     static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
+
 }
