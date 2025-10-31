@@ -332,6 +332,7 @@
 
 "conversation.connection_view.in_address_book" = "in Kontakte";
 "conversation.connection_view.encryption_info" = "Kommunikation in Wire ist immer Ende-zu-Ende verschlüsselt. Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.";
+"conversation.connection_view.wire_cells.encryption_info" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.";
 "conversation.connection_view.sensitive_information_warning" = "Bitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
 
 "conversation.input_bar.shortcut.send" = "Nachricht senden";
@@ -368,7 +369,7 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (Standard)";
-"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.title" = "Dateiverwaltung";
 "conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien zu verwalten. Verwenden Sie Ordner, Tags und Filter, um effizienter zu arbeiten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
@@ -604,7 +605,7 @@
 "content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
 "content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+"content.system.message_timer_unavailable" = "Selbstlöschende Nachrichten sind für Unterhaltungen mit Cells deaktiviert";
 
 "content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
 "content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
@@ -617,6 +618,8 @@
 
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
+
+"content.system.file_collaboration.enabled" = "Dateiverwaltung (Cells) aktiv";
 
 // read receipt
 
@@ -668,7 +671,7 @@
 "content.system.session_reset.self" = " Sie konnten einige Ihrer Nachrichten nicht entschlüsseln, haben das Problem aber gelöst. Dies betraf alle Unterhaltungen.";
 
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
-"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
+"content.system.unknown_message_received.body" = "Sie haben eine Nachricht erhalten, die nicht angezeigt werden kann. Möglicherweise verwenden Sie eine ältere Version von Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";
@@ -1084,6 +1087,10 @@
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "group_details.access_options_cell.title" = "Channel-Zugang";
 "group_details.channel_history_options_cell.title" = "Gesprächsverlauf";
+"group_details.file_collaboration_cell.title" = "Dateiverwaltung (Cells)";
+"group_details.file_collaboration_cell.subtitle" = "An";
+"group_details.file_collaboration_cell.footer" = "Dauerhaft aktiv für diese Unterhaltung";
+"group_details.timeout_options_disabled.footer" = "Die Funktion ist für Unterhaltungen mit Cells nicht verfügbar.";
 
 "group_details.message_protocol.section_tile" = "Details zum Protokoll";
 "group_details.message_protocol.title" = "Protokoll";
