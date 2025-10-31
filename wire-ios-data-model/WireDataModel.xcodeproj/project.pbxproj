@@ -249,6 +249,7 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
+		594471C52EB4D92200A77D75 /* WireLegacyLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 594471C42EB4D92200A77D75 /* WireLegacyLoggingSupport */; };
 		5947923D2EA7A576006BEC0A /* store2-131-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 5947923C2EA7A576006BEC0A /* store2-131-0.wiredatabase */; };
 		59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 59506A872E2E61BD0051B07A /* SwiftProtobuf */; };
 		5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0342E2EA1070051B07A /* GenericMessageProtocol */; };
@@ -1677,6 +1678,7 @@
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
 				0176B8812E7AE25B005D448B /* WireLogging in Frameworks */,
 				5950B0372E2EA1220051B07A /* GenericMessageProtocol in Frameworks */,
+				594471C52EB4D92200A77D75 /* WireLegacyLoggingSupport in Frameworks */,
 				5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4572,6 +4574,10 @@
 		5902AC742DA92365000A8F7F /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
+		};
+		594471C42EB4D92200A77D75 /* WireLegacyLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLegacyLoggingSupport;
 		};
 		59506A872E2E61BD0051B07A /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

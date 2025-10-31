@@ -1,5 +1,6 @@
 // swift-tools-version: 6.2
 
+import Foundation
 import PackageDescription
 
 let package = Package(
@@ -46,5 +47,7 @@ for target in package.targets {
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableUpcomingFeature("StrictMemorySafety"),
-    ]
+        isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
+    ].compactMap(\.self)
 }
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
