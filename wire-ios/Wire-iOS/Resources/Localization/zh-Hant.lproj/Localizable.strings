@@ -332,6 +332,7 @@
 
 "conversation.connection_view.in_address_book" = "在聯絡人中";
 "conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "發送訊息";
@@ -604,7 +605,7 @@
 "content.system.message_timer_off" = "%@關閉了訊息時限";
 "content.system.message_timer_off-you" = "%@關閉了訊息時限";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
 
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
@@ -617,6 +618,8 @@
 
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
+
+"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
 
 // read receipt
 
@@ -1084,6 +1087,10 @@
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
 "group_details.access_options_cell.title" = "Channel access";
 "group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.subtitle" = "開啟";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
