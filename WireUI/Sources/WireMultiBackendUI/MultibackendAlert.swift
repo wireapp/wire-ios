@@ -61,7 +61,6 @@ public enum MultibackendAlertMainApp {
 
         return alertController
     }
-
 }
 
 public enum MultibackendAlertInShareExtension {
@@ -93,7 +92,7 @@ public enum MultibackendAlertInShareExtension {
     }
 }
 
-extension UIAlertController {
+public extension UIAlertController {
 
     func addLogoutAction(_ action: @escaping () -> Void) {
         addAction(UIAlertAction(
