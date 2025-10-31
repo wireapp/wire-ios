@@ -4,9 +4,9 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## Special changes
 
-### Moving of `zmessaging` to `WireData` SPM target
+### Moving of `zmessaging` & `ZMEventModel` to `WireData` SPM target
 
-* Move `zmessaging` to `WireData` SPM target while keeping managed object subclasses in `WireDataModel` project target. This is an intermediary state. Eventually all managed object subclasses should be moved to `WireData` target. To achieve this, in **ALL VERSIONS** of `zmessaging` the _Module_ field in the Data Model Inspector was set to `WireDataModel` for non obj-c based entities. These changes did not require a migration.
+* Move `zmessaging` & `ZMEventModel` to `WireData` SPM target while keeping managed object subclasses in `WireDataModel` project target. This is an intermediary state. Eventually all managed object subclasses should be moved to `WireData` target. To achieve this, in **ALL VERSIONS** of `zmessaging` the _Module_ field in the Data Model Inspector was set to `WireDataModel` for non obj-c based entities. The same changes were applied to `ZMEventModel`. These changes did not require a migration. 
 
 ## zmessaging
 
