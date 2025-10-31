@@ -29,6 +29,12 @@ struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
+    
+    let additionalTagNumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.positivePrefix = formatter.plusSign
+        return formatter
+    }()
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -65,10 +71,12 @@ struct FilesViewItemView: View {
                                 }
                         }
                         
-                        let numberOfTags = viewModel.item.tags.count
+                        let additionalTags = viewModel.item.tags.count - 1
                         
-                        if numberOfTags > 1 {
-                            Text("+\(numberOfTags - 1)")
+                        if additionalTags > 0 {
+                            let formattedNumber = additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
+                            
+                            Text(formattedNumber)
                                 .wireTextStyle(.subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
