@@ -106,7 +106,6 @@ class WireUITestCase: XCTestCase {
         BackendContext.current = target
     }
 
-
     func handleNotificationPermissionAlert() {
         interruptionMonitorToken =
             addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
