@@ -201,7 +201,8 @@ final class UpdateEventDecryptorTests: XCTestCase {
             ]
         )
 
-        await Task.yield()
+        // Hack to allow `commitPendingProposalsIfNeeded` to complete :(
+        await Task(priority: .low) { await Task.yield() }.value
 
         XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
