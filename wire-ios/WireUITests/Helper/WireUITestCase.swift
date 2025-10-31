@@ -27,6 +27,14 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
 
+    var interruptionMonitorToken: (any NSObjectProtocol)?
+
+    deinit {
+        if let token = interruptionMonitorToken {
+            removeUIInterruptionMonitor(token)
+        }
+    }
+
     override func setUpWithError() throws {
         XCUIApplication().terminate()
 
@@ -97,4 +105,18 @@ class WireUITestCase: XCTestCase {
         // need to change for Inbucket
         BackendContext.current = target
     }
+
+
+    func handleNotificationPermissionAlert() {
+        interruptionMonitorToken =
+            addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
+                let notifPermission = "Would Like to Send You Notifications"
+                if alertElement.label.contains(notifPermission) {
+                    alertElement.buttons["Allow"].tap()
+                }
+
+                return true
+            }
+    }
+
 }
