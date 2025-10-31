@@ -33,7 +33,7 @@ class WireUITestCase: XCTestCase {
         let launchArguments = [
             "-resetData",
             "--useEnvStaging",
-            "--preferred-api-version=7" // temporary test critical flows with v7
+            "--preferred-api-version=12"
         ]
 
         app = XCUIApplication()
