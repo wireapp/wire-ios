@@ -1104,6 +1104,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     error: .networkError(code: error.errorCode)
                 )
                 return nil
+            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .databaseError(error)
+                )
+                return nil
             } catch let error as SafeForLoggingStringConvertible {
                 WireLogger.sessionManager.error(
                     "failed to load user session: \(error.safeForLoggingDescription)",
@@ -2073,6 +2083,7 @@ public extension SessionManager {
         case clientIsObsolete
         case networkError(code: Int)
         case genericError
+        case databaseError(Error)
 
     }
 
