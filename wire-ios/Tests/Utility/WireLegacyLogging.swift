@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireLegacyLogging
+import WireLegacyLogging
 
-public typealias WireLogger = WireLegacyLogging.WireLogger
-public typealias LogAttributes = WireLegacyLogging.LogAttributes
-public typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
+typealias WireLogger = WireLegacyLogging.WireLogger
