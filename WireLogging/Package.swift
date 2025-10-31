@@ -50,5 +50,3 @@ for target in package.targets {
         isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
     ].compactMap(\.self)
 }
-
-let isCI = ProcessInfo.processInfo.environment["CI"] != nil

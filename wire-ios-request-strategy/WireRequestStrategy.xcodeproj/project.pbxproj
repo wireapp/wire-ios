@@ -197,7 +197,6 @@
 		59537D852CFF9D1600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D842CFF9D1600920B59 /* WireLogging */; };
 		59537D872CFF9DF600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D862CFF9DF600920B59 /* WireLogging */; };
 		596A633A2EB3B27A0017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A63392EB3B27A0017C3CA /* WireLegacyLogging */; };
-		5974760C2D019EF5005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5974760B2D019EF5005E891A /* WireLegacyLogging.swift */; };
 		597B70C92B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */; };
 		597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */; };
 		598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042F2C89C67E00B64D71 /* WireFoundation */; };
@@ -704,7 +703,6 @@
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientRegistrationDelegate.swift; sourceTree = "<group>"; };
 		59271BEE2B90D24A0019B726 /* MockOTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockOTREntity.swift; sourceTree = "<group>"; };
-		5974760B2D019EF5005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandler.swift; sourceTree = "<group>"; };
 		597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandlerTests.swift; sourceTree = "<group>"; };
 		598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2130,7 +2128,6 @@
 				E6BBCF162C32EBA600BD0259 /* MessageLogAttributesBuilder.swift */,
 				E6BBCF122C32C55700BD0259 /* HttpClientImpl.swift */,
 				E6BBCF142C32D78F00BD0259 /* UserClient+QualifiedID.swift */,
-				5974760B2D019EF5005E891A /* WireLegacyLogging.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2511,7 +2508,6 @@
 				EEDBD0A92A7B7F0C00F3956F /* SelfUserRequestStrategy.swift in Sources */,
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */,
-				5974760C2D019EF5005E891A /* WireLegacyLogging.swift in Sources */,
 				1623F8D82AE7FB7E004F0319 /* PrekeyAPI.swift in Sources */,
 				E629E3D02B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift in Sources */,
 				C93B11482D95621A000F6573 /* Payload+UpdateConversationPermission.swift in Sources */,
