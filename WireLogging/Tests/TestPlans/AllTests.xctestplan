@@ -14,7 +14,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireLogging",
         "identifier" : "WireLoggingTests",
         "name" : "WireLoggingTests"
       }

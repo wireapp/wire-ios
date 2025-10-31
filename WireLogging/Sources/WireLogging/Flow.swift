@@ -48,6 +48,8 @@ open class Flow {
     ) {
         self.name = name
         self.logger = WireLogger(tag: tag)
+
+        let i = 0
     }
 
     // MARK: - Methods
