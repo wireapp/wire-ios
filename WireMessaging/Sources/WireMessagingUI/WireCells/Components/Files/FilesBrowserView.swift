@@ -69,9 +69,9 @@ package struct FilesBrowserView: FilesViewProtocol {
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(viewModel.state == .loading ? .hidden : .visible, for: .navigationBar) // fixes some weird UI glitch when refreshing
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(!viewModel.state.items.isEmpty || !viewModel.searchText.isEmpty) { view in
+            .if(showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
                     placement: .navigationBarDrawer,
@@ -85,6 +85,17 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+        }
+    }
+    
+    private var showSearchBar: Bool {
+        switch viewModel.state {
+        case .initial, .loading:
+            return true
+        case .received(let items):
+            return !items.isEmpty || !viewModel.searchText.isEmpty
+        case .pending, .error:
+            return false
         }
     }
 }
