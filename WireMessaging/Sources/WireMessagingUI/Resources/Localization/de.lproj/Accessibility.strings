@@ -26,7 +26,7 @@
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
 "conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
-"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
-"conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
+"conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
+"conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
+"conversation.wireCells.files.error.reload" = "Erneut laden";
