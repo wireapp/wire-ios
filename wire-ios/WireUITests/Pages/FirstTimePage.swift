@@ -34,7 +34,7 @@ class FirstTimePage: PageModel {
     var okButton: XCUIElement {
         app.buttons[Locators.FirstTimePage.okButton.rawValue]
     }
-    
+
     var firstTimePageMessageLabel: XCUIElement {
         app.staticTexts["It’s the first time you’re using Wire on this device."]
     }
