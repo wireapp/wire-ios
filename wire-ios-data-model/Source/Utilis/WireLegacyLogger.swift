@@ -18,6 +18,7 @@
 
 import WireLegacyLogging
 
-typealias LogAttributes = WireLegacyLogging.LogAttributes
+public typealias LogAttributes = WireLegacyLogging.LogAttributes
+
 typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
 typealias WireLogger = WireLegacyLogging.WireLogger

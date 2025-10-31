@@ -2170,7 +2170,6 @@
 		A9EADFFF19DBF20A00FD386C /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				59BAE29E2EB3D9C400CA529B /* WireLegacyLogging.swift */,
 				5430E9231BAA0D9F00395E05 /* WireSyncEngineLogs.h */,
 				546392711D79D5210094EC66 /* Application.swift */,
 				1645ECF72448A0A3007A82D6 /* Decodable+JSON.swift */,
@@ -2179,6 +2178,7 @@
 				EE2DE5EB29263C5100F42F4C /* Logger.swift */,
 				5E8EE1F920FDC7D700DB1F9B /* Pasteboard.swift */,
 				EE0CAEAE2AAF2E8E00BD2DB7 /* URLSession+MinTLSVersion.swift */,
+				59BAE29E2EB3D9C400CA529B /* WireLegacyLogging.swift */,
 				E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */,
 			);
 			path = Utility;

@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: delete file?
+import WireLegacyLogging
 
-// import WireLegacyLogging
-
-// typealias WireLogger = WireLegacyLogging.WireLogger
+typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
+typealias WireLogger = WireLegacyLogging.WireLogger

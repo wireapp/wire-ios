@@ -263,7 +263,6 @@
 		F1DABF961E9B8B6100AD2324 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				59BAE2A02EB3D9EA00CA529B /* WireLegacyLogging.swift */,
 				34C5BFAE2E57665D00C0FF34 /* BackendEnvironmentProvider+CookieStorage.swift */,
 				34C5BFAA2E57663C00C0FF34 /* SyncStatus.swift */,
 				34C5BFA82E57662200C0FF34 /* ApplicationStatusDirectory.swift */,
@@ -280,6 +279,7 @@
 				165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */,
 				F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */,
 				F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */,
+				59BAE2A02EB3D9EA00CA529B /* WireLegacyLogging.swift */,
 				F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */,
 				F1DABFA01E9B8B6100AD2324 /* ZMConversation+Conversation.swift */,
 				F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */,

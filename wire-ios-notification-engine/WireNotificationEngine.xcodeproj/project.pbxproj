@@ -190,7 +190,6 @@
 		06604296247FE76A00A5F161 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */,
 				0697129A2497CA8F00C32169 /* Synchronization */,
 				06604297247FE76A00A5F161 /* AppDelegate.swift */,
 				EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */,
@@ -199,6 +198,7 @@
 				EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */,
 				069712952497C1BC00C32169 /* NotificationSession.swift */,
 				3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */,
+				59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */,
 				066042A0247FE76C00A5F161 /* Assets.xcassets */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
 			);
