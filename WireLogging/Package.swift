@@ -27,6 +27,8 @@ let package = Package(
     ]
 )
 
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
+
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("ExistentialAny"),
@@ -36,5 +38,3 @@ for target in package.targets {
         isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
     ].compactMap(\.self)
 }
-
-let isCI = ProcessInfo.processInfo.environment["CI"] != nil
