@@ -40,6 +40,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let conversationId: String?
     package let publicLinkId: String?
     package let downloadURL: URL?
+    package let tags: [String]
 
     package init(
         uuid: UUID,
@@ -58,7 +59,8 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         ownerUserName: String?,
         conversationId: String? = nil,
         publicLinkId: String? = nil,
-        downloadURL: URL? = nil
+        downloadURL: URL? = nil,
+        tags: [String] = []
     ) {
         self.uuid = uuid
         self.path = path
@@ -77,6 +79,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
         self.downloadURL = downloadURL
+        self.tags = tags
     }
 }
 
@@ -99,7 +102,8 @@ package extension WireCellsNodeNetworkModel {
             ownerUserName: ownerUserName,
             conversationID: conversationId.flatMap(QualifiedID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
-            downloadURL: downloadURL
+            downloadURL: downloadURL,
+            tags: tags
         )
     }
 }
@@ -122,7 +126,8 @@ package extension WireCellsNode {
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
             conversationId: conversationID?.transportString,
-            publicLinkId: publicLinkID?.string
+            publicLinkId: publicLinkID?.string,
+            tags: tags
         )
     }
 }
@@ -146,16 +151,20 @@ package extension RestNode {
             previews: previews?.compactMap { preview -> PreviewDTO? in
                 PreviewDTO(preview)
             } ?? [],
-            ownerUserId: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner-uuid" })?
-                .valueAsString,
-            ownerUserName: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner" })?
-                .valueAsString,
+            ownerUserId: metadataString("usermeta-owner-uuid"),
+            ownerUserName: metadataString("usermeta-owner"),
             conversationId: contextWorkspace?.uuid,
             publicLinkId: shares?.first?.uuid,
-            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:)),
+            tags: metadataString("usermeta-tags")?
+                .split(separator: ",").map { String($0) } ?? []
         )
+    }
+    
+    private func metadataString(_ namespace: String) -> String? {
+        userMetadata?
+            .first { $0.namespace == namespace }?
+            .valueAsString
     }
 }
 

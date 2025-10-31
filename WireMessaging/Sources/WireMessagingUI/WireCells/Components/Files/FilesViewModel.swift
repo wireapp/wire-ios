@@ -277,7 +277,7 @@ package final class FilesViewModel: ObservableObject {
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
-                tags: [] //TODO: map tags
+                tags: node.tags
             )
         }
 
