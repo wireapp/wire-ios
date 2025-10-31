@@ -58,7 +58,7 @@ struct WireCellsVideoAttachmentPreview: View {
     }
 }
 
-private struct PlayIcon: View {
+struct PlayIcon: View {
 
     private typealias Theme = ColorTheme.Buttons.Secondary
 
