@@ -36,11 +36,13 @@ public struct OSLogLoggingProvider: WireLoggingProvider {
             .joined(separator: " ")
         logger.log(level: level, "\(message, privacy: .public)")
     }
+
 }
 
 private extension WireLogLevel {
 
     func mappedToOSLogType() -> OSLogType {
+
         // Note:
         // - levels are `default`, `info`, `debug`, `error` and `fault`
         // - `trace` is an alias for `debug`
@@ -50,17 +52,18 @@ private extension WireLogLevel {
 
         switch self {
         case .debug:
-            .debug
+                .debug
         case .info:
-            .info
+                .info
         case .notice:
-            .default
+                .default
         case .warn:
-            .error
+                .error
         case .error:
-            .error
+                .error
         case .critical:
-            .fault
+                .fault
         }
     }
+
 }

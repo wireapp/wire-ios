@@ -24,4 +24,5 @@ public protocol WireLoggingProvider: Sendable {
     var tag: Tag { get }
 
     func log(level: Level, message: WireLogMessage)
+
 }

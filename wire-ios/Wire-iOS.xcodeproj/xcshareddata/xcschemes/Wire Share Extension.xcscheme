@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "168A16A81D9597C2005CFA6C"
-               BuildableName = ".appex"
+               BuildableName = "Wire Share Extension.appex"
                BlueprintName = "Wire Share Extension"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
@@ -30,7 +30,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8F42C537199244A700288E4D"
-               BuildableName = ".app"
+               BuildableName = "Wire.app"
                BlueprintName = "Wire-iOS"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = ".app"
+            BuildableName = "Wire.app"
             BlueprintName = "Wire-iOS"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = ".app"
+            BuildableName = "Wire.app"
             BlueprintName = "Wire-iOS"
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
