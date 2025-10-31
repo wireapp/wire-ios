@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireLogging"
                BuildableName = "WireLogging"
                BlueprintName = "WireLogging"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireLogging">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -58,7 +58,7 @@
             BlueprintIdentifier = "WireLogging"
             BuildableName = "WireLogging"
             BlueprintName = "WireLogging"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireLogging">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
