@@ -27,6 +27,9 @@ let package = Package(
     ]
 )
 
+// open --env CI wire-ios-mono.xcworkspace
+// or
+// CI= swift build
 let isCI = ProcessInfo.processInfo.environment["CI"] != nil
 
 for target in package.targets {
