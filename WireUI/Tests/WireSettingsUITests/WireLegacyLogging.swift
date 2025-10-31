@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class Something {
-    func x() {
-        let i = 0
-    }
-}
+import WireLegacyLogging
+
+typealias WireLogger = WireLegacyLogging.WireLogger
