@@ -101,6 +101,9 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             case let .apiVersion(version):
                 BackendInfo.preferredAPIVersion = version
             }
+            // as the WireAuthentication module might have been loaded with wrong preferredAPIVersion
+            // we force exit
+            exit(0)
         }
     }
 

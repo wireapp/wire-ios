@@ -26,6 +26,7 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController, MainCont
         TabBarController.ConversationListUI == ConversationListUI,
         TabBarController.ConversationUI == ConversationUI,
         TabBarController.ArchiveUI == ArchiveUI,
+        TabBarController.MeetingsUI == MeetingsUI,
         TabBarController.SettingsUI == SettingsUI,
         TabBarController.FilesUI == FilesUI
 
