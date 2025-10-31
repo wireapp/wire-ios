@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 /// Abstraction of a convenience interface to the Wire logging systems.
 public protocol WireLoggerProtocol: Sendable {
     typealias Tag = WireLoggerTag
@@ -28,4 +29,5 @@ public protocol WireLoggerProtocol: Sendable {
     func warn(_ message: WireLogMessage)
     func error(_ message: WireLogMessage)
     func critical(_ message: WireLogMessage)
+
 }

@@ -18,7 +18,7 @@
 
 public import WireLogging
 
-public final class MockWireLoggerProtocol: WireLoggerProtocol, @unchecked Sendable {
+public final class MockWireLoggerProtocol: WireLoggerProtocol, @unchecked Sendable { // TODO: replace with WireLoggerProtocolMock
 
     // MARK: - Life cycle
 
