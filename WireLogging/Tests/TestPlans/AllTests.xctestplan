@@ -1,15 +1,18 @@
 {
   "configurations" : [
     {
-      "id" : "4D5F2F6E-3C6F-4ED2-AAD7-132E9DA30D40",
-      "name" : "Test Scheme Action",
+      "id" : "558E1A72-E387-4C4E-A2A8-B2BCD04FDEAF",
+      "name" : "Configuration 1",
       "options" : {
 
       }
     }
   ],
   "defaultOptions" : {
-    "performanceAntipatternCheckerEnabled" : true
+    "language" : "en",
+    "region" : "DE",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {
