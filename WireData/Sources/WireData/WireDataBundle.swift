@@ -18,6 +18,6 @@
 
 import Foundation
 
-final class WireDataModelBundle {
-    static let bundle = Bundle(for: WireDataModelBundle.self)
+public enum WireDataBundle {
+    public static let bundle = Bundle.module
 }

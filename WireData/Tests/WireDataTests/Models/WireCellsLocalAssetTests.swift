@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Testing
-import WireData
-import WireDataModelSupport
 
-@testable import WireDataModel
+@testable import WireData
 
 @MainActor
 struct WireCellsLocalAssetTests {
 
-    private let coreDataStack: CoreDataStack
+    private let container: NSPersistentContainer
 
-    init() async throws {
-        self.coreDataStack = try await CoreDataStackHelper().createStack()
+    init() throws {
+        self.container = try NSPersistentContainer.inMemoryContainer()
     }
 
     @Test
     func initialization() async throws {
         // given
-        let context = coreDataStack.viewContext
+        let context = container.viewContext
         let nodeID = UUID()
 
         let asset = WireCellsLocalAsset(context: context)
@@ -58,6 +57,29 @@ struct WireCellsLocalAssetTests {
         #expect(persisted.contentType == "image/png")
         #expect(persisted.size == 1024)
         #expect(persisted.isDownloaded == true)
+    }
+
+}
+
+// MARK: - Helpers
+
+private extension NSPersistentContainer {
+
+    static func inMemoryContainer() throws -> NSPersistentContainer {
+        let model = NSManagedObjectModel.mergedModel(from: [WireDataBundle.bundle])
+
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        let container = NSPersistentContainer(name: "zmessaging", managedObjectModel: model!)
+        container.persistentStoreDescriptions = [description]
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+        if let loadError {
+            throw loadError
+        }
+        return container
     }
 
 }
