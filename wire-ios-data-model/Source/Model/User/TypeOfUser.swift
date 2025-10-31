@@ -18,12 +18,19 @@
 
 @objc(ZMTypeOfUser)
 public enum TypeOfUser: Int16, CaseIterable, Sendable {
-    /// Regular users
+
+    /// (default) for regular users
+
     case regular
-    /// Apps
+
+    /// apps (new services)
+
     case app
-    /// Old style bots (services)
+
+    /// old-style bots (services)
+
     case bot
+
 }
 
 extension TypeOfUser: CustomDebugStringConvertible {

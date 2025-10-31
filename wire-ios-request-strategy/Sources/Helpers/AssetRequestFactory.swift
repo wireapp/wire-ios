@@ -47,13 +47,18 @@ public final class AssetRequestFactory: NSObject {
         public init(
             conversationID: QualifiedID,
             fileName: String,
-            mimeType: String
+            mimeType: String?
         ) {
             self.conversationID = conversationID
             self.fileName = fileName
-            self.mimeType = mimeType
-        }
 
+            if let mimeType, !mimeType.isEmpty {
+                self.mimeType = mimeType
+            } else {
+                // Fallback to "raw bytes".
+                self.mimeType = "application/octet-stream"
+            }
+        }
     }
 
     private enum Constant {
