@@ -25,18 +25,16 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .textField)["UsernameField"].firstMatch
     }
 
-    var usernameConfirmButton: XCUIElement {
-        let elementsQuery = usernameField.buttons
-        return elementsQuery.firstMatch
+    var confirmUsernameButton: XCUIElement {
+        app.descendants(matching: .button)["ConfirmButton"].firstMatch
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {
         try usernameField.tapIfKeyboardNotFocused().typeText(username)
-        usernameConfirmButton.tap()
+        confirmUsernameButton.tap()
         return try ConversationsPage()
     }
 }

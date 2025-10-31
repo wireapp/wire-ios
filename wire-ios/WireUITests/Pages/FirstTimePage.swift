@@ -34,6 +34,10 @@ class FirstTimePage: PageModel {
     var okButton: XCUIElement {
         app.buttons[Locators.FirstTimePage.okButton.rawValue]
     }
+    
+    var firstTimePageMessageLabel: XCUIElement {
+        app.staticTexts["It’s the first time you’re using Wire on this device."]
+    }
 
     var savePasswordSheet: XCUIElement {
         app.staticTexts["Save Password?"]
@@ -49,6 +53,7 @@ class FirstTimePage: PageModel {
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
+        firstTimePageMessageLabel.waitForNonExistence(timeout: 2)
         return self
     }
 
