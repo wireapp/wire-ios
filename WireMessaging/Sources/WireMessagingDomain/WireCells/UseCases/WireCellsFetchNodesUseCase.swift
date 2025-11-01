@@ -17,7 +17,7 @@
 //
 
 import CellsSDK
-package import Foundation
+import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
 package struct WireCellsFetchNodesUseCase: Sendable {
@@ -58,17 +58,6 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             Configuration(
                 root: nil,
                 nodeIDs: nil,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
-
-        /// A `Configuration` for showing only specific nodes in the file view.
-        package static func nodesFileView(nodeIDs: [UUID]) -> Configuration {
-            Configuration(
-                root: nil,
-                nodeIDs: nodeIDs,
                 isRecursive: true,
                 nodeType: .leaf,
                 deletionStatus: .notDeleted

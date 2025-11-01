@@ -131,20 +131,14 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
-        isCellsStatePending: Bool,
-        nodeIDs: [UUID]
+        isCellsStatePending: Bool
     ) -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = nodeIDs
-            .isEmpty ? .conversationFileView(root: .path(cellName)) :
-            .nodesFileView(nodeIDs: nodeIDs)
-
+        let configuration: WireCellsFetchNodesUseCase.Configuration = .conversationFileView(root: .path(cellName))
         let filesView: UIHostingController<FilesView>
-
         filesView = makeFilesHostingController(
             configuration: configuration,
             isCellsStatePending: isCellsStatePending
         )
-
         return filesView
     }
 
