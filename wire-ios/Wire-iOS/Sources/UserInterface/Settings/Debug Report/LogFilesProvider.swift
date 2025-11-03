@@ -51,7 +51,6 @@ struct LogFilesProvider: LogFilesProviding {
         .appendingPathComponent("logs", isDirectory: true)
 
     private var logFilesURLs: [URL] {
-<<<<<<< HEAD
         let fileManager = FileManager.default
         var urls = ZMSLog.pathsForExistingLogs
 
@@ -65,10 +64,6 @@ struct LogFilesProvider: LogFilesProviding {
             urls.append(contentsOf: targetLogDirectories ?? [])
         }
 
-=======
-        var urls = WireLogger.logFiles // TODO: inject FileLoggerProtocol providing a logFiles property
-        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
->>>>>>> 1f47bea48a (refactor: logging using string interpolation - WPB-14297 squashed)
         return urls
     }
 

@@ -50,11 +50,11 @@ struct NewWireDatadogLogger: WireLoggingProvider {
 }
 
 extension WireDatadog: LoggerProtocol {
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(
             level: .debug,
             message: message,
-            attributes: [attributes]
+            attributes: attributes
         )
     }
 

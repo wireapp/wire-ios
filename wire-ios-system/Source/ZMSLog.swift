@@ -368,7 +368,7 @@ public extension ZMSLog {
         do {
             assertionFile = try AssertionDumpFile.url
         } catch {
-            WireLogger.system.warn("AssertionDumpFile.url threw error: \(error)")
+            WireLogger.system.warn("AssertionDumpFile.url threw error: \(String(reflecting: error))")
             assertionFile = nil
         }
         if let assertionFile, FileManager.default.fileExists(atPath: assertionFile.path) {

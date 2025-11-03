@@ -45,7 +45,7 @@ struct NewCocoaLumberjackLogger: WireLoggingProvider {
 }
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
+final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()
@@ -68,8 +68,8 @@ final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
         NotificationCenter.default.removeObserver(self)
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes) {
-        log(message, attributes: [attributes], level: .debug)
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+        log(message, attributes: attributes, level: .debug)
     }
 
     func info(_ message: any LogConvertible, attributes: LogAttributes...) {
