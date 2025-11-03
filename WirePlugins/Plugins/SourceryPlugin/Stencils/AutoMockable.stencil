@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// This stencil file is copied from https://github.com/krzysztofzablocki/Sourcery (commit 645c16e9bf3cff2d268fb1a161ff88b0ba1a54bc) and slightly adjusted.
+
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -252,9 +254,11 @@ public import {{ import }}
 {% macro existentialVariableTypeName typeName isNotAllowedToBeImplicitlyUnwrappedOptional -%}
     {%- if typeName|contains:"<" and typeName|contains:">" -%}
         {{ typeName }}
+    {%- elif typeName|contains:"[" and typeName|contains:"]" -%}
+        {{ typeName }}
     {%- elif typeName|contains:"any " and typeName|contains:"!"  -%}
         {{ typeName | replace:"any","(any" | replace:"!",")!" }}
-    {%- elif typeName|contains:"any " and typeName.isOptional  -%}
+    {%- elif typeName|contains:"any " and typeName.isOptional and not typeName|contains:"(" -%}
         {{ typeName | replace:"any","(any" | replace:"?",")?" }}
     {%- elif typeName|contains:"any " and typeName.isClosure and typeName|contains:"?" -%}
         ({{ typeName | replace:"any","(any" | replace:"?",")?" }})
@@ -281,7 +285,9 @@ public import {{ import }}
             {{ typeName | replace:"inout ","" }}
         {%- endif -%}
     {% endset %}
-    {%- if typeName|contains:"any " and typeName|contains:"!" -%}
+    {%- if typeName|contains:"[" and typeName|contains:"]" -%}
+        {{ name }}
+    {%- elif typeName|contains:"any " and typeName|contains:"!" -%}
         {{ name | replace:"any","(any" | replace:"!",")?" }}
     {%- elif typeName|contains:"any " and typeName.isOptional and typeName.isClosure -%}
         ({{ typeName.unwrappedTypeName| replace:"inout ","" | replace:"any","(any" | replace:"?",")?" }})?
@@ -314,7 +320,9 @@ public import {{ import }}
             {{ typeName | replace:"inout ","" }}
         {%- endif -%}
     {% endset %}
-    {%- if typeName|contains:"any " and typeName|contains:"!" -%}
+    {%- if typeName|contains:"[" and typeName|contains:"]" -%}
+        {{ name }}
+    {%- elif typeName|contains:"any " and typeName|contains:"!" -%}
         {{ name | replace:"any","(any" | replace:"!",")?" }}
     {%- elif typeName|contains:"any " and typeName.isOptional and typeName.isClosure -%}
         ({{ typeName.unwrappedTypeName| replace:"inout ","" | replace:"any","(any" | replace:"?",")?" }})?
@@ -335,7 +343,9 @@ public import {{ import }}
     {%- endif -%}
 {%- endmacro %}
 {% macro existentialParameterTypeName typeName isVariadic -%}
-    {%- if typeName|contains:"any " and typeName|contains:"?," and typeName|contains:">?" -%}
+    {%- if typeName|contains:"[" and typeName|contains:"]" -%}
+        {{ typeName }}
+    {%- elif typeName|contains:"any " and typeName|contains:"?," and typeName|contains:">?" -%}
         {{ typeName | replace:"any","(any" | replace:"?,",")?," }}
     {%- elif typeName|contains:"any " and typeName|contains:"!" -%}
         {{ typeName | replace:"any","(any" | replace:"!",")!" }}

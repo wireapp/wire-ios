@@ -68,6 +68,16 @@ files: [
     "dest" : "/App/WireMessagingUI/Resources/Localizable.strings",
     "translation" : "/WireMessaging/Sources/WireMessagingUI/Resources/Localization/%osx_code%/%original_file_name%",
   },
+    {
+    "source" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/en.lproj/Accessibility.strings",
+    "dest" : "/App/WireCallingUI/Resources/Accessibility.strings",
+    "translation" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/en.lproj/Localizable.strings",
+    "dest" : "/App/WireCallingUI/Resources/Localizable.strings",
+    "translation" : "/WireCalling/Sources/WireCallingUI/Resources/Localization/%osx_code%/%original_file_name%",
+  },
   {
     "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Localization/Localizable.xcstrings",
     "dest" : "/App/WireMainNavigationUI/Resources/Localizable.xcstrings",

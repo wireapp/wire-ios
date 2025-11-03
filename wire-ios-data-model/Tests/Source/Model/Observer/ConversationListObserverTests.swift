@@ -848,7 +848,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             managedObjectContext: uiMOC
         )
 
-        XCTAssertEqual(conversationList.items.count, 0)
+        XCTAssertEqual(conversationList.items.count, 1)
 
         // when
         conversation.mlsStatus = .ready
@@ -859,9 +859,9 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         XCTAssertEqual(testObserver.changes.count, 1)
         let change = try XCTUnwrap(testObserver.changes.first)
-        XCTAssertEqual(change.insertedIndexes, IndexSet(integer: 0))
+        XCTAssertEqual(change.insertedIndexes, IndexSet())
         XCTAssertEqual(change.deletedIndexes, IndexSet())
-        XCTAssertEqual(change.updatedIndexes, IndexSet())
+        XCTAssertEqual(change.updatedIndexes, IndexSet(integer: 0))
         XCTAssertEqual(movedIndexes(change), [])
     }
 
