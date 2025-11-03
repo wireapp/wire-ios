@@ -455,14 +455,17 @@ public final class MessageSender: MessageSenderInterface {
                         epoch: Int64(epoch ?? 0)
                     )
             case let .groupOutOfSync(missingUsers):
-                try await handleGroupOutOfSyncError(
-                    groupID: groupID,
-                    missingUsers: missingUsers,
-                    mlsService: mlsService,
-                    operation: { [weak self] in
-                        try await self?.sendMessage(message: message)
-                    }
-                )
+                guard retryCount < maxRetryAttempts else {
+                    retryCount = 0
+                    throw error
+                }
+
+                retryCount += 1
+
+                let users = missingUsers.map { MLSUser($0) }
+                try await mlsService.addMembersToConversation(with: users, for: groupID)
+                try await sendMessage(message: message)
+
             default:
                 throw error
             }
@@ -489,27 +492,6 @@ public final class MessageSender: MessageSenderInterface {
 
             retryCount += 1
 
-            try await operation()
-        }
-    }
-
-    private func handleGroupOutOfSyncError(
-        groupID: MLSGroupID,
-        missingUsers: Set<QualifiedID>,
-        mlsService: MLSServiceInterface,
-        operation: () async throws -> Void
-    ) async throws {
-        do {
-            let users = missingUsers.map { MLSUser($0) }
-            try await mlsService.addMembersToConversation(with: users, for: groupID)
-            try await operation()
-        } catch let error as MessageSendError {
-            guard retryCount < maxRetryAttempts else {
-                retryCount = 0
-                throw error
-            }
-
-            retryCount += 1
             try await operation()
         }
     }
