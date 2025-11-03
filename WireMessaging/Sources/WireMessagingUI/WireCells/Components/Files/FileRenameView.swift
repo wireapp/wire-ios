@@ -24,13 +24,13 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FileRenameView: View, Identifiable {
-    @ObservedObject package var viewModel: FileRenameViewModel
+    @StateObject package var viewModel: FileRenameViewModel
     @Environment(\.dismiss) var dismiss
 
     var id = UUID()
 
-    init(viewModel: FileRenameViewModel) {
-        self.viewModel = viewModel
+    init(viewModel: @autoclosure @escaping () -> FileRenameViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     var body: some View {

@@ -136,9 +136,13 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private func setupBindings() {
         nodeRenameNotifier.publisher
-            .sink { [self] _ in
+            .sink { [self] nodeID in
+                guard nodeID == item.nodeID else {
+                    return
+                }
+
                 Task {
-                    // a node has been renamed, refresh
+                    // this node has been renamed, refresh
                     await self.refresh()
                 }
             }.store(in: &cancellables)

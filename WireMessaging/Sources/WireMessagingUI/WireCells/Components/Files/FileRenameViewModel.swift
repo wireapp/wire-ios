@@ -111,6 +111,8 @@ final class FileRenameViewModel: ObservableObject {
     // MARK: - Helpers
 
     static func removeFileExtension(from filename: String) -> String {
-        filename.split(separator: ".").first.map(String.init) ?? ""
+        URL(fileURLWithPath: filename)
+            .deletingPathExtension()
+            .lastPathComponent
     }
 }
