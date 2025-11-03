@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
 

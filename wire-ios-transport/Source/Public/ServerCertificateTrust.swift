@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 
 public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 

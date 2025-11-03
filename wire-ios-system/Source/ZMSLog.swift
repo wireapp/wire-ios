@@ -18,7 +18,7 @@
 
 import Foundation
 import os.log
-import WireLegacyLogging
+import WireLogging
 import ZIPFoundation
 
 /// Represents an entry to be logged.

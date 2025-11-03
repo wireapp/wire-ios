@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 struct PreviewLogger: LoggerProtocol {
 

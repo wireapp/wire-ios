@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 import WireUtilities
 
 private let log = ZMSLog(tag: "Backup")

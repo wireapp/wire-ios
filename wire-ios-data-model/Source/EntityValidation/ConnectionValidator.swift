@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireLegacyLogging
+import WireLogging
 
 /// An object responsible for correcting invalid state regarding
 /// user connections.

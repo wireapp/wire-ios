@@ -17,7 +17,7 @@
 //
 
 import GenericMessageProtocol
-import WireLegacyLogging
+import WireLogging
 
 public enum UpdateEventSource: String {
     case pushChannel

@@ -20,7 +20,7 @@ import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "UI")
 

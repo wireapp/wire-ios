@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 struct ConferenceParticipantsInfo {
     let participants: [CallParticipant]

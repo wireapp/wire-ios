@@ -28,7 +28,7 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLinkPreview
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireShareEngine
 import WireUtilities

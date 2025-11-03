@@ -18,7 +18,7 @@
 
 import Foundation
 import PushKit
-import WireLegacyLogging
+import WireLogging
 
 extension SessionManager {
 

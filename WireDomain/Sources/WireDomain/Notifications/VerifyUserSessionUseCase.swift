@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 /// Observes pending events, process them and generates new notifications content.

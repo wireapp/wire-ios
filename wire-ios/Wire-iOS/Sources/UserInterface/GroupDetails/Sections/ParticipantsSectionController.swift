@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 enum ParticipantsRowType {

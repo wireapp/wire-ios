@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 /// Closure to generate syncMarker, use for testing

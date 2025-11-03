@@ -17,7 +17,7 @@
 //
 
 import LocalAuthentication
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 enum AuthenticationType: CaseIterable {

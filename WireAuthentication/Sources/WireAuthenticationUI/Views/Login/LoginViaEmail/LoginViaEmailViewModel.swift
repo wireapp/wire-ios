@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 import WireAuthenticationAPI
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireReusableUIComponents
 

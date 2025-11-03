@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLegacyLogging
+import WireLogging
 
 struct TeamListPayload: Decodable {
     let hasMore: Bool

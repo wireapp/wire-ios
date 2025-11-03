@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {

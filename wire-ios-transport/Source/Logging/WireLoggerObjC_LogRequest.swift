@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 extension WireLoggerObjC {
     static func logRequest(_ request: NSURLRequest) {

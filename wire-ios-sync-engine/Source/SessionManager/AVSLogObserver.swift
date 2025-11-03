@@ -17,7 +17,7 @@
 //
 
 import avs
-import WireLegacyLogging
+import WireLogging
 
 final class AVSLogObserver: AVSLogger {
     private var token: Any!

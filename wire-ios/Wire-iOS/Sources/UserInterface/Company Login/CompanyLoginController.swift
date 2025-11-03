@@ -18,7 +18,7 @@
 
 import UIKit
 import WireCommonComponents
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 import WireTransport
 

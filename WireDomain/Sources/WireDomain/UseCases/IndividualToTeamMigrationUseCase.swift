@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import WireDomainPackage
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSystem
 

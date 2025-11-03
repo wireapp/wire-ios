@@ -19,7 +19,7 @@
 import Foundation
 import MessageUI
 import WireCommonComponents
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 extension MFMailComposeViewController {

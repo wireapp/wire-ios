@@ -19,7 +19,7 @@
 import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireTesting
 
 @testable import WireRequestStrategy

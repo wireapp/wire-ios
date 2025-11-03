@@ -22,7 +22,7 @@ package import Foundation
 import Smithy
 import SmithyIdentity
 import SmithyStreams
-import WireLegacyLogging
+import WireLogging
 import WireMessagingDomain
 
 // sourcery: AutoMockable

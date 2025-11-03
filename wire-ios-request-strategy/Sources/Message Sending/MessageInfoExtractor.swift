@@ -18,7 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireLegacyLogging
+import WireLogging
 
 enum MessageInfoExtractorError: Error {
     case missingConversation

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 /// sourcery: AutoMockable
 public protocol PushChannelStateProtocol {

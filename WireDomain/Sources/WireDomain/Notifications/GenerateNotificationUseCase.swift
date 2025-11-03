@@ -19,7 +19,7 @@
 import CallKit
 import UserNotifications
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 // sourcery: AutoMockable

@@ -18,7 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireLegacyLogging
+import WireLogging
 
 /// An asset message (image, file, ...)
 @objcMembers

@@ -23,7 +23,7 @@ import WireDataModel
 import WireDesign
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSettingsUI
 import WireSyncEngine

@@ -20,7 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 /// The actions that can be performed from the profile details or devices.

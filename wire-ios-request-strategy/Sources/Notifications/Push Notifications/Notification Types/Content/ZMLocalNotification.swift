@@ -18,7 +18,7 @@
 
 import UserNotifications
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 /// Defines the various types of local notifications, some of which
 /// have associated subtypes.

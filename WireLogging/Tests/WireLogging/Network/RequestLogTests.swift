@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-@testable import WireLegacyLogging
+@testable import WireLogging
 
 class RequestLogTests: XCTestCase {
 

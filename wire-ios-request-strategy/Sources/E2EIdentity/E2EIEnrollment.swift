@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
-import WireLegacyLogging
+import WireLogging
 
 public protocol E2EIEnrollmentInterface {
 

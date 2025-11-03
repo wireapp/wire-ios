@@ -18,7 +18,7 @@
 
 import Combine
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {

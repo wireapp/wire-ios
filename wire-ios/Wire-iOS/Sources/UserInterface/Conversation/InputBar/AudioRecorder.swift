@@ -19,7 +19,7 @@
 import avs
 import Foundation
 import MediaPlayer
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 enum PlayingState: UInt, CustomStringConvertible {

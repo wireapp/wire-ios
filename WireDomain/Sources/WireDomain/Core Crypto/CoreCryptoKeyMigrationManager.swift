@@ -18,7 +18,7 @@
 
 import WireCoreCrypto
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol {
 

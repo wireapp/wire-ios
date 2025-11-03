@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 import Security
-import WireLegacyLogging
+import WireLogging
 
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {

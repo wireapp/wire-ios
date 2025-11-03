@@ -18,7 +18,7 @@
 
 import WireAnalytics
 import WireDatadog
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 extension WireDatadog: LoggerProtocol {

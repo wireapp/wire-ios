@@ -18,7 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {

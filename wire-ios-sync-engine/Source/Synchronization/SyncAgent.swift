@@ -21,7 +21,7 @@ import Foundation
 import WireDataModel
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireUtilities
 
 // sourcery: AutoMockable

@@ -19,7 +19,7 @@
 import NeedleFoundation
 import SwiftUI
 import WireAuthenticationAPI
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic

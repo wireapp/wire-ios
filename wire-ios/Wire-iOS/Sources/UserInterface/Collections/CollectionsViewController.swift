@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireLegacyLogging
+import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
 

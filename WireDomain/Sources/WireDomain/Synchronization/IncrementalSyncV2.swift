@@ -20,7 +20,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 public typealias CreatePushChannelStateClosure = () -> PushChannelStateProtocol

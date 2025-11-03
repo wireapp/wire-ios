@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 /// A service that runs interruptible migrations when the app
 /// is updated from one version to another.

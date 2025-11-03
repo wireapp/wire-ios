@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public extension ZMLocalNotification {
 

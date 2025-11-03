@@ -19,7 +19,7 @@
 import Foundation
 import WireCrypto
 import WireCryptobox
-import WireLegacyLogging
+import WireLogging
 
 extension Sequence where Element: NSManagedObject {
 

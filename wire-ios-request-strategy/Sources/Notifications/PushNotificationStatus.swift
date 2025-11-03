@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 

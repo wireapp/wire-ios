@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 /// Removes UserClient duplicates and invalid ParticipantRoles
 class CleanupModels107PreAction: CoreDataMigrationAction {

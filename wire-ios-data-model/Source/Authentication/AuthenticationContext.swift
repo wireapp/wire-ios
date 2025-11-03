@@ -18,7 +18,7 @@
 
 import Foundation
 import LocalAuthentication
-import WireLegacyLogging
+import WireLogging
 
 // sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.

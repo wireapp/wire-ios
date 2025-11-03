@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 protocol UserSessionSelfUserClientDelegate: AnyObject {
     /// Invoked when a client is successfully registered

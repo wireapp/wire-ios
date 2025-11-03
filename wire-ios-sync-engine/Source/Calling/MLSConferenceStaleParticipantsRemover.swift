@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireUtilities
 
 /// A class responsible for removing stale participants in a MLS conference.

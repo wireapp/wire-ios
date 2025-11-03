@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDomain
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 import WireSystem
 import ZIPFoundation

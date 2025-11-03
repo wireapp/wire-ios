@@ -18,7 +18,7 @@
 
 public import Foundation
 
-import WireLegacyLogging
+import WireLogging
 
 /// The domain redirect configuration.
 

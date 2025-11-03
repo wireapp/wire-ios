@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 

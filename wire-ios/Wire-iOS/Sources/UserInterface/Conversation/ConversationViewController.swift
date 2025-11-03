@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireDomain
-import WireLegacyLogging
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingUI

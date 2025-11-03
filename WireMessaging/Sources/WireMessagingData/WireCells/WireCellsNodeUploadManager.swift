@@ -17,7 +17,7 @@
 //
 
 package import Foundation
-import WireLegacyLogging
+import WireLogging
 package import WireMessagingDomain
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {

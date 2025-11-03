@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSyncEngine
 

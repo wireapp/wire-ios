@@ -18,7 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireLegacyLogging
+import WireLogging
 
 private let log = ZMSLog(tag: "Conversations")
 

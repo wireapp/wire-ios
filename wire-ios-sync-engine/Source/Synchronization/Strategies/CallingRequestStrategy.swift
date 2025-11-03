@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import GenericMessageProtocol
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireRequestStrategy
 
 @objcMembers

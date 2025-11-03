@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSystem
 

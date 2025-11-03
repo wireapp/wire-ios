@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 // sourcery: AutoMockable

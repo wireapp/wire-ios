@@ -19,7 +19,7 @@
 import avs
 import WireDataModel
 import WireDomain
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 open class AuthenticatedSessionFactory {

@@ -19,11 +19,11 @@
 import Foundation
 import WireDataModelSupport
 import WireDomain
-import WireLegacyLoggingSupport
+import WireLoggingSupport
 import WireNetwork
 import XCTest
 
-@testable import WireLegacyLogging
+@testable import WireLogging
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 @testable import WireTransport

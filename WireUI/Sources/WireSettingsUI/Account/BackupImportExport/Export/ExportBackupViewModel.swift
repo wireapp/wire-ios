@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 
 @MainActor
 final class ExportBackupViewModel: ObservableObject {

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 /// A new user-type property has been introduced with API v12.
 /// Before users were either regular or service users.

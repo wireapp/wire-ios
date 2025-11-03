@@ -17,7 +17,7 @@
 //
 
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 struct TrackingManager: TrackingInterface {

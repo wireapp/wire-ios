@@ -19,7 +19,7 @@
 import WireBackupSupport
 import WireFoundation
 import WireFoundationSupport
-import WireLegacyLogging
+import WireLogging
 import WireUtilitiesPackage
 import XCTest
 

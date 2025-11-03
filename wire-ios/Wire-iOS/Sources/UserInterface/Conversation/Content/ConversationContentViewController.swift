@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingUI
 import WireRequestStrategy

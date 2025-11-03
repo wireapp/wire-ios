@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 
 /// High level access to a specific backend with automatic api
 /// version resolution.

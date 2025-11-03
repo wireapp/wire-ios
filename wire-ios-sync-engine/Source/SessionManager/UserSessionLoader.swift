@@ -19,7 +19,7 @@
 import Foundation
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 protocol UserSessionLoaderDelegate: AnyObject {

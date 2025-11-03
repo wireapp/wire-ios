@@ -18,7 +18,7 @@
 
 import WireDataModel
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireUpdateEventCoding
 

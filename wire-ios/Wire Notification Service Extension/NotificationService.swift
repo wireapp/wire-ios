@@ -21,7 +21,7 @@ import UserNotifications
 import WireCommonComponents
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireTransport
 import WireUtilities

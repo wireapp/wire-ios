@@ -19,7 +19,7 @@
 import Foundation
 import WireDomainPackage
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 
 @MainActor
 final class ImportBackupViewModel: ObservableObject {

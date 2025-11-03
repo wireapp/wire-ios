@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 // This is only used in tests, so it should be removed.

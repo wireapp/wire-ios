@@ -19,7 +19,7 @@
 import avs
 import WireCommonComponents
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 import WireUtilities
 

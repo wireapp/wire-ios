@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
-import WireLegacyLogging
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol E2EIVerificationStatusServiceInterface {

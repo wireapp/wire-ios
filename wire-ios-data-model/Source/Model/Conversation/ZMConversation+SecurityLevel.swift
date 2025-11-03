@@ -20,7 +20,7 @@ import Foundation
 import GenericMessageProtocol
 import WireCoreCrypto
 import WireCryptobox
-import WireLegacyLogging
+import WireLogging
 
 @objc
 public enum ZMConversationLegalHoldStatus: Int16 {

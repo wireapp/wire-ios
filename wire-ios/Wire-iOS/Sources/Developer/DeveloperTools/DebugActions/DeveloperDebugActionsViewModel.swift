@@ -21,7 +21,7 @@ import SwiftUI
 import WireDataModel
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSyncEngine
 

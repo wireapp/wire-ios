@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public enum MessageSendError: Error {
     case missingMessageProtocol

@@ -18,7 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 /// Logger to write logs to fileSystem via CocoaLumberjack

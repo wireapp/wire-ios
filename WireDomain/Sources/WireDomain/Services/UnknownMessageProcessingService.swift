@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 /// Service responsible for processing stored unknown messages when the app is updated
 /// and new protobuf message types become available.

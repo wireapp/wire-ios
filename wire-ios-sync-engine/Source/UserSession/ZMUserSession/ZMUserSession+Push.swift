@@ -19,7 +19,7 @@
 import Foundation
 import UserNotifications
 import WireDomain
-import WireLegacyLogging
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 

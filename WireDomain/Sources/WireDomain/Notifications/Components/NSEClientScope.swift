@@ -19,7 +19,7 @@
 import Foundation
 import NeedleFoundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 protocol NSEClientScopeDependency: Dependency {

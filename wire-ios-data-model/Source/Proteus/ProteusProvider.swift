@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 import WireUtilities
 
 public typealias KeyStorePerformBlock<T> = (UserClientKeysStore) throws -> T

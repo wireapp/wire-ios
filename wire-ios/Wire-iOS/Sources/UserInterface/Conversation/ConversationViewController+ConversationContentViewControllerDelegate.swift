@@ -19,7 +19,7 @@
 import UIKit
 import UniformTypeIdentifiers
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 import WireSystem
 

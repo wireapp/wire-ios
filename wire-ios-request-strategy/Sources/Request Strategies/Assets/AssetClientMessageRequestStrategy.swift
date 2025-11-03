@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 
 /// The `AssetClientMessageRequestStrategy` for creating requests to insert the genericMessage of a
 /// `ZMAssetClientMessage` remotely. This is only necessary for the `/assets/v3' endpoint as we

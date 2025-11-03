@@ -17,7 +17,7 @@
 //
 
 import UserNotifications
-import WireLegacyLogging
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol ProcessNotificationUseCaseProtocol {

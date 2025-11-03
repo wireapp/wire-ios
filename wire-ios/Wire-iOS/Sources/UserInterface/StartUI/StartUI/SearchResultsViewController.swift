@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 enum SearchGroup: Int {

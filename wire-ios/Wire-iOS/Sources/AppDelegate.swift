@@ -25,7 +25,7 @@ import WireCoreCrypto
 import WireCountly
 import WireDomain
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 import WireSyncEngine
 

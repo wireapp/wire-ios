@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import WireFoundation
-import WireLegacyLogging
+import WireLogging
 
 extension ZMUserSession: WireCallCenterCallStateObserver {
 

@@ -17,7 +17,7 @@
 //
 
 import WireDataModelSupport
-import WireLegacyLoggingSupport
+import WireLoggingSupport
 import WireSyncEngineSupport
 import XCTest
 

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLegacyLogging
+import WireLogging
 import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {

@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireNetwork
 
 typealias IncrementalSyncV1 = IncrementalSync

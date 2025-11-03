@@ -20,7 +20,7 @@ import MessageUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 import WireSystem
 
 /// Presents debug alerts

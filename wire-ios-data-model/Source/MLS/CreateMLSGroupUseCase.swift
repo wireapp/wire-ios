@@ -17,7 +17,7 @@
 //
 
 import WireCoreCrypto
-import WireLegacyLogging
+import WireLogging
 
 struct CreateMLSGroupUseCase {
 

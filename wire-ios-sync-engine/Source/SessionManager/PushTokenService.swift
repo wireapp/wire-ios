@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLegacyLogging
+import WireLogging
 
 public final class PushTokenService: PushTokenServiceInterface {
 
