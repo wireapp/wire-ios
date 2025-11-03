@@ -201,7 +201,7 @@ final class MLSAPITests: XCTestCase {
             payload: payload
         )
         let api = MLSAPIV13(apiService: apiService)
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(MLSAPIError.groupOutOfSync(missingUsers: missingUsers)) {
             // When

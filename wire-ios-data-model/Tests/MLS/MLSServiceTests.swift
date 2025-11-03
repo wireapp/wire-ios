@@ -2209,7 +2209,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Mock: commit failed due to missing users.
         let missingUsers: Set<WireDataModel.QualifiedID> = [
             .init(uuid: UUID(), domain: domain),
-            .init(uuid: UUID(), domain: domain),
+            .init(uuid: UUID(), domain: domain)
         ]
         var callCount = 0
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
@@ -2230,7 +2230,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Mock: add users.
         mockActionsProvider
             .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { userID, _, _, _, _ in
-                return [self.createKeyPackage(userID: userID, domain: domain)]
+                [self.createKeyPackage(userID: userID, domain: domain)]
             }
         var addedUsers = [WireDataModel.QualifiedID]()
         var addedInGroupIDs: [MLSGroupID] = []

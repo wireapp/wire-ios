@@ -823,7 +823,8 @@ final class MessageSenderTests: MessagingTestBase {
 
         // Then
         // It tried to send once (but failed), then one more time after adding members.
-        let sendMessageInvocations = arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_Invocations
+        let sendMessageInvocations = arrangement.messageApi
+            .sendMLSMessageMessageConversationIDExpirationDate_Invocations
         XCTAssertEqual(sendMessageInvocations.count, 2)
         XCTAssertEqual(arrangement.mlsService.addMembersToConversationWithFor_Invocations.count, 1)
     }
@@ -850,7 +851,7 @@ final class MessageSenderTests: MessagingTestBase {
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
-            .withApiVersionResolving(to: .v12) // TODO: should be v13
+            .withApiVersionResolving(to: .v13)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .failure(SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)))
             .arrange()
@@ -867,7 +868,8 @@ final class MessageSenderTests: MessagingTestBase {
 
         // Then
         // It tried to send the message 4 times (initial + 3 retries)
-        let sendMessageInvocations = arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_Invocations
+        let sendMessageInvocations = arrangement.messageApi
+            .sendMLSMessageMessageConversationIDExpirationDate_Invocations
         XCTAssertEqual(sendMessageInvocations.count, 4)
         XCTAssertEqual(arrangement.mlsService.addMembersToConversationWithFor_Invocations.count, 3)
     }

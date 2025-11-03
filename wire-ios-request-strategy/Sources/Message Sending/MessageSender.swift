@@ -465,7 +465,6 @@ public final class MessageSender: MessageSenderInterface {
                 let users = missingUsers.map { MLSUser($0) }
                 try await mlsService.addMembersToConversation(with: users, for: groupID)
                 try await sendMessage(message: message)
-
             default:
                 throw error
             }

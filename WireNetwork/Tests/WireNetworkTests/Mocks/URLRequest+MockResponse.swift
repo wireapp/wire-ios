@@ -62,9 +62,9 @@ extension URLRequest {
         )
     }
 
-    func mockErrorResponse<Payload: Encodable>(
+    func mockErrorResponse(
         statusCode: HTTPStatusCode,
-        payload: Payload
+        payload: some Encodable
     ) throws -> (Data, HTTPURLResponse) {
         guard let url else {
             throw "Unable to create mock response, request is missing url"

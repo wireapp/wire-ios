@@ -447,7 +447,7 @@ final class MessageAPIV13: MessageAPIV12 {
         let payload: Payload.MLSMessageSendingStatus
         if response.result == .success {
             payload = try mapSuccessResponse(response)
-        } else if response.httpStatus == 409 && response.payloadLabel() == "mls-group-out-of-sync" {
+        } else if response.httpStatus == 409, response.payloadLabel() == "mls-group-out-of-sync" {
             // New error to handle.
             guard let data = response.rawData else {
                 throw NetworkError.errorDecodingResponse(response)

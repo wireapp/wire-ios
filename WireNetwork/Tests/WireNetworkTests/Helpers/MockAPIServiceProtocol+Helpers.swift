@@ -70,9 +70,9 @@ extension MockAPIServiceProtocol {
         )
     }
 
-    static func withError<Payload: Encodable>(
+    static func withError(
         statusCode: HTTPStatusCode,
-        payload: Payload
+        payload: some Encodable
     ) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
