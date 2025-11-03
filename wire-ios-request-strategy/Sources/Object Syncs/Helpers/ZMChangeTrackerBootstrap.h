@@ -25,5 +25,5 @@
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)context changeTrackers:(NSArray *)changeTrackers;
 
 - (void)fetchObjectsForChangeTrackers;
-
+- (void)addChangeTrackers:(NSArray *)changeTrackers;
 @end

@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class AccountsAPIV12: AccountsAPIV11 {
+class AccountsAPIV12: AccountsAPIV11 {
     override var apiVersion: APIVersion { .v12 }
 }

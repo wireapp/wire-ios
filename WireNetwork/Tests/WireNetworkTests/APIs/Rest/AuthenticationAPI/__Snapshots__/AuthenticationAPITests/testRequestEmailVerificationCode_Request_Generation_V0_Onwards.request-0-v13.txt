@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"email\":\"john.smith@example.com\",\"locale\":\"en\"}" \
+	"/v13/activate/send"

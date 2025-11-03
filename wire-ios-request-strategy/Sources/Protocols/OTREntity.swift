@@ -167,7 +167,7 @@ extension OTREntity {
                 context: context
             )
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             guard let payload = Payload.MessageSendingStatusV4(response) else {
                 return (missingClients: Set(), deletedClients: Set())
             }
