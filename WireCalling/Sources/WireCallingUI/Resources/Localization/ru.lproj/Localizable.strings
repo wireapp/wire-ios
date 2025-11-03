@@ -15,3 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Meetings List
+
+
+"wireMeetings.list.title" = "Встречи";
+"wireMeetings.list.tabs.past" = "Прошлые";
+"wireMeetings.list.tabs.next" = "Вперед";
+"wireMeetings.list.actions.meetNow" = "Встречи сейчас";
+"wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
+"wireMeetings.list.actions.showAll" = "Показать все";
+"wireMeetings.list.emptyState.title" = "Встреч пока нет";
+"wireMeetings.list.emptyState.subtitle" = "Начните встречу с членами команды, гостями или внешними участниками.";
+"wireMeetings.list.header.today" = "Сегодня";
+"wireMeetings.list.header.tomorrow" = "Завтра";
+"wireMeetings.list.header.yesterday" = "Вчера";
+"wireMeetings.list.header.ongoing" = "В настоящее время";
