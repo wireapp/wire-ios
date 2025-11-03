@@ -332,6 +332,7 @@
 
 "conversation.connection_view.in_address_book" = "在联系人中";
 "conversation.connection_view.encryption_info" = "Wire 中的通信始终为端到端加密。您在此对话中发送和接收的所有内容只有您和您的联系人可以访问。";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "请仍然谨慎选择与谁共享敏感信息。";
 
 "conversation.input_bar.shortcut.send" = "发送消息";
@@ -604,7 +605,7 @@
 "content.system.message_timer_off" = "%@关闭了消息计时器";
 "content.system.message_timer_off-you" = "%@关闭了消息计时器";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
 
 "content.system.backends_stop_federating.self_backend" = "**您的后端**已停止与 **%@** 联合。[进一步了解](%@)";
 "content.system.backends_stop_federating.other_backends" = "后端 **%@** 和 **%@** 已停止联合。[进一步了解](%@)";
@@ -617,6 +618,8 @@
 
 "content.system.channel.guest.joined" = "%@ 加入了频道";
 "content.system.channel.guest.you_joined" = "您加入了频道";
+
+"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
 
 // read receipt
 
@@ -1084,6 +1087,10 @@
 "group_details.receipt_options_cell.description" = "当这启用时, 参与者可以看到他们在此对话中的消息何时已阅读。";
 "group_details.access_options_cell.title" = "频道访问权限";
 "group_details.channel_history_options_cell.title" = "对话历史记录";
+"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.subtitle" = "开启";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
 
 "group_details.message_protocol.section_tile" = "协议详细信息";
 "group_details.message_protocol.title" = "协议";
