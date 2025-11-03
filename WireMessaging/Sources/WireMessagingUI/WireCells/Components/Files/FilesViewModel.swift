@@ -98,7 +98,7 @@ package final class FilesViewModel: ObservableObject {
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
-    private let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
+    let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?

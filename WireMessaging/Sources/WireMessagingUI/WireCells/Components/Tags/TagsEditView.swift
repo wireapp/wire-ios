@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -31,8 +33,8 @@ struct TagsEditView: View {
     private let horizontalPadding: CGFloat = 16
     private let tagBubbleSpacing: CGFloat = 10
 
-    init(fileItem: FilesViewItem) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem))
+    init(fileItem: FilesViewItem, updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol) {
+        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, updateTagsUseCase: updateTagsUseCase))
     }
     
     var body: some View {
@@ -50,17 +52,27 @@ struct TagsEditView: View {
                     }
                     
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            viewModel.save()
-                        } label: {
-                            Text(L10n.Localizable.General.save)
-                                .bold()
+                        if viewModel.isPerformingSave {
+                            ProgressView()
+                                .tint(Color.primary)
+                        } else {
+                            Button {
+                                Task {
+                                    await viewModel.save()
+                                }
+                            } label: {
+                                Text(L10n.Localizable.General.save)
+                                    .bold()
+                            }
+                            .disabled(!viewModel.hasChanges)
                         }
-                        .disabled(!viewModel.hasChanges)
                     }
                 }
                 .background(ColorTheme.Backgrounds.background.color)
                 .tint(ColorTheme.Base.primary.color)
+                .onReceive(viewModel.dismiss) {
+                    dismiss()
+                }
         }
     }
     
@@ -250,6 +262,9 @@ struct TagsEditView: View {
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
     )
     
-    TagsEditView(fileItem: item)
+    let mockAPI = MockNodesAPIProtocol()
+    let useCase = WireCellsUpdateTagsUseCase(nodesAPI: mockAPI)
+    
+    TagsEditView(fileItem: item, updateTagsUseCase: useCase)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

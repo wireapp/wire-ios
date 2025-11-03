@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import Combine
+import WireMessagingDomain
 
 extension TagsEditView {
     @MainActor
@@ -28,9 +30,15 @@ extension TagsEditView {
         @Published var enteredTag = ""
         
         //TODO: replace by real server data
-        static private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
+        private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
         
         @Published var currentTags: [String] = []
+        
+        private let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
+        
+        @Published var isPerformingSave: Bool = false
+        
+        let dismiss = PassthroughSubject<Void, Never>()
         
         enum ValidationState {
             case valid
@@ -39,13 +47,14 @@ extension TagsEditView {
             case invalidCharacters
         }
         
-        init(fileItem: FilesViewItem) {
+        init(fileItem: FilesViewItem, updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol) {
             self.fileItem = fileItem
             self.currentTags = fileItem.tags
+            self.updateTagsUseCase = updateTagsUseCase
         }
         
         var suggestedTags: [String] {
-            Self.serverTags.filter { tag in
+            serverTags.filter { tag in
                 !currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
             }
         }
@@ -96,8 +105,18 @@ extension TagsEditView {
             currentTags.removeAll { $0 == tag }
         }
         
-        func save() {
-            //TODO: ...
+        func save() async {
+            isPerformingSave = true
+            defer { isPerformingSave = false }
+            
+            do {
+                //try await Task.sleep(for: .seconds(2))
+                try await updateTagsUseCase.invoke(nodeID: fileItem.id, oldTags: fileItem.tags, newTags: currentTags)
+                //TODO: trigger files reload
+                dismiss.send()
+            } catch {
+                //TODO: show error/retry message
+            }
         }
     }
 }
