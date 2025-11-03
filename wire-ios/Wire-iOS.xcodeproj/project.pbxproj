@@ -106,6 +106,8 @@
 		59C951C42E2B67E8002C0A3E /* WireLegacyLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59C951C32E2B67E8002C0A3E /* WireLegacyLoggingSupport */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
+		59D8C38F2EB9159E00B8E622 /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59D8C38E2EB9159E00B8E622 /* WireLoggingSupport */; };
+		59D8C3912EB915A500B8E622 /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59D8C3902EB915A500B8E622 /* WireLoggingSupport */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
@@ -501,6 +503,7 @@
 			membershipExceptions = (
 				LegacyNotificationService.swift,
 				Logger.swift,
+				WireLegacyLogging.swift,
 			);
 			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
 		};
@@ -709,6 +712,7 @@
 				GroupParticipantsDetailViewControllerSnapshotTests.swift,
 				Helpers/MockSystemSaveFilePresenter.swift,
 				Helpers/SaveFileManagerTests.swift,
+				Helpers/WireLegacyLoggingSupport.swift,
 				"Helpers/XCTestCase+Extensions.swift",
 				IconLabelButtonTests.swift,
 				ImageCache/DecodeImageOperationTests.swift,
@@ -1024,6 +1028,7 @@
 				59C951C22E2B67E3002C0A3E /* WireLegacyLoggingSupport in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 				595BE7A42E32367F00ED9088 /* WireAnalyticsSupport in Frameworks */,
+				59D8C38F2EB9159E00B8E622 /* WireLoggingSupport in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1033,6 +1038,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
+				59D8C3912EB915A500B8E622 /* WireLoggingSupport in Frameworks */,
 				59C951C42E2B67E8002C0A3E /* WireLegacyLoggingSupport in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				5977ED1F2D26747900F5C78E /* WireLegacyLogging in Frameworks */,
@@ -1442,6 +1448,7 @@
 				595BE7A32E32367F00ED9088 /* WireAnalyticsSupport */,
 				3438C5582E5C518900D6FB5C /* WireNetwork */,
 				76EF748F2E9E6380006A1579 /* WireLocators */,
+				59D8C38E2EB9159E00B8E622 /* WireLoggingSupport */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -1470,6 +1477,7 @@
 				59C951C32E2B67E8002C0A3E /* WireLegacyLoggingSupport */,
 				595BE7A52E32368500ED9088 /* WireAnalyticsSupport */,
 				3438C55A2E5C51A700D6FB5C /* WireNetwork */,
+				59D8C3902EB915A500B8E622 /* WireLoggingSupport */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -3008,6 +3016,14 @@
 		59D038262C85D31E009FE583 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMainNavigationUI;
+		};
+		59D8C38E2EB9159E00B8E622 /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
+		};
+		59D8C3902EB915A500B8E622 /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
 		};
 		76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */ = {
 			isa = XCSwiftPackageProductDependency;
