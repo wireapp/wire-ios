@@ -43,6 +43,7 @@
                            eventProcessingTracker:(id<EventProcessingTrackerProtocol> _Nonnull)eventProcessingTracker;
 
 - (void)tearDown;
+- (void)updateStrategyClientContextChangeTrackers;
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
 @property (nonatomic, nullable) id<EventProcessingTrackerProtocol> eventProcessingTracker;
