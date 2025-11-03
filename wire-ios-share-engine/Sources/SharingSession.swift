@@ -582,7 +582,7 @@ extension InitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateReset
 
 // No need to handle it in share extension for now
 struct NullInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
         // do nothing
     }
 }
