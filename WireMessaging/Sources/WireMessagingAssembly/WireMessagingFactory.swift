@@ -133,7 +133,7 @@ public extension WireMessagingFactory {
         cellName: String,
         isCellsStatePending: Bool
     ) -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = .conversationFileView(root: .path(cellName))
+        let configuration: WireCellsGetNodesRequest.Configuration = .conversationFileView(root: .path(cellName))
         let filesView: UIHostingController<FilesView>
         filesView = makeFilesHostingController(
             configuration: configuration,
@@ -144,7 +144,7 @@ public extension WireMessagingFactory {
 
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = .filesBrowserView()
+        let configuration: WireCellsGetNodesRequest.Configuration = .filesBrowserView
         let filesBrowserView: UIHostingController<FilesBrowserView>
         filesBrowserView = makeFilesHostingController(
             configuration: configuration
@@ -154,7 +154,7 @@ public extension WireMessagingFactory {
 
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
-        configuration: WireCellsFetchNodesUseCase.Configuration,
+        configuration: WireCellsGetNodesRequest.Configuration,
         isCellsStatePending: Bool = false
     ) -> UIHostingController<T> {
         let viewModel = FilesViewModel(
