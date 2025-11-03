@@ -44,6 +44,9 @@ extension FilesViewModel {
                 fileCache: cache,
                 localAssetStore: localAssetStore
             ),
+            updateTagsUseCase: WireCellsUpdateTagsUseCase(
+                nodesAPI: previewTagsApi()
+            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
             fileCache: cache
@@ -96,6 +99,12 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
         return (page, nextOffset)
     }
     return repository
+}
+
+private func previewTagsApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    //TODO: mock some results?
+    return mock
 }
 
 private func fileCache() -> any FileCache {

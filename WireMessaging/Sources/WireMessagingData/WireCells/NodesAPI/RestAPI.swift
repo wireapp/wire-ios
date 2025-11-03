@@ -212,6 +212,31 @@ final class RestAPI: Sendable {
     func deletePublicLink(uuid: UUID) async throws {
         _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
     }
+    
+    func updateMetadata(uuid: UUID, namespace: String, valuesToAdd: [String] = [], valuesToRemove: [String] = []) async throws {
+        let toAdd: [RestMetaUpdate] = valuesToAdd.map { value in
+            .init(
+                operation: .put,
+                userMeta: .init(jsonValue: value, namespace: namespace, nodeUuid: uuid.uuidString)
+            )
+        }
+        
+        let toRemove: [RestMetaUpdate] = valuesToRemove.map { value in
+            .init(
+                operation: .delete,
+                userMeta: .init(jsonValue: value, namespace: namespace, nodeUuid: uuid.uuidString)
+            )
+        }
+        
+        _ = try await NodeServiceAPI.batchUpdateMeta(
+            body: .init(updates: toAdd + toRemove),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+    
+    func updateTags(uuid: UUID, tagsToAdd: [String], tagsToRemove: [String]) async throws {
+        _ = try await updateMetadata(uuid: uuid, namespace: "usermeta-tags", valuesToAdd: tagsToAdd, valuesToRemove: tagsToRemove)
+    }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()

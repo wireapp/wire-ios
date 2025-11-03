@@ -123,7 +123,10 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
-
+    
+    public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
+        WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
+    }
 }
 
 public extension WireMessagingFactory {
@@ -173,6 +176,7 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
+            updateTagsUseCase: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache

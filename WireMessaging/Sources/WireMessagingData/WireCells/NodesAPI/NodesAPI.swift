@@ -141,6 +141,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func deletePublicLink(linkUUID: UUID) async throws {
         try await restAPI.deletePublicLink(uuid: linkUUID)
     }
+    
+    package func updateTags(nodeID: UUID, tagsToAdd: [String], tagsToRemove: [String]) async throws {
+        try await restAPI.updateTags(uuid: nodeID, tagsToAdd: tagsToAdd, tagsToRemove: tagsToRemove)
+    }
 }
 
 private extension CellsSDK.ErrorResponse {

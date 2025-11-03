@@ -98,6 +98,7 @@ package final class FilesViewModel: ObservableObject {
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
+    private let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
@@ -114,12 +115,14 @@ package final class FilesViewModel: ObservableObject {
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         deleteNodesUseCase: WireCellsDeleteNodesUseCase,
+        updateTagsUseCase: some WireCellsUpdateTagsUseCaseProtocol,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
         self.deleteNodesUseCase = deleteNodesUseCase
+        self.updateTagsUseCase = updateTagsUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading

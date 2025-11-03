@@ -66,7 +66,8 @@ final class FilesViewTests: XCTestCase {
             filename: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -88,7 +89,8 @@ final class FilesViewTests: XCTestCase {
             filename: "some random file with a long name.excel",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -110,7 +112,8 @@ final class FilesViewTests: XCTestCase {
             filename: "some random file with a long name.excel",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -133,7 +136,8 @@ final class FilesViewTests: XCTestCase {
             filename: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -163,7 +167,8 @@ final class FilesViewTests: XCTestCase {
             filename: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -272,6 +277,7 @@ private extension FilesItemViewModel {
             localAssetRepository: localAssetRepository,
             onOpen: { _ in },
             onDelete: { _ in },
+            onEditTagsSelected: { _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

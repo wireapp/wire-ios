@@ -45,4 +45,6 @@ package protocol NodesAPIProtocol: Sendable {
     func getPublicLink(linkUUID: UUID) async throws -> URL
 
     func deletePublicLink(linkUUID: UUID) async throws
+    
+    func updateTags(nodeID: UUID, tagsToAdd: [String], tagsToRemove: [String]) async throws
 }
