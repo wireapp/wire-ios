@@ -87,4 +87,5 @@ public class SystemLogger: LoggerProtocol {
             os_log(osLogType, log: logger, "\(finalMessage)")
         #endif
     }
+
 }

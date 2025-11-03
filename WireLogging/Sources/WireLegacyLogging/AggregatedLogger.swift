@@ -79,4 +79,5 @@ final class AggregatedLogger: LoggerProtocol {
             $0.addTag(key, value: value)
         }
     }
+
 }
