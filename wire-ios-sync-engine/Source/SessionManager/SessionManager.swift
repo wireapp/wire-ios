@@ -148,11 +148,11 @@ public protocol SessionManagerType: AnyObject {
         in session: ZMUserSession
     )
 
-    /// Switch account and and ask UI to navigate to the conversatio list
+    /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
     /// ask UI to open the profile of a user
-    func showUserProfile(user: UserType)
+    func showUserProfile(user: WireDataModel.UserType)
 
     /// Needs to be called before we try to register another device because API requires password
     func update(credentials: UserCredentials) -> Bool
@@ -1104,6 +1104,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     error: .networkError(code: error.errorCode)
                 )
                 return nil
+            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .databaseError(error)
+                )
+                return nil
             } catch let error as SafeForLoggingStringConvertible {
                 WireLogger.sessionManager.error(
                     "failed to load user session: \(error.safeForLoggingDescription)",
@@ -1892,7 +1902,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
     public func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
-        caller: UserType,
+        caller: WireDataModel.UserType,
         timestamp: Date?,
         previousCallState: CallState?
     ) {
@@ -2073,6 +2083,7 @@ public extension SessionManager {
         case clientIsObsolete
         case networkError(code: Int)
         case genericError
+        case databaseError(Error)
 
     }
 

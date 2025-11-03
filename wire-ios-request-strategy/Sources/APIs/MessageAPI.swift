@@ -416,11 +416,12 @@ class MessageAPIV11: MessageAPIV10 {
     override var apiVersion: APIVersion { .v11 }
 }
 
-final class MessageAPIV12: MessageAPIV11 {
+class MessageAPIV12: MessageAPIV11 {
     override var apiVersion: APIVersion { .v12 }
+}
 
-    // TODO: new error: 409 out-of-sync
-    // Parse the response to get a list of users.
+final class MessageAPIV13: MessageAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
 
     override func sendMLSMessage(
         message encryptedMessage: Data,
@@ -474,5 +475,4 @@ final class MessageAPIV12: MessageAPIV11 {
         }
 
     }
-
 }

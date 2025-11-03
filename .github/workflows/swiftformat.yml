@@ -29,6 +29,7 @@ jobs:
         if: ${{ steps.changes.outputs.swift == 'true' }}
 
       - name: Install SwiftFormat 0.58.3
+        if: ${{ steps.changes.outputs.swift == 'true' }}
         run: |
           curl -L -o swiftformat.zip https://github.com/nicklockwood/SwiftFormat/releases/download/0.58.3/swiftformat_linux.zip
           unzip swiftformat.zip -d swiftformat_bin
@@ -36,4 +37,5 @@ jobs:
           chmod +x /usr/local/bin/swiftformat
 
       - name: Run SwiftFormat
+        if: ${{ steps.changes.outputs.swift == 'true' }}
         run: swiftformat --lint . --reporter github-actions-log --config .swiftformat

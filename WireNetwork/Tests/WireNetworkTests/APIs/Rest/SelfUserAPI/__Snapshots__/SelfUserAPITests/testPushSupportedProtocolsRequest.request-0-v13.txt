@@ -1,0 +1,5 @@
+curl \
+	--request PUT \
+	--header "Content-Type: application/json" \
+	--data "{\"supported_protocols\":[\"mls\"]}" \
+	"/v13/self/supported-protocols"
