@@ -26,3 +26,18 @@ public protocol WireLoggingProvider: Sendable {
     func log(level: Level, message: WireLogMessage)
 
 }
+
+// TODO: fix conflict
+
+import Testing
+
+@testable import WireLogging
+
+struct Test {
+
+    @Test
+    func nothing() async throws {
+        // just a placeholder test
+    }
+
+}

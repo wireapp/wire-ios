@@ -10,8 +10,7 @@
 		013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */; };
 		591B6E8C2C8B0A37009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		591B6E8F2C8B0A3A009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
-		5953781C2CFF42E900920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5953781B2CFF42E900920B59 /* WireLogging */; };
-		596A19362EB3A5C20017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A19352EB3A5C20017C3CA /* WireLegacyLogging */; };
+		5953781C2CFF42E900920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5953781B2CFF42E900920B59 /* WireLegacyLogging */; };
 		596A19E72E9E4F8700E190AE /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 596A19E62E9E4F8700E190AE /* ZIPFoundation */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
 		EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC832BD1585500F7853F /* WireSystem.docc */; };
@@ -91,8 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596A19362EB3A5C20017C3CA /* WireLegacyLogging in Frameworks */,
-				5953781C2CFF42E900920B59 /* WireLogging in Frameworks */,
+				5953781C2CFF42E900920B59 /* WireLegacyLogging in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 				596A19E72E9E4F8700E190AE /* ZIPFoundation in Frameworks */,
 			);
@@ -192,9 +190,8 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
-				5953781B2CFF42E900920B59 /* WireLogging */,
+				5953781B2CFF42E900920B59 /* WireLegacyLogging */,
 				596A19E62E9E4F8700E190AE /* ZIPFoundation */,
-				596A19352EB3A5C20017C3CA /* WireLegacyLogging */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -700,11 +697,7 @@
 			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
 		};
-		5953781B2CFF42E900920B59 /* WireLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireLogging;
-		};
-		596A19352EB3A5C20017C3CA /* WireLegacyLogging */ = {
+		5953781B2CFF42E900920B59 /* WireLegacyLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLegacyLogging;
 		};

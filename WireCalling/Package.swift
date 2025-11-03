@@ -24,7 +24,6 @@ let package = Package(
             name: "WireCallingDomain",
             dependencies: [
                 "WireFoundation",
-                "WireLogging",
                 .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),
@@ -40,7 +39,6 @@ let package = Package(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
-                "WireLogging",
                 .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),

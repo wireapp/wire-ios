@@ -676,6 +676,7 @@ public final class ZMUserSession: NSObject {
                 incrementalSyncObserver: incrementalSyncObserver,
                 metadata: resolvedBackendMetadata
             )
+            syncStrategy?.updateClientContextChangeTrackers()
         }
     }
 
