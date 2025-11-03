@@ -19,47 +19,20 @@
 import Combine
 import Foundation
 package import SwiftUI
-import UniformTypeIdentifiers
-import WireLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
-
-/// An item in the `WireCellsAttachmentsPreviewView`.
-struct WireCellsAttachmentsPreviewViewItem: Identifiable, Hashable {
-
-    var id: UUID { nodeID }
-
-    /// Identifier of this item on the wire cells backend.
-    let nodeID: UUID
-
-    /// Icon representing the file type of this attachment.
-    let fileIcon: FileIcon
-
-    /// The name of the file, if available.
-    let fileName: String?
-
-    let fileExtension: String?
-
-    /// The size in bytes of the attachment.
-    let fileSize: Int?
-
-    /// Whether the item is deleted or in the recycle bin.
-    let isDeleted: Bool
-
-}
 
 @MainActor
 package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
-    private let attachments: [WireCellsMessageAttachment]
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
+    let attachments: [WireCellsMessageAttachment]
     let alignment: HorizontalAlignment
-    @Published var items: [WireCellsAttachmentsPreviewViewItem]
 
     package init(
         attachments: [WireCellsMessageAttachment],
@@ -77,38 +50,20 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
-
-        self.items = attachments.map { WireCellsAttachmentsPreviewViewItem($0, isDeleted: false) }
     }
 
     /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
     func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
         WireCellsAttachmentsPreviewItemViewModel(
-            item: items[index],
+            attachment: attachments[index],
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
-            nodeRenameNotifier: nodeRenameNotifier
+            nodeRenameNotifier: nodeRenameNotifier,
+            displayStyle: attachments.count > 1 ? .small : .large
         )
-    }
-
-}
-
-private extension WireCellsAttachmentsPreviewViewItem {
-
-    init(_ value: WireCellsMessageAttachment, isDeleted: Bool) {
-        let url = value.initialName.flatMap { URL(string: $0) }
-        let fileType = value.contentType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
-
-        self.nodeID = value.nodeID
-        self.fileIcon = .make(type: fileType, fileExtension: fileExtension)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.initialSize
-        self.isDeleted = isDeleted
     }
 
 }

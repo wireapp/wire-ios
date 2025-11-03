@@ -136,3 +136,4 @@
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
+"conversation.message.attachment.previewNotAvailable" = "Unable to display preview";

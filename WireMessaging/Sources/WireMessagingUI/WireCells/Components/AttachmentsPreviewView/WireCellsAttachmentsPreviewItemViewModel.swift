@@ -26,6 +26,12 @@ import WireMessagingDomain
 @MainActor
 final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
+    enum DisplayStyle {
+        case small
+        case large
+    }
+
+    private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
@@ -34,46 +40,71 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     let alignment: HorizontalAlignment
+    let displayStyle: DisplayStyle
 
-    @Published private var item: WireCellsAttachmentsPreviewViewItem
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
+    @Published private var node: WireCellsNode?
+    @Published private var isDeleted: Bool
 
     init(
-        item: WireCellsAttachmentsPreviewViewItem,
+        attachment: WireCellsMessageAttachment,
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
-        nodeRenameNotifier: WireCellsNodeRenameNotifier
+        nodeRenameNotifier: WireCellsNodeRenameNotifier,
+        displayStyle: DisplayStyle
     ) {
-        self.item = item
+        self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
         self.localAssetRepository = localAssetRepository
+        self.displayStyle = displayStyle
+        self.isDeleted = false
 
         setupBindings()
     }
 
+    var fileCategory: WireCellsFileCategory {
+        let fileType = contentType.flatMap { UTType(mimeType: $0) }
+        return WireCellsFileCategory(fileType)
+    }
+
     var headerText: String {
-        if item.isDeleted {
+        if isDeleted {
             return ""
         } else {
-            let fileSize = (item.fileSize?.formatted(.byteCount(style: .decimal)) as String?).map { "(\($0))" }
-            return [item.fileExtension?.uppercased(), fileSize].compactMap(\.self).joined(separator: " ")
+            let fileSizeString = fileSize.map { "(\($0))" }
+            let fileExtension = pathURL?.pathExtension.uppercased()
+            return [fileExtension, fileSizeString].compactMap(\.self).joined(separator: " ")
         }
     }
 
     var fileName: String {
-        item.isDeleted ? L10n.Localizable.Conversation.Message.Attachment.notAvailable : item.fileName ?? ""
+        if isDeleted {
+            L10n.Localizable.Conversation.Message.Attachment.notAvailable
+        } else {
+            pathURL?.deletingPathExtension().lastPathComponent ?? ""
+        }
     }
 
     var icon: ImageResource {
-        item.isDeleted ? .fileIconNotAvailable : item.fileIcon.resource
+        if isDeleted {
+            return .fileIconNotAvailable
+        } else {
+            let fileType = contentType.flatMap { UTType(mimeType: $0) }
+            let fileExtension = pathURL?.pathExtension
+            return FileIcon.make(type: fileType, fileExtension: fileExtension).resource
+        }
+    }
+
+    var imagePreviewURL: URL? {
+        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
     }
 
     var progress: Double {
@@ -87,7 +118,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
-    var isError: Bool {
+    var isAssetDownloadError: Bool {
         switch asset?.downloadState {
         case .failed:
             true
@@ -98,46 +129,82 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     func refresh() async {
         do {
-            for try await node in fetchNodeUseCase.invoke(nodeID: item.nodeID) {
+            for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
+                self.node = node
+
                 if let node {
-                    item = WireCellsAttachmentsPreviewViewItem(node)
+                    isDeleted = node.isRecycled
                 } else {
-                    item = WireCellsAttachmentsPreviewViewItem(
-                        nodeID: item.nodeID,
-                        fileIcon: item.fileIcon,
-                        fileName: item.fileName,
-                        fileExtension: item.fileExtension,
-                        fileSize: item.fileSize,
-                        isDeleted: true
-                    )
+                    isDeleted = true
                 }
             }
         } catch {
-            WireLogger.wireCells.info("Failed to refresh node with ID: \(item.nodeID), error: \(error)")
+            WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
     }
 
     func open() async {
-        guard !item.isDeleted, !isDownloading else { return }
+        guard !isDeleted, !isDownloading else { return }
 
-        lastOpenRequest.nodeID = item.nodeID
+        lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: item.nodeID)
-            if lastOpenRequest.nodeID == item.nodeID {
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }
         } catch {
-            WireLogger.wireCells.error("Failed to open file with node ID: \(item.nodeID), error: \(error)")
+            WireLogger.wireCells.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
+    }
+
+    private var previewSize: CGSize? {
+        guard let size = attachment.initialMetadata?.dimension, size.width > 0, size.height > 0 else {
+            return nil
+        }
+
+        return size
+    }
+
+    var previewAspectRatio: Double {
+        guard let size = previewSize else { return 1 }
+
+        return size.width / size.height
+    }
+
+    var previewWidth: Double? {
+        previewSize?.width as? Double // Explicit conversion necessary due to compiler bug
     }
 
     // MARK: - Private
 
+    private var nodeID: UUID {
+        node?.id ?? attachment.nodeID
+    }
+
+    private var pathURL: URL? {
+        let path = node?.path ?? attachment.initialName
+        return path.flatMap { URL(string: $0) }
+
+    }
+
+    private var contentType: String? {
+        node?.mimeType ?? attachment.contentType
+    }
+
+    private var fileSize: String? {
+        let fileSize = node?.size.map { Int($0) } ?? attachment.initialSize
+        return fileSize.map { $0.formatted(.byteCount(style: .decimal)) }
+    }
+
+    private var isDownloading: Bool {
+        asset?.downloadState.isDownloading == true
+    }
+
     private func setupBindings() {
         nodeRenameNotifier.publisher
             .sink { [self] nodeID in
-                guard nodeID == item.nodeID else {
+                guard nodeID == attachment.nodeID else {
                     return
                 }
 
@@ -147,48 +214,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
                 }
             }.store(in: &cancellables)
 
-        localAssetRepository.observeAsset(nodeID: item.nodeID)
+        localAssetRepository.observeAsset(nodeID: attachment.nodeID)
             .sink { [self] asset in
                 self.asset = asset
             }.store(in: &cancellables)
-    }
-
-    private var fileSize: String? {
-        item.fileSize.map { Int($0).formatted(.byteCount(style: .decimal)) }
-    }
-
-    private var isDownloading: Bool {
-        asset?.downloadState.isDownloading == true
-    }
-
-}
-
-private extension WireCellsAttachmentsPreviewViewItem {
-
-    init(_ value: WireCellsMessageAttachment, isDeleted: Bool) {
-        let url = value.initialName.flatMap { URL(string: $0) }
-        let fileType = value.contentType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
-
-        self.nodeID = value.nodeID
-        self.fileIcon = .make(type: fileType, fileExtension: fileExtension)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.initialSize
-        self.isDeleted = isDeleted
-    }
-
-    init(_ value: WireCellsNode) {
-        let url = URL(string: value.path)
-        let fileType = value.mimeType.flatMap { UTType(mimeType: $0) }
-        let fileExtension = url?.pathExtension
-
-        self.nodeID = value.id
-        self.fileIcon = .make(type: fileType, fileExtension: value.path)
-        self.fileName = url?.deletingPathExtension().lastPathComponent
-        self.fileExtension = fileExtension
-        self.fileSize = value.size.map { Int($0) }
-        self.isDeleted = value.isRecycled
     }
 
 }

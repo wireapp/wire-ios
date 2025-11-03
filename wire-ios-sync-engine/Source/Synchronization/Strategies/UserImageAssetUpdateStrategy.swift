@@ -225,7 +225,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else { return nil }
 
@@ -281,7 +281,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
                 extraMetaData = .init(
                     conversationID: QualifiedID(uuid: nullID, domain: localDomain),
                     fileName: image.name,
-                    mimeType: image.utType?.preferredMIMEType ?? ""
+                    mimeType: image.utType?.preferredMIMEType
                 )
             }
 
