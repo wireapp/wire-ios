@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"size\":500}" \
+	"/v13/list-connections"
