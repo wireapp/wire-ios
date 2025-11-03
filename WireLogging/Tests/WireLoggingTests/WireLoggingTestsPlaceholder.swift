@@ -22,7 +22,8 @@ import Testing
 
 struct Test {
 
-    @Test func nothing() async throws {
+    @Test
+    func nothing() async throws {
         // just a placeholder test
     }
 
