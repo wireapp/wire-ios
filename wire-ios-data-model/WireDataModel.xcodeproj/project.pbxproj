@@ -260,6 +260,7 @@
 		5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */; };
 		5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */; };
 		596A633E2EB3B2860017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A633D2EB3B2860017C3CA /* WireLegacyLogging */; };
+		597476082D019CF9005E891A /* WireLegacyLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476072D019CF9005E891A /* WireLegacyLogger.swift */; };
 		5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 5978BFD32E2E6132004778CC /* SwiftProtobuf */; };
 		5979E8482D478DD20051080F /* store2-121-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 5979E8472D478DD20051080F /* store2-121-0.wiredatabase */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
@@ -1026,6 +1027,7 @@
 		5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizer.swift; sourceTree = "<group>"; };
 		5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizerTests.swift; sourceTree = "<group>"; };
 		5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizationResult.swift; sourceTree = "<group>"; };
+		597476072D019CF9005E891A /* WireLegacyLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogger.swift; sourceTree = "<group>"; };
 		5979E8472D478DD20051080F /* store2-121-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-121-0.wiredatabase"; sourceTree = "<group>"; };
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
 		5980C7002BE4E17100278363 /* E2EINotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EINotifications.swift; sourceTree = "<group>"; };
@@ -2594,6 +2596,7 @@
 			isa = PBXGroup;
 			children = (
 				59BAE29C2EB3D99000CA529B /* WireLegacyLogger.swift */,
+				597476072D019CF9005E891A /* WireLegacyLogger.swift */,
 				EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */,
 				F963E9671D9ADD5A00098AD3 /* Protos */,
 				F9331C851CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h */,
@@ -3859,6 +3862,7 @@
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
 				59BAE29D2EB3D99000CA529B /* WireLegacyLogger.swift in Sources */,
 				5473CC731E14245C00814C03 /* NSManagedObjectContext+Debugging.swift in Sources */,
+				597476082D019CF9005E891A /* WireLegacyLogger.swift in Sources */,
 				BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */,
 				CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */,
 				F9A706991CAEE01D00C2F5FE /* ZMManagedObject.m in Sources */,
