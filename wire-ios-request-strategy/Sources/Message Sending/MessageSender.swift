@@ -43,7 +43,7 @@ public protocol MessageSenderInterface {
 
 // sourcery: AutoMockable
 public protocol InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: MLSGroupID, epoch: Int64) async
+    func invoke(groupID: MLSGroupID, epoch: UInt64) async
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -448,7 +448,7 @@ public final class MessageSender: MessageSenderInterface {
                 await initiateResetMLSConversationUseCase
                     .invoke(
                         groupID: groupID,
-                        epoch: Int64(epoch ?? 0)
+                        epoch: epoch ?? 0
                     )
             default:
                 throw error
