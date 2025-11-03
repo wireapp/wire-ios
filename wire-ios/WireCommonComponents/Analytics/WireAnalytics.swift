@@ -43,18 +43,9 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
-<<<<<<< HEAD
         migrateLogFilesToNewLocation(target: target)
 
-        WireLogger.initialize {
-            #if DEBUG
-                SystemLogger()
-            #endif
-            CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
-            WireAnalytics.Datadog.shared
-        }
-=======
-        let cocoaLumberjackLogger = CocoaLumberjackLogger()
+        let cocoaLumberjackLogger = CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
         let subsystem = Bundle.main.bundleIdentifier!
         WireLogger.setup { tag in
             var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
@@ -72,14 +63,13 @@ public enum WireAnalytics {
         }
 
         // TODO: clean up
-        LegacyLogger.initialize(
-            loggers: [
-                SystemLogger(),
-                cocoaLumberjackLogger,
-                WireAnalytics.Datadog.shared
-            ]
-        )
->>>>>>> 1f47bea48a (refactor: logging using string interpolation - WPB-14297 squashed)
+        LegacyLogger.initialize {
+            #if DEBUG
+                SystemLogger()
+            #endif
+            cocoaLumberjackLogger
+            WireAnalytics.Datadog.shared
+        }
 
         // pass tags to Datadog through WireLogger
         LegacyLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
