@@ -176,7 +176,7 @@ class Framework
         when "WireAnalytics"
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
         when "WireLogging"
-            "WireLogging"
+            "WireLoggingAll" # if a package has multiple targets, fastlane does not find <Package>-Package
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else
