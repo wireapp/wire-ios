@@ -21,7 +21,7 @@ public import Foundation
 /// A debouncer that triggers the action immediately on the first call (leading)
 /// and once more after a delay if additional calls occur (trailing).
 /// Useful for responding instantly but also handling final state after other input.
-public final class LeadingTrailingDebouncer<ID: Hashable> {
+public final class LeadingTrailingDebouncer: @unchecked Sendable {
 
     private struct DebounceState {
         var isCooldown = false
@@ -29,20 +29,20 @@ public final class LeadingTrailingDebouncer<ID: Hashable> {
     }
 
     private let cooldownTime: TimeInterval
-    private let queue: DispatchQueue
-    private var states: [AnyHashable: DebounceState] = [:]
+    private let queue: DispatchQueue = .main
+    private var states: [UUID: DebounceState] = [:]
 
     // Unique key for `nil` ID
     private let nilKey = UUID()
 
-    public init(cooldownTime: TimeInterval, queue: DispatchQueue = .main) {
+    public init(cooldownTime: TimeInterval) {
         self.cooldownTime = cooldownTime
-        self.queue = queue
     }
 
-    public func call(id: ID?, block: @escaping () -> Void) {
+    public func call(id: UUID?, block: @escaping () -> Void) {
+        precondition(Thread.isMainThread) // the `states` dictionary should be updated from one thread only
 
-        let key: AnyHashable = id.map { AnyHashable($0) } ?? AnyHashable(nilKey)
+        let key = id ?? nilKey
 
         if states[key] == nil {
             states[key] = DebounceState()
@@ -54,31 +54,27 @@ public final class LeadingTrailingDebouncer<ID: Hashable> {
             // LEADING: run immediately
             block()
             state.isCooldown = true
+            states[key] = state
 
             queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
                 guard let self else { return }
 
                 var updatedState = states[key] ?? DebounceState()
-                updatedState.isCooldown = false
 
+                // Execute trailing call if pending
                 if let trailing = updatedState.pendingCall {
                     trailing()
-                    updatedState.pendingCall = nil
-                    updatedState.isCooldown = true
-
-                    queue.asyncAfter(deadline: .now() + cooldownTime) {
-                        self.states[key]?.isCooldown = false
-                        self.states[key]?.pendingCall = nil
-                    }
                 }
 
+                // Reset state
+                updatedState.isCooldown = false
+                updatedState.pendingCall = nil
                 states[key] = updatedState
             }
         } else {
             // Store for TRAILING
             state.pendingCall = block
+            states[key] = state
         }
-
-        states[key] = state
     }
 }
