@@ -125,16 +125,6 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
-
-    public func makeRenameNodeUseCase() -> any WireCellsRenameNodeUseCaseProtocol {
-        WireCellsRenameNodeUseCase(
-            nodesRepository: nodesAPI,
-            localAssetsRepository: localAssetRepository,
-            nodeCache: nodeCache,
-            nodeRenameNotifier: nodeRenameNotifier
-        )
-    }
-
 }
 
 public extension WireMessagingFactory {
@@ -184,7 +174,12 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
-            renameNodeUseCase: makeRenameNodeUseCase(),
+            renameNodeUseCase: WireCellsRenameNodeUseCase(
+                nodesRepository: nodesAPI,
+                localAssetsRepository: localAssetRepository,
+                nodeCache: nodeCache,
+                nodeRenameNotifier: nodeRenameNotifier
+            ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache
