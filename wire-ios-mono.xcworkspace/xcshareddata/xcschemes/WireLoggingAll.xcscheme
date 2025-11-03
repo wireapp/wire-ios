@@ -81,6 +81,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLegacyLoggingTests"
+               BuildableName = "WireLegacyLoggingTests"
+               BlueprintName = "WireLegacyLoggingTests"
+               ReferencedContainer = "container:WireLogging">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireLoggingTests"
                BuildableName = "WireLoggingTests"
                BlueprintName = "WireLoggingTests"

@@ -23,7 +23,7 @@ import XCTest
 
 final class WireLogInterpolationAnyErrorTests: XCTestCase {
 
-    private var mockLogger: MockWireLoggerProtocol!
+    private var mockLogger: WireLoggerProtocolMock!
 
     override func setUp() {
         mockLogger = .init()

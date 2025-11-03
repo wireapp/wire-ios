@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLegacyLogging
-
-typealias WireLogger = WireLegacyLogging.WireLogger
+public extension ZMMessage {
+    @NSManaged var senderID: UUID?
+    @NSManaged var senderDomain: String?
+    @NSManaged var conversationID: UUID?
+    @NSManaged var conversationDomain: String?
+}
