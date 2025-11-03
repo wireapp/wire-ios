@@ -119,6 +119,7 @@ package final class FilesViewModel: ObservableObject {
     private func bindSearch() {
         $searchText
             .removeDuplicates()
+            .dropFirst()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
                 Task { await self?.reload() }
