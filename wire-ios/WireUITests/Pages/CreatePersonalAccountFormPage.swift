@@ -25,19 +25,15 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .any)["Enter your name"].firstMatch
-    }
-
-    var showPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["eye.slash"].firstMatch
+        app.descendants(matching: .textField)["enterNameField"].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .any)["Enter a password"].firstMatch
+        app.descendants(matching: .secureTextField)["enterPasswordField"].firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .any)["Confirm password"].firstMatch
+        app.descendants(matching: .secureTextField)["enterConfirmPasswordField"].firstMatch
     }
 
     var continueButton: XCUIElement {
@@ -56,13 +52,11 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
         try passwordField.tapIfKeyboardNotFocused().typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
         try confirmPasswordField.tapIfKeyboardNotFocused().typeText(confirmPassword)
         return self
     }
@@ -77,5 +71,4 @@ class CreatePersonalAccountFormPage: PageModel {
         acceptButton.tap()
         return try VerificationCodePage()
     }
-
 }
