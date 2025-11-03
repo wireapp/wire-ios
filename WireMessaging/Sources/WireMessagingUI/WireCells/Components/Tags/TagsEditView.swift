@@ -31,7 +31,7 @@ struct TagsEditView: View {
     @StateObject private var viewModel: ViewModel
     
     private let horizontalPadding: CGFloat = 16
-    private let tagBubbleSpacing: CGFloat = 10
+    private let tagBubbleSpacing: CGFloat = 8
 
     init(fileItem: FilesViewItem, updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol) {
         _viewModel = .init(wrappedValue: .init(fileItem: fileItem, updateTagsUseCase: updateTagsUseCase))
@@ -81,13 +81,20 @@ struct TagsEditView: View {
             VStack(alignment: .leading, spacing: 10) {
                 normalText(Strings.Tags.headline)
                 
-                tagNameInputArea()
+                VStack(alignment: .leading, spacing: 10) {
+                    addedTagsArea()
+                    
+                    tagNameInputArea()
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, horizontalPadding)
+                .background(ColorTheme.Backgrounds.backgroundVariant.color)
+                .padding(.horizontal, -horizontalPadding)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer(minLength: 6)
+                tagNamewValidationError()
                 
-                addedTagsArea()
-                
-                Spacer(minLength: 28)
+                Spacer(minLength: 20)
 
                 suggestedTagsArea()
             }
@@ -99,28 +106,19 @@ struct TagsEditView: View {
     }
     
     @ViewBuilder private func tagNameInputArea() -> some View {
-        VStack {
-            HStack {
-                let prompt = Strings.Tags.textFieldPlaceholder
-                TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
-                    .textFieldStyle(.roundedBorder)
-                    .textInputAutocapitalization(.never)
-                    .onSubmit {
-                        addEnteredTag()
-                    }
-                
-                Button {
-                    addEnteredTag()
-                } label: {
-                    Text(Strings.Tags.addTagButton)
-                }
-                .disabled(viewModel.validationState != .valid)
-                .animation(nil, value: viewModel.enteredTag)
+        let prompt = Strings.Tags.textFieldPlaceholder
+        TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
+            .textFieldStyle(.plain)
+            .textInputAutocapitalization(.never)
+            .onSubmit {
+                addEnteredTag()
             }
-            
-            if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
-                validationText(message)
-            }
+            .padding(.vertical, 4)
+    }
+    
+    @ViewBuilder private func tagNamewValidationError() -> some View {
+        if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
+            validationText(message)
         }
     }
     
@@ -134,21 +132,15 @@ struct TagsEditView: View {
     }
     
     @ViewBuilder private func addedTagsArea() -> some View {
-        VStack(spacing: 16) {
-            sectionText(Strings.Tags.addedTagsSection)
-            
-            let currentTags = viewModel.currentTags
-            
-            if currentTags.isEmpty {
-                normalText(Strings.Tags.addedTagsSectionEmpty)
-            } else {
-                FlowLayout(spacing: tagBubbleSpacing) {
-                    ForEach(currentTags, id: \.self) { tag in
-                        currentTagBubble(tag: tag)
-                    }
+        let currentTags = viewModel.currentTags
+        
+        if !currentTags.isEmpty {
+            FlowLayout(spacing: tagBubbleSpacing) {
+                ForEach(currentTags, id: \.self) { tag in
+                    currentTagBubble(tag: tag)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
     
@@ -201,28 +193,25 @@ struct TagsEditView: View {
     @ViewBuilder private func currentTagBubble(tag: String) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
         
-        HStack {
-            Text(tag)
-            
-            Button {
-                withAnimation {
-                    viewModel.removeTag(tag)
-                }
-            } label: {
+        Button {
+            withAnimation {
+                viewModel.removeTag(tag)
+            }
+        } label: {
+            HStack {
+                Text(tag)
+                
                 Image(systemName: "xmark")
                     .imageScale(.small)
             }
-            .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
+            .fontWeight(.medium)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background {
+                shape.fill(ColorTheme.Base.primaryVariant.color)
+            }
         }
-        .fontWeight(.medium)
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
-        .background {
-            shape.stroke(ColorTheme.Base.primary.color, lineWidth: 1)
-        }
-        .background {
-            shape.fill(ColorTheme.Base.primaryVariant.color)
-        }
+        .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
         .foregroundStyle(ColorTheme.Base.primary.color)
     }
     
