@@ -85,7 +85,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.createPushChannelState = createPushChannelState
     }
 
-    private var logAttributes: WireLegacyLogging.LogAttributes {
+    private var logAttributes: LogAttributes {
         .incrementalSyncV3
     }
 
