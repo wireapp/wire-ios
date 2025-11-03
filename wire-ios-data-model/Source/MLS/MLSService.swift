@@ -1314,7 +1314,7 @@ public final class MLSService: MLSServiceInterface {
     private func fetchConversationInfo(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) async -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID, epoch: UInt64)?  {
+    ) async -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID, epoch: UInt64)? {
 
         var conversation: ZMConversation?
         var qualifiedID: QualifiedID?
