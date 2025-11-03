@@ -8,26 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
-		069712912497B96E00C32169 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06394AA12497B24600380494 /* OperationLoop.swift */; };
-		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
-		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
-		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
 		06DE7AB72DE4D8A100D79D99 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DE7AB62DE4D8A100D79D99 /* WireDomain.framework */; };
 		06DE7ABF2DE4E39200D79D99 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 06DE7ABE2DE4E39200D79D99 /* WireFoundation */; };
-		3431F0872E795487007BA692 /* LegacyNotificationSessionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */; };
 		3431F0892E795B90007BA692 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 3431F0882E795B90007BA692 /* WireNetwork */; };
 		591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
 		591B6E2C2C8B0983009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B170E52BCE70E200575995 /* WireDataModelSupport.framework */; };
 		591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
-		59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLogging */; };
-		596A63342EB3B26B0017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A63332EB3B26B0017C3CA /* WireLegacyLogging */; };
-		59BAE2A52EB3DA3E00CA529B /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */; };
+		59537D8D2CFF9FB300920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLegacyLogging */; };
 		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
 		EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */; };
-		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
-		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
-		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
 		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */; };
 		EEC80B4329B6053200099727 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4229B6053200099727 /* AppDelegate.swift */; };
@@ -55,16 +44,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
-		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		066042A0247FE76C00A5F161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		066042A5247FE76C00A5F161 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		067ECB3C2487A93D00701956 /* WireNotificationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireNotificationEngine.h; sourceTree = "<group>"; };
 		067ECB3D2487A93D00701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		069712952497C1BC00C32169 /* NotificationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSession.swift; sourceTree = "<group>"; };
-		069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
-		0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStrategy.swift; sourceTree = "<group>"; };
 		06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "wire-ios-notification-engine.xcconfig"; sourceTree = "<group>"; };
 		06BD1D302487B01C002F82A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -76,14 +58,9 @@
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		06DE7AB62DE4D8A100D79D99 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationSessionLoader.swift; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionTests.swift; sourceTree = "<group>"; };
-		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
-		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
-		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
 		EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6FB296F09A0001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +76,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		596133042EB9138500BF6B25 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Info.plist,
+			);
+			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
+		};
 		59D264212CF721B40005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -109,6 +94,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		596132F72EB9138500BF6B25 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (596133042EB9138500BF6B25 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
 		59D2641F2CF721A00005317F /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264212CF721B40005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -117,12 +103,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596A63342EB3B26B0017C3CA /* WireLegacyLogging in Frameworks */,
 				06DE7ABF2DE4E39200D79D99 /* WireFoundation in Frameworks */,
 				06DE7AB72DE4D8A100D79D99 /* WireDomain.framework in Frameworks */,
 				3431F0892E795B90007BA692 /* WireNetwork in Frameworks */,
 				591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */,
-				59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */,
+				59537D8D2CFF9FB300920B59 /* WireLegacyLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,7 +148,7 @@
 			children = (
 				EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */,
 				06BD1D2D2487B01C002F82A6 /* Resources */,
-				06604296247FE76A00A5F161 /* Sources */,
+				596132F72EB9138500BF6B25 /* Sources */,
 				59D2641F2CF721A00005317F /* Tests */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
 				EE761670299E614B005DB75F /* WireNotificationEngineTests */,
@@ -187,24 +172,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		06604296247FE76A00A5F161 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				0697129A2497CA8F00C32169 /* Synchronization */,
-				06604297247FE76A00A5F161 /* AppDelegate.swift */,
-				EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */,
-				069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */,
-				EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */,
-				EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */,
-				069712952497C1BC00C32169 /* NotificationSession.swift */,
-				3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */,
-				59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */,
-				066042A0247FE76C00A5F161 /* Assets.xcassets */,
-				066042A5247FE76C00A5F161 /* Info.plist */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
 		067ECB3B2487A93D00701956 /* WireNotificationEngine */ = {
 			isa = PBXGroup;
 			children = (
@@ -212,23 +179,6 @@
 				067ECB3D2487A93D00701956 /* Info.plist */,
 			);
 			path = WireNotificationEngine;
-			sourceTree = "<group>";
-		};
-		0697129A2497CA8F00C32169 /* Synchronization */ = {
-			isa = PBXGroup;
-			children = (
-				06394AA12497B24600380494 /* OperationLoop.swift */,
-				0697129B2497CA9A00C32169 /* Strategies */,
-			);
-			path = Synchronization;
-			sourceTree = "<group>";
-		};
-		0697129B2497CA9A00C32169 /* Strategies */ = {
-			isa = PBXGroup;
-			children = (
-				0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */,
-			);
-			path = Strategies;
 			sourceTree = "<group>";
 		};
 		06BD1D2D2487B01C002F82A6 /* Resources */ = {
@@ -314,6 +264,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				596132F72EB9138500BF6B25 /* Sources */,
 				59D2641F2CF721A00005317F /* Tests */,
 			);
 			name = WireNotificationEngine;
@@ -432,17 +383,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				067ECB602487ABF700701956 /* AppDelegate.swift in Sources */,
-				EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */,
-				59BAE2A52EB3DA3E00CA529B /* WireLegacyLogging.swift in Sources */,
-				EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */,
-				069712912497B96E00C32169 /* OperationLoop.swift in Sources */,
 				EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */,
-				3431F0872E795487007BA692 /* LegacyNotificationSessionLoader.swift in Sources */,
-				0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */,
-				069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */,
-				069712972497C1BF00C32169 /* NotificationSession.swift in Sources */,
-				EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,11 +773,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
 		};
-		59537D8C2CFF9FB300920B59 /* WireLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireLogging;
-		};
-		596A63332EB3B26B0017C3CA /* WireLegacyLogging */ = {
+		59537D8C2CFF9FB300920B59 /* WireLegacyLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLegacyLogging;
 		};

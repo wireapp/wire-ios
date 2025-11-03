@@ -63,7 +63,6 @@ let package = Package(
         .target(
             name: "WireAuthenticationUI",
             dependencies: [
-                "WireLogging",
                 .product(name: "WireLegacyLogging", package: "WireLogging"),
                 "WireFoundation",
                 "WireAuthenticationAPI",

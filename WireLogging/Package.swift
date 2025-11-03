@@ -37,6 +37,10 @@ let package = Package(
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
+        ),
+        .testTarget(
+            name: "WireLegacyLoggingTests",
+            dependencies: ["WireLegacyLogging"]
         )
     ]
 )

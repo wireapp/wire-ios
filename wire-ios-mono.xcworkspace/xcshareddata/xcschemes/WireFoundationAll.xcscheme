@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLogging"
-               BuildableName = "WireLogging"
-               BlueprintName = "WireLogging"
+               BlueprintIdentifier = "WireLegacyLogging"
+               BuildableName = "WireLegacyLogging"
+               BlueprintName = "WireLegacyLogging"
                ReferencedContainer = "container:WireFoundation">
             </BuildableReference>
          </BuildActionEntry>

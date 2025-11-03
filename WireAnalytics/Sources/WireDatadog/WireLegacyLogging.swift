@@ -19,4 +19,3 @@
 public import WireLegacyLogging
 
 public typealias WireLogger = WireLegacyLogging.WireLogger
-public typealias WireLogLevel = WireLegacyLogging.WireLogLevel

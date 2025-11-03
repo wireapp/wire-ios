@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "558E1A72-E387-4C4E-A2A8-B2BCD04FDEAF",
+      "id" : "5D82ECB3-F716-4EAB-8FE5-C380EE8B8618",
       "name" : "Configuration 1",
       "options" : {
 
@@ -11,16 +11,24 @@
   "defaultOptions" : {
     "language" : "en",
     "region" : "DE",
+    "testExecutionOrdering" : "random",
     "threadSanitizerEnabled" : true,
     "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {
-      "parallelizable" : false,
       "target" : {
         "containerPath" : "container:WireLogging",
         "identifier" : "WireLoggingTests",
         "name" : "WireLoggingTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:WireLogging",
+        "identifier" : "WireLegacyLoggingTests",
+        "name" : "WireLegacyLoggingTests"
       }
     }
   ],
