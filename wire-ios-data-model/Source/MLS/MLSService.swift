@@ -1612,6 +1612,8 @@ public final class MLSService: MLSServiceInterface {
                 self = .retryAfterRepairingGroup
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 self = .resetBrokenMLSConversation
+            case let .groupOutOfSync(missingUsers):
+                self = .retryAfterAddingMissingUsers(missingUsers)
             default:
                 self = .giveUp
             }
@@ -1759,7 +1761,10 @@ public final class MLSService: MLSServiceInterface {
                     MLSUser($0, selfClientID: nil)
                 }
 
-                try await addMembersToConversation(
+                // It's important to call the internal method because
+                // we don't want to re-enter the comnmit failure handling
+                // again for this action, otherwise we may end up in a loop.
+                try await internalAddMembersToConversation(
                     with: users,
                     for: groupID
                 )
