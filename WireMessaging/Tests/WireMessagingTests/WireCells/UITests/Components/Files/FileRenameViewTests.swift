@@ -138,8 +138,8 @@ final class FileRenameViewTests: XCTestCase {
 
     @MainActor
     private func makeView() -> some View {
-        let viewModel = self.viewModel!
-        
+        let viewModel = viewModel!
+
         return FileRenameView(viewModel: viewModel)
             .frame(width: 375, height: 667)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
