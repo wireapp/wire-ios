@@ -46,7 +46,6 @@ final class MultiBackendSupportTests: WireUITestCase {
 
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
-        throw XCTSkip("Skipping this test temporarily due to backend")
 
         defer { BackendContext.current = .staging }
 
