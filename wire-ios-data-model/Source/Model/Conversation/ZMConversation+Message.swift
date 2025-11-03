@@ -361,14 +361,13 @@ public extension ZMConversation {
     ) throws -> ZMAssetClientMessage {
 
         let logAttributes: LogAttributes = [
-            .conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
-            .messageType: "asset",
-            .public: true
+            LogAttributesKey.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
+            LogAttributesKey.messageType: "asset"
         ]
 
         WireLogger.messaging.debug(
             "appending message to conversation",
-            attributes: logAttributes
+            attributes: logAttributes, .safePublic
         )
 
         guard let moc = managedObjectContext else {
@@ -464,13 +463,13 @@ public extension ZMConversation {
         let logAttributes: LogAttributes = [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
-            .public: true
+            .conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ]
 
         WireLogger.messaging.debug(
             "appending message to conversation",
-            attributes: logAttributes
+            attributes: logAttributes,
+            .safePublic
         )
 
         guard let moc = managedObjectContext else {
