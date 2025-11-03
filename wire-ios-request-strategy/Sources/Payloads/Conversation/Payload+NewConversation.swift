@@ -128,7 +128,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 self.legacyAccessRole = nil
             }
@@ -136,7 +136,7 @@ extension Payload {
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
                 self.skipCreator = nil
-            case .v10, .v11, .v12:
+            case .v10, .v11, .v12, .v13:
                 self.skipCreator = try container.decodeIfPresent(Bool.self, forKey: .skipCreator)
             }
         }
@@ -159,14 +159,14 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
 
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
                 break
-            case .v10, .v11, .v12:
+            case .v10, .v11, .v12, .v13:
                 try container.encodeIfPresent(skipCreator, forKey: .skipCreator)
             }
         }
