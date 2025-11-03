@@ -1019,5 +1019,5 @@ extension MessageSendError: @retroactive Equatable {
 }
 
 struct MockInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {}
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {}
 }
