@@ -57,7 +57,6 @@ package final class FilesViewModel: ObservableObject {
 
     enum State: Equatable {
 
-        case initial
         case loading
         case received(items: [FilesViewItem])
         case pending // cells are not ready yet
@@ -74,7 +73,7 @@ package final class FilesViewModel: ObservableObject {
 
         var isLoaded: Bool {
             switch self {
-            case .loading, .pending, .initial, .error:
+            case .loading, .pending, .error:
                 false
             case .received:
                 true
@@ -125,22 +124,25 @@ package final class FilesViewModel: ObservableObject {
                 Task { await self?.reload() }
             }
             .store(in: &subscriptions)
-
     }
 
     /// Reloads the items, clearing any previously loaded items.
+    /// - Parameters:
+    ///   - refreshing: Whether the reload was triggered by a pull-to-refresh action.
     ///
-    /// This method cancels any ongoing load operation and starts a new one.
-    func reload() async {
+    /// Cancels any ongoing load operation and starts a new one.
+    /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
+
+    func reload(refreshing: Bool = false) async {
         guard state != .pending else {
             return
         }
 
         cancelLoad()
-        state = .loading
+        state = refreshing ? state : .loading
         hasMore = true
 
-        await loadMore()
+        await loadMore(refreshing: refreshing)
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -213,16 +215,17 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore() async {
+    private func loadMore(refreshing: Bool = false) async {
         guard loadMoreTask == nil else { return }
 
-        let offset = state.items.count
+        let offset = refreshing ? 0 : state.items.count
         let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            state = .received(items: Self.processItems(state.items + newItems))
+            let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
+            state = .received(items: receivedItems)
             hasMore = !isLastPage
         } catch is CancellationError {
             return // developer-driven error, discard
@@ -244,7 +247,7 @@ package final class FilesViewModel: ObservableObject {
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
-            searchTerm: searchText,
+            searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
 

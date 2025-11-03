@@ -40,13 +40,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                 .ignoresSafeArea(.all)
             Group {
                 switch viewModel.state {
-                case .initial:
-                    Button(action: reloadTask) {
-                        Image(systemName: "arrow.trianglehead.clockwise")
-                            .wireTextStyle(.body3)
-                            .foregroundStyle(SemanticColors.Label.textDefault.color)
-
-                    }
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -56,7 +49,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                     } else {
                         filesList
                             .listStyle(.plain)
-                            .refreshable { reloadTask() }
+                            .refreshable { reloadTask(refreshing: true) }
                     }
                 case .pending:
                     FilesInfoView(info: .preparingFiles)
@@ -69,7 +62,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(viewModel.state == .loading ? .hidden : .visible, for: .navigationBar) // fixes some weird UI glitch when refreshing
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .if(showSearchBar) { view in
                 view.searchable(
@@ -87,15 +80,15 @@ package struct FilesBrowserView: FilesViewProtocol {
             )
         }
     }
-    
+
     private var showSearchBar: Bool {
         switch viewModel.state {
-        case .initial, .loading:
-            return true
-        case .received(let items):
-            return !items.isEmpty || !viewModel.searchText.isEmpty
+        case .loading:
+            true
+        case let .received(items):
+            !items.isEmpty || !viewModel.searchText.isEmpty
         case .pending, .error:
-            return false
+            false
         }
     }
 }

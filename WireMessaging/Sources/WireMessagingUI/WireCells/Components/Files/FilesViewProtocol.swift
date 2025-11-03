@@ -82,8 +82,8 @@ extension FilesViewProtocol {
 
 extension FilesViewProtocol {
 
-    func reloadTask() {
-        Task { await viewModel.reload() }
+    func reloadTask(refreshing: Bool = false) {
+        Task { await viewModel.reload(refreshing: refreshing) }
     }
 
     func loadMoreIfNeededTask(index: Int) {
