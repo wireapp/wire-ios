@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
         .package(path: "../WireNetwork"),
         .package(path: "../WireFoundation"),
-        .package(path: "../WireLegacyLogging"),
+        .package(path: "../WireLogging"),
         .package(path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
@@ -63,7 +63,7 @@ let package = Package(
         .target(
             name: "WireAuthenticationUI",
             dependencies: [
-                "WireLegacyLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 "WireFoundation",
                 "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),

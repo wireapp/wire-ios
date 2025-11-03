@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WireNetwork"),
         .package(path: "../WireFoundation"),
-        .package(path: "../WireLegacyLogging"),
+        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -23,7 +23,7 @@ let package = Package(
             name: "WireDomainPackage",
             dependencies: [
                 "WireNetwork",
-                "WireLegacyLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 "WireFoundation"
             ]
         ),

@@ -13,7 +13,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins"),
-        .package(path: "../WireLegacyLogging"),
+        .package(path: "../WireLogging"),
         .package(path: "../WireFoundation")
     ],
     targets: [
@@ -21,7 +21,7 @@ let package = Package(
             name: "WireNetwork",
             dependencies: [
                 "WireFoundation",
-                "WireLegacyLogging",
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),

@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
-        .package(path: "../WireLegacyLogging"),
+        .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
@@ -24,7 +24,7 @@ let package = Package(
             name: "WireCallingDomain",
             dependencies: [
                 "WireFoundation",
-                "WireLegacyLogging"
+                .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),
         .target(
@@ -39,7 +39,7 @@ let package = Package(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
-                "WireLegacyLogging"
+                .product(name: "WireLegacyLogging", package: "WireLogging")
             ]
         ),
         .target(

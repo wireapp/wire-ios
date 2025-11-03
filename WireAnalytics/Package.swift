@@ -21,13 +21,16 @@ let package = Package(
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
-        .package(path: "../WireLegacyLogging"),
+        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: ["WireFoundation", "WireLegacyLogging"]
+            dependencies: [
+                "WireFoundation",
+                .product(name: "WireLegacyLogging", package: "WireLogging")
+            ]
         ),
         .target(
             name: "WireAnalyticsSupport",
@@ -47,7 +50,9 @@ let package = Package(
 
         .target(
             name: "WireDatadog",
-            dependencies: datadogDependencies() + ["WireLegacyLogging"],
+            dependencies: datadogDependencies() + [
+                .product(name: "WireLegacyLogging", package: "WireLogging")
+            ],
             sources: datadogFiles()
         ),
 

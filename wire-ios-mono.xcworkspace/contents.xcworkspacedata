@@ -216,7 +216,7 @@
       location = "group:WireFoundation">
    </FileRef>
    <FileRef
-      location = "group:WireLegacyLogging">
+      location = "group:WireLogging">
    </FileRef>
    <FileRef
       location = "group:WireMessaging">
