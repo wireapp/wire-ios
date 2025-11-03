@@ -18,7 +18,7 @@
 
 import CallKit
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 enum ConversationLookupError: Error {

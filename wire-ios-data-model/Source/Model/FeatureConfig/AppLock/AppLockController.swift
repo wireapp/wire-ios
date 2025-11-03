@@ -18,7 +18,7 @@
 
 import Foundation
 import LocalAuthentication
-import WireLogging
+import WireLegacyLogging
 
 public final class AppLockController: AppLockType {
 

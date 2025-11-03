@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 extension ZMOperationLoop: ZMPushChannelConsumer {

@@ -19,7 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
-import WireLogging
+import WireLegacyLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSettingsUI

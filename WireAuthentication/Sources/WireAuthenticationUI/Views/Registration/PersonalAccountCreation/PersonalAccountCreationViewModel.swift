@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 import WireReusableUIComponents
 

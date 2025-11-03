@@ -20,7 +20,7 @@ import CoreData
 import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 

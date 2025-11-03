@@ -18,7 +18,7 @@
 
 import Foundation
 import os
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 /// Namespace for analytics tools.

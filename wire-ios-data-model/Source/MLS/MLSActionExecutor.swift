@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
-import WireLogging
+import WireLegacyLogging
 
 public protocol MLSActionExecutorProtocol {
 

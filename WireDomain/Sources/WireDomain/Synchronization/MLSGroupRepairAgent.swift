@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 // sourcery: AutoMockable
 public protocol MLSGroupRepairAgentProtocol {

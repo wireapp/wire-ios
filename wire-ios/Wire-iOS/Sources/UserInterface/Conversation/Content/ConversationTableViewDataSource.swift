@@ -19,7 +19,7 @@
 import DifferenceKit
 import WireDataModel
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireMessagingUI
 import WireSyncEngine
 

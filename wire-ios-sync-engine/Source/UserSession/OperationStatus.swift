@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 public typealias BackgroundFetchHandler = (_ fetchResult: UIBackgroundFetchResult) -> Void
 

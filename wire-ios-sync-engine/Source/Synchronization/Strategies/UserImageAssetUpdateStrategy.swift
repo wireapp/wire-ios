@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireRequestStrategy
 
 enum AssetTransportError: Error {

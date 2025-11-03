@@ -17,7 +17,7 @@
 //
 
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 
 private let zmLog = ZMSLog(tag: "SyncStatus")
 

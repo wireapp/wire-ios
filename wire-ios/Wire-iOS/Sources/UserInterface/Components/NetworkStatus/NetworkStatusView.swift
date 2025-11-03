@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 enum NetworkStatusViewState {

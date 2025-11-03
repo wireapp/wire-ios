@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 /// An object that tracks performance issues in the application for debugging purposes.

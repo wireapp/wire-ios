@@ -21,7 +21,7 @@ import GenericMessageProtocol
 import WireAnalytics
 import WireDataModel
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 
 extension ZMUserSession: AnalyticsEventTrackerProvider {
 

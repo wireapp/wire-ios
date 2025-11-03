@@ -20,7 +20,7 @@ import Foundation
 import WireDomainPackage
 import WireFoundation
 import WireFoundationSupport
-import WireLogging
+import WireLegacyLogging
 import WireTestingPackage
 import XCTest
 

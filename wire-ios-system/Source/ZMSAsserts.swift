@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 /// Reports an error and terminates the application
 public func fatal(

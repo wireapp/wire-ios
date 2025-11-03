@@ -19,7 +19,7 @@
 import WireDataModelSupport
 import WireFoundation
 import WireFoundationSupport
-import WireLogging
+import WireLegacyLogging
 import XCTest
 
 @testable import Wire

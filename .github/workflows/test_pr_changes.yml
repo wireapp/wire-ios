@@ -64,8 +64,8 @@ jobs:
             WireCalling:
               - 'WireCalling/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCallingAll.xcscheme'
-            WireLogging:
-              - 'WireLogging/**'
+            WireLegacyLogging:
+              - 'WireLegacyLogging/**'
             WireDomain:
               - 'WireDomain/**'
             wire-ios-data-model:

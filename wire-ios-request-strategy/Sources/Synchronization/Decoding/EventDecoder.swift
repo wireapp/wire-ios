@@ -20,7 +20,7 @@ import Foundation
 import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")

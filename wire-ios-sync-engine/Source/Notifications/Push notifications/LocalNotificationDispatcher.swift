@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 import UserNotifications
-import WireLogging
+import WireLegacyLogging
 
 /// Creates and cancels local notifications
 @objcMembers

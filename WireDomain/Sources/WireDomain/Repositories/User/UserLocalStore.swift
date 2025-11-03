@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 public final class UserLocalStore: UserLocalStoreProtocol {

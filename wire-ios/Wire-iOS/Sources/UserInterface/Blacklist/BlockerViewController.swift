@@ -18,7 +18,7 @@
 
 import MessageUI
 import UIKit
-import WireLogging
+import WireLegacyLogging
 import WireMultiBackendUI
 import WireSyncEngine
 

@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 public final class ConversationLabelsLocalStore: ConversationLabelsLocalStoreProtocol {
 

@@ -25,7 +25,7 @@ import WireAnalytics
 import WireDataModel
 import WireDomain
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 import WireRequestStrategy
 import WireTransport

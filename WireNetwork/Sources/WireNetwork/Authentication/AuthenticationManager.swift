@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 
 // sourcery: AutoMockable
 public protocol AuthenticationManagerProtocol {

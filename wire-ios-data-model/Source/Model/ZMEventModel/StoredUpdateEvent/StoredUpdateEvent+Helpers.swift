@@ -18,7 +18,7 @@
 
 import CoreData
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 public extension StoredUpdateEvent {
 

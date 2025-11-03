@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 /// Provides debug actions for UserClientDetails
 struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {

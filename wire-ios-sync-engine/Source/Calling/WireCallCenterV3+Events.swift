@@ -18,7 +18,7 @@
 
 import avs
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 // MARK: Conversation Changes
 

@@ -21,7 +21,7 @@
 import NeedleFoundation
 import WireDataModel
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 protocol SyncEventsDependency: Dependency {

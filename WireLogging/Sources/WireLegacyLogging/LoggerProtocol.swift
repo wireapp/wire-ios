@@ -27,7 +27,6 @@ public protocol LoggerProtocol {
 
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
-
 }
 
 public extension LoggerProtocol {
@@ -36,8 +35,8 @@ public extension LoggerProtocol {
         var logAttributes = attributes
 
         // drop attributes used for visibility and category
-        logAttributes.removeValue(forKey: .public)
-        logAttributes.removeValue(forKey: .tag)
+        logAttributes.removeValue(forKey: LogAttributesKey.public)
+        logAttributes.removeValue(forKey: LogAttributesKey.tag)
 
         guard !logAttributes.isEmpty else {
             return ""

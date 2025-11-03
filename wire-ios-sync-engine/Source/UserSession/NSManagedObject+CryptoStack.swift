@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 public extension NSManagedObjectContext {
 

@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {

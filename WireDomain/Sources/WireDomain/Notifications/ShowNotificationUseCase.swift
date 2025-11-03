@@ -20,7 +20,7 @@ import CallKit
 import Foundation
 import UserNotifications
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 protocol ShowNotificationUseCaseProtocol {
     func invoke(

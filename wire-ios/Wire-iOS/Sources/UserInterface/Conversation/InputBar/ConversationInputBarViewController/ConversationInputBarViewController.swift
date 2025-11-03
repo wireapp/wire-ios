@@ -25,7 +25,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireMessagingUI

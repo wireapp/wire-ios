@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireLegacyLogging"
                BuildableName = "WireLegacyLogging"
                BlueprintName = "WireLegacyLogging"
-               ReferencedContainer = "container:WireLogging">
+               ReferencedContainer = "container:WireLegacyLogging">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,35 +32,7 @@
                BlueprintIdentifier = "WireLegacyLoggingSupport"
                BuildableName = "WireLegacyLoggingSupport"
                BlueprintName = "WireLegacyLoggingSupport"
-               ReferencedContainer = "container:WireLogging">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLogging"
-               BuildableName = "WireLogging"
-               BlueprintName = "WireLogging"
-               ReferencedContainer = "container:WireLogging">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLoggingSupport"
-               BuildableName = "WireLoggingSupport"
-               BlueprintName = "WireLoggingSupport"
-               ReferencedContainer = "container:WireLogging">
+               ReferencedContainer = "container:WireLegacyLogging">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -72,7 +44,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:WireLogging/Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:WireLegacyLogging/Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -81,10 +53,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireLoggingTests"
-               BuildableName = "WireLoggingTests"
-               BlueprintName = "WireLoggingTests"
-               ReferencedContainer = "container:WireLogging">
+               BlueprintIdentifier = "WireLegacyLoggingTests"
+               BuildableName = "WireLegacyLoggingTests"
+               BlueprintName = "WireLegacyLoggingTests"
+               ReferencedContainer = "container:WireLegacyLogging">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -112,7 +84,7 @@
             BlueprintIdentifier = "WireLegacyLogging"
             BuildableName = "WireLegacyLogging"
             BlueprintName = "WireLegacyLogging"
-            ReferencedContainer = "container:WireLogging">
+            ReferencedContainer = "container:WireLegacyLogging">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

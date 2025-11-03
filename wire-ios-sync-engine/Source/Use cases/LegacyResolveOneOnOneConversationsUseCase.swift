@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 
 // sourcery: AutoMockable
 public protocol LegacyResolveOneOnOneConversationsUseCaseProtocol {

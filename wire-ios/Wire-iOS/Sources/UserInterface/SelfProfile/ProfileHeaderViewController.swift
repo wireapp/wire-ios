@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {

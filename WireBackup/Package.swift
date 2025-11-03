@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.0")),
         .package(path: "../WireFoundation"),
-        .package(path: "../WireLogging"),
+        .package(path: "../WireLegacyLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -21,8 +21,7 @@ let package = Package(
             dependencies: [
                 "KaliumBackup",
                 "WireFoundation",
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging"),
+                "WireLegacyLogging",
                 .product(name: "WireUtilitiesPackage", package: "WireFoundation")
             ]
         ),

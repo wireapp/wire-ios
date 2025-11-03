@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {

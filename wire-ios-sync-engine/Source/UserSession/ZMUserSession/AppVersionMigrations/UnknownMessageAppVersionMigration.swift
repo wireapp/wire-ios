@@ -19,7 +19,7 @@
 import GenericMessageProtocol
 import WireDataModel
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 /// This migration should be used to re-process events which were received before but couldn't be deserialized due to

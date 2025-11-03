@@ -18,7 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol,

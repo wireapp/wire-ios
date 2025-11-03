@@ -21,7 +21,7 @@ import Foundation
 import SwiftUI
 import WireAuthentication
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 // A temporary bridging object to allow the new WireAuthentication flow inside

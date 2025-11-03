@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 protocol SaveFileActions {

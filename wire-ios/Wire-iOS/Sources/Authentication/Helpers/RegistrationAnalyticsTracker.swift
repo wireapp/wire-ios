@@ -20,7 +20,7 @@ import UIKit
 import WireAnalytics
 import WireAuthenticationAPI
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 import WireSyncEngine
 

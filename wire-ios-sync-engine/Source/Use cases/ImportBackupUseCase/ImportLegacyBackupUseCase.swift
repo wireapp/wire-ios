@@ -21,7 +21,7 @@ import WireCrypto
 import WireDataModel
 import WireDomainPackage
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 import WireUtilitiesPackage
 

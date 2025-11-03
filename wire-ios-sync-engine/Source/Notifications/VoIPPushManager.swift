@@ -20,7 +20,7 @@ import avs
 import CallKit
 import Foundation
 import PushKit
-import WireLogging
+import WireLegacyLogging
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 

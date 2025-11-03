@@ -20,7 +20,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 public typealias CreatePushChannelStateClosure = () -> PushChannelStateProtocol
@@ -85,7 +85,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.createPushChannelState = createPushChannelState
     }
 
-    private var logAttributes: LogAttributes {
+    private var logAttributes: WireLegacyLogging.LogAttributes {
         .incrementalSyncV3
     }
 

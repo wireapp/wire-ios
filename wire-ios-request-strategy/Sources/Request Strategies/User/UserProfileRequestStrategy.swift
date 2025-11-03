@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 /// Request strategy for fetching user profiles and processing user update events.
 ///

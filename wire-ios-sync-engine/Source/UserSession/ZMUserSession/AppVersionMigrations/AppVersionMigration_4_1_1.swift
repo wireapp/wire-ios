@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 
 /// **Issue:** some users had conversations in their database that weren't
 /// fully up do date with the backend.

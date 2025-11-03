@@ -19,7 +19,7 @@
 import CoreData
 import Foundation
 import LocalAuthentication
-import WireLogging
+import WireLegacyLogging
 
 /// An object that provides encryption at rest.
 ///

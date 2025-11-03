@@ -17,7 +17,7 @@
 //
 
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 protocol SelfProfileViewsMonitor {

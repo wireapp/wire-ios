@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
-import WireLogging
+import WireLegacyLogging
 
 @MainActor
 package protocol Router {

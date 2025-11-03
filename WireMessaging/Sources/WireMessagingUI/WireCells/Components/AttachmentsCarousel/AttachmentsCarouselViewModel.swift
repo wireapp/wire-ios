@@ -21,7 +21,7 @@ import UIKit
 public import WireMessagingDomain
 import QuickLookThumbnailing
 import UniformTypeIdentifiers
-import WireLogging
+import WireLegacyLogging
 
 @MainActor
 public final class AttachmentsCarouselViewModel: ObservableObject {

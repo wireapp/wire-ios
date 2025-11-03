@@ -18,7 +18,7 @@
 
 import UserNotifications
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireUtilities
 
 struct ShouldPresentNotificationPermissionHintUseCase<

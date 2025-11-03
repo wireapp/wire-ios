@@ -20,9 +20,7 @@
 		591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
 		591B6E2C2C8B0983009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B170E52BCE70E200575995 /* WireDataModelSupport.framework */; };
 		591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
-		59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLogging */; };
-		596A63342EB3B26B0017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A63332EB3B26B0017C3CA /* WireLegacyLogging */; };
-		59BAE2A52EB3DA3E00CA529B /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */; };
+		59537D8D2CFF9FB300920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLegacyLogging */; };
 		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
 		EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
@@ -78,7 +76,6 @@
 		06DE7AB62DE4D8A100D79D99 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationSessionLoader.swift; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
@@ -117,12 +114,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596A63342EB3B26B0017C3CA /* WireLegacyLogging in Frameworks */,
 				06DE7ABF2DE4E39200D79D99 /* WireFoundation in Frameworks */,
 				06DE7AB72DE4D8A100D79D99 /* WireDomain.framework in Frameworks */,
 				3431F0892E795B90007BA692 /* WireNetwork in Frameworks */,
 				591B6E262C8B097B009F8A7B /* WireRequestStrategy.framework in Frameworks */,
-				59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */,
+				59537D8D2CFF9FB300920B59 /* WireLegacyLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,7 +194,6 @@
 				EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */,
 				069712952497C1BC00C32169 /* NotificationSession.swift */,
 				3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */,
-				59BAE2A42EB3DA3E00CA529B /* WireLegacyLogging.swift */,
 				066042A0247FE76C00A5F161 /* Assets.xcassets */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
 			);
@@ -434,7 +429,6 @@
 			files = (
 				067ECB602487ABF700701956 /* AppDelegate.swift in Sources */,
 				EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */,
-				59BAE2A52EB3DA3E00CA529B /* WireLegacyLogging.swift in Sources */,
 				EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */,
 				069712912497B96E00C32169 /* OperationLoop.swift in Sources */,
 				EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */,
@@ -832,11 +826,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
 		};
-		59537D8C2CFF9FB300920B59 /* WireLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireLogging;
-		};
-		596A63332EB3B26B0017C3CA /* WireLegacyLogging */ = {
+		59537D8C2CFF9FB300920B59 /* WireLegacyLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLegacyLogging;
 		};

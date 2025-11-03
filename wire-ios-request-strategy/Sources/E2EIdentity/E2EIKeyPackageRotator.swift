@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {

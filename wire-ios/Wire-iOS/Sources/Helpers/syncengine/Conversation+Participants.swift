@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 extension GroupDetailsConversation where Self: ZMConversation {

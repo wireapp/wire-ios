@@ -18,7 +18,7 @@
 
 package import Foundation
 package import UniformTypeIdentifiers
-import WireLogging
+import WireLegacyLogging
 
 enum UploadDraftUseCaseError: Error {
 

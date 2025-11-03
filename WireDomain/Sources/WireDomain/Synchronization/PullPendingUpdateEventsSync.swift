@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {

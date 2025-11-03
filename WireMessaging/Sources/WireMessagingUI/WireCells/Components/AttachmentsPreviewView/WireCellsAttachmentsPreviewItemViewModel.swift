@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
-import WireLogging
+import WireLegacyLogging
 import WireMessagingDomain
 
 @MainActor

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 /// Class to proxy WireLogger methods to Objective-C
 @objcMembers

@@ -19,7 +19,7 @@
 import avs
 import Combine
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.

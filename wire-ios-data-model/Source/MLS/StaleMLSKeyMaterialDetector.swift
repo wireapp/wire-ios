@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 // sourcery: AutoMockable
 public protocol StaleMLSKeyDetectorProtocol {

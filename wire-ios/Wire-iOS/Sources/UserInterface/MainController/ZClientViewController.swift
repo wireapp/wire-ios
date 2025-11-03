@@ -25,7 +25,7 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireDesign
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingDomain

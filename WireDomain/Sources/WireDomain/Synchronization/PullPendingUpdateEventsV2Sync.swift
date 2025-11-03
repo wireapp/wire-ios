@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 /// Closure to generate syncMarker, use for testing
@@ -65,7 +65,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         self.syncMarkerGenerator = syncMarkerGenerator
     }
 
-    private var logAttributes: LogAttributes {
+    private var logAttributes: WireLegacyLogging.LogAttributes {
         .incrementalSyncV3 + .newNSE
     }
 

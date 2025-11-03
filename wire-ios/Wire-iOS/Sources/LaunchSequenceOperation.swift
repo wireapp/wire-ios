@@ -20,7 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDesign
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 // MARK: - LaunchSequenceOperation

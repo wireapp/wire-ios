@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 @MainActor

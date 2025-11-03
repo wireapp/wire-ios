@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 
 /// PushChannel using new consumable notifications
 public final class PushChannelV2: PushChannelV2Protocol {

@@ -18,7 +18,7 @@
 
 import CoreData
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 /// Provides log attributes for messages of supported message types.
 struct MessageLogAttributesBuilder {

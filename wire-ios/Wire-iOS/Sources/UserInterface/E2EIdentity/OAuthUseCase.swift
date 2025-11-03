@@ -19,7 +19,7 @@
 import AppAuth
 import Foundation
 import WireCommonComponents
-import WireLogging
+import WireLegacyLogging
 import WireRequestStrategy
 import WireSystem
 import WireUtilities

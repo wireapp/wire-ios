@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
-        .package(path: "../WireLogging"),
+        .package(path: "../WireLegacyLogging"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WireData")
     ],
@@ -29,8 +29,7 @@ let package = Package(
             dependencies: [
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 "WireFoundation",
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
+                "WireLegacyLogging"
             ]
         ),
         .target(
@@ -38,8 +37,7 @@ let package = Package(
             dependencies: [
                 "WireData",
                 "WireMessagingDomain",
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging"),
+                "WireLegacyLogging",
                 .product(name: "AWSS3", package: "aws-sdk-swift"),
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 .product(name: "Collections", package: "swift-collections")

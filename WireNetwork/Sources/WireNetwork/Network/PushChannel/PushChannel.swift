@@ -19,7 +19,7 @@
 public import Foundation
 
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 
 public typealias PushChannelV1 = PushChannel
 public typealias PushChannelV1Procotol = PushChannelProtocol

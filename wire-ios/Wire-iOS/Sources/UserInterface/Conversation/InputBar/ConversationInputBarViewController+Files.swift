@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCommonComponents
-import WireLogging
+import WireLegacyLogging
 import WireMessagingAssembly
 import WireSyncEngine
 import WireUtilitiesPackage

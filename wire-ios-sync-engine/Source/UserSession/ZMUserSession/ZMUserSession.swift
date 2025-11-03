@@ -23,7 +23,7 @@ import Foundation
 import WireCoreCrypto
 import WireDataModel
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 import WireRequestStrategy
 import WireSystem

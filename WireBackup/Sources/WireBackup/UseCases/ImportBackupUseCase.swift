@@ -17,7 +17,7 @@
 //
 
 public import Foundation
-public import WireLogging
+public import WireLegacyLogging
 public import WireFoundation
 public import WireUtilitiesPackage
 

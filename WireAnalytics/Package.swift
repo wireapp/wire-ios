@@ -21,17 +21,13 @@ let package = Package(
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
-        .package(path: "../WireLogging"),
+        .package(path: "../WireLegacyLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: [
-                "WireFoundation",
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
-            ]
+            dependencies: ["WireFoundation", "WireLegacyLogging"]
         ),
         .target(
             name: "WireAnalyticsSupport",
@@ -51,10 +47,7 @@ let package = Package(
 
         .target(
             name: "WireDatadog",
-            dependencies: datadogDependencies() + [
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
-            ],
+            dependencies: datadogDependencies() + ["WireLegacyLogging"],
             sources: datadogFiles()
         ),
 
@@ -105,9 +98,9 @@ func datadogDependencies() -> [Target.Dependency] {
 
 func datadogFiles() -> [String] {
     if isDatadogEnabled {
-        ["WireDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireDatadog.swift"]
     } else {
-        ["WireFakeDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireFakeDatadog.swift"]
     }
 }
 

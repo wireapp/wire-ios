@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers

@@ -19,7 +19,7 @@
 import Combine
 import WireDataModelSupport
 import WireDomain
-import WireLoggingSupport
+import WireLegacyLoggingSupport
 import WireNetwork
 import WireRequestStrategySupport
 import WireTransportSupport

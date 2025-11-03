@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 /// AssetV3UploadRequestStrategy is responsible for uploading all the assets associated with a asset message
 /// after they've been preprocessed (downscaled & encrypted). After all the assets have been uploaded

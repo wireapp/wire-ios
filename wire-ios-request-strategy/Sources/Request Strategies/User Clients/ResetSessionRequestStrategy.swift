@@ -18,7 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireLogging
+import WireLegacyLogging
 
 public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 

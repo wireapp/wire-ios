@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
-import WireLogging
+import WireLegacyLogging
 
 /// A service that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.

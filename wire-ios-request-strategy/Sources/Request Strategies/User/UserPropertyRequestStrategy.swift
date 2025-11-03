@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireTransport
 
 private enum UserProperty: CaseIterable {

@@ -17,7 +17,7 @@
 //
 
 import WireCoreCrypto
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 final class MLSTransportImpl: MlsTransport {

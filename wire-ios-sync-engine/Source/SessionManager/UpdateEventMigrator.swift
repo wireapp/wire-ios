@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 import WireTransport
 

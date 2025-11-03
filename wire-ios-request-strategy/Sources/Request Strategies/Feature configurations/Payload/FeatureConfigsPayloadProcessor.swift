@@ -18,7 +18,7 @@
 
 import Foundation
 import protocol WireDataModel.LegacyFeatureRepositoryInterface
-import WireLogging
+import WireLegacyLogging
 
 struct FeatureConfigsPayloadProcessor {
 

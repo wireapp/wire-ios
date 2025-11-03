@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 final class RegistationCredentialVerificationStrategy: NSObject {
     let registrationStatus: RegistrationStatusProtocol

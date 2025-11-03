@@ -18,7 +18,7 @@
 
 import Foundation
 import Starscream
-import WireLogging
+import WireLegacyLogging
 
 @objcMembers
 final class StarscreamPushChannel: NSObject, PushChannelType {

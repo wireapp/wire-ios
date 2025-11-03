@@ -18,7 +18,7 @@
 
 import Combine
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 public struct InitialSync: InitialSyncProtocol {
 

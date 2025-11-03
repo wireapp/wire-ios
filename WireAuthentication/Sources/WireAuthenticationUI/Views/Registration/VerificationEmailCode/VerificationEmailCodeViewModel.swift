@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
-import WireLogging
+import WireLegacyLogging
 
 @MainActor
 public final class VerificationEmailCodeViewModel: ObservableObject {

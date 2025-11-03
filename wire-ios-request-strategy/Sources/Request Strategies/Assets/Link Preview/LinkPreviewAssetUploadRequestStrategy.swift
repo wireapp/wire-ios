@@ -19,7 +19,7 @@
 import Foundation
 import GenericMessageProtocol
 import WireLinkPreview
-import WireLogging
+import WireLegacyLogging
 
 public final class LinkPreviewDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?

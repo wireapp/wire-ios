@@ -12,8 +12,7 @@
 		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
-		59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CD82CFF7ED800920B59 /* WireLogging */; };
-		596A193D2EB3A6580017C3CA /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 596A193C2EB3A6580017C3CA /* WireLegacyLogging */; };
+		59537CD92CFF7ED800920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CD82CFF7ED800920B59 /* WireLegacyLogging */; };
 		59FE6ACC2DA90CBA00DB461C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59FE6ACB2DA90CBA00DB461C /* WireFoundation */; };
 		59FE6ACE2DA90CC100DB461C /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59FE6ACD2DA90CC100DB461C /* WireFoundationSupport */; };
 		BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
@@ -163,10 +162,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596A193D2EB3A6580017C3CA /* WireLegacyLogging in Frameworks */,
 				59FE6ACC2DA90CBA00DB461C /* WireFoundation in Frameworks */,
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
-				59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */,
+				59537CD92CFF7ED800920B59 /* WireLegacyLogging in Frameworks */,
 				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,9 +291,8 @@
 			name = "WireTransport-ios";
 			packageProductDependencies = (
 				01BBCFD72BF559AA001D9397 /* Starscream */,
-				59537CD82CFF7ED800920B59 /* WireLogging */,
+				59537CD82CFF7ED800920B59 /* WireLegacyLogging */,
 				59FE6ACB2DA90CBA00DB461C /* WireFoundation */,
-				596A193C2EB3A6580017C3CA /* WireLegacyLogging */,
 			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
@@ -835,11 +832,7 @@
 			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
 			productName = Starscream;
 		};
-		59537CD82CFF7ED800920B59 /* WireLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireLogging;
-		};
-		596A193C2EB3A6580017C3CA /* WireLegacyLogging */ = {
+		59537CD82CFF7ED800920B59 /* WireLegacyLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLegacyLogging;
 		};

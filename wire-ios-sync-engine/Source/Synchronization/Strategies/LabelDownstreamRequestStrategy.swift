@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 
 struct LabelUpdate: Codable, Equatable {
     let id: UUID

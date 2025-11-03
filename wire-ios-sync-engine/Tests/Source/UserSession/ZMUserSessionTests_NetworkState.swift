@@ -18,10 +18,10 @@
 
 import WireDataModelSupport
 import WireDomain
-import WireLoggingSupport
+import WireLegacyLoggingSupport
 import XCTest
 
-@testable import WireLogging
+@testable import WireLegacyLogging
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 

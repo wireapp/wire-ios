@@ -6,7 +6,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireMultiBackendUI
 import WireNetwork
 import WireReusableUIComponents

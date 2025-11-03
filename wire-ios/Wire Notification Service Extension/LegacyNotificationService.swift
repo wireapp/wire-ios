@@ -22,7 +22,7 @@ import UserNotifications
 import WireCommonComponents
 import WireDataModel
 import WireDomain
-import WireLogging
+import WireLegacyLogging
 import WireNotificationEngine
 import WireRequestStrategy
 import WireSyncEngine

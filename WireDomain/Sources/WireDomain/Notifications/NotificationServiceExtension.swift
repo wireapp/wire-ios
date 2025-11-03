@@ -19,7 +19,7 @@
 import NeedleFoundation
 import UserNotifications
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 /// Receives and process a push notification through a flow of several steps:
 /// 1. Process push notification request (`ProcessNotificationRequestStep`)

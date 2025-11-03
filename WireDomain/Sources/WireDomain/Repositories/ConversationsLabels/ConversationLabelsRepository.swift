@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {

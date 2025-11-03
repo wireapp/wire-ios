@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {

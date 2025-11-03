@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 @MainActor

@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 
 public protocol UserSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }

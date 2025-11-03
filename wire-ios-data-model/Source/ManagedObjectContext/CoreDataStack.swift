@@ -19,7 +19,7 @@
 import CoreData
 import Foundation
 import WireData
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 import WireUtilities
 

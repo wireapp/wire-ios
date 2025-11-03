@@ -18,7 +18,7 @@
 
 import CellsSDK
 import Foundation
-import WireLogging
+import WireLegacyLogging
 import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {

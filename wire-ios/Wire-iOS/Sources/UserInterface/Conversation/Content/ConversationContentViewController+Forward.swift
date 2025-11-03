@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireLogging
+import WireLegacyLogging
 import WireSyncEngine
 
 extension ZMConversation: ShareDestination {

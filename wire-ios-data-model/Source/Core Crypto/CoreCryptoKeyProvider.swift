@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireSystem
 
 public enum CoreCryptoKeyProviderDefaults: String, DefaultsKey {

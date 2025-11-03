@@ -19,7 +19,7 @@
 import WireAnalytics
 import WireDataModel
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 
 public protocol AppendMultipartMessageUseCaseProtocol {
 

@@ -18,7 +18,7 @@
 
 public import Foundation
 
-import WireLogging
+import WireLegacyLogging
 
 public actor WebSocket: WebSocketProtocol {
 

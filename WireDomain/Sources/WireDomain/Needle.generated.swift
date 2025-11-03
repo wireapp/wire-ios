@@ -6,7 +6,7 @@ import UserNotifications
 import WireCrypto
 import WireDataModel
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 import WireNetwork
 
 // swiftlint:disable unused_declaration

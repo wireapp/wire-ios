@@ -19,7 +19,7 @@
 import CoreData
 import Foundation
 import WireDataModel
-import WireLogging
+import WireLegacyLogging
 import WireRequestStrategy
 import WireTransport
 

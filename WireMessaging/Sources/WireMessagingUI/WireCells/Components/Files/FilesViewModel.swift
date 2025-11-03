@@ -20,7 +20,7 @@ import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
-import WireLogging
+import WireLegacyLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
 
