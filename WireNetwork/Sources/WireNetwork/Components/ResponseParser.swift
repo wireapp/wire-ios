@@ -78,15 +78,59 @@ struct ResponseParser<Success> {
         label: String? = nil,
         error: some Error
     ) -> ResponseParser<Success> {
-        addParseBlock(code: code, prioritize: label != nil) { data in
-            if let label {
-                guard let data, let failure = try? decoder.decode(FailureResponseV0.self, from: data),
-                      failure.label == label else { return nil }
-
-                throw error
-            } else {
+        addParseBlock(
+            code: code,
+            prioritize: label != nil
+        ) { data in
+            guard let label else {
                 throw error
             }
+
+            guard
+                let data,
+                let failure = try? decoder.decode(
+                    FailureResponseV0.self,
+                    from: data
+                ),
+                failure.label == label
+            else {
+                return nil
+            }
+            throw error
+        }
+    }
+
+    func failure(
+        code: HTTPStatusCode,
+        label: String? = nil,
+        decodingError: @escaping (Data) throws -> (some Error)?
+    ) -> ResponseParser<Success> {
+        addParseBlock(
+            code: code,
+            prioritize: label != nil
+        ) { data in
+            guard let data else {
+                return nil
+            }
+
+            // First check label matches.
+            if let label {
+                guard
+                    let failure = try? decoder.decode(
+                        FailureResponseV0.self,
+                        from: data
+                    ),
+                    failure.label == label
+                else {
+                    return nil
+                }
+            }
+
+            guard let failure = try decodingError(data) else {
+                return nil
+            }
+
+            throw failure
         }
     }
 

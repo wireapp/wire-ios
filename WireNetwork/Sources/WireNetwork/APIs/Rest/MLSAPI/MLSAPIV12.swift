@@ -16,8 +16,95 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 final class MLSAPIV12: MLSAPIV11 {
 
     override var apiVersion: APIVersion { .v12 }
+
+    override func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent] {
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/commit-bundles")
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withBody(bundle.transportData(), contentType: .mls)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        do {
+            return try ResponseParser()
+                .success(
+                    code: .created,
+                    type: CommitBundleResponseV5.self
+                )
+                .failure(
+                    code: .conflict,
+                    label: "mls-stale-message",
+                    error: MLSAPIError.mlsStaleMessage
+                )
+                .failure(
+                    code: .conflict,
+                    label: "mls-client-mismatch",
+                    error: MLSAPIError.mlsClientMismatch
+                )
+                .failure( // New in v13
+                    code: .conflict,
+                    label: "mls-group-out-of-sync",
+                    decodingError: { data in
+                        let payload = try JSONDecoder().decode(
+                            MissingUsersPayloadV12.self,
+                            from: data
+                        )
+                        let missingUsers = payload.missingUsers.map {
+                            $0.toAPIModel()
+                        }
+                        return MLSAPIError.groupOutOfSync(missingUsers: Set(missingUsers))
+                    }
+                )
+                .failure(
+                    code: .badRequest,
+                    label: "mls-invalid-leaf-node-index",
+                    error: MLSAPIError.mlsInvalidLeafNodeIndex
+                )
+                .failure(
+                    code: .badRequest,
+                    label: "mls-invalid-leaf-node-signature",
+                    error: MLSAPIError.mlsInvalidLeafNodeSignature
+                )
+                .failure(
+                    code: .badRequest,
+                    label: "mls-commit-missing-references",
+                    error: MLSAPIError.mlsCommitMissingReferences
+                )
+                .failure(
+                    code: .conflict,
+                    decodableError: FailureResponseV0.self
+                )
+                .parse(
+                    code: response.statusCode,
+                    data: data
+                )
+        } catch {
+            if let failureResponse = error as? FailureResponseV0 {
+                throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+            } else {
+                throw error
+            }
+        }
+
+    }
+
+    private struct MissingUsersPayloadV12: Decodable {
+
+        let missingUsers: [QualifiedIDV0]
+
+        enum CodingKeys: String, CodingKey {
+            case missingUsers = "missing_users"
+        }
+
+    }
 
 }

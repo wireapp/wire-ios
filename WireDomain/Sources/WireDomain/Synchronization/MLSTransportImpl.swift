@@ -17,6 +17,7 @@
 //
 
 import WireCoreCrypto
+import WireDataModel
 import WireLogging
 import WireNetwork
 
@@ -41,7 +42,14 @@ final class MLSTransportImpl: MlsTransport {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
             do {
-                return .abort(reason: try error.encodeAsString())
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .sortedKeys
+                let encodableError = MLSService.MLSTransportError(error)
+                let string = String(
+                    decoding: try encoder.encode(encodableError),
+                    as: UTF8.self
+                )
+                return .abort(reason: string)
             } catch {
                 return .abort(reason: "failed to encode error")
             }

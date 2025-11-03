@@ -1574,33 +1574,118 @@ public final class MLSService: MLSServiceInterface {
 
         case retryAfterRepairingGroup
 
+        /// Add the missing users to the group, then retry the action in
+        /// its entirety.
+        ///
+        /// It's possible that the membership of the local group does not
+        /// match the membership of the conversation according to the backend.
+        /// This needs correcting so that all members will receive the commit.
+
+        case retryAfterAddingMissingUsers(Set<QualifiedID>)
+
+        /// Reset the mls group.
+        ///
+        /// Some bugs led to MLS getting broken which then required
+        /// an explicit fix.
+
+        case resetBrokenMLSConversation
+
         /// Abort the action and inform the user.
         ///
         /// There is no way to automatically recover from the error.
 
         case giveUp
 
-        /// When MLS conversation happened to be broken
-
-        case resetBrokenMLSConversation
-
         init(from reason: String) {
-            if let error = try? MLSAPIError(from: reason) {
-                switch error {
-                case .mlsClientMismatch, .mlsCommitMissingReferences:
-                    self = .retryAfterQuickSync
-                case .mlsStaleMessage:
-                    self = .retryAfterRepairingGroup
-                case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-                    self = .resetBrokenMLSConversation
-                default:
-                    self = .giveUp
-                }
-            } else {
+            guard let error = try? JSONDecoder().decode(
+                MLSTransportError.self,
+                from: Data(reason.utf8)
+            ) else {
+                self = .giveUp
+                return
+            }
+
+            switch error {
+            case .mlsClientMismatch, .mlsCommitMissingReferences:
+                self = .retryAfterQuickSync
+            case .mlsStaleMessage:
+                self = .retryAfterRepairingGroup
+            case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                self = .resetBrokenMLSConversation
+            default:
                 self = .giveUp
             }
         }
 
+    }
+
+    /// Errors originating from `MLSAPI` that pass through Core Crypto.
+    ///
+    /// These errors originate from `MLSAPI` and are caught in
+    /// `MLSTransportImpl` which then need to be encoded to `String`
+    /// to pass over the CC border. When the errors pass back from CC
+    /// we'll need to decode them in order to handle thim.
+
+    public enum MLSTransportError: Error, Codable {
+        case invalidRequestBody
+        case unsupportedEndpointForAPIVersion
+        case mlsNotEnabled
+        case mlsStaleMessage
+        case mlsClientMismatch
+        case mlsCommitMissingReferences
+        case mlsInvalidLeafNodeIndex
+        case mlsInvalidLeafNodeSignature
+        case mlsError(_ label: String, _ message: String)
+        case mlsProtocolError(message: String)
+        case mlsGroupIdNotSupported(message: String)
+        case mlsFederatedResetNotSupported(message: String)
+        case actionDenied(message: String)
+        case accessDenied(message: String)
+        case invalidOperation(message: String)
+        case noConversation(message: String)
+        case groupOutOfSync(missingUsers: Set<QualifiedID>)
+
+        public init(_ error: MLSAPIError) {
+            switch error {
+            case .invalidRequestBody:
+                self = .invalidRequestBody
+            case .unsupportedEndpointForAPIVersion:
+                self = .unsupportedEndpointForAPIVersion
+            case .mlsNotEnabled:
+                self = .mlsNotEnabled
+            case .mlsStaleMessage:
+                self = .mlsStaleMessage
+            case .mlsClientMismatch:
+                self = .mlsClientMismatch
+            case .mlsCommitMissingReferences:
+                self = .mlsCommitMissingReferences
+            case .mlsInvalidLeafNodeIndex:
+                self = .mlsInvalidLeafNodeIndex
+            case .mlsInvalidLeafNodeSignature:
+                self = .mlsInvalidLeafNodeSignature
+            case let .mlsError(label, message):
+                self = .mlsError(label, message)
+            case let .mlsProtocolError(message):
+                self = .mlsProtocolError(message: message)
+            case let .mlsGroupIdNotSupported(message):
+                self = .mlsGroupIdNotSupported(message: message)
+            case let .mlsFederatedResetNotSupported(message):
+                self = .mlsFederatedResetNotSupported(message: message)
+            case let .actionDenied(message):
+                self = .actionDenied(message: message)
+            case let .accessDenied(message):
+                self = .accessDenied(message: message)
+            case let .invalidOperation(message):
+                self = .invalidOperation(message: message)
+            case let .noConversation(message):
+                self = .noConversation(message: message)
+            case let .groupOutOfSync(missingUsers):
+                let missingUsers = missingUsers.map {
+                    QualifiedID(uuid: $0.id, domain: $0.domain)
+                }
+                self = .groupOutOfSync(missingUsers: Set(missingUsers))
+            }
+        }
     }
 
     private func retryOnCommitFailure(
@@ -1656,12 +1741,34 @@ public final class MLSService: MLSServiceInterface {
                 )
                 try await operation()
 
-            case .giveUp:
+            case let .retryAfterAddingMissingUsers(missingUsers):
+                guard retryCount <= maxRetryAttempts else {
+                    logger.error(
+                        "failed to send commit due to missing users and reached max attempts",
+                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    )
+                    throw MLSRetryError.retryLimitReached
+                }
+
                 logger.warn(
-                    "failed to send commit, giving up...",
+                    "failed to send commit due to missing users. Adding users then retrying operation (attempt: \(retryCount)...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
-                throw MLSRetryError.nonRecoverableError(reason)
+
+                let users = missingUsers.map {
+                    MLSUser($0, selfClientID: nil)
+                }
+
+                try await addMembersToConversation(
+                    with: users,
+                    for: groupID
+                )
+
+                try await retryOnCommitFailure(
+                    for: groupID,
+                    operation: operation,
+                    retryCount: retryCount + 1
+                )
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
@@ -1689,6 +1796,13 @@ public final class MLSService: MLSServiceInterface {
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
                 brokenGroupIDs.remove(groupID)
+
+            case .giveUp:
+                logger.warn(
+                    "failed to send commit, giving up...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                throw MLSRetryError.nonRecoverableError(reason)
             }
         }
     }
