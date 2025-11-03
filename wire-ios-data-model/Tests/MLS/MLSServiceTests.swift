@@ -2201,6 +2201,61 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 5)
     }
 
+    func test_RetryOnCommitFailure_GroupOutOfSync() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let domain = "example.com"
+
+        // Mock: commit failed due to missing users.
+        let missingUsers: Set<WireDataModel.QualifiedID> = [
+            .init(uuid: UUID(), domain: domain),
+            .init(uuid: UUID(), domain: domain),
+        ]
+        var callCount = 0
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            defer { callCount += 1 }
+            if callCount == 0 {
+                // Fail on first call.
+                let users = missingUsers.map {
+                    WireNetwork.QualifiedID(id: $0.uuid, domain: $0.domain)
+                }
+                let error = MLSAPIError.groupOutOfSync(missingUsers: Set(users))
+                let reason = try error.encodeAsString()
+                throw CoreCryptoError.Mls(.MessageRejected(reason: reason))
+            } else {
+                // Success.
+            }
+        }
+
+        // Mock: add users.
+        mockActionsProvider
+            .claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { userID, _, _, _, _ in
+                return [self.createKeyPackage(userID: userID, domain: domain)]
+            }
+        var addedUsers = [WireDataModel.QualifiedID]()
+        var addedInGroupIDs: [MLSGroupID] = []
+        mockMLSActionExecutor.mockAddMembers = { keyPackages, groupID in
+            let ids = keyPackages.map {
+                WireDataModel.QualifiedID(
+                    uuid: $0.userID,
+                    domain: $0.domain
+                )
+            }
+            addedUsers.append(contentsOf: ids)
+            addedInGroupIDs.append(groupID)
+        }
+
+        // When a commit is generated.
+        try await sut.commitPendingProposals(in: groupID)
+
+        // Then
+        // 1 failed, 1 success.
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 2)
+        // Added the missing users.
+        XCTAssertEqual(addedInGroupIDs, [groupID])
+        XCTAssertEqual(Set(addedUsers), missingUsers)
+    }
+
     func test_RetryOnCommitFailure_CommitPendingProposalsAfterRetry() async throws {
         // Given a group.
         let groupID = MLSGroupID.random()
@@ -3272,4 +3327,14 @@ extension ClientId: @retroactive Equatable {
     public static func == (lhs: ClientId, rhs: ClientId) -> Bool {
         lhs.copyBytes() == rhs.copyBytes()
     }
+}
+
+private extension MLSAPIError {
+
+    func encodeAsString() throws -> String {
+        let error = MLSService.MLSTransportError(self)
+        let data = try JSONEncoder().encode(error)
+        return String(decoding: data, as: UTF8.self)
+    }
+
 }
