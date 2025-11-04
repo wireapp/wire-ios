@@ -1695,6 +1695,10 @@ public final class MLSService: MLSServiceInterface {
         operation: @escaping () async throws -> Void,
         retryCount: Int = 0
     ) async throws {
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .mlsGroupID: groupID.safeForLoggingDescription
+        ]
 
         do {
             try await operation()
@@ -1703,12 +1707,12 @@ public final class MLSService: MLSServiceInterface {
             case .retryAfterQuickSync:
                 logger.warn(
                     "failed to send commit, syncing then retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 try await mlsSyncDelegate?.recoverWithIncrementalSync()
                 logger.info(
                     "sync finished, retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
 
                 guard retryCount <= maxRetryAttempts else {
@@ -1730,7 +1734,7 @@ public final class MLSService: MLSServiceInterface {
             case .retryAfterRepairingGroup:
                 logger.warn(
                     "failed to send commit, repairing group then retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 await fetchAndRepairGroup(
                     with: groupID,
@@ -1739,7 +1743,7 @@ public final class MLSService: MLSServiceInterface {
 
                 logger.info(
                     "repair finished, retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 try await operation()
 
@@ -1747,14 +1751,14 @@ public final class MLSService: MLSServiceInterface {
                 guard retryCount <= maxRetryAttempts else {
                     logger.error(
                         "failed to send commit due to missing users and reached max attempts",
-                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        attributes: logAttributes
                     )
                     throw MLSRetryError.retryLimitReached
                 }
 
                 logger.warn(
                     "failed to send commit due to missing users. Adding users then retrying operation - attempt: \(retryCount)...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
 
                 let users = missingUsers.map {
@@ -1782,7 +1786,7 @@ public final class MLSService: MLSServiceInterface {
                 else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
-                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        attributes: logAttributes
                     )
                     brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
@@ -1790,7 +1794,7 @@ public final class MLSService: MLSServiceInterface {
 
                 logger.info(
                     "Handling reset broken MLS conversation recovery strategy...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 var epoch: Int64 = 0
                 if let context, let conversation = fetchConversationInfo(
@@ -1805,7 +1809,7 @@ public final class MLSService: MLSServiceInterface {
             case .giveUp:
                 logger.warn(
                     "failed to send commit, giving up...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 throw MLSRetryError.nonRecoverableError(reason)
             }
