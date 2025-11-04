@@ -126,7 +126,7 @@ struct ResponseParser<Success> {
                 }
             }
 
-            guard let failure = try decodingError(data) else {
+            guard let failure = try? decodingError(data) else {
                 return nil
             }
 
