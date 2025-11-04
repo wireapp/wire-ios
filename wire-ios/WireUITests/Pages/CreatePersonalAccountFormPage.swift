@@ -52,6 +52,7 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
+        try passwordField.tapIfKeyboardNotFocused()
         // Sometimes it doesn't password in one go so entering char by char
         for ch in password {
             passwordField.typeText(String(ch))
@@ -60,6 +61,7 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
+        try confirmPasswordField.tapIfKeyboardNotFocused()
         // Sometimes it doesn't password in one go so entering char by char
         for ch in confirmPassword {
             confirmPasswordField.typeText(String(ch))
