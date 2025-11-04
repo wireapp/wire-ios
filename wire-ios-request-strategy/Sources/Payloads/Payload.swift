@@ -157,7 +157,7 @@ public enum Payload {
         let scimExternalID: String?
     }
 
-    enum UserType: String, Codable {
+    enum UserType: Codable {
         case regular
         case app
         case bot
