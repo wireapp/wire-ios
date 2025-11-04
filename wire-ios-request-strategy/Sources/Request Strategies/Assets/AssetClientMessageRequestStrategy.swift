@@ -81,6 +81,19 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        if object.shouldExpire, object.expirationDate?.isInThePast == true {
+            // this message is a retry from when we got interrupted (i.e. crashed)
+            WireLogger.messaging.info(
+                "asset message expired before sending: \(object)",
+                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
+                .safePublic
+            )
+            object.expire(withReason: .timeout)
+            managedObjectContext.saveOrRollback()
+            completion()
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: managedObjectContext)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

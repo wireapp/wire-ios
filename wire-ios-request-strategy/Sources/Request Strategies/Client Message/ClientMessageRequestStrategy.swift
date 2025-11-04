@@ -110,6 +110,18 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        if object.shouldExpire, object.expirationDate?.isInThePast == true {
+            // this message is a retry from when we got interrupted (i.e. crashed)
+            WireLogger.messaging.info(
+                "client message expired before sending: \(object)",
+                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
+                .safePublic
+            )
+            object.expire(withReason: .timeout)
+            context.saveOrRollback()
+            completion()
+            return
+        }
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)
