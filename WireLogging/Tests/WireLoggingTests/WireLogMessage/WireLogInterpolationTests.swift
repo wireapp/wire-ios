@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireLogLevel {
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
+import Testing
+
+@testable import WireLogging
+
+struct WireLogInterpolationTests {
+
+    @Test func staticStringIsNotObfuscated() async throws {
+        let logger = ""
+    }
+
 }

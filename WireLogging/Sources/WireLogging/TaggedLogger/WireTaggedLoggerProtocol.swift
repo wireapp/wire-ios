@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 public protocol WireTaggedLoggerProtocol: Sendable {
-    typealias Tag = WireLoggerTag
+    typealias Tag = WireLogTag
 
     var tag: Tag { get }
 

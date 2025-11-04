@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireLoggingProvider: Sendable {
+public enum WireLogType {
 
-    func log(
-        tag: WireLogTag,
-        type: WireLogType,
-        message: WireLogMessage
-    )
+    case debug
+    case info
+    case notice
+    case warn
+    case error
+    case critical
 
 }
