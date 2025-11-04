@@ -3333,7 +3333,9 @@ private extension MLSAPIError {
 
     func encodeAsString() throws -> String {
         let error = MLSService.MLSTransportError(self)
-        let data = try JSONEncoder().encode(error)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let data = try encoder.encode(error)
         return String(decoding: data, as: UTF8.self)
     }
 
