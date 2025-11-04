@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetwork
 
 /// Errors originating from `MLSAPI` that pass through Core Crypto.
 ///
