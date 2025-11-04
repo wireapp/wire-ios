@@ -1762,7 +1762,7 @@ public final class MLSService: MLSServiceInterface {
                 }
 
                 // It's important to call the internal method because
-                // we don't want to re-enter the comnmit failure handling
+                // we don't want to re-enter the commit failure handling
                 // again for this action, otherwise we may end up in a loop.
                 try await internalAddMembersToConversation(
                     with: users,
