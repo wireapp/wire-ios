@@ -29,16 +29,19 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .secureTextField)["enterPasswordField"].firstMatch
+        app.descendants(matching: .textField)["enterPasswordField"].firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .secureTextField)["enterConfirmPasswordField"].firstMatch
+        app.descendants(matching: .textField)["enterConfirmPasswordField"].firstMatch
+    }
+
+    var showPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)["Show password"].firstMatch
     }
 
     var continueButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        app.descendants(matching: .button)["Continue"].firstMatch
     }
 
     var acceptButton: XCUIElement {
@@ -52,20 +55,16 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
+        showPasswordIcon.tap()
         try passwordField.tapIfKeyboardNotFocused()
-        // Sometimes it doesn't password in one go so entering char by char
-        for ch in password {
-            passwordField.typeText(String(ch))
-        }
+        passwordField.typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
+        showPasswordIcon.tap()
         try confirmPasswordField.tapIfKeyboardNotFocused()
-        // Sometimes it doesn't password in one go so entering char by char
-        for ch in confirmPassword {
-            confirmPasswordField.typeText(String(ch))
-        }
+        confirmPasswordField.typeText(confirmPassword)
         return self
     }
 
