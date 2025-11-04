@@ -771,7 +771,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageOnAnOutOfSyncGroup_ItAddsMissingUsersAndTriesAgain() async throws {
         // Given
-        await syncMOC.performGrouped {
+        await syncMOC.perform {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
             self.groupConversation.mlsStatus = .ready
