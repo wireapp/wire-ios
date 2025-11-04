@@ -805,7 +805,7 @@ final class MessageSenderTests: MessagingTestBase {
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
-            .withApiVersionResolving(to: .v12) // Should be v13
+            .withApiVersionResolving(to: .v13)
             .withMLServiceConfigured()
             .withSendMlsMessageResults(returning: [
                 .failure(SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)),
