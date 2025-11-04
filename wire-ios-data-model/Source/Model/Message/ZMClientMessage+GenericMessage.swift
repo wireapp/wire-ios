@@ -19,9 +19,9 @@
 import Foundation
 import GenericMessageProtocol
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
-    public var underlyingMessage: GenericMessage? {
+    var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil
         }
@@ -54,7 +54,7 @@ extension ZMClientMessage {
     /// - Parameter message: The protobuf message object to be associated with this client message.
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
 
-    public func setUnderlyingMessage(_ message: GenericMessage) throws {
+    func setUnderlyingMessage(_ message: GenericMessage) throws {
         let messageData = try mergeWithExistingData(message)
 
         if nonce == .none, let messageID = messageData.underlyingMessage?.messageID {
@@ -71,12 +71,12 @@ extension ZMClientMessage {
     /// - Parameter message: The protobuf message object to be associated with this asset client message.
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
 
-    public func setNewUnderlyingMessage(_ message: GenericMessage) throws {
+    func setNewUnderlyingMessage(_ message: GenericMessage) throws {
         try createNewGenericMessageData(with: message)
     }
 
     @discardableResult
-    func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
+    internal func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
         cachedUnderlyingMessage = nil
 
         let existingMessageData = dataSet

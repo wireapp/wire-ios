@@ -39,12 +39,12 @@ struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
         self.backupContext = contextProvider.newBackgroundContext()
 
         setupBackupContext()
-        
-        clientMessageEntityDescription = NSEntityDescription.entity(
+
+        self.clientMessageEntityDescription = NSEntityDescription.entity(
             forEntityName: ZMClientMessage.entityName(),
             in: backupContext
         )
-        assetMessageEntityDescription = NSEntityDescription.entity(
+        self.assetMessageEntityDescription = NSEntityDescription.entity(
             forEntityName: ZMAssetClientMessage.entityName(),
             in: backupContext
         )

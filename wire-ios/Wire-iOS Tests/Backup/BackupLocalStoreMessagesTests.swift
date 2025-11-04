@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import XCTest
 import WireBackup
-@testable import WireDataModel
 import WireFoundation
+import XCTest
 @testable import Wire
+@testable import WireDataModel
 
 final class BackupLocalStoreMessagesTests: XCTestCase {
-    
+
     private typealias QualifiedID = WireFoundation.QualifiedID
 
     // MARK: - Properties
@@ -34,7 +34,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
     private var senderID: QualifiedID!
     private var conversationID: QualifiedID!
     private var context: NSManagedObjectContext!
-    
+
     // MARK: - Setup & Teardown
 
     override func setUp() async throws {
@@ -58,7 +58,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
         sut = BackupLocalStore(contextProvider: coreDataStack)
         context = sut.backupContext
-    
+
         // Create test fixtures
         conversationID = QualifiedID(id: UUID(), domain: "wire.com")
         senderID = QualifiedID(id: UUID(), domain: "wire.com")
@@ -111,11 +111,11 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         XCTAssertEqual(result.rehydrationCount.successCount, 2)
 
         try await context.perform { [senderID, conversationID, fetchMessages] in
-            
+
             // Verify messages in database
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 2)
-        
+
             // Verify relationships
             for message in fetchedMessages {
                 XCTAssertNotNil(message.sender)
@@ -125,7 +125,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
             }
         }
     }
-    
+
     func test_AddMessages_ImportsValidAssetMessages() async throws {
         // GIVEN
         let messages = [
@@ -145,11 +145,11 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
         // Verify asset message in database
         try await context.perform { [senderID, conversationID, fetchMessages] in
-            
+
             // Verify messages in database
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 1)
-            
+
             guard let assetMessage = fetchedMessages.first as? ZMAssetClientMessage else {
                 XCTFail("Expected ZMAssetClientMessage")
                 return
@@ -161,7 +161,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
             XCTAssertEqual(assetMessage.visibleInConversation?.remoteIdentifier, conversationID?.id)
             XCTAssertNotNil(assetMessage.underlyingMessage)
         }
-        
+
     }
 
     func test_AddMessages_ImportsValidLocationMessages() async throws {
@@ -182,11 +182,11 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         XCTAssertEqual(result.rehydrationCount.successCount, 1)
 
         try await context.perform { [senderID, conversationID, fetchMessages] in
-            
+
             // Verify message in database
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 1)
-    
+
             guard let message = fetchedMessages.first else { return XCTFail() }
             XCTAssertNotNil(message.sender)
             XCTAssertEqual(message.sender?.remoteIdentifier, senderID?.id)
@@ -255,7 +255,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
     func test_AddMessages_ReportsValidationFailure_ForUnsupportedContentType() async throws {
         // GIVEN
-        
+
         // Create a message with text content but manually create the model
         // to simulate unsupported content that doesn't pass validation
         let invalidMessage = MessageBackupModel(
@@ -311,7 +311,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         try await context.perform { [fetchMessages] in
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 1)
-            
+
             guard let message = fetchedMessages.first else {
                 return XCTFail()
             }
@@ -353,7 +353,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
     func testThatAddMessagesHandlesLargeBatch() async throws {
         // GIVEN - 1000 messages
-        let messages = (0..<1000).map { _ in
+        let messages = (0 ..< 1000).map { _ in
             makeValidTextMessage(
                 conversationID: conversationID,
                 senderID: senderID
@@ -445,7 +445,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
             content: .text("This message has invalid nonce")
         )
     }
-    
+
     func fetchMessages() throws -> [ZMMessage] {
         let fetchRequest = ZMMessage.fetchRequest()
         let fetchResult = try context!.fetch(fetchRequest) as? [ZMMessage]
