@@ -37,7 +37,7 @@ actor WorkAgent {
 
     private var task: Task<Void, Never>?
     private let scheduler: any WorkScheduler
-    private var workers: [any Worker] = []
+    private var workers: [UUID: any Worker] = [:]
     private let nonReentrantTaskManager = NonReentrantTaskManager()
 
     init(scheduler: any WorkScheduler) {
@@ -47,7 +47,7 @@ actor WorkAgent {
     // MARK: - Operation
 
     func registerWorker(_ worker: any Worker) {
-        workers.append(worker)
+        workers[worker.id] = worker
     }
 
     func submitTicket(_ ticket: any WorkTicket) {
@@ -101,9 +101,7 @@ actor WorkAgent {
                     attributes: .init(ticket)
                 )
 
-                guard let worker = workers.first(where: {
-                    $0.id == ticket.workerID
-                }) else {
+                guard let worker = workers[ticket.workerID] else {
                     WireLogger.workAgent.warn(
                         "didn't find worker for ticket",
                         attributes: .init(ticket)
