@@ -43,13 +43,6 @@ package struct FilesView: FilesViewProtocol {
 
                 Group {
                     switch viewModel.state {
-                    case .initial:
-                        Button(action: reloadTask) {
-                            Image(systemName: "arrow.trianglehead.clockwise")
-                                .wireTextStyle(.body3)
-                                .foregroundStyle(SemanticColors.Label.textDefault.color)
-
-                        }
                     case .loading:
                         ProgressView()
                             .progressViewStyle(.circular)
@@ -59,7 +52,7 @@ package struct FilesView: FilesViewProtocol {
                         } else {
                             filesList
                                 .listStyle(.plain)
-                                .refreshable { reloadTask() }
+                                .refreshable { reloadTask(refreshing: true) }
                         }
                     case .pending:
                         FilesInfoView(info: .preparingFiles)
