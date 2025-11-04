@@ -26,11 +26,15 @@ extension XCUIElement {
 
     @discardableResult
     func tapIfKeyboardNotFocused(timeout: TimeInterval = 3.0) throws -> XCUIElement {
+        let deadline = Date().addingTimeInterval(timeout)
         while !(value(forKey: "hasKeyboardFocus") as? Bool ?? false) {
             tap()
-            if Date() > Date().addingTimeInterval(timeout) {
-                throw KeyboardFocusError
-                    .failedToFocusWithinTimeout(message: "Failed to focus keyboard within \(timeout) seconds")
+            _ = XCUIApplication().keyboards.element.waitForExistence(timeout: 0.5)
+            RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            if Date() > deadline {
+                throw KeyboardFocusError.failedToFocusWithinTimeout(
+                    message: "Failed to focus keyboard within \(timeout) seconds"
+                )
             }
         }
         return self
