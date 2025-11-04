@@ -16,11 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireTaggedLogger: WireTaggedLoggerProtocol {
-    public typealias Tag = WireLogTag
+public struct WireTaggedLogger<
+    LogHandler: WireLogHandlerProtocol
+> {
 
-    public var tag: Tag
-    public var providers: [any WireLoggingProvider]
+    public var tag: WireLogTag
+    public var handler: LogHandler
+
+    public init(
+        tag: WireLogTag,
+        handler: LogHandler
+    ) {
+        self.tag = tag
+        self.handler = handler
+    }
+
+    private func log(_ type: WireLogType, _ message: WireLogMessage) {
+        handler.log(tag: tag, type: type, message: message)
+    }
+
+}
+
+// MARK: -
+
+extension WireTaggedLogger: WireTaggedLoggerProtocol {
 
     public func debug(_ message: WireLogMessage) {
         log(.debug, message)
@@ -44,16 +63,6 @@ public struct WireTaggedLogger: WireTaggedLoggerProtocol {
 
     public func critical(_ message: WireLogMessage) {
         log(.critical, message)
-    }
-
-    private func log(_ type: WireLogType, _ message: WireLogMessage) {
-        providers.forEach { provider in
-            provider.log(
-                tag: tag,
-                type: type,
-                message: message
-            )
-        }
     }
 
 }

@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireLoggingProvider: Sendable {
+// sourcery: AutoMockable
+public protocol WireLogHandlerProtocol: Sendable {
 
     func log(
         tag: WireLogTag,

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import Testing
 
 @testable import WireLogging
@@ -23,7 +24,36 @@ import Testing
 struct WireLogInterpolationTests {
 
     @Test func staticStringIsNotObfuscated() async throws {
-        let logger = ""
+        let message: WireLogMessage = "Hello, World!"
+        #expect(message.content == "Hello, World!")
+    }
+
+    @Test func staticStringInterpolationIsNotObfuscated() async throws {
+        let name = "World" as StaticString
+        let message: WireLogMessage = "Hello, \(name)!"
+        #expect(message.content == "Hello, World!")
+    }
+
+}
+
+
+// TODO: move somewhere else
+private struct CustomType {
+    var eventID = "012345"
+    var sensibleInformation = "Sensitive"
+}
+
+extension WireLogInterpolation {
+
+    fileprivate mutating func appendInterpolation(
+        _ customType: CustomType,
+        selfUserID: UUID
+    ) {
+        let obfuscationStartIndex = content.index(content.startIndex, offsetBy: 4)
+        let obfuscatedContent = content.replacingCharacters(in: obfuscationStartIndex...content.endIndex, with: "***")
+        writeText(obfuscatedContent)
+
+        writeAttribute(customType.eventID)
     }
 
 }

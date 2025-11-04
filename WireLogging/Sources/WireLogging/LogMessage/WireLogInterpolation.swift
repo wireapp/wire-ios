@@ -43,6 +43,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     /// Allows for adding additional tags to a log message.
     /// Depending on the logging system the attributes might for example be prepended in brackets or appended
     /// separately.
+
     public mutating func writeAttribute(_ attribute: WireLogAttribute) {
         attributes += [attribute]
     }
@@ -51,6 +52,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     public mutating func writeText(_ text: String) {
         content += text
     }
+
 }
 
 // TODO: remove this example

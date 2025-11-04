@@ -34,6 +34,7 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
         mockLogger = nil
     }
 
+    /*
     func testSimpleErrorIsLoggedWithObfuscation() {
         // Given
         let error = CustomError.simple
@@ -53,7 +54,6 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
         )
     }
 
-    /*
     func testSimpleErrorIsLoggedWithoutObfuscation() {
         // Given
         let error = CustomError.simple

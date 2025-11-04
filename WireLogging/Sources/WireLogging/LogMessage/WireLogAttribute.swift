@@ -17,4 +17,4 @@
 //
 
 // TODO: add comment
-public typealias WireLogAttribute = WireLogTag
+public typealias WireLogAttribute = String

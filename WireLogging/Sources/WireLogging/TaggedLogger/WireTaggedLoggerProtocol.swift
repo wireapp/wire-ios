@@ -18,9 +18,8 @@
 
 // sourcery: AutoMockable
 public protocol WireTaggedLoggerProtocol: Sendable {
-    typealias Tag = WireLogTag
 
-    var tag: Tag { get }
+    var tag: WireLogTag { get }
 
     func debug(_ message: WireLogMessage)
     func info(_ message: WireLogMessage)
