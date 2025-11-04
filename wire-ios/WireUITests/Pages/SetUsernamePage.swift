@@ -33,9 +33,19 @@ class SetUsernamePage: PageModel {
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {
-        if usernameField.exists, usernameField.isHittable {
-            try usernameField.tapIfKeyboardNotFocused().typeText(username)
-        }
+        XCTAssertTrue(usernameField.waitForExistence(timeout: 3), "Username field not found")
+
+        let predicate = NSPredicate(format: "exists == true AND hittable == true")
+        let element = XCTNSPredicateExpectation(predicate: predicate, object: usernameField)
+        XCTAssertEqual(
+            XCTWaiter().wait(for: [element], timeout: 3),
+            .completed,
+            "Username field not ready due to animation to type"
+        )
+
+        try usernameField.tapIfKeyboardNotFocused()
+        _ = app.keyboards.firstMatch.waitForExistence(timeout: 2)
+        usernameField.typeText(username)
         confirmUsernameButton.tap()
         return try ConversationsPage()
     }
