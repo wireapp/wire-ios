@@ -101,7 +101,7 @@ final class MLSTransportTests: XCTestCase {
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        let data = try JSONEncoder().encode(MLSService.MLSTransportError.mlsStaleMessage)
+        let data = try JSONEncoder().encode(MLSTransportError.mlsStaleMessage)
         let expectedReason = String(decoding: data, as: UTF8.self)
         XCTAssertEqual(result, MlsTransportResponse.abort(reason: expectedReason))
     }

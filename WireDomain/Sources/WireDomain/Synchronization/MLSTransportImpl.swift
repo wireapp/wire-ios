@@ -44,7 +44,7 @@ final class MLSTransportImpl: MlsTransport {
             do {
                 let encoder = JSONEncoder()
                 encoder.outputFormatting = .sortedKeys
-                let encodableError = MLSService.MLSTransportError(error)
+                let encodableError = MLSTransportError(error)
                 let string = String(
                     decoding: try encoder.encode(encodableError),
                     as: UTF8.self

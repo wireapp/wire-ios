@@ -3332,7 +3332,7 @@ extension ClientId: @retroactive Equatable {
 private extension MLSAPIError {
 
     func encodeAsString() throws -> String {
-        let error = MLSService.MLSTransportError(self)
+        let error = MLSTransportError(self)
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let data = try encoder.encode(error)
