@@ -18,29 +18,29 @@
 
 import Foundation
 
-/// A scheduler that dequeues tickets in priority order.
+/// A scheduler that dequeues items in priority order.
 
-final class PriorityOrderWorkScheduler: WorkScheduler {
+actor PriorityOrderWorkItemScheduler: WorkItemScheduler {
 
-    private var blockerQueue: [any WorkTicket] = []
-    private var highQueue: [any WorkTicket] = []
-    private var mediumQueue: [any WorkTicket] = []
-    private var lowQueue: [any WorkTicket] = []
+    private var blockerQueue: [any WorkItem] = []
+    private var highQueue: [any WorkItem] = []
+    private var mediumQueue: [any WorkItem] = []
+    private var lowQueue: [any WorkItem] = []
 
-    func enqueueTicket(_ ticket: any WorkTicket) {
-        switch ticket.priority {
+    func enqueueItem(_ item: any WorkItem) async {
+        switch item.priority {
         case .low:
-            lowQueue.append(ticket)
+            lowQueue.append(item)
         case .medium:
-            mediumQueue.append(ticket)
+            mediumQueue.append(item)
         case .high:
-            highQueue.append(ticket)
+            highQueue.append(item)
         case .blocker:
-            blockerQueue.append(ticket)
+            blockerQueue.append(item)
         }
     }
 
-    func dequeueNextTicket() -> (any WorkTicket)? {
+    func dequeueNextItem() async -> (any WorkItem)? {
         if !blockerQueue.isEmpty {
             blockerQueue.removeFirst()
         } else if !highQueue.isEmpty {

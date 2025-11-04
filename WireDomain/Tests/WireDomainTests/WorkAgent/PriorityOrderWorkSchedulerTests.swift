@@ -20,109 +20,110 @@ import Foundation
 import Testing
 @testable import WireDomain
 
-struct PriorityOrderWorkSchedulerTests {
+struct PriorityOrderWorkItemSchedulerTests {
 
-    let sut = PriorityOrderWorkScheduler()
+    let sut = PriorityOrderWorkItemScheduler()
 
     @Test("It deqeues in priority order")
     func itDequeuesInPriorityOrder() async throws {
         // Given
-        let lowPriorityTicket = MockWorkTicket(priority: .low)
-        let mediumPriorityTicket = MockWorkTicket(priority: .medium)
-        let highPriorityTicket = MockWorkTicket(priority: .high)
-        let blockerPriorityTicket = MockWorkTicket(priority: .blocker)
+        let lowPriorityItem = MockWorkItem(priority: .low)
+        let mediumPriorityItem = MockWorkItem(priority: .medium)
+        let highPriorityItem = MockWorkItem(priority: .high)
+        let blockerPriorityItem = MockWorkItem(priority: .blocker)
 
         // When
-        sut.enqueueTicket(lowPriorityTicket)
-        sut.enqueueTicket(mediumPriorityTicket)
-        sut.enqueueTicket(highPriorityTicket)
-        sut.enqueueTicket(blockerPriorityTicket)
+        await sut.enqueueItem(lowPriorityItem)
+        await sut.enqueueItem(mediumPriorityItem)
+        await sut.enqueueItem(highPriorityItem)
+        await sut.enqueueItem(blockerPriorityItem)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == blockerPriorityTicket.id)
-        try #require(sut.dequeueNextTicket()?.id == highPriorityTicket.id)
-        try #require(sut.dequeueNextTicket()?.id == mediumPriorityTicket.id)
-        try #require(sut.dequeueNextTicket()?.id == lowPriorityTicket.id)
-        #expect(sut.dequeueNextTicket() == nil)
+        try await #require(sut.dequeueNextItem()?.id == blockerPriorityItem.id)
+        try await #require(sut.dequeueNextItem()?.id == highPriorityItem.id)
+        try await #require(sut.dequeueNextItem()?.id == mediumPriorityItem.id)
+        try await #require(sut.dequeueNextItem()?.id == lowPriorityItem.id)
+        #expect(await sut.dequeueNextItem() == nil)
     }
 
     @Test("It dequeues tickets of same priority in FIFO order")
     func itDequeuesTicketsOfSamePriorityInFIFOOrder() async throws {
         // Given
-        let ticket1 = MockWorkTicket(priority: .low)
-        let ticket2 = MockWorkTicket(priority: .high)
-        let ticket3 = MockWorkTicket(priority: .medium)
-        let ticket4 = MockWorkTicket(priority: .low)
-        let ticket5 = MockWorkTicket(priority: .medium)
-        let ticket6 = MockWorkTicket(priority: .blocker)
-        let ticket7 = MockWorkTicket(priority: .high)
-        let ticket8 = MockWorkTicket(priority: .blocker)
+        let item1 = MockWorkItem(priority: .low)
+        let item2 = MockWorkItem(priority: .high)
+        let item3 = MockWorkItem(priority: .medium)
+        let item4 = MockWorkItem(priority: .low)
+        let item5 = MockWorkItem(priority: .medium)
+        let item6 = MockWorkItem(priority: .blocker)
+        let item7 = MockWorkItem(priority: .high)
+        let item8 = MockWorkItem(priority: .blocker)
 
         // When
-        sut.enqueueTicket(ticket1)
-        sut.enqueueTicket(ticket2)
-        sut.enqueueTicket(ticket3)
-        sut.enqueueTicket(ticket4)
-        sut.enqueueTicket(ticket5)
-        sut.enqueueTicket(ticket6)
-        sut.enqueueTicket(ticket7)
-        sut.enqueueTicket(ticket8)
+        await sut.enqueueItem(item1)
+        await sut.enqueueItem(item2)
+        await sut.enqueueItem(item3)
+        await sut.enqueueItem(item4)
+        await sut.enqueueItem(item5)
+        await sut.enqueueItem(item6)
+        await sut.enqueueItem(item7)
+        await sut.enqueueItem(item8)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == ticket6.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket8.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket2.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket7.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket3.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket5.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket1.id)
-        try #require(sut.dequeueNextTicket()?.id == ticket4.id)
-        #expect(sut.dequeueNextTicket() == nil)
+        try await #require(sut.dequeueNextItem()?.id == item6.id)
+        try await #require(sut.dequeueNextItem()?.id == item8.id)
+        try await #require(sut.dequeueNextItem()?.id == item2.id)
+        try await #require(sut.dequeueNextItem()?.id == item7.id)
+        try await #require(sut.dequeueNextItem()?.id == item3.id)
+        try await #require(sut.dequeueNextItem()?.id == item5.id)
+        try await #require(sut.dequeueNextItem()?.id == item1.id)
+        try await #require(sut.dequeueNextItem()?.id == item4.id)
+        #expect(await sut.dequeueNextItem() == nil)
     }
 
     @Test("Dequeuing considers newly enqueued tickets")
     func dequeuingConsidersNewlyEnqueuedTickets() async throws {
         // Given
-        let medium1 = MockWorkTicket(priority: .medium)
-        let high1 = MockWorkTicket(priority: .high)
-        let low1 = MockWorkTicket(priority: .low)
-        let low2 = MockWorkTicket(priority: .low)
-        let blocker1 = MockWorkTicket(priority: .blocker)
+        let medium1 = MockWorkItem(priority: .medium)
+        let high1 = MockWorkItem(priority: .high)
+        let low1 = MockWorkItem(priority: .low)
+        let low2 = MockWorkItem(priority: .low)
+        let blocker1 = MockWorkItem(priority: .blocker)
 
         // When
-        sut.enqueueTicket(medium1)
-        sut.enqueueTicket(high1)
+        await sut.enqueueItem(medium1)
+        await sut.enqueueItem(high1)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == high1.id)
+        try await #require(sut.dequeueNextItem()?.id == high1.id)
 
         // When
-        sut.enqueueTicket(low1)
+        await sut.enqueueItem(low1)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == medium1.id)
+        try await #require(sut.dequeueNextItem()?.id == medium1.id)
 
         // When
-        sut.enqueueTicket(low2)
+        await sut.enqueueItem(low2)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == low1.id)
+        try await #require(sut.dequeueNextItem()?.id == low1.id)
 
         // When
-        sut.enqueueTicket(blocker1)
+        await sut.enqueueItem(blocker1)
 
         // Then
-        try #require(sut.dequeueNextTicket()?.id == blocker1.id)
-        try #require(sut.dequeueNextTicket()?.id == low2.id)
-        #expect(sut.dequeueNextTicket() == nil)
+        try await #require(sut.dequeueNextItem()?.id == blocker1.id)
+        try await #require(sut.dequeueNextItem()?.id == low2.id)
+        #expect(await sut.dequeueNextItem() == nil)
     }
 
 }
 
-private struct MockWorkTicket: WorkTicket, Equatable {
+private struct MockWorkItem: WorkItem, Equatable {
 
     let id = UUID()
-    let workerID = UUID()
-    var priority: WorkTicketPriority
+    let priority: WorkItemPriority
+    func start() async throws {}
+    func cancel() async {}
 
 }

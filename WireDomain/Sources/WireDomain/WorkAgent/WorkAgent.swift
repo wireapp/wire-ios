@@ -31,34 +31,33 @@ actor WorkAgent {
 
     /// Whether dequeuing should begin after ticket submission.
 
-    var shouldAutoStart = false
+    private var shouldAutoStart = false
+    func setAutoStartEnabled(_ enabled: Bool) async {
+        shouldAutoStart = enabled
+    }
 
     // MARK: - Life cycle
 
     private var task: Task<Void, Never>?
-    private let scheduler: any WorkScheduler
-    private var workers: [UUID: any Worker] = [:]
+    private let scheduler: any WorkItemScheduler
     private let nonReentrantTaskManager = NonReentrantTaskManager()
 
-    init(scheduler: any WorkScheduler) {
+    init(scheduler: any WorkItemScheduler) {
         self.scheduler = scheduler
     }
 
     // MARK: - Operation
 
-    func registerWorker(_ worker: any Worker) {
-        workers[worker.id] = worker
-    }
-
-    func submitTicket(_ ticket: any WorkTicket) {
+    func submitItem(_ item: any WorkItem) {
         WireLogger.workAgent.debug(
-            "ticket submitted: \(ticket)",
-            attributes: .init(ticket)
+            "item submitted: \(item)",
+            attributes: .init(item)
         )
-        scheduler.enqueueTicket(ticket)
 
-        if shouldAutoStart {
-            Task {
+        Task {
+            await scheduler.enqueueItem(item)
+
+            if shouldAutoStart, !isRunning {
                 await start()
             }
         }
@@ -82,44 +81,35 @@ actor WorkAgent {
 
         task = Task {
             let startTime = Date()
-            var completedTickets = 0
+            var completedItems = 0
 
-            while let ticket = scheduler.dequeueNextTicket() {
+            while let item = await scheduler.dequeueNextItem() {
                 do {
                     try Task.checkCancellation()
                 } catch {
                     WireLogger.workAgent.debug(
                         "task has been cancelled, aborting...",
-                        attributes: .init(ticket)
+                        attributes: .init(item)
                     )
                     break
                 }
 
-
                 WireLogger.workAgent.debug(
-                    "dequeued ticket",
-                    attributes: .init(ticket)
+                    "dequeued item",
+                    attributes: .init(item)
                 )
 
-                guard let worker = workers[ticket.workerID] else {
-                    WireLogger.workAgent.warn(
-                        "didn't find worker for ticket",
-                        attributes: .init(ticket)
-                    )
-                    continue
-                }
-
                 do {
-                    try await worker.performWork(for: ticket)
-                    completedTickets += 1
+                    try await item.start()
+                    completedItems += 1
                     WireLogger.workAgent.debug(
-                        "ticket complete",
-                        attributes: .init(ticket)
+                        "item complete",
+                        attributes: .init(item)
                     )
                 } catch {
                     WireLogger.workAgent.error(
-                        "ticket failed, dropping",
-                        attributes: .init(ticket)
+                        "item failed, dropping",
+                        attributes: .init(item)
                     )
                     continue
                 }
@@ -128,7 +118,7 @@ actor WorkAgent {
             let duration = Date().timeIntervalSince(startTime)
             let durationString = String(format: "%.2f seconds", duration)
             WireLogger.workAgent.info(
-                "completed \(completedTickets) tickets in \(durationString)",
+                "completed \(completedItems) tickets in \(durationString)",
                 attributes: .safePublic
             )
         }
@@ -150,10 +140,10 @@ actor WorkAgent {
 
 private extension LogAttributes {
 
-    init(_ ticket: any WorkTicket) {
+    init(_ item: any WorkItem) {
         self = [
             .public: true,
-            .workTicketID: "\(ticket.id)"
+            .workItemID: "\(item.id)"
         ]
     }
 

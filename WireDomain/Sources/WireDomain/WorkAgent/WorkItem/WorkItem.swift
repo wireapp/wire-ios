@@ -18,19 +18,27 @@
 
 import Foundation
 
-/// Defines the strategy to recover from a failed or unprocessable work ticket.
+/// An item of work that can be performed.
 ///
-/// When a `WorkTicket` cannot be executed successfully, the worker may throw
-/// a `WorkTicketRecoveryStrategy` to indicate what should be done with the
-/// failed ticket. This allows the system to decide whether to retry, drop,
-/// or escalate the ticket based on the chosen strategy.
+/// A `Workitem` is a pending operation that can be performed when instructed
+/// to. Instances are created and scheduled via the `WorkAgent`.
 
-enum WorkTicketRecoveryStrategy: Error {
+protocol WorkItem: Sendable {
 
-    /// The ticket should be discarded and it will not be retried.
-    ///
-    /// Use this for tasks that are no longer relevant, redundant, or
-    /// when retrying would not be meaningful or safe.
+    /// A unique identifier for this item.
 
-    case drop
+    var id: UUID { get }
+
+    /// The urgency or importance of this ticket.
+
+    var priority: WorkItemPriority { get }
+
+    /// Start the work for this item.
+
+    func start() async throws
+
+    /// Cancel the work item.
+
+    func cancel() async
+
 }

@@ -26,7 +26,7 @@ import Foundation
 /// lower priority to avoid overload and allow important issues to be peformed
 /// quickly.
 
-enum WorkTicketPriority: Sendable {
+enum WorkItemPriority: Sendable {
 
     /// Low priority.
     ///

@@ -18,24 +18,19 @@
 
 import Foundation
 
-/// A component responsible for managing and ordering pending work tickets.
+/// Defines the strategy to recover from a failed or unprocessable work item.
 ///
-/// The `WorkScheduler` acts as the central queue for the app’s internal
-/// work management system. It accepts tickets created by workers and
-/// determines the order in which they should be executed based on their
-/// assigned priority and other scheduling policies.
+/// When a `WorkItem` cannot be executed successfully, the worker may throw
+/// a `WorkItemRecoveryStrategy` to indicate what should be done with the
+/// failed item. This allows the system to decide whether to retry, drop,
+/// or escalate the ticket based on the chosen strategy.
 
-protocol WorkScheduler {
+enum WorkItemRecoveryStrategy: Error {
 
-    /// Add a ticket to the scheduler.
+    /// The item should be discarded and it will not be retried.
     ///
-    /// - Parameter ticket: The ticket to enqueue.
+    /// Use this for tasks that are no longer relevant, redundant, or
+    /// when retrying would not be meaningful or safe.
 
-    func enqueueTicket(_ ticket: any WorkTicket)
-
-    /// Retrieves and removes the next ticket to be processed.
-    ///
-    /// - Returns: The next available ticket.
-
-    func dequeueNextTicket() -> (any WorkTicket)?
+    case drop
 }
