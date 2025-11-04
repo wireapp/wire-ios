@@ -33,7 +33,9 @@ class SetUsernamePage: PageModel {
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {
-        try usernameField.tapIfKeyboardNotFocused().typeText(username)
+        if usernameField.exists, usernameField.isHittable {
+            try usernameField.tapIfKeyboardNotFocused().typeText(username)
+        }
         confirmUsernameButton.tap()
         return try ConversationsPage()
     }

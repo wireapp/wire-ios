@@ -47,6 +47,10 @@ class FirstTimePage: PageModel {
         app.buttons["Not Now"]
     }
 
+    var validationRuleForUsername: XCUIElement {
+        app.descendants(matching: .staticText)["validation-rules"].firstMatch
+    }
+
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
@@ -54,6 +58,7 @@ class FirstTimePage: PageModel {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
         firstTimePageMessageLabel.waitForNonExistence(timeout: 2)
+        XCTAssertTrue(validationRuleForUsername.waitForExistence(timeout: 1), "Username field is not loaded")
         return self
     }
 
