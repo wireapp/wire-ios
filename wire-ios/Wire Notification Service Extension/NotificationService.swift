@@ -111,7 +111,7 @@ final class NotificationService: UNNotificationServiceExtension {
             return nil
         }
 
-        if apiVersion >= .v8 {
+        if apiVersion >= APIVersion.minimumSyncV2CompatibleVersion {
             WireLogger.notifications.info(
                 "loading new notification service",
                 attributes: .safePublic

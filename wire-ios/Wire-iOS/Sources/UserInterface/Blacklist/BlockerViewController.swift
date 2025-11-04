@@ -324,6 +324,7 @@ final class BlockerViewController: LaunchImageViewController {
         }
 
         databaseFailureAlert.addAction(deleteDatabaseAction)
+        databaseFailureAlert.addSwitchAccountAction(switchAccountAction)
         present(databaseFailureAlert, animated: true)
     }
 

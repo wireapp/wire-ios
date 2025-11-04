@@ -154,7 +154,6 @@ extension ConversationInputBarViewController {
 
     private func showFileUploadActionSheet(_ sender: IconButton) {
         mode = ConversationInputBarViewControllerMode.textInput
-        inputBar.textView.resignFirstResponder()
 
         let controller = createFileUploadActionSheet(sender: sender)
 

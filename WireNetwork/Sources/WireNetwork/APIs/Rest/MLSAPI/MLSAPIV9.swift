@@ -22,7 +22,7 @@ class MLSAPIV9: MLSAPIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 
-    override func resetMLSConversation(epoch: Int64, groupID: String) async throws {
+    override func resetMLSConversation(epoch: UInt64, groupID: String) async throws {
         let parameters = MLSResetParameters(epoch: epoch, groupID: groupID)
 
         let encodedJSON: Data
@@ -91,7 +91,7 @@ class MLSAPIV9: MLSAPIV8 {
 }
 
 struct MLSResetParameters: Encodable {
-    var epoch: Int64
+    var epoch: UInt64
     var groupID: String
 
     enum CodingKeys: String, CodingKey {

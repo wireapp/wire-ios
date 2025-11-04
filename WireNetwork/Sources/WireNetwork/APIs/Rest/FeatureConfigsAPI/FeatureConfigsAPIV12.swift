@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV12: FeatureConfigsAPIV11 {
+class FeatureConfigsAPIV12: FeatureConfigsAPIV11 {
 
     override var apiVersion: APIVersion { .v12 }
 

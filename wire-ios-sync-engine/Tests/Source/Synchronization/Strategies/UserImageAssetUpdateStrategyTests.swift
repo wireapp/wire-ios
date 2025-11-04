@@ -355,7 +355,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             "/assets/v3/\(assetId)"
         case .v1:
             "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 
