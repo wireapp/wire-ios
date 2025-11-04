@@ -1626,7 +1626,7 @@ public final class MLSService: MLSServiceInterface {
     /// These errors originate from `MLSAPI` and are caught in
     /// `MLSTransportImpl` which then need to be encoded to `String`
     /// to pass over the CC border. When the errors pass back from CC
-    /// we'll need to decode them in order to handle thim.
+    /// we'll need to decode them in order to handle them.
 
     public enum MLSTransportError: Error, Codable {
         case invalidRequestBody
