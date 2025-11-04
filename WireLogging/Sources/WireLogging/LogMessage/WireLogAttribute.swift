@@ -16,5 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: add comment
-public typealias WireLogAttribute = String
+public struct WireLogAttribute {
+
+    public var key: String
+    public var value: String
+
+}
+
+extension WireLogAttribute {
+
+    public typealias Provider = (String) -> WireLogAttribute
+
+    nonisolated(unsafe) public static let someKey: Provider = { .init(key: "someKey", value: $0) }
+
+}
+
+// TODO: delete
+nonisolated(unsafe) var la: [WireLogAttribute] = [
+    .someKey("abcd")
+]

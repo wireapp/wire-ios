@@ -37,7 +37,7 @@ struct WireLogInterpolationTests {
 }
 
 
-// TODO: move somewhere else
+// TODO: move somewhere else? keep in readme/docs?
 private struct CustomType {
     var eventID = "012345"
     var sensibleInformation = "Sensitive"
@@ -49,11 +49,25 @@ extension WireLogInterpolation {
         _ customType: CustomType,
         selfUserID: UUID
     ) {
+
         let obfuscationStartIndex = content.index(content.startIndex, offsetBy: 4)
         let obfuscatedContent = content.replacingCharacters(in: obfuscationStartIndex...content.endIndex, with: "***")
         writeText(obfuscatedContent)
 
-        writeAttribute(customType.eventID)
+        writeAttribute(.eventID(selfUserID.uuidString))
+        writeAttribute(.selfUserID(selfUserID.uuidString))
+    }
+
+}
+
+extension WireLogAttribute {
+
+    fileprivate static func eventID(_ value: String) -> WireLogAttribute {
+        .init(key: "event_id", value: value)
+    }
+
+    fileprivate static func selfUserID(_ value: String) -> WireLogAttribute {
+        .init(key: "self_user_id", value: value)
     }
 
 }
