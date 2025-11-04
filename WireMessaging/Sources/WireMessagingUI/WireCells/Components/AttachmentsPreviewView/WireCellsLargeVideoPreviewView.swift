@@ -88,7 +88,8 @@ struct WireCellsLargeVideoPreviewView: View {
                     .resizable()
                     .scaledToFill()
                     .overlay {
-                        PlayIcon(isEnabled: true)
+                        PlayIcon()
+                            .disabled(false)
                     }
             case .failure:
                 errorView(text: Self.errorMessage)
