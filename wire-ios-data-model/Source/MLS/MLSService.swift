@@ -1753,7 +1753,7 @@ public final class MLSService: MLSServiceInterface {
                 }
 
                 logger.warn(
-                    "failed to send commit due to missing users. Adding users then retrying operation (attempt: \(retryCount)...",
+                    "failed to send commit due to missing users. Adding users then retrying operation - attempt: \(retryCount)...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
 
