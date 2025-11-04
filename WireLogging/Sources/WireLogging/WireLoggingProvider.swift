@@ -16,18 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Abstraction of a convenience interface to the Wire logging systems.
-public protocol WireLoggerProtocol: Sendable {
-    typealias Tag = WireLoggerTag
-
-    var tag: Tag { get }
-
-    func debug(_ message: WireLogMessage)
-    func info(_ message: WireLogMessage)
-    func notice(_ message: WireLogMessage)
-    func warn(_ message: WireLogMessage)
-    func error(_ message: WireLogMessage)
-    func critical(_ message: WireLogMessage)
-
-}
+public protocol WireLoggingProvider {}
