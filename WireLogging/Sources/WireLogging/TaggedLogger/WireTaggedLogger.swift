@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Convenience interface to the Wire logging systems.
-public struct WireLogger: WireLoggerProtocol {
+public struct WireTaggedLogger: WireTaggedLoggerProtocol {
     public typealias Tag = WireLoggerTag
-    private typealias Level = WireLogLevel
 
     public var tag: Tag
     public var providers: [any WireLoggingProvider]
@@ -48,9 +46,14 @@ public struct WireLogger: WireLoggerProtocol {
         log(.critical, message)
     }
 
-    private func log(_ level: Level, _ message: WireLogMessage) {
+    private func log(_ level: WireLogLevel, _ message: WireLogMessage) {
         providers.forEach { provider in
-            provider.log(level: level, message: message)
+            provider.log(
+                tag: tag,
+                level: level,
+                message: message
+            )
         }
     }
+
 }

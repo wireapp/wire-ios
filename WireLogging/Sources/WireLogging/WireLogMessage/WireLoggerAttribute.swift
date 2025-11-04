@@ -16,14 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireLogging/Sources/WireLogging/WireLogMessage/WireLoggerAttribute.swift
-// TODO: needed?
+// TODO: add comment
 public typealias WireLoggerAttribute = WireLoggerTag
-========
-public extension ZMMessage {
-    @NSManaged var senderID: UUID?
-    @NSManaged var senderDomain: String?
-    @NSManaged var conversationID: UUID?
-    @NSManaged var conversationDomain: String?
-}
->>>>>>>> feat/create-new-logger-WPB-14297:wire-ios-data-model/Source/Model/Message/ZMMessage+Backup.swift

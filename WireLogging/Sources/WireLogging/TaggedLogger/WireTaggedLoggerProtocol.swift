@@ -17,8 +17,7 @@
 //
 
 // sourcery: AutoMockable
-/// Abstraction of a convenience interface to the Wire logging systems.
-public protocol WireLoggerProtocol: Sendable {
+public protocol WireTaggedLoggerProtocol: Sendable {
     typealias Tag = WireLoggerTag
 
     var tag: Tag { get }

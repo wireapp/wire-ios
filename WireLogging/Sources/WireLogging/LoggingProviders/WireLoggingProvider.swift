@@ -18,26 +18,10 @@
 
 public protocol WireLoggingProvider: Sendable {
 
-    typealias Tag = WireLoggerTag
-    typealias Level = WireLogLevel
-
-    var tag: Tag { get }
-
-    func log(level: Level, message: WireLogMessage)
-
-}
-
-// TODO: fix conflict
-
-import Testing
-
-@testable import WireLogging
-
-struct Test {
-
-    @Test
-    func nothing() async throws {
-        // just a placeholder test
-    }
+    func log(
+        tag: WireLoggerTag,
+        level: WireLogLevel,
+        message: WireLogMessage
+    )
 
 }
