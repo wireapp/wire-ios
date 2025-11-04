@@ -85,6 +85,17 @@ actor WorkAgent {
             var completedTickets = 0
 
             while let ticket = scheduler.dequeueNextTicket() {
+                do {
+                    try Task.checkCancellation()
+                } catch {
+                    WireLogger.workAgent.debug(
+                        "task has been cancelled, aborting...",
+                        attributes: .init(ticket)
+                    )
+                    break
+                }
+
+
                 WireLogger.workAgent.debug(
                     "dequeued ticket",
                     attributes: .init(ticket)
