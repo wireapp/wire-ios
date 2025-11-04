@@ -20,6 +20,7 @@ import GenericMessageProtocol
 import WireDataModel
 import WireFoundation
 import WireNetwork
+import WireLogging
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
 
@@ -78,14 +79,32 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             timestamp = proteusMessageEvent.timestamp
         }
 
+        // DEBUG: Log if this is a calling message
+        if message.hasCalling {
+            WireLogger.notifications.info(
+                "[CALLING-DEBUG] Calling message detected - conversationID: \(conversationID.id.safeForLoggingDescription), senderID: \(senderID.id.safeForLoggingDescription), calling content: \(message.calling.content)",
+                attributes: .newNSE, .safePublic
+            )
+        }
+
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
             calling: message.calling,
             at: timestamp,
             conversationID: conversationID,
             senderID: senderID
         ) {
+            WireLogger.notifications.info(
+                "[CALLING-DEBUG] Calling notification generated successfully",
+                attributes: .newNSE, .safePublic
+            )
             return callingNotification
         } else {
+            if message.hasCalling {
+                WireLogger.notifications.info(
+                    "[CALLING-DEBUG] Calling message but NO notification generated",
+                    attributes: .newNSE, .safePublic
+                )
+            }
             return await buildMessageContentNotification(
                 message: message,
                 senderID: senderID,

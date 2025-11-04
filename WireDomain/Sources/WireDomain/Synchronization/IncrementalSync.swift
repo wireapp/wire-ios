@@ -219,6 +219,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             "processing live event: \(event.name)",
                             attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                         )
+                        logger.debug(
+                            "processing DEBUG live event: \(event)",
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                        )
                         try await processor.processEvent(event)
                     } catch {
                         logger.error(

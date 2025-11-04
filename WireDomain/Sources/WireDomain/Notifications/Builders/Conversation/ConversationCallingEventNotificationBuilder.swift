@@ -19,6 +19,7 @@
 import GenericMessageProtocol
 import WireDataModel
 import WireNetwork
+import WireLogging
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
@@ -33,10 +34,32 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         conversationID: ConversationID,
         senderID: UserID
     ) async -> UserNotification? {
+        WireLogger.notifications.info(
+            "[CALLING-DEBUG] buildContent called - conversationID: \(conversationID.id.safeForLoggingDescription), senderID: \(senderID.id.safeForLoggingDescription), calling.content: \(calling.content)",
+            attributes: .newNSE, .safePublic
+        )
+
         guard let callContent: CallContent = .decode(from: calling) else {
+            WireLogger.notifications.warn(
+                "[CALLING-DEBUG] Failed to decode CallContent",
+                attributes: .newNSE, .safePublic
+            )
             return nil
         }
 
+        WireLogger.notifications.info(
+            "[CALLING-DEBUG] CallContent decoded - type: \(callContent.type), isIncomingCall: \(callContent.isIncomingCall), isAnsweredElsewhere: \(callContent.isAnsweredElsewhere), isEndCall: \(callContent.isEndCall), responded: \(callContent.responded)",
+            attributes: .newNSE, .safePublic
+        )
+        var resolvedConversationID: ConversationID {
+            let callingConversationID = calling.qualifiedConversationID
+            guard !callingConversationID.id.isEmpty,
+                  let conversationUUID = UUID(uuidString: callingConversationID.id)
+            else {
+                return conversationID
+            }
+            return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
+        }
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: conversationID,
             senderID: senderID,
@@ -52,17 +75,35 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callContent: callContent
         )
 
+        WireLogger.notifications.info(
+            "[CALLING-DEBUG] Validation results - displayCallKitNotification: \(displayCallKitNotification), displayCallNotification: \(displayCallNotification)",
+            attributes: .newNSE, .safePublic
+        )
+
         if displayCallKitNotification {
             // First, let's try to return a CallKit notification if possible.
-            return await buildCallKitNotification(
+            WireLogger.notifications.info(
+                "[CALLING-DEBUG] Building CallKit notification",
+                attributes: .newNSE, .safePublic
+            )
+            let notification = await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
                 conversationID: conversationID,
                 senderID: senderID
             )
+            WireLogger.notifications.info(
+                "[CALLING-DEBUG] CallKit notification built",
+                attributes: .newNSE, .safePublic
+            )
+            return notification
 
         } else if displayCallNotification {
             // If not, try to return a regular call notification.
+            WireLogger.notifications.info(
+                "[CALLING-DEBUG] Building regular call notification",
+                attributes: .newNSE, .safePublic
+            )
             return await buildCallNotification(
                 callContent: callContent,
                 senderID: senderID,
@@ -70,6 +111,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             )
         } else {
             // Else, this is not a call, return nil.
+            WireLogger.notifications.warn(
+                "[CALLING-DEBUG] No notification will be generated (both validations failed)",
+                attributes: .newNSE, .safePublic
+            )
             return nil
         }
 
@@ -370,7 +415,7 @@ extension ConversationCallingEventNotificationBuilder {
         let userDefaults: UserDefaults
 
         /// In priority, we'll try to validate a CallKit notification to show to the user
-        func validateCallKitNotification(
+        func validateCallKitNotification( //!!!!!
             conversationID: ConversationID,
             senderID: UserID,
             accountID: UUID,
