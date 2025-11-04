@@ -19,5 +19,5 @@
 public import Foundation
 
 public protocol WireCellsUpdateTagsUseCaseProtocol: Sendable {
-    func invoke(nodeID: UUID, oldTags: [String], newTags: [String]) async throws
+    func invoke(nodeID: UUID, tags: [String]) async throws
 }

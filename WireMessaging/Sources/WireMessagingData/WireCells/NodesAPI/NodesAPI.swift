@@ -142,8 +142,8 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deletePublicLink(uuid: linkUUID)
     }
     
-    package func updateTags(nodeID: UUID, tagsToAdd: [String], tagsToRemove: [String]) async throws {
-        try await restAPI.updateTags(uuid: nodeID, tagsToAdd: tagsToAdd, tagsToRemove: tagsToRemove)
+    package func updateTags(nodeID: UUID, tags: [String]) async throws {
+        try await restAPI.updateTags(uuid: nodeID, tags: tags)
     }
 }
 

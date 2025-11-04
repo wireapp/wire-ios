@@ -111,7 +111,7 @@ extension TagsEditView {
             
             do {
                 //try await Task.sleep(for: .seconds(2))
-                try await updateTagsUseCase.invoke(nodeID: fileItem.id, oldTags: fileItem.tags, newTags: currentTags)
+                try await updateTagsUseCase.invoke(nodeID: fileItem.id, tags: currentTags)
                 //TODO: trigger files reload
                 dismiss.send()
             } catch {

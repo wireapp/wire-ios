@@ -213,29 +213,17 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
     }
     
-    func updateMetadata(uuid: UUID, namespace: String, valuesToAdd: [String] = [], valuesToRemove: [String] = []) async throws {
-        let toAdd: [RestMetaUpdate] = valuesToAdd.map { value in
-            .init(
-                operation: .put,
-                userMeta: .init(jsonValue: value, namespace: namespace, nodeUuid: uuid.uuidString)
-            )
-        }
+    func updateTags(uuid: UUID, tags: [String]) async throws {
+        let update = RestMetaUpdate(
+            operation: .put,
+            userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
+        )
         
-        let toRemove: [RestMetaUpdate] = valuesToRemove.map { value in
-            .init(
-                operation: .delete,
-                userMeta: .init(jsonValue: value, namespace: namespace, nodeUuid: uuid.uuidString)
-            )
-        }
-        
-        _ = try await NodeServiceAPI.batchUpdateMeta(
-            body: .init(updates: toAdd + toRemove),
+        _ = try await NodeServiceAPI.patchNode(
+            uuid: uuid.uuidString,
+            nodeUpdates: .init(metaUpdates: [update]),
             apiConfiguration: makeConfiguration()
         )
-    }
-    
-    func updateTags(uuid: UUID, tagsToAdd: [String], tagsToRemove: [String]) async throws {
-        _ = try await updateMetadata(uuid: uuid, namespace: "usermeta-tags", valuesToAdd: tagsToAdd, valuesToRemove: tagsToRemove)
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {

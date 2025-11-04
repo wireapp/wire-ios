@@ -25,20 +25,7 @@ package struct WireCellsUpdateTagsUseCase<NodesAPI: NodesAPIProtocol>: WireCells
         self.nodesAPI = nodesAPI
     }
     
-    package func invoke(nodeID: UUID, oldTags: [String], newTags: [String]) async throws {
-        var toAdd: [String] = []
-        var toRemove: [String] = []
-        
-        let diff = newTags.difference(from: oldTags)
-        diff.forEach { entry in
-            switch entry {
-            case .insert(offset: _, element: let tag, associatedWith: _):
-                toAdd.append(tag)
-            case .remove(offset: _, element: let tag, associatedWith: _):
-                toRemove.append(tag)
-            }
-        }
-        
-        try await nodesAPI.updateTags(nodeID: nodeID, tagsToAdd: toAdd, tagsToRemove: toRemove)
+    package func invoke(nodeID: UUID, tags: [String]) async throws {
+        try await nodesAPI.updateTags(nodeID: nodeID, tags: tags)
     }
 }
