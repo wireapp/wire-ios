@@ -26,7 +26,12 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         self.subsystem = subsystem
     }
 
-    public func log(tag: WireLogTag, type: WireLogType, message: WireLogMessage) {
+    public func log(
+        tag: WireLogTag,
+        type: WireLogType,
+        message: WireLogMessage,
+        additionalAttributes: [WireLogAttribute]
+    ) {
 
         let type = type.mappedToOSLogType()
         let attributes = message.interpolation.attributes.map { "[\($0)]" }

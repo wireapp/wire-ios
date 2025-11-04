@@ -32,10 +32,13 @@ struct WireLogInterpolationTests {
         let name = "World" as StaticString
         let message: WireLogMessage = "Hello, \(name)!"
         #expect(message.content == "Hello, World!")
+
+        let osl = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!) // TODO: delete
+        let l = WireTaggedLogger(tag: "test", handler: osl)
+        l.critical("Lorem \("Ipsum")", .eventID(""))
     }
 
 }
-
 
 // TODO: move somewhere else? keep in readme/docs?
 private struct CustomType {

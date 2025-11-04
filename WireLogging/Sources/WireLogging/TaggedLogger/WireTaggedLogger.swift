@@ -31,8 +31,17 @@ public struct WireTaggedLogger<
         self.handler = handler
     }
 
-    private func log(_ type: WireLogType, _ message: WireLogMessage) {
-        handler.log(tag: tag, type: type, message: message)
+    private func log(
+        _ type: WireLogType,
+        _ message: WireLogMessage,
+        _ additionalAttributes: [WireLogAttribute]
+    ) {
+        handler.log(
+            tag: tag,
+            type: type,
+            message: message,
+            additionalAttributes: additionalAttributes
+        )
     }
 
 }
@@ -41,28 +50,28 @@ public struct WireTaggedLogger<
 
 extension WireTaggedLogger: WireTaggedLoggerProtocol {
 
-    public func debug(_ message: WireLogMessage) {
-        log(.debug, message)
+    public func debug(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.debug, message, additionalAttributes)
     }
 
-    public func info(_ message: WireLogMessage) {
-        log(.info, message)
+    public func info(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.info, message, additionalAttributes)
     }
 
-    public func notice(_ message: WireLogMessage) {
-        log(.notice, message)
+    public func notice(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.notice, message, additionalAttributes)
     }
 
-    public func warn(_ message: WireLogMessage) {
-        log(.warn, message)
+    public func warn(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.warn, message, additionalAttributes)
     }
 
-    public func error(_ message: WireLogMessage) {
-        log(.error, message)
+    public func error(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.error, message, additionalAttributes)
     }
 
-    public func critical(_ message: WireLogMessage) {
-        log(.critical, message)
+    public func critical(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.critical, message, additionalAttributes)
     }
 
 }
