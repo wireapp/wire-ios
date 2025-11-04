@@ -26,7 +26,6 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
     private var mockLogger: WireTaggedLoggerProtocolMock!
 
     override func setUp() {
-        fatalError("TODO")
         mockLogger = .init()
         mockLogger.errorMessageWireLogMessageVoidClosure = { _ in }
     }
@@ -35,7 +34,6 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
         mockLogger = nil
     }
 
-    /*
     func testSimpleErrorIsLoggedWithObfuscation() {
         // Given
         let error = CustomError.simple
@@ -55,6 +53,7 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
         )
     }
 
+    /*
     func testSimpleErrorIsLoggedWithoutObfuscation() {
         // Given
         let error = CustomError.simple

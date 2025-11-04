@@ -48,7 +48,11 @@ public struct WireTaggedLogger: WireTaggedLoggerProtocol {
 
     private func log(_ level: WireLogLevel, _ message: WireLogMessage) {
         providers.forEach { provider in
-            provider.log(level: level, message: message)
+            provider.log(
+                tag: tag,
+                level: level,
+                message: message
+            )
         }
     }
 

@@ -18,11 +18,10 @@
 
 public protocol WireLoggingProvider: Sendable {
 
-    typealias Tag = WireLoggerTag
-    typealias Level = WireLogLevel
-
-    var tag: Tag { get } // TODO: why tag as property not as argument to log(...)
-
-    func log(level: Level, message: WireLogMessage)
+    func log(
+        tag: WireLoggerTag,
+        level: WireLogLevel,
+        message: WireLogMessage
+    )
 
 }
