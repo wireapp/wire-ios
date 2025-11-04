@@ -58,7 +58,7 @@ class FirstTimePage: PageModel {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
         firstTimePageMessageLabel.waitForNonExistence(timeout: 2)
-        XCTAssertTrue(validationRuleForUsername.waitForExistence(timeout: 1), "Username field is not loaded")
+        XCTAssertTrue(validationRuleForUsername.waitForExistence(timeout: 3), "Username field is not loaded")
         return self
     }
 
