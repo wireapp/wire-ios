@@ -19,7 +19,7 @@
 import Foundation
 import WireLogging
 
-final class WorkAgent {
+actor WorkAgent {
 
     // MARK: - Properties
 
@@ -42,10 +42,6 @@ final class WorkAgent {
 
     init(scheduler: any WorkScheduler) {
         self.scheduler = scheduler
-    }
-
-    deinit {
-        stop()
     }
 
     // MARK: - Operation
