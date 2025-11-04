@@ -143,10 +143,9 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         XCTAssertEqual(result.insertionCount.successCount, 1)
         XCTAssertEqual(result.rehydrationCount.successCount, 1)
 
-        // Verify asset message in database
         try await context.perform { [senderID, conversationID, fetchMessages] in
 
-            // Verify messages in database
+            // Verify asset message in database
             let fetchedMessages = try fetchMessages()
             XCTAssertEqual(fetchedMessages.count, 1)
 
