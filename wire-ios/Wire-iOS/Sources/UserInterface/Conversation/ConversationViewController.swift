@@ -873,8 +873,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending,
-                nodeIDs: []
+                isCellsStatePending: wireCellsState == .pending
             )
 
         filesView.presentOverAll(animated: true)
