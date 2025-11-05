@@ -49,7 +49,7 @@ final class WireCellsRenameNodeUseCaseTests {
         let newFilename = "foo1"
 
         // Mock
-        repository.preCheckPathFindAvailablePath_MockValue = (false, nil)
+        repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.renameNodeNodeIDTargetPath_MockValue = true
         localAssetsRepository.refreshAssetMetadataNodeID_MockValue = (
             WireCellsNode.fixture(uuid: nodeID),
@@ -65,7 +65,7 @@ final class WireCellsRenameNodeUseCaseTests {
         )
 
         // Then
-        #expect(repository.preCheckPathFindAvailablePath_Invocations.count == 1)
+        #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
         #expect(repository.renameNodeNodeIDTargetPath_Invocations.count == 1)
         #expect(localAssetsRepository.refreshAssetMetadataNodeID_Invocations.count == 1)
         #expect(nodeCache.setItemFor_Invocations.count == 1)
@@ -79,7 +79,7 @@ final class WireCellsRenameNodeUseCaseTests {
         let newFilename = "foo1"
 
         // Mock
-        repository.preCheckPathFindAvailablePath_MockValue = (true, nil)
+        repository.preCheckNodePathFindAvailablePath_MockValue = .fileExists(nextPath: "")
         repository.renameNodeNodeIDTargetPath_MockValue = true
         localAssetsRepository.refreshAssetMetadataNodeID_MockValue = (
             WireCellsNode.fixture(),
@@ -106,7 +106,7 @@ final class WireCellsRenameNodeUseCaseTests {
         let newFilename = "foo1"
 
         // Mock
-        repository.preCheckPathFindAvailablePath_MockValue = (false, nil)
+        repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.renameNodeNodeIDTargetPath_MockValue = true
         localAssetsRepository.refreshAssetMetadataNodeID_MockValue = (
             WireCellsNode.fixture(),
@@ -133,7 +133,7 @@ final class WireCellsRenameNodeUseCaseTests {
         let newFilename = "foo1"
 
         // Mock
-        repository.preCheckPathFindAvailablePath_MockValue = (false, nil)
+        repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.renameNodeNodeIDTargetPath_MockValue = false
         localAssetsRepository.refreshAssetMetadataNodeID_MockValue = (
             WireCellsNode.fixture(),

@@ -62,11 +62,11 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
 
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(
-            path: targetPath.absoluteString,
+            nodePath: targetPath.absoluteString,
             findAvailablePath: false
         )
 
-        guard !preCheckResult.fileExists else {
+        guard preCheckResult == .success else {
             throw WireCellsRenameNodeError.fileAlreadyExists
         }
 

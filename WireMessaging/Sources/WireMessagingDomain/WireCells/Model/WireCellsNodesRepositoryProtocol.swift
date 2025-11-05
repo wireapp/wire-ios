@@ -52,10 +52,10 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// Apply some pre-validation checks on node name before sending an upload
     ///
     /// - Parameters:
-    ///     - path: The node path to pre-check.
+    ///     - nodePath: The node path to pre-check.
     ///     - findAvailablePath: Finds the next available path if path already exists.
     /// - Returns: Whether a file already exists at this path and the next available path if any.
-    func preCheck(path: String, findAvailablePath: Bool) async throws -> (fileExists: Bool, nextPath: String?)
+    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
 
 }
 
