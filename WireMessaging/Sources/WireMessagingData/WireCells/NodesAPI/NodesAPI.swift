@@ -54,7 +54,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
             path: nodePath,
             findAvailablePath: findAvailablePath
         )
-        
+
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
