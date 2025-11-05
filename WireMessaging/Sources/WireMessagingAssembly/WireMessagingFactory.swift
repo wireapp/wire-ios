@@ -44,7 +44,8 @@ public struct WireMessagingFactory {
         serverURL: URL,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider
+        contextProvider: any ManagedObjectContextProvider,
+        isFoldersEnabled: Bool
     ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
