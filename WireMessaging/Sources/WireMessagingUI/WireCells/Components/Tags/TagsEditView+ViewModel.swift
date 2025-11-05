@@ -61,9 +61,15 @@ extension TagsEditView {
             allExistingTags.filter { tag in
                 let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 let isAlreadyAdded = currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+                return !isEmpty && !isAlreadyAdded
+            }
+        }
+        
+        var filteredSuggestedTags: [String] {
+            suggestedTags.filter { tag in
                 let containsEnteredText = tag.localizedCaseInsensitiveContains(enteredTag.trimmingCharacters(in: .whitespacesAndNewlines))
                 let enteredTextIsEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                return !isEmpty && !isAlreadyAdded && (containsEnteredText || enteredTextIsEmpty)
+                return containsEnteredText || enteredTextIsEmpty
             }
         }
         

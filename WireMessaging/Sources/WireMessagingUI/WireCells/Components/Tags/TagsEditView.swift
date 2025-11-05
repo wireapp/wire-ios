@@ -30,6 +30,8 @@ struct TagsEditView: View {
     
     @StateObject private var viewModel: ViewModel
     
+    @FocusState private var isTextFieldFocused: Bool
+    
     private let horizontalPadding: CGFloat = 16
     private let tagBubbleSpacing: CGFloat = 8
     
@@ -61,6 +63,8 @@ struct TagsEditView: View {
                             ProgressView()
                                 .tint(Color.primary)
                         } else {
+                            let hasEnteredTagName = !viewModel.enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            
                             Button {
                                 Task {
                                     await viewModel.save()
@@ -69,12 +73,24 @@ struct TagsEditView: View {
                                 Text(L10n.Localizable.General.save)
                                     .bold()
                             }
-                            .disabled(!viewModel.hasChanges)
+                            .disabled(!viewModel.hasChanges || hasEnteredTagName)
                         }
                     }
+                    
+                    ToolbarItemGroup(placement: .keyboard) {
+                        suggestedTagsList(viewModel.filteredSuggestedTags, withKeyboardStyle: true)
+                            .animation(.easeInOut, value: viewModel.enteredTag)
+                            .animation(.easeInOut, value: isTextFieldFocused)
+                    }
                 }
-                .background(ColorTheme.Backgrounds.background.color)
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                }
+                .ignoresSafeArea(edges: .bottom)
                 .tint(ColorTheme.Base.primary.color)
+                .onTapGesture {
+                    isTextFieldFocused = false
+                }
                 .onReceive(viewModel.dismiss) {
                     dismiss()
                 }
@@ -102,6 +118,8 @@ struct TagsEditView: View {
                 Spacer(minLength: 20)
 
                 suggestedTagsArea()
+                    .opacity(isTextFieldFocused ? 0 : 1)
+                    .animation(.easeInOut, value: isTextFieldFocused)
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, horizontalPadding)
@@ -116,6 +134,7 @@ struct TagsEditView: View {
         TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
             .textFieldStyle(.plain)
             .textInputAutocapitalization(.never)
+            .focused($isTextFieldFocused)
             .onSubmit {
                 addEnteredTag()
             }
@@ -159,17 +178,22 @@ struct TagsEditView: View {
             if suggestedTags.isEmpty {
                 normalText(Strings.Tags.suggestedTagsSectionEmpty)
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: tagBubbleSpacing) {
-                        ForEach(suggestedTags, id: \.self) { tag in
-                            suggestedTagBubble(tag: tag)
-                        }
-                    }
-                    .padding(.horizontal, horizontalPadding)
-                }
-                .padding(.horizontal, -horizontalPadding)
+                suggestedTagsList(suggestedTags, withKeyboardStyle: false)
             }
         }
+    }
+    
+    @ViewBuilder private func suggestedTagsList(_ tags: [String], withKeyboardStyle: Bool) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: tagBubbleSpacing) {
+                ForEach(tags, id: \.self) { tag in
+                    suggestedTagBubble(tag: tag, withKeyboardStyle: withKeyboardStyle)
+                }
+            }
+            .padding(.horizontal, horizontalPadding)
+            .frame(maxHeight: withKeyboardStyle ? .infinity : nil)
+        }
+        .padding(.horizontal, -horizontalPadding)
     }
     
     @ViewBuilder private func normalText(_ text: String) -> some View {
@@ -221,7 +245,7 @@ struct TagsEditView: View {
         .foregroundStyle(ColorTheme.Base.primary.color)
     }
     
-    @ViewBuilder private func suggestedTagBubble(tag: String) -> some View {
+    @ViewBuilder private func suggestedTagBubble(tag: String, withKeyboardStyle: Bool) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
         
         Button {
@@ -241,6 +265,12 @@ struct TagsEditView: View {
             .background {
                 shape.fill(ColorTheme.Backgrounds.backgroundVariant.color)
             }
+            .background {
+                if withKeyboardStyle {
+                    shape.stroke(ColorTheme.Base.secondaryText.color)
+                }
+            }
+            .padding(.vertical, 1)
         }
         .accessibilityLabel(Text(Accessibility.Tags.addTag.replacingOccurrences(of: "{0}", with: tag)))
         .foregroundStyle(.primary)

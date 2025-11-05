@@ -108,7 +108,10 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
 
 private func previewTagsApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
-    //TODO: mock some results?
+    mock.getAllTags_MockMethod = {
+        ["suggested tag 1", "lorem", "ipsum"]
+    }
+    mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
     return mock
 }
 
