@@ -806,22 +806,14 @@ public final class ClientSessionComponent {
         conversationEventProcessor: conversationEventProcessor
     )
 
-    lazy var syncConversationsWorker = SyncConversationsWorker(repository: conversationRepository)
+    public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
-    public lazy var workAgent: WorkAgent = {
-        let agent = WorkAgent(scheduler: PriorityOrderWorkScheduler())
-        agent.registerWorker(syncConversationsWorker)
-        // will start again whhen new tickets are enqueued
-        agent.shouldAutoStart = true
-        return agent
-    }()
-
-    public lazy var conversationMonitor: ConversationUpdatesGeneratorProtocol = ConversationUpdatesGenerator(
+    public lazy var conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol = ConversationUpdatesGenerator(
         repository: conversationRepository,
         context: syncContext,
-        onConversationUpdated: { [weak self] ticket in
+        onConversationUpdated: { [weak self] workItem in
 
-            self?.workAgent.submitTicket(ticket)
+            self?.workAgent.submitItem(workItem)
         }
     )
 

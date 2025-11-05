@@ -651,7 +651,7 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationsMonitor: clientSessionComponent.conversationMonitor
+            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -680,6 +680,7 @@ public final class ZMUserSession: NSObject {
             syncStrategy?.updateClientContextChangeTrackers()
         }
         Task {
+            await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
         }
     }
@@ -716,8 +717,9 @@ public final class ZMUserSession: NSObject {
     public func tearDown() {
         guard !isTornDown else { return }
 
-        clientSessionComponent?.workAgent.stop()
-
+        Task {
+            await clientSessionComponent?.workAgent.stop()
+        }
         tearDownMLSGroupVerification()
 
         tokens.removeAll()
@@ -1735,7 +1737,8 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
+            AppVersionMigration_4_10_0(journal: journal)
         ]
     }
 

@@ -19,6 +19,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
+/// sourcery: AutoMockable
 public protocol ConversationUpdatesGeneratorProtocol {
     func start() async
     func stop()
@@ -28,12 +29,13 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
 
     private let context: NSManagedObjectContext
     private let fetchedResultsController: NSFetchedResultsController<ZMConversation>
-    private var onConversationUpdated: (UpdateConversationTicket) -> Void
+    private let repository: ConversationRepositoryProtocol
+    private var onConversationUpdated: (UpdateConversationItem) -> Void
 
     init(
         repository: ConversationRepositoryProtocol,
         context: NSManagedObjectContext,
-        onConversationUpdated: @escaping (UpdateConversationTicket) -> Void
+        onConversationUpdated: @escaping (UpdateConversationItem) -> Void
     ) {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = ZMConversation.predicateForNeedingToBeUpdatedFromBackend()
@@ -46,6 +48,7 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
         )
         self.context = context
         self.onConversationUpdated = onConversationUpdated
+        self.repository = repository
         super.init()
     }
 
@@ -62,8 +65,8 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
         for conversation in conversations {
             await context.perform {
                 if let id = conversation.qualifiedID {
-                    self.onConversationUpdated(UpdateConversationTicket(
-                        priority: .medium,
+                    self.onConversationUpdated(UpdateConversationItem(
+                        repository: self.repository,
                         conversationID: id.toAPIModel()
                     ))
                 }
@@ -93,8 +96,8 @@ extension ConversationUpdatesGenerator: NSFetchedResultsControllerDelegate {
         case .insert:
             // Insert == flag flipped to true (matches predicate now)
             if let qualifiedID = conversation.qualifiedID {
-                onConversationUpdated(UpdateConversationTicket(
-                    priority: .medium,
+                onConversationUpdated(UpdateConversationItem(
+                    repository: repository,
                     conversationID: qualifiedID.toAPIModel()
                 ))
             }

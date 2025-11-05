@@ -19,7 +19,7 @@
 import Foundation
 import WireLogging
 
-actor WorkAgent {
+public actor WorkAgent {
 
     // MARK: - Properties
 
@@ -32,7 +32,7 @@ actor WorkAgent {
     /// Whether dequeuing should begin after ticket submission.
 
     private var shouldAutoStart = false
-    func setAutoStartEnabled(_ enabled: Bool) async {
+    public func setAutoStartEnabled(_ enabled: Bool) async {
         shouldAutoStart = enabled
     }
 
@@ -63,7 +63,7 @@ actor WorkAgent {
         }
     }
 
-    func start() async {
+    public func start() async {
         try? await nonReentrantTaskManager.performIfNeeded { [weak self] in
             await self?.internalStart()
         }

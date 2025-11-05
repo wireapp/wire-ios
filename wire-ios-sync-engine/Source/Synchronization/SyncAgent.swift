@@ -68,7 +68,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
-    private let conversationsMonitor: ConversationUpdatesGeneratorProtocol
+    private let conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol
 
     private var subscription: AnyCancellable?
 
@@ -96,7 +96,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
-        conversationsMonitor: any ConversationUpdatesGeneratorProtocol
+        conversationUpdatesGenerator: any ConversationUpdatesGeneratorProtocol
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -107,7 +107,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
-        self.conversationsMonitor = conversationsMonitor
+        self.conversationUpdatesGenerator = conversationUpdatesGenerator
         super.init()
 
         setupBindings()
@@ -157,7 +157,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-        conversationsMonitor.stop()
+        conversationUpdatesGenerator.stop()
         ongoingSyncTask?.cancel()
         ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
@@ -225,7 +225,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         Task {
-            await conversationsMonitor.start()
+            await conversationUpdatesGenerator.start()
         }
 
         if isSyncV2Enabled {

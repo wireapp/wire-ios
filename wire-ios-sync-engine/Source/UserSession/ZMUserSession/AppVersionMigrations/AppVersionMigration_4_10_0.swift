@@ -17,28 +17,19 @@
 //
 
 import Foundation
+import WireCoreCrypto
+import WireDomain
 
-/// An item of work that can be performed.
-///
-/// A `Workitem` is a pending operation that can be performed when instructed
-/// to. Instances are created and scheduled via the `WorkAgent`.
+/// **Issue:**: Missing groups are not synced - [WPB-20123]
+struct AppVersionMigration_4_10_0: AppVersionMigration {
 
-protocol WorkItem: Sendable {
+    let version: SemanticVersion = "4.10.0"
+    let journal: any JournalProtocol
 
-    /// A unique identifier for this item.
-
-    var id: UUID { get }
-
-    /// The urgency or importance of this ticket.
-
-    var priority: WorkItemPriority { get }
-
-    /// Start the work for this item.
-
-    func start() async throws
-
-    /// Cancel the work item.
-
-//    func cancel() async
+    func perform() async throws {
+        // in order to fix conversations that does not show in the list
+        // we need to force a conversation sync
+        journal[.isConversationSyncRequired] = true
+    }
 
 }

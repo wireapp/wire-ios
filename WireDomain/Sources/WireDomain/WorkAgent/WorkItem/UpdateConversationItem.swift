@@ -21,57 +21,54 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-private let kWorkerID = UUID()
-
-struct UpdateConversationTicket: WorkTicket {
-    var id = UUID()
-    var workerID: UUID {
-        kWorkerID
-    }
-
-    var priority: WorkTicketPriority
-
-    var conversationID: WireNetwork.QualifiedID
-}
-
-final class SyncConversationsWorker: Worker {
-    var id: UUID {
-        kWorkerID
-    }
-
+struct UpdateConversationItem: WorkItem {
     private let repository: ConversationRepositoryProtocol
 
-    public init(repository: ConversationRepositoryProtocol) {
-        self.repository = repository
+    var id = UUID()
+    var priority: WorkItemPriority {
+        .medium
     }
 
-    func performWork(for ticket: UpdateConversationTicket) async throws {
-        let qualifiedID = ticket.conversationID
+    var conversationID: WireNetwork.QualifiedID
 
+    public init(
+        repository: ConversationRepositoryProtocol,
+        conversationID: WireNetwork.QualifiedID,
+    ) {
+        self.repository = repository
+        self.conversationID = conversationID
+    }
+
+    func start() async throws {
         do {
             WireLogger.conversation.debug(
                 "updating conversation",
-                attributes: [.conversationId: qualifiedID.id.uuidString],
-                .init(ticket)
+                attributes: [.conversationId: conversationID.id.uuidString],
+                .init(self)
             )
-            try await repository.pullConversation(id: qualifiedID.id, domain: qualifiedID.domain)
+            try await repository.pullConversation(id: conversationID.id, domain: conversationID.domain)
 
         } catch ConversationRepositoryError.conversationNotFound {
             WireLogger.conversation.warn(
                 "conversation does not on backend, delete locally",
-                attributes: [.conversationId: qualifiedID.id.uuidString],
-                .init(ticket)
+                attributes: [.conversationId: conversationID.id.uuidString],
+                .init(self)
             )
-            try await repository.deleteConversation(id: qualifiedID.id, domain: qualifiedID.domain)
+            try await repository.deleteConversation(id: conversationID.id, domain: conversationID.domain)
 
         } catch {
             // giving more context to the error
             WireLogger.conversation.error(
                 "error updating conversation from the backend: \(String(describing: error))",
-                attributes: [.conversationId: qualifiedID.id.uuidString],
-                .init(ticket)
+                attributes: [.conversationId: conversationID.id.uuidString],
+                .init(self)
             )
             throw error
         }
+
+    }
+
+    func cancel() async {
+        // do nothing
     }
 }
