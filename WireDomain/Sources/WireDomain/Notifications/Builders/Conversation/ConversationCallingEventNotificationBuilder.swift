@@ -33,7 +33,6 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         conversationID: ConversationID,
         senderID: UserID
     ) async -> UserNotification? {
-
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
@@ -64,13 +63,12 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         if displayCallKitNotification {
             // First, let's try to return a CallKit notification if possible.
-            let notification = await buildCallKitNotification(
+            return await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
                 conversationID: resolvedConversationID,
                 senderID: senderID
             )
-            return notification
 
         } else if displayCallNotification {
             // If not, try to return a regular call notification.
