@@ -28,11 +28,11 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: FilesViewProtocol {
-    @ObservedObject package var viewModel: FilesViewModel
+    @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
 
-    package init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     package var body: some View {

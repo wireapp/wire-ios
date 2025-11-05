@@ -28,10 +28,10 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 /// Allows browsing files shared across all conversations
 package struct FilesBrowserView: FilesViewProtocol {
-    @ObservedObject package var viewModel: FilesViewModel
+    @StateObject package var viewModel: FilesViewModel
 
-    package init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     package var body: some View {

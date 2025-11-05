@@ -26,7 +26,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 /// common reusable views.
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
-    init(viewModel: FilesViewModel)
+    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
 }
 
 // MARK: - List
