@@ -110,7 +110,6 @@ package final class FilesViewModel: ObservableObject {
         
         let fetchNodes: WireCellsFetchNodesUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
-        //TODO: test without 'any'
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
     }

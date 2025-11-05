@@ -107,6 +107,7 @@ struct TagsEditView: View {
             .padding(.horizontal, horizontalPadding)
             .padding(.vertical)
             .animation(.easeInOut, value: viewModel.enteredTag)
+            .animation(.easeInOut, value: viewModel.suggestedTags)
         }
     }
     

@@ -30,10 +30,9 @@ extension TagsEditView {
         
         @Published var enteredTag = ""
         
-        //TODO: replace by real server data
-        private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
-        
         @Published var currentTags: [String] = []
+        
+        @Published var allExistingTags: [String] = []
         
         @Published var isPerformingSave: Bool = false
         
@@ -50,11 +49,19 @@ extension TagsEditView {
             self.fileItem = fileItem
             self.currentTags = fileItem.tags
             self.useCases = useCases
+            
+            Task {
+                await loadAllExistingTags()
+            }
         }
         
         var suggestedTags: [String] {
-            serverTags.filter { tag in
-                !currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+            allExistingTags.filter { tag in
+                let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                let isAlreadyAdded = currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+                let containsEnteredText = tag.localizedCaseInsensitiveContains(enteredTag.trimmingCharacters(in: .whitespacesAndNewlines))
+                let enteredTextIsEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                return !isEmpty && !isAlreadyAdded && (containsEnteredText || enteredTextIsEmpty)
             }
         }
         
@@ -102,6 +109,10 @@ extension TagsEditView {
         
         func removeTag(_ tag: String) {
             currentTags.removeAll { $0 == tag }
+        }
+        
+        func loadAllExistingTags() async {
+            allExistingTags = (try? await useCases.getSuggestions.invoke()) ?? []
         }
         
         func save() async {
