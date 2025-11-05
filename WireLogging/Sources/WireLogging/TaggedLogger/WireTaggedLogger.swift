@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireLoggingAPI
-
 public struct WireTaggedLogger {
 
     public var tag: WireLogTag

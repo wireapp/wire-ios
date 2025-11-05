@@ -18,7 +18,6 @@
 
 import Foundation
 import Testing
-import WireLoggingAPI
 
 @testable import WireLogging
 

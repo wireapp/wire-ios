@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLoggingAPI
-
 public enum WireLogger {
 
     /// This method must be called very early on app start, before any other interaction with ``WireLogger``.

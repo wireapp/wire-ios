@@ -1,10 +1,9 @@
 sources:
-- ${PACKAGE_ROOT_DIR}/Sources/WireLoggingAPI
 - ${PACKAGE_ROOT_DIR}/Sources/WireLogging
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePublicImports: ["WireLoggingAPI"]
-  autoMockableImports: ["Foundation", "WireLogging"]
+  autoMockablePublicImports: ["WireLogging"]
+  autoMockableImports: ["Foundation"]
