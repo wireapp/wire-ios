@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingAssembly
 import WireData
 @preconcurrency import WireDataModel
 import WireMessagingAssembly
@@ -39,7 +40,8 @@ struct ZClientControllerBuilder {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
-            wireCellsFactory: buildWireCellsFactory()
+            wireMeetingsFactory: buildWireMeetingsFactory(),
+            wireMessagingFactory: buildWireMessagingFactory()
         )
         viewController.router = router
         return viewController
@@ -51,14 +53,19 @@ struct ZClientControllerBuilder {
     }
 
     @MainActor
-    private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
-        WireCellsFactory(
+    private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
+        WireMessagingFactory(
             serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
         )
+    }
+
+    @MainActor
+    private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
+        WireMeetingsFactory()
     }
 }
 

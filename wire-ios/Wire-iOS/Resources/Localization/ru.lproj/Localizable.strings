@@ -332,6 +332,7 @@
 
 "conversation.connection_view.in_address_book" = "в контактах";
 "conversation.connection_view.encryption_info" = "Общение в Wire всегда защищено сквозным шифрованием. Отправляемые и получаемые сообщения доступны только вам и вашему собеседнику.";
+"conversation.connection_view.wire_cells.encryption_info" = "Сообщения и звонки всегда зашифрованы сквозным шифрованием, при этом файлы и папки защищены в состоянии передачи и зашифрованы в состоянии покоя.";
 "conversation.connection_view.sensitive_information_warning" = "Пожалуйста, будьте осторожны со всеми с кем делитесь конфиденциальной информацией.";
 
 "conversation.input_bar.shortcut.send" = "Отправить сообщение";
@@ -368,6 +369,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (по умолчанию)";
+"conversation.create.file_management.title" = "Совместная работа с файлами";
+"conversation.create.file_management.subtitle" = "Предоставьте пользователям возможность управлять своими документами и медиафайлами. Используйте папки, теги и фильтры для более эффективной работы. Это невозможно отменить.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -602,6 +605,8 @@
 "content.system.message_timer_off" = "%@ отключил(-а) таймер сообщения";
 "content.system.message_timer_off-you" = "%@ отключил таймер сообщения";
 
+"content.system.message_timer_unavailable" = "Самоудаляющиеся сообщения отключены для бесед с Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
 "content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
 
@@ -613,6 +618,8 @@
 
 "content.system.channel.guest.joined" = "%@ присоединился к каналу";
 "content.system.channel.guest.you_joined" = "Вы присоединились к каналу";
+
+"content.system.file_collaboration.enabled" = "Совместная работа (Cells) включена";
 
 // read receipt
 
@@ -664,6 +671,7 @@
 "content.system.session_reset.self" = "Вам не смогли расшифровать некоторые из ваших сообщений, но проблема была решена. Это затронуло все беседы.";
 
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
+"content.system.unknown_message_received.body" = "Вы получили сообщение, которое не может быть показано. Возможно, вы используете старую версию Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "Этот пользователь больше не доступен";
@@ -1079,6 +1087,10 @@
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "group_details.access_options_cell.title" = "";
 "group_details.channel_history_options_cell.title" = "История беседы";
+"group_details.file_collaboration_cell.title" = "Совместная работа с файлами (Cells)";
+"group_details.file_collaboration_cell.subtitle" = "Вкл.";
+"group_details.file_collaboration_cell.footer" = "Постоянно для этой беседы";
+"group_details.timeout_options_disabled.footer" = "Функция недоступна для бесед с Cells.";
 
 "group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";

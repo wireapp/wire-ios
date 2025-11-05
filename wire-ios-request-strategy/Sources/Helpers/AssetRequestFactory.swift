@@ -47,13 +47,18 @@ public final class AssetRequestFactory: NSObject {
         public init(
             conversationID: QualifiedID,
             fileName: String,
-            mimeType: String
+            mimeType: String?
         ) {
             self.conversationID = conversationID
             self.fileName = fileName
-            self.mimeType = mimeType
-        }
 
+            if let mimeType, !mimeType.isEmpty {
+                self.mimeType = mimeType
+            } else {
+                // Fallback to "raw bytes".
+                self.mimeType = "application/octet-stream"
+            }
+        }
     }
 
     private enum Constant {
@@ -97,7 +102,7 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             "/assets"
         }
 
@@ -135,7 +140,7 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             "/assets/v3"
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             "/assets"
         }
 

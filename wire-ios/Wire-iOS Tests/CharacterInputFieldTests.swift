@@ -39,8 +39,8 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
 
 final class CharacterInputFieldTests: XCTestCase {
 
-    private var sut: CharacterInputField! = nil
-    private var delegate: TestCharacterInputFieldDelegate! = nil
+    private var sut: CharacterInputField!
+    private var delegate: TestCharacterInputFieldDelegate!
 
     private var rootViewController: UIViewController! {
         (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController

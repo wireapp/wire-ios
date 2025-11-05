@@ -75,7 +75,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil,
-            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
+            wireMeetingsFactory: MockWireMeetingsFactoryProtocol(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
         sut = .init(
             account: coreDataStack.account,
@@ -94,7 +95,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         sut.mainSplitViewState = .collapsed
-        DeveloperFlag.wireCells.enable(false, storage: .temporary())
 
         await setupTabBar()
     }
@@ -110,17 +110,19 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         coreDataFixture = nil
         window.isHidden = true
         window = nil
-        DeveloperFlag.wireCells.enable(false, storage: .temporary())
     }
 
     @MainActor
-    private func setupTabBar() async {
+    private func setupTabBar(showFiles: Bool = false) async {
         let tabBarController = ZClientViewController.MainCoordinator.TabBarController(
             showMeetings: false,
-            showFiles: DeveloperFlag.wireCells.isOn
+            showFiles: showFiles
         )
         tabBarController.applyMainTabBarControllerAppearance()
         tabBarController.conversationListUI = sut
+        if showFiles {
+            tabBarController.filesUI = .init()
+        }
 
         window = .init(windowScene: windowScene)
         window.backgroundColor = .systemBackground
@@ -555,8 +557,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         userSession.mockConversationDirectory.mockUnarchivedConversations = []
 
         // WHEN
-        DeveloperFlag.wireCells.enable(true, storage: .temporary())
-        await setupTabBar()
+        await setupTabBar(showFiles: true)
 
         // THEN, files tab should show up
         snapshotHelper.verify(matching: renderedImage())

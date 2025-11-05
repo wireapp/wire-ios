@@ -48,10 +48,12 @@ public final class ClientMessageRequestFactory: NSObject {
         switch apiVersion {
 
         case .v0:
-            path = "/" + ["conversations",
-                          conversationId.transportString(),
-                          "otr",
-                          "messages"].joined(separator: "/")
+            path = "/" + [
+                "conversations",
+                conversationId.transportString(),
+                "otr",
+                "messages"
+            ].joined(separator: "/")
 
             // In wire protos this is annotated as deprecated, and recommended to use QualifiedNewOtrMessage
             // So, not sure if we should use it with v0 on non-federated endpoints
@@ -63,7 +65,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             let domain = if let domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 zmLog.error("could not create request: missing domain")

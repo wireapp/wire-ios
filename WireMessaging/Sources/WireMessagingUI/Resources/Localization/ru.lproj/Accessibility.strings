@@ -24,5 +24,9 @@
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе";
-"conversation.wireCells.files.pendingCells.title" = "Файлы подготавливаются";
-"conversation.wireCells.files.pendingCells.message" = "Мы обрабатываем файлы для этой беседы. Они появятся здесь, как только все будет готово.";
+"conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
+"conversation.wireCells.files.pendingCells.message" = "Ваши документы и медиафайлы будут доступны здесь после того, как мы загрузим все файлы и папки.";
+"conversation.wireCells.allFiles.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в ваших беседах.";
+"conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
+"conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
+"conversation.wireCells.files.error.reload" = "Перезагрузить";

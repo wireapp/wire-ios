@@ -21,6 +21,7 @@ public extension MainCoordinator {
     typealias SplitViewController = Dependencies.SplitViewController
     typealias ConversationListUI = Dependencies.SplitViewController.ConversationListUI
     typealias SettingsUI = Dependencies.SplitViewController.SettingsUI
+    typealias MeetingsUI = Dependencies.SplitViewController.MeetingsUI
     typealias TabBarController = Dependencies.SplitViewController.TabBarController
 
     typealias ConversationModel = Dependencies.ConversationModel

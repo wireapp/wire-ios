@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireDataModel
 import WireNetwork
 import XCTest
 
@@ -100,7 +101,9 @@ final class MLSTransportTests: XCTestCase {
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        XCTAssertEqual(result, MlsTransportResponse.abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
+        let data = try JSONEncoder().encode(MLSTransportError.mlsStaleMessage)
+        let expectedReason = String(decoding: data, as: UTF8.self)
+        XCTAssertEqual(result, MlsTransportResponse.abort(reason: expectedReason))
     }
 
     enum Scaffolding {

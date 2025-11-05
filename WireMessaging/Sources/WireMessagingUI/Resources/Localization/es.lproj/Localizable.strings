@@ -21,96 +21,110 @@
 "general.confirm" = "OK";
 "general.failure" = "Algo salió mal";
 "general.error.unknown.title." = "Algo salió mal";
-"general.error.unknown.message." = "Please retry later.";
-"general.error.noInternet.title." = "No internet connection";
+"general.error.unknown.message." = "Vuelva a intentarlo más tarde.";
+"general.error.noInternet.title." = "No hay conexión a internet";
 "general.error.noInternet.message." = "Parece haber un problema con la red. Por favor, inténtalo más tarde.";
 
 // MARK: - Channel Access level
-"channel_access_level.public" = "Public";
-"channel_access_level.private" = "Private";
-"channel_access_level.admins" = "Admins";
-"channel_access_level.everyone" = "Admins and members";
-"channel_access_level.navigation_title" = "Access";
+"channel_access_level.public" = "Público";
+"channel_access_level.private" = "Privado";
+"channel_access_level.admins" = "Administradores";
+"channel_access_level.everyone" = "Administradores y miembros";
+"channel_access_level.navigation_title" = "Acceso";
 
 "channel_access_level.participants_header" = "Agregar participantes";
 "channel_access_level.participants_header" = "Agregar participantes";
 
-"channel_access_level.access_footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public.";
-"channel_access_level.participants_footer" = "Select who can add participants to a private channel";
+"channel_access_level.access_footer" = "Todos los miembros del equipo pueden unirse a canales públicos. Pero sólo los administradores del canal o los miembros pueden añadir personas a un canal privado. Un canal privado no puede cambiarse a público.";
+"channel_access_level.participants_footer" = "Seleccione quién puede agregar participantes a un canal privado";
 
 
-"channel_access_level.change_level_alert.title" = "Change access from public to private?";
-"channel_access_level.change_level_alert.message" = "It means: Team members can't join this channel themselves.\nDepending on your choice, only channel admins or both admins and members can add new participants.\nYou can't undo this step. The channel will stay private.";
-"channel_access_level.change_level_alert.button.change" = "Change to Private";
+"channel_access_level.change_level_alert.title" = "¿Cambiar el acceso de público a privado?";
+"channel_access_level.change_level_alert.message" = "Significa: Los miembros del equipo no pueden unirse a este canal por sí mismos.\nDependiendo de tu elección, solo los administradores del canal, o tanto los administradores como los miembros, pueden añadir nuevos participantes.\nNo puedes deshacer este paso. El canal se mantendrá privado.";
+"channel_access_level.change_level_alert.button.change" = "Cambiar a Privado";
 "channel_access_level.change_level_alert.button.cancel" = "Cancelar";
 
 
-"conversation.create.channel.title" = "New channel";
-"conversation.create.channel.subtitle" = "Conversation history and more";
-"conversation.create.group.title" = "New group";
+"conversation.create.channel.title" = "Nuevo canal";
+"conversation.create.channel.subtitle" = "Historial de conversaciones y más";
+"conversation.create.group.title" = "Nuevo grupo";
 
 // MARK: - Navigation
 "conversation.create.channel.back" = "Atrás";
 "conversation.create.channel.next" = "Siguiente";
 
 // MARK: - Channel name
-"conversation.creationForm.channelName.sectionTitle" = "Channel name";
-"conversation.creationForm.channelName.placeholder" = "Enter channel name";
-"conversation.creationForm.channelName.label" = "Channel name";
+"conversation.creationForm.channelName.sectionTitle" = "Nombre del canal";
+"conversation.creationForm.channelName.placeholder" = "Introducir nombre del canal";
+"conversation.creationForm.channelName.label" = "Nombre del canal";
 
 // MARK: - Options
 "conversation.creationForm.options.sectionTitle" = "Opciones";
-"conversation.creationForm.options.channelAccess" = "Channel access";
-"conversation.creationForm.options.channelAccess.public" = "Public";
-"conversation.creationForm.options.channelAccess.private" = "Private";
+"conversation.creationForm.options.channelAccess" = "Acceso al canal";
+"conversation.creationForm.options.channelAccess.public" = "Público";
+"conversation.creationForm.options.channelAccess.private" = "Privado";
 
 "conversation.creationForm.options.channelAccess.invitePolicy" = "Agregar participantes";
-"conversation.creationForm.options.channelAccess.invitePolicy.adminsOnly" = "Admins";
-"conversation.creationForm.options.channelAccess.invitePolicy.adminsAndMembers" = "Admins and members";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsOnly" = "Administradores";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsAndMembers" = "Administradores y miembros";
 
-"conversation.creationForm.options.footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public later.";
+"conversation.creationForm.options.footer" = "Todos los miembros del equipo pueden unirse a canales públicos. Pero sólo los administradores del canal o los miembros pueden añadir personas a un canal privado. Un canal privado no se puede cambiar a público más adelante.";
 
-"conversation.creationForm.services.toggle" = "Allow services";
+"conversation.creationForm.services.toggle" = "Permitir servicios";
 "conversation.creationForm.guests.toggle" = "Permitir invitados";
-"conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
+"conversation.creationForm.guests.description" = "Abre esta conversación a personas ajenas a tu equipo o servicios.";
 
 "conversation.creationForm.readReceipts.toggle" = "Confirmaciones de lectura";
 "conversation.creationForm.readReceipts.description" = "Cuando esto está activado, la gente puede ver cuándo se leen sus mensajes en esta conversación.";
+"conversation.creationForm.wireCells.toggle" = "File collaboration";
+"conversation.creationForm.wireCells.description" = "Habilitar a los participantes el gestionar sus documentos y archivos de medios. Utilice carpetas, etiquetas y filtros para trabajar más eficientemente. Esto no se puede deshacer.";
+"conversation.creationForm.wireCells.learnMore" = "Más información";
+
 
 // MARK: - Channel history
-"conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
-"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
-"conversation.channelHistory.upgradeBanner.button" = "Upgrade now";
-"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
-"conversation.channelHistory.picker.title" = "Conversation history";
+"conversation.channelHistory.upgradeBanner.title" = "¿Mostrar mensajes antiguos?";
+"conversation.channelHistory.upgradeBanner.message" = "Actualice a un plan de pago para ofrecer a los miembros del canal todo el historial.";
+"conversation.channelHistory.upgradeBanner.button" = "Actualizar ahora";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Cerrar banner";
+"conversation.channelHistory.picker.title" = "Historial de conversaciones";
 "conversation.channelHistory.picker.off" = "Desactivar";
-"conversation.channelHistory.picker.oneDay" = "1 day";
-"conversation.channelHistory.picker.oneWeek" = "1 week";
-"conversation.channelHistory.picker.fourWeeks" = "4 weeks";
-"conversation.channelHistory.picker.unlimited" = "Unlimited";
-"conversation.channelHistory.picker.custom" = "Custom";
-"conversation.channelHistory.customPicker.days" = "Days";
-"conversation.channelHistory.customPicker.weeks" = "Weeks";
-"conversation.channelHistory.share.sectionFootnote" = "You can share conversation history with new channel members. This way, they can also see older messages and files.\nWhen you set it to off, channel members won't see any conversation history.";
-"conversation.channelHistory.navigationTitle" = "Conversation history";
-"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";
-"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
-"conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
-"conversation.file.preview.open" = "Open preview";
-"conversation.draft.attachmentMenu.retry" = "Retry";
-"conversation.draft.attachmentMenu.remove" = "Remove File";
+"conversation.channelHistory.picker.oneDay" = "1 día";
+"conversation.channelHistory.picker.oneWeek" = "1 semana";
+"conversation.channelHistory.picker.fourWeeks" = "4 semanas";
+"conversation.channelHistory.picker.unlimited" = "Ilimitado";
+"conversation.channelHistory.picker.custom" = "Personalizado";
+"conversation.channelHistory.customPicker.days" = "Días";
+"conversation.channelHistory.customPicker.weeks" = "Semanas";
+"conversation.channelHistory.share.sectionFootnote" = "Puedes compartir el historial de la conversación con los nuevos miembros del canal. De esta manera, ellos también pueden ver los mensajes y archivos anteriores.\nCuando lo desactivas, los miembros del canal no verán ningún historial de la conversación.";
+"conversation.channelHistory.navigationTitle" = "Historial de conversaciones";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Seleccione un período. Cuando los participantes se unen a este canal, pueden seguir el historial de este periodo.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Se ha producido un error al obtener las opciones de profundidad del historial del canal.";
+"conversation.channelHistory.updateHistoryDepth.error" = "Ocurrió un error mientras se actualizaba la profundidad del historial del canal.";
+"conversation.file.preview.open" = "Abrir vista previa";
+"conversation.draft.attachmentMenu.retry" = "Reintentar";
+"conversation.draft.attachmentMenu.remove" = "Quitar archivo";
 
-// MARK: Conversation Files View
+// MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Ficheros";
-"conversation.wireCells.files.item.subtitle" = "%@ by %@";
-"conversation.wireCells.files.loadMore.title" = "Load more";
+"conversation.wireCells.allFiles.navigationTitle" = "Todos los archivos";
+"conversation.wireCells.files.item.subtitle" = "%@ por %@";
+"conversation.wireCells.files.loadMore.title" = "Cargar más";
 "conversation.wireCells.files.item.menu.open" = "Abrir";
 "conversation.wireCells.files.item.menu.download" = "Descargar";
 "conversation.wireCells.files.item.menu.rename" = "Renombrar";
-"conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
-"conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
-"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
-"conversation.wireCells.files.noData.title" = "There are no files or folders yet";
-"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.item.menu.delete" = "Eliminar Permanentemente";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "Esto eliminará permanentemente el archivo %@ para todos los participantes. Todos perderán el acceso y no hay forma de recuperar el archivo.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Eliminar Permanentemente";
+"conversation.wireCells.files.noData.title" = "Aún no hay archivos o carpetas";
+"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
+"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.pendingCells.title" = "Los archivos están cargando";
+"conversation.wireCells.files.pendingCells.message" = "Tus documentos y archivos multimedia estarán disponibles aquí una vez que hayamos subido todos los archivos y carpetas.";
+"conversation.wireCells.files.error.title" = "Can't load files";
+"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
+"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.search.title" = "Search files";
+
+// MARK: - Conversation
+"conversation.message.attachment.notAvailable" = "Archivo no disponible";
+"conversation.message.attachment.previewNotAvailable" = "Unable to display preview";

@@ -35,7 +35,7 @@ public struct LegacyNotificationSessionLoader {
         case failedToLoadPersistenceStack(any Error)
         case failedToCheckBuildBlacklist(any Error)
         case buildIsBlacklisted(buildNumber: String)
-
+        case missingAPIVersion(message: String)
     }
 
     private let account: Account
@@ -129,7 +129,8 @@ public struct LegacyNotificationSessionLoader {
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
             backendMetadata: metadata,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            apiVersion: metadata.apiVersion
         )
     }
 
@@ -250,7 +251,8 @@ public struct LegacyNotificationSessionLoader {
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        apiVersion: WireNetwork.APIVersion
     ) async throws -> NotificationSession {
         let legacyEnvironment = BackendEnvironment(environment)
         // Don't cache the cookie because if the user logs out and back in again in the main app
@@ -296,7 +298,19 @@ public struct LegacyNotificationSessionLoader {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             lastEventIDRepository: lastEventIDRepository
         )
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
+
+        guard let transportAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) else {
+            // we need to call tearDown before these objects are deallocated
+            legacyEnvironment.reachability.tearDown()
+            transportSession.tearDown()
+
+            throw Failure.missingAPIVersion(message: "unexpected api version \(apiVersion)")
+        }
+
+        let requestGeneratorStore = RequestGeneratorStore(
+            strategies: [pushNotificationStrategy],
+            apiVersion: transportAPIVersion
+        )
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
@@ -306,6 +320,10 @@ public struct LegacyNotificationSessionLoader {
         )
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
+            // we need to call tearDown before these objects are deallocated
+            legacyEnvironment.reachability.tearDown()
+            transportSession.tearDown()
+
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
         let earService = EARService(

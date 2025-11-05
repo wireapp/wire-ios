@@ -184,7 +184,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public var isWireCellsEnabled: Bool {
-        wireCellsFeature.status == .enabled || DeveloperFlag.wireCells.isOn
+        wireCellsFeature.status == .enabled
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
@@ -676,6 +676,7 @@ public final class ZMUserSession: NSObject {
                 incrementalSyncObserver: incrementalSyncObserver,
                 metadata: resolvedBackendMetadata
             )
+            syncStrategy?.updateClientContextChangeTrackers()
         }
     }
 

@@ -17,56 +17,12 @@
 //
 
 import CellsSDK
-package import Foundation
+import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
 package struct WireCellsFetchNodesUseCase: Sendable {
 
-    package struct Configuration: Sendable {
-
-        /// The root container for the nodes. If `nil`, nodes for all conversations will be returned.
-        let root: WireCellsNodeLocator?
-
-        /// Specific nodes to fetch.
-        let nodeIDs: [UUID]?
-
-        /// Whether to fetch nodes recursively from the root container.
-        let isRecursive: Bool
-
-        /// The type of nodes to fetch.
-        let nodeType: WireCellsNodeType
-
-        /// The deletion status of the nodes to fetch.
-        let deletionStatus: WireCellsNodeDeletionStatus
-
-        /// The maximum number of nodes to fetch.
-        let pageSize: Int = 30
-
-        /// A `Configuration` suitable for the conversation file view.
-        package static func conversationFileView(root: WireCellsNodeLocator) -> Configuration {
-            Configuration(
-                root: root,
-                nodeIDs: nil,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
-
-        /// A `Configuration` for showing only specific nodes in the file view.
-        package static func nodesFileView(nodeIDs: [UUID]) -> Configuration {
-            Configuration(
-                root: nil,
-                nodeIDs: nodeIDs,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
-
-    }
-
-    private let configuration: Configuration
+    private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
 
     /// Initializes the use case with the required parameters.
@@ -74,7 +30,7 @@ package struct WireCellsFetchNodesUseCase: Sendable {
     ///   - configuration: The configuration for the use case.
     ///   - repository: The repository to use for fetching nodes.
     package init(
-        configuration: Configuration,
+        configuration: WireCellsGetNodesRequest.Configuration,
         repository: any WireCellsNodesRepositoryProtocol
     ) {
         self.configuration = configuration
@@ -93,28 +49,12 @@ package struct WireCellsFetchNodesUseCase: Sendable {
         offset: Int
     ) async throws -> (nodes: [WireCellsNode], isLastPage: Bool) {
         let request = WireCellsGetNodesRequest(
-            scope: WireCellsGetNodesRequest.Scope(
-                root: configuration.root,
-                isRecursive: configuration.isRecursive
-            ),
-            query: configuration.nodeIDs.map { WireCellsGetNodesRequest.Query(nodeIDs: $0) },
-            filter: WireCellsGetNodesRequest.Filter(
-                deletionStatus: configuration.deletionStatus,
-                text: searchTerm,
-                type: configuration.nodeType
-            ),
-            limit: configuration.pageSize,
-            offset: offset
+            searchTerm: searchTerm,
+            limit: 30,
+            offset: offset,
+            configuration: configuration
         )
-        var (nodes, nextOffset) = try await repository.getNodes(request)
-
-        // FIXME: [WPB-16311] Temporary fix to filter out recycled nodes.
-        // This is necessary because the backend doesn't filter out recycled nodes when we have requested specific
-        // nodes. Once we implement showing previews in a conversation this check should move there, if there is no
-        // backend fix.
-        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, !nodeIDs.isEmpty {
-            nodes = nodes.filter { !$0.isRecycled }
-        }
+        let (nodes, nextOffset) = try await repository.getNodes(request)
 
         return (nodes, nextOffset == nil)
     }

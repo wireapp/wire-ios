@@ -1,0 +1,32 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// MARK: - Meetings List
+
+
+"wireMeetings.list.title" = "Meetings";
+"wireMeetings.list.tabs.past" = "Past";
+"wireMeetings.list.tabs.next" = "Nächste";
+"wireMeetings.list.actions.meetNow" = "Meeting starten";
+"wireMeetings.list.actions.scheduleMeeting" = "Meeting planen";
+"wireMeetings.list.actions.showAll" = "Alle anzeigen";
+"wireMeetings.list.emptyState.title" = "No meetings yet";
+"wireMeetings.list.emptyState.subtitle" = "Beginnen Sie ein Meeting mit Team-Mitgliedern, Gästen oder Externen.";
+"wireMeetings.list.header.today" = "Heute";
+"wireMeetings.list.header.tomorrow" = "Morgen";
+"wireMeetings.list.header.yesterday" = "Gestern";
+"wireMeetings.list.header.ongoing" = "Ongoing";

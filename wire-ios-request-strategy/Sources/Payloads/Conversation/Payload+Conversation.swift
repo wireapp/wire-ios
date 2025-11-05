@@ -139,7 +139,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -159,13 +159,13 @@ extension Payload {
             case .v0, .v1, .v2, .v3, .v4:
                 self.cipherSuite = nil
                 self.epochTimestamp = nil
-            case .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
 
             switch apiVersion {
-            case .v8, .v9, .v10, .v11, .v12:
+            case .v8, .v9, .v10, .v11, .v12, .v13:
                 self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
                 self.addPermission = try container.decodeIfPresent(ChannelPermission.self, forKey: .addPermission)
                 self.cellsState = try container.decodeIfPresent(CellsState.self, forKey: .cellsState)
@@ -197,7 +197,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {
@@ -207,7 +207,7 @@ extension Payload {
             }
 
             switch apiVersion {
-            case .v8, .v9, .v10, .v11, .v12:
+            case .v8, .v9, .v10, .v11, .v12, .v13:
                 try container.encodeIfPresent(groupType, forKey: .groupType)
                 try container.encodeIfPresent(addPermission, forKey: .addPermission)
                 try container.encodeIfPresent(cellsState, forKey: .cellsState)

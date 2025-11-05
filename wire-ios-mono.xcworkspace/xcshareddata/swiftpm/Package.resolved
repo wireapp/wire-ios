@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
         "state": {
           "branch": null,
-          "revision": "bc03f619b3ed2ed2d8472b360624928313fe598f",
-          "version": "1.53.0"
+          "revision": "e70b883a9588c8a68f2604fd5fc9697bc3f33216",
+          "version": "1.54.0"
         }
       },
       {
@@ -204,8 +204,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "85e4bb4e1cd62cec64a4b8e769dcefdf0c5b9d64",
-          "version": "1.4.3"
+          "revision": "3e4f133a77e644a5812911a0513aeb7288b07d06",
+          "version": "1.4.5"
         }
       },
       {
@@ -231,8 +231,8 @@
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
-          "revision": "102a647b573f60f73afdce5613a51d71349fe507",
-          "version": "1.30.0"
+          "revision": "c6fe6442e6a64250495669325044052e113e990c",
+          "version": "1.32.0"
         }
       },
       {
@@ -258,8 +258,8 @@
         "repositoryURL": "https://github.com/siteline/swiftui-introspect",
         "state": {
           "branch": null,
-          "revision": "807f73ce09a9b9723f12385e592b4e0aaebd3336",
-          "version": "1.3.0"
+          "revision": "a08b87f96b41055577721a6e397562b21ad52454",
+          "version": "26.0.0"
         }
       },
       {

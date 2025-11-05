@@ -65,7 +65,7 @@ final class StrategyFactory {
         self.apiVersion = apiVersion
         self.localDomain = localDomain
 
-        if let localDomain, !BackendEnvironment2.isCloudDomain(localDomain) {
+        if let localDomain, BackendEnvironment2.isCloudDomain(localDomain) {
             self.isCloudDomain = true
         } else {
             self.isCloudDomain = false

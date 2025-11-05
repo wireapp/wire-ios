@@ -22,7 +22,7 @@ import WireLogging
 import WireNetwork
 
 public protocol InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async
 }
 
 public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol {
@@ -51,7 +51,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
         self.lockRepository = lockRepository
     }
 
-    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
 
         var attributes: LogAttributes = [:]
 
@@ -110,4 +110,12 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             )
         }
     }
+}
+
+extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async {
+        await invoke(groupID: groupID, epoch: epoch)
+    }
+
 }

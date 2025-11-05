@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.3.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -5568,10 +5568,10 @@ public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationD
 
     // MARK: - didCatchBrokenMLSConversation
 
-    public var didCatchBrokenMLSConversationGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
-    public var didCatchBrokenMLSConversationGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+    public var didCatchBrokenMLSConversationGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: UInt64)] = []
+    public var didCatchBrokenMLSConversationGroupIDEpoch_MockMethod: ((MLSGroupID, UInt64) async -> Void)?
 
-    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async {
         didCatchBrokenMLSConversationGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
 
         guard let mock = didCatchBrokenMLSConversationGroupIDEpoch_MockMethod else {

@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "Zbirke";
+"sidebar.files.all_files.title" = "Vsi";
+
 "sidebar.contacts.title" = "Stiki";
 "sidebar.contacts.connect.title" = "Poveži";
 

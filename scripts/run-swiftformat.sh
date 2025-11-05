@@ -21,7 +21,7 @@ set -Eeuo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
-SWIFTFORMAT="$SCRIPTS_DIR/.build/artifacts/scripts/swiftformat/swiftformat.artifactbundle/swiftformat-0.55.5-macos/bin/swiftformat"
+SWIFTFORMAT="$SCRIPTS_DIR/.build/artifacts/scripts/swiftformat/swiftformat.artifactbundle/swiftformat-0.58.3-macos/bin/swiftformat"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftFormat in CI environment"

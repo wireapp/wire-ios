@@ -57,10 +57,10 @@ package final class FilesViewModel: ObservableObject {
 
     enum State: Equatable {
 
-        case initial
         case loading
         case received(items: [FilesViewItem])
         case pending // cells are not ready yet
+        case error
 
         var items: [FilesViewItem] {
             switch self {
@@ -73,7 +73,7 @@ package final class FilesViewModel: ObservableObject {
 
         var isLoaded: Bool {
             switch self {
-            case .loading, .pending, .initial:
+            case .loading, .pending, .error:
                 false
             case .received:
                 true
@@ -86,9 +86,11 @@ package final class FilesViewModel: ObservableObject {
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
+    private var subscriptions = Set<AnyCancellable>()
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
+    @Published var searchText = ""
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
@@ -105,6 +107,8 @@ package final class FilesViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
+
+        bindSearch()
     }
 
     /// Whether the view model is currently loading items.
@@ -112,19 +116,34 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
+    private func bindSearch() {
+        $searchText
+            .removeDuplicates()
+            .dropFirst()
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { await self?.reload() }
+            }
+            .store(in: &subscriptions)
+    }
+
     /// Reloads the items, clearing any previously loaded items.
+    /// - Parameters:
+    ///   - refreshing: Whether the reload was triggered by a pull-to-refresh action.
     ///
-    /// This method cancels any ongoing load operation and starts a new one.
-    func reload() async {
+    /// Cancels any ongoing load operation and starts a new one.
+    /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
+
+    func reload(refreshing: Bool = false) async {
         guard state != .pending else {
             return
         }
 
         cancelLoad()
-        state = .loading
+        state = refreshing ? state : .loading
         hasMore = true
 
-        await loadMore()
+        await loadMore(refreshing: refreshing)
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -197,24 +216,29 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore() async {
+    private func loadMore(refreshing: Bool = false) async {
         guard loadMoreTask == nil else { return }
 
-        let offset = state.items.count
+        let offset = refreshing ? 0 : state.items.count
         let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            state = .received(items: Self.processItems(state.items + newItems))
+            let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
+            state = .received(items: receivedItems)
             hasMore = !isLastPage
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            alert = .noInternet
-            state = state.items.isEmpty ? .initial : state
-            hasMore = state.items.isEmpty ? true : hasMore
+        } catch is CancellationError {
+            return // developer-driven error, discard
         } catch {
-            alert = .unknownError
-            state = state.items.isEmpty ? .initial : state
+            if state.items.isEmpty {
+                state = .error
+            } else {
+                let urlError = (error as? URLError)?.code
+                let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
+                alert = isNoInternetError ? .noInternet : .unknownError
+            }
+
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
@@ -223,7 +247,10 @@ package final class FilesViewModel: ObservableObject {
     private nonisolated func fetchItems(
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
-        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(searchTerm: nil, offset: offset)
+        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
+            searchTerm: searchText.isEmpty ? nil : searchText,
+            offset: offset
+        )
 
         let items = nodes.map { node in
             let url = URL(string: node.path)

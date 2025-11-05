@@ -37,6 +37,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v10
     case v11
     case v12
+    case v13
 
     /// API versions considered production ready by the client.
     ///
@@ -48,7 +49,9 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11]
+    public static let productionVersions: Set<Self> = [
+        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12
+    ]
 
     /// API versions currently under development and not suitable for production
     /// environments.
@@ -74,3 +77,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 }
 
 // swiftlint:enable identifier_name
+
+public extension APIVersion {
+    static let minimumSyncV2CompatibleVersion: APIVersion = .v7
+}

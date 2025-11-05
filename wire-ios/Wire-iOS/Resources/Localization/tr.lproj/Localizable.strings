@@ -332,6 +332,7 @@
 
 "conversation.connection_view.in_address_book" = "Kişilerde";
 "conversation.connection_view.encryption_info" = "Wire'da tüm iletişim uçtan uca şifrelenmektedir. Bu sohbette gönderdiğiniz veya size gönderilen her şeye sadece siz ve karşıdaki kişi tarafından erişilebilir.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Lütfen bu hassas bilgiyi paylaştığınız kişilerle ilgili dikkatli olun.";
 
 "conversation.input_bar.shortcut.send" = "Mesaj Gönder";
@@ -368,6 +369,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
+"conversation.create.file_management.title" = "File collaboration";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Devam eden arama";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Görüşme sırasında sesli mesaj kaydedemezsiniz.";
@@ -602,6 +605,8 @@
 "content.system.message_timer_off" = "%@ mesaj zamanlayıcısını kapattı";
 "content.system.message_timer_off-you" = "%@ mesaj zamanlayıcısını kapattı";
 
+"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
+
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
@@ -613,6 +618,8 @@
 
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
+
+"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
 
 // read receipt
 
@@ -664,6 +671,7 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Bu mesaj görüntülenemiyor. Wire'ın eski bir sürümünü kullanıyor olabilirsiniz.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
 
 // user removed from team
 "content.system.user_removed_from_team" = "This user is no longer available";
@@ -1079,6 +1087,10 @@
 "group_details.receipt_options_cell.description" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
 "group_details.access_options_cell.title" = "Channel access";
 "group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.subtitle" = "Açık";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";

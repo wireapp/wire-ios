@@ -24,5 +24,9 @@
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
+"conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
+"conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
+"conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
+"conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
+"conversation.wireCells.files.error.reload" = "Erneut laden";

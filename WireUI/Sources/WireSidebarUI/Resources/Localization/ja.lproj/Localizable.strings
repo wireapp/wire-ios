@@ -34,6 +34,9 @@
 "sidebar.meetings.title" = "Meetings";
 "sidebar.meetings.all_meetings.title" = "All Meetings";
 
+"sidebar.files.title" = "ファイル";
+"sidebar.files.all_files.title" = "すべて";
+
 "sidebar.contacts.title" = "連絡先";
 "sidebar.contacts.connect.title" = "接続";
 

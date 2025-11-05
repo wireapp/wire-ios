@@ -19,12 +19,12 @@
 public import Foundation
 
 /// Data for a single attachment sent with a message
-public struct WireCellsMessageAttachment {
+public struct WireCellsMessageAttachment: Hashable, Sendable {
 
-    public enum Metadata {
+    public enum Metadata: Hashable, Sendable {
 
         /// Image metadata, containing width and height in pixels.
-        case image(width: Int, height: Int)
+        case image(width: Int?, height: Int?)
 
         /// Video metadata, containing width and height in pixels, and duration in milliseconds.
         case video(width: Int?, height: Int?, duration: Int?)
@@ -33,6 +33,35 @@ public struct WireCellsMessageAttachment {
         ///
         /// - note: Currently, normalized loudness is not sent.
         case audio(duration: Int?, normalizedLoudness: Data?)
+
+        package var dimension: CGSize? {
+            switch self {
+            case let .image(width, height), let .video(width, height, _):
+                guard let width, let height else { return nil }
+
+                return CGSize(width: Double(width), height: Double(height))
+            default:
+                return nil
+            }
+        }
+
+        package var duration: Int? {
+            switch self {
+            case let .video(_, _, duration), let .audio(duration, _):
+                duration
+            default:
+                nil
+            }
+        }
+
+        package var normalizedLoudness: Data? {
+            switch self {
+            case let .audio(_, normalizedLoudness):
+                normalizedLoudness
+            default:
+                nil
+            }
+        }
 
     }
 

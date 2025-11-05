@@ -76,6 +76,10 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Звіти про перегляд";
 "conversation.creationForm.readReceipts.description" = "Якщо ця опція увімкнена, учасники розмови можуть бачити, коли їхні повідомлення в цій розмові були переглянуті.";
+"conversation.creationForm.wireCells.toggle" = "File collaboration";
+"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.creationForm.wireCells.learnMore" = "Дізнатися більше";
+
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
@@ -100,8 +104,9 @@
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
-// MARK: Conversation Files View
+// MARK: - Conversation Files View
 "conversation.wireCells.files.navigationTitle" = "Файли";
+"conversation.wireCells.allFiles.navigationTitle" = "All Files";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Вiдкрити";
@@ -111,6 +116,15 @@
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
-"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
-"conversation.wireCells.files.pendingCells.title" = "Files are being prepared";
-"conversation.wireCells.files.pendingCells.message" = "We’re processing the files for this conversation. They’ll appear here once everything is ready.";
+"conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
+"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.pendingCells.title" = "Files are loading";
+"conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
+"conversation.wireCells.files.error.title" = "Can't load files";
+"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
+"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.search.title" = "Search files";
+
+// MARK: - Conversation
+"conversation.message.attachment.notAvailable" = "File not available";
+"conversation.message.attachment.previewNotAvailable" = "Unable to display preview";

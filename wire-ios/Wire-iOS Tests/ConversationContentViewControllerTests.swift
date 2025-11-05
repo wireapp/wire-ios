@@ -51,7 +51,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            wireCellsFactory: MockWireCellsFactoryProtocol()
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // Call the setup codes in viewDidLoad

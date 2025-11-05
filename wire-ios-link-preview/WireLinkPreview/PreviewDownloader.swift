@@ -39,7 +39,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     var containerByTaskID = ThreadSafeDictionary<Int, MetaStreamContainer>()
     var completionByURL = ThreadSafeDictionary<URL, DownloadCompletion>()
     var cancelledTaskIDs = OSAllocatedUnfairLock(initialState: Set<Int>())
-    var session: URLSessionType! = nil
+    var session: URLSessionType!
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
 

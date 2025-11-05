@@ -20,6 +20,7 @@ import DifferenceKit
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireMessagingUI
 import WireSyncEngine
 
 extension Int: Differentiable {}
@@ -74,7 +75,7 @@ final class ConversationTableViewDataSource: NSObject {
     weak var messageActionResponder: MessageActionResponder?
     private let getUserByIDUseCase: GetUserByIDUseCaseProtocol
 
-    let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
+    let debouncer = LeadingTrailingDebouncer(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
@@ -108,7 +109,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     private let isChatBubbleSimpleEnabled: Bool
 
-    private let wireCellsFactory: any WireCellsFactoryProtocol
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
+
+    private let cellProvider: ConversationCellProviderProtocol
 
     /// calculate cell sections
     ///
@@ -238,17 +241,6 @@ final class ConversationTableViewDataSource: NSObject {
               let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
 
-        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
-            // workaround: this loop might add a status view to a message, which is removed again later, so skip
-            if description.instance is ConversationMessageToolboxCellDescription {
-                continue
-            }
-            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
-                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
-                description.configureCell(cell, animated: true)
-            }
-        }
-
         let messages = allMessages
 
         let context = context(
@@ -260,6 +252,17 @@ final class ConversationTableViewDataSource: NSObject {
         )
 
         sectionController.recreateCellDescriptions(in: context)
+
+        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
+            // workaround: this loop might add a status view to a message, which is removed again later, so skip
+            if description.instance is ConversationMessageToolboxCellDescription {
+                continue
+            }
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
+                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
+                description.configureCell(cell, animated: true)
+            }
+        }
 
         var updatedSections = currentSections
         updatedSections[section] = ArraySection(
@@ -282,7 +285,8 @@ final class ConversationTableViewDataSource: NSObject {
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
         getUserByIDUseCase: GetUserByIDUseCaseProtocol,
-        wireCellsFactory: any WireCellsFactoryProtocol
+        wireMessagingFactory: any WireMessagingFactoryProtocol,
+        conversationCellProvider: any ConversationCellProviderProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -291,7 +295,8 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
-        self.wireCellsFactory = wireCellsFactory
+        self.wireMessagingFactory = wireMessagingFactory
+        self.cellProvider = conversationCellProvider
 
         super.init()
 
@@ -367,8 +372,7 @@ final class ConversationTableViewDataSource: NSObject {
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled,
-            wireCellsFactory: wireCellsFactory
+            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
@@ -719,10 +723,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
 
-            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-            model.configureCell(cell)
-            return cell
+            return cellProvider.provideCell(for: model, tableView: tableView, indexPath: indexPath)
 
         } else {
 
