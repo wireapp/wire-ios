@@ -111,7 +111,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         }
 
         if object.shouldExpire, object.expirationDate?.isInThePast == true {
-            // this message is a retry from when we got interrupted (i.e. crashed)
+            // When unsent messages past their expiration date they should be expired.
+            // It's likely this message failed to send before but the app crashed or was
+            // terminated before it succeeded.
             WireLogger.messaging.info(
                 "client message expired before sending: \(object)",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
