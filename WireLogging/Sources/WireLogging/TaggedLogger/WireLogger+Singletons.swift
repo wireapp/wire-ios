@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public enum WireLogger {
 
     /// This method must be called very early on app start, before any other interaction with ``WireLogger``.
 
-    @MainActor
-    static func setup(_ logHandler: any WireLogHandlerProtocol) {
+    public static func setup(_ logHandler: any WireLogHandlerProtocol) {
+        precondition(Thread.isMainThread)
         guard self.logHandler == nil else {
             fatalError("WireLogger is already set up")
         }

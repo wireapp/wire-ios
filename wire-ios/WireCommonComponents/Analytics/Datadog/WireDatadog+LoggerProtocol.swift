@@ -21,18 +21,29 @@ import WireDatadog
 import WireLogging
 import WireSystem
 
-struct NewWireDatadogLogger: WireLoggingProvider {
+struct NewWireDatadogLogger: WireLogHandlerProtocol {
 
-    var tag: Tag
-    var additionalAttributes = LogAttributes()
-    var logger: WireDatadog
+    let additionalAttributes = LogAttributes()
+    let logger: WireDatadog
 
-    func log(level: Level, message: WireLogMessage) {
+    func log(
+        tag: WireLogTag,
+        type: WireLogType,
+        message: WireLogMessage,
+        additionalAttributes: [WireLogAttribute]
+    ) {
 
-        var attributes = additionalAttributes
+        var attributes = LogAttributes()
+        for additionalAttribute in additionalAttributes {
+            if let key = LogAttributesKey(rawValue: additionalAttribute.key) {
+                attributes[key] = additionalAttribute.value
+            } else {
+                assertionFailure(additionalAttribute.key)
+            }
+        }
         attributes[.tag] = tag.rawValue
 
-        switch level {
+        switch type {
         case .debug:
             logger.debug(message.content, attributes: attributes)
         case .info:
@@ -46,6 +57,7 @@ struct NewWireDatadogLogger: WireLoggingProvider {
         case .critical:
             logger.critical(message.content, attributes: attributes)
         }
+
     }
 }
 
@@ -109,7 +121,7 @@ extension WireDatadog: LoggerProtocol {
     // MARK: Helpers
 
     private func log(
-        level: WireLogLevel,
+        level: WireLogType,
         message: any LogConvertible,
         error: Error? = nil,
         attributes: [LogAttributes] = []
@@ -121,7 +133,7 @@ extension WireDatadog: LoggerProtocol {
         }
 
         log(
-            level: level,
+            type: level,
             message: message.logDescription,
             error: error,
             attributes: plainAttributes

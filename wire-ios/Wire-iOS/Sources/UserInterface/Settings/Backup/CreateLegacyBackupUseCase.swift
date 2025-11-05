@@ -40,7 +40,7 @@ struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
 
                     let sessionManager = sessionManager()
 
-                    continuation.yield(.progress(current: 1, total: 2))
+                    continuation.yield(.progress(BackupProgress(current: 1, total: 2)))
                     let url = try await sessionManager.backupActiveAccount(password: password)
                     continuation.yield(.done(url))
                     continuation.finish()

@@ -46,21 +46,24 @@ public enum WireAnalytics {
         migrateLogFilesToNewLocation(target: target)
 
         let cocoaLumberjackLogger = CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
-        let subsystem = Bundle.main.bundleIdentifier!
-        WireLogger.setup { tag in
-            var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
-            if tag == WireLogger.system.tag {
-                datadogLogger.additionalAttributes = [
-                    .processId: "\(ProcessInfo.processInfo.processIdentifier)",
-                    .processName: ProcessInfo.processInfo.processName
-                ]
-            }
-            return [
-                OSLogLoggingProvider(tag: tag, subsystem: subsystem),
-                NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
-                datadogLogger
-            ]
-        }
+        let osLogHandler = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!)
+        let datadogLogger = NewWireDatadogLogger(logger: WireAnalytics.Datadog.shared)
+        let multiplexLogHandler = MultiplexLogHandler(osLogHandler, cocoaLumberjackLogger, datadogLogger)
+        WireLogger.setup(multiplexLogHandler)
+//        WireLogger.setup { tag in
+//            var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
+//            if tag == WireLogger.system.tag {
+//                datadogLogger.additionalAttributes = [ // TODO: migrate
+//                    .processId: "\(ProcessInfo.processInfo.processIdentifier)",
+//                    .processName: ProcessInfo.processInfo.processName
+//                ]
+//            }
+//            return [
+//                OSLogLoggingProvider(tag: tag, subsystem: subsystem),
+//                NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
+//                datadogLogger
+//            ]
+//        }
 
         // TODO: clean up
         LegacyLogger.initialize {
@@ -126,6 +129,35 @@ public enum WireAnalytics {
             let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "system")
             logger.error("Failed to migrate old log files to new location: \(error)")
         }
+    }
+
+}
+
+// MARK: -
+
+private struct MultiplexLogHandler: WireLogHandlerProtocol {
+
+    let osLogHandler: OSLogHandler
+    let cocoaLumberjackLogger: CocoaLumberjackLogger
+    let datadogLogger: NewWireDatadogLogger
+
+    init(
+        _ osLogHandler: OSLogHandler,
+        _ cocoaLumberjackLogger: CocoaLumberjackLogger,
+        _ datadogLogger: NewWireDatadogLogger
+    ) {
+        self.osLogHandler = osLogHandler
+        self.cocoaLumberjackLogger = cocoaLumberjackLogger
+        self.datadogLogger = datadogLogger
+    }
+
+    func log(
+        tag: WireLogTag,
+        type: WireLogType,
+        message: WireLogMessage,
+        additionalAttributes: [WireLogAttribute]
+    ) {
+        osLogHandler.log(tag: tag, type: type, message: message, additionalAttributes: additionalAttributes)
     }
 
 }

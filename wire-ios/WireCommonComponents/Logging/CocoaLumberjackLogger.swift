@@ -21,13 +21,17 @@ import Foundation
 import WireLogging
 import WireSystem
 
-struct NewCocoaLumberjackLogger: WireLoggingProvider {
+struct NewCocoaLumberjackLogger: WireLogHandlerProtocol {
 
-    var tag: Tag
     var logger: CocoaLumberjackLogger
 
-    func log(level: Level, message: WireLogMessage) {
-        switch level {
+    func log(
+        tag: WireLogTag,
+        type: WireLogType,
+        message: WireLogMessage,
+        additionalAttributes: [WireLogAttribute]
+    ) {
+        switch type {
         case .debug:
             logger.debug(message.content, attributes: [.tag: tag.rawValue])
         case .info:
@@ -42,6 +46,7 @@ struct NewCocoaLumberjackLogger: WireLoggingProvider {
             logger.critical(message.content, attributes: [.tag: tag.rawValue])
         }
     }
+
 }
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
