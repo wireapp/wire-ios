@@ -16,5 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: add comment
-public typealias WireLoggerAttribute = WireLoggerTag
+public struct WireLogTag: ExpressibleByStringLiteral, Hashable, Sendable {
+
+    public var rawValue: String
+
+    public init(stringLiteral rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+}

@@ -23,6 +23,7 @@ import XCTest
 
 final class WireLogInterpolationAnyErrorTests: XCTestCase {
 
+    /*
     private var mockLogger: WireTaggedLoggerProtocolMock!
 
     override func setUp() {
@@ -53,7 +54,6 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
         )
     }
 
-    /*
     func testSimpleErrorIsLoggedWithoutObfuscation() {
         // Given
         let error = CustomError.simple

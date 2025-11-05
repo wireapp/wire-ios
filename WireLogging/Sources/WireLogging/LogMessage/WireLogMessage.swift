@@ -16,11 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLoggerTag: ExpressibleByStringLiteral, Hashable, Sendable {
+public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
 
-    public var rawValue: String
+    public var content: String { interpolation.content }
+    public var attributes: [WireLogAttribute] { interpolation.attributes }
 
-    public init(stringLiteral rawValue: String) {
-        self.rawValue = rawValue
+    let interpolation: WireLogInterpolation
+
+    public init(stringLiteral value: StaticString) {
+        var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+        interpolation.appendLiteral(value)
+        self.interpolation = interpolation
     }
+
+    public init(stringInterpolation interpolation: WireLogInterpolation) {
+        self.interpolation = interpolation
+    }
+
 }

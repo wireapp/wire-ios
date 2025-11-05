@@ -16,15 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: check doc comment
 /// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk
 /// of leaking sensible information.
 /// Each custom type which can be logged must define how it should appear in the logs.
 /// Query the property `isObfuscationRequired` in order to know, if the value should be obfuscated or not.
 /// Use `addText(_:)` and `addAttribute(_:)` to create the content to be logged.
+
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
     private(set) var content = ""
-    private(set) var attributes = [WireLoggerAttribute]()
+    private(set) var attributes = [WireLogAttribute]()
 
     public init(literalCapacity: Int, interpolationCount _: Int) {
         content.reserveCapacity(literalCapacity)
@@ -41,7 +43,8 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     /// Allows for adding additional tags to a log message.
     /// Depending on the logging system the attributes might for example be prepended in brackets or appended
     /// separately.
-    public mutating func writeAttribute(_ attribute: WireLoggerAttribute) {
+
+    public mutating func writeAttribute(_ attribute: WireLogAttribute) {
         attributes += [attribute]
     }
 
@@ -49,6 +52,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     public mutating func writeText(_ text: String) {
         content += text
     }
+
 }
 
 // TODO: remove this example

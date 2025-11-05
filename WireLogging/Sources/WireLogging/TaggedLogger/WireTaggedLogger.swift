@@ -16,44 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireTaggedLogger: WireTaggedLoggerProtocol {
-    public typealias Tag = WireLoggerTag
+public struct WireTaggedLogger<
+    LogHandler: WireLogHandlerProtocol
+> {
 
-    public var tag: Tag
-    public var providers: [any WireLoggingProvider]
+    public var tag: WireLogTag
+    public var handler: LogHandler
 
-    public func debug(_ message: WireLogMessage) {
-        log(.debug, message)
+    public init(
+        tag: WireLogTag,
+        handler: LogHandler
+    ) {
+        self.tag = tag
+        self.handler = handler
     }
 
-    public func info(_ message: WireLogMessage) {
-        log(.info, message)
+    private func log(
+        _ type: WireLogType,
+        _ message: WireLogMessage,
+        _ additionalAttributes: [WireLogAttribute]
+    ) {
+        handler.log(
+            tag: tag,
+            type: type,
+            message: message,
+            additionalAttributes: additionalAttributes
+        )
     }
 
-    public func notice(_ message: WireLogMessage) {
-        log(.notice, message)
+}
+
+// MARK: -
+
+extension WireTaggedLogger: WireTaggedLoggerProtocol {
+
+    public func debug(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.debug, message, additionalAttributes)
     }
 
-    public func warn(_ message: WireLogMessage) {
-        log(.warn, message)
+    public func info(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.info, message, additionalAttributes)
     }
 
-    public func error(_ message: WireLogMessage) {
-        log(.error, message)
+    public func notice(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.notice, message, additionalAttributes)
     }
 
-    public func critical(_ message: WireLogMessage) {
-        log(.critical, message)
+    public func warn(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.warn, message, additionalAttributes)
     }
 
-    private func log(_ level: WireLogLevel, _ message: WireLogMessage) {
-        providers.forEach { provider in
-            provider.log(
-                tag: tag,
-                level: level,
-                message: message
-            )
-        }
+    public func error(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.error, message, additionalAttributes)
+    }
+
+    public func critical(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        log(.critical, message, additionalAttributes)
     }
 
 }

@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 public protocol WireTaggedLoggerProtocol: Sendable {
-    typealias Tag = WireLoggerTag
 
-    var tag: Tag { get }
+    var tag: WireLogTag { get }
 
-    func debug(_ message: WireLogMessage)
-    func info(_ message: WireLogMessage)
-    func notice(_ message: WireLogMessage)
-    func warn(_ message: WireLogMessage)
-    func error(_ message: WireLogMessage)
-    func critical(_ message: WireLogMessage)
+    func debug(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
+    func info(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
+    func notice(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
+    func warn(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
+    func error(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
+    func critical(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
 
 }

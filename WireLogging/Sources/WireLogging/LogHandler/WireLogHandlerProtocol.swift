@@ -16,20 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
+// sourcery: AutoMockable
+public protocol WireLogHandlerProtocol: Sendable {
 
-    public var content: String { interpolation.content }
-    public var attributes: [WireLoggerAttribute] { interpolation.attributes }
+// TODO: add doc comment, mention that `additionalAttributes` override any attributes in `WireLogMessage` with the same key
 
-    let interpolation: WireLogInterpolation
+    func log(
+        tag: WireLogTag,
+        type: WireLogType,
+        message: WireLogMessage,
+        additionalAttributes: [WireLogAttribute]
+    )
 
-    public init(stringLiteral value: StaticString) {
-        var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)
-        interpolation.appendLiteral(value)
-        self.interpolation = interpolation
-    }
-
-    public init(stringInterpolation interpolation: WireLogInterpolation) {
-        self.interpolation = interpolation
-    }
 }

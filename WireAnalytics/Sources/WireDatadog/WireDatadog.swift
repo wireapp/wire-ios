@@ -32,7 +32,7 @@ public final class WireDatadog {
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: WireLogLevel = .debug
+    private let logtype: WireLogType = .debug
 
     public private(set) var userIdentifier: String
     private(set) var logger: (any DatadogLogs.LoggerProtocol)?
@@ -107,7 +107,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireLogLevel,
+        type: WireLogType,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]
@@ -153,7 +153,7 @@ public final class WireDatadog {
     }
 }
 
-extension WireLogLevel {
+extension WireLogType {
     func mapToDatadogLogLevel() -> LogLevel {
         switch self {
         case .debug:
