@@ -33,9 +33,10 @@ struct WireLogInterpolationTests {
         let message: WireLogMessage = "Hello, \(name)!"
         #expect(message.content == "Hello, World!")
 
-        let osl = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!) // TODO: delete
+        // TODO: delete
+        let osl = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!)
         let l = WireTaggedLogger(tag: "test", handler: osl)
-        l.critical("Lorem \("Ipsum")", .eventID("overridden")) x
+        l.critical("Lorem \("Ipsum")", .eventID("overridden"))
     }
 
 }
