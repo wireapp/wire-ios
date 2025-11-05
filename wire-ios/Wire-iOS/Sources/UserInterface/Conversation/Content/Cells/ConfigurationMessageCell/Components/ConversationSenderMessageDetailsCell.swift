@@ -21,6 +21,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -87,7 +88,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private lazy var authorLabel: UILabel = {
         let label = UILabel()
-        label.accessibilityIdentifier = "author.name"
+        label.accessibilityIdentifier = Locators.ActiveConversationPage.authorName.rawValue
         label.numberOfLines = 0
 
         label.setContentCompressionResistancePriority(.required, for: .horizontal)

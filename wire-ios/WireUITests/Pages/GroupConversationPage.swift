@@ -16,53 +16,54 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
-class GroupConversationPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        videoCallButton
-    }
-
-    var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
-    }
-
-    var typeMessageField: XCUIElement {
-        app.descendants(matching: .any)["inputField"].firstMatch
-    }
-
-    var sendButton: XCUIElement {
-        app.descendants(matching: .any)["sendButton"].firstMatch
-    }
-
-    var senderNameLabel: XCUIElement {
-        app.descendants(matching: .any)["author.name"].firstMatch
-    }
-
-    var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: "Message")
-    }
-
-    func sendMessage(input: String) throws -> GroupConversationPage {
-        try typeMessageField.tapIfKeyboardNotFocused().typeText(input)
-        sendButton.tap()
-        return self
-    }
-
-    func getSenderName() -> String? {
-        senderNameLabel.label
-    }
-
-    func getSentMessages() -> [String] {
-        var messages: [String] = []
-
-        for i in 0 ..< messageLabels.count {
-            let element = messageLabels.element(boundBy: i)
-            if let value = element.value as? String {
-                messages.append(value)
-            }
-        }
-        return messages
-    }
-}
+// class GroupConversationPage: PageModel {
+//
+//    override var pageMainElement: XCUIElement {
+//        videoCallButton
+//    }
+//
+//    var videoCallButton: XCUIElement {
+//        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
+//    }
+//
+//    var typeMessageField: XCUIElement {
+//        app.descendants(matching: .any)[Locators.ActiveConversationPage.inputField.rawValue].firstMatch
+//    }
+//
+//    var sendButton: XCUIElement {
+//        app.descendants(matching: .any)[Locators.ActiveConversationPage.sendButton.rawValue].firstMatch
+//    }
+//
+//    var senderNameLabel: XCUIElement {
+//        app.descendants(matching: .any)[Locators.ActiveConversationPage.authorName.rawValue].firstMatch
+//    }
+//
+//    var messageLabels: XCUIElementQuery {
+//        app.textViews.matching(identifier: "Message")
+//    }
+//
+//    func sendMessage(input: String) throws -> GroupConversationPage {
+//        try typeMessageField.tapIfKeyboardNotFocused().typeText(input)
+//        sendButton.tap()
+//        return self
+//    }
+//
+//    func getSenderName() -> String? {
+//        senderNameLabel.label
+//    }
+//
+//    func getSentMessages() -> [String] {
+//        var messages: [String] = []
+//
+//        for i in 0 ..< messageLabels.count {
+//            let element = messageLabels.element(boundBy: i)
+//            if let value = element.value as? String {
+//                messages.append(value)
+//            }
+//        }
+//        return messages
+//    }
+// }

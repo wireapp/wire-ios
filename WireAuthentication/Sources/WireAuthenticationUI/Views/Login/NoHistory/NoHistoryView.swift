@@ -61,7 +61,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
-            .accessibilityIdentifier(String(describing: Locators.FirstTimePage.okButton))
+            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
 
         }
         .alert(

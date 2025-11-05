@@ -32,7 +32,7 @@ class FirstTimePage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons[Locators.FirstTimePage.okButton.rawValue]
+        app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?

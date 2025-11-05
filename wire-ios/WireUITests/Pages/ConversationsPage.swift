@@ -49,7 +49,7 @@ class ConversationsPage: PageModel {
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var acceptRequestButton: XCUIElement {

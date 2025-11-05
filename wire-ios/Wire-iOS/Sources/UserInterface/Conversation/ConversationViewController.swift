@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireDomain
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -471,6 +472,7 @@ final class ConversationViewController: UIViewController {
         actions.append(UIAction(
             title: L10n.Localizable.Conversation.Action.conversationDetails,
             image: UIImage(systemName: "info.circle"),
+            identifier: UIAction.Identifier(Locators.ActiveConversationPage.conversationDetailsButton.rawValue),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
             }

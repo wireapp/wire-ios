@@ -24,6 +24,7 @@ public enum Locators {
 
         case emailTextField
         case nextButton
+        case onPremInfoButton
     }
 
     public enum LoginPage: String {
@@ -31,6 +32,7 @@ public enum Locators {
         case emailTextField
         case passwordSecureTextField
         case nextButton
+        case createAccountLink
     }
 
     public enum FirstTimePage: String {
@@ -49,4 +51,29 @@ public enum Locators {
         case accountCell
         case optionsCell
     }
+
+    public enum AccountSettingsPage: String {
+
+        case NameField
+        case UsernameField
+        case EmailField
+        case DomainFieldDisabled
+        case BackuporRestoreField = "Back up or RestoreField"
+        case ResetPasswordField = "Reset PasswordField"
+        case DeleteAccountField = "Delete AccountField"
+        case LogOut = "Log Out"
+
+    }
+
+    public enum ActiveConversationPage: String {
+
+        case videoCallBarButton
+        case inputField
+        case sendButton
+        case ConversationBackButton
+        case authorName
+        case conversationTitleButton
+        case conversationDetailsButton
+    }
+
 }

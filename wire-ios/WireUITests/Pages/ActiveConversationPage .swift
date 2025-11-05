@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class ActiveConversationPage: PageModel {
@@ -25,23 +26,23 @@ class ActiveConversationPage: PageModel {
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var inputMessageField: XCUIElement {
-        app.textViews["inputField"]
+        app.textViews[Locators.ActiveConversationPage.inputField.rawValue]
     }
 
     var sendButton: XCUIElement {
-        app.buttons["sendButton"]
+        app.buttons[Locators.ActiveConversationPage.sendButton.rawValue]
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons["ConversationBackButton"]
+        app.buttons[Locators.ActiveConversationPage.ConversationBackButton.rawValue]
     }
 
     var senderNameLabel: XCUIElement {
-        app.descendants(matching: .any)["author.name"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.authorName.rawValue].firstMatch
     }
 
     var messageLabels: XCUIElementQuery {
@@ -53,11 +54,11 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationTitleButton: XCUIElement {
-        app.buttons["conversation_title_button"]
+        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue]
     }
 
     var conversationDetailsButton: XCUIElement {
-        app.buttons["Conversation Details"]
+        app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
 
     func fetchMessages() -> [String] {
