@@ -72,8 +72,8 @@ final class ExportBackupViewModel: ObservableObject {
                 state = .creatingBackup(current: 0, total: 0)
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
-                    case let .progress(current, total):
-                        state = .creatingBackup(current: current, total: total)
+                    case let .progress(progress):
+                        state = .creatingBackup(current: progress.current, total: progress.total)
                     case let .done(url):
                         state = .backupReady(url: url)
                     }

@@ -17,7 +17,7 @@
 //
 
 // TODO: [WPB-14297] Remove this file and create `WireLogInterpolation.appendInterpolation` overloads.
-
+/*
 /// A type which is only used during migrating to the new logging.
 public struct PubliclyLoggedString {
 
@@ -47,3 +47,4 @@ public extension WireLogInterpolation {
         writeText(value)
     }
 }
+*/

@@ -135,8 +135,8 @@ final class ImportBackupViewModel: ObservableObject {
                 state = .importingBackup(current: 0, total: 0)
                 for try await update in importBackupUseCase.invoke(password: password) {
                     switch update {
-                    case let .progress(current, total):
-                        state = .importingBackup(current: current, total: total)
+                    case let .progress(progress):
+                        state = .importingBackup(current: progress.current, total: progress.total)
                     case .done:
                         alertContent = .init(
                             title: Strings.Alert.Success.message,

@@ -31,4 +31,8 @@ public extension ImportBackupProgress {
         .progress(BackupProgress(current, total))
     }
 
+    static func progress(_ current: Int, _ total: Int) -> Self {
+        .progress(current: current, total: total)
+    }
+
 }

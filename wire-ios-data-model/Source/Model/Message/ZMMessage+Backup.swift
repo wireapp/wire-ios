@@ -27,3 +27,6 @@ public extension ZMMessage {
     @NSManaged var conversationDomain: String?
 }
 >>>>>>>> feat/create-new-logger-WPB-14297:wire-ios-data-model/Source/Model/Message/ZMMessage+Backup.swift
+
+
+x
