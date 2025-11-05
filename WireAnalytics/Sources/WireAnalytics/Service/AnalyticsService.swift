@@ -212,25 +212,12 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             ($0.key, $0.value)
         })
 
-        logger.debug("tracking event: \(event)") // TODO: what was it converted to before? CustomDebugStringConvertible?
+        logger.debug("tracking event: \(event)")
 
         countly.recordEvent(
             event.name,
             segmentation: rawSegmentation
         )
-    }
-
-}
-
-// MARK: -
-
-private extension WireLogInterpolation {
-
-    mutating func appendInterpolation(
-        _ analyticsEvent: AnalyticsEvent
-    ) {
-        // no obfuscation needed
-        writeText("\(analyticsEvent)")
     }
 
 }
