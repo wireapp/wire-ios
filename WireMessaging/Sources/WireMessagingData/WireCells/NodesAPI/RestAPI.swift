@@ -286,17 +286,17 @@ private extension WireCellsGetNodesRequest {
         )
 
         switch configuration {
-        case let .conversationFileView(root):
+        case let .conversationFileView(root, isFoldersEnabled):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
-                type: .leaf
+                type: isFoldersEnabled ? .unknown : .leaf
             )
             request.scope = RestLookupScope(
-                recursive: true,
+                recursive: isFoldersEnabled ? false : true,
                 root: RestNodeLocator(root)
             )
             request.sortDirDesc = true

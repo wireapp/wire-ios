@@ -36,6 +36,7 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
+    private let isFoldersEnabled: Bool
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -72,6 +73,7 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
+        self.isFoldersEnabled = true
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -134,10 +136,9 @@ public extension WireMessagingFactory {
         cellName: String,
         isCellsStatePending: Bool
     ) -> UIViewController {
-        let configuration: WireCellsGetNodesRequest.Configuration = .conversationFileView(root: .path(cellName))
         let filesView: UIHostingController<FilesView>
         filesView = makeFilesHostingController(
-            configuration: configuration,
+            configuration: .conversationFileView(root: .path(cellName), isFoldersEnabled: isFoldersEnabled),
             isCellsStatePending: isCellsStatePending
         )
         return filesView
