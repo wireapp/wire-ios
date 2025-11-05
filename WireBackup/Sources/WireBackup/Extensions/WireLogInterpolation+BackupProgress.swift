@@ -16,25 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import WireFoundation
+import WireLogging
 
-public enum CreateBackupProgress: Equatable, Sendable {
+extension WireLogInterpolation {
 
-    case progress(BackupProgress)
-    case done(url: URL)
-
-}
-
-// MARK: - Convenience
-
-public extension CreateBackupProgress {
-
-    static func progress(_ current: Int, _ total: Int) -> Self {
-        .progress(BackupProgress(current: current, total: total))
-    }
-
-    static func done(_ url: URL) -> Self {
-        .done(url: url)
+    mutating func appendInterpolation(_ progress: BackupProgress) {
+        // no obfuscation needed
+        writeText("\(progress.current)/\(progress.total)")
     }
 
 }

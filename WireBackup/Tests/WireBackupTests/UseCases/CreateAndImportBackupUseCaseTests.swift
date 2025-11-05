@@ -20,6 +20,7 @@ import WireBackupSupport
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
+import WireLoggingSupport
 import WireUtilitiesPackage
 import XCTest
 
@@ -42,12 +43,13 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         fileArchiver = .init()
         fileUnarchiver = .init()
 
+        let logger = WireTaggedLogger(tag: "???", handler: WireLogHandlerProtocolMock())
         let selfUserID = QualifiedID(id: UUID(), domain: "wire.com")
         createBackupUseCase = CreateBackupUseCase(
             selfUserID: selfUserID,
             backupLocalStore: backupLocalStoreMock,
             fileArchiver: fileArchiver,
-            logger: WireLogger(tag: "???")
+            logger: logger
         )
 
         let syncTriggerExpectation = XCTestExpectation()
@@ -59,7 +61,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
                 backupLocalStore: backupLocalStoreMock!,
                 fileUnarchiver: fileUnarchiver!,
                 syncTrigger: { syncTriggerExpectation.fulfill() },
-                logger: WireLogger(tag: "???")
+                logger: logger
             )
         }
     }

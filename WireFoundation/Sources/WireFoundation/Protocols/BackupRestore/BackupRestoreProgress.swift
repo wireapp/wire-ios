@@ -16,7 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireLegacyLogging
+/// A simple container for storing a progress value (current/total) of a create or import backup operation.
 
-public typealias WireLogger = WireLegacyLogging.WireLogger
-public typealias LoggerProtocol = WireLegacyLogging.LoggerProtocol
+public struct BackupProgress: Equatable, Sendable {
+
+    public var current: Int
+    public var total: Int
+
+    public init(current: Int, total: Int) {
+        self.current = current
+        self.total = total
+    }
+
+}
+
+// MARK: - Convenience
+
+public extension BackupProgress {
+
+    init(_ current: Int, _ total: Int) {
+        self.init(current: current, total: total)
+    }
+
+}

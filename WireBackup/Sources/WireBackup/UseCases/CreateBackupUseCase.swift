@@ -28,15 +28,13 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
     private let selfUserID: QualifiedID
     private let backupLocalStore: any BackupLocalStoreProtocol
     private let fileArchiver: any FileArchiverProtocol
-    // TODO: [WPB-14297] Try making LoggerProtocol `Sendable` (implementations might be @unchecked Sendable) and
-    // then the `logger` can be injected without closure.
-    private let logger: @Sendable () -> any LoggerProtocol
+    private let logger: WireTaggedLogger
 
     public init(
         selfUserID: QualifiedID,
         backupLocalStore: any BackupLocalStoreProtocol,
         fileArchiver: any FileArchiverProtocol,
-        logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
+        logger: WireTaggedLogger
     ) {
         self.backupLocalStore = backupLocalStore
         self.fileArchiver = fileArchiver
@@ -57,12 +55,12 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                 defer { try? fileManager.removeItem(at: workDirectoryURL) }
 
                 do {
-                    let logger = logger()
                     let checkCancellationAndReportProgress: (Int, Int) throws -> Void = { current, total in
                         guard current % 50 == 0 || current == total else { return }
                         try Task.checkCancellation()
-                        logger.debug("reporting overall process: \(current)/\(total)")
-                        continuation.yield(.progress(current, total))
+                        let progress = BackupProgress(current: current, total: total)
+                        logger.debug("reporting overall process: \(progress)")
+                        continuation.yield(.progress(progress))
                     }
 
                     try checkCancellationAndReportProgress(0, 0)

@@ -16,16 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireTaggedLogger<
-    LogHandler: WireLogHandlerProtocol
-> {
+public struct WireTaggedLogger {
 
     public var tag: WireLogTag
-    public var handler: LogHandler
+    public var handler: any WireLogHandlerProtocol
 
     public init(
         tag: WireLogTag,
-        handler: LogHandler
+        handler: any WireLogHandlerProtocol
     ) {
         self.tag = tag
         self.handler = handler

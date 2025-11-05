@@ -16,63 +16,67 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireLogger {
+public enum WireLogger {
 
-    private nonisolated(unsafe) static var providerBuilder: ((Tag) -> [any WireLoggingProvider])!
+    /// This method must be called very early on app start, before any other interaction with ``WireLogger``.
 
-    /// This method is supposed to be called very early on app start, before any other interaction with ``WireLogger``.
-    static func setup(_ providerBuilder: @escaping (Tag) -> [any WireLoggingProvider]) {
-        guard self.providerBuilder == nil else {
+    @MainActor
+    static func setup(_ logHandler: any WireLogHandlerProtocol) {
+        guard self.logHandler == nil else {
             fatalError("WireLogger is already set up")
         }
-        self.providerBuilder = providerBuilder
+        self.logHandler = logHandler
     }
 
-    static let apiMigration = WireLogger(tag: "api-migration", providerBuilder)
-    static let appState = WireLogger(tag: "AppState", providerBuilder)
-    static let appDelegate = WireLogger(tag: "AppDelegate", providerBuilder)
-    static let appLock = WireLogger(tag: "AppLock", providerBuilder)
-    static let assets = WireLogger(tag: "assets", providerBuilder)
-    static let authentication = WireLogger(tag: "authentication", providerBuilder)
-    static let backgroundActivity = WireLogger(tag: "background-activity", providerBuilder)
-    static let badgeCount = WireLogger(tag: "badge-count", providerBuilder)
-    static let backend = WireLogger(tag: "backend", providerBuilder)
-    static let calling = WireLogger(tag: "calling", providerBuilder)
-    static let conversation = WireLogger(tag: "conversation", providerBuilder)
-    static let coreCrypto = WireLogger(tag: "core-crypto", providerBuilder)
-    static let e2ei = WireLogger(tag: "end-to-end-identity", providerBuilder)
-    static let ear = WireLogger(tag: "encryption-at-rest", providerBuilder)
-    static let environment = WireLogger(tag: "environment", providerBuilder)
-    static let featureConfigs = WireLogger(tag: "feature-configurations", providerBuilder)
-    static let keychain = WireLogger(tag: "keychain", providerBuilder)
-    static let localStorage = WireLogger(tag: "local-storage", providerBuilder)
-    static let mainCoordinator = WireLogger(tag: "main-coordinator", providerBuilder)
-    static let messaging = WireLogger(tag: "messaging", providerBuilder)
-    static let mls = WireLogger(tag: "mls", providerBuilder)
-    static let notifications = WireLogger(tag: "notifications", providerBuilder)
-    static let performance = WireLogger(tag: "performance", providerBuilder)
-    static let push = WireLogger(tag: "push", providerBuilder)
-    static let pushChannel = WireLogger(tag: "push-channel", providerBuilder)
-    static let proteus = WireLogger(tag: "proteus", providerBuilder)
-    static let session = WireLogger(tag: "session", providerBuilder)
-    static let sessionManager = WireLogger(tag: "SessionManager", providerBuilder)
-    static let shareExtension = WireLogger(tag: "share-extension", providerBuilder)
-    static let sync = WireLogger(tag: "sync", providerBuilder)
-    static let system = WireLogger(tag: "system", providerBuilder)
-    static let timePoint = WireLogger(tag: "timePoint", providerBuilder)
-    static let ui = WireLogger(tag: "UI", providerBuilder)
-    static let updateEvent = WireLogger(tag: "update-event", providerBuilder)
-    static let userClient = WireLogger(tag: "user-client", providerBuilder)
-    static let network = WireLogger(tag: "network", providerBuilder)
-    static let eventProcessing = WireLogger(tag: "event-processing", providerBuilder)
-    static let messageProcessing = WireLogger(tag: "message-processing", providerBuilder)
-    static let avs = WireLogger(tag: "avs", providerBuilder)
-    static let analytics = WireLogger(tag: "analytics", providerBuilder)
-    static let supportedProtocols = WireLogger(tag: "supported-protocols", providerBuilder)
-}
+    nonisolated(unsafe) private static var logHandler: (any WireLogHandlerProtocol)!
 
-private extension WireLogger {
-    init(tag: Tag, _ providersBuilder: (Tag) -> [any WireLoggingProvider]) {
-        self.init(tag: tag, providers: providersBuilder(tag))
-    }
+    static let apiMigration = WireTaggedLogger(tag: "api-migration", handler: logHandler)
+    static let appVersionMigration = WireTaggedLogger(tag: "api-version-migration", handler: logHandler)
+    static let appState = WireTaggedLogger(tag: "AppState", handler: logHandler)
+    static let appDelegate = WireTaggedLogger(tag: "AppDelegate", handler: logHandler)
+    static let appLock = WireTaggedLogger(tag: "AppLock", handler: logHandler)
+    static let assets = WireTaggedLogger(tag: "assets", handler: logHandler)
+    static let authentication = WireTaggedLogger(tag: "authentication", handler: logHandler)
+    static let backend = WireTaggedLogger(tag: "backend", handler: logHandler)
+    static let backupExport = WireTaggedLogger(tag: "backup-export", handler: logHandler)
+    static let backupImport = WireTaggedLogger(tag: "backup-import", handler: logHandler)
+    static let backgroundActivity = WireTaggedLogger(tag: "background-activity", handler: logHandler)
+    static let badgeCount = WireTaggedLogger(tag: "badge-count", handler: logHandler)
+    static let calling = WireTaggedLogger(tag: "calling", handler: logHandler)
+    static let conversation = WireTaggedLogger(tag: "conversation", handler: logHandler)
+    static let coreCrypto = WireTaggedLogger(tag: "core-crypto", handler: logHandler)
+    static let e2ei = WireTaggedLogger(tag: "end-to-end-identity", handler: logHandler)
+    static let ear = WireTaggedLogger(tag: "encryption-at-rest", handler: logHandler)
+    static let environment = WireTaggedLogger(tag: "environment", handler: logHandler)
+    static let featureConfigs = WireTaggedLogger(tag: "feature-configurations", handler: logHandler)
+    static let individualToTeamMigration = WireTaggedLogger(tag: "individual-to-team-migration", handler: logHandler)
+    static let keychain = WireTaggedLogger(tag: "keychain", handler: logHandler)
+    static let localStorage = WireTaggedLogger(tag: "local-storage", handler: logHandler)
+    static let mainCoordinator = WireTaggedLogger(tag: "main-coordinator", handler: logHandler)
+    static let messaging = WireTaggedLogger(tag: "messaging", handler: logHandler)
+    static let mls = WireTaggedLogger(tag: "mls", handler: logHandler)
+    static let notifications = WireTaggedLogger(tag: "notifications", handler: logHandler)
+    static let performance = WireTaggedLogger(tag: "performance", handler: logHandler)
+    static let push = WireTaggedLogger(tag: "push", handler: logHandler)
+    static let pushChannel = WireTaggedLogger(tag: "push-channel", handler: logHandler)
+    static let webSocket = WireTaggedLogger(tag: "websocket", handler: logHandler)
+    static let proteus = WireTaggedLogger(tag: "proteus", handler: logHandler)
+    static let session = WireTaggedLogger(tag: "session", handler: logHandler)
+    static let sessionManager = WireTaggedLogger(tag: "SessionManager", handler: logHandler)
+    static let shareExtension = WireTaggedLogger(tag: "share-extension", handler: logHandler)
+    static let sync = WireTaggedLogger(tag: "sync", handler: logHandler)
+    static let system = WireTaggedLogger(tag: "system", handler: logHandler)
+    static let timePoint = WireTaggedLogger(tag: "timePoint", handler: logHandler)
+    static let ui = WireTaggedLogger(tag: "UI", handler: logHandler)
+    static let updateEvent = WireTaggedLogger(tag: "update-event", handler: logHandler)
+    static let userClient = WireTaggedLogger(tag: "user-client", handler: logHandler)
+    static let network = WireTaggedLogger(tag: "network", handler: logHandler)
+    static let eventProcessing = WireTaggedLogger(tag: "event-processing", handler: logHandler)
+    static let messageProcessing = WireTaggedLogger(tag: "message-processing", handler: logHandler)
+    static let avs = WireTaggedLogger(tag: "avs", handler: logHandler)
+    static let analytics = WireTaggedLogger(tag: "analytics", handler: logHandler)
+    static let supportedProtocols = WireTaggedLogger(tag: "supported-protocols", handler: logHandler)
+    static let search = WireTaggedLogger(tag: "search", handler: logHandler)
+    static let wireCells = WireTaggedLogger(tag: "wire-cells", handler: logHandler)
+
 }

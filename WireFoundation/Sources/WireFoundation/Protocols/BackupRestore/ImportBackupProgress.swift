@@ -18,7 +18,7 @@
 
 public enum ImportBackupProgress: Equatable, Sendable {
 
-    case progress(_ current: Int, _ total: Int)
+    case progress(BackupProgress)
     case done
 
 }
@@ -28,7 +28,7 @@ public enum ImportBackupProgress: Equatable, Sendable {
 public extension ImportBackupProgress {
 
     static func progress(current: Int, total: Int) -> Self {
-        .progress(current, total)
+        .progress(BackupProgress(current, total))
     }
 
 }

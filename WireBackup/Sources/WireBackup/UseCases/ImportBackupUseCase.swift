@@ -30,7 +30,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let backupLocalStore: any BackupLocalStoreProtocol
     let fileUnarchiver: any FileUnarchiverProtocol
     let syncTrigger: @Sendable () -> Void
-    let logger: @Sendable () -> any LoggerProtocol
+    let logger: WireTaggedLogger
 
     public let isImportDestructive = false
 
@@ -40,7 +40,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         backupLocalStore: any BackupLocalStoreProtocol,
         fileUnarchiver: any FileUnarchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
-        logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
+        logger: WireTaggedLogger
     ) {
         self.url = url
         self.selfUserID = selfUserID
@@ -62,10 +62,10 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 }
 
                 do {
-                    let logger = logger()
                     let reportProgress: (Int, Int) -> Void = { current, total in
-                        logger.debug("reporting overall process: \(current)/\(total)")
-                        continuation.yield(.progress(current, total))
+                        let progress = BackupProgress(current, total)
+                        logger.debug("reporting overall process: \(progress)")
+                        continuation.yield(.progress(progress))
                     }
 
                     reportProgress(0, 0)
