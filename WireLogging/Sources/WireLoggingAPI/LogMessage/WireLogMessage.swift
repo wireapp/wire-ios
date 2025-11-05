@@ -16,22 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogAttribute {
+public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
 
-    public var key: String
-    public var value: String
+    public var content: String { interpolation.content }
+    public var attributes: [WireLogAttribute] { interpolation.attributes }
+
+    package let interpolation: WireLogInterpolation
+
+    public init(stringLiteral value: StaticString) {
+        var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+        interpolation.appendLiteral(value)
+        self.interpolation = interpolation
+    }
+
+    public init(stringInterpolation interpolation: WireLogInterpolation) {
+        self.interpolation = interpolation
+    }
 
 }
-
-extension WireLogAttribute {
-
-    public typealias Provider = (String) -> WireLogAttribute
-
-    nonisolated(unsafe) public static let someKey: Provider = { .init(key: "someKey", value: $0) }
-
-}
-
-// TODO: delete
-nonisolated(unsafe) var la: [WireLogAttribute] = [
-    .someKey("abcd")
-]

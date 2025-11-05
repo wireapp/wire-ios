@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-14297] Remove this file and create `WireLogInterpolation.appendInterpolation` overloads.
+import WireLoggingAPI
 
+// TODO: [WPB-14297] Remove this file and create `WireLogInterpolation.appendInterpolation` overloads.
+/*
 /// A type which is only used during migrating to the new logging.
 public struct PubliclyLoggedString {
 
@@ -47,3 +49,4 @@ public extension WireLogInterpolation {
         writeText(value)
     }
 }
+*/

@@ -17,7 +17,7 @@
 //
 
 public import Foundation
-public import WireLogging
+public import WireLoggingAPI
 
 import CryptoKit
 import DatadogCore

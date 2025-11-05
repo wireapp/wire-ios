@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireLoggingAPI
+
 public extension WireLogInterpolation {
 
     #if DEBUG

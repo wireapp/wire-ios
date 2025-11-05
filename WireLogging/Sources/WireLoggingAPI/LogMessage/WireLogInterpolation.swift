@@ -25,8 +25,8 @@
 
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
-    private(set) var content = ""
-    private(set) var attributes = [WireLogAttribute]()
+    package private(set) var content = ""
+    package private(set) var attributes = [WireLogAttribute]()
 
     public init(literalCapacity: Int, interpolationCount _: Int) {
         content.reserveCapacity(literalCapacity)

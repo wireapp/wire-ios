@@ -17,10 +17,16 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(name: "WireLogging"),
+        .target(name: "WireLoggingAPI"),
+        .target(
+            name: "WireLogging",
+            dependencies: [
+                "WireLoggingAPI"
+            ]
+        ),
         .target(
             name: "WireLoggingSupport",
-            dependencies: ["WireLogging"],
+            dependencies: ["WireLoggingAPI", "WireLogging"],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
