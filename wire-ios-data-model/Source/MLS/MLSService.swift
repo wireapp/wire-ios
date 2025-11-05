@@ -919,7 +919,7 @@ public final class MLSService: MLSServiceInterface {
     public func reEstablishPendingGroup(groupID: MLSGroupID) async throws {
         guard let context else { return }
 
-        let conversationInfo = fetchConversationInfo(with: groupID, in: context)
+        let conversationInfo = await fetchConversationInfo(with: groupID, in: context)
 
         guard let conversationInfo else {
             throw MLSServiceError.conversationNotFound
@@ -1023,7 +1023,7 @@ public final class MLSService: MLSServiceInterface {
                 try await mlsSyncDelegate?.recoverWithIncrementalSync()
             }
 
-            guard let conversationInfo = fetchConversationInfo(
+            guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
                 in: context
             ) else {
@@ -1093,7 +1093,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
 
-            guard let conversationInfo = fetchConversationInfo(
+            guard let conversationInfo = await fetchConversationInfo(
                 with: parentGroupID,
                 in: context
             ) else {
@@ -1273,7 +1273,7 @@ public final class MLSService: MLSServiceInterface {
 
             guard let context else { return }
 
-            guard let parentConversationInfo = fetchConversationInfo(
+            guard let parentConversationInfo = await fetchConversationInfo(
                 with: parentID,
                 in: context
             ) else {
@@ -1314,14 +1314,15 @@ public final class MLSService: MLSServiceInterface {
     private func fetchConversationInfo(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID)? {
+    ) async -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID, epoch: UInt64)? {
 
         var conversation: ZMConversation?
         var qualifiedID: QualifiedID?
-
-        context.performAndWait {
+        var epoch: UInt64 = 0
+        await context.perform {
             conversation = ZMConversation.fetch(with: groupID, in: context)
             qualifiedID = conversation?.qualifiedID
+            epoch = conversation?.epoch ?? 0
         }
 
         guard
@@ -1331,7 +1332,7 @@ public final class MLSService: MLSServiceInterface {
             return nil
         }
 
-        return (conversation, qualifiedID, groupID)
+        return (conversation, qualifiedID, groupID, epoch)
     }
 
     // MARK: - Encrypt message
@@ -1574,29 +1575,47 @@ public final class MLSService: MLSServiceInterface {
 
         case retryAfterRepairingGroup
 
+        /// Add the missing users to the group, then retry the action in
+        /// its entirety.
+        ///
+        /// It's possible that the membership of the local group does not
+        /// match the membership of the conversation according to the backend.
+        /// This needs correcting so that all members will receive the commit.
+
+        case retryAfterAddingMissingUsers(Set<QualifiedID>)
+
+        /// Reset the mls group.
+        ///
+        /// Some bugs led to MLS getting broken which then required
+        /// an explicit fix.
+
+        case resetBrokenMLSConversation
+
         /// Abort the action and inform the user.
         ///
         /// There is no way to automatically recover from the error.
 
         case giveUp
 
-        /// When MLS conversation happened to be broken
-
-        case resetBrokenMLSConversation
-
         init(from reason: String) {
-            if let error = try? MLSAPIError(from: reason) {
-                switch error {
-                case .mlsClientMismatch, .mlsCommitMissingReferences:
-                    self = .retryAfterQuickSync
-                case .mlsStaleMessage:
-                    self = .retryAfterRepairingGroup
-                case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-                    self = .resetBrokenMLSConversation
-                default:
-                    self = .giveUp
-                }
-            } else {
+            guard let error = try? JSONDecoder().decode(
+                MLSTransportError.self,
+                from: Data(reason.utf8)
+            ) else {
+                self = .giveUp
+                return
+            }
+
+            switch error {
+            case .mlsClientMismatch, .mlsCommitMissingReferences:
+                self = .retryAfterQuickSync
+            case .mlsStaleMessage:
+                self = .retryAfterRepairingGroup
+            case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                self = .resetBrokenMLSConversation
+            case let .groupOutOfSync(missingUsers):
+                self = .retryAfterAddingMissingUsers(missingUsers)
+            default:
                 self = .giveUp
             }
         }
@@ -1608,6 +1627,10 @@ public final class MLSService: MLSServiceInterface {
         operation: @escaping () async throws -> Void,
         retryCount: Int = 0
     ) async throws {
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .mlsGroupID: groupID.safeForLoggingDescription
+        ]
 
         do {
             try await operation()
@@ -1616,12 +1639,12 @@ public final class MLSService: MLSServiceInterface {
             case .retryAfterQuickSync:
                 logger.warn(
                     "failed to send commit, syncing then retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 try await mlsSyncDelegate?.recoverWithIncrementalSync()
                 logger.info(
                     "sync finished, retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
 
                 guard retryCount <= maxRetryAttempts else {
@@ -1643,7 +1666,7 @@ public final class MLSService: MLSServiceInterface {
             case .retryAfterRepairingGroup:
                 logger.warn(
                     "failed to send commit, repairing group then retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 await fetchAndRepairGroup(
                     with: groupID,
@@ -1652,16 +1675,41 @@ public final class MLSService: MLSServiceInterface {
 
                 logger.info(
                     "repair finished, retrying operation...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
                 try await operation()
 
-            case .giveUp:
+            case let .retryAfterAddingMissingUsers(missingUsers):
+                guard retryCount <= maxRetryAttempts else {
+                    logger.error(
+                        "failed to send commit due to missing users and reached max attempts",
+                        attributes: logAttributes
+                    )
+                    throw MLSRetryError.retryLimitReached
+                }
+
                 logger.warn(
-                    "failed to send commit, giving up...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    "failed to send commit due to missing users. Adding users then retrying operation - attempt: \(retryCount)...",
+                    attributes: logAttributes
                 )
-                throw MLSRetryError.nonRecoverableError(reason)
+
+                let users = missingUsers.map {
+                    MLSUser($0, selfClientID: nil)
+                }
+
+                // It's important to call the internal method because
+                // we don't want to re-enter the commit failure handling
+                // again for this action, otherwise we may end up in a loop.
+                try await internalAddMembersToConversation(
+                    with: users,
+                    for: groupID
+                )
+
+                try await retryOnCommitFailure(
+                    for: groupID,
+                    operation: operation,
+                    retryCount: retryCount + 1
+                )
 
             case .resetBrokenMLSConversation:
                 let feature = await featureRepository.fetchAllowedGlobalOperations()
@@ -1670,7 +1718,7 @@ public final class MLSService: MLSServiceInterface {
                 else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
-                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        attributes: logAttributes
                     )
                     brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
@@ -1678,17 +1726,21 @@ public final class MLSService: MLSServiceInterface {
 
                 logger.info(
                     "Handling reset broken MLS conversation recovery strategy...",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    attributes: logAttributes
                 )
-                var epoch: Int64 = 0
-                if let context, let conversation = fetchConversationInfo(
-                    with: groupID,
-                    in: context
-                )?.conversation {
-                    epoch = Int64(conversation.epoch)
+                var epoch: UInt64 = 0
+                if let context {
+                    epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
                 brokenGroupIDs.remove(groupID)
+
+            case .giveUp:
+                logger.warn(
+                    "failed to send commit, giving up...",
+                    attributes: logAttributes
+                )
+                throw MLSRetryError.nonRecoverableError(reason)
             }
         }
     }

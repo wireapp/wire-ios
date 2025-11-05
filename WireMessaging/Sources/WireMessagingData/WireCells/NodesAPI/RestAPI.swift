@@ -29,7 +29,6 @@ enum WireCellsNodesAPIError: Error {
 final class RestAPI: Sendable {
 
     private enum Constants {
-        static let sortedBy = "mtime"
         static let deleteBackgroundActionName = "delete"
         static let renameBackgroundActionName = "move"
     }
@@ -53,32 +52,11 @@ final class RestAPI: Sendable {
     func getNodes(
         _ request: WireCellsGetNodesRequest
     ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
-        let request = RestLookupRequest(
-            filters: RestLookupFilter(
-                status: LookupFilterStatusFilter(
-                    deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
-                    isDraft: false
-                ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: request.filter.text ?? "*"),
-                type: TreeNodeType(request.filter.type)
-            ),
-            flags: [.withPreSignedURLs],
-            limit: "\(request.limit)",
-            offset: "\(request.offset)",
-            query: request.query.map { query in
-                let nodeIDs = query.nodeIDs?.compactMap { $0.uuidString.lowercased() }
-                return TreeQuery(uUIDs: nodeIDs)
-            },
-            scope: RestLookupScope(
-                recursive: request.scope.isRecursive,
-                root: request.scope.root.map { RestNodeLocator($0) }
-            ),
-            sortDirDesc: true,
-            sortField: Constants.sortedBy
-        )
-
         do {
-            let collection = try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration())
+            let collection = try await NodeServiceAPI.lookup(
+                body: request.lookupRequest,
+                apiConfiguration: makeConfiguration()
+            )
             let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
             let nextOffset = collection.pagination?.nextOffset
 
@@ -259,20 +237,6 @@ final class RestAPI: Sendable {
 
 // MARK: - Helpers
 
-private extension StatusFilterDeletedStatus {
-
-    init(_ value: WireCellsNodeDeletionStatus) {
-        switch value {
-        case .deleted:
-            self = .only
-        case .notDeleted:
-            self = .not
-        case .any:
-            self = .any
-        }
-    }
-}
-
 private extension RestNodeLocator {
 
     init(_ value: WireCellsNodeLocator) {
@@ -344,4 +308,50 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
             completion: completion
         )
     }
+}
+
+private extension WireCellsGetNodesRequest {
+
+    var lookupRequest: RestLookupRequest {
+        var request = RestLookupRequest(
+            flags: [.withPreSignedURLs],
+            limit: "\(limit)",
+            offset: "\(offset)",
+        )
+
+        switch configuration {
+        case let .conversationFileView(root):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
+                type: .leaf
+            )
+            request.scope = RestLookupScope(
+                recursive: true,
+                root: RestNodeLocator(root)
+            )
+            request.sortDirDesc = true
+            request.sortField = "mtime"
+        case .filesBrowserView:
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
+                type: .leaf
+            )
+            request.scope = RestLookupScope(
+                recursive: true,
+                root: nil
+            )
+            request.sortDirDesc = true
+            request.sortField = "mtime"
+        }
+        return request
+    }
+
 }

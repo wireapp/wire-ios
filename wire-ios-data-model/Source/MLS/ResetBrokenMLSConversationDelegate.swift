@@ -17,9 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 
 // sourcery: AutoMockable
 public protocol ResetBrokenMLSConversationDelegate: AnyObject {
-    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async
+    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async
 }

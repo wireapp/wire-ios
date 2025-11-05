@@ -189,7 +189,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
             await userSession.clientSessionComponent?.initiateResetMLSConversationUseCase.invoke(
                 groupID: MLSGroupID(base64Encoded: remoteConversation.mlsGroupID!)!,
-                epoch: Int64(remoteConversation.epoch ?? 0)
+                epoch: UInt64(remoteConversation.epoch ?? 0)
             )
         }
 

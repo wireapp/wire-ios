@@ -665,10 +665,10 @@ public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSCo
 
     // MARK: - invoke
 
-    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
-    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: UInt64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, UInt64) async -> Void)?
 
-    public func invoke(groupID: MLSGroupID, epoch: Int64) async {
+    public func invoke(groupID: MLSGroupID, epoch: UInt64) async {
         invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
 
         guard let mock = invokeGroupIDEpoch_MockMethod else {
