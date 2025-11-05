@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireLogging
 
 package enum WireCellsCreateFolderUseCaseError: Error {
     case serverFailedToCreateFolder
@@ -61,10 +60,6 @@ package struct WireCellsCreateFolderUseCase: WireCellsCreateFolderUseCaseProtoco
         do {
             try await nodesRepository.createFolder(at: targetPath)
         } catch {
-            WireLogger.wireCells.error(
-                "Failed to create folder: \(targetPath) with error: \(String(describing: error))"
-            )
-            
             throw WireCellsCreateFolderUseCaseError.serverFailedToCreateFolder
         }
     }

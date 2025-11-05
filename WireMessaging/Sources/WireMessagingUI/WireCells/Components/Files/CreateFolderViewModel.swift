@@ -80,7 +80,7 @@ final class CreateFolderViewModel: ObservableObject {
             return false
         } catch {
             isLoading = false
-            WireLogger.wireCells.error("Renaming file failed: \(error)")
+            WireLogger.wireCells.error("Creating folder failed: \(error)")
             return false
         }
     }

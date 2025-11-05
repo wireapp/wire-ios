@@ -259,7 +259,7 @@ package final class FilesViewModel: ObservableObject {
         do {
             let (newItems, isLastPage) = try await task.value
             let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
-            state = .received(items: [])
+            state = .received(items: receivedItems)
             hasMore = !isLastPage
         } catch is CancellationError {
             return // developer-driven error, discard

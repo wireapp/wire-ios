@@ -90,16 +90,17 @@ package struct FilesView: FilesViewProtocol {
                     },
                     content: { $0 }
                 )
+                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
             }
         }
     }
     
     private var createFolderView: some View {
-        VStack {
+        VStack(spacing: 0) {
             Divider()
 
-            HStack(spacing: 29) {
+            HStack(alignment: .center, spacing: 20) {
                 Button {
                     viewModel.onCreateFolder()
                 } label: {
@@ -107,11 +108,15 @@ package struct FilesView: FilesViewProtocol {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                 }
 
-                Text(Strings.Files.NewFolder.title)
+                Text(Strings.Files.List.newFolder)
                     .wireTextStyle(.body2)
                 Spacer()
             }
             .padding()
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.onCreateFolder()
         }
     }
 }
