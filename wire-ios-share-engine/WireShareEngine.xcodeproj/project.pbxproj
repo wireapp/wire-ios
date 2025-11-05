@@ -18,6 +18,7 @@
 		59537D8B2CFF9F8F00920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8A2CFF9F8F00920B59 /* WireLegacyLogging */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CB79791D2C748580006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791C2C748580006FBA58 /* TestSetup.swift */; };
+		CBC41A3A2EB50FBA000769CE /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
 		EE67F6F5296F093E001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; };
@@ -33,6 +34,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5470D3E71D76E1B000FDE440;
 			remoteInfo = "wire-ios-share-engine";
+		};
+		CBC41A3C2EB50FBA000769CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5470D3DF1D76E1B000FDE440 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5470D3E71D76E1B000FDE440;
+			remoteInfo = WireShareEngine;
 		};
 		F1E48012207E4C77008D4299 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -123,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6F5296F093E001D7C88 /* WireTesting.framework in Frameworks */,
+				CBC41A3A2EB50FBA000769CE /* WireShareEngine.framework in Frameworks */,
 				591B6E382C8B0995009F8A7B /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,6 +300,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CBC41A3D2EB50FBA000769CE /* PBXTargetDependency */,
 			);
 			name = WireShareEngineTestHost;
 			productName = WireShareEngineTestHost;
@@ -406,6 +416,11 @@
 			isa = PBXTargetDependency;
 			target = 5470D3E71D76E1B000FDE440 /* WireShareEngine */;
 			targetProxy = 5470D3F41D76E1B000FDE440 /* PBXContainerItemProxy */;
+		};
+		CBC41A3D2EB50FBA000769CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5470D3E71D76E1B000FDE440 /* WireShareEngine */;
+			targetProxy = CBC41A3C2EB50FBA000769CE /* PBXContainerItemProxy */;
 		};
 		F1E48013207E4C77008D4299 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
