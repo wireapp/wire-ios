@@ -136,45 +136,38 @@ public extension WireMessagingFactory {
         cellName: String,
         isCellsStatePending: Bool
     ) -> UIViewController {
-        let filesView: UIHostingController<FilesView>
-        filesView = makeFilesHostingController(
-            configuration: .conversationFileView(root: .path(cellName), isFoldersEnabled: isFoldersEnabled),
-            isCellsStatePending: isCellsStatePending
+        UIHostingController(
+            rootView: FilesViewContainer(
+                cellName: cellName,
+                nodesRepository: nodesAPI,
+                isCellsStatePending: isCellsStatePending,
+                localAssetStore: localAssetStore,
+                localAssetRepository: localAssetRepository,
+                fileCache: fileCache
+            )
         )
-        return filesView
     }
 
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
-        let configuration: WireCellsGetNodesRequest.Configuration = .filesBrowserView
-        let filesBrowserView: UIHostingController<FilesBrowserView>
-        filesBrowserView = makeFilesHostingController(
-            configuration: configuration
+        UIHostingController(
+            rootView: FilesBrowserView(
+                viewModel: FilesViewModel(
+                    fetchNodesUseCase: WireCellsFetchNodesUseCase(
+                        configuration: .filesBrowserView,
+                        repository: nodesAPI
+                    ),
+                    deleteNodesUseCase: WireCellsDeleteNodesUseCase(
+                        repository: nodesAPI,
+                        fileCache: fileCache,
+                        localAssetStore: localAssetStore
+                    ),
+                    isCellsStatePending: false,
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
+                )
+            )
         )
-        return filesBrowserView
-    }
-
-    @MainActor
-    private func makeFilesHostingController<T: FilesViewProtocol>(
-        configuration: WireCellsGetNodesRequest.Configuration,
-        isCellsStatePending: Bool = false
-    ) -> UIHostingController<T> {
-        let viewModel = FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: configuration,
-                repository: nodesAPI
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesAPI,
-                fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            fileCache: fileCache
-        )
-
-        return UIHostingController(rootView: T(viewModel: viewModel))
     }
 
     @MainActor

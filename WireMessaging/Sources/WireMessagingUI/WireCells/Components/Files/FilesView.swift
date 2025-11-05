@@ -36,45 +36,44 @@ package struct FilesView: FilesViewProtocol {
     }
 
     package var body: some View {
-        NavigationStack {
-            ZStack {
-                ColorTheme.Backgrounds.background.color
-                    .ignoresSafeArea(.all)
+        ZStack {
+            ColorTheme.Backgrounds.background.color
+                .ignoresSafeArea(.all)
 
-                Group {
-                    switch viewModel.state {
-                    case .loading:
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                    case let .received(items):
-                        if items.isEmpty {
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask(refreshing: true) }
-                        }
-                    case .pending:
-                        FilesInfoView(info: .preparingFiles)
-                    case .error:
-                        FilesInfoView(info: .error, onReload: {
-                            reloadTask()
-                        })
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case let .received(items):
+                    if items.isEmpty {
+                        FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+                    } else {
+                        filesList
+                            .listStyle(.plain)
+                            .refreshable { reloadTask(refreshing: true) }
                     }
+                case .pending:
+                    FilesInfoView(info: .preparingFiles)
+                case .error:
+                    FilesInfoView(info: .error, onReload: {
+                        reloadTask()
+                    })
                 }
-                .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
-                .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-                .toolbar { toolbarContent }
-                .onAppear { reloadTask() }
-                .alert(
-                    item: $viewModel.alert,
-                    title: { Text($0.title) },
-                    message: { Text($0.message) },
-                    actions: { _ in confirmButton }
-                )
             }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(viewModel.title ?? Strings.Files.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+            .toolbar { toolbarContent }
+            .onAppear { reloadTask() }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
+            )
         }
     }
 }
@@ -84,14 +83,22 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .principal) { titleView }
+        ToolbarTitleMenu {
+            toolBarTitleMenuContent()
+        }
+
         ToolbarItem(placement: .navigationBarTrailing) { closeButton }
     }
 
-    var titleView: some View {
-        Text(Strings.Files.navigationTitle)
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(SemanticColors.Label.textDefault.color)
+    func toolBarTitleMenuContent() -> some View {
+        ForEach(viewModel.folderMenuOptions, id: \.self) { option in
+            Button(
+                option.title,
+                systemImage: option == .root ? "rectangle.stack" : "folder"
+            ) {
+                viewModel.selectFolderMenuOption(option)
+            }
+        }
     }
 
     var closeButton: some View {
@@ -106,6 +113,19 @@ private extension FilesView {
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
     }
+}
+
+private extension FilesViewModel.FolderMenuOption {
+
+    var title: String {
+        switch self {
+        case let .folder(_, title):
+            title
+        case .root:
+            Strings.Files.navigationTitle
+        }
+    }
+
 }
 
 #Preview {

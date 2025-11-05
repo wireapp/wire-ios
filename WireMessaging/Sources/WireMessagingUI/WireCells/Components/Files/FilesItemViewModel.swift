@@ -66,7 +66,9 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        switch asset?.downloadState {
+        guard item.kind == .file else { return false }
+
+        return switch asset?.downloadState {
         case .downloaded:
             true
         default:
@@ -108,6 +110,8 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func download() async {
+        precondition(item.kind == .file)
+
         // Ignore errors as these will be reported via the `asset` publisher.
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
