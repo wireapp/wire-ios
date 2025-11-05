@@ -27,11 +27,4 @@ extension WireLogAttribute {
 
     public typealias Provider = (String) -> WireLogAttribute
 
-    nonisolated(unsafe) public static let someKey: Provider = { .init(key: "someKey", value: $0) }
-
 }
-
-// TODO: delete
-nonisolated(unsafe) var la: [WireLogAttribute] = [
-    .someKey("abcd")
-]

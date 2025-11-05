@@ -54,28 +54,3 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     }
 
 }
-
-// TODO: remove this example
-// public struct SensibleInformationModel {
-//    var content: String
-// }
-//
-// extension WireLogInterpolation {
-//
-//    /// Construct the log message content for ``SensibleInformationModel`` values.
-//    mutating func appendInterpolation(_ mySensibleInformation: SensibleInformationModel) {
-//        let content: String
-//        if isObfuscationRequired {
-//            let obfuscatedContent = mySensibleInformation. ...
-//            content = "SensibleInformationModel( \(obfuscatedContent) )"
-//        } else {
-//            content = "SensibleInformationModel( \(mySensibleInformation.content) )"
-//        }
-//        writeText(content)
-//
-//        let relevantAttributes = ...
-//        for relevantAttribute in relevantAttributes {
-//            writeAttribute(relevantAttribute)
-//        }
-//    }
-// }

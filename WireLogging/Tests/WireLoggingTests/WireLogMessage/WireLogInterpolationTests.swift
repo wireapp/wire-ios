@@ -32,45 +32,6 @@ struct WireLogInterpolationTests {
         let name = "World" as StaticString
         let message: WireLogMessage = "Hello, \(name)!"
         #expect(message.content == "Hello, World!")
-
-        let osl = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!) // TODO: delete
-        let l = WireTaggedLogger(tag: "test", handler: osl)
-        l.critical("Lorem \("Ipsum")", .eventID("overridden")) x
-    }
-
-}
-
-// TODO: move somewhere else? keep in readme/docs?
-private struct CustomType {
-    var eventID = "012345"
-    var sensibleInformation = "Sensitive"
-}
-
-extension WireLogInterpolation {
-
-    fileprivate mutating func appendInterpolation(
-        _ customType: CustomType,
-        selfUserID: UUID
-    ) {
-
-        let obfuscationStartIndex = content.index(content.startIndex, offsetBy: 4)
-        let obfuscatedContent = content.replacingCharacters(in: obfuscationStartIndex...content.endIndex, with: "***")
-        writeText(obfuscatedContent)
-
-        writeAttribute(.eventID(selfUserID.uuidString))
-        writeAttribute(.selfUserID(selfUserID.uuidString))
-    }
-
-}
-
-extension WireLogAttribute {
-
-    fileprivate static func eventID(_ value: String) -> WireLogAttribute {
-        .init(key: "event_id", value: value)
-    }
-
-    fileprivate static func selfUserID(_ value: String) -> WireLogAttribute {
-        .init(key: "self_user_id", value: value)
     }
 
 }
