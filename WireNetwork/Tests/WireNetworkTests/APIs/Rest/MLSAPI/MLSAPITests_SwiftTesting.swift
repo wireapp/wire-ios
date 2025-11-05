@@ -91,7 +91,7 @@ class MLSAPITests_SwiftTesting {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1 ... 1000)
+    static let epoch: UInt64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
 
 }

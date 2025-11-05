@@ -4,6 +4,7 @@ import Foundation
 import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
+// open --env ENABLE_DATADOG=true --env ENABLE_COUNTLY=true wire-ios-mono.xcworkspace
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
 let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 

@@ -66,12 +66,12 @@ class UsersAPIV4: UsersAPIV3 {
 
 struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
-    /// List of users which were found and succesfully retrieved.
+    /// List of users which were found and successfully retrieved.
 
     let found: [UserResponseV4]
 
     /// List of user IDs for which a user couldn't be retrieved.
-    ///
+
     let failed: [QualifiedIDV0]?
 
     func toAPIModel() -> UserList {
@@ -121,6 +121,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             name: name,
             handle: handle,
             teamID: teamID,
+            type: nil,
             accentID: accentID,
             assets: assets.map { $0.toAPIModel() },
             deleted: deleted,
@@ -131,4 +132,5 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
             legalholdStatus: legalholdStatus.toAPIModel()
         )
     }
+
 }

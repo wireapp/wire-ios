@@ -15,3 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+// MARK: - Meetings List
+
+
+"wireMeetings.list.title" = "Meetings";
+"wireMeetings.list.tabs.past" = "Past";
+"wireMeetings.list.tabs.next" = "Nächste";
+"wireMeetings.list.actions.meetNow" = "Meeting starten";
+"wireMeetings.list.actions.scheduleMeeting" = "Meeting planen";
+"wireMeetings.list.actions.showAll" = "Alle anzeigen";
+"wireMeetings.list.emptyState.title" = "No meetings yet";
+"wireMeetings.list.emptyState.subtitle" = "Beginnen Sie ein Meeting mit Team-Mitgliedern, Gästen oder Externen.";
+"wireMeetings.list.header.today" = "Heute";
+"wireMeetings.list.header.tomorrow" = "Morgen";
+"wireMeetings.list.header.yesterday" = "Gestern";
+"wireMeetings.list.header.ongoing" = "Ongoing";

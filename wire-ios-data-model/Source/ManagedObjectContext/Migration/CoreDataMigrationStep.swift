@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireData
 
 struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
 
@@ -82,7 +83,7 @@ struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
         toDestinationModel destinationModel: NSManagedObjectModel
     ) -> NSMappingModel? {
         NSMappingModel(
-            from: [WireDataModelBundle.bundle],
+            from: [WireDataBundle.bundle],
             forSourceModel: sourceModel,
             destinationModel: destinationModel
         )

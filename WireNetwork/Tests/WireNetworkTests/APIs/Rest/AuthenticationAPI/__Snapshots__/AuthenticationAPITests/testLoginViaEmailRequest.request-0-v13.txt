@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"email\":\"email@example.com\",\"password\":\"123456\",\"verification_code\":\"193756\"}" \
+	"/v13/login?persist=true"
