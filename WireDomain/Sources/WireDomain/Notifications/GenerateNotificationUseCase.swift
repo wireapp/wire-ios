@@ -61,16 +61,19 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
             for event in events {
                 logger.info(
-                    "SKY, event: \(event)",
+                    "[CALLING-DEBUG] event: \(event)",
                     attributes: .newNSE, .safePublic
                 )
 
                 // DEBUG: Log calling-related events with more details
                 if case let .conversation(conversationEvent) = event {
-                    logger.info(
-                        "[CALLING-DEBUG] Backend event received - conversationID: \(conversationEvent.conversationID.id.safeForLoggingDescription), senderID: \(conversationEvent.senderID.id.safeForLoggingDescription), type: \(String(describing: conversationEvent))",
-                        attributes: .newNSE, .safePublic
-                    )
+//                    logger.info(
+//                        "[CALLING-DEBUG] Backend event received - conversationID:
+//                        \(conversationEvent.conversationID.id.safeForLoggingDescription), senderID:
+//                        \(conversationEvent.senderID.id.safeForLoggingDescription), type: \(String(describing:
+//                        conversationEvent))",
+//                        attributes: .newNSE, .safePublic
+//                    )
                 }
 
                 if let notification = await generateNotification(for: event) {

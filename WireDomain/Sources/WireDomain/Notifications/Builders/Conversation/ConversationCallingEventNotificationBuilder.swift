@@ -18,8 +18,8 @@
 
 import GenericMessageProtocol
 import WireDataModel
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
@@ -61,7 +61,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
         }
         let displayCallKitNotification = await validator.validateCallKitNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             accountID: accountID,
             eventTimestamp: time,
@@ -69,7 +69,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         )
 
         let displayCallNotification = await validator.validateCallNotification(
-            conversationID: conversationID,
+            conversationID: resolvedConversationID,
             senderID: senderID,
             eventTimestamp: time,
             callContent: callContent
@@ -89,7 +89,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             let notification = await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
-                conversationID: conversationID,
+                conversationID: resolvedConversationID,
                 senderID: senderID
             )
             WireLogger.notifications.info(
@@ -107,7 +107,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallNotification(
                 callContent: callContent,
                 senderID: senderID,
-                conversationID: conversationID
+                conversationID: resolvedConversationID
             )
         } else {
             // Else, this is not a call, return nil.
@@ -415,7 +415,7 @@ extension ConversationCallingEventNotificationBuilder {
         let userDefaults: UserDefaults
 
         /// In priority, we'll try to validate a CallKit notification to show to the user
-        func validateCallKitNotification( //!!!!!
+        func validateCallKitNotification(
             conversationID: ConversationID,
             senderID: UserID,
             accountID: UUID,
