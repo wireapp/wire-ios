@@ -30,7 +30,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
     private let baseSegmentation: Set<AnalyticsEvent.Segmentation>
-    private let logger: WireLogger
+    private let logger: WireTaggedLogger
 
     // MARK: - Life cycle
 
@@ -62,8 +62,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         self.config = config
         self.baseSegmentation = baseSegmentation
         self.countlyProvider = countlyProvider
-
-        self.logger = .analytics
+        self.logger = WireLogger.analytics
     }
 
     // MARK: - Enable / disable
@@ -213,12 +212,25 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             ($0.key, $0.value)
         })
 
-        logger.debug("tracking event: \(event)")
+        logger.debug("tracking event: \(event)") // TODO: what was it converted to before? CustomDebugStringConvertible?
 
         countly.recordEvent(
             event.name,
             segmentation: rawSegmentation
         )
+    }
+
+}
+
+// MARK: -
+
+private extension WireLogInterpolation {
+
+    mutating func appendInterpolation(
+        _ analyticsEvent: AnalyticsEvent
+    ) {
+        // no obfuscation needed
+        writeText("\(analyticsEvent)")
     }
 
 }

@@ -29,8 +29,7 @@ let package = Package(
             name: "WireAnalytics",
             dependencies: [
                 "WireFoundation",
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
+                "WireLogging"
             ]
         ),
         .target(
@@ -52,8 +51,7 @@ let package = Package(
         .target(
             name: "WireDatadog",
             dependencies: datadogDependencies() + [
-                "WireLogging",
-                .product(name: "WireLegacyLogging", package: "WireLogging")
+                "WireLogging"
             ],
             sources: datadogFiles()
         ),
@@ -105,9 +103,9 @@ func datadogDependencies() -> [Target.Dependency] {
 
 func datadogFiles() -> [String] {
     if isDatadogEnabled {
-        ["WireDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireDatadog.swift"]
     } else {
-        ["WireFakeDatadog.swift", "WireLegacyLogging.swift"]
+        ["WireFakeDatadog.swift"]
     }
 }
 
