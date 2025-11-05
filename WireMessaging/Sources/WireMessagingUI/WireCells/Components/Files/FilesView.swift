@@ -83,7 +83,10 @@ package struct FilesView: FilesViewProtocol {
                         useCases: .init(
                             updateTags: viewModel.useCases.updateTags,
                             getSuggestions: viewModel.useCases.getTagSuggestions
-                        )
+                        ),
+                        postSaveAction: {
+                            await viewModel.reload()
+                        }
                     )
                 }
             }

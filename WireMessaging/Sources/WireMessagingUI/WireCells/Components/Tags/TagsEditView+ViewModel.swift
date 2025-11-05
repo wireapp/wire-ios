@@ -25,6 +25,7 @@ extension TagsEditView {
     final class ViewModel: ObservableObject {
         private let fileItem: FilesViewItem
         private let useCases: UseCases
+        private let postSaveAction: () async -> Void
         
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
         
@@ -45,10 +46,11 @@ extension TagsEditView {
             case invalidCharacters
         }
         
-        init(fileItem: FilesViewItem, useCases: UseCases) {
+        init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
             self.fileItem = fileItem
             self.currentTags = fileItem.tags
             self.useCases = useCases
+            self.postSaveAction = postSaveAction
             
             Task {
                 await loadAllExistingTags()
@@ -122,7 +124,7 @@ extension TagsEditView {
             do {
                 //try await Task.sleep(for: .seconds(2))
                 try await useCases.updateTags.invoke(nodeID: fileItem.id, tags: currentTags)
-                //TODO: trigger files reload
+                await postSaveAction()
                 dismiss.send()
             } catch {
                 //TODO: show error/retry message

@@ -38,8 +38,8 @@ struct TagsEditView: View {
         let getSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
     }
 
-    init(fileItem: FilesViewItem, useCases: UseCases) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases))
+    init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
+        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases, postSaveAction: postSaveAction))
     }
     
     var body: some View {
@@ -264,6 +264,6 @@ struct TagsEditView: View {
         getSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: mockAPI),
     )
     
-    TagsEditView(fileItem: item, useCases: useCases)
+    TagsEditView(fileItem: item, useCases: useCases, postSaveAction: {})
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
