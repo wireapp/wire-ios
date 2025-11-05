@@ -35,7 +35,7 @@ struct WireLogInterpolationTests {
 
         let osl = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!) // TODO: delete
         let l = WireTaggedLogger(tag: "test", handler: osl)
-        l.critical("Lorem \("Ipsum")", .eventID(""))
+        l.critical("Lorem \("Ipsum")", .eventID("overridden")) x
     }
 
 }

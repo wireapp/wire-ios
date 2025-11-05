@@ -33,13 +33,23 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         additionalAttributes: [WireLogAttribute]
     ) {
 
-        let type = type.mappedToOSLogType()
-        let attributes = message.interpolation.attributes.map { "[\($0)]" }
-        let message = (attributes + [message.interpolation.content])
-            .joined(separator: " ")
+        var attributes = [String: String]() // additionalAttributes overwrite message attributes
+        for attribute in message.interpolation.attributes + additionalAttributes {
+            attributes[attribute.key] = attribute.value
+        }
+
+        var attributesString = ""
+        for attributesKey in attributes.keys.sorted() {
+            attributesString += "[\(attributesKey)=\(attributes[attributesKey]!)]"
+        }
+
+        let message = "\(attributesString) \(message.interpolation.content)"
 
         let logger = Logger(subsystem: subsystem, category: tag.rawValue) // TODO: cache instances
-        logger.log(level: type, "\(message, privacy: .public)")
+        logger.log(
+            level: type.mappedToOSLogType(),
+            "\(message, privacy: .public)"
+        )
 
     }
 
