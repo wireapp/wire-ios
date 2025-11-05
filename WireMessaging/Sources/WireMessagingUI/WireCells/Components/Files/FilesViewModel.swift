@@ -83,9 +83,12 @@ package final class FilesViewModel: ObservableObject {
 
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
+    private let createFolderUseCase: WireCellsCreateFolderUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
+    private let cellName: String? // nil when browsing all files
+    private var subfoldersPath: String? = nil // nil when no subfolders (folder is created at the root)
     private var subscriptions = Set<AnyCancellable>()
 
     @Published private(set) var hasMore = true
@@ -94,18 +97,24 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var createFolderView: CreateFolderView?
+    var didCreateFolder: Bool = false
 
     package init(
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         deleteNodesUseCase: WireCellsDeleteNodesUseCase,
+        createFolderUseCase: WireCellsCreateFolderUseCase,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        fileCache: any FileCache
+        fileCache: any FileCache,
+        cellName: String? = nil,
     ) {
         self.fetchNodesUseCase = fetchNodesUseCase
         self.deleteNodesUseCase = deleteNodesUseCase
+        self.createFolderUseCase = createFolderUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
+        self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
 
         bindSearch()
@@ -189,6 +198,30 @@ package final class FilesViewModel: ObservableObject {
             alert = .unknownError
         }
     }
+    
+    func onCreateFolder() {
+        guard let cellName else {
+            return
+        }
+        
+        let viewModel = CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            model: .init(
+                cellName: cellName,
+                subfoldersPath: subfoldersPath
+            )
+        )
+        
+        // to know whether we need to reload nodes.
+        viewModel.$didCreate
+            .sink { [weak self] didCreate in
+                self?.didCreateFolder = didCreate
+            }.store(in: &subscriptions)
+        
+        createFolderView = CreateFolderView(
+            viewModel: viewModel
+        )
+    }
 
     // MARK: - Private
 
@@ -226,7 +259,7 @@ package final class FilesViewModel: ObservableObject {
         do {
             let (newItems, isLastPage) = try await task.value
             let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
-            state = .received(items: receivedItems)
+            state = .received(items: [])
             hasMore = !isLastPage
         } catch is CancellationError {
             return // developer-driven error, discard

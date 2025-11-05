@@ -44,9 +44,13 @@ extension FilesViewModel {
                 fileCache: cache,
                 localAssetStore: localAssetStore
             ),
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: previewNodesRepository()
+            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
-            fileCache: cache
+            fileCache: cache,
+            cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6"
         )
     }
 
@@ -158,4 +162,20 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
     func cancelDownload(nodeID: UUID) {}
 
+}
+
+
+extension CreateFolderViewModel {
+    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
+    static func preview() -> CreateFolderViewModel {
+        let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+        
+        return CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            model: .init(
+                cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+                subfoldersPath: "Test-1/Test-2"
+            )
+        )
+    }
 }

@@ -137,6 +137,7 @@ public extension WireMessagingFactory {
         let filesView: UIHostingController<FilesView>
         filesView = makeFilesHostingController(
             configuration: configuration,
+            cellName: cellName,
             isCellsStatePending: isCellsStatePending
         )
         return filesView
@@ -155,6 +156,7 @@ public extension WireMessagingFactory {
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
         configuration: WireCellsGetNodesRequest.Configuration,
+        cellName: String? = nil,
         isCellsStatePending: Bool = false
     ) -> UIHostingController<T> {
         let viewModel = FilesViewModel(
@@ -167,9 +169,13 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: nodesAPI
+            ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            cellName: cellName
         )
 
         return UIHostingController(rootView: T(viewModel: viewModel))

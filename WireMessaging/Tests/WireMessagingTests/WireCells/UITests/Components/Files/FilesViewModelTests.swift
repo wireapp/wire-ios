@@ -46,6 +46,9 @@ final class FilesViewModelTests {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: nodesRepository
+            ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache

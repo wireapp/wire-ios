@@ -118,10 +118,32 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
     }
+    
+    /// Creates a new folder at the specified path.
+    ///
+    /// - Parameters:
+    ///  - path: The path of the new folder.
+    func createFolder(at path: String) async throws {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().uuidString,
+                type: .collection,
+            )
+        ])
+        
+        
+        _ = try await NodeServiceAPI.create(
+            body: request,
+            apiConfiguration: makeConfiguration()
+        )
+    }
 
-    func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO {
+    func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {
         let request = RestCreateCheckRequest(
-            findAvailablePath: true,
+            findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
                 type: .leaf

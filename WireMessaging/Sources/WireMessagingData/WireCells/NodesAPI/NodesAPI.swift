@@ -49,8 +49,8 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         self.fileManager = fileManager
     }
 
-    package func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult {
-        let result = try await restAPI.preCheck(path: nodePath)
+    package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult {
+        let result = try await restAPI.preCheck(path: nodePath, findAvailablePath: findAvailablePath)
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
@@ -140,6 +140,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func deletePublicLink(linkUUID: UUID) async throws {
         try await restAPI.deletePublicLink(uuid: linkUUID)
+    }
+    
+    package func createFolder(at path: String) async throws {
+        try await restAPI.createFolder(at: path)
     }
 }
 

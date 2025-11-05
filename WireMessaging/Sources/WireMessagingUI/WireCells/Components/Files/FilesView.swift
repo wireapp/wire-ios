@@ -47,12 +47,18 @@ package struct FilesView: FilesViewProtocol {
                         ProgressView()
                             .progressViewStyle(.circular)
                     case let .received(items):
-                        if items.isEmpty {
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask(refreshing: true) }
+                        VStack(spacing: 0) {
+                            if items.isEmpty {
+                                Spacer()
+                                FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+                                Spacer()
+                            } else {
+                                filesList
+                                    .listStyle(.plain)
+                                    .refreshable { reloadTask(refreshing: true) }
+                            }
+                            
+                            createFolderView
                         }
                     case .pending:
                         FilesInfoView(info: .preparingFiles)
@@ -74,7 +80,38 @@ package struct FilesView: FilesViewProtocol {
                     message: { Text($0.message) },
                     actions: { _ in confirmButton }
                 )
+                .sheet(
+                    item: $viewModel.createFolderView,
+                    onDismiss: {
+                        if viewModel.didCreateFolder {
+                            reloadTask()
+                            viewModel.didCreateFolder = false
+                        }
+                    },
+                    content: { $0 }
+                )
+
             }
+        }
+    }
+    
+    private var createFolderView: some View {
+        VStack {
+            Divider()
+
+            HStack(spacing: 29) {
+                Button {
+                    viewModel.onCreateFolder()
+                } label: {
+                    Image(systemName: "plus")
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                }
+
+                Text(Strings.Files.NewFolder.title)
+                    .wireTextStyle(.body2)
+                Spacer()
+            }
+            .padding()
         }
     }
 }
