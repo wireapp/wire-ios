@@ -245,6 +245,7 @@
 		CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */; };
 		CB5A461D2D940BB700D469F1 /* Payload+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */; };
 		CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEA58F192B71179D006DEE32 /* WireRequestStrategySupport.framework */; };
+		CBC41A302EB50DBE000769CE /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		CBF2BD5F2C5BD468002BCBDD /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */; };
 		E60CBEC32B45CCBF00958C10 /* EventPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60CBEC22B45CCBF00958C10 /* EventPayloadDecoder.swift */; };
 		E60E82A42B837B7A00F8DA5C /* FeatureConfigsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60E82A32B837B7A00F8DA5C /* FeatureConfigsPayload.swift */; };
@@ -426,6 +427,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = EEA58F182B71179D006DEE32;
 			remoteInfo = WireRequestStrategySupport;
+		};
+		CBC41A322EB50DBE000769CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 166901611D707509000FE4AF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 166901691D707509000FE4AF;
+			remoteInfo = WireRequestStrategy;
 		};
 		F154EDD61F447BB600CB8184 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -983,6 +991,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBC41A302EB50DBE000769CE /* WireRequestStrategy.framework in Frameworks */,
 				591B6E3F2C8B09B3009F8A7B /* WireTesting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2210,6 +2219,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CBC41A332EB50DBE000769CE /* PBXTargetDependency */,
 			);
 			name = WireRequestStrategyTestHost;
 			productName = WireRequestStrategyTestHost;
@@ -2743,6 +2753,11 @@
 			isa = PBXTargetDependency;
 			target = EEA58F182B71179D006DEE32 /* WireRequestStrategySupport */;
 			targetProxy = CB7979072C73663B006FBA58 /* PBXContainerItemProxy */;
+		};
+		CBC41A332EB50DBE000769CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 166901691D707509000FE4AF /* WireRequestStrategy */;
+			targetProxy = CBC41A322EB50DBE000769CE /* PBXContainerItemProxy */;
 		};
 		F154EDD71F447BB600CB8184 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

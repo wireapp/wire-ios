@@ -16,6 +16,7 @@
 		591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
 		59537D8D2CFF9FB300920B59 /* WireLegacyLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLegacyLogging */; };
 		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
+		CBC41A352EB50F42000769CE /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */; };
 		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		EE9AEC982BD159C700F7853F /* WireNotificationEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC972BD159C700F7853F /* WireNotificationEngine.docc */; };
@@ -27,6 +28,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CBC41A372EB50F42000769CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 067ECB392487A93D00701956;
+			remoteInfo = WireNotificationEngine;
+		};
 		EE76166A299E60C9005DB75F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
@@ -124,6 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBC41A352EB50F42000769CE /* WireNotificationEngine.framework in Frameworks */,
 				591B6E2F2C8B0988009F8A7B /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,6 +311,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CBC41A382EB50F42000769CE /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineTestHost;
 			productName = WireNotificationEngineTestHost;
@@ -409,6 +419,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CBC41A382EB50F42000769CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
+			targetProxy = CBC41A372EB50F42000769CE /* PBXContainerItemProxy */;
+		};
 		EE76166B299E60C9005DB75F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;

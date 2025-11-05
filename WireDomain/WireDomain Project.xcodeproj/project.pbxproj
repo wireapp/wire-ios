@@ -26,6 +26,7 @@
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */ = {isa = PBXBuildFile; productRef = CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
+		CBC41E722EB51569000769CE /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,20 @@
 			remoteGlobalIDString = 017F67812C207A3200B6E02D;
 			remoteInfo = WireDomainSupport;
 		};
+		CBC41E702EB5155D000769CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D0DC9D2C1C8C870076CB1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBC41E642EB514F2000769CE;
+			remoteInfo = WireDomainTestHost;
+		};
+		CBC41E742EB51569000769CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01D0DC9D2C1C8C870076CB1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01D0DCA52C1C8C870076CB1C;
+			remoteInfo = WireDomain;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +75,7 @@
 		01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBC41E652EB514F2000769CE /* WireDomainTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireDomainTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -78,6 +94,7 @@
 		59EA78992D00CF1C002CA0B8 /* WireDomainTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomainTests; sourceTree = "<group>"; };
 		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (595594652DD64BA90084CF2A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
 		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
+		CBC41E662EB514F2000769CE /* TestHost */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestHost; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +138,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CBC41E622EB514F2000769CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBC41E722EB51569000769CE /* WireDomain.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -139,6 +164,7 @@
 				01D0DCA62C1C8C870076CB1C /* WireDomain.framework */,
 				01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */,
 				017F67822C207A3200B6E02D /* WireDomainSupport.framework */,
+				CBC41E652EB514F2000769CE /* WireDomainTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,6 +193,7 @@
 		01D0DCED2C1C8EA10076CB1C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CBC41E662EB514F2000769CE /* TestHost */,
 				5904B7822D315AAC00E866D1 /* TestPlans */,
 				59EA78992D00CF1C002CA0B8 /* WireDomainTests */,
 			);
@@ -245,6 +272,7 @@
 			dependencies = (
 				01D0DCB32C1C8C880076CB1C /* PBXTargetDependency */,
 				5904B1B62D31582700E866D1 /* PBXTargetDependency */,
+				CBC41E712EB5155D000769CE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5904B7822D315AAC00E866D1 /* TestPlans */,
@@ -259,6 +287,29 @@
 			productReference = 01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		CBC41E642EB514F2000769CE /* WireDomainTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBC41E6F2EB514F4000769CE /* Build configuration list for PBXNativeTarget "WireDomainTestHost" */;
+			buildPhases = (
+				CBC41E612EB514F2000769CE /* Sources */,
+				CBC41E622EB514F2000769CE /* Frameworks */,
+				CBC41E632EB514F2000769CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CBC41E752EB51569000769CE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CBC41E662EB514F2000769CE /* TestHost */,
+			);
+			name = WireDomainTestHost;
+			packageProductDependencies = (
+			);
+			productName = WireDomainTestHost;
+			productReference = CBC41E652EB514F2000769CE /* WireDomainTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -266,7 +317,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1530;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					017F67812C207A3200B6E02D = {
@@ -277,6 +328,10 @@
 					};
 					01D0DCAF2C1C8C880076CB1C = {
 						CreatedOnToolsVersion = 15.3;
+						TestTargetID = CBC41E642EB514F2000769CE;
+					};
+					CBC41E642EB514F2000769CE = {
+						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
@@ -317,6 +372,7 @@
 			targets = (
 				01D0DCA52C1C8C870076CB1C /* WireDomain */,
 				01D0DCAF2C1C8C880076CB1C /* WireDomainTests */,
+				CBC41E642EB514F2000769CE /* WireDomainTestHost */,
 				017F67812C207A3200B6E02D /* WireDomainSupport */,
 			);
 		};
@@ -338,6 +394,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		01D0DCAE2C1C8C880076CB1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBC41E632EB514F2000769CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -390,6 +453,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CBC41E612EB514F2000769CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -407,6 +477,16 @@
 			isa = PBXTargetDependency;
 			target = 017F67812C207A3200B6E02D /* WireDomainSupport */;
 			targetProxy = 5904B1B52D31582700E866D1 /* PBXContainerItemProxy */;
+		};
+		CBC41E712EB5155D000769CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBC41E642EB514F2000769CE /* WireDomainTestHost */;
+			targetProxy = CBC41E702EB5155D000769CE /* PBXContainerItemProxy */;
+		};
+		CBC41E752EB51569000769CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01D0DCA52C1C8C870076CB1C /* WireDomain */;
+			targetProxy = CBC41E742EB51569000769CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -705,6 +785,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireDomainTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WireDomainTestHost";
 			};
 			name = Debug;
 		};
@@ -723,6 +804,75 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireDomainTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WireDomainTestHost";
+			};
+			name = Release;
+		};
+		CBC41E6D2EB514F4000769CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CBC41E6E2EB514F4000769CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -763,6 +913,15 @@
 			buildConfigurations = (
 				01D0DCBE2C1C8C880076CB1C /* Debug */,
 				01D0DCBF2C1C8C880076CB1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBC41E6F2EB514F4000769CE /* Build configuration list for PBXNativeTarget "WireDomainTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBC41E6D2EB514F4000769CE /* Debug */,
+				CBC41E6E2EB514F4000769CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

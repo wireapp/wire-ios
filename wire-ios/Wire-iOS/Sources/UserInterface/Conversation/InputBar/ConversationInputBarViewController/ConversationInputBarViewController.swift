@@ -1026,7 +1026,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 
     private func sketch() {
-        inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
         viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
