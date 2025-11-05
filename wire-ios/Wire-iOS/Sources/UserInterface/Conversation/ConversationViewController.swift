@@ -469,14 +469,16 @@ final class ConversationViewController: UIViewController {
                 )
             )
         }
-        actions.append(UIAction(
+        let conversationDetailsAction = UIAction(
             title: L10n.Localizable.Conversation.Action.conversationDetails,
             image: UIImage(systemName: "info.circle"),
-            identifier: UIAction.Identifier(Locators.ActiveConversationPage.conversationDetailsButton.rawValue),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
             }
-        ))
+        )
+        conversationDetailsAction.accessibilityIdentifier = Locators.ActiveConversationPage.conversationDetailsButton
+            .rawValue
+        actions.append(conversationDetailsAction)
 
         let menu = UIMenu(title: "", children: actions)
 

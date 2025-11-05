@@ -25,10 +25,6 @@ class AccountSettingsPage: PageModel {
         nameField
     }
 
-//    var accountSettingsPageHeader: XCUIElement {
-//        app.staticTexts["Account"]
-//    }
-
     var nameField: XCUIElement {
         app.descendants(matching: .any)[Locators.AccountSettingsPage.NameField.rawValue].firstMatch
     }

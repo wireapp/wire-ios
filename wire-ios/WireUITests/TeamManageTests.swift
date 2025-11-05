@@ -41,13 +41,6 @@ final class TeamManageTests: WireUITestCase {
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
         XCTAssertTrue(userAccountPage.manageTeamButton.exists, "Manage Team button is not visible")
-
-        conversationPage = try userAccountPage.closeAccountPage()
-        let settingsPage = try conversationPage.openSettings()
-
-        try settingsPage.openAccountSettings()
-            .logout()
-            .enterPassword(user.password)
     }
 
     @MainActor
