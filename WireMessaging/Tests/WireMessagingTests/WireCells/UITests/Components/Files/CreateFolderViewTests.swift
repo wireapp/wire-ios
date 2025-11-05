@@ -16,4 +16,121 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import Combine
+import SwiftUI
+import WireDesign
+import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
+import WireTestingPackage
+import XCTest
+
+@testable import WireMessagingUI
+
+final class CreateFolderViewTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+    private var createFolderUseCase: MockWireCellsCreateFolderUseCaseProtocol!
+    private var viewModel: CreateFolderViewModel!
+
+    @MainActor
+    override func setUp() async throws {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+        createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+
+        let createFolderModel = CreateFolderViewModel.CreateFolderModel(
+            cellName: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com",
+            subfoldersPath: "Folder-1/Folder-2"
+        )
+
+        viewModel = CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            model: createFolderModel
+        )
+    }
+
+    @MainActor
+    override func tearDown() async throws {
+        snapshotHelper = nil
+        createFolderUseCase = nil
+        viewModel = nil
+    }
+
+    @MainActor
+    func testCreateFolderView_WrongCharacterInputError() {
+        let view = makeView()
+        viewModel.folderNameInput = "/"
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testCreateFolderView_TooLongInputError() {
+        let view = makeView()
+        viewModel.folderNameInput = Array(repeating: "r", count: 65).joined()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testCreateFolderView_Loading() {
+        let view = makeView()
+        viewModel.isLoading = true
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testCreateFolderView_FolderAlreadyExistsError() async {
+        let view = makeView()
+        createFolderUseCase.invokeRootPathSubfoldersPathFolderName_MockError = WireCellsCreateFolderUseCaseError
+            .folderAlreadyExists
+        _ = await viewModel.create()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testCreateFolderView_EmptyInput() {
+        let view = makeView()
+        viewModel.folderNameInput = ""
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    private func makeView() -> some View {
+        let viewModel = viewModel!
+
+        return CreateFolderView(viewModel: viewModel)
+            .frame(width: 375, height: 667)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+
+}

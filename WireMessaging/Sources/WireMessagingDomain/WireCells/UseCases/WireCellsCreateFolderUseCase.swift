@@ -25,7 +25,7 @@ package enum WireCellsCreateFolderUseCaseError: Error {
 
 /// Creates a folder on the server.
 package struct WireCellsCreateFolderUseCase: WireCellsCreateFolderUseCaseProtocol {
-    
+
     private let nodesRepository: any WireCellsNodesRepositoryProtocol
 
     package init(
@@ -33,19 +33,19 @@ package struct WireCellsCreateFolderUseCase: WireCellsCreateFolderUseCaseProtoco
     ) {
         self.nodesRepository = nodesRepository
     }
-    
+
     package func invoke(
         rootPath: String,
         subfoldersPath: String?,
         folderName: String
     ) async throws {
-        
+
         let targetPath = if let subfoldersPath {
             rootPath + "/" + subfoldersPath + "/" + folderName
         } else {
             rootPath + "/" + folderName
         }
-        
+
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(
             nodePath: targetPath,
@@ -63,5 +63,5 @@ package struct WireCellsCreateFolderUseCase: WireCellsCreateFolderUseCaseProtoco
             throw WireCellsCreateFolderUseCaseError.serverFailedToCreateFolder
         }
     }
-    
+
 }

@@ -26,7 +26,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct CreateFolderView: View, Identifiable {
     @StateObject package var viewModel: CreateFolderViewModel
     @Environment(\.dismiss) var dismiss
-    
+
     var id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> CreateFolderViewModel) {

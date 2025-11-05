@@ -118,7 +118,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
     }
-    
+
     /// Creates a new folder at the specified path.
     ///
     /// - Parameters:
@@ -133,8 +133,7 @@ final class RestAPI: Sendable {
                 type: .collection,
             )
         ])
-        
-        
+
         _ = try await NodeServiceAPI.create(
             body: request,
             apiConfiguration: makeConfiguration()

@@ -57,7 +57,7 @@ package struct FilesView: FilesViewProtocol {
                                     .listStyle(.plain)
                                     .refreshable { reloadTask(refreshing: true) }
                             }
-                            
+
                             createFolderView
                         }
                     case .pending:
@@ -95,7 +95,7 @@ package struct FilesView: FilesViewProtocol {
             }
         }
     }
-    
+
     private var createFolderView: some View {
         VStack(spacing: 0) {
             Divider()

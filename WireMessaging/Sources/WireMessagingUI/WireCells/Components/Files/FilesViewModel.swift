@@ -88,7 +88,7 @@ package final class FilesViewModel: ObservableObject {
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
-    private var subfoldersPath: String? = nil // nil when no subfolders (folder is created at the root)
+    private var subfoldersPath: String? // nil when no subfolders (folder is created at the root)
     private var subscriptions = Set<AnyCancellable>()
 
     @Published private(set) var hasMore = true
@@ -198,12 +198,12 @@ package final class FilesViewModel: ObservableObject {
             alert = .unknownError
         }
     }
-    
+
     func onCreateFolder() {
         guard let cellName else {
             return
         }
-        
+
         let viewModel = CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
             model: .init(
@@ -211,13 +211,13 @@ package final class FilesViewModel: ObservableObject {
                 subfoldersPath: subfoldersPath
             )
         )
-        
+
         // to know whether we need to reload nodes.
         viewModel.$didCreate
             .sink { [weak self] didCreate in
                 self?.didCreateFolder = didCreate
             }.store(in: &subscriptions)
-        
+
         createFolderView = CreateFolderView(
             viewModel: viewModel
         )

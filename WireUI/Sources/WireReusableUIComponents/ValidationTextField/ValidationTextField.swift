@@ -23,13 +23,13 @@ import WireDesign
 public struct ValidationTextField: View {
     @FocusState private var isFocusedState: Bool
     @ScaledMetric private var fieldHeight: CGFloat = 48
-    
+
     @Binding var textInput: String
     @Binding var errorMessage: String?
     @Binding var isFocused: Bool
     private let title: String?
     private let placeholder: String?
-    
+
     public init(
         title: String?,
         placeholder: String?,
@@ -43,7 +43,7 @@ public struct ValidationTextField: View {
         self.title = title
         self.placeholder = placeholder
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             if let title {
@@ -51,7 +51,7 @@ public struct ValidationTextField: View {
                     .wireTextStyle(.h4)
                     .foregroundColor(titleColor)
             }
-            
+
             HStack {
                 TextField(placeholder ?? "", text: $textInput)
                     .autocorrectionDisabled()
@@ -67,14 +67,14 @@ public struct ValidationTextField: View {
                     .onAppear {
                         $isFocusedState.wrappedValue = isFocused
                     }
-                
+
                 Spacer()
-                
+
                 Button(action: {
                     if !shouldShowErrorMessage {
                         textInput = ""
                     }
-                    
+
                 }, label: {
                     Image(systemName: shouldShowErrorMessage ? "exclamationmark.circle" : "xmark.circle.fill")
                         .foregroundColor(iconColor)
@@ -91,7 +91,7 @@ public struct ValidationTextField: View {
                         lineWidth: 1
                     )
             )
-            
+
             if shouldShowErrorMessage, let errorMessage {
                 Text(errorMessage)
                     .font(.caption)
@@ -99,13 +99,13 @@ public struct ValidationTextField: View {
             }
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private var shouldShowErrorMessage: Bool {
         errorMessage != nil
     }
-    
+
     private var titleColor: Color {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
@@ -113,7 +113,7 @@ public struct ValidationTextField: View {
             ColorTheme.Base.primary.color
         }
     }
-    
+
     private var borderColor: Color {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
@@ -121,7 +121,7 @@ public struct ValidationTextField: View {
             ColorTheme.Base.primary.color
         }
     }
-    
+
     private var iconColor: Color {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
@@ -139,7 +139,7 @@ public struct ValidationTextField: View {
 
 private struct ValidationTextField_PreviewView: View {
     @StateObject var viewModel: ValidationTextField_PreviewViewModel
-    
+
     var body: some View {
         ValidationTextField(
             title: "Username",
@@ -153,9 +153,9 @@ private struct ValidationTextField_PreviewView: View {
 private final class ValidationTextField_PreviewViewModel: ObservableObject {
     @Published var text: String = ""
     @Published var errorMessage: String?
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     init() {
         $text
             .map { input -> String? in

@@ -40,14 +40,13 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to delete.
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
-    
+
     /// Creates a folder at the specified path.
     ///
     /// - Parameters:
     ///  - path: The path of the new folder.
     func createFolder(at path: String) async throws
-    
-    
+
     /// Apply some pre-validation checks on node name before sending an upload
     ///
     /// - Parameters:

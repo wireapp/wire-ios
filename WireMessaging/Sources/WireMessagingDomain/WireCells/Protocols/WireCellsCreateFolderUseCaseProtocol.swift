@@ -28,7 +28,8 @@ package protocol WireCellsCreateFolderUseCaseProtocol: Sendable {
     ///
     /// - Parameters:
     ///   - rootPath: The root container (aka cell name) in which the folder will be created.
-    ///   - subfoldersPath: The path of the subfolder where the new folder should be created. Pass `nil` to create it directly under the root container.
+    ///   - subfoldersPath: The path of the subfolder where the new folder should be created. Pass `nil` to create it
+    /// directly under the root container.
     ///   - folderName: The name of the folder to create.
     func invoke(
         rootPath: String,

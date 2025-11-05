@@ -164,12 +164,11 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
 }
 
-
 extension CreateFolderViewModel {
     /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
     static func preview() -> CreateFolderViewModel {
         let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
-        
+
         return CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
             model: .init(
