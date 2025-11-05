@@ -60,33 +60,12 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
             for event in events {
-                logger.info(
-                    "[CALLING-DEBUG] event: \(event)",
-                    attributes: .newNSE, .safePublic
-                )
-
-                // DEBUG: Log calling-related events with more details
-                if case let .conversation(conversationEvent) = event {
-//                    logger.info(
-//                        "[CALLING-DEBUG] Backend event received - conversationID:
-//                        \(conversationEvent.conversationID.id.safeForLoggingDescription), senderID:
-//                        \(conversationEvent.senderID.id.safeForLoggingDescription), type: \(String(describing:
-//                        conversationEvent))",
-//                        attributes: .newNSE, .safePublic
-//                    )
-                }
-
                 if let notification = await generateNotification(for: event) {
                     logger.info(
                         "Generated a notification from an event",
                         attributes: .newNSE, .safePublic
                     )
                     notifications.append(notification)
-                } else {
-                    logger.info(
-                        "[CALLING-DEBUG] No notification generated for event",
-                        attributes: .newNSE, .safePublic
-                    )
                 }
             }
         }

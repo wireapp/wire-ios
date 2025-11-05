@@ -426,10 +426,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "processing live event: \(event.name)",
                 attributes: [.eventEnvelopeID: envelope.id]
             )
-            logger.debug(
-                "processing DEBUG live event: \(event)",
-                attributes: [.eventEnvelopeID: envelope.id]
-            )
             try await processor.processEvent(event)
         }
     }

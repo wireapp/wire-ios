@@ -65,7 +65,7 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
         coreDataStackHelper = nil
     }
 
-    // MARK: - Self User Tests
+    // MARK: - Self user
 
     func test_validate_RejectsSelfUserEventsInGroupConversation() async {
         // Given
@@ -139,7 +139,7 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
         XCTAssertTrue(result)
     }
 
-    // MARK: - Muted Conversation Tests
+    // MARK: - Muted conversation
 
     func test_validate_RejectsMutedGroupConversation() async {
         // Given
@@ -158,7 +158,7 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
         XCTAssertFalse(result)
     }
 
-    // MARK: - Already Read Events Tests
+    // MARK: - Last read
 
     func test_validate_RejectsAlreadyReadEvents() async {
         // Given
@@ -284,5 +284,4 @@ final class ConversationEventNotificationBuilderValidatorTests: XCTestCase {
     private enum Scaffolding {
         static let qualifiedID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
     }
-
 }
