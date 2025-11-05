@@ -145,6 +145,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func updateTags(nodeID: UUID, tags: [String]) async throws {
         try await restAPI.updateTags(uuid: nodeID, tags: tags)
     }
+    
+    package func getAllTags() async throws -> [String] {
+        try await restAPI.getAllTags()
+    }
 }
 
 private extension CellsSDK.ErrorResponse {

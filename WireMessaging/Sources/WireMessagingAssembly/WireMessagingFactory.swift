@@ -167,16 +167,19 @@ public extension WireMessagingFactory {
         isCellsStatePending: Bool = false
     ) -> UIHostingController<T> {
         let viewModel = FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: configuration,
-                repository: nodesAPI
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: configuration,
+                    repository: nodesAPI
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: nodesAPI,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
             ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesAPI,
-                fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            updateTagsUseCase: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache

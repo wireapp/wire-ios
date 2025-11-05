@@ -24,6 +24,7 @@ extension TagsEditView {
     @MainActor
     final class ViewModel: ObservableObject {
         private let fileItem: FilesViewItem
+        private let useCases: UseCases
         
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
         
@@ -33,8 +34,6 @@ extension TagsEditView {
         private let serverTags: [String] = ["Never", "gonna", "give", "you", "up"]
         
         @Published var currentTags: [String] = []
-        
-        private let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
         
         @Published var isPerformingSave: Bool = false
         
@@ -47,10 +46,10 @@ extension TagsEditView {
             case invalidCharacters
         }
         
-        init(fileItem: FilesViewItem, updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol) {
+        init(fileItem: FilesViewItem, useCases: UseCases) {
             self.fileItem = fileItem
             self.currentTags = fileItem.tags
-            self.updateTagsUseCase = updateTagsUseCase
+            self.useCases = useCases
         }
         
         var suggestedTags: [String] {
@@ -111,7 +110,7 @@ extension TagsEditView {
             
             do {
                 //try await Task.sleep(for: .seconds(2))
-                try await updateTagsUseCase.invoke(nodeID: fileItem.id, tags: currentTags)
+                try await useCases.updateTags.invoke(nodeID: fileItem.id, tags: currentTags)
                 //TODO: trigger files reload
                 dismiss.send()
             } catch {

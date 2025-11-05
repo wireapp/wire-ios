@@ -225,6 +225,14 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
     }
+    
+    func getAllTags() async throws -> [String] {
+        let response = try await NodeServiceAPI.listNamespaceValues(
+            namespace: "usermeta-tags",
+            apiConfiguration: makeConfiguration()
+        )
+        return response.values ?? []
+    }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()

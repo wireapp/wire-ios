@@ -18,15 +18,16 @@
 
 package import Foundation
 
-/// Sets a new list of tags for a file or folder, represented by the given node ID.
-package struct WireCellsUpdateTagsUseCase<NodesAPI: NodesAPIProtocol>: WireCellsUpdateTagsUseCaseProtocol {
+/// Returns a list of all existing tags, collected from all files and folders.
+/// Is used to suggest new tags.
+package struct WireCellsGetTagSuggestionsUseCase<NodesAPI: NodesAPIProtocol>: WireCellsGetTagSuggestionsUseCaseProtocol {
     private let nodesAPI: NodesAPI
     
     package init(nodesAPI: NodesAPI) {
         self.nodesAPI = nodesAPI
     }
     
-    package func invoke(nodeID: UUID, tags: [String]) async throws {
-        try await nodesAPI.updateTags(nodeID: nodeID, tags: tags)
+    package func invoke() async throws -> [String] {
+        try await nodesAPI.getAllTags()
     }
 }

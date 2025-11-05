@@ -32,9 +32,14 @@ struct TagsEditView: View {
     
     private let horizontalPadding: CGFloat = 16
     private let tagBubbleSpacing: CGFloat = 8
+    
+    struct UseCases {
+        let updateTags: any WireCellsUpdateTagsUseCaseProtocol
+        let getSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
+    }
 
-    init(fileItem: FilesViewItem, updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, updateTagsUseCase: updateTagsUseCase))
+    init(fileItem: FilesViewItem, useCases: UseCases) {
+        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases))
     }
     
     var body: some View {
@@ -252,8 +257,12 @@ struct TagsEditView: View {
     )
     
     let mockAPI = MockNodesAPIProtocol()
-    let useCase = WireCellsUpdateTagsUseCase(nodesAPI: mockAPI)
     
-    TagsEditView(fileItem: item, updateTagsUseCase: useCase)
+    let useCases = TagsEditView.UseCases(
+        updateTags: WireCellsUpdateTagsUseCase(nodesAPI: mockAPI),
+        getSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: mockAPI),
+    )
+    
+    TagsEditView(fileItem: item, useCases: useCases)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

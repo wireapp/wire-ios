@@ -78,7 +78,13 @@ package struct FilesView: FilesViewProtocol {
             .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                 switch navigationItem {
                 case .editTags(fileItem: let fileItem):
-                    TagsEditView(fileItem: fileItem, updateTagsUseCase: viewModel.updateTagsUseCase)
+                    TagsEditView(
+                        fileItem: fileItem,
+                        useCases: .init(
+                            updateTags: viewModel.useCases.updateTags,
+                            getSuggestions: viewModel.useCases.getTagSuggestions
+                        )
+                    )
                 }
             }
         }

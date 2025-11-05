@@ -94,10 +94,28 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
+    
+    package struct UseCases {
+        package init(
+            fetchNodes: WireCellsFetchNodesUseCase,
+            deleteNodes: WireCellsDeleteNodesUseCase,
+            updateTags: any WireCellsUpdateTagsUseCaseProtocol,
+            getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol) {
 
-    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
-    private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
-    let updateTagsUseCase: any WireCellsUpdateTagsUseCaseProtocol
+            self.fetchNodes = fetchNodes
+            self.deleteNodes = deleteNodes
+            self.updateTags = updateTags
+            self.getTagSuggestions = getTagSuggestions
+        }
+        
+        let fetchNodes: WireCellsFetchNodesUseCase
+        let deleteNodes: WireCellsDeleteNodesUseCase
+        //TODO: test without 'any'
+        let updateTags: any WireCellsUpdateTagsUseCaseProtocol
+        let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
+    }
+
+    let useCases: UseCases
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
@@ -112,16 +130,12 @@ package final class FilesViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
 
     package init(
-        fetchNodesUseCase: WireCellsFetchNodesUseCase,
-        deleteNodesUseCase: WireCellsDeleteNodesUseCase,
-        updateTagsUseCase: some WireCellsUpdateTagsUseCaseProtocol,
+        useCases: UseCases,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
-        self.fetchNodesUseCase = fetchNodesUseCase
-        self.deleteNodesUseCase = deleteNodesUseCase
-        self.updateTagsUseCase = updateTagsUseCase
+        self.useCases = useCases
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
@@ -268,7 +282,7 @@ package final class FilesViewModel: ObservableObject {
     private nonisolated func fetchItems(
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
-        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
+        let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
@@ -318,7 +332,7 @@ package final class FilesViewModel: ObservableObject {
         state = .received(items: Self.processItems(currentItems))
 
         do {
-            try await deleteNodesUseCase.invoke(nodeIDs: [asset.id])
+            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id])
         } catch {
             guard state.isLoaded else { return }
 

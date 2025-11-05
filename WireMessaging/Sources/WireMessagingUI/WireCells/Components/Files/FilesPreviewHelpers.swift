@@ -35,17 +35,22 @@ extension FilesViewModel {
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root")),
-                repository: previewNodesRepository()
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: previewNodesRepository(),
-                fileCache: cache,
-                localAssetStore: localAssetStore
-            ),
-            updateTagsUseCase: WireCellsUpdateTagsUseCase(
-                nodesAPI: previewTagsApi()
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: .conversationFileView(root: .path("root")),
+                    repository: previewNodesRepository()
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(
+                    nodesAPI: previewTagsApi()
+                ),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(
+                    nodesAPI: previewTagsApi()
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),

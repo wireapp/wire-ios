@@ -16,17 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
-/// Sets a new list of tags for a file or folder, represented by the given node ID.
-package struct WireCellsUpdateTagsUseCase<NodesAPI: NodesAPIProtocol>: WireCellsUpdateTagsUseCaseProtocol {
-    private let nodesAPI: NodesAPI
-    
-    package init(nodesAPI: NodesAPI) {
-        self.nodesAPI = nodesAPI
-    }
-    
-    package func invoke(nodeID: UUID, tags: [String]) async throws {
-        try await nodesAPI.updateTags(nodeID: nodeID, tags: tags)
-    }
+public protocol WireCellsGetTagSuggestionsUseCaseProtocol: Sendable {
+    func invoke() async throws -> [String]
 }
