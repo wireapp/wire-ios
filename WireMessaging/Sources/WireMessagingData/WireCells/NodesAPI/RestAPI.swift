@@ -292,15 +292,12 @@ private extension WireCellsGetNodesRequest {
                     deleted: .not,
                     isDraft: false
                 ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
                 type: isFoldersEnabled ? .unknown : .leaf
             )
             request.scope = RestLookupScope(
                 recursive: isFoldersEnabled ? false : true,
                 root: RestNodeLocator(root)
             )
-            request.sortDirDesc = true
-            request.sortField = "mtime"
         case .filesBrowserView:
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
