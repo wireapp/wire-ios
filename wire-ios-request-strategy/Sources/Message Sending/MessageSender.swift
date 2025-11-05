@@ -43,7 +43,7 @@ public protocol MessageSenderInterface {
 
 // sourcery: AutoMockable
 public protocol InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: MLSGroupID, epoch: Int64) async
+    func invoke(groupID: MLSGroupID, epoch: UInt64) async
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -142,12 +142,16 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            return switch messageProtocol {
+            switch messageProtocol {
             case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
             }
+
+            // Success! Reset count
+            retryCount = 0
+
         } catch let networkError as NetworkError {
             try await context.perform { [self] in
                 try handleFederationFailure(networkError: networkError, message: message)
@@ -448,8 +452,19 @@ public final class MessageSender: MessageSenderInterface {
                 await initiateResetMLSConversationUseCase
                     .invoke(
                         groupID: groupID,
-                        epoch: Int64(epoch ?? 0)
+                        epoch: epoch ?? 0
                     )
+            case let .groupOutOfSync(missingUsers):
+                guard retryCount < maxRetryAttempts else {
+                    retryCount = 0
+                    throw error
+                }
+
+                retryCount += 1
+
+                let users = missingUsers.map { MLSUser($0) }
+                try await mlsService.addMembersToConversation(with: users, for: groupID)
+                try await sendMessage(message: message)
             default:
                 throw error
             }

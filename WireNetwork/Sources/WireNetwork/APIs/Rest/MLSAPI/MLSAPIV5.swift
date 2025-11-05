@@ -97,7 +97,7 @@ private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible 
 
 }
 
-private struct CommitBundleResponseV5: Decodable, ToAPIModelConvertible {
+struct CommitBundleResponseV5: Decodable, ToAPIModelConvertible {
 
     let time: UTCTime?
     let events: [UpdateEventDecodingProxy]

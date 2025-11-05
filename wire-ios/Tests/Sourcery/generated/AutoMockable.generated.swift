@@ -1858,20 +1858,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations: [(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID])] = []
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod: ((String, Bool, [UUID]) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue: UIViewController?
+    var makeFilesViewCellNameIsCellsStatePending_Invocations: [(cellName: String, isCellsStatePending: Bool)] = []
+    var makeFilesViewCellNameIsCellsStatePending_MockMethod: ((String, Bool) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePending_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePendingNodeIDs_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, nodeIDs: nodeIDs))
+    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePending_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending))
 
-        if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockMethod {
-            return mock(cellName, isCellsStatePending, nodeIDs)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePendingNodeIDs_MockValue {
+        if let mock = makeFilesViewCellNameIsCellsStatePending_MockMethod {
+            return mock(cellName, isCellsStatePending)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePending_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingNodeIDs`")
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePending`")
         }
     }
 
