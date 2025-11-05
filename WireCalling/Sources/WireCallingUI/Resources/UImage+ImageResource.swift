@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class ConversationsAPIV13: ConversationsAPIV12 {
-
-    override var apiVersion: APIVersion { .v13 }
+import UIKit
 
 extension UIImage {
     static let videoCall = UIImage(resource: .videoCall)

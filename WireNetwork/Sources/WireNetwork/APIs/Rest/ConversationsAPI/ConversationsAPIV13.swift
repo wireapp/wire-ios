@@ -20,6 +20,4 @@ final class ConversationsAPIV13: ConversationsAPIV12 {
 
     override var apiVersion: APIVersion { .v13 }
 
-extension UIImage {
-    static let videoCall = UIImage(resource: .videoCall)
 }
