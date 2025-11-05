@@ -39,6 +39,6 @@ protocol WorkItem: Sendable {
 
     /// Cancel the work item.
 
-//    func cancel() async
+    func cancel() async
 
 }
