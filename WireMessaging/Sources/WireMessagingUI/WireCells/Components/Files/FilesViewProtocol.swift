@@ -26,6 +26,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 /// common reusable views.
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
+    var isBrowsing: Bool { get }
     init(viewModel: FilesViewModel)
 }
 
@@ -61,7 +62,10 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
+        FilesViewItemView(
+            viewModel: viewModel.itemViewModel(index: index),
+            canRenameFile: !isBrowsing // action not allowed when browsing files
+        )
     }
 
     var loadMoreRow: some View {

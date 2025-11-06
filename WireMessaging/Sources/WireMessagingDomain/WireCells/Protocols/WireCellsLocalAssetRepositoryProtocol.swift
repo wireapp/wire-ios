@@ -34,7 +34,7 @@ package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
     @MainActor
-    func refreshAssetMetadata(nodeID: UUID) async throws
+    func refreshAssetMetadata(nodeID: UUID) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset)
 
     /// Downloads the asset for the given `nodeID`.
     ///

@@ -16,24 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+public import Foundation
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells
+// sourcery: AutoMockable
+public protocol WireCellsRenameNodeUseCaseProtocol: Sendable {
 
-// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
-public struct AllFilesView: View {
-    @State private var searchText = ""
+    func invoke(
+        nodeID: UUID,
+        nodeFilepath: String,
+        newFilename: String
+    ) async throws
 
-    public init() {}
-
-    public var body: some View {
-        Text("")
-            .navigationTitle(Strings.AllFiles.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, placement: .navigationBarDrawer)
-    }
-}
-
-#Preview {
-    AllFilesView()
 }
