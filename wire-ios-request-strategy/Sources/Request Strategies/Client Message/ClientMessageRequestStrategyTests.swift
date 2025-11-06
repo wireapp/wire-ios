@@ -287,7 +287,7 @@ extension ClientMessageRequestStrategyTests {
 
             wait(for: [didComplete])
             XCTAssertTrue(message.isExpired)
-            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
     }
 }
