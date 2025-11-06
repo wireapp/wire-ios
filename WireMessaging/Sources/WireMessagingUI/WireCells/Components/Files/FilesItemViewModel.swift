@@ -32,6 +32,7 @@ final class FilesItemViewModel: ObservableObject {
     private let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem) async -> Void
+    private let onRename: ((FilesViewItem) async -> Void)?
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
@@ -47,6 +48,7 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
         onDelete: @escaping (FilesViewItem) async -> Void,
+        onRename: ((FilesViewItem) async -> Void)? = nil,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
@@ -55,6 +57,7 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onOpen = onOpen
         self.onDelete = onDelete
+        self.onRename = onRename
         self.fileName = item.filename
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -105,6 +108,10 @@ final class FilesItemViewModel: ObservableObject {
 
     func open() async {
         await onOpen(item)
+    }
+
+    func rename() async {
+        await onRename?(item)
     }
 
     func download() async {
