@@ -447,7 +447,7 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
 
     func fetchMessages() throws -> [ZMMessage] {
         let fetchRequest = ZMMessage.fetchRequest()
-        let fetchResult = try context!.fetch(fetchRequest) as? [ZMMessage]
+        let fetchResult = try context.fetch(fetchRequest) as? [ZMMessage]
         return try XCTUnwrap(fetchResult)
     }
 }
