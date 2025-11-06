@@ -30,8 +30,14 @@ struct FilesViewItemView: View {
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
 
-    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
+    private var canRenameFile: Bool
+
+    init(
+        viewModel: @autoclosure @escaping () -> FilesItemViewModel,
+        canRenameFile: Bool = false
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.canRenameFile = canRenameFile
     }
 
     var body: some View {
@@ -69,10 +75,11 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    // FIXME: [WPB-19393] Enable
-//                    Button(action: rename) {
-//                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-//                    }
+                    if canRenameFile {
+                        Button(action: rename) {
+                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                    }
 
                     Button(role: .destructive, action: delete) {
                         Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
@@ -118,7 +125,7 @@ struct FilesViewItemView: View {
     }
 
     private func rename() {
-        // FIXME: [WPB-19393] Implement
+        Task { await viewModel.rename() }
     }
 
     private func delete() {
@@ -136,6 +143,6 @@ struct FilesViewItemView: View {
 }
 
 #Preview {
-    FilesViewItemView(viewModel: .preview())
+    FilesViewItemView(viewModel: .preview(), canRenameFile: true)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

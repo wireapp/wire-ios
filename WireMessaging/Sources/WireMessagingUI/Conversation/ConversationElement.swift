@@ -16,24 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+import Foundation
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells
+package enum ConversationElement: Hashable, Sendable {
 
-// TODO: [WPB-21030] view + view model to implement, potentially reuse FilesView and FilesViewModel.
-public struct AllFilesView: View {
-    @State private var searchText = ""
+    case text(TextMessageViewModel)
+    // case image, video, system, etc
 
-    public init() {}
-
-    public var body: some View {
-        Text("")
-            .navigationTitle(Strings.AllFiles.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, placement: .navigationBarDrawer)
-    }
-}
-
-#Preview {
-    AllFilesView()
 }
