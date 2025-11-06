@@ -16,25 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import UIKit
+import Foundation
 
-class MessageCollectionViewCell: UICollectionViewCell {
+package enum ConversationElement: Hashable, Sendable {
 
-    // reuse identifier for each message type
-    // one for now, later will be improved
-    static let reuseIdentifier = "MessageCollectionViewCell"
+    case text(TextMessageViewModel)
+    // case image, video, system, etc
 
-    var messageType: MessageType? {
-        didSet {
-            guard let messageType else { return }
-            switch messageType {
-            case let .text(viewModel):
-                let config = UIHostingConfiguration {
-                    TextMessageView(viewModel: viewModel)
-                }
-                contentConfiguration = config
-            }
-        }
-    }
 }
