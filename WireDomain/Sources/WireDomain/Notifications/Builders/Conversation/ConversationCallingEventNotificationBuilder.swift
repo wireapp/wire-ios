@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
@@ -37,15 +38,19 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return nil
         }
 
-        var resolvedConversationID: ConversationID {
+        let resolvedConversationID: ConversationID = {
             let callingConversationID = calling.qualifiedConversationID
             guard !callingConversationID.id.isEmpty,
                   let conversationUUID = UUID(uuidString: callingConversationID.id)
             else {
+                WireLogger.calling.warn(
+                    "Falling back to original conversationID. Calling conversationID is empty or invalid",
+                    attributes: .newNSE
+                )
                 return conversationID
             }
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
-        }
+        }()
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
