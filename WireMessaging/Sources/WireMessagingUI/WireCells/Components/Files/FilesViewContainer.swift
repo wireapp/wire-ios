@@ -29,6 +29,7 @@ package struct FilesViewContainer: View {
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
+    private let isFoldersEnabled: Bool
 
     package init(
         cellName: String,
@@ -36,7 +37,8 @@ package struct FilesViewContainer: View {
         isCellsStatePending: Bool,
         localAssetStore: any WireCellsLocalAssetStoreProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        fileCache: any FileCache
+        fileCache: any FileCache,
+        isFoldersEnabled: Bool
     ) {
         self.cellName = cellName
         self.nodesRepository = nodesRepository
@@ -44,6 +46,7 @@ package struct FilesViewContainer: View {
         self.localAssetStore =  localAssetStore
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
+        self.isFoldersEnabled = isFoldersEnabled
     }
 
     var body: some View {
@@ -65,7 +68,7 @@ package struct FilesViewContainer: View {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(
                     root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    isFoldersEnabled: true
+                    isFoldersEnabled: isFoldersEnabled
                 ),
                 repository: nodesRepository
             ),

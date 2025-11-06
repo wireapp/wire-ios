@@ -73,7 +73,7 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
-        self.isFoldersEnabled = true
+        self.isFoldersEnabled = isFoldersEnabled
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -143,7 +143,8 @@ public extension WireMessagingFactory {
                 isCellsStatePending: isCellsStatePending,
                 localAssetStore: localAssetStore,
                 localAssetRepository: localAssetRepository,
-                fileCache: fileCache
+                fileCache: fileCache,
+                isFoldersEnabled: isFoldersEnabled
             )
         )
     }
