@@ -29,6 +29,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     let attachments: [WireCellsMessageAttachment]
     let alignment: HorizontalAlignment
@@ -39,7 +40,8 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest
+        lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier
     ) {
         self.attachments = attachments
         self.alignment = alignment
@@ -47,6 +49,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         self.getAssetUseCase = getAssetUseCase
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
+        self.nodeRenameNotifier = nodeRenameNotifier
     }
 
     /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
@@ -58,6 +61,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
             getAssetUseCase: getAssetUseCase,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             displayStyle: attachments.count > 1 ? .small : .large
         )
     }
@@ -119,7 +123,8 @@ extension WireCellsAttachmentsPreviewViewModel {
                 fileCache: fileCache
             ),
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: WireCellsLastOpenRequest()
+            lastOpenRequest: WireCellsLastOpenRequest(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
     }
 

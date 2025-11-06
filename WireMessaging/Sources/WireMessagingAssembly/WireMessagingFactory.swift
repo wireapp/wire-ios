@@ -36,6 +36,7 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -71,6 +72,7 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
+        self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -123,7 +125,6 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
-
 }
 
 public extension WireMessagingFactory {
@@ -167,6 +168,12 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
+            renameNodeUseCase: WireCellsRenameNodeUseCase(
+                nodesRepository: nodesAPI,
+                localAssetsRepository: localAssetRepository,
+                nodeCache: nodeCache,
+                nodeRenameNotifier: nodeRenameNotifier
+            ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache
@@ -194,7 +201,8 @@ public extension WireMessagingFactory {
                         fileCache: fileCache
                     ),
                     localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest
+                    lastOpenRequest: lastOpenRequest,
+                    nodeRenameNotifier: nodeRenameNotifier
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
@@ -216,6 +224,7 @@ public extension WireMessagingFactory {
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             insetsProvider: insetsProvider
         )
     }

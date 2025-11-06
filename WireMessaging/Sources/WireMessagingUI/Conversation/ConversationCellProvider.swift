@@ -26,6 +26,7 @@ public final class ConversationCellProvider {
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let insetsProvider: () -> ConversationCellInsets
 
     package init(
@@ -33,6 +34,7 @@ public final class ConversationCellProvider {
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier,
         insetsProvider: @escaping () -> ConversationCellInsets
     ) {
         self.fetchNodeUseCase = fetchNodeUseCase
@@ -40,6 +42,7 @@ public final class ConversationCellProvider {
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.insetsProvider = insetsProvider
+        self.nodeRenameNotifier = nodeRenameNotifier
     }
 
     @MainActor
@@ -76,7 +79,8 @@ public final class ConversationCellProvider {
                 fetchNodeUseCase: fetchNodeUseCase,
                 getAssetUseCase: getAssetUseCase,
                 localAssetRepository: localAssetRepository,
-                lastOpenRequest: lastOpenRequest
+                lastOpenRequest: lastOpenRequest,
+                nodeRenameNotifier: nodeRenameNotifier
             )
             cell.configure(
                 content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
