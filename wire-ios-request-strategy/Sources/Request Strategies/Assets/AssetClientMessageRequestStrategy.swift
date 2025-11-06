@@ -81,6 +81,21 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        if object.shouldExpire, object.expirationDate?.isInThePast == true {
+            // When unsent messages past their expiration date they should be expired.
+            // It's likely this message failed to send before but the app crashed or was
+            // terminated before it succeeded.
+            WireLogger.messaging.info(
+                "asset message expired before sending: \(object)",
+                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
+                .safePublic
+            )
+            object.expire(withReason: .timeout)
+            managedObjectContext.saveOrRollback()
+            completion()
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: managedObjectContext)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)
