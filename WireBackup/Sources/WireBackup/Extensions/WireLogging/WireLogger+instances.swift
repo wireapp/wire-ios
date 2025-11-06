@@ -18,10 +18,10 @@
 
 public import WireLogging
 
-extension WireLogger {
+public extension WireLogger {
 
-    public static let createBackup = WireTaggedLogger(tag: "create-backup", handler: logHandler)
+    static let createBackup = WireTaggedLogger(tag: "create-backup", handler: logHandler)
 
-    public static let importBackup = WireTaggedLogger(tag: "import-backup", handler: logHandler)
+    static let importBackup = WireTaggedLogger(tag: "import-backup", handler: logHandler)
 
 }

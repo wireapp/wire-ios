@@ -18,10 +18,9 @@
 
 import Foundation
 import os
+import WireLegacyLogging
 import WireLogging
 import WireSystem
-import WireLogging
-import WireLegacyLogging
 
 /// Namespace for analytics tools.
 public enum WireAnalytics {

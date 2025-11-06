@@ -19,9 +19,9 @@
 public import WireLogging
 public import WireFoundation
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
-    public mutating func appendInterpolation(
+    mutating func appendInterpolation(
         _ analyticsEvent: AnalyticsEvent
     ) {
         // no obfuscation needed

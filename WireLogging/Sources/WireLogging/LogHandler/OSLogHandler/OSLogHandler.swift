@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import os
 import Foundation
+import os
 
 public struct OSLogHandler: WireLogHandlerProtocol {
 
@@ -63,6 +63,11 @@ public struct OSLogHandler: WireLogHandlerProtocol {
     private struct CacheEntry {
         let logger: Logger
         var lastAccessTime: Date
+
+        init(logger: Logger) {
+            self.logger = logger
+            self.lastAccessTime = Date()
+        }
     }
 
     /// Thread-safe cache manager for Logger instances.
@@ -72,38 +77,54 @@ public struct OSLogHandler: WireLogHandlerProtocol {
     private final class LoggerCache: @unchecked Sendable {
         private let subsystem: String
         private var dictionary: [WireLogTag: CacheEntry] = [:]
-        private let queue = DispatchQueue(label: "com.wire.OSLogHandler.cache")
+        private let queue = DispatchQueue(label: "com.wire.logging.oslogger.cache")
 
         /// Time interval after which unused loggers are evicted (5 minutes).
         private static let evictionTimeout: TimeInterval = 5 * 60
-        
+
         init(subsystem: String) {
             self.subsystem = subsystem
         }
-        
+
         func logger(for tag: WireLogTag) -> Logger {
-            // Synchronously get or create logger
-            queue.sync {
+            // Synchronously get or create logger and update access time
+            let logger = queue.sync {
                 let now = Date()
 
                 // Check if we have a cached entry
                 if var entry = dictionary[tag] {
-                    let age = now.timeIntervalSince(entry.lastAccessTime)
-                    if age > Self.evictionTimeout {
-                        // Entry is stale, remove it and create a new one
-                        dictionary.removeValue(forKey: tag)
-                    } else {
-                        // Update access time synchronously
-                        entry.lastAccessTime = now
-                        dictionary[tag] = entry
-                        return entry.logger
-                    }
+                    // Always update access time if entry exists (even if it was stale)
+                    entry.lastAccessTime = now
+                    dictionary[tag] = entry
+                    return entry.logger
                 }
 
                 // Create new logger and cache it
                 let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-                dictionary[tag] = CacheEntry(logger: logger, lastAccessTime: now)
+                dictionary[tag] = CacheEntry(logger: logger)
                 return logger
+            }
+
+            // Asynchronously clean up stale entries (non-blocking)
+            queue.async {
+                self.evictStaleEntries()
+            }
+
+            return logger
+        }
+
+        private func evictStaleEntries() {
+            let cutoffTime = Date().addingTimeInterval(-Self.evictionTimeout)
+            var keysToRemove: [WireLogTag] = []
+
+            for (tag, entry) in dictionary {
+                if entry.lastAccessTime < cutoffTime {
+                    keysToRemove.append(tag)
+                }
+            }
+
+            for key in keysToRemove {
+                dictionary.removeValue(forKey: key)
             }
         }
     }

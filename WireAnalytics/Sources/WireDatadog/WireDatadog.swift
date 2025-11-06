@@ -159,17 +159,17 @@ extension WireLogType {
 
         switch self {
         case .debug:
-                .debug
+            .debug
         case .info:
-                .info
+            .info
         case .notice:
-                .notice
+            .notice
         case .warn:
-                .warn
+            .warn
         case .error:
-                .error
+            .error
         case .critical:
-                .critical
+            .critical
         }
 
     }
