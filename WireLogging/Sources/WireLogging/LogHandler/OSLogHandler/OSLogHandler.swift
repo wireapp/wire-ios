@@ -17,13 +17,16 @@
 //
 
 import os
+import Foundation
 
 public struct OSLogHandler: WireLogHandlerProtocol {
 
     var subsystem: String
+    private let cache: LoggerCache
 
     public init(subsystem: String) {
         self.subsystem = subsystem
+        self.cache = LoggerCache(subsystem: subsystem)
     }
 
     public func log(
@@ -45,12 +48,69 @@ public struct OSLogHandler: WireLogHandlerProtocol {
 
         let message = "\(attributesString) \(message.interpolation.content)"
 
-        let logger = Logger(subsystem: subsystem, category: tag.rawValue) // TODO: cache instances
+        let logger = cache.logger(for: tag)
         logger.log(
             level: type.mappedToOSLogType(),
             "\(message, privacy: .public)"
         )
 
+    }
+
+    // MARK: - Logger Caching
+
+    /// Wrapper class to store Logger (a struct) in NSCache with last access tracking.
+    private final class LoggerWrapper {
+        let logger: Logger
+        private(set) var lastAccessTime: Date
+        
+        init(_ logger: Logger) {
+            self.logger = logger
+            self.lastAccessTime = Date()
+        }
+        
+        func updateAccessTime() {
+            lastAccessTime = Date()
+        }
+    }
+
+    /// Thread-safe cache manager for Logger instances.
+    ///
+    /// Uses `NSCache` to automatically evict unused Logger instances under memory pressure.
+    /// Also evicts loggers that haven't been accessed recently (lazy eviction on access).
+    private final class LoggerCache {
+        private let subsystem: String
+        private let cache: NSCache<NSString, LoggerWrapper>
+        
+        /// Time interval after which unused loggers are evicted (5 minutes).
+        private static let evictionTimeout: TimeInterval = 5 * 60
+        
+        init(subsystem: String) {
+            self.subsystem = subsystem
+            self.cache = NSCache<NSString, LoggerWrapper>()
+        }
+        
+        func logger(for tag: WireLogTag) -> Logger {
+            let key = tag.rawValue as NSString
+            
+            // Try to get cached logger
+            if let wrapper = cache.object(forKey: key) {
+                // Check if entry is stale and should be evicted
+                let age = Date().timeIntervalSince(wrapper.lastAccessTime)
+                if age > Self.evictionTimeout {
+                    // Entry is stale, remove it and create a new one
+                    cache.removeObject(forKey: key)
+                } else {
+                    // Update access time and return cached logger
+                    wrapper.updateAccessTime()
+                    return wrapper.logger
+                }
+            }
+            
+            // Create new logger and cache it
+            let logger = Logger(subsystem: subsystem, category: tag.rawValue)
+            cache.setObject(LoggerWrapper(logger), forKey: key)
+            return logger
+        }
     }
 
 }
