@@ -34,10 +34,10 @@ extension BackupLocalStore {
     }
 
     func fetchAllMessageIDs() async throws -> Set<String> {
-        return try await backupContext.perform { [backupContext] in
+        try await backupContext.perform { [backupContext] in
             let fetchRequest = ZMMessage.fetchRequest()
             fetchRequest.propertiesToFetch = ["nonce_data"]
-            
+
             let messages = try backupContext.fetch(fetchRequest) as! [ZMMessage]
             return Set(messages.compactMap(\.nonce).map(\.uuidString))
         }
@@ -76,12 +76,18 @@ extension BackupLocalStore {
     private typealias QualifiedID = WireFoundation.QualifiedID
     private typealias ImportResult = BackupMessagesImportResult
 
+    private struct RehydrationData {
+        let senderID: QualifiedID
+        let conversationID: QualifiedID
+        let genericMessage: GenericMessage
+    }
+
     private struct MessagesImportData {
         let conversationDomains: Set<String>
         let conversationIdsData: Set<Data>
         let senderDomains: Set<String>
         let senderIdsData: Set<Data>
-        let genericMessagesByNonce: [UUID: GenericMessage]
+        let rehydrationDataByNonce: [UUID: RehydrationData]
         let clientMessagesAttributes: [CoreDataAttributes]
         let assetMessagesAttributes: [CoreDataAttributes]
     }
@@ -109,7 +115,7 @@ extension BackupLocalStore {
             insertedIDs: insertedIDs,
             sendersByID: sendersByID,
             conversationsByID: conversationsByID,
-            genericMessagesByNonce: importData.genericMessagesByNonce
+            rehydrationDataByNonce: importData.rehydrationDataByNonce
         )
         logPublic("Rehydration: \(rehydrationResult.successCount) succeeded, \(rehydrationResult.failureCount) failed")
 
@@ -148,13 +154,22 @@ extension BackupLocalStore {
         from backupMessages: [MessageBackupModel]
     ) -> (importData: MessagesImportData, validationResult: ImportResult.ResultCount) {
 
+        // Conversations domains and UUIDs for batch fetch
         var conversationDomains = Set<String>()
         var conversationIdsData = Set<Data>()
+
+        // Senders domains and UUIDs for batch fetch
         var senderDomains = Set<String>()
         var senderIdsData = Set<Data>()
-        var genericMessagesByNonce: [UUID: GenericMessage] = [:]
+
+        // Dictionary to map messages to conversations, senders, and
+        // generic messages to restore after insert
+        var rehydrationDataByNonce: [UUID: RehydrationData] = [:]
+
+        // The attributes from messages for batch insert
         var clientMessagesAttributes: [CoreDataAttributes] = []
         var assetMessagesAttributes: [CoreDataAttributes] = []
+
         var invalidCount = 0
 
         for message in backupMessages {
@@ -181,8 +196,12 @@ extension BackupLocalStore {
                 continue
             }
 
-            // Build generic message mapping to set after insert
-            genericMessagesByNonce[nonce] = genericMessage
+            // Build mapping to set generic messages, senders and conversations after insert
+            rehydrationDataByNonce[nonce] = RehydrationData(
+                senderID: message.senderUserID,
+                conversationID: message.conversationID,
+                genericMessage: genericMessage
+            )
 
             // Collect IDs to fetch relationship objects batches, to set after insert
             conversationIdsData.insert(message.conversationID.id.uuidData)
@@ -197,7 +216,7 @@ extension BackupLocalStore {
                 conversationIdsData: conversationIdsData,
                 senderDomains: senderDomains,
                 senderIdsData: senderIdsData,
-                genericMessagesByNonce: genericMessagesByNonce,
+                rehydrationDataByNonce: rehydrationDataByNonce,
                 clientMessagesAttributes: clientMessagesAttributes,
                 assetMessagesAttributes: assetMessagesAttributes
             ),
@@ -214,11 +233,7 @@ extension BackupLocalStore {
     ) -> CoreDataAttributes {
         var attributes: CoreDataAttributes = [
             ZMMessageNonceDataKey: nonce.uuidData,
-            #keyPath(ZMOTRMessage.serverTimestamp): message.creationDate,
-            #keyPath(ZMOTRMessage.senderID): message.senderUserID.id,
-            #keyPath(ZMOTRMessage.senderDomain): message.senderUserID.domain,
-            #keyPath(ZMOTRMessage.conversationID): message.conversationID.id,
-            #keyPath(ZMOTRMessage.conversationDomain): message.conversationID.domain
+            #keyPath(ZMOTRMessage.serverTimestamp): message.creationDate
         ]
 
         if let senderClientID = message.senderClientID {
@@ -390,7 +405,7 @@ extension BackupLocalStore {
         insertedIDs: [NSManagedObjectID],
         sendersByID: [QualifiedID: ZMUser],
         conversationsByID: [QualifiedID: ZMConversation],
-        genericMessagesByNonce: [UUID: GenericMessage]
+        rehydrationDataByNonce: [UUID: RehydrationData],
     ) async throws -> ImportResult.ResultCount {
         var restoredCount = 0
         var failedCount = 0
@@ -407,7 +422,7 @@ extension BackupLocalStore {
                             objectID: objectID,
                             sendersByID: sendersByID,
                             conversationsByID: conversationsByID,
-                            genericMessagesByNonce: genericMessagesByNonce
+                            rehydrationDataByNonce: rehydrationDataByNonce
                         )
                         restoredCount += 1
                     } catch {
@@ -438,8 +453,8 @@ extension BackupLocalStore {
     private enum RehydrationFailure: Error {
         case failedToGetMessageFromCoreData
         case failedToGetMessageNonce
+        case failedToGetRehydrationData
         case failedToGetConversation
-        case failedToGetGenericMessage
         case failedToSetGenericMessage(error: Error)
     }
 
@@ -447,7 +462,7 @@ extension BackupLocalStore {
         objectID: NSManagedObjectID,
         sendersByID: [QualifiedID: ZMUser],
         conversationsByID: [QualifiedID: ZMConversation],
-        genericMessagesByNonce: [UUID: GenericMessage]
+        rehydrationDataByNonce: [UUID: RehydrationData]
     ) throws {
 
         guard let message = backupContext.object(with: objectID) as? ZMOTRMessage else {
@@ -476,18 +491,18 @@ extension BackupLocalStore {
             throw RehydrationFailure.failedToGetMessageNonce
         }
 
-        guard let conversation = conversation(for: message, from: conversationsByID) else {
+        guard let rehydrationData = rehydrationDataByNonce[nonce] else {
+            throw RehydrationFailure.failedToGetRehydrationData
+        }
+
+        guard let conversation = conversationsByID[rehydrationData.conversationID] else {
             throw RehydrationFailure.failedToGetConversation
         }
 
-        guard let genericMessage = genericMessagesByNonce[nonce] else {
-            throw RehydrationFailure.failedToGetGenericMessage
-        }
-
         do {
-            try setGenericMessage(genericMessage, for: message)
+            try setGenericMessage(rehydrationData.genericMessage, for: message)
 
-            if let sender = sender(for: message, from: sendersByID) {
+            if let sender = sendersByID[rehydrationData.senderID] {
                 message.sender = sender
             }
 
@@ -496,22 +511,6 @@ extension BackupLocalStore {
         } catch {
             throw RehydrationFailure.failedToSetGenericMessage(error: error)
         }
-    }
-
-    private func sender(
-        for message: ZMOTRMessage,
-        from sendersByID: [QualifiedID: ZMUser]
-    ) -> ZMUser? {
-        guard let id = message.senderID, let domain = message.senderDomain else { return nil }
-        return sendersByID[QualifiedID(id: id, domain: domain)]
-    }
-
-    private func conversation(
-        for message: ZMOTRMessage,
-        from conversationsByID: [QualifiedID: ZMConversation]
-    ) -> ZMConversation? {
-        guard let id = message.conversationID, let domain = message.conversationDomain else { return nil }
-        return conversationsByID[QualifiedID(id: id, domain: domain)]
     }
 
     private func setGenericMessage(_ genericMessage: GenericMessage, for message: ZMOTRMessage) throws {
@@ -548,15 +547,6 @@ extension BackupLocalStore {
         return fetchRequest
     }
 
-}
-
-// MARK: - ZMMessage
-
-private extension ZMMessage {
-    @NSManaged var senderID: UUID?
-    @NSManaged var senderDomain: String?
-    @NSManaged var conversationID: UUID?
-    @NSManaged var conversationDomain: String?
 }
 
 // MARK: - Helpers
