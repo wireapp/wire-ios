@@ -60,7 +60,8 @@ let package = Package(
                 .process("Network/PushChannel/Resources"),
                 .process("Authentication/Resources"),
                 .process("Backend/Resources"),
-                .process("APIs/Blacklist/Resources")
+                .process("APIs/Blacklist/Resources"),
+                .process("Endpoints/Conversations/Resources")
             ]
         )
     ]

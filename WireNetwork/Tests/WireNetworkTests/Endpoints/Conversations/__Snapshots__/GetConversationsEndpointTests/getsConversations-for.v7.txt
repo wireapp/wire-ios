@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"qualified_ids\":[{\"domain\":\"example.com\",\"id\":\"99DB9768-04E3-4B5D-9268-831B6A25C4AB\"},{\"domain\":\"example.com\",\"id\":\"F4A1296C-277A-4B73-BA02-5BD8B81B4EA5\"},{\"domain\":\"example.com\",\"id\":\"498F41B6-5341-4CC9-82E3-969D72675DD4\"}]}" \
+	"/v7/conversations/list"

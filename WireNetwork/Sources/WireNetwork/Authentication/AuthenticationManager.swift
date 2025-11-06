@@ -21,7 +21,7 @@ import WireFoundation
 import WireLogging
 
 // sourcery: AutoMockable
-public protocol AuthenticationManagerProtocol {
+public protocol AuthenticationManagerProtocol: Sendable {
 
     func getValidAccessToken() async throws -> AccessToken
     func refreshAccessToken() async throws -> AccessToken

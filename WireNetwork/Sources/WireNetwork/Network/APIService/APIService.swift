@@ -49,7 +49,7 @@ public protocol APIServiceProtocol {
 /// It may provide additional functionality, such providing authentication
 /// headers if needed.
 
-public final class APIService: APIServiceProtocol {
+public final class APIService: APIServiceProtocol, Sendable {
 
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol

@@ -97,4 +97,30 @@ struct HTTPRequestSnapshotHelper {
         }
     }
 
+    @MainActor
+    func verifyRequestThrowing(
+        request: URLRequest,
+        resourceName: String? = nil,
+        record: Bool? = nil,
+        file: StaticString = #filePath,
+        function: String = #function,
+        line: UInt = #line
+    ) throws {
+        try withSnapshotTesting(record: defaultRecordMode) {
+            let errorMessage = verifySnapshot(
+                of: request,
+                as: .curl,
+                named: resourceName,
+                record: record,
+                file: file,
+                testName: function,
+                line: line
+            )
+
+            if let errorMessage {
+                throw errorMessage
+            }
+        }
+    }
+
 }
