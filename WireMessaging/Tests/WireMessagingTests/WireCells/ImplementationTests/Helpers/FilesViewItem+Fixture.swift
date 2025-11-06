@@ -24,6 +24,7 @@ extension FilesViewItem {
 
     static func fixture(
         id: UUID = UUID(),
+        kind: FilesViewItem.Kind = .file,
         filename: String = "filename.png",
         ownedBy: String? = nil,
         modifiedAt: Date? = nil,
@@ -31,6 +32,7 @@ extension FilesViewItem {
     ) -> FilesViewItem {
         FilesViewItem(
             id: id,
+            kind: kind,
             filename: filename,
             ownedBy: ownedBy,
             modifiedAt: modifiedAt,

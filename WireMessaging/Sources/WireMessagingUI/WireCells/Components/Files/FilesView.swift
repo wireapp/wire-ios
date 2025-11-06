@@ -83,8 +83,10 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarTitleMenu {
-            toolBarTitleMenuContent()
+        if !viewModel.folderMenuOptions.isEmpty {
+            ToolbarTitleMenu {
+                toolBarTitleMenuContent()
+            }
         }
 
         ToolbarItem(placement: .navigationBarTrailing) { closeButton }
