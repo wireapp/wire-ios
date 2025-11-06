@@ -23,9 +23,9 @@ public struct WireLogAttribute {
 
 }
 
-extension WireLogAttribute {
+public extension WireLogAttribute {
 
-    public typealias Provider = (String) -> WireLogAttribute
+    typealias Provider = (String) -> WireLogAttribute
 
     nonisolated(unsafe) public static let someKey: Provider = { .init(key: "someKey", value: $0) }
 

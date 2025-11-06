@@ -19,7 +19,7 @@
 // sourcery: AutoMockable
 public protocol WireLogHandlerProtocol: Sendable {
 
-// TODO: add doc comment, mention that `additionalAttributes` override any attributes in `WireLogMessage` with the same key
+    // TODO: add doc comment, mention that `additionalAttributes` override any attributes in `WireLogMessage` with the same key
 
     func log(
         tag: WireLogTag,

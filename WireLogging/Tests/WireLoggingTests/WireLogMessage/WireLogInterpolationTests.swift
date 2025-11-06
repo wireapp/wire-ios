@@ -23,12 +23,14 @@ import Testing
 
 struct WireLogInterpolationTests {
 
-    @Test func staticStringIsNotObfuscated() async throws {
+    @Test
+    func staticStringIsNotObfuscated() async throws {
         let message: WireLogMessage = "Hello, World!"
         #expect(message.content == "Hello, World!")
     }
 
-    @Test func staticStringInterpolationIsNotObfuscated() async throws {
+    @Test
+    func staticStringInterpolationIsNotObfuscated() async throws {
         let name = "World" as StaticString
         let message: WireLogMessage = "Hello, \(name)!"
         #expect(message.content == "Hello, World!")
@@ -47,15 +49,15 @@ private struct CustomType {
     var sensibleInformation = "Sensitive"
 }
 
-extension WireLogInterpolation {
+private extension WireLogInterpolation {
 
-    fileprivate mutating func appendInterpolation(
+    mutating func appendInterpolation(
         _ customType: CustomType,
         selfUserID: UUID
     ) {
 
         let obfuscationStartIndex = content.index(content.startIndex, offsetBy: 4)
-        let obfuscatedContent = content.replacingCharacters(in: obfuscationStartIndex...content.endIndex, with: "***")
+        let obfuscatedContent = content.replacingCharacters(in: obfuscationStartIndex ... content.endIndex, with: "***")
         writeText(obfuscatedContent)
 
         writeAttribute(.eventID(selfUserID.uuidString))
@@ -64,13 +66,13 @@ extension WireLogInterpolation {
 
 }
 
-extension WireLogAttribute {
+private extension WireLogAttribute {
 
-    fileprivate static func eventID(_ value: String) -> WireLogAttribute {
+    static func eventID(_ value: String) -> WireLogAttribute {
         .init(key: "event_id", value: value)
     }
 
-    fileprivate static func selfUserID(_ value: String) -> WireLogAttribute {
+    static func selfUserID(_ value: String) -> WireLogAttribute {
         .init(key: "self_user_id", value: value)
     }
 
