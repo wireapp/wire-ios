@@ -23,8 +23,8 @@ public struct WireLogAttribute {
 
 }
 
-extension WireLogAttribute {
+public extension WireLogAttribute {
 
-    public typealias Provider = (String) -> WireLogAttribute
+    typealias Provider = (String) -> WireLogAttribute
 
 }

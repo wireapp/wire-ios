@@ -28,8 +28,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
     }
     public var underlyingTag: (WireLogTag)!
 
-
-    //MARK: - debug
+    // MARK: - debug
 
     public var debugMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var debugMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -46,7 +45,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         debugMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
 
-    //MARK: - info
+    // MARK: - info
 
     public var infoMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var infoMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -63,7 +62,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         infoMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
 
-    //MARK: - notice
+    // MARK: - notice
 
     public var noticeMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var noticeMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -80,7 +79,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         noticeMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
 
-    //MARK: - warn
+    // MARK: - warn
 
     public var warnMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var warnMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -97,7 +96,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         warnMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
 
-    //MARK: - error
+    // MARK: - error
 
     public var errorMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var errorMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -114,7 +113,7 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         errorMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
 
-    //MARK: - critical
+    // MARK: - critical
 
     public var criticalMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCallsCount = 0
     public var criticalMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidCalled: Bool {
@@ -130,6 +129,5 @@ public class WireTaggedLoggerProtocolMock: WireTaggedLoggerProtocol, @unchecked 
         criticalMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidReceivedInvocations.append((message: message, additionalAttributes: additionalAttributes))
         criticalMessageWireLogMessageAdditionalAttributesWireLogAttributeVoidClosure?(message, additionalAttributes)
     }
-
 
 }

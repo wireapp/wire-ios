@@ -68,18 +68,17 @@ private extension WireLogType {
 
         switch self {
         case .debug:
-                .debug
+            .debug
         case .info:
-                .info
+            .info
         case .notice:
-                .default
+            .default
         case .warn:
-                .error
+            .error
         case .error:
-                .error
+            .error
         case .critical:
-                .fault
-
+            .fault
         }
     }
 

@@ -30,7 +30,7 @@ public enum WireLogger {
         self.logHandler = logHandler
     }
 
-    nonisolated(unsafe) public private(set) static var logHandler: (any WireLogHandlerProtocol)!
+    public private(set) nonisolated(unsafe) static var logHandler: (any WireLogHandlerProtocol)!
 
     public static let analytics = WireTaggedLogger(tag: "analytics", handler: logHandler)
     public static let apiMigration = WireTaggedLogger(tag: "api-migration", handler: logHandler)
@@ -50,7 +50,10 @@ public enum WireLogger {
     public static let ear = WireTaggedLogger(tag: "encryption-at-rest", handler: logHandler)
     public static let environment = WireTaggedLogger(tag: "environment", handler: logHandler)
     public static let featureConfigs = WireTaggedLogger(tag: "feature-configurations", handler: logHandler)
-    public static let individualToTeamMigration = WireTaggedLogger(tag: "individual-to-team-migration", handler: logHandler)
+    public static let individualToTeamMigration = WireTaggedLogger(
+        tag: "individual-to-team-migration",
+        handler: logHandler
+    )
     public static let keychain = WireTaggedLogger(tag: "keychain", handler: logHandler)
     public static let localStorage = WireTaggedLogger(tag: "local-storage", handler: logHandler)
     public static let mainCoordinator = WireTaggedLogger(tag: "main-coordinator", handler: logHandler)
