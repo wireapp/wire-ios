@@ -75,30 +75,29 @@ public struct OSLogHandler: WireLogHandlerProtocol {
 
     /// Thread-safe cache manager for Logger instances.
     ///
-    /// Uses `NSCache` to automatically evict unused Logger instances under memory pressure.
-    /// Also evicts loggers that haven't been accessed recently (lazy eviction on access).
-    private final class LoggerCache {
+    /// Evicts loggers that haven't been accessed recently (lazy eviction on access).
+    private final class LoggerCache: @unchecked Sendable {
         private let subsystem: String
-        private let cache: NSCache<NSString, LoggerWrapper>
+        private var dictionary = [WireLogTag: LoggerWrapper]()
+        private let queue = DispatchQueue(label: "com.wire.logging.oslogger.cache", attributes: .concurrent)
         
         /// Time interval after which unused loggers are evicted (5 minutes).
         private static let evictionTimeout: TimeInterval = 5 * 60
         
         init(subsystem: String) {
             self.subsystem = subsystem
-            self.cache = NSCache<NSString, LoggerWrapper>()
         }
         
         func logger(for tag: WireLogTag) -> Logger {
-            let key = tag.rawValue as NSString
-            
-            // Try to get cached logger
-            if let wrapper = cache.object(forKey: key) {
+            // Fast path: concurrent read
+            if let wrapper = queue.sync(execute: { dictionary[tag] }) {
                 // Check if entry is stale and should be evicted
                 let age = Date().timeIntervalSince(wrapper.lastAccessTime)
                 if age > Self.evictionTimeout {
                     // Entry is stale, remove it and create a new one
-                    cache.removeObject(forKey: key)
+                    queue.async(flags: .barrier) {
+                        self.dictionary.removeValue(forKey: tag)
+                    }
                 } else {
                     // Update access time and return cached logger
                     wrapper.updateAccessTime()
@@ -106,10 +105,22 @@ public struct OSLogHandler: WireLogHandlerProtocol {
                 }
             }
             
-            // Create new logger and cache it
-            let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-            cache.setObject(LoggerWrapper(logger), forKey: key)
-            return logger
+            // Slow path: barrier write (create new logger)
+            return queue.sync(flags: .barrier) {
+                // Double-check after acquiring write lock
+                if let wrapper = dictionary[tag] {
+                    let age = Date().timeIntervalSince(wrapper.lastAccessTime)
+                    if age <= Self.evictionTimeout {
+                        wrapper.updateAccessTime()
+                        return wrapper.logger
+                    }
+                }
+                
+                // Create new logger and cache it
+                let logger = Logger(subsystem: subsystem, category: tag.rawValue)
+                dictionary[tag] = LoggerWrapper(logger)
+                return logger
+            }
         }
     }
 
