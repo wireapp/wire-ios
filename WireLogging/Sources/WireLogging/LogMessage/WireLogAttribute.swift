@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireLogLevel {
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
+public struct WireLogAttribute {
+
+    public var key: String
+    public var value: String
+
+}
+
+extension WireLogAttribute {
+
+    public typealias Provider = (String) -> WireLogAttribute
+
 }

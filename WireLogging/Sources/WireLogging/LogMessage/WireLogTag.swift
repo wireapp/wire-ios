@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
+public struct WireLogTag: ExpressibleByStringLiteral, Hashable, Sendable {
 
-@testable import WireLogging
+    public var rawValue: String
 
-struct Test {
-
-    @Test
-    func nothing() async throws {
-        // just a placeholder test
+    public init(stringLiteral rawValue: String) {
+        self.rawValue = rawValue
     }
 
 }

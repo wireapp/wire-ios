@@ -30,7 +30,12 @@ let package = Package(
             dependencies: ["WireLogging", "WireLoggingSupport"]
         ),
 
-        .target(name: "WireLegacyLogging"),
+        .target(
+            name: "WireLegacyLogging",
+            dependencies: [
+                "WireLogging"
+            ]
+        ),
         .target(
             name: "WireLegacyLoggingSupport",
             dependencies: ["WireLegacyLogging"],
