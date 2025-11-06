@@ -61,7 +61,7 @@ struct MeetingsView: View {
 
     @ViewBuilder private var content: some View {
         if viewModel.selectedTab == .next {
-            if viewModel.ongoingMeetings.isEmpty && viewModel.groupedNextMeetings.isEmpty {
+            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
                 MeetingsEmptyStateView(
                     title: Strings.EmptyState.Next.title,
                     subtitle: Strings.EmptyState.Next.subtitle
