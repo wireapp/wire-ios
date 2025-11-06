@@ -90,7 +90,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
             WireLogger.messaging.info(
-                "expiring stale asset message: \(object)",
+                "expiring stale asset message",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )
