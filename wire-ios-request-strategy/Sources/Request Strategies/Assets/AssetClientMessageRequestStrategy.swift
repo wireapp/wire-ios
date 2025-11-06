@@ -70,7 +70,11 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     typealias Object = ZMAssetClientMessage
 
-    func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
+    func insert(
+        object: ZMAssetClientMessage,
+        isFresh: Bool,
+        completion: @escaping () -> Void
+    ) {
         let hasRegisteredMLSClient = managedObjectContext.performAndWait {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             return selfClient?.hasRegisteredMLSClient ?? false
@@ -81,12 +85,12 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
-        if object.shouldExpire, object.expirationDate?.isInThePast == true {
-            // When unsent messages past their expiration date they should be expired.
-            // It's likely this message failed to send before but the app crashed or was
-            // terminated before it succeeded.
+        if !isFresh {
+            // This message was not added in this runtime. Rather than send it
+            // which may no longer make sense after such as delay, we will
+            // expire it so the user can retry.
             WireLogger.messaging.info(
-                "asset message expired before sending: \(object)",
+                "expiring stale asset message: \(object)",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )
