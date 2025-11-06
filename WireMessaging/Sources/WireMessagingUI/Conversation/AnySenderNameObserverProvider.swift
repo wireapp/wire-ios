@@ -16,28 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import WireMessagingDomain
 
-// To be refined later
-public struct UserModel: Sendable {
+// Need to be wrapped to type eraser as @unchecked Sendable to be able to pass to datasource actor
+// also performs mapping of domain model which is just raw string
+// to UI model which is Attributed string
+package struct AnySenderNameObserverProvider: @unchecked Sendable {
 
-    // 'objectID' to abstract id from data layer hide behind abstract 'any Sendable'
-    // used as a way to map domain models back to data models
-    public let objectID: any Sendable
+    private var observerProvider: SenderNameObserverProvider?
 
-    public let remoteIdentifier: UUID
-    public let name: String?
-    public let handle: String?
-
-    public init(
-        objectID: any Sendable,
-        remoteIdentifier: UUID,
-        name: String?,
-        handle: String?
+    package init(
+        _ observerProvider: SenderNameObserverProvider?
     ) {
-        self.remoteIdentifier = remoteIdentifier
-        self.name = name
-        self.handle = handle
-        self.objectID = objectID
+        self.observerProvider = observerProvider
+    }
+
+    func get(for model: UserModel?) -> (any SenderNameObserverProtocol)? {
+        observerProvider?(model)
     }
 }
