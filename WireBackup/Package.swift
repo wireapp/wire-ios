@@ -39,6 +39,7 @@ let package = Package(
                 "WireBackup",
                 "WireBackupSupport",
                 .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireLoggingSupport", package: "WireLogging"),
                 "ZIPFoundation"
             ],
             resources: [

@@ -40,7 +40,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         backupLocalStore: any BackupLocalStoreProtocol,
         fileUnarchiver: any FileUnarchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
-        logger: WireTaggedLogger
+        logger: WireTaggedLogger = WireLogger.backupImport
     ) {
         self.url = url
         self.selfUserID = selfUserID

@@ -34,7 +34,7 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
         selfUserID: QualifiedID,
         backupLocalStore: any BackupLocalStoreProtocol,
         fileArchiver: any FileArchiverProtocol,
-        logger: WireTaggedLogger
+        logger: WireTaggedLogger = WireLogger.backupExport
     ) {
         self.backupLocalStore = backupLocalStore
         self.fileArchiver = fileArchiver
