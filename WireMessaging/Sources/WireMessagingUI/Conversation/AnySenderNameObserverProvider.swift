@@ -16,25 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import UIKit
+package import WireMessagingDomain
 
-class MessageCollectionViewCell: UICollectionViewCell {
+// Need to be wrapped to type eraser as @unchecked Sendable to be able to pass to datasource actor
+// also performs mapping of domain model which is just raw string
+// to UI model which is Attributed string
+package struct AnySenderNameObserverProvider: @unchecked Sendable {
 
-    // reuse identifier for each message type
-    // one for now, later will be improved
-    static let reuseIdentifier = "MessageCollectionViewCell"
+    private var observerProvider: SenderNameObserverProvider?
 
-    var messageType: MessageType? {
-        didSet {
-            guard let messageType else { return }
-            switch messageType {
-            case let .text(viewModel):
-                let config = UIHostingConfiguration {
-                    TextMessageView(viewModel: viewModel)
-                }
-                contentConfiguration = config
-            }
-        }
+    package init(
+        _ observerProvider: SenderNameObserverProvider?
+    ) {
+        self.observerProvider = observerProvider
+    }
+
+    func get(for model: UserModel?) -> (any SenderNameObserverProtocol)? {
+        observerProvider?(model)
     }
 }

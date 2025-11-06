@@ -35,6 +35,8 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     let alignment: HorizontalAlignment
@@ -52,6 +54,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         getAssetUseCase: WireCellsGetAssetUseCase,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier,
         displayStyle: DisplayStyle
     ) {
         self.attachment = attachment
@@ -59,12 +62,12 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
         self.lastOpenRequest = lastOpenRequest
+        self.nodeRenameNotifier = nodeRenameNotifier
+        self.localAssetRepository = localAssetRepository
         self.displayStyle = displayStyle
         self.isDeleted = false
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
-            self?.asset = asset
-        }.store(in: &cancellables)
+        setupBindings()
     }
 
     var fileCategory: WireCellsFileCategory {
@@ -196,6 +199,25 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var isDownloading: Bool {
         asset?.downloadState.isDownloading == true
+    }
+
+    private func setupBindings() {
+        nodeRenameNotifier.publisher
+            .sink { [self] nodeID in
+                guard nodeID == attachment.nodeID else {
+                    return
+                }
+
+                Task {
+                    // this node has been renamed, refresh
+                    await self.refresh()
+                }
+            }.store(in: &cancellables)
+
+        localAssetRepository.observeAsset(nodeID: attachment.nodeID)
+            .sink { [self] asset in
+                self.asset = asset
+            }.store(in: &cancellables)
     }
 
 }

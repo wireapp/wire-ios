@@ -44,12 +44,42 @@ extension FilesViewModel {
                 fileCache: cache,
                 localAssetStore: localAssetStore
             ),
+            renameNodeUseCase: WireCellsRenameNodeUseCase(
+                nodesRepository: previewNodesRepository(),
+                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireCellsNodeCacheProtocol(),
+                nodeRenameNotifier: WireCellsNodeRenameNotifier()
+            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
             fileCache: cache
         )
     }
 
+}
+
+extension FileRenameViewModel {
+    /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
+    static func preview() -> FileRenameViewModel {
+        let cache = fileCache()
+        let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
+        localAssetStore.assetNodeID_MockValue = nil
+        localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
+
+        return FileRenameViewModel(
+            renameNodeUseCase: WireCellsRenameNodeUseCase(
+                nodesRepository: previewNodesRepository(),
+                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireCellsNodeCacheProtocol(),
+                nodeRenameNotifier: WireCellsNodeRenameNotifier()
+            ),
+            fileRenameModel: FileRenameModel(
+                nodeID: .init(),
+                filename: "foo.jpg",
+                filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
+            )
+        )
+    }
 }
 
 extension FilesItemViewModel {
@@ -60,13 +90,15 @@ extension FilesItemViewModel {
             item: FilesViewItem(
                 id: UUID(),
                 filename: "foo.jpg",
+                filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
-            onDelete: { _ in }
+            onDelete: { _ in },
+            onRename: { _ in }
         )
     }
 
@@ -116,7 +148,22 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         publishers[nodeID]?.value
     }
 
-    func refreshAssetMetadata(nodeID: UUID) async throws {}
+    func refreshAssetMetadata(
+        nodeID: UUID
+    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
+        let node = WireCellsNode(uuid: .init(), path: "")
+
+        let localAsset = WireCellsLocalAsset(
+            nodeID: nodeID,
+            eTag: "something",
+            path: "some/path.jpg",
+            contentType: nil,
+            size: nil,
+            downloadState: .pending
+        )
+
+        return (node, localAsset)
+    }
 
     func downloadAsset(nodeID: UUID) async throws {
         failIndex += 1
