@@ -137,6 +137,9 @@
 "conversation.wireCells.tags.textFieldPlaceholder" = "Enter tag name";
 "conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
 "conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.retryButton" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

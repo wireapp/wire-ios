@@ -63,8 +63,6 @@ struct TagsEditView: View {
                             ProgressView()
                                 .tint(Color.primary)
                         } else {
-                            let hasEnteredTagName = !viewModel.enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            
                             Button {
                                 Task {
                                     await viewModel.save()
@@ -73,7 +71,7 @@ struct TagsEditView: View {
                                 Text(L10n.Localizable.General.save)
                                     .bold()
                             }
-                            .disabled(!viewModel.hasChanges || hasEnteredTagName)
+                            .disabled(!viewModel.isSaveEnabled)
                         }
                     }
                     
@@ -85,9 +83,23 @@ struct TagsEditView: View {
                 }
                 .background {
                     ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(edges: .all)
                 }
-                .ignoresSafeArea(edges: .bottom)
                 .tint(ColorTheme.Base.primary.color)
+                .alert(isPresented: $viewModel.isSaveErrorMessagePresented) {
+                    Alert(
+                        title: Text(Strings.Tags.Error.saveFailedTitle),
+                        message: Text(Strings.Tags.Error.saveFailedMessage),
+                        primaryButton: .default(Text(Strings.Tags.Error.retryButton)) {
+                            if viewModel.isSaveEnabled {
+                                Task {
+                                    await viewModel.save()
+                                }
+                            }
+                        },
+                        secondaryButton: .cancel()
+                    )
+                }
                 .onTapGesture {
                     isTextFieldFocused = false
                 }

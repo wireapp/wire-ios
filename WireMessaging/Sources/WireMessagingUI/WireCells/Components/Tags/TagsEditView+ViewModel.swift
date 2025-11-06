@@ -19,6 +19,7 @@
 import Foundation
 import Combine
 import WireMessagingDomain
+import WireLogging
 
 extension TagsEditView {
     @MainActor
@@ -30,15 +31,13 @@ extension TagsEditView {
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
         
         @Published var enteredTag = ""
-        
         @Published var currentTags: [String] = []
-        
         @Published var allExistingTags: [String] = []
-        
-        @Published var isPerformingSave: Bool = false
+        @Published var isPerformingSave = false
+        @Published var isSaveErrorMessagePresented = false
         
         let dismiss = PassthroughSubject<Void, Never>()
-        
+
         enum ValidationState {
             case valid
             case empty
@@ -123,17 +122,22 @@ extension TagsEditView {
             allExistingTags = (try? await useCases.getSuggestions.invoke()) ?? []
         }
         
+        var isSaveEnabled: Bool {
+            let hasEnteredTagName = !enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            return hasChanges && !hasEnteredTagName
+        }
+        
         func save() async {
             isPerformingSave = true
             defer { isPerformingSave = false }
             
             do {
-                //try await Task.sleep(for: .seconds(2))
                 try await useCases.updateTags.invoke(nodeID: fileItem.id, tags: currentTags)
                 await postSaveAction()
                 dismiss.send()
             } catch {
-                //TODO: show error/retry message
+                WireLogger.wireCells.error("Error while saving tags: \(error)", attributes: .safePublic)
+                isSaveErrorMessagePresented = true
             }
         }
     }
