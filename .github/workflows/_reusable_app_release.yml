@@ -85,7 +85,7 @@ jobs:
     if: always()
     timeout-minutes: 60
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-sequoia-xcode:26.1-rc
+    runs-on: ghcr.io/cirruslabs/macos-tahoe-xcode:26.1-rc
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
