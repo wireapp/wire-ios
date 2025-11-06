@@ -28,15 +28,16 @@ import WireNetwork
 extension BackupLocalStore {
 
     func refreshViewContext() async throws {
-        await contextProvider.viewContext.perform { [contextProvider] in
-            contextProvider.viewContext.refreshAllObjects()
+        await contextProvider.viewContext.perform { [context = contextProvider.viewContext] in
+            context.refreshAllObjects()
         }
     }
 
     func fetchAllMessageIDs() async throws -> Set<String> {
-        let fetchRequest = ZMMessage.fetchRequest()
-        fetchRequest.propertiesToFetch = ["nonce_data"]
         return try await backupContext.perform { [backupContext] in
+            let fetchRequest = ZMMessage.fetchRequest()
+            fetchRequest.propertiesToFetch = ["nonce_data"]
+            
             let messages = try backupContext.fetch(fetchRequest) as! [ZMMessage]
             return Set(messages.compactMap(\.nonce).map(\.uuidString))
         }
@@ -262,17 +263,17 @@ extension BackupLocalStore {
         context: NSManagedObjectContext
     ) async throws -> [QualifiedID: T] {
 
-        let fetchRequest = T.fetchRequest()
-
-        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData),
-            NSPredicate(format: "%K IN %@", T.domainKey(), domains)
-        ])
-
-        fetchRequest.predicate = predicate
-
         do {
             return try await context.perform {
+                let fetchRequest = T.fetchRequest()
+
+                let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData),
+                    NSPredicate(format: "%K IN %@", T.domainKey(), domains)
+                ])
+
+                fetchRequest.predicate = predicate
+
                 let fetchResult = try context.fetch(fetchRequest) as! [T]
 
                 return [QualifiedID: T](uniqueKeysWithValues: fetchResult.compactMap {
