@@ -58,29 +58,22 @@ public struct OSLogHandler: WireLogHandlerProtocol {
 
     // MARK: - Logger Caching
 
-    /// Wrapper class to store Logger (a struct) in NSCache with last access tracking.
-    private final class LoggerWrapper {
+    /// Cache entry containing a logger and its last access time.
+
+    private struct CacheEntry {
         let logger: Logger
-        private(set) var lastAccessTime: Date
-        
-        init(_ logger: Logger) {
-            self.logger = logger
-            self.lastAccessTime = Date()
-        }
-        
-        func updateAccessTime() {
-            lastAccessTime = Date()
-        }
+        var lastAccessTime: Date
     }
 
     /// Thread-safe cache manager for Logger instances.
     ///
     /// Evicts loggers that haven't been accessed recently (lazy eviction on access).
+
     private final class LoggerCache: @unchecked Sendable {
         private let subsystem: String
-        private var dictionary = [WireLogTag: LoggerWrapper]()
-        private let queue = DispatchQueue(label: "com.wire.logging.oslogger.cache", attributes: .concurrent)
-        
+        private var dictionary: [WireLogTag: CacheEntry] = [:]
+        private let queue = DispatchQueue(label: "com.wire.OSLogHandler.cache")
+
         /// Time interval after which unused loggers are evicted (5 minutes).
         private static let evictionTimeout: TimeInterval = 5 * 60
         
@@ -89,36 +82,27 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         }
         
         func logger(for tag: WireLogTag) -> Logger {
-            // Fast path: concurrent read
-            if let wrapper = queue.sync(execute: { dictionary[tag] }) {
-                // Check if entry is stale and should be evicted
-                let age = Date().timeIntervalSince(wrapper.lastAccessTime)
-                if age > Self.evictionTimeout {
-                    // Entry is stale, remove it and create a new one
-                    queue.async(flags: .barrier) {
-                        self.dictionary.removeValue(forKey: tag)
-                    }
-                } else {
-                    // Update access time and return cached logger
-                    wrapper.updateAccessTime()
-                    return wrapper.logger
-                }
-            }
-            
-            // Slow path: barrier write (create new logger)
-            return queue.sync(flags: .barrier) {
-                // Double-check after acquiring write lock
-                if let wrapper = dictionary[tag] {
-                    let age = Date().timeIntervalSince(wrapper.lastAccessTime)
-                    if age <= Self.evictionTimeout {
-                        wrapper.updateAccessTime()
-                        return wrapper.logger
+            // Synchronously get or create logger
+            queue.sync {
+                let now = Date()
+
+                // Check if we have a cached entry
+                if var entry = dictionary[tag] {
+                    let age = now.timeIntervalSince(entry.lastAccessTime)
+                    if age > Self.evictionTimeout {
+                        // Entry is stale, remove it and create a new one
+                        dictionary.removeValue(forKey: tag)
+                    } else {
+                        // Update access time synchronously
+                        entry.lastAccessTime = now
+                        dictionary[tag] = entry
+                        return entry.logger
                     }
                 }
-                
+
                 // Create new logger and cache it
                 let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-                dictionary[tag] = LoggerWrapper(logger)
+                dictionary[tag] = CacheEntry(logger: logger, lastAccessTime: now)
                 return logger
             }
         }
