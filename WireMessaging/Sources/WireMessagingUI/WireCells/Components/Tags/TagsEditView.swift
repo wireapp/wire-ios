@@ -65,6 +65,7 @@ struct TagsEditView: View {
                         } else {
                             Button {
                                 Task {
+                                    isTextFieldFocused = false
                                     await viewModel.save()
                                 }
                             } label: {
@@ -292,14 +293,21 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
-        filename: "Hello World",
+        filename: "some_file.pdf",
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
     )
     
-    let mockAPI = MockNodesAPIProtocol()
+    let mockAPI = {
+        let mockAPI = MockNodesAPIProtocol()
+        mockAPI.getAllTags_MockMethod = {
+            ["suggested tag 1", "tag 2", "lorem", "ipsum"]
+        }
+        mockAPI.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        return mockAPI
+    }()
     
     let useCases = TagsEditView.UseCases(
         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: mockAPI),
