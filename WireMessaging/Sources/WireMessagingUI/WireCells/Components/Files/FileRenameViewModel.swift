@@ -26,7 +26,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 final class FileRenameViewModel: ObservableObject {
-    
+
     private enum Constants {
         static let maxInputLength = 64
     }
