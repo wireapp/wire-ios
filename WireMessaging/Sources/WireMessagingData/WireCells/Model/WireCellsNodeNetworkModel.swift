@@ -160,7 +160,7 @@ package extension RestNode {
                 .split(separator: ",").map { String($0) } ?? []
         )
     }
-    
+
     private func metadataString(_ namespace: String) -> String? {
         userMetadata?
             .first { $0.namespace == namespace }?

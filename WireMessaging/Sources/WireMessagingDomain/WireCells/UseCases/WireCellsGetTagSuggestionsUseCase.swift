@@ -22,11 +22,11 @@ package import Foundation
 /// Is used to suggest new tags.
 package struct WireCellsGetTagSuggestionsUseCase<NodesAPI: NodesAPIProtocol>: WireCellsGetTagSuggestionsUseCaseProtocol {
     private let nodesAPI: NodesAPI
-    
+
     package init(nodesAPI: NodesAPI) {
         self.nodesAPI = nodesAPI
     }
-    
+
     package func invoke() async throws -> [String] {
         try await nodesAPI.getAllTags()
     }

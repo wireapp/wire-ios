@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
-import WireMessagingDomain
+import Foundation
 import WireLogging
+import WireMessagingDomain
 
 extension TagsEditView {
     @MainActor
@@ -27,15 +27,15 @@ extension TagsEditView {
         private let fileItem: FilesViewItem
         private let useCases: UseCases
         private let postSaveAction: () async -> Void
-        
+
         let invalidCharacters: [Character] = [",", ";", "/", "\\", "\"", "'", "<", ">"]
-        
+
         @Published var enteredTag = ""
         @Published var currentTags: [String] = []
         @Published var allExistingTags: [String] = []
         @Published var isPerformingSave = false
         @Published var isSaveErrorMessagePresented = false
-        
+
         let dismiss = PassthroughSubject<Void, Never>()
 
         enum ValidationState {
@@ -44,18 +44,18 @@ extension TagsEditView {
             case tooLong
             case invalidCharacters
         }
-        
+
         init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
             self.fileItem = fileItem
             self.currentTags = fileItem.tags
             self.useCases = useCases
             self.postSaveAction = postSaveAction
-            
+
             Task {
                 await loadAllExistingTags()
             }
         }
-        
+
         var suggestedTags: [String] {
             allExistingTags.filter { tag in
                 let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -63,20 +63,21 @@ extension TagsEditView {
                 return !isEmpty && !isAlreadyAdded
             }
         }
-        
+
         var filteredSuggestedTags: [String] {
             suggestedTags.filter { tag in
-                let containsEnteredText = tag.localizedCaseInsensitiveContains(enteredTag.trimmingCharacters(in: .whitespacesAndNewlines))
+                let containsEnteredText = tag
+                    .localizedCaseInsensitiveContains(enteredTag.trimmingCharacters(in: .whitespacesAndNewlines))
                 let enteredTextIsEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 return containsEnteredText || enteredTextIsEmpty
             }
         }
-        
+
         var validationState: ValidationState {
             let isEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             let tooLong = enteredTag.count > 30
             let containsInvalidCharacters = enteredTag.contains { invalidCharacters.contains($0) }
-            
+
             return if isEmpty {
                 .empty
             } else if tooLong {
@@ -87,7 +88,7 @@ extension TagsEditView {
                 .valid
             }
         }
-        
+
         func validationErrorMessage(for validationState: ValidationState) -> String? {
             switch validationState {
             case .tooLong:
@@ -95,17 +96,18 @@ extension TagsEditView {
             case .invalidCharacters:
                 let message = L10n.Localizable.Conversation.WireCells.Tags.Error.specialCharacters
                 let nonBreakingSpace = "\u{A0}"
-                let invalidCharactersFormatted = invalidCharacters.map { String($0) }.joined(separator: nonBreakingSpace)
+                let invalidCharactersFormatted = invalidCharacters.map { String($0) }
+                    .joined(separator: nonBreakingSpace)
                 return message.replacing("{0}", with: invalidCharactersFormatted)
             default:
                 return nil
             }
         }
-        
+
         var hasChanges: Bool {
             Set(fileItem.tags) != Set(currentTags)
         }
-        
+
         func addTag(_ tag: String) {
             let trimmedTag = tag.trimmingCharacters(in: .whitespacesAndNewlines)
             let alreadyExists = currentTags.contains { $0.localizedCaseInsensitiveCompare(trimmedTag) == .orderedSame }
@@ -113,24 +115,24 @@ extension TagsEditView {
                 currentTags.append(trimmedTag)
             }
         }
-        
+
         func removeTag(_ tag: String) {
             currentTags.removeAll { $0 == tag }
         }
-        
+
         func loadAllExistingTags() async {
             allExistingTags = (try? await useCases.getSuggestions.invoke()) ?? []
         }
-        
+
         var isSaveEnabled: Bool {
             let hasEnteredTagName = !enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             return hasChanges && !hasEnteredTagName
         }
-        
+
         func save() async {
             isPerformingSave = true
             defer { isPerformingSave = false }
-            
+
             do {
                 try await useCases.updateTags.invoke(nodeID: fileItem.id, tags: currentTags)
                 await postSaveAction()

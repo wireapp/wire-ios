@@ -44,7 +44,7 @@ struct FilesViewItem: Identifiable, Hashable {
 
     /// The icon representing the file type.
     let icon: FileIcon
-    
+
     /// The tags that users have added for that file.
     let tags: [String]
 }
@@ -60,13 +60,13 @@ package final class FilesViewModel: ObservableObject {
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
     }
-    
+
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
-        
+
         var id: String {
             switch self {
-            case .editTags(fileItem: let item):
+            case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
             }
         }
@@ -97,14 +97,15 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
-    
+
     package struct UseCases {
         package init(
             fetchNodes: WireCellsFetchNodesUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
-            getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol) {
+            getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
+        ) {
 
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
@@ -112,7 +113,7 @@ package final class FilesViewModel: ObservableObject {
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
         }
-        
+
         let fetchNodes: WireCellsFetchNodesUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol

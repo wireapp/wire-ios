@@ -29,7 +29,7 @@ struct FilesViewItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
-    
+
     let additionalTagNumberFormatter = {
         let formatter = NumberFormatter()
         formatter.positivePrefix = formatter.plusSign
@@ -76,12 +76,12 @@ struct FilesViewItemView: View {
                                         .fill(ColorTheme.Base.primaryVariant.color)
                                 }
                         }
-                        
+
                         let additionalTags = viewModel.item.tags.count - 1
-                        
+
                         if additionalTags > 0 {
                             let formattedNumber = additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
-                            
+
                             Text(formattedNumber)
                                 .wireTextStyle(.subline1)
                                 .fontWeight(.medium)
@@ -89,7 +89,7 @@ struct FilesViewItemView: View {
                                 .foregroundStyle(ColorTheme.Base.primary.color)
                                 .padding(.trailing, 2)
                         }
-                        
+
                         Text(viewModel.subtitle ?? "")
                             .wireTextStyle(.subline1)
                             .lineLimit(1)
@@ -109,13 +109,13 @@ struct FilesViewItemView: View {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                         }.disabled(viewModel.isDownloading)
                     }
-                    
+
                     if canRenameFile {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
                         }
                     }
-                    
+
                     Button(action: editTags) {
                         Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                     }
@@ -166,7 +166,7 @@ struct FilesViewItemView: View {
     private func rename() {
         Task { await viewModel.rename() }
     }
-    
+
     private func editTags() {
         viewModel.onEditTagsSelected()
     }

@@ -27,14 +27,14 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct TagsEditView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @StateObject private var viewModel: ViewModel
-    
+
     @FocusState private var isTextFieldFocused: Bool
-    
+
     private let horizontalPadding: CGFloat = 16
     private let tagBubbleSpacing: CGFloat = 8
-    
+
     struct UseCases {
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
@@ -43,7 +43,7 @@ struct TagsEditView: View {
     init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
         _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases, postSaveAction: postSaveAction))
     }
-    
+
     var body: some View {
         NavigationStack {
             content()
@@ -57,7 +57,7 @@ struct TagsEditView: View {
                             Text(L10n.Localizable.General.close)
                         }
                     }
-                    
+
                     ToolbarItem(placement: .topBarTrailing) {
                         if viewModel.isPerformingSave {
                             ProgressView()
@@ -75,7 +75,7 @@ struct TagsEditView: View {
                             .disabled(!viewModel.isSaveEnabled)
                         }
                     }
-                    
+
                     ToolbarItemGroup(placement: .keyboard) {
                         suggestedTagsList(viewModel.filteredSuggestedTags, withKeyboardStyle: true)
                             .animation(.easeInOut, value: viewModel.enteredTag)
@@ -109,15 +109,16 @@ struct TagsEditView: View {
                 }
         }
     }
-    
-    @ViewBuilder private func content() -> some View {
+
+    @ViewBuilder
+    private func content() -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 normalText(Strings.Tags.headline)
-                
+
                 VStack(alignment: .leading, spacing: 10) {
                     addedTagsArea()
-                    
+
                     tagNameInputArea()
                 }
                 .padding(.vertical, 10)
@@ -125,9 +126,9 @@ struct TagsEditView: View {
                 .background(ColorTheme.Backgrounds.backgroundVariant.color)
                 .padding(.horizontal, -horizontalPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 tagNamewValidationError()
-                
+
                 Spacer(minLength: 20)
 
                 suggestedTagsArea()
@@ -141,8 +142,9 @@ struct TagsEditView: View {
             .animation(.easeInOut, value: viewModel.suggestedTags)
         }
     }
-    
-    @ViewBuilder private func tagNameInputArea() -> some View {
+
+    @ViewBuilder
+    private func tagNameInputArea() -> some View {
         let prompt = Strings.Tags.textFieldPlaceholder
         TextField("", text: $viewModel.enteredTag, prompt: Text(prompt))
             .textFieldStyle(.plain)
@@ -153,13 +155,14 @@ struct TagsEditView: View {
             }
             .padding(.vertical, 4)
     }
-    
-    @ViewBuilder private func tagNamewValidationError() -> some View {
+
+    @ViewBuilder
+    private func tagNamewValidationError() -> some View {
         if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
             validationText(message)
         }
     }
-    
+
     private func addEnteredTag() {
         if viewModel.validationState == .valid {
             withAnimation {
@@ -168,10 +171,11 @@ struct TagsEditView: View {
             }
         }
     }
-    
-    @ViewBuilder private func addedTagsArea() -> some View {
+
+    @ViewBuilder
+    private func addedTagsArea() -> some View {
         let currentTags = viewModel.currentTags
-        
+
         if !currentTags.isEmpty {
             FlowLayout(spacing: tagBubbleSpacing) {
                 ForEach(currentTags, id: \.self) { tag in
@@ -181,13 +185,14 @@ struct TagsEditView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
-    
-    @ViewBuilder private func suggestedTagsArea() -> some View {
+
+    @ViewBuilder
+    private func suggestedTagsArea() -> some View {
         VStack(spacing: 16) {
             sectionText(Strings.Tags.suggestedTagsSection)
-            
+
             let suggestedTags = viewModel.suggestedTags
-            
+
             if suggestedTags.isEmpty {
                 normalText(Strings.Tags.suggestedTagsSectionEmpty)
             } else {
@@ -195,8 +200,9 @@ struct TagsEditView: View {
             }
         }
     }
-    
-    @ViewBuilder private func suggestedTagsList(_ tags: [String], withKeyboardStyle: Bool) -> some View {
+
+    @ViewBuilder
+    private func suggestedTagsList(_ tags: [String], withKeyboardStyle: Bool) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: tagBubbleSpacing) {
                 ForEach(tags, id: \.self) { tag in
@@ -208,15 +214,17 @@ struct TagsEditView: View {
         }
         .padding(.horizontal, -horizontalPadding)
     }
-    
-    @ViewBuilder private func normalText(_ text: String) -> some View {
+
+    @ViewBuilder
+    private func normalText(_ text: String) -> some View {
         Text(text)
             .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
-    @ViewBuilder private func sectionText(_ text: String) -> some View {
+
+    @ViewBuilder
+    private func sectionText(_ text: String) -> some View {
         Text(text)
             .wireTextStyle(.h4)
             .textCase(.uppercase)
@@ -224,18 +232,20 @@ struct TagsEditView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
-    
-    @ViewBuilder private func validationText(_ text: String) -> some View {
+
+    @ViewBuilder
+    private func validationText(_ text: String) -> some View {
         Text(text)
             .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(ColorTheme.Base.error.color)
     }
-    
-    @ViewBuilder private func currentTagBubble(tag: String) -> some View {
+
+    @ViewBuilder
+    private func currentTagBubble(tag: String) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         Button {
             withAnimation {
                 viewModel.removeTag(tag)
@@ -243,7 +253,7 @@ struct TagsEditView: View {
         } label: {
             HStack {
                 Text(tag)
-                
+
                 Image(systemName: "xmark")
                     .imageScale(.small)
             }
@@ -257,10 +267,11 @@ struct TagsEditView: View {
         .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
         .foregroundStyle(ColorTheme.Base.primary.color)
     }
-    
-    @ViewBuilder private func suggestedTagBubble(tag: String, withKeyboardStyle: Bool) -> some View {
+
+    @ViewBuilder
+    private func suggestedTagBubble(tag: String, withKeyboardStyle: Bool) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         Button {
             withAnimation {
                 viewModel.addTag(tag)
@@ -268,7 +279,7 @@ struct TagsEditView: View {
         } label: {
             HStack {
                 Text(tag)
-                
+
                 Image(systemName: "plus")
                     .imageScale(.small)
             }
@@ -300,7 +311,7 @@ struct TagsEditView: View {
         icon: .document,
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
     )
-    
+
     let mockAPI = {
         let mockAPI = MockNodesAPIProtocol()
         mockAPI.getAllTags_MockMethod = {
@@ -309,12 +320,12 @@ struct TagsEditView: View {
         mockAPI.updateTagsNodeIDTags_MockMethod = { _, _ in }
         return mockAPI
     }()
-    
+
     let useCases = TagsEditView.UseCases(
         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: mockAPI),
         getSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: mockAPI),
     )
-    
+
     TagsEditView(fileItem: item, useCases: useCases, postSaveAction: {})
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

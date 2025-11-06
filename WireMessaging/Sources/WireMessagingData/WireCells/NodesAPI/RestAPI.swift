@@ -224,20 +224,20 @@ final class RestAPI: Sendable {
     func deletePublicLink(uuid: UUID) async throws {
         _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
     }
-    
+
     func updateTags(uuid: UUID, tags: [String]) async throws {
         let update = RestMetaUpdate(
             operation: .put,
             userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
         )
-        
+
         _ = try await NodeServiceAPI.patchNode(
             uuid: uuid.uuidString,
             nodeUpdates: .init(metaUpdates: [update]),
             apiConfiguration: makeConfiguration()
         )
     }
-    
+
     func getAllTags() async throws -> [String] {
         let response = try await NodeServiceAPI.listNamespaceValues(
             namespace: "usermeta-tags",
