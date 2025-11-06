@@ -26,6 +26,10 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 final class FileRenameViewModel: ObservableObject {
+    
+    private enum Constants {
+        static let maxInputLength = 64
+    }
 
     struct FileRenameModel {
         let nodeID: UUID
@@ -99,7 +103,7 @@ final class FileRenameViewModel: ObservableObject {
     }
 
     private func validateTextInput(_ textInput: String) {
-        if textInput.count > 64 {
+        if textInput.count > Constants.maxInputLength {
             errorMessage = Strings.Files.RenameFile.filenameTooLongError
         } else if textInput.contains("/") {
             errorMessage = Strings.Files.RenameFile.wrongCharacterError
