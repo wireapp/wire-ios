@@ -381,12 +381,23 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    /// Removes items with duplicate IDs keeping the first.
+    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
     private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
-        var nodeIDs = Set<UUID>()
+        var latestByID: [UUID: FilesViewItem] = [:]
+        for item in items {
+            if let existing = latestByID[item.id] {
+                let existingDate = existing.modifiedAt ?? .distantPast
+                let newDate = item.modifiedAt ?? .distantPast
+                if newDate > existingDate {
+                    latestByID[item.id] = item
+                }
+            } else {
+                latestByID[item.id] = item
+            }
+        }
+
         var results: [FilesViewItem] = []
-        for item in items where !nodeIDs.contains(item.id) {
-            nodeIDs.insert(item.id)
+        for item in items where item == latestByID[item.id] {
             results.append(item)
         }
 
