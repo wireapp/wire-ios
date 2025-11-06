@@ -29,7 +29,6 @@ public protocol StrategyDirectoryProtocol {
     var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
     var contextChangeTrackers: [ZMContextChangeTracker] { get }
-    var clientContextChangeTrackers: [ZMContextChangeTracker] { get }
 
 }
 
@@ -41,7 +40,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
-    public private(set) var clientContextChangeTrackers: [ZMContextChangeTracker] = []
     public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
         .InitiateResetMLSConversationUseCaseProtocol
 
@@ -474,16 +472,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
             self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
             self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
-            self.clientContextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
-                if let source = object as? ZMContextChangeTrackerSource {
-                    return source.contextChangeTrackers
-                } else if let tracker = object as? ZMContextChangeTracker {
-                    return [tracker]
-                } else {
-                    return []
-                }
-            }
-            self.contextChangeTrackers.append(contentsOf: clientContextChangeTrackers)
+            self.contextChangeTrackers
+                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                    if let source = object as? ZMContextChangeTrackerSource {
+                        return source.contextChangeTrackers
+                    } else if let tracker = object as? ZMContextChangeTracker {
+                        return [tracker]
+                    } else {
+                        return []
+                    }
+                })
         }
     }
 

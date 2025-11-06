@@ -123,13 +123,6 @@ ZM_EMPTY_ASSERTING_INIT()
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)updateStrategyClientContextChangeTrackers
-{
-    [self.syncMOC performBlock:^{
-        [self.changeTrackerBootStrap addChangeTrackers:self.strategyDirectory.clientContextChangeTrackers];
-    }];
-}
-
 - (NSManagedObjectContext *)moc
 {
     return self.syncMOC;

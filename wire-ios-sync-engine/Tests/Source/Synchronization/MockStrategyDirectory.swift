@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
-    public var clientContextChangeTrackers: [any ZMContextChangeTracker] = []
 
     public var eventConsumers: [ZMEventConsumer] = []
 
