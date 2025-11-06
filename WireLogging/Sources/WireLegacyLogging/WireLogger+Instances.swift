@@ -26,8 +26,6 @@ public extension WireLogger {
     static let assets = WireLogger(tag: "assets")
     static let authentication = WireLogger(tag: "authentication")
     static let backend = WireLogger(tag: "backend")
-    static let backupExport = WireLogger(tag: "backup-export")
-    static let backupImport = WireLogger(tag: "backup-import")
     static let backgroundActivity = WireLogger(tag: "background-activity")
     static let badgeCount = WireLogger(tag: "badge-count")
     static let calling = WireLogger(tag: "calling")
@@ -67,4 +65,5 @@ public extension WireLogger {
     static let search = WireLogger(tag: "search")
     static let wireCells = WireLogger(tag: "wire-cells")
     static let workAgent = WireLogger(tag: "work-agent")
+
 }

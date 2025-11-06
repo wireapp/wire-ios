@@ -414,7 +414,7 @@ extension SettingsCellDescriptorFactory {
                         await userSession.triggerResourcesSync()
                     }
                 },
-                logger: WireLogging.WireLogger.backupImport
+                logger: WireLogging.WireLogger.importBackup
             )
         } legacyImportBackupUseCase: { url in
             sessionManager.importLegacyBackupUseCase(url: url)!
@@ -426,7 +426,7 @@ extension SettingsCellDescriptorFactory {
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
-                logger: WireLogging.WireLogger.backupExport
+                logger: WireLogging.WireLogger.createBackup
             )
         }
 
