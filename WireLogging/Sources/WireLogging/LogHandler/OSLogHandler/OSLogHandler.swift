@@ -59,20 +59,18 @@ public struct OSLogHandler: WireLogHandlerProtocol {
     // MARK: - Logger Caching
 
     /// Cache entry containing a logger and its last access time.
-
     private struct CacheEntry {
         let logger: Logger
         var lastAccessTime: Date
-
-        init(logger: Logger) {
-            self.logger = logger
-            self.lastAccessTime = Date()
-        }
     }
 
     /// Thread-safe cache manager for Logger instances.
     ///
     /// Evicts loggers that haven't been accessed recently (lazy eviction on access).
+    ///
+    /// Caching is necessary because `os.Logger` requires its category to be set at initialization time.
+    /// Since each log tag maps to a different category, we need a separate `Logger` instance per tag.
+    /// This cache stores `Logger` instances keyed by tag to avoid recreating them on every log call.
 
     private final class LoggerCache: @unchecked Sendable {
         private let subsystem: String
@@ -101,7 +99,7 @@ public struct OSLogHandler: WireLogHandlerProtocol {
 
                 // Create new logger and cache it
                 let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-                dictionary[tag] = CacheEntry(logger: logger)
+                dictionary[tag] = CacheEntry(logger: logger, lastAccessTime: now)
                 return logger
             }
 
@@ -117,12 +115,9 @@ public struct OSLogHandler: WireLogHandlerProtocol {
             let cutoffTime = Date().addingTimeInterval(-Self.evictionTimeout)
             var keysToRemove: [WireLogTag] = []
 
-            for (tag, entry) in dictionary {
-                if entry.lastAccessTime < cutoffTime {
-                    keysToRemove.append(tag)
-                }
+            for (tag, entry) in dictionary where entry.lastAccessTime < cutoffTime {
+                keysToRemove.append(tag)
             }
-
             for key in keysToRemove {
                 dictionary.removeValue(forKey: key)
             }
