@@ -268,6 +268,28 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
+
+    func testThatItExpiresStaleMessage() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            XCTAssertFalse(message.isExpired)
+
+            // WHEN
+            let didComplete = XCTestExpectation(description: "didComplete")
+            self.sut.insert(object: message, isFresh: false, completion: {
+                didComplete.fulfill()
+            })
+
+            wait(for: [didComplete])
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
 }
 
 // MARK: - Processing events
