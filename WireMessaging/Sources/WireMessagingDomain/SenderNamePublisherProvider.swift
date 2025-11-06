@@ -17,10 +17,10 @@
 //
 
 import Foundation
+public import Combine
 
-package enum MessageType: Hashable, Sendable {
-
-    case text(TextMessageViewModel)
-    // case image, video, system, etc
-
+public protocol SenderNameObserverProtocol {
+    var authorChangedPublisher: AnyPublisher<String, Never>? { get }
 }
+
+public typealias SenderNameObserverProvider = (UserModel?) -> (any SenderNameObserverProtocol)?
