@@ -222,19 +222,17 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func selectFolderMenuOption(_ option: FolderMenuOption) {
-        let newPath: [FilesViewItem]
-
-        switch option {
+        let newPath: [FilesViewItem] = switch option {
         case let .folder(nodeID, _):
             if let index = navigationPath.firstIndex(where: { $0.id == nodeID }) {
-                newPath = Array(navigationPath.prefix(upTo: index + 1))
+                Array(navigationPath.prefix(upTo: index + 1))
             } else {
-                newPath = []
+                []
             }
         case .root:
-            newPath = []
+            []
         }
-        
+
         setNavigation(newPath)
     }
 

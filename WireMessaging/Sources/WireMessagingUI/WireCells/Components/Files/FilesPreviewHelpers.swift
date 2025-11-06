@@ -35,7 +35,7 @@ extension FilesViewModel {
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FilesViewModel(
-            setNavigation: { _ in  },
+            setNavigation: { _ in },
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                 repository: previewNodesRepository()

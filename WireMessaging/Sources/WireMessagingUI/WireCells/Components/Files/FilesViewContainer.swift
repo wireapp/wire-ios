@@ -43,7 +43,7 @@ package struct FilesViewContainer: View {
         self.cellName = cellName
         self.nodesRepository = nodesRepository
         self.isCellsStatePending = isCellsStatePending
-        self.localAssetStore =  localAssetStore
+        self.localAssetStore = localAssetStore
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
