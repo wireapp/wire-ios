@@ -67,7 +67,10 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>) {
-        let result = try await nodesAPI.preCheck(nodePath: destNodePath)
+        let result = try await nodesAPI.preCheck(
+            nodePath: destNodePath,
+            findAvailablePath: true
+        )
 
         let resolvedPath: String = switch result {
         case let .fileExists(nextPath):
