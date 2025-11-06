@@ -131,6 +131,6 @@ package extension MeetingsRepository {
             )
         ]
 
-        return MeetingsRepository(meetings: { meetings })
+        return MeetingsRepository(meetings: { /*meetings*/[] })
     }
 }
