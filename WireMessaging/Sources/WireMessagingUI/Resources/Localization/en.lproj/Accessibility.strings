@@ -16,6 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// MARK: - Navigation
+"general.loading" = "Loading…";
+"general.confirm" = "OK";
+"general.failure" = "Something went wrong";
+"general.save" = "Save";
+"general.cancel" = "Cancel";
+
+// MARK: Channel History
 "conversation.create.channel.back" = "Go back to new conversation overview";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
 

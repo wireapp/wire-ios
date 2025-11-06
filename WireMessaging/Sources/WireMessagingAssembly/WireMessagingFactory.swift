@@ -36,6 +36,7 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -71,6 +72,7 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
+        self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -123,7 +125,7 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
-    
+
     public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
         WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
     }
@@ -134,26 +136,20 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
-        isCellsStatePending: Bool,
-        nodeIDs: [UUID]
+        isCellsStatePending: Bool
     ) -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = nodeIDs
-            .isEmpty ? .conversationFileView(root: .path(cellName)) :
-            .nodesFileView(nodeIDs: nodeIDs)
-
+        let configuration: WireCellsGetNodesRequest.Configuration = .conversationFileView(root: .path(cellName))
         let filesView: UIHostingController<FilesView>
-
         filesView = makeFilesHostingController(
             configuration: configuration,
             isCellsStatePending: isCellsStatePending
         )
-
         return filesView
     }
 
     @MainActor
     func makeFilesBrowserView() -> UIViewController {
-        let configuration: WireCellsFetchNodesUseCase.Configuration = .filesBrowserView()
+        let configuration: WireCellsGetNodesRequest.Configuration = .filesBrowserView
         let filesBrowserView: UIHostingController<FilesBrowserView>
         filesBrowserView = makeFilesHostingController(
             configuration: configuration
@@ -163,7 +159,7 @@ public extension WireMessagingFactory {
 
     @MainActor
     private func makeFilesHostingController<T: FilesViewProtocol>(
-        configuration: WireCellsFetchNodesUseCase.Configuration,
+        configuration: WireCellsGetNodesRequest.Configuration,
         isCellsStatePending: Bool = false
     ) -> UIHostingController<T> {
         let viewModel = FilesViewModel(
@@ -176,6 +172,12 @@ public extension WireMessagingFactory {
                     repository: nodesAPI,
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
+                ),
+                renameNode: WireCellsRenameNodeUseCase(
+                    nodesRepository: nodesAPI,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: nodeCache,
+                    nodeRenameNotifier: nodeRenameNotifier
                 ),
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
@@ -207,7 +209,8 @@ public extension WireMessagingFactory {
                         fileCache: fileCache
                     ),
                     localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest
+                    lastOpenRequest: lastOpenRequest,
+                    nodeRenameNotifier: nodeRenameNotifier
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
@@ -229,6 +232,7 @@ public extension WireMessagingFactory {
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             insetsProvider: insetsProvider
         )
     }

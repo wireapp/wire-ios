@@ -294,6 +294,7 @@ struct TagsEditView: View {
     let item = FilesViewItem(
         id: UUID(),
         filename: "some_file.pdf",
+        filePath: "some/path",
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,

@@ -142,12 +142,16 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            return switch messageProtocol {
+            switch messageProtocol {
             case .proteus, .mixed:
                 try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
                 try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
             }
+
+            // Success! Reset count
+            retryCount = 0
+
         } catch let networkError as NetworkError {
             try await context.perform { [self] in
                 try handleFederationFailure(networkError: networkError, message: message)
@@ -450,6 +454,17 @@ public final class MessageSender: MessageSenderInterface {
                         groupID: groupID,
                         epoch: epoch ?? 0
                     )
+            case let .groupOutOfSync(missingUsers):
+                guard retryCount < maxRetryAttempts else {
+                    retryCount = 0
+                    throw error
+                }
+
+                retryCount += 1
+
+                let users = missingUsers.map { MLSUser($0) }
+                try await mlsService.addMembersToConversation(with: users, for: groupID)
+                try await sendMessage(message: message)
             default:
                 throw error
             }

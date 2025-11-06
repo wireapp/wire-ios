@@ -36,8 +36,14 @@ struct FilesViewItemView: View {
         return formatter
     }()
 
-    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
+    private var canRenameFile: Bool
+
+    init(
+        viewModel: @autoclosure @escaping () -> FilesItemViewModel,
+        canRenameFile: Bool = false
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.canRenameFile = canRenameFile
     }
 
     var body: some View {
@@ -103,11 +109,12 @@ struct FilesViewItemView: View {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                         }.disabled(viewModel.isDownloading)
                     }
-
-                    // FIXME: [WPB-19393] Enable
-//                    Button(action: rename) {
-//                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-//                    }
+                    
+                    if canRenameFile {
+                        Button(action: rename) {
+                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                    }
                     
                     Button(action: editTags) {
                         Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
@@ -157,7 +164,7 @@ struct FilesViewItemView: View {
     }
 
     private func rename() {
-        // FIXME: [WPB-19393] Implement
+        Task { await viewModel.rename() }
     }
     
     private func editTags() {
@@ -181,7 +188,8 @@ struct FilesViewItemView: View {
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(tags: ["urgent"]))
+        FilesViewItemView(viewModel: .preview(), canRenameFile: true)
+        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
