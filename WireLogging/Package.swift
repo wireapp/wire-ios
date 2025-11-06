@@ -13,7 +13,6 @@ let package = Package(
         .library(name: "WireLegacyLoggingSupport", targets: ["WireLegacyLoggingSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins")
     ],
@@ -23,8 +22,7 @@ let package = Package(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
             plugins: [
-                // .plugin(name: "SourceryPlugin", package: "WirePlugins")
-                .plugin(name: "SourceryCommandPlugin", package: "Sourcery")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(

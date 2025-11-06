@@ -28,19 +28,3 @@ public protocol WireTaggedLoggerProtocol: Sendable {
     func critical(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...)
 
 }
-
-// TODO: delete
-
-// sourcery: AutoMockable
-public protocol WireTaggedLoggerProtocol_: Sendable {
-
-    var tag: WireLogTag { get }
-
-    func debug(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-    func info(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-    func notice(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-    func warn(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-    func error(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-    func critical(_ message: WireLogMessage, _ additionalAttributes: [WireLogAttribute])
-
-}
