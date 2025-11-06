@@ -24,9 +24,10 @@ import WireNetwork
 import WireTesting
 import XCTest
 
-@testable import WireDataModel
+@testable @preconcurrency import WireDataModel
 @testable import WireDataModelSupport
 
+@preconcurrency
 final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     var sut: MLSService!
@@ -1026,13 +1027,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let futureCommitDate = Date().addingTimeInterval(2)
         let groupID = MLSGroupID(.init([1, 2, 3]))
-        var conversation: ZMConversation!
 
         await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+
             // A group with pending proposal in the future
-            conversation = createConversation(in: uiMOC)
+            let conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = futureCommitDate
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
         }
 
         // Mock no subconversations
@@ -1062,13 +1065,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let groupID = MLSGroupID.random()
-        var conversation: ZMConversation!
 
-        await uiMOC.perform { [self] in
+        let conversationOID = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+
             // A group with pending proposal in the past.
-            conversation = createConversation(in: uiMOC)
+            let conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = overdueCommitDate
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return conversation.objectID
         }
 
         // Mock no subconversations
@@ -1081,7 +1088,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await sut.commitPendingProposals()
 
         // Then we cleared the pending proposal date.
-        await uiMOC.perform {
+        try await uiMOC.perform { [uiMOC] in
+            let conversation = try XCTUnwrap(uiMOC.object(with: conversationOID) as? ZMConversation)
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
     }
@@ -1090,13 +1098,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let groupID = MLSGroupID.random()
-        var conversation: ZMConversation!
 
-        await uiMOC.perform { [self] in
-            // A group with pending proposal in the past.
-            conversation = createConversation(in: uiMOC)
+        let conversationOID = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+
+            // Create conversation with pending proposal in the future
+            let conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = overdueCommitDate
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return conversation.objectID
         }
 
         // Mock no subconversations
@@ -1118,7 +1130,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(id, groupID)
         XCTAssertEqual(commitTime.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
-        await uiMOC.perform {
+        try await uiMOC.perform { [self] in
+            let conversation = try XCTUnwrap(uiMOC.object(with: conversationOID) as? ZMConversation)
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
     }
@@ -1127,13 +1140,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let futureCommitDate = Date().addingTimeInterval(2)
         let groupID = MLSGroupID(.init([1, 2, 3]))
-        var conversation: ZMConversation!
 
-        await uiMOC.perform { [self] in
-            // A group with pending proposal in the future
-            conversation = createConversation(in: uiMOC)
+        let conversationOID = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+
+            // Create conversation with pending proposal in the future
+            let conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = futureCommitDate
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return conversation.objectID
         }
 
         // Mock no subconversations
@@ -1155,8 +1172,104 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(id, groupID)
         XCTAssertEqual(commitTime.timeIntervalSinceNow, futureCommitDate.timeIntervalSinceNow, accuracy: 0.1)
 
-        await uiMOC.perform {
+        try await uiMOC.perform { [self] in
+            let conversation = try XCTUnwrap(uiMOC.object(with: conversationOID) as? ZMConversation)
             XCTAssertNil(conversation.commitPendingProposalDate)
+        }
+    }
+
+    func test_CommitPendingProposals_ExcludesGroupsWhereSelfUserIsNotAMember() async throws {
+        // Given
+        let groupID = MLSGroupID(.init([1, 2, 3]))
+        let commitDate = Date().addingTimeInterval(-1) // Past date
+
+        let context = uiMOC
+
+        let conversationOID = await context.perform { [self] in
+            let conversation = createConversation(in: context)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = commitDate
+            conversation.conversationType = .group
+            return conversation.objectID
+        }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
+        // Mock committing pending proposal
+        var committedGroupIDs: [MLSGroupID] = []
+        mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
+            committedGroupIDs.append(groupID)
+        }
+
+        // When
+        await sut.commitPendingProposals()
+
+        // Then the conversation should be excluded and no commits should happen
+        XCTAssertTrue(committedGroupIDs.isEmpty)
+
+        // Verify self user is not a member
+        try await context.perform {
+            let conversation = try XCTUnwrap(context.existingObject(with: conversationOID) as? ZMConversation)
+            XCTAssertFalse(conversation.isSelfAnActiveMember)
+            XCTAssertNotNil(conversation.commitPendingProposalDate)
+        }
+    }
+
+    func test_CommitPendingProposals_CancelsCommitWhenSelfUserRemovedDuringDelay() async throws {
+        // Given
+        let futureCommitDate = Date().addingTimeInterval(1.5)
+        let groupID = MLSGroupID(.init([1, 2, 3]))
+        let context = uiMOC
+
+        let (conversationOID, selfUserOID) = await context.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: context)
+
+            // Create conversation with pending proposal in the future
+            let conversation = createConversation(in: context)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+            conversation.conversationType = .group
+
+            // Self user is initially a member
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return (conversation.objectID, selfUser.objectID)
+        }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
+        // Mock committing pending proposal
+        var committedGroupIDs: [MLSGroupID] = []
+        mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
+            committedGroupIDs.append(groupID)
+        }
+
+        // Schedule removal of self user after 0.5 seconds (before commit time)
+        Task {
+            do {
+                try await Task.sleep(for: .milliseconds(500)) // 0.5 seconds
+                try await context.perform {
+                    let conversation = try XCTUnwrap(context.object(with: conversationOID) as? ZMConversation)
+                    let selfUser = try XCTUnwrap(context.object(with: selfUserOID) as? ZMUser)
+                    conversation.removeParticipantAndUpdateConversationState(user: selfUser)
+                }
+            } catch {
+                XCTFail("test failed with error: \(error)")
+            }
+        }
+
+        // When
+        await sut.commitPendingProposals()
+
+        // Then the commit should be cancelled
+        XCTAssertTrue(committedGroupIDs.isEmpty, "No commits should have been executed")
+
+        // Verify self user is no longer a member
+        try await context.perform {
+            let conversation = try XCTUnwrap(context.object(with: conversationOID) as? ZMConversation)
+            XCTAssertFalse(conversation.isSelfAnActiveMember)
         }
     }
 
@@ -1170,25 +1283,32 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let conversation2MLSGroupID = MLSGroupID(.init([4, 5, 6]))
         let conversation3MLSGroupID = MLSGroupID(.init([7, 8, 9]))
 
-        var conversation1: ZMConversation!
-        var conversation2: ZMConversation!
-        var conversation3: ZMConversation!
+        let objectIDs = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
 
-        await uiMOC.perform { [self] in
             // A group with pending proposal in the past
-            conversation1 = createConversation(in: uiMOC)
+            let conversation1 = createConversation(in: uiMOC)
             conversation1.mlsGroupID = conversation1MLSGroupID
             conversation1.commitPendingProposalDate = overdueCommitDate
+            conversation1.addParticipantAndUpdateConversationState(user: selfUser)
 
             // A group with pending proposal in the future
-            conversation2 = createConversation(in: uiMOC)
+            let conversation2 = createConversation(in: uiMOC)
             conversation2.mlsGroupID = conversation2MLSGroupID
             conversation2.commitPendingProposalDate = futureCommitDate1
+            conversation2.addParticipantAndUpdateConversationState(user: selfUser)
 
             // A group with pending proposal in the future
-            conversation3 = createConversation(in: uiMOC)
+            let conversation3 = createConversation(in: uiMOC)
             conversation3.mlsGroupID = conversation3MLSGroupID
             conversation3.commitPendingProposalDate = futureCommitDate2
+            conversation3.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return (
+                id1: conversation1.objectID,
+                id2: conversation2.objectID,
+                id3: conversation3.objectID
+            )
         }
 
         // Mock no subconversations
@@ -1237,7 +1357,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then all conversations have no more commit dates.
-        await uiMOC.perform {
+        try await uiMOC.perform { [uiMOC] in
+            let conversation1 = try XCTUnwrap(uiMOC.object(with: objectIDs.id1) as? ZMConversation)
+            let conversation2 = try XCTUnwrap(uiMOC.object(with: objectIDs.id2) as? ZMConversation)
+            let conversation3 = try XCTUnwrap(uiMOC.object(with: objectIDs.id3) as? ZMConversation)
+
             XCTAssertNil(conversation1.commitPendingProposalDate)
             XCTAssertNil(conversation2.commitPendingProposalDate)
             XCTAssertNil(conversation3.commitPendingProposalDate)
@@ -1249,13 +1373,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let parentGroupdID = MLSGroupID.random()
         let subgroupID = MLSGroupID.random()
-        var conversation: ZMConversation!
 
-        await uiMOC.perform { [self] in
+        let conversationOID = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+
             // A group with pending proposal in the past.
-            conversation = createConversation(in: uiMOC)
+            let conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = parentGroupdID
             conversation.commitPendingProposalDate = overdueCommitDate
+            conversation.addParticipantAndUpdateConversationState(user: selfUser)
+
+            return conversation.objectID
         }
 
         // Mock subconversation
@@ -1292,7 +1420,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue([subgroupID, parentGroupdID].contains(id2))
         XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
-        await uiMOC.perform {
+        try await uiMOC.perform { [uiMOC] in
+            let conversation = try XCTUnwrap(uiMOC.object(with: conversationOID) as? ZMConversation)
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
     }
