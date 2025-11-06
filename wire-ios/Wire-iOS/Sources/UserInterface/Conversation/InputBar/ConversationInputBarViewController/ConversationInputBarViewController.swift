@@ -120,7 +120,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         button.setIcon(.hourglass, size: .tiny, for: UIControl.State.normal)
         button.accessibilityIdentifier = "ephemeralTimeSelectionButton"
-        
+
         if conversation.isSelfDeletingMessageSendingDisabled {
             button.isEnabled = false
         }
