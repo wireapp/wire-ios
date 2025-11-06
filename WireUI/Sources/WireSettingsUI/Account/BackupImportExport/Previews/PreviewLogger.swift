@@ -16,37 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireLogging
 
-struct PreviewLogger: LoggerProtocol {
+struct PreviewLogger: WireTaggedLoggerProtocol {
 
-    let logFiles = [URL]()
+    let tag = WireLogTag("preview")
 
-    func addTag(_ key: LogAttributesKey, value: String?) {}
-
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[debug] \(message)")
+    func debug(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[DEBUG]: \(message.content)")
     }
 
-    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[info] \(message)")
+    func info(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[INFO]: \(message.content)")
     }
 
-    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[notice] \(message)")
+    func notice(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[NOTICE]: \(message.content)")
     }
 
-    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[warn] \(message)")
+    func warn(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[WARN]: \(message.content)")
     }
 
-    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[error] \(message)")
+    func error(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[ERROR]: \(message.content)")
     }
 
-    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-        print("[critical] \(message)")
+    func critical(_ message: WireLogMessage, _ additionalAttributes: WireLogAttribute...) {
+        print("[CRITICAL]: \(message.content)")
     }
 
 }

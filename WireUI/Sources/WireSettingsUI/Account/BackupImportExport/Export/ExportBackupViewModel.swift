@@ -40,12 +40,12 @@ final class ExportBackupViewModel: ObservableObject {
 
     private var backupTask: Task<Void, Never>?
 
-    private let logger: any LoggerProtocol
+    private let logger: any WireTaggedLoggerProtocol
 
     init(
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
-        logger: any LoggerProtocol
+        logger: any WireTaggedLoggerProtocol
     ) {
         self.createBackupUseCase = createBackupUseCase
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
@@ -82,7 +82,7 @@ final class ExportBackupViewModel: ObservableObject {
                 logger.info("backup cancelled")
                 state = nil
             } catch {
-                logger.error("backup failed unexpectedly: " + String(reflecting: error))
+                logger.error("backup failed unexpectedly: \(error)")
                 state = .backupFailed(error)
             }
         }
@@ -171,9 +171,22 @@ final class ExportBackupViewModel: ObservableObject {
             do {
                 try await cleanUpBackupsUseCase.invoke()
             } catch {
-                logger.error("cleaning up backups failed: \(String(reflecting: error))")
+                logger.error("cleaning up backups failed: \(error)")
             }
         }
+    }
+
+}
+
+private extension WireLogInterpolation {
+
+    mutating func appendInterpolation(
+        _ error: any Error
+    ) {
+        // just log the type of error for now, we can still refine it,
+        // e.g. treat DecodingError, URLError etc. similar everywhere
+        let type = type(of: error)
+        writeText("\(type)")
     }
 
 }

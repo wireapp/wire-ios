@@ -28,8 +28,8 @@ public struct BackupImportExportBuilder {
     let createBackupUseCase: any CreateBackupUseCaseProtocol
     let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
-    let exportBackupLogger: any LoggerProtocol
-    let importBackupLogger: any LoggerProtocol
+    let createBackupLogger: WireTaggedLoggerProtocol
+    let importBackupLogger: WireTaggedLoggerProtocol
     let wireAccentColor: WireAccentColor
     let wireAccentColorMapping: WireAccentColorMapping
     let isContextMenuAllowed: Bool
@@ -39,8 +39,8 @@ public struct BackupImportExportBuilder {
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
-        exportBackupLogger: any LoggerProtocol,
-        importBackupLogger: any LoggerProtocol,
+        createBackupLogger: WireTaggedLoggerProtocol,
+        importBackupLogger: WireTaggedLoggerProtocol,
         wireAccentColorMapping: WireAccentColorMapping,
         wireAccentColor: WireAccentColor,
         isContextMenuAllowed: Bool
@@ -49,7 +49,7 @@ public struct BackupImportExportBuilder {
         self.createBackupUseCase = createBackupUseCase
         self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
-        self.exportBackupLogger = exportBackupLogger
+        self.createBackupLogger = createBackupLogger
         self.importBackupLogger = importBackupLogger
         self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
@@ -77,7 +77,7 @@ public struct BackupImportExportBuilder {
         let viewModel = ExportBackupViewModel(
             createBackupUseCase: createBackupUseCase,
             cleanUpBackupsUseCase: cleanUpBackupsUseCase,
-            logger: exportBackupLogger
+            logger: createBackupLogger
         )
 
         ExportBackupView(
@@ -136,7 +136,7 @@ extension BackupImportExportBuilder {
             createBackupUseCase: PreviewCreateBackupUseCase(),
             importBackupUseCaseFactory: PreviewImportBackupUseCaseFactory(),
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
-            exportBackupLogger: PreviewLogger(),
+            createBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
             wireAccentColorMapping: WireAccentColorMapping(),
             wireAccentColor: .purple,

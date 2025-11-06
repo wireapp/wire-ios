@@ -116,9 +116,9 @@ let package = Package(
                 "WireDesign",
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
-                .product(name: "WireLegacyLogging", package: "WireLogging"),
-                "WireReusableUIComponents",
-                "WireLocators"
+                "WireLocators",
+                "WireLogging",
+                "WireReusableUIComponents"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
@@ -131,6 +131,7 @@ let package = Package(
         ),
         .testTarget(name: "WireSettingsUITests", dependencies: [
             .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            .product(name: "WireLoggingSupport", package: "WireLogging"),
             "WireSettingsUI",
             "WireSettingsUISupport"
         ]),

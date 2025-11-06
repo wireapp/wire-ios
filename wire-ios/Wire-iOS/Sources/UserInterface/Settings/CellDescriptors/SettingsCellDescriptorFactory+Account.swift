@@ -435,8 +435,8 @@ extension SettingsCellDescriptorFactory {
             createBackupUseCase: createBackupUseCase,
             importBackupUseCaseFactory: importBackupUseCaseFactory,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
-            exportBackupLogger: WireLogger.backupExport,
-            importBackupLogger: WireLogger.backupImport,
+            exportBackupLogger: WireLogging.WireLogger.createBackup,
+            importBackupLogger: WireLogging.WireLogger.importBackup,
             wireAccentColorMapping: WireAccentColorMapping(),
             wireAccentColor: selfUser.accentColor ?? .default,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled

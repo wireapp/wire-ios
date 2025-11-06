@@ -44,14 +44,14 @@ final class ImportBackupViewModel: ObservableObject {
     private var importTask: Task<Void, Never>?
     private var hasDestructiveImportBeenConfirmed = false
 
-    private let logger: any LoggerProtocol
+    private let logger: WireTaggedLoggerProtocol
     private let fileManager = FileManager.default
 
     private typealias Strings = L10n.Localizable.ImportBackup
 
     init(
         importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
-        logger: any LoggerProtocol
+        logger: WireTaggedLoggerProtocol
     ) {
         self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.logger = logger
@@ -91,7 +91,7 @@ final class ImportBackupViewModel: ObservableObject {
                 importBackup(from: copy, password: "")
             }
         } catch {
-            logger.error("failed to pick backup file to restore: " + String(reflecting: error))
+            logger.error("failed to pick backup file to restore: \(error)")
             state = .restoreFailed
         }
     }
@@ -180,7 +180,7 @@ final class ImportBackupViewModel: ObservableObject {
                 logger.info("restore cancelled")
                 reset()
             } catch {
-                logger.error("unexpected error while restoring: " + String(reflecting: error))
+                logger.error("unexpected error while restoring: \(error)")
                 alertContent = .init(
                     title: Strings.Alert.GenericError.title,
                     message: Strings.Alert.GenericError.message,
@@ -191,7 +191,7 @@ final class ImportBackupViewModel: ObservableObject {
             do {
                 try fileManager.removeItem(at: url)
             } catch {
-                logger.error("failed to remove temporary file: " + String(reflecting: error))
+                logger.error("failed to remove temporary file: \(error)")
             }
         }
     }
@@ -284,6 +284,19 @@ final class ImportBackupViewModel: ObservableObject {
         var cancel = ""
         let action: String
 
+    }
+
+}
+
+private extension WireLogInterpolation {
+
+    mutating func appendInterpolation(
+        _ error: any Error
+    ) {
+        // just log the type of error for now, we can still refine it,
+        // e.g. treat DecodingError, URLError etc. similar everywhere
+        let type = type(of: error)
+        writeText("\(type)")
     }
 
 }

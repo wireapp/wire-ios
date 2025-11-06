@@ -19,6 +19,7 @@
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
+import WireLoggingSupport
 import WireTestingPackage
 import XCTest
 
@@ -30,7 +31,7 @@ final class ExportBackupViewModelTests: XCTestCase {
 
     private var mockCreateBackupUseCase: CreateBackupUseCaseProtocolMock!
     private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
-    private var mockLogger: (any LoggerProtocol)!
+    private var mockLogger: WireTaggedLoggerProtocolMock!
     private var sut: ExportBackupViewModel!
 
     override func setUp() async throws {
@@ -39,7 +40,7 @@ final class ExportBackupViewModelTests: XCTestCase {
         mockCleanUpBackupsUseCase = .init()
         mockCleanUpBackupsUseCase.invoke_MockMethod = {}
 
-        mockLogger = WireLogger(tag: "mock")
+        mockLogger = .init()
 
         sut = .init(
             createBackupUseCase: mockCreateBackupUseCase,

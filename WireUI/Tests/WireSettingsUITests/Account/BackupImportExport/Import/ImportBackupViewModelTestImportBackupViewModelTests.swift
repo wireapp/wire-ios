@@ -21,6 +21,7 @@ import WireDomainPackage
 import WireFoundation
 import WireFoundationSupport
 import WireLogging
+import WireLoggingSupport
 import WireTestingPackage
 import XCTest
 
@@ -33,7 +34,7 @@ final class ImportBackupViewModelTests: XCTestCase {
     private var temporaryDirectory: URL!
     private var temporaryFile: URL!
     private var mockImportBackupUseCase: ImportBackupUseCaseProtocolMock!
-    private var mockLogger: (any LoggerProtocol)!
+    private var mockLogger: WireTaggedLoggerProtocolMock!
     private var sut: ImportBackupViewModel!
 
     private var fileManager: FileManager { .default }
@@ -53,7 +54,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         mockImportBackupUseCase = .init()
         mockImportBackupUseCase.isImportDestructive = true
 
-        mockLogger = WireLogger(tag: "mock")
+        mockLogger = .init()
 
         sut = .init(
             importBackupUseCaseFactory: ImportBackupUseCaseFactory(useCase: mockImportBackupUseCase),
