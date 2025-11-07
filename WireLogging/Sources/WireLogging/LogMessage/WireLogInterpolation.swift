@@ -58,7 +58,7 @@
 ///         writeText(obfuscated)
 ///
 ///         // Optionally add structured attributes
-///         writeAttribute(WireLogAttribute(key: "user_id", value: userID.uuidString))
+///         writeAttribute(.selfUserID(userID))
 ///     }
 /// }
 /// ```
@@ -68,6 +68,7 @@
 /// - Whether structured attributes should be added for better log analysis
 /// - Using `writeText(_:)` for content that should appear in the log message
 /// - Using `writeAttribute(_:)` for structured metadata
+
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
     private(set) var content = ""
@@ -99,10 +100,11 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     /// extension WireLogInterpolation {
     ///     mutating func appendInterpolation(_ userID: UUID) {
     ///         writeText("User: \(userID.uuidString.prefix(8))***")
-    ///         writeAttribute(WireLogAttribute(key: "user_id", value: userID.uuidString))
+    ///         writeAttribute(.selfUserID(userID))
     ///     }
     /// }
     /// ```
+
     public mutating func writeAttribute(_ attribute: WireLogAttribute) {
         attributes += [attribute]
     }
@@ -125,6 +127,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     ///     }
     /// }
     /// ```
+
     public mutating func writeText(_ text: String) {
         content += text
     }

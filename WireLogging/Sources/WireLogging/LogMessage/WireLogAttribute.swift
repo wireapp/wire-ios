@@ -16,16 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogAttribute {
+public import Foundation
+
+public struct WireLogAttribute: Sendable {
 
     public var key: String
     public var value: String
+
+    // feel free to make init public if needed
+    init(
+        key: String,
+        value: String
+    ) {
+        self.key = key
+        self.value = value
+    }
+
+    // feel free to make init public if needed
+    init(
+        _ key: String,
+        _ value: String
+    ) {
+        self.init(key: key, value: value)
+    }
 
 }
 
 public extension WireLogAttribute {
 
-    typealias Provider = (String) -> WireLogAttribute
+    // TODO: check if commented ones are needed
+    // static func `public`(_ value: String) -> WireLogAttribute { .init("public", value) }
+    // static func accountID(_ value: String) -> WireLogAttribute { .init("account_id", value) }
+    // static func ackMultipleEventsCount(_ value: String) -> WireLogAttribute { .init("ack_events_count", value) }
+    // static func conversationID(_ value: String) -> WireLogAttribute { .init("conversation_id", value) }
+    // static func coreCryptoContext(_ value: String) -> WireLogAttribute { .init("core_crypto_context", value) }
+    // static func duration(_ value: String) -> WireLogAttribute { .init("duration", value) }
+    // static func eventEnvelopeID(_ value: String) -> WireLogAttribute { .init("event_envelope_id", value) }
+    // static func eventID(_ value: String) -> WireLogAttribute { .init("event_id", value) }
+    // static func eventSource(_ value: String) -> WireLogAttribute { .init("event_source", value) }
+    // static func lastEventID(_ value: String) -> WireLogAttribute { .init("last_event_id", value) }
+    // static func messageType(_ value: String) -> WireLogAttribute { .init("message_type", value) }
+    // static func mlsGroupID(_ value: String) -> WireLogAttribute { .init("mls_group_id", value) }
+    // static func multipleEvents(_ value: String) -> WireLogAttribute { .init("ack_multiple_events", value) }
+    // static func nonce(_ value: String) -> WireLogAttribute { .init("message_nonce", value) }
+    // static func nse(_ value: String) -> WireLogAttribute { .init("NSE", value) }
+    // static func processID(_ value: String) -> WireLogAttribute { .init("process_id", value) }
+    // static func processName(_ value: String) -> WireLogAttribute { .init("process_name", value) }
+    // static func pushChannelVersion(_ value: String) -> WireLogAttribute { .init("push_channel", value) }
+    // static func recipientID(_ value: String) -> WireLogAttribute { .init("recipient_id", value) }
+    // static func selfClientID(_ value: String) -> WireLogAttribute { .init("self_client_id", value) }
+    static func selfUserID(_ value: UUID) -> WireLogAttribute { .init("self_user_id", value.uuidString) }
+    // static func senderUserID(_ value: String) -> WireLogAttribute { .init("sender_user_id", value) }
+    // static func syncPhase(_ value: String) -> WireLogAttribute { .init("sync_phase", value) }
+    // static func syncType(_ value: String) -> WireLogAttribute { .init("sync_type", value) }
+    // static func syncVersion(_ value: String) -> WireLogAttribute { .init("sync_version", value) }
+    // static func tag(_ value: String) -> WireLogAttribute { .init("tag", value) }
+    // static func workItemID(_ value: String) -> WireLogAttribute { .init("work_item_id", value) }
 
     nonisolated(unsafe) static let someKey: Provider = { .init(key: "someKey", value: $0) }
 
