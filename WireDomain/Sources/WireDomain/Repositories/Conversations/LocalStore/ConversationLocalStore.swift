@@ -738,6 +738,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func isSelfConversation(_ conversation: ZMConversation) async -> Bool {
+        await context.perform {
+            conversation.conversationType == .self
+        }
+    }
+
     public func name(
         for conversation: ZMConversation
     ) async -> String? {

@@ -264,6 +264,10 @@ public protocol ConversationLocalStoreProtocol {
         _ conversation: ZMConversation
     ) async -> Bool
 
+    func isSelfConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
     /// Deletes a conversation locally.
     /// - Parameters:
     ///     - conversation: The conversation to delete.
