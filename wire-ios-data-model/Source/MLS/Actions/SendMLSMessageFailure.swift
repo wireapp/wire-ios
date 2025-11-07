@@ -69,6 +69,7 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case mlsStaleMessage
     case mlsClientMismatch
     case unreachableDomains(Set<String>)
+    case groupOutOfSync(missingUsers: Set<QualifiedID>)
 
     // 422
     case mlsUnsupportedProposal(message: String)
@@ -161,6 +162,9 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case let .unreachableDomains(domains):
             "Some domains were unreachable: \(domains)"
+
+        case let .groupOutOfSync(missingUsers):
+            "The group is missing \(missingUsers.count) users"
         }
     }
 
