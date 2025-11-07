@@ -23,7 +23,7 @@
 # 9. A new pull request is created against the target branch with the cherry-picked changes.
 #
 
-name: "Cherry-pick from release to next release or develop"
+name: Playground
 
 on:
   workflow_dispatch: # TODO: delete
