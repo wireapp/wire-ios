@@ -27,8 +27,6 @@ struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
     let backupContext: NSManagedObjectContext
     let contextProvider: ContextProvider
     let assetTransferStateResolver: AssetTransferStateResolverProtocol
-    var clientMessageEntityDescription: NSEntityDescription?
-    var assetMessageEntityDescription: NSEntityDescription?
 
     init(
         contextProvider: ContextProvider,
@@ -39,15 +37,6 @@ struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
         self.backupContext = contextProvider.newBackgroundContext()
 
         setupBackupContext()
-
-        self.clientMessageEntityDescription = NSEntityDescription.entity(
-            forEntityName: ZMClientMessage.entityName(),
-            in: backupContext
-        )
-        self.assetMessageEntityDescription = NSEntityDescription.entity(
-            forEntityName: ZMAssetClientMessage.entityName(),
-            in: backupContext
-        )
     }
 
     private func setupBackupContext() {

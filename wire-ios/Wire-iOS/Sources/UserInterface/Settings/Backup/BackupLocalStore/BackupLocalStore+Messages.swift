@@ -322,7 +322,7 @@ extension BackupLocalStore {
         do {
             insertedMessagesIDs += try await batchInsert(
                 attributes: clientMessagesAttributes,
-                entityDescription: clientMessageEntityDescription,
+                entityName: ZMClientMessage.entityName(),
                 context: backupContext
             )
         } catch {
@@ -332,7 +332,7 @@ extension BackupLocalStore {
         do {
             insertedMessagesIDs += try await batchInsert(
                 attributes: assetMessagesAttributes,
-                entityDescription: assetMessageEntityDescription,
+                entityName: ZMAssetClientMessage.entityName(),
                 context: backupContext
             )
         } catch {
@@ -358,31 +358,36 @@ extension BackupLocalStore {
 
     private func batchInsert(
         attributes: [CoreDataAttributes],
-        entityDescription: NSEntityDescription?,
+        entityName: String,
         context: NSManagedObjectContext
     ) async throws -> [NSManagedObjectID] {
         guard !attributes.isEmpty else { return [] }
 
-        guard let entityDescription else {
-            throw BatchInsertFailure.failedToGetEntityDescription
-        }
-
-        let insertRequest = NSBatchInsertRequest(
-            entity: entityDescription,
-            objects: attributes
-        )
-        insertRequest.resultType = .objectIDs
-
         do {
+
             let insertResult = try await context.perform {
-                try context.execute(insertRequest) as? NSBatchInsertResult
+                
+                guard let entity = NSEntityDescription.entity(
+                    forEntityName: entityName,
+                    in: context
+                ) else {
+                    throw BatchInsertFailure.failedToGetEntityDescription
+                }
+                
+                let insertRequest = NSBatchInsertRequest(
+                    entity: entity,
+                    objects: attributes
+                )
+                insertRequest.resultType = .objectIDs
+                
+                return try context.execute(insertRequest) as? NSBatchInsertResult
             }
 
             return insertResult?.result as? [NSManagedObjectID] ?? []
         } catch {
             throw BatchInsertFailure.failedToInsertBatch(
                 error: error,
-                entity: entityDescription.name ?? "unknown"
+                entity: entityName
             )
         }
     }
