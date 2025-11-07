@@ -18,7 +18,19 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ResetBrokenMLSConversationDelegate: AnyObject {
-    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async
+/// Defines the strategy to recover from a failed or unprocessable work item.
+///
+/// When a `WorkItem` cannot be executed successfully, the worker may throw
+/// a `WorkItemRecoveryStrategy` to indicate what should be done with the
+/// failed item. This allows the system to decide whether to retry, drop,
+/// or escalate the ticket based on the chosen strategy.
+
+enum WorkItemRecoveryStrategy: Error {
+
+    /// The item should be discarded and it will not be retried.
+    ///
+    /// Use this for tasks that are no longer relevant, redundant, or
+    /// when retrying would not be meaningful or safe.
+
+    case drop
 }

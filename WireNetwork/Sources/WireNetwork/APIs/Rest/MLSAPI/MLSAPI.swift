@@ -43,5 +43,5 @@ public protocol MLSAPI {
     /// Available from ``APIVersion`` v9.
     ///
 
-    func resetMLSConversation(epoch: Int64, groupID: String) async throws
+    func resetMLSConversation(epoch: UInt64, groupID: String) async throws
 }

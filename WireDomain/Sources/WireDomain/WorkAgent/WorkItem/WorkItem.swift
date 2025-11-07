@@ -18,7 +18,27 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ResetBrokenMLSConversationDelegate: AnyObject {
-    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async
+/// An item of work that can be performed.
+///
+/// A `Workitem` is a pending operation that can be performed when instructed
+/// to. Instances are created and scheduled via the `WorkAgent`.
+
+protocol WorkItem: Sendable {
+
+    /// A unique identifier for this item.
+
+    var id: UUID { get }
+
+    /// The urgency or importance of this ticket.
+
+    var priority: WorkItemPriority { get }
+
+    /// Start the work for this item.
+
+    func start() async throws
+
+    /// Cancel the work item.
+
+    func cancel() async
+
 }

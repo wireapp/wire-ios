@@ -379,7 +379,7 @@ class MessageAPIV5: MessageAPIV4 {
         return (payload, response)
     }
 
-    private func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
+    func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
         if let error = SendMLSMessageFailure(from: response) {
             error
         } else {
@@ -422,4 +422,57 @@ class MessageAPIV12: MessageAPIV11 {
 
 final class MessageAPIV13: MessageAPIV12 {
     override var apiVersion: APIVersion { .v13 }
+
+    override func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+
+        let request = ZMTransportRequest(
+            path: "/mls/messages",
+            method: .post,
+            binaryData: encryptedMessage,
+            type: "message/mls",
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+
+        let payload: Payload.MLSMessageSendingStatus
+        if response.result == .success {
+            payload = try mapSuccessResponse(response)
+        } else if response.httpStatus == 409, response.payloadLabel() == "mls-group-out-of-sync" {
+            // New error to handle.
+            guard let data = response.rawData else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+            do {
+                let decoder = JSONDecoder.defaultDecoder
+                let payload = try decoder.decode(MissingUsersPayload.self, from: data)
+                throw SendMLSMessageFailure.groupOutOfSync(missingUsers: payload.missingUsers)
+            } catch {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+        } else {
+            throw customMapFailureResponse(response)
+        }
+
+        return (payload, response)
+    }
+
+    private struct MissingUsersPayload: Decodable {
+
+        let missingUsers: Set<QualifiedID>
+
+        enum CodingKeys: String, CodingKey {
+            case missingUsers = "missing_users"
+        }
+
+    }
 }

@@ -18,7 +18,24 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ResetBrokenMLSConversationDelegate: AnyObject {
-    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: UInt64) async
+/// A component responsible for managing and ordering pending work items.
+///
+/// The `WorkItemScheduler` acts as the central queue for the app’s internal
+/// work management system. It accepts items and determines the order in
+/// which they should be executed based on their assigned priority and
+/// other scheduling policies.
+
+protocol WorkItemScheduler: Sendable {
+
+    /// Add an item to the scheduler.
+    ///
+    /// - Parameter item: The item to enqueue.
+
+    func enqueueItem(_ item: any WorkItem) async
+
+    /// Retrieves and removes the next item to be performed.
+    ///
+    /// - Returns: The next available item.
+
+    func dequeueNextItem() async -> (any WorkItem)?
 }
