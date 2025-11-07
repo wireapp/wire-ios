@@ -48,7 +48,7 @@ jobs:
         with:
           lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
-          fetch-depth: 0
+          fetch-depth: 1
           submodules: recursive
 
       - name: Determine target branch
