@@ -68,6 +68,7 @@
 /// - Whether structured attributes should be added for better log analysis
 /// - Using `writeText(_:)` for content that should appear in the log message
 /// - Using `writeAttribute(_:)` for structured metadata
+
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
     private(set) var content = ""
@@ -103,6 +104,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     ///     }
     /// }
     /// ```
+
     public mutating func writeAttribute(_ attribute: WireLogAttribute) {
         attributes += [attribute]
     }
@@ -125,6 +127,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     ///     }
     /// }
     /// ```
+
     public mutating func writeText(_ text: String) {
         content += text
     }
