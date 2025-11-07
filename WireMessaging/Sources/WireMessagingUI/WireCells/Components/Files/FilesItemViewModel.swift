@@ -70,9 +70,9 @@ final class FilesItemViewModel: ObservableObject {
 
         return switch asset?.downloadState {
         case .downloaded:
-            true
-        default:
             false
+        default:
+            true
         }
     }
 
