@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 public struct WireLogAttribute: Sendable {
 
     public var key: String
     public var value: String
 
-    public init(
+    // feel free to make init public if needed
+    init(
         key: String,
         value: String
     ) {
@@ -29,7 +32,8 @@ public struct WireLogAttribute: Sendable {
         self.value = value
     }
 
-    public init(
+    // feel free to make init public if needed
+    init(
         _ key: String,
         _ value: String
     ) {
@@ -61,7 +65,7 @@ public extension WireLogAttribute {
     // static func pushChannelVersion(_ value: String) -> WireLogAttribute { .init("push_channel", value) }
     // static func recipientID(_ value: String) -> WireLogAttribute { .init("recipient_id", value) }
     // static func selfClientID(_ value: String) -> WireLogAttribute { .init("self_client_id", value) }
-    static func selfUserID(_ value: String) -> WireLogAttribute { .init("self_user_id", value) }
+    static func selfUserID(_ value: UUID) -> WireLogAttribute { .init("self_user_id", value.uuidString) }
     // static func senderUserID(_ value: String) -> WireLogAttribute { .init("sender_user_id", value) }
     // static func syncPhase(_ value: String) -> WireLogAttribute { .init("sync_phase", value) }
     // static func syncType(_ value: String) -> WireLogAttribute { .init("sync_type", value) }
