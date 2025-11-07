@@ -68,6 +68,7 @@ package struct FilesView: FilesViewProtocol {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
                 .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+                .interactiveDismissDisabled()
                 .toolbar { toolbarContent }
                 .onAppear { reloadTask() }
                 .alert(
