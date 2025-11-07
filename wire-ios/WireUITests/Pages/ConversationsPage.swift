@@ -33,7 +33,7 @@ class ConversationsPage: PageModel {
     }
 
     var plusButtonToCreateGroup: XCUIElement {
-        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+        app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
 
     var conversationCell: XCUIElement {
@@ -53,7 +53,7 @@ class ConversationsPage: PageModel {
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
     func openSettings() throws -> SettingsPage {
@@ -61,11 +61,11 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
-    func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
+    func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
         let button = app.buttons.containing(predicate).firstMatch
         button.tap()
-        return try UserAccountPage()
+        return try UserProfilePage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

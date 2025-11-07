@@ -38,7 +38,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.ConversationBackButton.rawValue]
+        app.buttons[Locators.ActiveConversationPage.conversationBackButton.rawValue]
     }
 
     var senderNameLabel: XCUIElement {

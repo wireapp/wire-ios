@@ -36,11 +36,11 @@ class FirstTimePage: PageModel {
     }
 
     var savePasswordSheet: XCUIElement {
-        app.staticTexts["Save Password?"]
+        app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
     }
 
     var notNowOptionOnSavePasswordSheet: XCUIElement {
-        app.buttons["Not Now"]
+        app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?

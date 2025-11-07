@@ -26,27 +26,27 @@ class AccountSettingsPage: PageModel {
     }
 
     var nameField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.NameField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.nameField.rawValue].firstMatch
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.UsernameField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.usernameField.rawValue].firstMatch
     }
 
     var emailField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.EmailField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.emailField.rawValue].firstMatch
     }
 
     var domainField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.DomainFieldDisabled.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.domainFieldDisabled.rawValue].firstMatch
     }
 
     var logoutButton: XCUIElement {
-        app.staticTexts[Locators.AccountSettingsPage.LogOut.rawValue]
+        app.staticTexts[Locators.AccountSettingsPage.logOut.rawValue]
     }
 
     var deleteAccountButtonOnAccount: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.DeleteAccountField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.deleteAccountField.rawValue].firstMatch
     }
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
@@ -58,11 +58,11 @@ class AccountSettingsPage: PageModel {
     }
 
     var backupOrRestoreButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.BackuporRestoreField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.backuporRestoreField.rawValue].firstMatch
     }
 
     var resetPasswordButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.ResetPasswordField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue].firstMatch
     }
 
     func getAccountName() -> String? {

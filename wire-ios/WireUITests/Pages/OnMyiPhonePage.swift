@@ -36,14 +36,6 @@ class OnMyiPhonePage: PageModel {
         app.searchFields["Search"]
     }
 
-    var moreButton: XCUIElement {
-        app.buttons["More"]
-    }
-
-    var sortByDateButton: XCUIElement {
-        app.buttons["Date"]
-    }
-
     var backupFile: (String) -> XCUIElement {
         { name in
             let predicate = NSPredicate(format: "identifier CONTAINS %@", name)
@@ -57,8 +49,6 @@ class OnMyiPhonePage: PageModel {
     }
 
     func selectBackupFile(withName name: String) throws -> SetPasswordPage {
-        moreButton.tap()
-        sortByDateButton.tap()
         backupFile(name).tap()
         return try SetPasswordPage()
     }

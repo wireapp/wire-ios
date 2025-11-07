@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 public struct SelfProfileViewCallToActionBanner: View {
@@ -65,6 +66,7 @@ private func contentView(
             }
         )
         .wireButtonStyle(.tertiary)
+        .accessibilityIdentifier(Locators.UserProfilePage.createWireTeamButton.rawValue)
     }
 }
 

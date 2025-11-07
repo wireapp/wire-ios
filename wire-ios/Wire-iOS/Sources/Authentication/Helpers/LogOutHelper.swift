@@ -20,6 +20,7 @@ import avs
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import WireLocators
 
 final class LogOutHelper {
 
@@ -55,6 +56,7 @@ final class LogOutHelper {
                     self?.logout()
                 }
             )
+            actionLogout.accessibilityIdentifier = Locators.LogOutPage.ok.rawValue
             alert.addAction(actionCancel)
             alert.addAction(actionLogout)
 

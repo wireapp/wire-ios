@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
@@ -50,6 +51,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 } message: {
                     Text(Strings.ExportBackup.ErrorAlert.message)
                 }
+                .accessibilityIdentifier(Locators.BackupOrRestorePage.backUpNowButton.rawValue)
 
         }
     }

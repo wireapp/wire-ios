@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 public  struct Option: Identifiable {
 
@@ -36,13 +37,15 @@ public  struct Option: Identifiable {
     let text: String
     let actionImage: ActionImage?
     let action: () -> Void
+    let accessibilityIdentifier: String?
 
     public static func manageTeamOption(action: @escaping () -> Void) -> Option {
         Option(
             icon: .manage,
             text: L10n.Localizable.ManageTeam.title,
             actionImage: .manage,
-            action: action
+            action: action,
+            accessibilityIdentifier: Locators.UserProfilePage.manageTeamButton.rawValue
         )
     }
 
@@ -51,7 +54,8 @@ public  struct Option: Identifiable {
             icon: .plus,
             text: L10n.Localizable.AddAccount.title,
             actionImage: nil,
-            action: action
+            action: action,
+            accessibilityIdentifier: Locators.UserProfilePage.addAcccountOrTeamButton.rawValue
         )
     }
 
@@ -59,12 +63,14 @@ public  struct Option: Identifiable {
         icon: Icon,
         text: String,
         actionImage: ActionImage?,
-        action: @escaping () -> Void
+        action: @escaping () -> Void,
+        accessibilityIdentifier: String? = nil
     ) {
         self.icon = icon
         self.text = text
         self.actionImage = actionImage
         self.action = action
+        self.accessibilityIdentifier = accessibilityIdentifier
     }
 }
 
@@ -100,6 +106,7 @@ struct OptionView: View {
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
         .accessibilityLabel(option.text)
+        .accessibilityIdentifier(option.accessibilityIdentifier ?? "")
         .onTapGesture {
             option.action()
         }

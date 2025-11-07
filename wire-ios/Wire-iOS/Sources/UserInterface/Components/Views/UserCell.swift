@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
@@ -192,7 +193,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.accessibilityIdentifier = Locators.ConversationDetailsPage.userCellName.rawValue
         titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel

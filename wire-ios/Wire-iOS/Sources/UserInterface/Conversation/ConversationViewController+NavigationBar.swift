@@ -109,7 +109,7 @@ extension ConversationViewController {
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
-        button.accessibilityIdentifier = Locators.ActiveConversationPage.ConversationBackButton.rawValue
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil

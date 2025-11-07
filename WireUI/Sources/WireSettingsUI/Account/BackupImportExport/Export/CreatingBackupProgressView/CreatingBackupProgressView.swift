@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 struct CreatingBackupProgressView: View {
 
@@ -40,6 +41,7 @@ struct CreatingBackupProgressView: View {
                             .accessibilityIdentifier("cancel")
                     }
                 }
+                .accessibilityIdentifier(Locators.CreatingBackupPage.creatingBackupPageLabel.rawValue)
         }
     }
 
@@ -66,6 +68,7 @@ struct CreatingBackupProgressView: View {
                 backupURL: url,
                 completedAction: completedAction
             )
+            .accessibilityIdentifier(Locators.CreatingBackupPage.backupProgressFinished.rawValue)
         }
     }
 

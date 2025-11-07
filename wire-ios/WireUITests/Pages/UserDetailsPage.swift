@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class UserDetailsPage: PageModel {
@@ -25,11 +26,11 @@ class UserDetailsPage: PageModel {
     }
 
     var nameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "name").firstMatch
+        app.descendants(matching: .any)[Locators.UserProfilePage.name.rawValue].firstMatch
     }
 
     var userNameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "username").firstMatch
+        app.descendants(matching: .any).matching(identifier: Locators.UserProfilePage.username.rawValue).firstMatch
     }
 
     var closeProfileButton: XCUIElement {

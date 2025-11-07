@@ -38,12 +38,15 @@ public enum Locators {
     public enum FirstTimePage: String {
 
         case okButton
+        case savePasswordSheet = "Save Password?"
+        case notNowOption = "Not Now"
     }
 
     public enum ConversationsPage: String {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case createGroupOrSearchButton
     }
 
     public enum SettingsPage: String {
@@ -54,14 +57,14 @@ public enum Locators {
 
     public enum AccountSettingsPage: String {
 
-        case NameField
-        case UsernameField
-        case EmailField
-        case DomainFieldDisabled
-        case BackuporRestoreField = "Back up or RestoreField"
-        case ResetPasswordField = "Reset PasswordField"
-        case DeleteAccountField = "Delete AccountField"
-        case LogOut = "Log Out"
+        case nameField
+        case usernameField
+        case emailField
+        case domainFieldDisabled
+        case backuporRestoreField = "Back up or RestoreField"
+        case resetPasswordField = "Reset PasswordField"
+        case deleteAccountField = "Delete AccountField"
+        case logOut = "Log Out"
 
     }
 
@@ -70,10 +73,80 @@ public enum Locators {
         case videoCallBarButton
         case inputField
         case sendButton
-        case ConversationBackButton
+        case conversationBackButton
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
     }
 
+    public enum BackupOrRestorePage: String {
+
+        case backUpNowButton
+        case restoreFromBackupButton
+        case browse = "Browse"
+    }
+
+    public enum CreatingBackupPage: String {
+
+        case creatingBackupPageLabel
+        case progressView
+        case backupProgressFinished
+        case exportBackupButton
+    }
+
+    public enum ConnectionRequestsPage: String {
+
+        case connectRequestButton
+        case ignoreRequestButton
+        case username
+    }
+
+    public enum ConversationDetailsPage: String {
+
+        case addParticipantsButton
+        case moreOptionsButton
+        case userCellName
+        case close
+
+    }
+
+    public enum UserProfilePage: String {
+
+        case name
+        case qrCodeButton
+        case teamName
+        case username
+        case createWireTeamButton
+        case manageTeamButton
+        case addAcccountOrTeamButton
+    }
+
+    public enum CreateGroupPage: String {
+
+        case groupNameField
+        case newGroupNextButton
+    }
+    
+    public enum EmailUpdatePage: String {
+
+        case emailField
+        case newGroupNextButton
+        case save
+    }
+    
+    public enum LogOutPage: String {
+        
+        case ok
+    }
+    
+    public enum NewConversationPage: String {
+        
+        case createNewGroupButton
+        case searchByNameOrUsername
+    }
+    
+    
 }
+
+
+
