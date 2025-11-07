@@ -353,11 +353,12 @@ package final class FilesViewModel: ObservableObject {
     ) -> FileRenameView {
         let viewModel = FileRenameViewModel(
             renameNodeUseCase: renameNodeUseCase,
-            fileRenameModel: .init(
+            model: .init(
                 nodeID: item.id,
                 filename: item.filename,
                 filepath: item.filePath,
-            )
+            ),
+            kind: .file // TODO: [WPB-21418] adjust when PR is merged
         )
 
         // to know whether we need to reload items.
