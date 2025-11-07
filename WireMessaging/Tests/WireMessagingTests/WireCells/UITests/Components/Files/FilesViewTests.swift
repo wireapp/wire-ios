@@ -64,7 +64,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             kind: .file,
-            filename: "image.jpg",
+            name: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -87,7 +87,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             kind: .file,
-            filename: "some random file with a long name.excel",
+            name: "some random file with a long name.excel",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -110,7 +110,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             kind: .file,
-            filename: "some random file with a long name.excel",
+            name: "some random file with a long name.excel",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -134,7 +134,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             kind: .file,
-            filename: "image.jpg",
+            name: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -165,7 +165,7 @@ final class FilesViewTests: XCTestCase {
         let item = FilesViewItem(
             id: UUID(),
             kind: .file,
-            filename: "image.jpg",
+            name: "image.jpg",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image

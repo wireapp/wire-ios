@@ -60,7 +60,7 @@ package struct FilesViewContainer: View {
 
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
-            title: path.last?.filename,
+            title: path.last?.name,
             navigationPath: path,
             setNavigation: { items in
                 path = items

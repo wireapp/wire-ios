@@ -118,9 +118,9 @@ final class FilesViewModelTests {
         // then
         #expect(itemsUpdates == [
             [], // Clears items
-            [FilesViewItem(id: node.id, kind: .file, filename: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)],
+            [FilesViewItem(id: node.id, kind: .file, name: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)],
             [], // Clears items
-            [FilesViewItem(id: node.id, kind: .file, filename: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)]
+            [FilesViewItem(id: node.id, kind: .file, name: "a.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)]
         ])
     }
 
@@ -159,8 +159,8 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: node1.id, kind: .file, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .image),
-            FilesViewItem(id: node2.id, kind: .file, filename: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
+            FilesViewItem(id: node1.id, kind: .file, name: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .image),
+            FilesViewItem(id: node2.id, kind: .file, name: "b.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
     }
 
@@ -189,16 +189,9 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: node1.id, kind: .file, filename: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
-            FilesViewItem(
-                id: node2.id,
-                kind: .file,
-                filename: "b.jpg",
-                ownedBy: nil,
-                modifiedAt: now - 60,
-                icon: .other
-            ),
-            FilesViewItem(id: node3.id, kind: .file, filename: "c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
+            FilesViewItem(id: node1.id, kind: .file, name: "a.jpg", ownedBy: "Emel", modifiedAt: now, icon: .other),
+            FilesViewItem(id: node2.id, kind: .file, name: "b.jpg", ownedBy: nil, modifiedAt: now - 60, icon: .other),
+            FilesViewItem(id: node3.id, kind: .file, name: "c.jpg", ownedBy: nil, modifiedAt: nil, icon: .other)
         ])
     }
 
@@ -310,10 +303,10 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.state.items == [
-            FilesViewItem(id: nodeB.id, kind: .file, filename: "bb.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
-            FilesViewItem(id: nodeC.id, kind: .file, filename: "cc.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
-            FilesViewItem(id: nodeD.id, kind: .file, filename: "dd.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
-            FilesViewItem(id: nodeA.id, kind: .file, filename: "aaa.xyz", ownedBy: nil, modifiedAt: now, icon: .other)
+            FilesViewItem(id: nodeB.id, kind: .file, name: "bb.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
+            FilesViewItem(id: nodeC.id, kind: .file, name: "cc.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
+            FilesViewItem(id: nodeD.id, kind: .file, name: "dd.xyz", ownedBy: nil, modifiedAt: nil, icon: .other),
+            FilesViewItem(id: nodeA.id, kind: .file, name: "aaa.xyz", ownedBy: nil, modifiedAt: now, icon: .other)
         ])
     }
 

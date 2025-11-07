@@ -55,7 +55,7 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onOpen = onOpen
         self.onDelete = onDelete
-        self.fileName = item.filename
+        self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository

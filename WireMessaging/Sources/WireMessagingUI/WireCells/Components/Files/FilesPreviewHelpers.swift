@@ -61,7 +61,7 @@ extension FilesItemViewModel {
             item: FilesViewItem(
                 id: UUID(),
                 kind: .file,
-                filename: "foo.jpg",
+                name: "foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image

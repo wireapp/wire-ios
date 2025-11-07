@@ -44,16 +44,16 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// The kind of this item - file or folder.
     let kind: Kind
 
-    /// The filename of the file including its extension.
-    let filename: String
+    /// The name of the item including its extension.
+    let name: String
 
-    /// The name of the user who owns (uploaded) this file.
+    /// The name of the user who owns (uploaded or created) this item.
     let ownedBy: String?
 
-    /// The date when the file was last modified.
+    /// The date when the item was last modified.
     let modifiedAt: Date?
 
-    /// The icon representing the file type.
+    /// The icon representing the item's type.
     let icon: FileIcon
 }
 
@@ -215,7 +215,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     var folderMenuOptions: [FolderMenuOption] {
-        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.filename) }
+        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.name) }
         options.append(.root)
         options.removeFirst()
         return options
@@ -329,7 +329,7 @@ package final class FilesViewModel: ObservableObject {
             return FilesViewItem(
                 id: node.id,
                 kind: kind,
-                filename: url?.lastPathComponent ?? node.path,
+                name: url?.lastPathComponent ?? node.path,
                 ownedBy: node.ownerUserName,
                 modifiedAt: node.modified,
                 icon: kind == .folder ? .folder : .make(
