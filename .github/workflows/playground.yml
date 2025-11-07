@@ -3,22 +3,26 @@ name: Playground
 on:
   workflow_dispatch:
     inputs:
-      distribute_externals:
-        type: boolean
-        description: 'Distribute externally'
-        default: false
-
-permissions: 
-  checks: write
+      base_branch:
+        type: string
+        description: 'Base branch to test (e.g., release/cycle-4.9)'
+        required: true
+        default: 'release/cycle-4.9'
 
 jobs:
-  playground:
+  determine-target-branch:
     runs-on: ubuntu-24.04
+    
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Determine target branch
         id: target-branch
         run: |
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          BASE_BRANCH="${{ inputs.base_branch }}"
           
           # Check if base branch matches release/cycle-X.Y pattern
           if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
@@ -41,3 +45,8 @@ jobs:
               echo "target=develop" >> $GITHUB_OUTPUT
               echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
           fi
+
+      - name: Display result
+        run: |
+          echo "Base branch: ${{ inputs.base_branch }}"
+          echo "Target branch: ${{ steps.target-branch.outputs.target }}"
