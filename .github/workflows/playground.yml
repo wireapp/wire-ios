@@ -7,7 +7,7 @@ on:
         type: string
         description: 'Comma-separated list of base branches to test (e.g., release/cycle-4.9,release/cycle-5.0,develop)'
         required: true
-        default: 'release/cycle-4.9'
+        default: 'release/cycle-3.125,release/cycle-3.126,release/cycle-4.9,release/cycle-4.10,release/cycle-5.0,develop'
 
 jobs:
   determine-target-branch:
@@ -40,17 +40,25 @@ jobs:
                 MAJOR="${BASH_REMATCH[1]}"
                 MINOR="${BASH_REMATCH[2]}"
                 
-                # Calculate next cycle (increment minor version)
+                # First, check for next minor version (X.Y+1)
                 NEXT_MINOR=$((MINOR + 1))
-                NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
+                NEXT_MINOR_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
                 
-                # Check if next cycle branch exists
-                if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
-                    TARGET="$NEXT_BRANCH"
-                    echo "  ✓ Found next release branch: $NEXT_BRANCH"
+                if git ls-remote --heads origin "$NEXT_MINOR_BRANCH" | grep -q "$NEXT_MINOR_BRANCH"; then
+                    TARGET="$NEXT_MINOR_BRANCH"
+                    echo "  ✓ Found next minor release branch: $NEXT_MINOR_BRANCH"
                 else
-                    TARGET="develop"
-                    echo "  → Next release branch $NEXT_BRANCH not found, using develop"
+                    # If next minor doesn't exist, check for next major version (X+1.0)
+                    NEXT_MAJOR=$((MAJOR + 1))
+                    NEXT_MAJOR_BRANCH="release/cycle-${NEXT_MAJOR}.0"
+                    
+                    if git ls-remote --heads origin "$NEXT_MAJOR_BRANCH" | grep -q "$NEXT_MAJOR_BRANCH"; then
+                        TARGET="$NEXT_MAJOR_BRANCH"
+                        echo "  ✓ Found next major release branch: $NEXT_MAJOR_BRANCH"
+                    else
+                        TARGET="develop"
+                        echo "  → Next release branches ($NEXT_MINOR_BRANCH, $NEXT_MAJOR_BRANCH) not found, using develop"
+                    fi
                 fi
             else
                 TARGET="develop"

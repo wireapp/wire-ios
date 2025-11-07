@@ -4,8 +4,10 @@
 # It is triggered whenever a pull request is merged into any `release/*` branch.
 #
 # Target branch selection:
-# - If the source branch matches `release/cycle-X.Y` pattern and `release/cycle-X.(Y+1)` exists,
-#   the cherry-pick targets the next release branch (e.g., from `release/cycle-4.9` to `release/cycle-4.10`).
+# - If the source branch matches `release/cycle-X.Y` pattern:
+#   a. First checks if `release/cycle-X.(Y+1)` exists (next minor version)
+#   b. If not, checks if `release/cycle-(X+1).0` exists (next major version)
+#   c. If neither exists, targets `develop`
 # - Otherwise, the cherry-pick targets `develop`.
 #
 # The action performs the following steps:
@@ -59,17 +61,25 @@ jobs:
               MAJOR="${BASH_REMATCH[1]}"
               MINOR="${BASH_REMATCH[2]}"
               
-              # Calculate next cycle (increment minor version)
+              # First, check for next minor version (X.Y+1)
               NEXT_MINOR=$((MINOR + 1))
-              NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
+              NEXT_MINOR_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
               
-              # Check if next cycle branch exists
-              if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
-                  echo "target=$NEXT_BRANCH" >> $GITHUB_OUTPUT
-                  echo "Found next release branch: $NEXT_BRANCH"
+              if git ls-remote --heads origin "$NEXT_MINOR_BRANCH" | grep -q "$NEXT_MINOR_BRANCH"; then
+                  echo "target=$NEXT_MINOR_BRANCH" >> $GITHUB_OUTPUT
+                  echo "Found next minor release branch: $NEXT_MINOR_BRANCH"
               else
-                  echo "target=develop" >> $GITHUB_OUTPUT
-                  echo "Next release branch $NEXT_BRANCH not found, using develop"
+                  # If next minor doesn't exist, check for next major version (X+1.0)
+                  NEXT_MAJOR=$((MAJOR + 1))
+                  NEXT_MAJOR_BRANCH="release/cycle-${NEXT_MAJOR}.0"
+                  
+                  if git ls-remote --heads origin "$NEXT_MAJOR_BRANCH" | grep -q "$NEXT_MAJOR_BRANCH"; then
+                      echo "target=$NEXT_MAJOR_BRANCH" >> $GITHUB_OUTPUT
+                      echo "Found next major release branch: $NEXT_MAJOR_BRANCH"
+                  else
+                      echo "target=develop" >> $GITHUB_OUTPUT
+                      echo "Next release branches ($NEXT_MINOR_BRANCH, $NEXT_MAJOR_BRANCH) not found, using develop"
+                  fi
               fi
           else
               echo "target=develop" >> $GITHUB_OUTPUT
