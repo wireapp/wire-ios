@@ -366,20 +366,20 @@ extension BackupLocalStore {
         do {
 
             let insertResult = try await context.perform {
-                
+
                 guard let entity = NSEntityDescription.entity(
                     forEntityName: entityName,
                     in: context
                 ) else {
                     throw BatchInsertFailure.failedToGetEntityDescription
                 }
-                
+
                 let insertRequest = NSBatchInsertRequest(
                     entity: entity,
                     objects: attributes
                 )
                 insertRequest.resultType = .objectIDs
-                
+
                 return try context.execute(insertRequest) as? NSBatchInsertResult
             }
 
