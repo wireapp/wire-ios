@@ -3,9 +3,9 @@ name: Playground
 on:
   workflow_dispatch:
     inputs:
-      base_branch:
+      base_branches:
         type: string
-        description: 'Base branch to test (e.g., release/cycle-4.9)'
+        description: 'Comma-separated list of base branches to test (e.g., release/cycle-4.9,release/cycle-5.0,develop)'
         required: true
         default: 'release/cycle-4.9'
 
@@ -17,36 +17,54 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Determine target branch
-        id: target-branch
+      - name: Determine target branches
+        id: target-branches
         run: |
-          BASE_BRANCH="${{ inputs.base_branch }}"
+          BASE_BRANCHES="${{ inputs.base_branches }}"
           
-          # Check if base branch matches release/cycle-X.Y pattern
-          if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
-              MAJOR="${BASH_REMATCH[1]}"
-              MINOR="${BASH_REMATCH[2]}"
-              
-              # Calculate next cycle (increment minor version)
-              NEXT_MINOR=$((MINOR + 1))
-              NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
-              
-              # Check if next cycle branch exists
-              if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
-                  echo "target=$NEXT_BRANCH" >> $GITHUB_OUTPUT
-                  echo "Found next release branch: $NEXT_BRANCH"
-              else
-                  echo "target=develop" >> $GITHUB_OUTPUT
-                  echo "Next release branch $NEXT_BRANCH not found, using develop"
-              fi
-          else
-              echo "target=develop" >> $GITHUB_OUTPUT
-              echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
-          fi
+          # Split comma-separated branches and process each
+          IFS=',' read -ra BRANCH_ARRAY <<< "$BASE_BRANCHES"
+          
+          RESULTS=()
+          for BASE_BRANCH in "${BRANCH_ARRAY[@]}"; do
+            # Trim whitespace
+            BASE_BRANCH=$(echo "$BASE_BRANCH" | xargs)
+            
+            echo ""
+            echo "Processing: $BASE_BRANCH"
+            
+            # Check if base branch matches release/cycle-X.Y pattern
+            if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
+                MAJOR="${BASH_REMATCH[1]}"
+                MINOR="${BASH_REMATCH[2]}"
+                
+                # Calculate next cycle (increment minor version)
+                NEXT_MINOR=$((MINOR + 1))
+                NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
+                
+                # Check if next cycle branch exists
+                if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
+                    TARGET="$NEXT_BRANCH"
+                    echo "  ✓ Found next release branch: $NEXT_BRANCH"
+                else
+                    TARGET="develop"
+                    echo "  → Next release branch $NEXT_BRANCH not found, using develop"
+                fi
+            else
+                TARGET="develop"
+                echo "  → Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
+            fi
+            
+            RESULTS+=("$BASE_BRANCH → $TARGET")
+          done
+          
+          # Output summary
+          echo ""
+          echo "=== Summary ==="
+          printf '%s\n' "${RESULTS[@]}"
 
-      - name: Display result
+      - name: Display summary
         run: |
-          echo "Base branch: ${{ inputs.base_branch }}"
-          echo "Target branch: ${{ steps.target-branch.outputs.target }}"
+          echo "All test cases have been processed. See the detailed output above."
