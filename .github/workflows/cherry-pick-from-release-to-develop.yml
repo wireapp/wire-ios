@@ -26,7 +26,6 @@
 name: "Cherry-pick from release to next release or develop"
 
 on:
-  workflow_dispatch: # TODO: delete
   pull_request:
     branches:
       - release/*
@@ -42,13 +41,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     lfs: 'true'
-      #     token: ${{ secrets.SUBMODULE_PAT }}
-      #     fetch-depth: 0
-      #     submodules: recursive
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: 'true'
+          token: ${{ secrets.SUBMODULE_PAT }}
+          fetch-depth: 0
+          submodules: recursive
 
       - name: Determine target branch
         id: target-branch
@@ -77,9 +76,9 @@ jobs:
               echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
           fi
 
-      # - name: Cherry pick to target branch
-      #   uses: wireapp/action-auto-cherry-pick@v1.0.2
-      #   with:
-      #     target-branch: ${{ steps.target-branch.outputs.target }}
-      #     pr-labels: 'cherry-pick'
-      #     pr-title-suffix: '🍒'
+      - name: Cherry pick to target branch
+        uses: wireapp/action-auto-cherry-pick@v1.0.2
+        with:
+          target-branch: ${{ steps.target-branch.outputs.target }}
+          pr-labels: 'cherry-pick'
+          pr-title-suffix: '🍒'
