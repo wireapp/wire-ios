@@ -250,20 +250,6 @@ private extension RestNodeLocator {
 
 }
 
-private extension TreeNodeType {
-
-    init(_ value: WireCellsNodeType) {
-        switch value {
-        case .leaf:
-            self = .leaf
-        case .collection:
-            self = .collection
-        case .any:
-            self = .unknown
-        }
-    }
-}
-
 private struct LoggingIntercepter: OpenAPIInterceptor {
 
     let interceptor = DefaultOpenAPIInterceptor()

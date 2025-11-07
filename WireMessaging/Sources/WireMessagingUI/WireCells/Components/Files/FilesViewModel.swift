@@ -333,10 +333,11 @@ package final class FilesViewModel: ObservableObject {
             searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
+        print(">>>>>", nodes.map { $0.type })
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
-            let kind: FilesViewItem.Kind = node.type == "COLLECTION" ? .folder : .file
+            let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
                 kind: kind,
