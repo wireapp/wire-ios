@@ -333,7 +333,6 @@ package final class FilesViewModel: ObservableObject {
             searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
-        print(">>>>>", nodes.map { $0.type })
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
