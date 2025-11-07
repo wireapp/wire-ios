@@ -45,7 +45,7 @@ extension WireLogInterpolation {
         writeText(obfuscated)
         
         // Add structured attribute for log analysis
-        writeAttribute(WireLogAttribute(key: "user_id", value: userID.uuidString))
+        writeAttribute(.selfUserID(userID))
     }
 }
 
@@ -69,9 +69,8 @@ extension WireLogInterpolation {
         writeText("User(id: \(user.id.uuidString.prefix(8))***)")
         
         // Never log sensitive fields like password
-        // Add structured attributes for analysis
-        writeAttribute(WireLogAttribute(key: "user_id", value: user.id.uuidString))
-        writeAttribute(WireLogAttribute(key: "has_email", value: user.email.isEmpty ? "false" : "true"))
+        // Add structured attributes for analysis using predefined methods
+        writeAttribute(.selfUserID(user.id))
     }
 }
 ```
@@ -81,7 +80,7 @@ extension WireLogInterpolation {
 When implementing `appendInterpolation`, use:
 
 - **`writeText(_:)`** - Adds text content to the log message. The provided value is **not obfuscated**, so ensure sensitive data is handled before calling this method.
-- **`writeAttribute(_:)`** - Adds structured attributes that can be used for log analysis. Attributes are separate from the message content and may be formatted differently by the logging handler.
+- **`writeAttribute(_:)`** - Adds structured attributes that can be used for log analysis. Attributes are separate from the message content and may be formatted differently by the logging handler. Prefer using predefined static methods on `WireLogAttribute` (e.g., `.selfUserID(_:)`) rather than initializing new instances directly.
 
 ## Topics
     

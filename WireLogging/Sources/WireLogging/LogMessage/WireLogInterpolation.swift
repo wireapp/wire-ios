@@ -58,7 +58,7 @@
 ///         writeText(obfuscated)
 ///
 ///         // Optionally add structured attributes
-///         writeAttribute(WireLogAttribute(key: "user_id", value: userID.uuidString))
+///         writeAttribute(.selfUserID(userID))
 ///     }
 /// }
 /// ```
@@ -100,7 +100,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     /// extension WireLogInterpolation {
     ///     mutating func appendInterpolation(_ userID: UUID) {
     ///         writeText("User: \(userID.uuidString.prefix(8))***")
-    ///         writeAttribute(WireLogAttribute(key: "user_id", value: userID.uuidString))
+    ///         writeAttribute(.selfUserID(userID))
     ///     }
     /// }
     /// ```
