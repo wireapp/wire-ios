@@ -28,6 +28,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: FilesViewProtocol {
+    package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
 
@@ -66,6 +67,7 @@ package struct FilesView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+            .interactiveDismissDisabled()
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
             .alert(
@@ -73,6 +75,16 @@ package struct FilesView: FilesViewProtocol {
                 title: { Text($0.title) },
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
+            )
+            .sheet(
+                item: $viewModel.fileRenameView,
+                onDismiss: {
+                    if viewModel.didRenameFile {
+                        reloadTask()
+                        viewModel.didRenameFile = false
+                    }
+                },
+                content: { $0 }
             )
         }
     }

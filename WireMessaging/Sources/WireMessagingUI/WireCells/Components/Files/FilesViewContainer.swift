@@ -28,6 +28,8 @@ package struct FilesViewContainer: View {
     private let isCellsStatePending: Bool
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodeCache: any WireCellsNodeCacheProtocol
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
 
@@ -37,6 +39,8 @@ package struct FilesViewContainer: View {
         isCellsStatePending: Bool,
         localAssetStore: any WireCellsLocalAssetStoreProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodeCache: any WireCellsNodeCacheProtocol,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
         isFoldersEnabled: Bool
     ) {
@@ -45,6 +49,8 @@ package struct FilesViewContainer: View {
         self.isCellsStatePending = isCellsStatePending
         self.localAssetStore = localAssetStore
         self.localAssetRepository = localAssetRepository
+        self.nodeCache = nodeCache
+        self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
     }
@@ -76,6 +82,12 @@ package struct FilesViewContainer: View {
                 repository: nodesRepository,
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
+            ),
+            renameNodeUseCase: WireCellsRenameNodeUseCase(
+                nodesRepository: nodesRepository,
+                localAssetsRepository: localAssetRepository,
+                nodeCache: nodeCache,
+                nodeRenameNotifier: nodeRenameNotifier
             ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,

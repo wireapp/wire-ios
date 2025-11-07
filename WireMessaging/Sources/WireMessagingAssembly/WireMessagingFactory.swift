@@ -37,6 +37,7 @@ public struct WireMessagingFactory {
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
     private let isFoldersEnabled: Bool
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -74,6 +75,7 @@ public struct WireMessagingFactory {
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
         self.isFoldersEnabled = isFoldersEnabled
+        self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
@@ -126,7 +128,6 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
-
 }
 
 public extension WireMessagingFactory {
@@ -143,6 +144,8 @@ public extension WireMessagingFactory {
                 isCellsStatePending: isCellsStatePending,
                 localAssetStore: localAssetStore,
                 localAssetRepository: localAssetRepository,
+                nodeCache: nodeCache,
+                nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled
             )
@@ -162,6 +165,12 @@ public extension WireMessagingFactory {
                         repository: nodesAPI,
                         fileCache: fileCache,
                         localAssetStore: localAssetStore
+                    ),
+                    renameNodeUseCase: WireCellsRenameNodeUseCase(
+                        nodesRepository: nodesAPI,
+                        localAssetsRepository: localAssetRepository,
+                        nodeCache: nodeCache,
+                        nodeRenameNotifier: nodeRenameNotifier
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
@@ -190,7 +199,8 @@ public extension WireMessagingFactory {
                         fileCache: fileCache
                     ),
                     localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest
+                    lastOpenRequest: lastOpenRequest,
+                    nodeRenameNotifier: nodeRenameNotifier
                 )
             ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
@@ -212,6 +222,7 @@ public extension WireMessagingFactory {
             ),
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             insetsProvider: insetsProvider
         )
     }
