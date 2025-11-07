@@ -20,5 +20,6 @@ enum RestAPIError: Error, Equatable {
 
     case unsupportedAPIVersion(APIVersion)
     case illegalArgument(message: String)
+    case failedToEncodeBody(any Error)
 
 }
