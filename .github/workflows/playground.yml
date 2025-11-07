@@ -3,76 +3,20 @@ name: Playground
 on:
   workflow_dispatch:
     inputs:
-      base_branches:
-        type: string
-        description: 'Comma-separated list of base branches to test (e.g., release/cycle-4.9,release/cycle-5.0,develop)'
-        required: true
-        default: 'release/cycle-3.125,release/cycle-3.126,release/cycle-4.9,release/cycle-4.10,release/cycle-5.0,develop'
+      distribute_externals:
+        type: boolean
+        description: 'Distribute externally'
+        default: false
+
+permissions: 
+  checks: write
 
 jobs:
-  determine-target-branch:
-    runs-on: ubuntu-24.04
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Determine target branches
-        id: target-branches
-        run: |
-          BASE_BRANCHES="${{ inputs.base_branches }}"
-          
-          # Split comma-separated branches and process each
-          IFS=',' read -ra BRANCH_ARRAY <<< "$BASE_BRANCHES"
-          
-          RESULTS=()
-          for BASE_BRANCH in "${BRANCH_ARRAY[@]}"; do
-            # Trim whitespace
-            BASE_BRANCH=$(echo "$BASE_BRANCH" | xargs)
-            
-            echo ""
-            echo "Processing: $BASE_BRANCH"
-            
-            # Check if base branch matches release/cycle-X.Y pattern
-            if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
-                MAJOR="${BASH_REMATCH[1]}"
-                MINOR="${BASH_REMATCH[2]}"
-                
-                # First, check for next minor version (X.Y+1)
-                NEXT_MINOR=$((MINOR + 1))
-                NEXT_MINOR_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
-                
-                if git ls-remote --heads origin "$NEXT_MINOR_BRANCH" | grep -q "$NEXT_MINOR_BRANCH"; then
-                    TARGET="$NEXT_MINOR_BRANCH"
-                    echo "  ✓ Found next minor release branch: $NEXT_MINOR_BRANCH"
-                else
-                    # If next minor doesn't exist, check for next major version (X+1.0)
-                    NEXT_MAJOR=$((MAJOR + 1))
-                    NEXT_MAJOR_BRANCH="release/cycle-${NEXT_MAJOR}.0"
-                    
-                    if git ls-remote --heads origin "$NEXT_MAJOR_BRANCH" | grep -q "$NEXT_MAJOR_BRANCH"; then
-                        TARGET="$NEXT_MAJOR_BRANCH"
-                        echo "  ✓ Found next major release branch: $NEXT_MAJOR_BRANCH"
-                    else
-                        TARGET="develop"
-                        echo "  → Next release branches ($NEXT_MINOR_BRANCH, $NEXT_MAJOR_BRANCH) not found, using develop"
-                    fi
-                fi
-            else
-                TARGET="develop"
-                echo "  → Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
-            fi
-            
-            RESULTS+=("$BASE_BRANCH → $TARGET")
-          done
-          
-          # Output summary
-          echo ""
-          echo "=== Summary ==="
-          printf '%s\n' "${RESULTS[@]}"
-
-      - name: Display summary
-        run: |
-          echo "All test cases have been processed. See the detailed output above."
+  playground:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      countly_enabled: true
+      datadog_enabled: true
+      distribute_externals: ${{ inputs.distribute_externals }}
+      fastlane_action: playground
+    secrets: inherit
