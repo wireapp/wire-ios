@@ -288,7 +288,7 @@ platform :ios do
         
         write_tests_info_to_summary("🤖 Testing schemas: #{schemas.join(', ')}")
         
-        testplan = options[:testplan] || "AllTests"
+        testplan = options[:testplan] || "AllTests" # GermanLocaleTests are not run!?
 
         is_nightly_build = options[:all] == true
         
@@ -301,9 +301,6 @@ platform :ios do
                 schema_errors[scheme] = false
             rescue => e
                 write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
-                if !is_nightly_build
-                    raise e
-                end
                 schema_errors[scheme] = true
             end
         end
