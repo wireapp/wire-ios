@@ -38,7 +38,7 @@ final class FilesViewModelTests {
     init() {
         self.sut = FilesViewModel(
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("some-cell")),
+                configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
                 repository: nodesRepository
             ),
             deleteNodesUseCase: WireCellsDeleteNodesUseCase(
@@ -126,7 +126,8 @@ final class FilesViewModelTests {
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
-                filename: "a.jpg",
+                kind: .file,
+                name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
@@ -135,7 +136,8 @@ final class FilesViewModelTests {
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
-                filename: "a.jpg",
+                kind: .file,
+                name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
@@ -181,7 +183,8 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
-                filename: "a.jpg",
+                kind: .file,
+                name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
@@ -189,7 +192,8 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node2.id,
-                filename: "b.jpg",
+                kind: .file,
+                name: "b.jpg",
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
@@ -225,7 +229,8 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
-                filename: "a.jpg",
+                kind: .file,
+                name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
@@ -233,7 +238,8 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node2.id,
-                filename: "b.jpg",
+                kind: .file,
+                name: "b.jpg",
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: now - 60,
@@ -241,7 +247,8 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node3.id,
-                filename: "c.jpg",
+                kind: .file,
+                name: "c.jpg",
                 filePath: "some-cell/c.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
@@ -334,23 +341,22 @@ final class FilesViewModelTests {
     }
 
     @Test
-    func itemsAreOrderedAndFilteredCorrectly() async throws {
-        // This is not a real scenario but tests that the logic for ordering and removing duplicates is correct.
+    func itemsFilteredCorrectly() async throws {
+        // This is not a real scenario but tests that the logic for removing duplicates is correct.
         // It _is_ possible for different versions of the same node to appear across different pages. We need to ensure
         // that there is only ever one version of a node in the list.
 
         // given
         let now = Date()
-        let nodeA = WireCellsNode.fixture(path: "foo/aa.xyz", modified: now - 60)
-        let nodeB = WireCellsNode.fixture(path: "foo/bb.xyz", modified: now - 60)
-        let nodeC = WireCellsNode.fixture(path: "foo/cc.xyz", modified: now - 120)
-        let nodeD = WireCellsNode.fixture(path: "foo/dd.xyz", modified: nil)
-        let nodeE = WireCellsNode.fixture(path: "foo/ee.xyz", modified: nil)
-        let nodeA_V2 = WireCellsNode.fixture(uuid: nodeA.id, path: "foo/aa.xyz", modified: now)
-        let nodeD_V2 = WireCellsNode.fixture(uuid: nodeD.id, path: "foo/cd.xyz", modified: nil)
+        let nodeA = WireCellsNode.fixture(path: "foo/aa.xyz")
+        let nodeB = WireCellsNode.fixture(path: "foo/bb.xyz")
+        let nodeC = WireCellsNode.fixture(path: "foo/cc.xyz")
+        let nodeD = WireCellsNode.fixture(path: "foo/dd.xyz")
+        let nodeA_V2 = WireCellsNode.fixture(uuid: nodeA.id, path: "foo/aaa.xyz", modified: now)
+        let nodeD_V2 = WireCellsNode.fixture(uuid: nodeD.id, path: "foo/ccc.xyz")
 
         nodesRepository.getNodes_MockValue = (
-            nodes: [nodeA, nodeB, nodeC, nodeD, nodeE, nodeA_V2, nodeD_V2].shuffled(),
+            nodes: [nodeA, nodeB, nodeC, nodeD, nodeA_V2, nodeD_V2],
             nextOffset: nil
         )
 
@@ -358,54 +364,52 @@ final class FilesViewModelTests {
         await sut.reload()
 
         // then
-        #expect(sut.state.items == [
-            FilesViewItem(
-                id: nodeA.id,
-                filename: "aa.xyz",
-                filePath: "foo/aa.xyz",
-                ownedBy: nil,
-                modifiedAt: now,
-                icon: .other
-            ), // V2 node
-            FilesViewItem(
-                id: nodeB.id,
-                filename: "bb.xyz",
-                filePath: "foo/bb.xyz",
-                ownedBy: nil,
-                modifiedAt: now - 60,
-                icon: .other
-            ),
-            FilesViewItem(
-                id: nodeC.id,
-                filename: "cc.xyz",
-                filePath: "foo/cc.xyz",
-                ownedBy: nil,
-                modifiedAt: now - 120,
-                icon: .other
-            ),
-            FilesViewItem(
-                id: nodeD.id,
-                filename: "cd.xyz",
-                filePath: "foo/cd.xyz",
-                ownedBy: nil,
-                modifiedAt: nil,
-                icon: .other
-            ), // V2 node
-            FilesViewItem(
-                id: nodeE.id,
-                filename: "ee.xyz",
-                filePath: "foo/ee.xyz",
-                ownedBy: nil,
-                modifiedAt: nil,
-                icon: .other
-            )
-        ])
+        #expect(
+            sut.state.items == [
+                FilesViewItem(
+                    id: nodeB.id,
+                    kind: .file,
+                    name: "bb.xyz",
+                    filePath: "foo/bb.xyz",
+                    ownedBy: nil,
+                    modifiedAt: nil,
+                    icon: .other
+                ),
+                FilesViewItem(
+                    id: nodeC.id,
+                    kind: .file,
+                    name: "cc.xyz",
+                    filePath: "foo/cc.xyz",
+                    ownedBy: nil,
+                    modifiedAt: nil,
+                    icon: .other
+                ),
+                FilesViewItem(
+                    id: nodeD.id,
+                    kind: .file,
+                    name: "dd.xyz",
+                    filePath: "foo/dd.xyz",
+                    ownedBy: nil,
+                    modifiedAt: nil,
+                    icon: .other
+                ),
+                FilesViewItem(
+                    id: nodeA.id,
+                    kind: .file,
+                    name: "aaa.xyz",
+                    filePath: "foo/aaa.xyz",
+                    ownedBy: nil,
+                    modifiedAt: now,
+                    icon: .other
+                )
+            ]
+        )
     }
 
-    // MARK: - viewAsset
+    // MARK: - openItem
 
     @Test
-    func viewAsset_whenFileAlreadyDownloaded() async throws {
+    func openItem_whenFileAlreadyDownloaded() async throws {
         // given
         let nodeID = UUID()
         localAssetRepository.assetNodeID_MockValue = WireCellsLocalAsset.fixture(
@@ -414,7 +418,7 @@ final class FilesViewModelTests {
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
-        await sut.viewAsset(item: .fixture(id: nodeID))
+        await sut.openItem(item: .fixture(id: nodeID))
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
@@ -422,7 +426,7 @@ final class FilesViewModelTests {
     }
 
     @Test
-    func viewAsset_whenFileNeedsDownloaded() async throws {
+    func openItem_whenFileNeedsDownloaded() async throws {
         // given
         var assets: [UUID: WireCellsLocalAsset] = [:]
         let nodeID = UUID()
@@ -435,7 +439,7 @@ final class FilesViewModelTests {
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
-        await sut.viewAsset(item: .fixture(id: nodeID))
+        await sut.openItem(item: .fixture(id: nodeID))
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
@@ -443,7 +447,7 @@ final class FilesViewModelTests {
     }
 
     @Test
-    func viewAsset_whenFileAlreadyDownloading() async throws {
+    func openItem_whenFileAlreadyDownloading() async throws {
         // given
         var assets: [UUID: WireCellsLocalAsset] = [:]
         let nodeID = UUID()
@@ -462,7 +466,7 @@ final class FilesViewModelTests {
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
-        await sut.viewAsset(item: .fixture(id: nodeID))
+        await sut.openItem(item: .fixture(id: nodeID))
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
@@ -474,12 +478,12 @@ final class FilesViewModelTests {
         (error: URLError(.networkConnectionLost), expectedAlert: AlertModel.noInternet),
         (error: URLError(.badURL), expectedAlert: AlertModel.unknownError)
     ])
-    func viewAsset_triggersAlertOnFailure(error: any Error, expectedAlert: AlertModel) async {
+    func openItem_triggersAlertOnFailure(error: any Error, expectedAlert: AlertModel) async {
         // given
         localAssetRepository.assetNodeID_MockError = error
 
         // when
-        await sut.viewAsset(item: .fixture())
+        await sut.openItem(item: .fixture())
 
         // then
         #expect(sut.alert == expectedAlert)

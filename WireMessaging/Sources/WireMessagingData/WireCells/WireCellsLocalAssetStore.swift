@@ -114,7 +114,7 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
                     eTag: managed.eTag,
                     path: managed.path,
                     contentType: managed.contentType,
-                    size: UInt64(managed.size),
+                    size: managed.size >= 0 ? UInt64(managed.size) : nil,
                     downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
                 )
             }

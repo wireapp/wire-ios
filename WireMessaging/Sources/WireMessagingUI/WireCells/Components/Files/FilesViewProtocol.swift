@@ -27,7 +27,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
     var isBrowsing: Bool { get }
-    init(viewModel: FilesViewModel)
+    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
 }
 
 // MARK: - List
@@ -51,7 +51,7 @@ extension FilesViewProtocol {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.viewAsset(item: item) } }
+                .onTapGesture { Task { await viewModel.openItem(item: item) } }
         }
     }
 }
