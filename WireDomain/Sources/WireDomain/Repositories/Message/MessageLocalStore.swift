@@ -40,6 +40,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
+    let assetTransferStateResolver: AssetTransferStateResolverProtocol
 
     // MARK: - Object lifecycle
 
@@ -47,6 +48,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         context: NSManagedObjectContext
     ) {
         self.context = context
+        self.assetTransferStateResolver = AssetTransferStateResolver()
     }
 
     // MARK: - Public
@@ -241,29 +243,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             // We assume received assets are V3 since backend no longer supports sending V2 assets.
             assetClientMessage.version = 3
 
-            if let assetData = genericMessage.assetData, let status = assetData.status {
-                switch status {
-                case let .uploaded(data) where data.hasAssetID:
-                    assetClientMessage.updateTransferState(
-                        .uploaded,
-                        synchronize: false
-                    )
-
-                case .notUploaded where assetClientMessage.transferState != .uploaded:
-                    switch assetData.notUploaded {
-                    case .cancelled:
-                        context.delete(assetClientMessage)
-                    case .failed:
-                        assetClientMessage.updateTransferState(
-                            .uploadingFailed,
-                            synchronize: false
-                        )
-                    }
-
-                default:
-                    break
-                }
-            }
+            assetTransferStateResolver.resolveTransferState(
+                assetMessage: assetClientMessage,
+                genericMessage: genericMessage,
+                context: context
+            )
 
             finalizeMessageUpdate(
                 message: assetClientMessage,

@@ -541,6 +541,7 @@
 				AvailabilityLabelTests.swift,
 				"AVAsset/AVURLAsset+conversionTests.swift",
 				Backup/BackupExcluderTests.swift,
+				Backup/BackupLocalStoreMessagesTests.swift,
 				"Bundle/URL+WireTests.swift",
 				Bundle/URLsTests.swift,
 				Bundle/WireEmailTests.swift,
