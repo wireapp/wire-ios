@@ -26,59 +26,60 @@
 name: "Cherry-pick from release to next release or develop"
 
 on:
-    pull_request:
-        branches:
-            - release/*
-        types:
-            - closed
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - release/*
+    types:
+      - closed
 
 jobs:
-    cherry-pick:
-        runs-on: ubuntu-24.04
-        if: github.event.pull_request.merged == true
+  cherry-pick:
+    runs-on: ubuntu-24.04
+    if: github.event.pull_request.merged == true
 
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  lfs: 'true'
-                  token: ${{ secrets.SUBMODULE_PAT }}
-                  fetch-depth: 0
-                  submodules: recursive
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: 'true'
+          token: ${{ secrets.SUBMODULE_PAT }}
+          fetch-depth: 0
+          submodules: recursive
 
-            - name: Determine target branch
-              id: target-branch
-              run: |
-                  BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-                  
-                  # Check if base branch matches release/cycle-X.Y pattern
-                  if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
-                      MAJOR="${BASH_REMATCH[1]}"
-                      MINOR="${BASH_REMATCH[2]}"
-                      
-                      # Calculate next cycle (increment minor version)
-                      NEXT_MINOR=$((MINOR + 1))
-                      NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
-                      
-                      # Check if next cycle branch exists
-                      if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
-                          echo "target=$NEXT_BRANCH" >> $GITHUB_OUTPUT
-                          echo "Found next release branch: $NEXT_BRANCH"
-                      else
-                          echo "target=develop" >> $GITHUB_OUTPUT
-                          echo "Next release branch $NEXT_BRANCH not found, using develop"
-                      fi
-                  else
-                      echo "target=develop" >> $GITHUB_OUTPUT
-                      echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
-                  fi
+      - name: Determine target branch
+        id: target-branch
+        run: |
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          
+          # Check if base branch matches release/cycle-X.Y pattern
+          if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
+              MAJOR="${BASH_REMATCH[1]}"
+              MINOR="${BASH_REMATCH[2]}"
+              
+              # Calculate next cycle (increment minor version)
+              NEXT_MINOR=$((MINOR + 1))
+              NEXT_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
+              
+              # Check if next cycle branch exists
+              if git ls-remote --heads origin "$NEXT_BRANCH" | grep -q "$NEXT_BRANCH"; then
+                  echo "target=$NEXT_BRANCH" >> $GITHUB_OUTPUT
+                  echo "Found next release branch: $NEXT_BRANCH"
+              else
+                  echo "target=develop" >> $GITHUB_OUTPUT
+                  echo "Next release branch $NEXT_BRANCH not found, using develop"
+              fi
+          else
+              echo "target=develop" >> $GITHUB_OUTPUT
+              echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
+          fi
 
-            - name: Cherry pick to target branch
-              uses: wireapp/action-auto-cherry-pick@v1.0.2
-              with:
-                  target-branch: ${{ steps.target-branch.outputs.target }}
-                  pr-labels: 'cherry-pick'
-                  pr-title-suffix: '🍒'
+      - name: Cherry pick to target branch
+        uses: wireapp/action-auto-cherry-pick@v1.0.2
+        with:
+          target-branch: ${{ steps.target-branch.outputs.target }}
+          pr-labels: 'cherry-pick'
+          pr-title-suffix: '🍒'
