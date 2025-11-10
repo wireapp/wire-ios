@@ -43,7 +43,7 @@ final class FilesViewTests: XCTestCase {
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
@@ -70,7 +70,8 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
@@ -93,7 +94,8 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            kind: .file,
+            name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
@@ -116,7 +118,8 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            kind: .file,
+            name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
@@ -140,7 +143,8 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
@@ -171,7 +175,8 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
@@ -261,9 +266,11 @@ final class FilesViewTests: XCTestCase {
 
         filesViewModel.state = state
 
-        return FilesView(viewModel: filesViewModel)
-            .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        return NavigationStack {
+            FilesView(viewModel: filesViewModel)
+        }
+        .frame(width: 375, height: 667)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }
