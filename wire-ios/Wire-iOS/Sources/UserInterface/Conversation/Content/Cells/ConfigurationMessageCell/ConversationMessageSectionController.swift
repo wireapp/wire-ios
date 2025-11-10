@@ -275,9 +275,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
+        guard let imageMessageData = message.imageMessageData else {
+            return []
+        }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
             message: message,
-            image: message.imageMessageData!
+            image: imageMessageData
         )
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
