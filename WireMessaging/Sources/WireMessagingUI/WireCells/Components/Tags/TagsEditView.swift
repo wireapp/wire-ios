@@ -206,7 +206,7 @@ struct TagsEditView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: tagBubbleSpacing) {
                 ForEach(tags, id: \.self) { tag in
-                    suggestedTagBubble(tag: tag, withKeyboardStyle: withKeyboardStyle)
+                    suggestedTagBubble(tag: tag)
                 }
             }
             .padding(.horizontal, horizontalPadding)
@@ -269,7 +269,7 @@ struct TagsEditView: View {
     }
 
     @ViewBuilder
-    private func suggestedTagBubble(tag: String, withKeyboardStyle: Bool) -> some View {
+    private func suggestedTagBubble(tag: String) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
 
         Button {
@@ -290,9 +290,7 @@ struct TagsEditView: View {
                 shape.fill(ColorTheme.Backgrounds.backgroundVariant.color)
             }
             .background {
-                if withKeyboardStyle {
-                    shape.stroke(ColorTheme.Base.secondaryText.color)
-                }
+                shape.stroke(ColorTheme.Base.secondaryText.color)
             }
             .padding(.vertical, 1)
         }
