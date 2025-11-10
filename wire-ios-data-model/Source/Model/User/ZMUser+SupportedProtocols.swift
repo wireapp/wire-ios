@@ -25,8 +25,8 @@ public extension ZMUser {
     @NSManaged private var primitiveSupportedProtocols: [Int16]?
 
     /// Objc-C helper method because enum 'MessageProtocol' is not available.
-    @objc(setSupportedProtocols:)
-    internal func _setSupportedProtocols(_ protocols: Set<String>) {
+    @objc(updateSupportedProtocols:)
+    internal func _updateSupportedProtocols(_ protocols: Set<String>) {
         supportedProtocols = Set(protocols.compactMap {
             guard let messageProtocol = MessageProtocol(rawValue: $0) else {
                 assertionFailure("can not map value \($0) as MessageProtocol!")
