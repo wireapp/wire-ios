@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireLocators
 
 class NewConversationPage: PageModel {
 
@@ -25,7 +26,7 @@ class NewConversationPage: PageModel {
     }
 
     var newGroupButton: XCUIElement {
-        app.descendants(matching: .any)["New group"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.createNewGroupButton.rawValue].firstMatch
     }
 
     func tapNewGroupButton() throws -> CreateGroupPage {
