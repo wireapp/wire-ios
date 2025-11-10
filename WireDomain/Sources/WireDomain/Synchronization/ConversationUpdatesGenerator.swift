@@ -90,7 +90,9 @@ extension ConversationUpdatesGenerator: NSFetchedResultsControllerDelegate {
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let conversation = anObject as? ZMConversation else { return }
+        guard let conversation = anObject as? ZMConversation else {
+            fatal("unexpected object, expected ZMConversation")
+        }
 
         switch type {
         case .insert:

@@ -24,12 +24,12 @@ import WireNetwork
 struct UpdateConversationItem: WorkItem {
     private let repository: ConversationRepositoryProtocol
 
-    var id = UUID()
+    let id = UUID()
     var priority: WorkItemPriority {
         .medium
     }
 
-    var conversationID: WireNetwork.QualifiedID
+    let conversationID: WireNetwork.QualifiedID
 
     public init(
         repository: ConversationRepositoryProtocol,
