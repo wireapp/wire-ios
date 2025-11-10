@@ -62,6 +62,20 @@ package struct FilesView: FilesViewProtocol {
                     })
                 }
             }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(viewModel.title ?? Strings.Files.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+            .interactiveDismissDisabled()
+            .toolbar { toolbarContent }
+            .onAppear { reloadTask() }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
+            )
             .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                 switch navigationItem {
                 case let .editTags(fileItem: fileItem):
@@ -77,20 +91,6 @@ package struct FilesView: FilesViewProtocol {
                     )
                 }
             }
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(viewModel.title ?? Strings.Files.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
-            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .interactiveDismissDisabled()
-            .toolbar { toolbarContent }
-            .onAppear { reloadTask() }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
             .sheet(
                 item: $viewModel.fileRenameView,
                 onDismiss: {
@@ -100,7 +100,7 @@ package struct FilesView: FilesViewProtocol {
                     }
                 },
                 content: { $0 }
-            ) //TODO: merge both sheets
+            )
         }
     }
 }
