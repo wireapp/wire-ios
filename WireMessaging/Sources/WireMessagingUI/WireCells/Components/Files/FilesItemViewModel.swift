@@ -61,7 +61,7 @@ final class FilesItemViewModel: ObservableObject {
         self.onDelete = onDelete
         self.onRename = onRename
         self.onEditTagsSelected = { onEditTagsSelected(item) }
-        self.fileName = item.filename
+        self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
@@ -72,11 +72,13 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        switch asset?.downloadState {
+        guard item.kind == .file else { return false }
+
+        return switch asset?.downloadState {
         case .downloaded:
-            true
-        default:
             false
+        default:
+            true
         }
     }
 
@@ -118,6 +120,8 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func download() async {
+        precondition(item.kind == .file)
+
         // Ignore errors as these will be reported via the `asset` publisher.
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }

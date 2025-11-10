@@ -104,7 +104,7 @@ struct FilesViewItemView: View {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
 
-                    if !viewModel.isDownloadOptionAvailable {
+                    if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                         }.disabled(viewModel.isDownloading)

@@ -17,6 +17,7 @@
 //
 
 import Combine
+package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
@@ -25,24 +26,37 @@ package import WireMessagingDomain
 import WireMessagingDomainSupport
 
 /// An item in the `FilesView`.
-struct FilesViewItem: Identifiable, Hashable {
+package struct FilesViewItem: Identifiable, Hashable {
+
+    /// The kind of item
+    enum Kind {
+
+        /// A file.
+        case file
+
+        /// A folder.
+        case folder
+    }
 
     /// Identifier of this item on the wire cells backend.
-    let id: UUID
+    package let id: UUID
 
-    /// The filename of the file including its extension.
-    let filename: String
+    /// The kind of this item - file or folder.
+    let kind: Kind
 
-    /// The filepath of the file.
+    /// The name of the user who owns (uploaded or created) this item.
+    let name: String
+
+    /// The filepath of the item.
     let filePath: String
 
     /// The name of the user who owns (uploaded) this file.
     let ownedBy: String?
 
-    /// The date when the file was last modified.
+    /// The date when the item was last modified.
     let modifiedAt: Date?
 
-    /// The icon representing the file type.
+    /// The icon representing the item's type.
     let icon: FileIcon
 
     /// The tags that users have added for that file.
@@ -63,13 +77,19 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
-
+        
         var id: String {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
             }
         }
+    }
+
+    /// An navigation option displayed in the navigation folder menu.
+    enum FolderMenuOption: Hashable {
+        case folder(nodeID: UUID, title: String)
+        case root
     }
 
     enum State: Equatable {
@@ -123,10 +143,12 @@ package final class FilesViewModel: ObservableObject {
 
     let useCases: UseCases
 
+    private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private var subscriptions = Set<AnyCancellable>()
+    private let navigationPath: [FilesViewItem]
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -139,13 +161,21 @@ package final class FilesViewModel: ObservableObject {
     @Published var fileRenameView: FileRenameView?
     var didRenameFile: Bool = false
 
+    let title: String?
+
     package init(
         useCases: UseCases,
+        title: String? = nil,
+        navigationPath: [FilesViewItem] = [],
+        setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
         self.useCases = useCases
+        self.title = title
+        self.navigationPath = navigationPath
+        self.setNavigation = setNavigation
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
@@ -208,7 +238,7 @@ package final class FilesViewModel: ObservableObject {
             item: state.items[index],
             localAssetRepository: localAssetRepository,
             onOpen: { [weak self] item in
-                await self?.viewAsset(item: item)
+                await self?.openItem(item: item)
             },
             onDelete: { [weak self] item in
                 await self?.deleteItem(item)
@@ -222,8 +252,51 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
+    func openItem(item: FilesViewItem) async {
+        switch item.kind {
+        case .file:
+            await viewAsset(item: item)
+        case .folder:
+            openFolder(item: item)
+        }
+    }
+
+    var folderMenuOptions: [FolderMenuOption] {
+        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.name) }
+        options.append(.root)
+        options.removeFirst()
+        return options
+    }
+
+    func selectFolderMenuOption(_ option: FolderMenuOption) {
+        let newPath: [FilesViewItem] = switch option {
+        case let .folder(nodeID, _):
+            if let index = navigationPath.firstIndex(where: { $0.id == nodeID }) {
+                Array(navigationPath.prefix(upTo: index + 1))
+            } else {
+                []
+            }
+        case .root:
+            []
+        }
+
+        setNavigation(newPath)
+    }
+
+    // MARK: - Private
+
+    /// Navigates to the folder represented by the given item.
+    private func openFolder(item: FilesViewItem) {
+        precondition(item.kind == .folder)
+
+        setNavigation(navigationPath + [item])
+    }
+
     /// Downloads if necessary and views the asset represented by the given item.
-    func viewAsset(item: FilesViewItem) async {
+    private func viewAsset(item: FilesViewItem) async {
+        precondition(item.kind == .file)
+
         // Bookkeeping ensure we only attempt to display the most recently selected item.
         lastSelectedItem = item
 
@@ -237,8 +310,6 @@ package final class FilesViewModel: ObservableObject {
             alert = .unknownError
         }
     }
-
-    // MARK: - Private
 
     private func localURL(for item: FilesViewItem) async throws -> URL? {
         // If the file is already downloaded, return the local URL.
@@ -302,13 +373,15 @@ package final class FilesViewModel: ObservableObject {
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
+            let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
-                filename: url?.lastPathComponent ?? node.path,
+                kind: kind,
+                name: url?.lastPathComponent ?? node.path,
                 filePath: node.path,
                 ownedBy: node.ownerUserName,
                 modifiedAt: node.modified,
-                icon: .make(
+                icon: kind == .folder ? .folder : .make(
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
@@ -356,30 +429,23 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    /// Sorts items first by modified date descending, then by filename ascending.
-    /// If multiple items have the same `nodeID`, only the first is kept.
+    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
     private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
-        // sort
-        let sorted = items.sorted { left, right in
-            if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt {
-                if leftModified == rightModified {
-                    left.filename < right.filename
-                } else {
-                    leftModified > rightModified
+        var latestByID: [UUID: FilesViewItem] = [:]
+        for item in items {
+            if let existing = latestByID[item.id] {
+                let existingDate = existing.modifiedAt ?? .distantPast
+                let newDate = item.modifiedAt ?? .distantPast
+                if newDate > existingDate {
+                    latestByID[item.id] = item
                 }
-            } else if left.modifiedAt != nil {
-                true
-            } else if right.modifiedAt != nil {
-                false
             } else {
-                left.filename < right.filename
+                latestByID[item.id] = item
             }
         }
 
-        var nodeIDs = Set<UUID>()
         var results: [FilesViewItem] = []
-        for item in sorted where !nodeIDs.contains(item.id) {
-            nodeIDs.insert(item.id)
+        for item in items where item == latestByID[item.id] {
             results.append(item)
         }
 
@@ -393,7 +459,7 @@ package final class FilesViewModel: ObservableObject {
             renameNodeUseCase: useCases.renameNode,
             fileRenameModel: .init(
                 nodeID: item.id,
-                filename: item.filename,
+                filename: item.name,
                 filepath: item.filePath,
             )
         )

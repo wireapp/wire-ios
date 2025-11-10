@@ -19,9 +19,9 @@
 import Foundation
 import GenericMessageProtocol
 
-extension ZMClientMessage {
+public extension ZMClientMessage {
 
-    public var underlyingMessage: GenericMessage? {
+    var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil
         }
@@ -54,7 +54,7 @@ extension ZMClientMessage {
     /// - Parameter message: The protobuf message object to be associated with this client message.
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
 
-    public func setUnderlyingMessage(_ message: GenericMessage) throws {
+    func setUnderlyingMessage(_ message: GenericMessage) throws {
         let messageData = try mergeWithExistingData(message)
 
         if nonce == .none, let messageID = messageData.underlyingMessage?.messageID {
@@ -65,8 +65,18 @@ extension ZMClientMessage {
         setLocallyModifiedKeys([#keyPath(ZMClientMessage.dataSet)])
     }
 
+    /// Sets the underlying protobuf message data by creating a new `ZMGenericMessageData` object,
+    /// without checking if any generic message data exists to merge with.
+    ///
+    /// - Parameter message: The protobuf message object to be associated with this asset client message.
+    /// - Throws `ProcessingError` if the protobuf data can't be processed.
+
+    func setNewUnderlyingMessage(_ message: GenericMessage) throws {
+        try createNewGenericMessageData(with: message)
+    }
+
     @discardableResult
-    func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
+    internal func mergeWithExistingData(_ message: GenericMessage) throws -> ZMGenericMessageData {
         cachedUnderlyingMessage = nil
 
         let existingMessageData = dataSet
@@ -86,6 +96,7 @@ extension ZMClientMessage {
         return messageData
     }
 
+    @discardableResult
     private func createNewGenericMessageData(with message: GenericMessage) throws -> ZMGenericMessageData {
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext

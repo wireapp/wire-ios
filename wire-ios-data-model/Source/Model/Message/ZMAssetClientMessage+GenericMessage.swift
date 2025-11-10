@@ -63,6 +63,16 @@ extension ZMAssetClientMessage {
         try mergeWithExistingData(message: message)
     }
 
+    /// Sets the underlying protobuf message data by creating a new `ZMGenericMessageData` object,
+    /// without checking if any generic message data exists to merge with.
+    ///
+    /// - Parameter message: The protobuf message object to be associated with this asset client message.
+    /// - Throws `ProcessingError` if the protobuf data can't be processed.
+
+    public func setNewUnderlyingMessage(_ message: GenericMessage) throws {
+        try createNewGenericMessageData(with: message)
+    }
+
     @discardableResult
     func mergeWithExistingData(message: GenericMessage) throws -> ZMGenericMessageData {
         cachedUnderlyingAssetMessage = nil
@@ -82,6 +92,7 @@ extension ZMAssetClientMessage {
         }
     }
 
+    @discardableResult
     func createNewGenericMessageData(with message: GenericMessage) throws -> ZMGenericMessageData {
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext

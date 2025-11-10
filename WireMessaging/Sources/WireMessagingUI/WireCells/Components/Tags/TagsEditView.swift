@@ -304,7 +304,8 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
-        filename: "some_file.pdf",
+        kind: .file,
+        name: "some_file.pdf",
         filePath: "some/path",
         ownedBy: nil,
         modifiedAt: nil,

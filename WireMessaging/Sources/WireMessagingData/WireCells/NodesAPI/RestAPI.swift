@@ -271,20 +271,6 @@ private extension RestNodeLocator {
 
 }
 
-private extension TreeNodeType {
-
-    init(_ value: WireCellsNodeType) {
-        switch value {
-        case .leaf:
-            self = .leaf
-        case .collection:
-            self = .collection
-        case .any:
-            self = .unknown
-        }
-    }
-}
-
 private struct LoggingIntercepter: OpenAPIInterceptor {
 
     let interceptor = DefaultOpenAPIInterceptor()
@@ -341,21 +327,18 @@ private extension WireCellsGetNodesRequest {
         )
 
         switch configuration {
-        case let .conversationFileView(root):
+        case let .conversationFileView(root, isFoldersEnabled):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
-                type: .leaf
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: true,
+                recursive: isFoldersEnabled ? false : true,
                 root: RestNodeLocator(root)
             )
-            request.sortDirDesc = true
-            request.sortField = "mtime"
         case .filesBrowserView:
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
