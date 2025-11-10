@@ -27,7 +27,7 @@ extension WireCellsNode {
         modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
-        type: String? = nil,
+        type: WireCellsNodeType? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
         contentUrl: URL? = nil,

@@ -505,11 +505,11 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
     if (arrayProtocols != nil) {
         NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
-        [self setSupportedProtocols:supportedProtocols];
+        [self updateSupportedProtocols:supportedProtocols];
     } else {
         // fallback to proteus as default supported protocol,
         // we don't have swift constants here unfortunately.
-        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+        [self updateSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
     }
 
 

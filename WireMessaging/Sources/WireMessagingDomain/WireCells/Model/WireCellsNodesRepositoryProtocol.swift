@@ -65,7 +65,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireCellsNodeLocator)
+        case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

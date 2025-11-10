@@ -64,9 +64,9 @@ public protocol HasQualifiedID {
     var qualifiedID: WireDataModel.QualifiedID? { get }
 }
 
-public extension ZMUser {
+extension ZMUser: HasQualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    public var qualifiedID: QualifiedID? {
         guard
             let context = managedObjectContext,
             let uuid = remoteIdentifier,

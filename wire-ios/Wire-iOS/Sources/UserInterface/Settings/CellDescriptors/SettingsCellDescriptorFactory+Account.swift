@@ -391,16 +391,8 @@ extension SettingsCellDescriptorFactory {
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
-        let context = selfUser.managedObjectContext!.performAndWait {
-            selfUser.managedObjectContext!.zm_sync!
-        }
         let backupLocalStore = BackupLocalStore(
-            context: context,
-            processor: ConversationProtobufMessageProcessor(
-                context: context,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            )
+            contextProvider: sessionManager.activeUserSession!.contextProvider
         )
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
