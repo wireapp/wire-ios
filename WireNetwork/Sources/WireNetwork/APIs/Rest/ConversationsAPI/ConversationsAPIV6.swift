@@ -18,4 +18,49 @@
 
 class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
+    
+    override func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> (Conversation, MLSPublicKeys?) {
+        guard !userID.isEmpty, !domain.isEmpty else {
+            throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
+        }
+
+        let path = "\(oneToOneConversationsPath)/\(domain)/\(userID)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationWithPublicKeys.self)
+            .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
+            .parse(code: response.statusCode, data: data)
+    }
 }
+
+
+private struct ConversationWithPublicKeys: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case conversation
+        case publicKeys = "public_keys"
+    }
+    
+    var conversation: ConversationV5
+    var publicKeys: MLSPublicKeysV0
+    
+    func toAPIModel() -> (Conversation, MLSPublicKeys) {
+        (
+            conversation.toAPIModel(),
+            publicKeys.toAPIModel()
+        )
+    }
+}
+

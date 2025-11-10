@@ -94,7 +94,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+        let (mlsGroupID, pubKeys) = try await sut.pullMLSOneToOneConversation(
             userID: Scaffolding.id.uuidString,
             userDomain: Scaffolding.domain
         )

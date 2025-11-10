@@ -115,7 +115,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
 
         // Sync the user MLS conversation from backend.
-        let mlsGroupID = try await pullMLSOneOnOneSync.pull(
+        let (mlsGroupID, mlsPublicKeys) = try await pullMLSOneOnOneSync.pull(
             userID: userID.uuid,
             userDomain: userID.domain
         )
@@ -142,8 +142,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             await migrateToMLS(
                 mlsConversation: mlsConversation,
                 mlsGroupID: groupID,
+                mlsPublicKeys: mlsPublicKeys,
                 user: user,
                 userID: userID
+                
             )
         }
     }
@@ -158,6 +160,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             try await setupMLSGroup(
                 mlsConversation: mlsConversation,
                 groupID: mlsGroupID,
+                mls
                 userID: userID
             )
         } catch {
@@ -187,12 +190,13 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func setupMLSGroup(
         mlsConversation: ZMConversation,
         groupID: MLSGroupID,
+        publicKeys: MLSPublicKeys,
         userID: WireDataModel.QualifiedID
     ) async throws {
         let mlsService = mlsProvider.service
-
         let epoch = await context.perform {
-            mlsConversation.epoch
+            (mlsConversation.epoch,
+            mlsConversation.)
         }
 
         if epoch == 0 {
@@ -202,7 +206,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 let ciphersuite = try await mlsService.establishGroup(
                     for: groupID,
                     with: users,
-                    removalKeys: nil
+                    removalKeys: publicKeys
                 )
 
                 await context.perform {
