@@ -4,11 +4,10 @@
 # It is triggered whenever a pull request is merged into any `release/*` branch.
 #
 # Target branch selection:
-# - If the source branch matches `release/cycle-X.Y` pattern:
-#   a. First checks if `release/cycle-X.(Y+1)` exists (next minor version)
-#   b. If not, checks if `release/cycle-(X+1).0` exists (next major version)
-#   c. If neither exists, targets `develop`
-# - Otherwise, the cherry-pick targets `develop`.
+# - Gets all release branches and sorts them
+# - Finds the position of the source branch in the sorted list
+# - Selects the next branch in the sorted list, or `develop` if no next branch exists
+# - If the source branch doesn't match `release/cycle-*` pattern, targets `develop`
 #
 # The action performs the following steps:
 # 1. Checkout the merged PR.
@@ -51,40 +50,15 @@ jobs:
           fetch-depth: 1
           submodules: recursive
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Determine target branch
         id: target-branch
         run: |
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          
-          # Check if base branch matches release/cycle-X.Y pattern
-          if [[ "$BASE_BRANCH" =~ ^release/cycle-([0-9]+)\.([0-9]+)$ ]]; then
-              MAJOR="${BASH_REMATCH[1]}"
-              MINOR="${BASH_REMATCH[2]}"
-              
-              # First, check for next minor version (X.Y+1)
-              NEXT_MINOR=$((MINOR + 1))
-              NEXT_MINOR_BRANCH="release/cycle-${MAJOR}.${NEXT_MINOR}"
-              
-              if git ls-remote --heads origin "$NEXT_MINOR_BRANCH" | grep -q "$NEXT_MINOR_BRANCH"; then
-                  echo "target=$NEXT_MINOR_BRANCH" >> $GITHUB_OUTPUT
-                  echo "Found next minor release branch: $NEXT_MINOR_BRANCH"
-              else
-                  # If next minor doesn't exist, check for next major version (X+1.0)
-                  NEXT_MAJOR=$((MAJOR + 1))
-                  NEXT_MAJOR_BRANCH="release/cycle-${NEXT_MAJOR}.0"
-                  
-                  if git ls-remote --heads origin "$NEXT_MAJOR_BRANCH" | grep -q "$NEXT_MAJOR_BRANCH"; then
-                      echo "target=$NEXT_MAJOR_BRANCH" >> $GITHUB_OUTPUT
-                      echo "Found next major release branch: $NEXT_MAJOR_BRANCH"
-                  else
-                      echo "target=develop" >> $GITHUB_OUTPUT
-                      echo "Next release branches ($NEXT_MINOR_BRANCH, $NEXT_MAJOR_BRANCH) not found, using develop"
-                  fi
-              fi
-          else
-              echo "target=develop" >> $GITHUB_OUTPUT
-              echo "Base branch $BASE_BRANCH doesn't match release/cycle-X.Y pattern, using develop"
-          fi
+          scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
 
       - name: Cherry pick to target branch
         uses: wireapp/action-auto-cherry-pick@v1.0.2

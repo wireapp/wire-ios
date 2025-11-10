@@ -3,20 +3,38 @@ name: Playground
 on:
   workflow_dispatch:
     inputs:
-      distribute_externals:
-        type: boolean
-        description: 'Distribute externally'
-        default: false
-
-permissions: 
-  checks: write
+      base_branches:
+        type: string
+        description: 'Comma-separated list of base branches to test (e.g., release/cycle-4.9,release/cycle-5.0,develop)'
+        required: true
+        default: 'release/cycle-3.125,release/cycle-3.126,release/cycle-4.9,release/cycle-4.10,release/cycle-5.0,develop'
 
 jobs:
-  playground:
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      countly_enabled: true
-      datadog_enabled: true
-      distribute_externals: ${{ inputs.distribute_externals }}
-      fastlane_action: playground
-    secrets: inherit
+  determine-target-branch:
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: 'true'
+          token: ${{ secrets.SUBMODULE_PAT }}
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Determine target branch
+        id: target-branch
+        run: |
+          scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
+
+      - name: Cherry pick to target branch
+        uses: wireapp/action-auto-cherry-pick@v1.0.2
+        with:
+          target-branch: ${{ steps.target-branch.outputs.target }}
+          pr-labels: 'cherry-pick'
+          pr-title-suffix: '🍒'
