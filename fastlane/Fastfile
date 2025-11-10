@@ -288,7 +288,7 @@ platform :ios do
         
         write_tests_info_to_summary("🤖 Testing schemas: #{schemas.join(', ')}")
         
-        testplan = options[:testplan] || "AllTests" # GermanLocaleTests are not run!?
+        testplan = options[:testplan] || "AllTests" # TODO: [WPB-17497] GermanLocaleTests are not run
 
         is_nightly_build = options[:all] == true
         
