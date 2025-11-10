@@ -111,8 +111,8 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
-        
-        self.presentationController?.delegate = self
+
+        presentationController?.delegate = self
     }
 
     override var prefersStatusBarHidden: Bool {
