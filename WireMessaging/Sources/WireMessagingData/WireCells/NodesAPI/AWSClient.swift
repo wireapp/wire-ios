@@ -22,6 +22,7 @@ package import Foundation
 import Smithy
 import SmithyIdentity
 import SmithyStreams
+import WireFoundation
 import WireLogging
 import WireMessagingDomain
 
@@ -268,8 +269,8 @@ private extension WireCellsNodeNetworkModel {
     func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": uuid.uuidString,
-            "Create-Version-ID": versionID.uuidString
+            "Create-Resource-UUID": uuid.transportString(),
+            "Create-Version-ID": versionID.transportString()
         ]
     }
 }
