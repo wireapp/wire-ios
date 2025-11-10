@@ -45,7 +45,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
