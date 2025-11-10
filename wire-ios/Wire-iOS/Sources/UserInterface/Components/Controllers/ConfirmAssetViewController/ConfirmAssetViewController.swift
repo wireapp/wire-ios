@@ -111,6 +111,8 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
+        
+        self.presentationController?.delegate = self
     }
 
     override var prefersStatusBarHidden: Bool {
@@ -414,5 +416,12 @@ final class ConfirmAssetViewController: UIViewController {
 extension ConfirmAssetViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         context.onConfirm?(image)
+    }
+}
+
+extension ConfirmAssetViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        // this is called (only) when the user swipes down the sheet.
+        context.onCancel?()
     }
 }
