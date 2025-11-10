@@ -16,9 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMMessage {
-    @NSManaged var senderID: UUID?
-    @NSManaged var senderDomain: String?
-    @NSManaged var conversationID: UUID?
-    @NSManaged var conversationDomain: String?
+public import Foundation
+
+public enum BackupMessagesImportFailure: LocalizedError {
+    case failedToFetchRelationships
+
+    public var errorDescription: String? {
+        switch self {
+        case .failedToFetchRelationships:
+            "Relationships with senders / conversations could not be fetched."
+        }
+    }
 }
