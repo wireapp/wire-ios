@@ -39,7 +39,7 @@ public enum WireLogger {
     public static let appDelegate = WireTaggedLogger(tag: "AppDelegate", handler: logHandler)
     public static let appLock = WireTaggedLogger(tag: "AppLock", handler: logHandler)
     public static let assets = WireTaggedLogger(tag: "assets", handler: logHandler)
-    public static let authentication = WireTaggedLogger(tag: "authentication", handler: logHandler)
+    public static let authentication = WireTaggedLogger(tag: "authentication", handler: logHandler) // TODO: move?
     public static let backend = WireTaggedLogger(tag: "backend", handler: logHandler)
     public static let backgroundActivity = WireTaggedLogger(tag: "background-activity", handler: logHandler)
     public static let badgeCount = WireTaggedLogger(tag: "badge-count", handler: logHandler)

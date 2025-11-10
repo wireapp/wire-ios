@@ -16,6 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLegacyLogging
+import WireLogging
 
-typealias WireLogger = WireLegacyLogging.WireLogger
+extension WireLogAttribute {
+
+    /// legacy pushChannel (Starscream)
+
+    static var pushChannelV0: WireLogAttribute { .init("push_channel", "v0") }
+
+    /// PushChannel V1 (regular sync)
+
+    static var pushChannelV1: WireLogAttribute { .init("push_channel", "v1") }
+
+    /// PushChannelV2 (consumable notifications sync)
+
+    static var pushChannelV2: WireLogAttribute { .init("push_channel", "v2") }
+
+}

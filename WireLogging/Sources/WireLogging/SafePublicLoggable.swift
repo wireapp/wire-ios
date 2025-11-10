@@ -16,35 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-14297] Remove this file and create `WireLogInterpolation.appendInterpolation` overloads.
-/*
-/// A type which is only used during migrating to the new logging.
-public struct PubliclyLoggedString {
+/// A wrapper which allows for all types of string interpolations to be logged without obfuscation.
+
+public struct SafePublicLoggable {
 
     fileprivate let value: String
 
     public init(_ value: String) {
         self.value = value
     }
+
 }
 
 public extension WireLogInterpolation {
 
-    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-    mutating func appendInterpolation(_ publiclyLoggedString: PubliclyLoggedString) {
-        writeText(publiclyLoggedString.value)
+    mutating func appendInterpolation(_ safePublicLoggable: SafePublicLoggable) {
+        writeText(safePublicLoggable.value)
     }
+
 }
 
 // MARK: -
 
 // The following extension ensures no WireLogging consuming code needs to be changed for now.
 
-public extension WireLogInterpolation {
-
-    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-    mutating func appendInterpolation(_ value: String) {
-        writeText(value)
-    }
-}
-*/
+//public extension WireLogInterpolation {
+//
+//    mutating func appendInterpolation(_ value: String) {
+//        writeText(value)
+//    }
+//}

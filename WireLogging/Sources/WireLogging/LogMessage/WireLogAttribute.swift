@@ -23,8 +23,7 @@ public struct WireLogAttribute: Sendable {
     public var key: String
     public var value: String
 
-    // feel free to make init public if needed
-    init(
+    public init(
         key: String,
         value: String
     ) {
@@ -32,8 +31,7 @@ public struct WireLogAttribute: Sendable {
         self.value = value
     }
 
-    // feel free to make init public if needed
-    init(
+    public init(
         _ key: String,
         _ value: String
     ) {
@@ -73,11 +71,4 @@ public extension WireLogAttribute {
     // static func tag(_ value: String) -> WireLogAttribute { .init("tag", value) }
     // static func workItemID(_ value: String) -> WireLogAttribute { .init("work_item_id", value) }
 
-    nonisolated(unsafe) static let someKey: Provider = { .init(key: "someKey", value: $0) }
-
 }
-
-// TODO: delete
-nonisolated(unsafe) var la: [WireLogAttribute] = [
-    .someKey("abcd")
-]
