@@ -17,12 +17,9 @@
 //
 
 import Foundation
+import WireFoundation
 
 extension UUID: TransportCoding {
-
-    public func transportString() -> String {
-        uuidString.lowercased()
-    }
 
     public init?(transportString: String) {
         self.init(uuidString: transportString)
