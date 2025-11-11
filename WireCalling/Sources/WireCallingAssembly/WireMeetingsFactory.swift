@@ -20,17 +20,22 @@ import Foundation
 import WireCallingDomain
 import WireCallingUI
 public import UIKit
-import SwiftUI
+public import SwiftUI
 import WireCallingData
+public import WireReusableUIComponents
 
 public struct WireMeetingsFactory {
+    private let passwordValidator: any PasswordValidator
+
     @MainActor
-    public init() {}
+    public init(passwordValidator: any PasswordValidator) {
+        self.passwordValidator = passwordValidator
+    }
 }
 
 public extension WireMeetingsFactory {
     @MainActor
-    func makeMeetingsView() -> UIViewController {
+    func makeMeetingsView(accentColor: @escaping () -> Color) -> UIViewController {
         let meetingsViewModel = AllMeetingsViewModel(
             repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
@@ -41,7 +46,9 @@ public extension WireMeetingsFactory {
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            )
+            ),
+            accentColor: accentColor,
+            passwordValidator: passwordValidator
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

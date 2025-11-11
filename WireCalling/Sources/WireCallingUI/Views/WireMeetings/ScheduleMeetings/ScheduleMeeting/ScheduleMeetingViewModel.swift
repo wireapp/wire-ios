@@ -18,13 +18,21 @@
 
 import Foundation
 import SwiftUI
-import UIKit
-import WireCallingAssembly
 
-// sourcery: AutoMockable
-protocol WireMeetingsFactoryProtocol {
-    @MainActor
-    func makeMeetingsView(accentColor: @escaping () -> Color) -> UIViewController
+final class ScheduleMeetingViewModel: ObservableObject {
+
+    @Published var meetingTitle: String = ""
+
+    var isNextButtonEnabled: Bool {
+        true
+    }
+
+    let accentColor: Color
+
+    init(accentColor: Color) {
+        self.accentColor = accentColor
+    }
+
+    func scheduleMeeting() {}
+
 }
-
-extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

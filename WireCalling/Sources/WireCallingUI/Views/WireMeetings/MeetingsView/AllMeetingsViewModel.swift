@@ -17,23 +17,32 @@
 //
 
 import Foundation
+package import SwiftUI
 package import WireCallingDomain
 import WireCallingDomainSupport
 package import WireFoundation
+package import WireReusableUIComponents
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
 package final class AllMeetingsViewModel: ObservableObject {
 
-    /// The meetings data view model, exposed for the child MeetingsView
     package let meetingsViewModel: MeetingsViewModel
+
+    @Published var isCreateInstantMeetingPresented: Bool = false
+    @Published var isScheduleMeetingPresented: Bool = false
+
+    public let accentColor: () -> Color
+    private let passwordValidator: any PasswordValidator
 
     package init(
         repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
         pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        accentColor: @escaping () -> Color,
+        passwordValidator: any PasswordValidator
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             repository: repository,
@@ -42,14 +51,29 @@ package final class AllMeetingsViewModel: ObservableObject {
             pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
+        self.accentColor = accentColor
+        self.passwordValidator = passwordValidator
     }
 
     // MARK: - Public Interface
 
-    /// Creates and starts an instant meeting.
-    func meetNowTapped() {}
+    func createInstantMeetingTapped() {
+        isCreateInstantMeetingPresented = true
+    }
 
-    /// Opens the meeting scheduling interface.
-    func scheduleMeetingTapped() {}
+    func scheduleMeetingTapped() {
+        isScheduleMeetingPresented = true
+    }
+
+    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
+        CreateInstantMeetingViewModel(
+            accentColor: accentColor(),
+            passwordValidator: passwordValidator
+        )
+    }
+
+    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
+        ScheduleMeetingViewModel(accentColor: accentColor())
+    }
 
 }

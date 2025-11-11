@@ -386,7 +386,9 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(accentColor: { [weak userSession] in
+            userSession?.selfUser.accentColor.color ?? WireAccentColor.default.color
+        })
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
