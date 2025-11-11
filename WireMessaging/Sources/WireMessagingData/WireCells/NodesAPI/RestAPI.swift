@@ -41,7 +41,10 @@ final class RestAPI: Sendable {
     }
 
     func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
-        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.transportString(), apiConfiguration: makeConfiguration())
+        let response = try await NodeServiceAPI.getByUuid(
+            uuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
         }
@@ -188,7 +191,10 @@ final class RestAPI: Sendable {
     }
 
     func deletePublicLink(uuid: UUID) async throws {
-        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.transportString(), apiConfiguration: makeConfiguration())
+        _ = try await NodeServiceAPI.deletePublicLink(
+            linkUuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
