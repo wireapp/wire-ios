@@ -35,6 +35,8 @@ final class FilesViewTests: XCTestCase {
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
+    private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
+    private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
 
     @MainActor
     override func setUp() async throws {
@@ -42,6 +44,11 @@ final class FilesViewTests: XCTestCase {
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
+
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
@@ -57,6 +64,8 @@ final class FilesViewTests: XCTestCase {
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
+        updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
+        getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -261,9 +270,13 @@ final class FilesViewTests: XCTestCase {
         state: FilesViewModel.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
-            fetchNodesUseCase: fetchNodesUseCase,
-            deleteNodesUseCase: deleteNodeUseCase,
-            renameNodeUseCase: renameNodeUseCase,
+            useCases: .init(
+                fetchNodes: fetchNodesUseCase,
+                deleteNodes: deleteNodeUseCase,
+                renameNode: renameNodeUseCase,
+                updateTags: updateTagsUseCase,
+                getTagSuggestions: getTagSuggestionsUseCase,
+            ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache()

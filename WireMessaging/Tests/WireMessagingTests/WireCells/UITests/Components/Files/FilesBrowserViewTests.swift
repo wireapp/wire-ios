@@ -35,6 +35,8 @@ final class FilesBrowserViewTests: XCTestCase {
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
+    private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
+    private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     @MainActor
@@ -44,6 +46,11 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
+
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
@@ -53,13 +60,14 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
-
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: MockWireCellsNodesRepositoryProtocol(),
             localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
+        updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
+        getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -136,9 +144,13 @@ final class FilesBrowserViewTests: XCTestCase {
         state: FilesViewModel.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
-            fetchNodesUseCase: fetchNodesUseCase,
-            deleteNodesUseCase: deleteNodeUseCase,
-            renameNodeUseCase: renameNodeUseCase,
+            useCases: .init(
+                fetchNodes: fetchNodesUseCase,
+                deleteNodes: deleteNodeUseCase,
+                renameNode: renameNodeUseCase,
+                updateTags: updateTagsUseCase,
+                getTagSuggestions: getTagSuggestionsUseCase,
+            ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             fileCache: MockFileCache()
