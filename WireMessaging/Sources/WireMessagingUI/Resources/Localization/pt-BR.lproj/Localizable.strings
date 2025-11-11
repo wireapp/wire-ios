@@ -83,7 +83,7 @@
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
-"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.channelHistory.upgradeBanner.message" = "To show older messages to channel members, your team needs configuration. Please contact your team admin.";
 "conversation.channelHistory.upgradeBanner.button" = "Atualizar agora";
 "conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
 "conversation.channelHistory.picker.title" = "Conversation history";

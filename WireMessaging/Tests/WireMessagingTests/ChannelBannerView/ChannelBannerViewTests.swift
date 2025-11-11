@@ -42,7 +42,7 @@ final class ChannelBannerTests: XCTestCase {
         let view = ChannelBannerView(
             configuration: .init(
                 title: "Show older messages?",
-                message: "Upgrade to a paid plan to offer channel members the whole history.",
+                message: "To show older messages to channel members, your team needs configuration. Please contact your team admin.",
                 mainButtonTitle: "Upgrade now",
                 mainButtonAction: {},
                 closeButton: .init(
@@ -67,7 +67,7 @@ final class ChannelBannerTests: XCTestCase {
         let view = ChannelBannerView(
             configuration: .init(
                 title: "Show older messages?",
-                message: "Upgrade to a paid plan to offer channel members the whole history.",
+                message: "To show older messages to channel members, your team needs configuration. Please contact your team admin.",
                 mainButtonTitle: "Upgrade now",
                 mainButtonAction: {},
                 closeButton: .init(
