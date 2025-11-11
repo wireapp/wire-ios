@@ -63,6 +63,10 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
+    public var isServiceUser: Bool {
+        type == .app || type == .bot
+    }
+
     public var teamName: String? {
         team?.name
     }

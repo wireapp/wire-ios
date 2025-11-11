@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+
 @testable import WireDataModel
 
 class ZMConversationAccessModeTests: ZMConversationTestsBase {
@@ -51,26 +52,26 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
 
     func testAllowingGuests() {
         // GIVEN
-        sut.accessRoles = [.teamMember, .service]
+        sut.accessRoles = [.teamMember, .app]
         sut.accessMode = .teamOnly
 
         // WHEN
         sut.allowGuests = true
 
         XCTAssertEqual(sut.accessMode, .allowGuests)
-        XCTAssertEqual(sut.accessRoles, [.teamMember, .nonTeamMember, .service, .guest])
+        XCTAssertEqual(sut.accessRoles, [.teamMember, .nonTeamMember, .app, .guest])
     }
 
     func testDisallowingGuests() {
         // GIVEN
-        sut.accessRoles = [.teamMember, .nonTeamMember, .service, .guest]
+        sut.accessRoles = [.teamMember, .nonTeamMember, .app, .guest]
         sut.accessMode = .allowGuests
 
         // WHEN
         sut.allowGuests = false
 
         XCTAssertEqual(sut.accessMode, .teamOnly)
-        XCTAssertEqual(sut.accessRoles, [.teamMember, .service])
+        XCTAssertEqual(sut.accessRoles, [.teamMember, .app])
     }
 
     func testAllowingServices() {
@@ -81,12 +82,12 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         sut.allowServices = true
 
         // THEN
-        XCTAssertEqual(sut.accessRoles, [.teamMember, .service])
+        XCTAssertEqual(sut.accessRoles, [.teamMember, .app])
     }
 
     func testDisallowingServices() {
         // GIVEN
-        sut.accessRoles = [.teamMember, .service]
+        sut.accessRoles = [.teamMember, .app]
 
         // WHEN
         sut.allowServices = false
@@ -106,12 +107,12 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
 
         // THEN
         XCTAssertEqual(sut.accessMode, .allowGuests)
-        XCTAssertEqual(sut.accessRoles, [.nonTeamMember, .teamMember, .guest, .service])
+        XCTAssertEqual(sut.accessRoles, [.nonTeamMember, .teamMember, .guest, .app])
     }
 
     func testDisallowingGuestsAndServices() {
         // GIVEN
-        sut.accessRoles = [.teamMember, .guest, .nonTeamMember, .service]
+        sut.accessRoles = [.teamMember, .guest, .nonTeamMember, .app]
         sut.accessMode = .allowGuests
 
         // WHEN
@@ -213,7 +214,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
 
     func testThatServicesAreAllowed() {
         // WHEN
-        sut.accessRoles = [.teamMember, .service]
+        sut.accessRoles = [.teamMember, .app]
 
         // THEN
         XCTAssertTrue(sut.allowServices)
@@ -266,14 +267,14 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
             allowGuests: false,
             allowServices: true,
             expectedAccessModes: [],
-            expectedAccessRoles: [.teamMember, .service]
+            expectedAccessRoles: [.teamMember, .app]
         )
 
         assertAccessModeAndRoles(
             allowGuests: true,
             allowServices: true,
             expectedAccessModes: ["code", "invite"],
-            expectedAccessRoles: [.teamMember, .nonTeamMember, .guest, .service]
+            expectedAccessRoles: [.teamMember, .nonTeamMember, .guest, .app]
         )
 
         assertAccessModeAndRoles(
@@ -314,7 +315,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
 
     func testThatAccessRoleSetAccessRoleString() {
         // GIVEN
-        sut.accessRoles = [.teamMember, .guest, .nonTeamMember, .service]
+        sut.accessRoles = [.teamMember, .guest, .nonTeamMember, .app]
 
         // THEN
         XCTAssertEqual(Set(sut.accessRoleStringsV2!), Set(["team_member", "guest", "non_team_member", "service"]))
@@ -325,6 +326,6 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         sut.accessRoleStringsV2 = ["team_member", "non_team_member", "guest", "service"]
 
         // THEN
-        XCTAssertEqual(sut.accessRoles, [.teamMember, .nonTeamMember, .guest, .service])
+        XCTAssertEqual(sut.accessRoles, [.teamMember, .nonTeamMember, .guest, .app])
     }
 }
