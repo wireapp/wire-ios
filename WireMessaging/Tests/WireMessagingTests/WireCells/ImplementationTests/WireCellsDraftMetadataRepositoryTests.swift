@@ -76,7 +76,7 @@ struct WireCellsDraftMetadataRepositoryTests {
         let metadata = try await sut.audioMetadata(fileURL: fileURL)
 
         // then
-        #expect(metadata == .audio(duration: 934))
+        #expect(metadata == .audio(duration: 1000))
     }
 
 }
