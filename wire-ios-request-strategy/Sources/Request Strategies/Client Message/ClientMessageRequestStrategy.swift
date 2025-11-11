@@ -89,7 +89,11 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     typealias Object = ZMClientMessage
 
-    func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+    func insert(
+        object: ZMClientMessage,
+        isFresh: Bool,
+        completion: @escaping () -> Void
+    ) {
         // Temp fix for avoiding to send a large amount of last read
         // messages, see: [WPB-17439]
         if
@@ -110,12 +114,12 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
-        if object.shouldExpire, object.expirationDate?.isInThePast == true {
-            // When unsent messages past their expiration date they should be expired.
-            // It's likely this message failed to send before but the app crashed or was
-            // terminated before it succeeded.
+        if !isFresh {
+            // This message was not added in this runtime. Rather than send it
+            // which may no longer make sense after such as delay, we will
+            // expire it so the user can retry.
             WireLogger.messaging.info(
-                "client message expired before sending: \(object)",
+                "expiring statle client message",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )
