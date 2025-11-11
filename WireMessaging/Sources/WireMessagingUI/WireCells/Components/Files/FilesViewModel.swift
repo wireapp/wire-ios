@@ -77,7 +77,7 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
-        
+
         var id: String {
             switch self {
             case let .editTags(fileItem: item):

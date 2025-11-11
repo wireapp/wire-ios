@@ -57,11 +57,13 @@ extension TagsEditView {
         }
 
         var suggestedTags: [String] {
-            allExistingTags.filter { tag in
-                let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                let isAlreadyAdded = currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
-                return !isEmpty && !isAlreadyAdded
-            }
+            Set(allExistingTags.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
+                .filter { tag in
+                    let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    let isAlreadyAdded = currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+                    return !isEmpty && !isAlreadyAdded
+                }
+                .sortedAlphabetically
         }
 
         var filteredSuggestedTags: [String] {
@@ -141,6 +143,14 @@ extension TagsEditView {
                 WireLogger.wireCells.error("Error while saving tags: \(error)", attributes: .safePublic)
                 isSaveErrorMessagePresented = true
             }
+        }
+    }
+}
+
+private extension [String] {
+    var sortedAlphabetically: [String] {
+        sorted { left, right in
+            left.localizedCaseInsensitiveCompare(right) == .orderedAscending
         }
     }
 }

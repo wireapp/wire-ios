@@ -63,7 +63,7 @@ struct FilesViewItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     HStack(spacing: 5) {
-                        if let firstTag = viewModel.item.tags.first {
+                        if let firstTag = viewModel.item.tags.sortedAlphabetically.first {
                             Text(firstTag)
                                 .wireTextStyle(.subline1)
                                 .fontWeight(.medium)
@@ -183,6 +183,14 @@ struct FilesViewItemView: View {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
     }
 
+}
+
+private extension [String] {
+    var sortedAlphabetically: [String] {
+        sorted { left, right in
+            left.localizedCaseInsensitiveCompare(right) == .orderedAscending
+        }
+    }
 }
 
 #Preview {

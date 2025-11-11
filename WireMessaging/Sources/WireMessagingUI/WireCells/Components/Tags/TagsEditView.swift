@@ -314,7 +314,7 @@ struct TagsEditView: View {
     let mockAPI = {
         let mockAPI = MockNodesAPIProtocol()
         mockAPI.getAllTags_MockMethod = {
-            ["suggested tag 1", "tag 2", "lorem", "ipsum"]
+            ["suggested tag 1", "tag 2", "lorem", "ipsum", "abc"]
         }
         mockAPI.updateTagsNodeIDTags_MockMethod = { _, _ in }
         return mockAPI
