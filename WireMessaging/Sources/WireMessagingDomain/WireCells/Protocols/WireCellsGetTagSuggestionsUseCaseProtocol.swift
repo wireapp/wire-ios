@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 public protocol WireCellsGetTagSuggestionsUseCaseProtocol: Sendable {
     func invoke() async throws -> [String]

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
 /// Returns a list of all existing tags, collected from all files and folders.
 /// Is used to suggest new tags.

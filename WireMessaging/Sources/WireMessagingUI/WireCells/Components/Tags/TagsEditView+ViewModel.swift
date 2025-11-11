@@ -60,7 +60,8 @@ extension TagsEditView {
             Set(allExistingTags.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
                 .filter { tag in
                     let isEmpty = tag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    let isAlreadyAdded = currentTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
+                    let isAlreadyAdded = currentTags
+                        .contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
                     return !isEmpty && !isAlreadyAdded
                 }
                 .sortedAlphabetically

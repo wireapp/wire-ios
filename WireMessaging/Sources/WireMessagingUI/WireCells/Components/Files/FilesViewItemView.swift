@@ -30,12 +30,6 @@ struct FilesViewItemView: View {
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
 
-    let additionalTagNumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.positivePrefix = formatter.plusSign
-        return formatter
-    }()
-
     private var canRenameFile: Bool
 
     init(
@@ -63,7 +57,9 @@ struct FilesViewItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     HStack(spacing: 5) {
-                        if let firstTag = viewModel.item.tags.sortedAlphabetically.first {
+                        let tagsInfo = viewModel.tagsInfo
+
+                        if let firstTag = tagsInfo.firstTag {
                             Text(firstTag)
                                 .wireTextStyle(.subline1)
                                 .fontWeight(.medium)
@@ -77,12 +73,8 @@ struct FilesViewItemView: View {
                                 }
                         }
 
-                        let additionalTags = viewModel.item.tags.count - 1
-
-                        if additionalTags > 0 {
-                            let formattedNumber = additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
-
-                            Text(formattedNumber)
+                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                            Text(additionalTagsIndicator)
                                 .wireTextStyle(.subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
@@ -183,14 +175,6 @@ struct FilesViewItemView: View {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
     }
 
-}
-
-private extension [String] {
-    var sortedAlphabetically: [String] {
-        sorted { left, right in
-            left.localizedCaseInsensitiveCompare(right) == .orderedAscending
-        }
-    }
 }
 
 #Preview {

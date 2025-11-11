@@ -44,6 +44,17 @@ final class FilesItemViewModel: ObservableObject {
     let subtitle: String?
     let icon: FileIcon
 
+    struct TagsInfo {
+        let firstTag: String?
+        let additionalTagsIndicator: String?
+    }
+
+    private let additionalTagNumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.positivePrefix = formatter.plusSign
+        return formatter
+    }()
+
     init(
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
@@ -158,4 +169,24 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
+    var tagsInfo: TagsInfo {
+        let additionalTags = item.tags.count - 1
+        let formattedNumber: String? = if additionalTags > 0 {
+            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
+        } else {
+            nil
+        }
+        return .init(
+            firstTag: item.tags.sortedAlphabetically.first,
+            additionalTagsIndicator: formattedNumber
+        )
+    }
+}
+
+private extension [String] {
+    var sortedAlphabetically: [String] {
+        sorted { left, right in
+            left.localizedCaseInsensitiveCompare(right) == .orderedAscending
+        }
+    }
 }
