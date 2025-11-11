@@ -38,7 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
-    
+
     private let record: Bool? = nil
 
     @MainActor
