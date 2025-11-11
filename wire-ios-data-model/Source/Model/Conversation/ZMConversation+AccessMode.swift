@@ -90,7 +90,7 @@ public enum ConversationAccessRole: String, Equatable {
     public static func fromAccessRoleV2(_ accessRoles: Set<ConversationAccessRoleV2>) -> ConversationAccessRole {
         if accessRoles.contains(.guest) {
             .nonActivated
-        } else if accessRoles.contains(.nonTeamMember) || accessRoles.contains(.service) {
+        } else if accessRoles.contains(.nonTeamMember) || accessRoles.contains(.app) {
             .activated
         } else if accessRoles.contains(.teamMember) {
             .team
@@ -124,7 +124,7 @@ public enum ConversationAccessRoleV2: String {
     /// Users without Wire accounts, or wireless users (i.e users who join with a guest link and temporary account).
     case guest
     /// A service pseudo-user, aka a non-human bot.
-    case service
+    case app = "service"
 
     public static func fromLegacyAccessRole(_ accessRole: ConversationAccessRole) -> Set<Self> {
         switch accessRole {
@@ -133,7 +133,7 @@ public enum ConversationAccessRoleV2: String {
         case .activated:
             [.teamMember, .nonTeamMember, guest]
         case .nonActivated:
-            [.teamMember, .nonTeamMember, guest, .service]
+            [.teamMember, .nonTeamMember, guest, .app]
         case .private:
             []
         }
@@ -141,7 +141,7 @@ public enum ConversationAccessRoleV2: String {
 
     public static func from(
         allowGuests: Bool,
-        allowServices: Bool
+        allowApps: Bool
     ) -> Set<ConversationAccessRoleV2> {
         var roles: Set<ConversationAccessRoleV2> = [.teamMember]
 
@@ -150,8 +150,8 @@ public enum ConversationAccessRoleV2: String {
             roles.insert(.nonTeamMember)
         }
 
-        if allowServices {
-            roles.insert(.service)
+        if allowApps {
+            roles.insert(.app)
         }
 
         return roles
@@ -184,7 +184,7 @@ extension ZMConversation: SwiftConversationLike {
                     .teamMember,
                     .nonTeamMember,
                     .guest,
-                    .service
+                    .app
                 ]
             }
             return Set(strings.compactMap(ConversationAccessRoleV2.init))
@@ -219,13 +219,13 @@ extension ZMConversation: SwiftConversationLike {
     /// Controls the value of `accessRoleV2`.
     @objc public var allowServices: Bool {
         get {
-            accessRoles.contains(.service)
+            accessRoles.contains(.app)
         }
         set {
             if newValue {
-                accessRoles.insert(.service)
+                accessRoles.insert(.app)
             } else {
-                accessRoles.remove(.service)
+                accessRoles.remove(.app)
             }
         }
 

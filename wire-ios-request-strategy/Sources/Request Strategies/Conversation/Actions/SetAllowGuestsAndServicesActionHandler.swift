@@ -55,9 +55,9 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         var accessRoles = conversation.accessRoles
 
         if action.allowServices {
-            accessRoles.insert(.service)
+            accessRoles.insert(.app)
         } else {
-            accessRoles.remove(.service)
+            accessRoles.remove(.app)
         }
 
         if action.allowGuests {

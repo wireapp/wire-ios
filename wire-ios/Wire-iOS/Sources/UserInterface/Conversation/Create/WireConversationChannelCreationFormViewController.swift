@@ -137,7 +137,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         values.name = channelCreationSettings.channelName
         values.allowGuests = channelCreationSettings.guestsAllowed
-        values.allowServices = channelCreationSettings.servicesAllowed
+        values.allowApps = channelCreationSettings.appsAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
         values.channelHistoryDepth = channelCreationSettings.historyDepth
         values.enableFileManagement = channelCreationSettings.fileManagementEnabled
@@ -213,7 +213,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
+            allowApps: values.shouldIncludeApps ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }

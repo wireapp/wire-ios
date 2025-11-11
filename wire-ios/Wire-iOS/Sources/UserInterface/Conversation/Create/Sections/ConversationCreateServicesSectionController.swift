@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class ConversationCreateServicesSectionController: ConversationCreateSectionController {
+final class ConversationCreateServicesSectionController: ConversationCreateSectionController { // TODO: rename Apps
 
     typealias Cell = ConversationCreateServicesCell
 

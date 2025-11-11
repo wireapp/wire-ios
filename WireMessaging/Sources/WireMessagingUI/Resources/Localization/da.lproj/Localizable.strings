@@ -70,7 +70,7 @@
 
 "conversation.creationForm.options.footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public later.";
 
-"conversation.creationForm.services.toggle" = "Allow services";
+"conversation.creationForm.apps.toggle" = "Allow services";
 "conversation.creationForm.guests.toggle" = "Tillad gæster";
 "conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
 

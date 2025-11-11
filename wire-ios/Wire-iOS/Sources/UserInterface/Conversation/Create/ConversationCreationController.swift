@@ -67,7 +67,7 @@ final class ConversationCreationController: UIViewController {
     private var optionsSections: [ConversationCreateSectionController] {
         let sections = [
             guestsSection,
-            values.shouldIncludeServices ? servicesSection : nil,
+            values.shouldIncludeApps ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
@@ -104,11 +104,11 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var servicesSection: ConversationCreateServicesSectionController = {
+    private lazy var appsSection: ConversationCreateServicesSectionController = {
         let section = ConversationCreateServicesSectionController(values: values)
 
-        section.toggleAction = { [unowned self] allowServices in
-            values.allowServices = allowServices
+        section.toggleAction = { [unowned self] allowApps in
+            values.allowApps = allowApps
             updateOptions()
         }
         return section
@@ -235,7 +235,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateSections() {
-        servicesSection.isHidden = !values.shouldIncludeServices
+        servicesSection.isHidden = !values.shouldIncludeApps
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
@@ -305,7 +305,7 @@ final class ConversationCreationController: UIViewController {
 
     private func updateOptions() {
         guestsSection.configure(with: values)
-        servicesSection.configure(with: values)
+        appsSection.configure(with: values)
         encryptionProtocolSection.configure(with: values)
         fileManagementSection.configure(with: values)
     }
@@ -372,7 +372,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
+            allowApps: values.shouldIncludeApps ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }
