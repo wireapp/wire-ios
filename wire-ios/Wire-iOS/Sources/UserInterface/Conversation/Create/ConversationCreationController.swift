@@ -235,7 +235,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateSections() {
-        servicesSection.isHidden = !values.shouldIncludeApps
+        appsSection.isHidden = !values.shouldIncludeApps
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
@@ -599,8 +599,8 @@ extension ConversationAccessRoleV2 {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

@@ -214,9 +214,9 @@ enum WirelessRequestFactory {
         var accessRoles = conversation.accessRoles
 
         if allowServices {
-            accessRoles.insert(.service)
+            accessRoles.insert(.app)
         } else {
-            accessRoles.remove(.service)
+            accessRoles.remove(.app)
         }
 
         if allowGuests {

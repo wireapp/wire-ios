@@ -348,7 +348,7 @@ final class ConversationEventDecodingTests: XCTestCase {
             conversationID: conversationID,
             senderID: senderID,
             accessModes: [.private, .invite, .link, .code],
-            accessRoles: [.teamMember, .nonTeamMember, .guest, .service],
+            accessRoles: [.teamMember, .nonTeamMember, .guest, .app],
             legacyAccessRole: .nonActivated
         )
 
