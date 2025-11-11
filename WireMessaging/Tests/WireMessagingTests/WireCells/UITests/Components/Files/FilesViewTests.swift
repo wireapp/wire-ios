@@ -37,6 +37,8 @@ final class FilesViewTests: XCTestCase {
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    
+    private let record: Bool? = nil
 
     @MainActor
     override func setUp() async throws {
@@ -94,10 +96,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -119,10 +121,60 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withOneTag() {
+        let item = FilesViewItem(
+            id: UUID(),
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["important"]
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withThreeTags() {
+        let item = FilesViewItem(
+            id: UUID(),
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["tag1", "tag2", "abcdef"]
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -146,7 +198,8 @@ final class FilesViewTests: XCTestCase {
             snapshotHelper
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    named: "\(dynamicTypeSize)",
+                    record: record
                 )
         }
     }
@@ -178,10 +231,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -211,10 +264,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -223,10 +276,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -235,10 +288,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -247,10 +300,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -259,10 +312,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
