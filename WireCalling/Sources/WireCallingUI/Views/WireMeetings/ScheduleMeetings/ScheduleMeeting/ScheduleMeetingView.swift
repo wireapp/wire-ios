@@ -31,34 +31,34 @@ struct ScheduleMeetingView: View {
     }
 
     var body: some View {
-       NavigationView {
-           Form {
-               titleSection
-           }
-           .scrollContentBackground(.hidden)
-           .background(ColorTheme.Backgrounds.background.color)
-           .navigationTitle(Strings.Now.title)
-           .navigationBarTitleDisplayMode(.inline)
-           .toolbar {
-               ToolbarItem(placement: .navigationBarLeading) {
-                   Button(Strings.Cancel.button) {
-                       dismiss()
-                   }
-                   .foregroundColor(.blue)
-               }
+        NavigationView {
+            Form {
+                titleSection
+            }
+            .scrollContentBackground(.hidden)
+            .background(ColorTheme.Backgrounds.background.color)
+            .navigationTitle(Strings.Now.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(Strings.Cancel.button) {
+                        dismiss()
+                    }
+                    .foregroundColor(.blue)
+                }
 
-               ToolbarItem(placement: .navigationBarTrailing) {
-                   Button(Strings.Schedule.button) {
-                       viewModel.scheduleMeeting()
-                   }
-                   .foregroundColor(viewModel.accentColor)
-                   .disabled(!viewModel.isNextButtonEnabled)
-               }
-           }
-           .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-       }
-       .background(ColorTheme.Backgrounds.background.color)
-   }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(Strings.Schedule.button) {
+                        viewModel.scheduleMeeting()
+                    }
+                    .foregroundColor(viewModel.accentColor)
+                    .disabled(!viewModel.isNextButtonEnabled)
+                }
+            }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+        }
+        .background(ColorTheme.Backgrounds.background.color)
+    }
 
     var titleSection: some View {
         Section(Strings.SetupTitle.header) {

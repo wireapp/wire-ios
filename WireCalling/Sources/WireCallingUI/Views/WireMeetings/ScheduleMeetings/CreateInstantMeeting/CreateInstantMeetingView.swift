@@ -76,14 +76,14 @@ struct CreateInstantMeetingView: View {
                         isPasswordVisible.toggle()
                     } label: {
                         Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
-                            .foregroundColor(.gray)
+                            .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
 
-                if !viewModel.password.isEmpty && !viewModel.isPasswordValid {
+                if !viewModel.password.isEmpty, !viewModel.isPasswordValid {
                     Text(viewModel.localizedPasswordRules)
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(ColorTheme.Base.error.color)
                 }
             }
         } header: {
@@ -109,52 +109,52 @@ struct CreateInstantMeetingView: View {
                         isConfirmedPasswordVisible.toggle()
                     } label: {
                         Image(systemName: isConfirmedPasswordVisible ? "eye.slash" : "eye")
-                            .foregroundColor(.gray)
+                            .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
 
-                if !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid {
+                if !viewModel.confirmedPassword.isEmpty, !viewModel.isConfirmedPasswordValid {
                     Text(Strings.ConfirmedPassword.error)
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(ColorTheme.Base.error.color)
                 }
             }
         }
     }
 
-     @ViewBuilder
-     private var formContent: some View {
-         Form {
-             titleSection
-             participantsSection
-             Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
-             passwordSection
-             confirmedPasswordSection
-         }
-         .scrollContentBackground(.hidden)
-         .background(ColorTheme.Backgrounds.background.color)
-         .navigationTitle(Strings.Now.title)
-         .navigationBarTitleDisplayMode(.inline)
-         .toolbar {
-             ToolbarItem(placement: .navigationBarLeading) {
-                 Button(Strings.Cancel.button) {
-                     dismiss()
-                 }
-                 .foregroundColor(viewModel.accentColor)
-             }
+    @ViewBuilder private var formContent: some View {
+        Form {
+            titleSection
+            participantsSection
+            Toggle(Strings.AllowGuests.title, isOn: $viewModel.allowGuests)
+            passwordSection
+            confirmedPasswordSection
+        }
+        .scrollContentBackground(.hidden)
+        .background(ColorTheme.Backgrounds.background.color)
+        .navigationTitle(Strings.Now.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(Strings.Cancel.button) {
+                    dismiss()
+                }
+                .foregroundColor(viewModel.accentColor)
+            }
 
-             ToolbarItem(placement: .navigationBarTrailing) {
-                 Button(Strings.Next.button) {
-                     viewModel.createInstantMeeting()
-                 }
-                 .foregroundColor(viewModel.accentColor)
-                 .disabled(!viewModel.isNextButtonEnabled)
-             }
-         }
-         .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-     }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(Strings.Next.button) {
+                    viewModel.createInstantMeeting()
+                }
+                .disabled(!viewModel.isNextButtonEnabled)
+                .tint(viewModel.accentColor)
+            }
 
- }
+        }
+        .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+    }
+
+}
 
 // MARK: - Preview
 
