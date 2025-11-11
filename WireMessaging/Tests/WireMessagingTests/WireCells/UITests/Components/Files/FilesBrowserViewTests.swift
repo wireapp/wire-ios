@@ -38,6 +38,8 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
+    
+    private let record: Bool? = nil
 
     @MainActor
     override func setUp() async throws {
@@ -84,10 +86,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -96,10 +98,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -108,10 +110,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -120,23 +122,31 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
     func testFilesBrowserView_ReceivedItemsState() async {
-        let view = makeFilesBrowserView(state: .received(items: [.fixture(), .fixture()]))
+        let view = makeFilesBrowserView(
+            state: .received(
+                items: [
+                    .fixture(),
+                    .fixture(tags: ["tag1"]),
+                    .fixture(tags: ["tag1", "tag2", "abc"])
+                ]
+            )
+        )
         localAssetsRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
