@@ -65,6 +65,7 @@ final class ConversationCreationController: UIViewController {
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
     private var optionsSections: [ConversationCreateSectionController] {
+        print("shouldIncludeApps", values.shouldIncludeApps) // TODO: delete
         let sections = [
             guestsSection,
             values.shouldIncludeApps ? appsSection : nil,
@@ -104,8 +105,8 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var appsSection: ConversationCreateServicesSectionController = {
-        let section = ConversationCreateServicesSectionController(values: values)
+    private lazy var appsSection: ConversationCreateAppsSectionController = {
+        let section = ConversationCreateAppsSectionController(values: values)
 
         section.toggleAction = { [unowned self] allowApps in
             values.allowApps = allowApps
