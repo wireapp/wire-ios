@@ -266,7 +266,11 @@ NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
         self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
     }
     [self removeExpirationDate];
-    self.conversation.hasUnreadUnsentMessage = YES;
+
+    if (self.visibleInConversation != nil) {
+        // Only warn for unsent messages if it's actually visible.
+        self.conversation.hasUnreadUnsentMessage = YES;
+    }
 }
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
