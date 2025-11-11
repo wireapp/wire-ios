@@ -17,7 +17,7 @@
 //
 
 import GenericMessageProtocol
-import WireFoundation
+import WireTransport
 
 public struct MultipartAttachment {
 

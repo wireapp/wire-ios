@@ -22,7 +22,6 @@ package import Foundation
 import Smithy
 import SmithyIdentity
 import SmithyStreams
-import WireFoundation
 import WireLogging
 import WireMessagingDomain
 
