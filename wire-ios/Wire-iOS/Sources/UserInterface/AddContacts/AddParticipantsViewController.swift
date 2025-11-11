@@ -361,10 +361,12 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateSelectionValues() {
+        // TODO: when is this called? why is `allowGuests` set to `true`?
         // Update view model after selection changed
         if case let .create(values) = viewModel.context {
             let updated = ConversationCreationValues(
                 isChannel: values.isChannel,
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,

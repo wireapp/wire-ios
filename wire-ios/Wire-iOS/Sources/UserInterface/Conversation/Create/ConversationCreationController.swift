@@ -65,10 +65,9 @@ final class ConversationCreationController: UIViewController {
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
     private var optionsSections: [ConversationCreateSectionController] {
-        print("shouldIncludeApps", values.shouldIncludeApps) // TODO: delete
         let sections = [
             guestsSection,
-            values.shouldIncludeApps ? appsSection : nil,
+            values.isAppsFeatureEnabled ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
@@ -172,11 +171,13 @@ final class ConversationCreationController: UIViewController {
     init(
         preSelectedParticipants: UserSet?,
         userSession: UserSession
-    ) {
+    ) async {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
+        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
         self.values = ConversationCreationValues(
             isChannel: false,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -236,7 +237,7 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateSections() {
-        appsSection.isHidden = !values.shouldIncludeApps
+        appsSection.isHidden = !values.isAppsFeatureEnabled
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
@@ -373,7 +374,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowApps: values.shouldIncludeApps ? values.allowApps : false
+            allowApps: values.isAppsFeatureEnabled ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }
