@@ -439,7 +439,6 @@
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
 		CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
-		CB283A0C2EC21B6B00522C81 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CB283A0B2EC21B6B00522C81 /* WireFoundation */; };
 		CB3437012DF32846007CFB34 /* MultipartMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3437002DF3283E007CFB34 /* MultipartMessageData.swift */; };
 		CB3437032DF329D2007CFB34 /* ZMClientMessage+MultipartMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3437022DF329D2007CFB34 /* ZMClientMessage+MultipartMessageData.swift */; };
 		CB417B082D9FDA2B00F0701B /* store2-123-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CB417B072D9FDA2B00F0701B /* store2-123-0.wiredatabase */; };
@@ -1640,7 +1639,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB283A0C2EC21B6B00522C81 /* WireFoundation in Frameworks */,
 				591B6E542C8B09D2009F8A7B /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2443,6 +2441,7 @@
 		F9A705F01CAEE01D00C2F5FE /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				884371632EB8DC49003DA083 /* ZMMessage+Backup.swift */,
 				06E8AAB2242BAA1B008929B1 /* File */,
 				63370CB9242CB8310072C37F /* Composite */,
 				F963E97D1D9C09DA00098AD3 /* Ephemeral */,
@@ -3792,6 +3791,7 @@
 				639971AA2B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift in Sources */,
 				F93C4C7D1E24E1B1007E9CEE /* NotificationDispatcher.swift in Sources */,
 				06D48735241F930A00881B08 /* GenericMessage+Obfuscation.swift in Sources */,
+				884371642EB8DC50003DA083 /* ZMMessage+Backup.swift in Sources */,
 				E4E38CE52E2EC99E00E4FFA9 /* MLSServiceInterface.swift in Sources */,
 				01BDA3172C59210400675DCB /* CoreDataMessagingMigratorProtocol.swift in Sources */,
 				069BCC5C2B30945500DF4EC2 /* E2EIVerificationStatusService.swift in Sources */,
@@ -4608,10 +4608,6 @@
 		59D398CF2D552573001C9C5F /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
-		};
-		CB283A0B2EC21B6B00522C81 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
 		};
 		CBB648A42E33D18900FA52AA /* WireData */ = {
 			isa = XCSwiftPackageProductDependency;

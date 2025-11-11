@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-public extension UUID {
+extension UUID {
 
     /// Creates a string suitable for transport to the server.
 
