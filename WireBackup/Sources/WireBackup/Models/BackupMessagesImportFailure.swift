@@ -16,4 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"wireMeetings.videoButton.description" = "Start or schedule a meeting";
+public import Foundation
+
+public enum BackupMessagesImportFailure: LocalizedError {
+    case failedToFetchRelationships
+
+    public var errorDescription: String? {
+        switch self {
+        case .failedToFetchRelationships:
+            "Relationships with senders / conversations could not be fetched."
+        }
+    }
+}

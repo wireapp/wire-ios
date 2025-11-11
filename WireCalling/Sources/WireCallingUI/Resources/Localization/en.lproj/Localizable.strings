@@ -24,8 +24,10 @@
 "wireMeetings.list.actions.meetNow" = "Meet Now";
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.actions.showAll" = "Show All";
-"wireMeetings.list.emptyState.title" = "No meetings yet";
-"wireMeetings.list.emptyState.subtitle" = "Start a meeting with team members, guests, or external parties.";
+"wireMeetings.list.emptyState.next.title" = "No upcoming meetings yet";
+"wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members, guests, or external parties.";
+"wireMeetings.list.emptyState.past.title" = "No past meetings yet";
+"wireMeetings.list.emptyState.past.subtitle" = "You'll find all previous meetings here.";
 "wireMeetings.list.header.today" = "Today";
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
