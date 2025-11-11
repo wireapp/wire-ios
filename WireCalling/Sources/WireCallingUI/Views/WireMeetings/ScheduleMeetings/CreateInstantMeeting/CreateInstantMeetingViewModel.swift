@@ -25,12 +25,14 @@ final class CreateInstantMeetingViewModel: ObservableObject {
     @Published var meetingTitle: String = "" {
         didSet { updateNextButtonState() }
     }
+
     // TODO: [WPB-21335] Implement Wire users and emails
     @Published var participants: String = ""
     @Published var allowGuests: Bool = false
     @Published var password: String = "" {
         didSet { updateNextButtonState() }
     }
+
     @Published var confirmedPassword: String = "" {
         didSet { updateNextButtonState() }
     }
