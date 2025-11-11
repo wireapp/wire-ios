@@ -60,7 +60,8 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         userSession: UserSession
     ) async {
         self.userSession = userSession
-        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+            .isFeatureEnabled(.apps) ?? false
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,

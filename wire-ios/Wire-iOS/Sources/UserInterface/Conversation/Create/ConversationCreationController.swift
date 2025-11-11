@@ -174,7 +174,8 @@ final class ConversationCreationController: UIViewController {
     ) async {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+            .isFeatureEnabled(.apps) ?? false
         self.values = ConversationCreationValues(
             isChannel: false,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
