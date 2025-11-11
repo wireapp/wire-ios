@@ -43,9 +43,6 @@ jobs:
             WireCalling:
               - 'WireCalling/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCallingAll.xcscheme'
-            WireCells:
-              - 'WireCells/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCellsAll.xcscheme'
             WireData:
               - 'WireData/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireDataAll.xcscheme'
