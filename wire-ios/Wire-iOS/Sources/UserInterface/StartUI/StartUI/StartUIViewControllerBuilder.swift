@@ -51,7 +51,6 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     func build() async -> UIViewController {
         let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
         let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
-        print("isAppsFeatureEnabled", isAppsFeatureEnabled) // TODO: revert
         let rootViewController = StartUIViewController(
             isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,

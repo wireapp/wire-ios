@@ -157,7 +157,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
+- (BOOL)isServiceUser // TODO: move to Swift
 {
     return self.serviceIdentifier != nil && self.providerIdentifier != nil;
 }
