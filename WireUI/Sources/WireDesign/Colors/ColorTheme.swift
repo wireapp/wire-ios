@@ -67,6 +67,8 @@ public enum ColorTheme {
 
         public static let inverted = UIColor(light: .black, dark: .white)
         public static let onInverted = UIColor(light: .white, dark: .black)
+
+        public static let onTransparentDark = UIColor(light: .white, dark: .white)
     }
 
     public enum Banners {
