@@ -22,7 +22,6 @@
 # 7. If any conflicts arise during the cherry-pick, they are committed.
 # 8. The branch with the cherry-picked changes is pushed.
 # 9. A new pull request is created against the target branch with the cherry-picked changes.
-#
 
 name: "Cherry-pick from release to next release or develop"
 
@@ -47,7 +46,7 @@ jobs:
         with:
           lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
-          fetch-depth: 1
+          fetch-depth: 0
           submodules: recursive
 
       - name: Setup Python
