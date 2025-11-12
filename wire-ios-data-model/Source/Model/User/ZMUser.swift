@@ -63,7 +63,10 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
-    public var isServiceUser: Bool {
+    @available(*, deprecated, renamed: "isApp")
+    public var isServiceUser: Bool { isApp }
+
+    public var isApp: Bool {
         type == .app || type == .bot
     }
 

@@ -38,7 +38,7 @@ public protocol ConversationLike: AnyObject {
     var displayName: String? { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
-    var allowServices: Bool { get }
+    var allowApps: Bool { get }
 
     var isUnderLegalHold: Bool { get }
 

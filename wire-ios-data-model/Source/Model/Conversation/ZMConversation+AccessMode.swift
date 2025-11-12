@@ -215,9 +215,10 @@ extension ZMConversation: SwiftConversationLike {
     }
 
     /// If set to false, only team member or guest can join the conversation.
-    /// True means that a service could join
+    /// True means that an app could join.
     /// Controls the value of `accessRoleV2`.
-    @objc public var allowServices: Bool {
+
+    @objc public var allowApps: Bool {
         get {
             accessRoles.contains(.app)
         }
@@ -228,7 +229,6 @@ extension ZMConversation: SwiftConversationLike {
                 accessRoles.remove(.app)
             }
         }
-
     }
 
     // The conversation access mode is stored as an array of string in CoreData, cf. `acccessModeStrings`.

@@ -272,14 +272,14 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingAllowGuests: Bool!
 
-    // MARK: - allowServices
+    // MARK: - allowApps
 
-    public var allowServices: Bool {
-        get { return underlyingAllowServices }
-        set(value) { underlyingAllowServices = value }
+    public var allowApps: Bool {
+        get { return underlyingAllowApps }
+        set(value) { underlyingAllowApps = value }
     }
 
-    public var underlyingAllowServices: Bool!
+    public var underlyingAllowApps: Bool!
 
     // MARK: - isUnderLegalHold
 
