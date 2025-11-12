@@ -59,6 +59,9 @@ extension UIFont {
         case .subline1:
             return .preferredFont(forTextStyle: .caption1)
 
+        case .subline2:
+            return .preferredFont(forTextStyle: .caption1).withWeight(.semibold)
+
         case .buttonSmall:
             let baseFont = UIFont.systemFont(ofSize: 14)
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
