@@ -87,6 +87,12 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
             .makeStream(of: [conversation])
         backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
             .makeStream(of: [message])
+        backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReturnValue =
+            BackupMessagesImportResult(
+                validationCount: .init(successCount: 1, failureCount: 0),
+                insertionCount: .init(successCount: 1, failureCount: 0),
+                rehydrationCount: .init(successCount: 1, failureCount: 0)
+            )
 
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
@@ -106,7 +112,8 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         XCTAssertEqual(importEvents.last, .done)
         XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
         XCTAssertEqual(
-            backupLocalStoreMock.addMessagesBackupMessagesMessageBackupModelVoidReceivedInvocations,
+            backupLocalStoreMock
+                .addMessagesBackupMessagesMessageBackupModelBackupMessagesImportResultReceivedInvocations,
             [[message]]
         )
 
