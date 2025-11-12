@@ -47,7 +47,8 @@ final class FilesViewModelTests {
                 localAssetStore: localAssetStore
             ),
             createFolderUseCase: WireCellsCreateFolderUseCase(
-                nodesRepository: nodesRepository,
+                nodesRepository: nodesRepository
+            ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
                 nodesRepository: MockWireCellsNodesRepositoryProtocol(),
                 localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),

@@ -52,7 +52,7 @@ final class FilesViewTests: XCTestCase {
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
-            nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
@@ -64,6 +64,7 @@ final class FilesViewTests: XCTestCase {
         snapshotHelper = nil
         nodesRepository = nil
         fetchNodesUseCase = nil
+        renameNodeUseCase = nil
     }
 
     @MainActor

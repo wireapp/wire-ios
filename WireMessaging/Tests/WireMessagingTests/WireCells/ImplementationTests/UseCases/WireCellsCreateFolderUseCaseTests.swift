@@ -37,8 +37,7 @@ final class WireCellsCreateFolderUseCaseTests {
 
     @Test
     func invoke_Success() async throws {
-        let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
-        let subfoldersPaths = "Folder-1/Folder-2"
+        let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
         // Mock
@@ -49,8 +48,7 @@ final class WireCellsCreateFolderUseCaseTests {
 
         // When
         try await sut.invoke(
-            rootPath: rootPath,
-            subfoldersPath: subfoldersPaths,
+            folderPath: folderPath,
             folderName: folderName
         )
 
@@ -61,8 +59,7 @@ final class WireCellsCreateFolderUseCaseTests {
 
     @Test
     func invoke_FailureFolderAlreadyExists() async throws {
-        let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
-        let subfoldersPaths = "Folder-1/Folder-2"
+        let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
         // Mock
@@ -72,8 +69,7 @@ final class WireCellsCreateFolderUseCaseTests {
         await #expect(throws: WireCellsCreateFolderUseCaseError.folderAlreadyExists) {
             // When
             try await sut.invoke(
-                rootPath: rootPath,
-                subfoldersPath: subfoldersPaths,
+                folderPath: folderPath,
                 folderName: folderName
             )
         }
@@ -82,8 +78,7 @@ final class WireCellsCreateFolderUseCaseTests {
     @Test
     func invoke_FailureServerFailedToCreateFolder() async throws {
         // Given
-        let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
-        let subfoldersPaths = "Folder-1/Folder-2"
+        let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
         // Mock
@@ -94,8 +89,7 @@ final class WireCellsCreateFolderUseCaseTests {
         await #expect(throws: WireCellsCreateFolderUseCaseError.serverFailedToCreateFolder) {
             // When
             try await sut.invoke(
-                rootPath: rootPath,
-                subfoldersPath: subfoldersPaths,
+                folderPath: folderPath,
                 folderName: folderName
             )
         }

@@ -39,14 +39,9 @@ final class CreateFolderViewTests: XCTestCase {
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
 
-        let createFolderModel = CreateFolderViewModel.CreateFolderModel(
-            cellName: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com",
-            subfoldersPath: "Folder-1/Folder-2"
-        )
-
         viewModel = CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
-            model: createFolderModel
+            folderPath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         )
     }
 
@@ -99,7 +94,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_FolderAlreadyExistsError() async {
         let view = makeView()
-        createFolderUseCase.invokeRootPathSubfoldersPathFolderName_MockError = WireCellsCreateFolderUseCaseError
+        createFolderUseCase.invokeFolderPathFolderName_MockError = WireCellsCreateFolderUseCaseError
             .folderAlreadyExists
         _ = await viewModel.create()
 
