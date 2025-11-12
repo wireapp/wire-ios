@@ -26,12 +26,6 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 final class CreateFolderViewModel: ObservableObject {
-
-    struct CreateFolderModel {
-        let cellName: String
-        let subfoldersPath: String?
-    }
-
     @Published var folderNameInput: String = ""
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
@@ -39,15 +33,15 @@ final class CreateFolderViewModel: ObservableObject {
     @Published var didCreate: Bool = false
 
     private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
-    private let model: CreateFolderModel
+    private let folderPath: String
     private var subscriptions = Set<AnyCancellable>()
 
     init(
         createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol,
-        model: CreateFolderModel
+        folderPath: String
     ) {
         self.createFolderUseCase = createFolderUseCase
-        self.model = model
+        self.folderPath = folderPath
 
         bindTextInput()
     }
@@ -59,8 +53,7 @@ final class CreateFolderViewModel: ObservableObject {
             isLoading = true
 
             try await createFolderUseCase.invoke(
-                rootPath: model.cellName,
-                subfoldersPath: model.subfoldersPath,
+                folderPath: folderPath,
                 folderName: folderNameInput
             )
 

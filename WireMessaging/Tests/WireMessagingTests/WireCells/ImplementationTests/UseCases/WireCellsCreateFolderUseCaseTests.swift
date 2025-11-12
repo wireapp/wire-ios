@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import Testing
 
@@ -25,42 +24,41 @@ import WireMessagingDomainSupport
 
 @MainActor
 final class WireCellsCreateFolderUseCaseTests {
-    
+
     private let repository = MockWireCellsNodesRepositoryProtocol()
     private let sut: WireCellsCreateFolderUseCase
-    
+
     init() {
         self.sut = WireCellsCreateFolderUseCase(
             nodesRepository: repository
         )
-            
+
     }
-    
+
     @Test
     func invoke_Success() async throws {
         let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
         let subfoldersPaths = "Folder-1/Folder-2"
         let folderName = "Folder-3"
-        
+
         // Mock
         repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.createFolderAt_MockMethod = { targetPath in
             #expect(targetPath == "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2/Folder-3")
         }
-        
+
         // When
         try await sut.invoke(
             rootPath: rootPath,
             subfoldersPath: subfoldersPaths,
             folderName: folderName
         )
-        
-        
+
         // Then
         #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
         #expect(repository.createFolderAt_Invocations.count == 1)
     }
-    
+
     @Test
     func invoke_FailureFolderAlreadyExists() async throws {
         let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
@@ -80,18 +78,18 @@ final class WireCellsCreateFolderUseCaseTests {
             )
         }
     }
-    
+
     @Test
     func invoke_FailureServerFailedToCreateFolder() async throws {
         // Given
         let rootPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com"
         let subfoldersPaths = "Folder-1/Folder-2"
         let folderName = "Folder-3"
-        
+
         // Mock
         repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.createFolderAt_MockError = NSError(domain: "Server error", code: 0)
-        
+
         // Then
         await #expect(throws: WireCellsCreateFolderUseCaseError.serverFailedToCreateFolder) {
             // When
@@ -102,8 +100,5 @@ final class WireCellsCreateFolderUseCaseTests {
             )
         }
     }
-    
-}
 
-            
-            
+}

@@ -113,7 +113,6 @@ package final class FilesViewModel: ObservableObject {
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
-    private var subfoldersPath: String? // nil when no subfolders (folder is created at the root)
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
 
@@ -127,7 +126,6 @@ package final class FilesViewModel: ObservableObject {
     @Published var fileRenameView: FileRenameView?
     var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
-
     let title: String?
 
     package init(
@@ -284,16 +282,16 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func onCreateFolder() {
-        guard let cellName else {
-            return
-        }
+        guard let cellName else { return }
+
+        // When navigation path is empty, folder is created at the root path (cell name)
+        let folderPath = navigationPath.isEmpty ? cellName : navigationPath
+            .last!
+            .filePath
 
         let viewModel = CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
-            model: .init(
-                cellName: cellName,
-                subfoldersPath: subfoldersPath
-            )
+            folderPath: folderPath
         )
 
         // to know whether we need to reload nodes.

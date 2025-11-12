@@ -49,12 +49,16 @@ package struct FilesView: FilesViewProtocol {
                 case let .received(items):
                     VStack(spacing: 0) {
                         if items.isEmpty {
+                            Spacer()
                             FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+                            Spacer()
                         } else {
                             filesList
                                 .listStyle(.plain)
                                 .refreshable { reloadTask(refreshing: true) }
                         }
+
+                        createFolderView
                     }
                 case .pending:
                     FilesInfoView(info: .preparingFiles)

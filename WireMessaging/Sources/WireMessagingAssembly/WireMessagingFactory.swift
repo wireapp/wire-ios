@@ -166,6 +166,9 @@ public extension WireMessagingFactory {
                         fileCache: fileCache,
                         localAssetStore: localAssetStore
                     ),
+                    createFolderUseCase: WireCellsCreateFolderUseCase(
+                        nodesRepository: nodesAPI
+                    ),
                     renameNodeUseCase: WireCellsRenameNodeUseCase(
                         nodesRepository: nodesAPI,
                         localAssetsRepository: localAssetRepository,

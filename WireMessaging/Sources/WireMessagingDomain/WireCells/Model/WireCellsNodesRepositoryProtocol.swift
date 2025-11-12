@@ -46,7 +46,7 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Parameters:
     ///  - path: The path of the new folder.
     func createFolder(at path: String) async throws
-    
+
     /// Renames a node.
     ///
     /// - Parameters:

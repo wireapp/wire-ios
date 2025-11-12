@@ -46,7 +46,8 @@ extension FilesViewModel {
                 localAssetStore: localAssetStore
             ),
             createFolderUseCase: WireCellsCreateFolderUseCase(
-                nodesRepository: previewNodesRepository(),
+                nodesRepository: previewNodesRepository()
+            ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
                 nodesRepository: previewNodesRepository(),
                 localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
@@ -65,7 +66,6 @@ extension FilesViewModel {
 extension FileRenameViewModel {
     /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
     static func preview() -> FileRenameViewModel {
-        let cache = fileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
@@ -219,10 +219,7 @@ extension CreateFolderViewModel {
 
         return CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
-            model: .init(
-                cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-                subfoldersPath: "Test-1/Test-2"
-            )
+            folderPath: "Test-1/Test-2"
         )
     }
 }

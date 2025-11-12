@@ -35,16 +35,10 @@ package struct WireCellsCreateFolderUseCase: WireCellsCreateFolderUseCaseProtoco
     }
 
     package func invoke(
-        rootPath: String,
-        subfoldersPath: String?,
+        folderPath: String,
         folderName: String
     ) async throws {
-
-        let targetPath = if let subfoldersPath {
-            rootPath + "/" + subfoldersPath + "/" + folderName
-        } else {
-            rootPath + "/" + folderName
-        }
+        let targetPath = folderPath + "/" + folderName
 
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(

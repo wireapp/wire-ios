@@ -179,7 +179,7 @@ final class RestAPI: Sendable {
             findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
-                type: .leaf
+                type: .unknown
             )]
         )
 

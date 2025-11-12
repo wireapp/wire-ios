@@ -83,6 +83,9 @@ package struct FilesViewContainer: View {
                 fileCache: fileCache,
                 localAssetStore: localAssetStore
             ),
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: nodesRepository
+            ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
                 nodesRepository: nodesRepository,
                 localAssetsRepository: localAssetRepository,
@@ -91,7 +94,8 @@ package struct FilesViewContainer: View {
             ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            cellName: cellName
         )
     }
 }
