@@ -22,7 +22,6 @@
 # 7. If any conflicts arise during the cherry-pick, they are committed.
 # 8. The branch with the cherry-picked changes is pushed.
 # 9. A new pull request is created against the target branch with the cherry-picked changes.
-#
 
 name: "Cherry-pick from release to next release or develop"
 
@@ -59,6 +58,10 @@ jobs:
         id: target-branch
         run: |
           scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
+
+      - name: Fetch target branch
+        run: |
+          git fetch origin ${{ steps.target-branch.outputs.target }}:${{ steps.target-branch.outputs.target }}
 
       - name: Cherry pick to target branch
         uses: wireapp/action-auto-cherry-pick@v1.0.2
