@@ -52,7 +52,7 @@ final class ConversationCreationValues {
             }
 
             if !allowApps {
-                let noApps = result.filter { !$0.isServiceUser } // TODO: `isServiceUser` doesn't check user type
+                let noApps = result.filter { !$0.isServiceUser }
                 result = UserSet(noApps)
             }
 
