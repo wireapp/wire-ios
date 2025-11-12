@@ -20,10 +20,7 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
-/// A wire cells attachment preview for document attachments.
-
-struct WireCellsDocumentAttachmentPreview: View {
-
+struct WireCellsDocumentHeaderView: View {
     enum Constants {
         static let errorColor = ColorTheme.Base.error.color
     }
@@ -37,25 +34,48 @@ struct WireCellsDocumentAttachmentPreview: View {
     let isError: Bool
 
     var body: some View {
-        WireCellsAttachmentPreview(
-            progress: progress,
-            progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary.color
-        ) {
-            WireCellsDocumentHeaderView(
-                headerIcon: headerIcon,
-                headerText: headerText,
-                labelText: labelText,
-                progress: progress,
-                isError: isError,
-            )
-            .background(ColorTheme.Backgrounds.surfaceVariant.color)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        header()
+    }
+
+    @ViewBuilder
+    private func header() -> some View {
+        VStack(alignment: .leading) {
+            HStack(spacing: 4) {
+                if isError {
+                    Image(systemName: "exclamationmark.triangle")
+                        .fontWeight(.semibold)
+                        .font(.system(size: 14 * scale))
+                        .foregroundStyle(Constants.errorColor)
+                } else {
+                    headerIcon
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 16 * scale)
+                }
+
+                Text(headerText)
+                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    .wireTextStyle(.subline1)
+                    .lineLimit(1)
+
+                Spacer()
+            }
+            .padding([.horizontal, .top], 8)
+
+            Spacer(minLength: 0)
+
+            Text(labelText)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
+                .wireTextStyle(.h5)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding([.horizontal, .bottom], 8)
         }
     }
 }
 
 #Preview {
-    WireCellsDocumentAttachmentPreview(
+    WireCellsDocumentHeaderView(
         headerIcon: Image(FileIcon.pdf.resource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",

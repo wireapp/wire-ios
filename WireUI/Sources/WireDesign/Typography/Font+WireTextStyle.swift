@@ -48,6 +48,8 @@ public extension Font {
             .callout.bold()
         case .subline1:
             .caption
+        case .subline2:
+            .caption.weight(.semibold)
         case .buttonSmall:
             .system(size: 14, weight: .semibold)
         case .buttonBig:
