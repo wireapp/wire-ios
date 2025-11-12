@@ -31,7 +31,7 @@ struct ScheduleMeetingView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 titleSection
             }
