@@ -31,56 +31,6 @@ final class FileRenameViewModel: ObservableObject {
         static let maxInputLength = 64
     }
 
-    enum Kind {
-        case folder
-        case file
-
-        var title: String {
-            switch self {
-            case .folder:
-                Strings.Files.FolderName.title
-            case .file:
-                Strings.Files.FileName.title
-            }
-        }
-
-        var placeholder: String {
-            switch self {
-            case .folder:
-                Strings.Files.RenameFolder.placeholder
-            case .file:
-                Strings.Files.RenameFile.placeholder
-            }
-        }
-
-        var navigationTitle: String {
-            switch self {
-            case .folder:
-                Strings.Files.RenameFolder.navigationTitle
-            case .file:
-                Strings.Files.RenameFile.navigationTitle
-            }
-        }
-
-        var inputTooLongErrorMessage: String {
-            switch self {
-            case .folder:
-                Strings.Files.RenameFolder.folderNameTooLongError
-            case .file:
-                Strings.Files.RenameFile.filenameTooLongError
-            }
-        }
-
-        var alreadyExistsErrorMessage: String {
-            switch self {
-            case .folder:
-                Strings.Files.RenameFolder.folderAlreadyExistsError
-            case .file:
-                Strings.Files.RenameFile.fileAlreadyExistsError
-            }
-        }
-    }
-
     struct Model {
         let nodeID: UUID
         let filename: String
@@ -95,25 +45,58 @@ final class FileRenameViewModel: ObservableObject {
 
     private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let model: Model
-    private let kind: Kind
+    private let kind: FilesViewItem.Kind
     private var subscriptions = Set<AnyCancellable>()
-
+    
     var title: String {
-        kind.title
+        switch kind {
+        case .folder:
+            Strings.Files.FolderName.title
+        case .file:
+            Strings.Files.FileName.title
+        }
     }
-
+    
     var placeholder: String {
-        kind.placeholder
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.placeholder
+        case .file:
+            Strings.Files.RenameFile.placeholder
+        }
     }
-
+    
     var navigationTitle: String {
-        kind.navigationTitle
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.navigationTitle
+        case .file:
+            Strings.Files.RenameFile.navigationTitle
+        }
+    }
+    
+    private var inputTooLongErrorMessage: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.folderNameTooLongError
+        case .file:
+            Strings.Files.RenameFile.filenameTooLongError
+        }
+    }
+    
+    private var alreadyExistsErrorMessage: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.folderAlreadyExistsError
+        case .file:
+            Strings.Files.RenameFile.fileAlreadyExistsError
+        }
     }
 
     init(
         renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         model: Model,
-        kind: Kind
+        kind: FilesViewItem.Kind
     ) {
         self.renameNodeUseCase = renameNodeUseCase
         self.filenameInput = Self.removeFileExtension(from: model.filename)
@@ -147,7 +130,7 @@ final class FileRenameViewModel: ObservableObject {
             case .serverFailedToRenameNode, .invalidPath:
                 errorMessage = L10n.Localizable.General.failure
             case .fileAlreadyExists:
-                errorMessage = kind.alreadyExistsErrorMessage
+                errorMessage = alreadyExistsErrorMessage
             }
 
             return false
@@ -169,7 +152,7 @@ final class FileRenameViewModel: ObservableObject {
 
     private func validateTextInput(_ textInput: String) {
         if textInput.count > Constants.maxInputLength {
-            errorMessage = kind.inputTooLongErrorMessage
+            errorMessage = inputTooLongErrorMessage
         } else if textInput.contains("/") {
             errorMessage = Strings.Files.RenameFile.wrongCharacterError
         } else {

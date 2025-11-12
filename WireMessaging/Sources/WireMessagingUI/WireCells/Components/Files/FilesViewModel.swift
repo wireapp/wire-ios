@@ -424,7 +424,7 @@ package final class FilesViewModel: ObservableObject {
                 filename: item.name,
                 filepath: item.filePath,
             ),
-            kind: .file // TODO: [WPB-21418] adjust when PR is merged
+            kind: item.kind
         )
 
         // to know whether we need to reload items.
