@@ -53,7 +53,7 @@ public protocol ConversationLike: AnyObject {
     var lastMessage: ZMConversationMessage? { get }
     var firstUnreadMessage: ZMConversationMessage? { get }
 
-    var areServicesPresent: Bool { get }
+    var areAppsPresent: Bool { get }
     var domain: String? { get }
     var isChannel: Bool { get }
     var privateChannelPermission: PrivateChannelPermission { get }
@@ -77,7 +77,7 @@ public protocol SwiftConversationLike {
 
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
-    var sortedServiceUsers: [UserType] { get }
+    var sortedApps: [UserType] { get }
     var ciphersuite: MLSCipherSuite? { get }
 }
 
@@ -106,7 +106,7 @@ extension ZMConversation: ConversationLike {
             .sortedAscendingPrependingNil(by: \.name)
     }
 
-    public var sortedServiceUsers: [UserType] { // TODO: rename
+    public var sortedApps: [UserType] { // TODO: rename
         localParticipants
             .filter(\.isApp)
             .sortedAscendingPrependingNil(by: \.name)

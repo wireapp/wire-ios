@@ -25,20 +25,20 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     // MARK: Properties
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
-    var allowServices: Bool
-    var allowServicesChangedHandler: ((Bool) -> Void)?
-    var areServicePresent = true
-    var setAllowServices: SetHandler?
+    var allowApps: Bool
+    var allowAppsChangedHandler: ((Bool) -> Void)?
+    var areAppsPresent = true
+    var setAllowApps: SetHandler?
 
     // MARK: Init
 
-    init(allowServices: Bool, setAllowServices: SetHandler? = nil) {
-        self.allowServices = allowServices
-        self.setAllowServices = setAllowServices
+    init(allowApps: Bool, setAllowApps: SetHandler? = nil) {
+        self.allowApps = allowApps
+        self.setAllowApps = setAllowApps
     }
 
-    func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-        setAllowServices?(allowServices, completion)
+    func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        setAllowApps?(allowApps, completion)
     }
 }
 
@@ -60,7 +60,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersServicesScreenWhenServicesAreNotAllowed() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: false)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: false)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -70,7 +70,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersServicesScreenWhenServicesAreNotAllowed_DarkTheme() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: false)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: false)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -82,7 +82,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersServicesScreenWhenServicesAreAllowed() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -92,7 +92,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersServicesScreenWhenServicesAreAllowed_DarkTheme() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -106,7 +106,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItUpdatesServicesScreenWhenItReceivesAChange() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: false)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: false)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -114,9 +114,9 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
 
         // WHEN
-        config.allowServices = true
+        config.allowApps = true
         // confusingly, the value passed here has no affect
-        config.allowServicesChangedHandler?(true)
+        config.allowAppsChangedHandler?(true)
 
         // Then, verify the toggle is now on.
         snapshotHelper.verify(matching: sut)
@@ -127,7 +127,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersItsGroupTitle() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
         let sut = ConversationServicesOptionsViewController(viewModel: viewModel)
 
@@ -146,13 +146,13 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatNoAlertIsShowIfNoServiceIsPresent() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
-        config.areServicePresent = false
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
+        config.areAppsPresent = false
 
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false, sender: .init())
+        let sut = viewModel.setAllowApps(false, sender: .init())
 
         // THEN
         XCTAssertNil(sut)
@@ -160,14 +160,14 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     func testThatItRendersRemoveServicesWarning() {
         // GIVEN
-        let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
+        let config = MockServicesOptionsViewModelConfiguration(allowApps: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
 
         // For ConversationServicesOptionsViewModel's delegate
         let viewController = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false, sender: viewController.view.subviews[0])!
+        let sut = viewModel.setAllowApps(false, sender: viewController.view.subviews[0])!
 
         // THEN
         XCTAssertNotNil(sut)

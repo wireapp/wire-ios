@@ -111,7 +111,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .service
+            teamRoleIndicator: .app
         )
 
         // WHEN

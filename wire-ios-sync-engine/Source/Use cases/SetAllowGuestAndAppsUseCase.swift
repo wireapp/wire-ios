@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SetAllowGuestsAndServicesUseCaseError: Error {
+public enum SetAllowGuestsAndAppsUseCaseError: Error {
 
     case invalidOperation
     case contextUnavailable
@@ -25,23 +25,23 @@ public enum SetAllowGuestsAndServicesUseCaseError: Error {
 }
 
 // sourcery: AutoMockable
-public protocol SetAllowGuestAndServicesUseCaseProtocol {
+public protocol SetAllowGuestAndAppsUseCaseProtocol {
 
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowServices: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
+        allowApps: Bool,
+        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
     )
 }
 
-struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol {
+struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
 
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowServices: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
+        allowApps: Bool,
+        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
     ) {
         guard conversation.canManageGuestsAccess else {
             return completion(.failure(.invalidOperation))
@@ -51,9 +51,9 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
             return completion(.failure(.contextUnavailable))
         }
 
-        var action = SetAllowGuestsAndServicesAction(
+        var action = SetAllowGuestsAndAppsAction(
             allowGuests: allowGuests,
-            allowServices: allowServices,
+            allowApps: allowApps,
             conversationID: conversation.objectID
         )
 

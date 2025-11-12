@@ -97,7 +97,7 @@ public extension ZMConversation {
 
     /// Returns whether apps are present, regardless of the display rules.
 
-    var areServicesPresent: Bool { // TODO: `areAppsPresent`
+    var areAppsPresent: Bool {
         localParticipants.any(\.isApp)
     }
 

@@ -202,7 +202,7 @@ enum WirelessRequestFactory {
 
     static func setAccessRoles(
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         for conversation: ZMConversation,
         apiVersion: APIVersion,
         localDomain: String?
@@ -213,7 +213,7 @@ enum WirelessRequestFactory {
 
         var accessRoles = conversation.accessRoles
 
-        if allowServices {
+        if allowApps {
             accessRoles.insert(.app)
         } else {
             accessRoles.remove(.app)

@@ -329,14 +329,14 @@ public class MockConversationLike: ConversationLike {
 
     public var firstUnreadMessage: ZMConversationMessage?
 
-    // MARK: - areServicesPresent
+    // MARK: - areAppsPresent
 
-    public var areServicesPresent: Bool {
-        get { return underlyingAreServicesPresent }
-        set(value) { underlyingAreServicesPresent = value }
+    public var areAppsPresent: Bool {
+        get { return underlyingAreAppsPresent }
+        set(value) { underlyingAreAppsPresent = value }
     }
 
-    public var underlyingAreServicesPresent: Bool!
+    public var underlyingAreAppsPresent: Bool!
 
     // MARK: - domain
 

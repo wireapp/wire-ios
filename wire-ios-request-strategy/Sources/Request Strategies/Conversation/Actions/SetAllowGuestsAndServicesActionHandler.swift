@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
+final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndAppsAction> {
 
     private let eventProcessor: ConversationEventProcessor
     private let localDomain: String?
@@ -40,7 +40,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
     // MARK: - Request Generation
 
     override func request(
-        for action: SetAllowGuestsAndServicesAction,
+        for action: SetAllowGuestsAndAppsAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
@@ -54,7 +54,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         }
         var accessRoles = conversation.accessRoles
 
-        if action.allowServices {
+        if action.allowApps {
             accessRoles.insert(.app)
         } else {
             accessRoles.remove(.app)
@@ -98,7 +98,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
     // MARK: - Request Handling
 
-    override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndServicesAction) {
+    override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndAppsAction) {
 
         var action = action
 
