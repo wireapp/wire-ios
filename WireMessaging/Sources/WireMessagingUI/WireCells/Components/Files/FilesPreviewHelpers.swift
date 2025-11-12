@@ -35,8 +35,9 @@ extension FilesViewModel {
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FilesViewModel(
+            setNavigation: { _ in },
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root")),
+                configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                 repository: previewNodesRepository()
             ),
             deleteNodesUseCase: WireCellsDeleteNodesUseCase(
@@ -90,7 +91,8 @@ extension FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
-                filename: "foo.jpg",
+                kind: .file,
+                name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),

@@ -33,7 +33,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let modified: Date?
     public let size: UInt64?
     public let eTag: String?
-    public let type: String?
+    public let type: WireCellsNodeType?
     public let isRecycled: Bool
     public let isDraft: Bool
     public let contentUrl: URL?
@@ -55,7 +55,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
-        type: String? = nil,
+        type: WireCellsNodeType? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
         contentUrl: URL? = nil,
