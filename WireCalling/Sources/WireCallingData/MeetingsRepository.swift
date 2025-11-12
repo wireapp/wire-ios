@@ -60,19 +60,37 @@ package extension MeetingsRepository {
                 of: cal.date(byAdding: .day, value: offset, to: cal.startOfDay(for: now))!
             )!
         }
+
+        func makeConversation(name: String, memberCount: Int = 3) -> Conversation {
+            let memberNames = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank"]
+            let members = (0..<min(memberCount, memberNames.count)).map { index in
+                Conversation.Member(id: UUID(), name: memberNames[index])
+            }
+            return Conversation(
+                id: UUID(),
+                name: name,
+                members: Conversation.Members(
+                    others: members,
+                    selfMember: Conversation.Member(id: UUID(), name: "You")
+                )
+            )
+        }
+
         let meetings: [Meeting] = [
             // YESTERDAY
             Meeting(
                 id: UUID(),
                 title: "iOS Playtest - develop build",
                 start: day(-1, hour: 8, min: 0),
-                end: day(-1, hour: 8, min: 30)
+                end: day(-1, hour: 8, min: 30),
+                conversation: makeConversation(name: "iOS Playtest - develop build", memberCount: 5)
             ),
             Meeting(
                 id: UUID(),
                 title: "Sprint Review (all teams)",
                 start: day(-1, hour: 16, min: 0),
-                end: day(-1, hour: 16, min: 30)
+                end: day(-1, hour: 16, min: 30),
+                conversation: makeConversation(name: "Sprint Review (all teams)", memberCount: 6)
             ),
 
             // TODAY — several at 7:00 AM for time grouping
@@ -80,26 +98,30 @@ package extension MeetingsRepository {
                 id: UUID(),
                 title: "Candidate interview",
                 start: day(0, hour: 16, min: 0),
-                end: day(0, hour: 16, min: 45)
+                end: day(0, hour: 16, min: 45),
+                conversation: makeConversation(name: "Candidate interview", memberCount: 2)
             ),
             Meeting(
                 id: UUID(),
                 title: "Standup",
                 start: day(0, hour: 7, min: 0),
-                end: day(0, hour: 7, min: 30)
+                end: day(0, hour: 7, min: 30),
+                conversation: makeConversation(name: "Standup", memberCount: 4)
             ),
             Meeting(
                 id: UUID(),
                 title: "iOS team update",
                 start: day(0, hour: 7, min: 0),
-                end: day(0, hour: 7, min: 20)
+                end: day(0, hour: 7, min: 20),
+                conversation: makeConversation(name: "iOS team update", memberCount: 3)
             ),
 
             Meeting(
                 id: UUID(),
                 title: "Design review",
                 start: day(0, hour: 12),
-                end: day(0, hour: 13)
+                end: day(0, hour: 13),
+                conversation: makeConversation(name: "Design review", memberCount: 3)
             ),
 
             // TOMORROW — again two meetings at 7:00 AM to group
@@ -107,19 +129,22 @@ package extension MeetingsRepository {
                 id: UUID(),
                 title: "Sprint planning",
                 start: day(1, hour: 7),
-                end: day(1, hour: 8)
+                end: day(1, hour: 8),
+                conversation: makeConversation(name: "Sprint planning", memberCount: 5)
             ),
             Meeting(
                 id: UUID(),
                 title: "Daily sync",
                 start: day(1, hour: 7),
-                end: day(1, hour: 7, min: 20)
+                end: day(1, hour: 7, min: 20),
+                conversation: makeConversation(name: "Daily sync", memberCount: 4)
             ),
             Meeting(
                 id: UUID(),
                 title: "Architecture Forum",
                 start: day(1, hour: 13),
-                end: day(1, hour: 14)
+                end: day(1, hour: 14),
+                conversation: makeConversation(name: "Architecture Forum", memberCount: 6)
             ),
 
             // AFTER TOMORROW — ensures "Show All" appears in the Next tab
@@ -127,7 +152,8 @@ package extension MeetingsRepository {
                 id: UUID(),
                 title: "All hands",
                 start: day(3, hour: 11),
-                end: day(3, hour: 12)
+                end: day(3, hour: 12),
+                conversation: makeConversation(name: "All hands", memberCount: 6)
             )
         ]
 

@@ -35,16 +35,20 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
+    public let conversation: Conversation
+
     public init(
         id: UUID,
         title: String,
         start: Date,
-        end: Date
+        end: Date,
+        conversation: Conversation
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.conversation = conversation
     }
 
 }

@@ -40,6 +40,9 @@ package final class MeetingsViewModel: ObservableObject {
     @Published private(set) var cachedOngoingMeetings: [Meeting] = []
     @Published private(set) var cachedPastMeetings: GroupedMeetings = []
 
+    /// The ID of the meeting the user is currently participating in
+    @Published var participatingMeetingId: UUID?
+
     private let repository: any MeetingsRepositoryProtocol
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
@@ -76,6 +79,10 @@ package final class MeetingsViewModel: ObservableObject {
 
     var groupedNextMeetings: GroupedMeetings {
         upcomingMeetings
+    }
+
+    var currentDate: Date {
+        currentDateProvider.now
     }
 
     func loadInitialData() {

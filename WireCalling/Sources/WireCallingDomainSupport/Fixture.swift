@@ -25,13 +25,28 @@ package extension Meeting {
         id: UUID = UUID(),
         title: String,
         start: Date,
-        duration: TimeInterval = 3600
+        duration: TimeInterval = 3600,
+        conversation: Conversation? = nil
     ) -> Meeting {
-        Meeting(
+        let defaultConversation = conversation ?? Conversation(
+            id: UUID(),
+            name: title,
+            members: Conversation.Members(
+                others: [
+                    Conversation.Member(id: UUID(), name: "Alice"),
+                    Conversation.Member(id: UUID(), name: "Bob"),
+                    Conversation.Member(id: UUID(), name: "Charlie")
+                ],
+                selfMember: Conversation.Member(id: UUID(), name: "You")
+            )
+        )
+
+        return Meeting(
             id: id,
             title: title,
             start: start,
-            end: start.addingTimeInterval(duration)
+            end: start.addingTimeInterval(duration),
+            conversation: defaultConversation
         )
     }
 

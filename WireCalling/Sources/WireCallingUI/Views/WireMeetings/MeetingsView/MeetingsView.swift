@@ -86,7 +86,13 @@ struct MeetingsView: View {
             if !viewModel.ongoingMeetings.isEmpty {
                 Section {
                     ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                        MeetingRow(meeting: meeting)
+                        MeetingListItemView(
+                            viewModel: MeetingListItemViewModel(
+                                meeting: meeting,
+                                currentDate: viewModel.currentDate,
+                                participatingMeetingId: viewModel.participatingMeetingId
+                            )
+                        )
                     }
                 } header: {
                     SectionTitle(Strings.Header.ongoing)
@@ -95,7 +101,9 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedNextMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatTime: viewModel.formatTime(_:),
+                currentDate: viewModel.currentDate,
+                participatingMeetingId: viewModel.participatingMeetingId
             )
 
             if viewModel.showMoreButton {
@@ -123,7 +131,9 @@ struct MeetingsView: View {
             GroupedSections(
                 groups: viewModel.groupedPastMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatTime: viewModel.formatTime(_:),
+                currentDate: viewModel.currentDate,
+                participatingMeetingId: viewModel.participatingMeetingId
             )
         }
         .listStyle(.insetGrouped)
@@ -146,13 +156,22 @@ private struct GroupedSections: View {
     let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
     let formatDay: (Date) -> String
     let formatTime: (Date) -> String
+    let currentDate: Date
+    let participatingMeetingId: UUID?
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
                 ForEach(dayGroup.timeSlots, id: \.time) { slot in
                     Section {
                         ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
+                            MeetingListItemView(
+                                viewModel: MeetingListItemViewModel(
+                                    meeting: meeting,
+                                    currentDate: currentDate,
+                                    participatingMeetingId: participatingMeetingId
+                                )
+                            )
                         }
                     } header: {
                         Text(formatTime(slot.time))
@@ -164,53 +183,6 @@ private struct GroupedSections: View {
                 SectionTitle(formatDay(dayGroup.day))
             }
         }
-    }
-}
-
-// MARK: - Row
-
-private struct MeetingRow: View {
-    let meeting: Meeting
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
-
-                Image(systemName: "video.fill").font(.system(size: 15))
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(.textStyle(.body2))
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
-
-                Text("Meeting date")
-                    .font(.textStyle(.subline1))
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
-                        .font(.textStyle(.subline1))
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.top, 2)
-            }
-
-            Spacer()
-
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
     }
 }
 

@@ -34,11 +34,22 @@ struct MeetingsGrouperTests {
         start: Date,
         duration: TimeInterval = 3600
     ) -> Meeting {
-        Meeting(
+        let conversation = Conversation(
+            id: UUID(),
+            name: title,
+            members: Conversation.Members(
+                others: [
+                    Conversation.Member(id: UUID(), name: "Test Member")
+                ],
+                selfMember: Conversation.Member(id: UUID(), name: "Self")
+            )
+        )
+        return Meeting(
             id: id,
             title: title,
             start: start,
-            end: start.addingTimeInterval(duration)
+            end: start.addingTimeInterval(duration),
+            conversation: conversation
         )
     }
 
