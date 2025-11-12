@@ -20,6 +20,8 @@
 "general.loading" = "Loading…";
 "general.confirm" = "OK";
 "general.failure" = "Something went wrong";
+"general.save" = "Save";
+"general.cancel" = "Cancel";
 "general.error.unknown.title." = "Something went wrong";
 "general.error.unknown.message." = "Please retry later.";
 "general.error.noInternet.title." = "No internet connection";
@@ -134,6 +136,12 @@
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
 "conversation.wireCells.files.newFolder.wrongCharacterError" = "Use a name without \"/\"";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
+"conversation.wireCells.files.fileName.title" = "File name";
+"conversation.wireCells.files.renameFile.navigationTitle" = "Rename file";
+"conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\"";
+"conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
+"conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

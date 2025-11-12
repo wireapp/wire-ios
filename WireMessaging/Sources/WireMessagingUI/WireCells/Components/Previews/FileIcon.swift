@@ -32,6 +32,7 @@ enum FileIcon {
     case presentation
     case spreadsheet
     case video
+    case folder
 
 }
 
@@ -121,6 +122,8 @@ extension FileIcon {
             .fileIconSpreadsheet
         case .video:
             .fileIconVideo
+        case .folder:
+            .fileIconFolder
         }
     }
 

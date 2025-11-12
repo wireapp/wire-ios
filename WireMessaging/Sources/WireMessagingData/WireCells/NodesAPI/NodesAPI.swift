@@ -50,7 +50,11 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     }
 
     package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult {
-        let result = try await restAPI.preCheck(path: nodePath, findAvailablePath: findAvailablePath)
+        let result = try await restAPI.preCheck(
+            path: nodePath,
+            findAvailablePath: findAvailablePath
+        )
+
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
@@ -72,6 +76,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     /// - Returns: Whether the deletion was successful.
     package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
         try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
+    }
+
+    package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
+        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath)
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {

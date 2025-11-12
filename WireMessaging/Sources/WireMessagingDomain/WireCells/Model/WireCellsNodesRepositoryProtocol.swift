@@ -46,6 +46,14 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Parameters:
     ///  - path: The path of the new folder.
     func createFolder(at path: String) async throws
+    
+    /// Renames a node.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID`s of the node to rename.
+    ///  - targetPath: The new path for the node.
+    /// - Returns: Whether the renaming was successful.
+    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
 
     /// Apply some pre-validation checks on node name before sending an upload
     ///
@@ -63,7 +71,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireCellsNodeLocator)
+        case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

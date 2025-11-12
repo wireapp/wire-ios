@@ -17,14 +17,11 @@
 //
 
 /// The type of the node.
-package enum WireCellsNodeType {
+public enum WireCellsNodeType: String, Hashable, Sendable {
 
     /// A file that is not a folder.
-    case leaf
+    case leaf = "LEAF"
 
-    /// A folder.
-    case collection
-
-    /// Any type of file, including folders.
-    case any
+    /// A collection such as a folder.
+    case collection = "COLLECTION"
 }

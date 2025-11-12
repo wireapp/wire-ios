@@ -52,6 +52,7 @@ package struct AllMeetingsView: View {
                             .renderingMode(.template)
                     }
                     .accessibilityIdentifier("scheduleMeetingBarButton")
+                    .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
