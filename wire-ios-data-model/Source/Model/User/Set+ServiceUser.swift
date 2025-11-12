@@ -20,8 +20,8 @@ import Foundation
 
 extension Set<ZMUser> {
 
-    var serviceUsers: Set<ZMUser> {
-        filter(\.isServiceUser)
+    var serviceUsers: Set<ZMUser> { // TODO: rename apps?
+        filter(\.isApp)
     }
 
     func categorizeServicesAndUser() -> (services: Set<ZMUser>, users: Set<ZMUser>) {

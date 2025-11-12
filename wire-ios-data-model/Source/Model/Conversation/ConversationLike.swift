@@ -102,13 +102,13 @@ extension ZMConversation: ConversationLike {
 
     public var sortedOtherParticipants: [UserType] {
         localParticipants
-            .filter { !$0.isServiceUser }
+            .filter { !$0.isApp }
             .sortedAscendingPrependingNil(by: \.name)
     }
 
-    public var sortedServiceUsers: [UserType] {
+    public var sortedServiceUsers: [UserType] { // TODO: rename
         localParticipants
-            .filter(\.isServiceUser)
+            .filter(\.isApp)
             .sortedAscendingPrependingNil(by: \.name)
     }
 

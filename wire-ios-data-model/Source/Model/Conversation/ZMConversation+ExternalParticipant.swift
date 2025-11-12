@@ -47,7 +47,7 @@ public extension ZMConversation {
     @objc
     internal class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         [
-            "participantRoles.user.isServiceUser",
+            "participantRoles.user.isApp",
             "participantRoles.user.hasTeam",
             "participantRoles.user.isExternalPartner"
         ]
@@ -63,7 +63,7 @@ public extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
 
-        if otherUsers.count == 1, otherUsers.first!.isServiceUser {
+        if otherUsers.count == 1, otherUsers.first!.isApp {
             return []
         }
 
@@ -75,7 +75,7 @@ public extension ZMConversation {
         for user in otherUsers {
             if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
-            } else if user.isServiceUser {
+            } else if user.isApp {
                 state.insert(.visibleApps)
             } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
@@ -96,16 +96,19 @@ public extension ZMConversation {
     }
 
     /// Returns whether apps are present, regardless of the display rules.
-    var areServicesPresent: Bool {
-        localParticipants.any(\.isServiceUser)
+
+    var areServicesPresent: Bool { // TODO: `areAppsPresent`
+        localParticipants.any(\.isApp)
     }
 
     /// Returns whether guests are present, regardless of the display rules.
+
     var areGuestsPresent: Bool {
         localParticipants.any { $0.isGuest(in: self) }
     }
 
     /// Returns whether federated remote users are present, regardless of the display rules.
+
     var areRemotesPresent: Bool {
         localParticipants.any(\.isFederated)
     }

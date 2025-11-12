@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public protocol ServiceUser: AnyObject, UserType {
+public protocol ServiceUser: AnyObject, UserType { // TODO: rename AppUser?
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }

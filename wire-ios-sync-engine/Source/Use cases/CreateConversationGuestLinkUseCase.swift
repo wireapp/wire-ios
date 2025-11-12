@@ -52,7 +52,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
             setGuestsAndServicesUseCase.invoke(
                 conversation: conversation,
                 allowGuests: true,
-                allowServices: conversation.allowServices
+                allowServices: conversation.allowApps
             ) { result in
                 switch result {
                 case let .failure(error):
