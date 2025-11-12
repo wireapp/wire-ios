@@ -46,7 +46,7 @@ jobs:
         with:
           lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
-          fetch-depth: 1
+          fetch-depth: 0
           submodules: recursive
 
       - name: Setup Python
@@ -58,10 +58,6 @@ jobs:
         id: target-branch
         run: |
           scripts/determine-cherry-pick-target.py "${{ github.event.pull_request.base.ref }}"
-
-      - name: Fetch target branch
-        run: |
-          git fetch origin ${{ steps.target-branch.outputs.target }}:${{ steps.target-branch.outputs.target }}
 
       - name: Cherry pick to target branch
         uses: wireapp/action-auto-cherry-pick@v1.0.2
