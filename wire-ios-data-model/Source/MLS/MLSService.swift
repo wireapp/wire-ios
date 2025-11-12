@@ -1402,7 +1402,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     func commitPendingProposals() async {
-        guard context != nil else {
+        guard let context else {
             return
         }
 
@@ -1434,6 +1434,20 @@ public final class MLSService: MLSServiceInterface {
                             if timeIntervalSinceNow > 0 {
                                 try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
                             }
+
+                            let isSelfAnActiveMember = await context.perform {
+                                let conversation = ZMConversation.fetch(with: groupID, in: context)
+                                return conversation?.isSelfAnActiveMember ?? false
+                            }
+
+                            guard isSelfAnActiveMember else {
+                                logger.info(
+                                    "cancelling commit as the user is no longer a member",
+                                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                                )
+                                return
+                            }
+
                             logger.info(
                                 "scheduled commit is ready, committing...",
                                 attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
@@ -1460,22 +1474,26 @@ public final class MLSService: MLSServiceInterface {
 
         var result: [(MLSGroupID, Date)] = []
 
-        let conversations = await context.perform { ZMConversation.fetchConversationsWithPendingProposals(in: context) }
-
-        for conversation in conversations {
-            let (groupID, timestamp) = await context.perform {
-                (
-                    conversation.mlsGroupID,
-                    conversation.commitPendingProposalDate
-                )
+        let groupIDsAndProposalDatesArray: [(MLSGroupID, Date)] = await context.perform {
+            ZMConversation.fetchConversationsWithPendingProposals(
+                in: context
+            ).filter(
+                \.isSelfAnActiveMember
+            ).compactMap {
+                guard
+                    let groupID = $0.mlsGroupID,
+                    let proposalDate = $0.commitPendingProposalDate
+                else {
+                    return nil
+                }
+                return (groupID, proposalDate)
             }
+        }
 
-            guard
-                let groupID,
-                // The pending proposal will always fail and cause
-                // recovery too many recovery syncs.
-                !brokenGroupIDs.contains(groupID),
-                let timestamp else {
+        for (groupID, timestamp) in groupIDsAndProposalDatesArray {
+            // The pending proposal will always fail and cause
+            // recovery too many recovery syncs.
+            guard !brokenGroupIDs.contains(groupID) else {
                 continue
             }
 

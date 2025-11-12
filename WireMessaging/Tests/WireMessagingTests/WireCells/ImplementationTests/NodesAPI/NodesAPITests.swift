@@ -76,8 +76,8 @@ final class NodesAPITests {
         #expect(inputPutObject.key == "node-path")
         #expect(inputPutObject.metadata == [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": node.id.uuidString,
-            "Create-Version-ID": versionID.uuidString
+            "Create-Resource-UUID": node.id.transportString(),
+            "Create-Version-ID": versionID.transportString()
         ])
     }
 
