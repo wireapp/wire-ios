@@ -16,25 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import UIKit
+public import Foundation
 
-class MessageCollectionViewCell: UICollectionViewCell {
+public enum BackupMessagesImportFailure: LocalizedError {
+    case failedToFetchRelationships
 
-    // reuse identifier for each message type
-    // one for now, later will be improved
-    static let reuseIdentifier = "MessageCollectionViewCell"
-
-    var messageType: MessageType? {
-        didSet {
-            guard let messageType else { return }
-            switch messageType {
-            case let .text(viewModel):
-                let config = UIHostingConfiguration {
-                    TextMessageView(viewModel: viewModel)
-                }
-                contentConfiguration = config
-            }
+    public var errorDescription: String? {
+        switch self {
+        case .failedToFetchRelationships:
+            "Relationships with senders / conversations could not be fetched."
         }
     }
 }

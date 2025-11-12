@@ -64,8 +64,10 @@ class ConversationsPage: PageModel {
     func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
         let button = app.buttons.containing(predicate).firstMatch
-        button.tap()
-        return try UserProfilePage()
+        if button.waitForExistence(timeout: 2), button.isHittable {
+            button.tap()
+        }
+        return try UserAccountPage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

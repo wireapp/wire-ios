@@ -30,6 +30,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let deleteBackgroundActionName = "delete"
+        static let renameBackgroundActionName = "move"
     }
 
     private let serverURL: URL
@@ -72,6 +73,39 @@ final class RestAPI: Sendable {
         } catch {
             throw error
         }
+    }
+
+    /// Renames a node.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID`s of the node to rename.
+    ///  - targetPath: The new path for the node.
+    /// - Returns: Whether the renaming was successful.
+
+    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
+        let node = RestNodeLocator(uuid: nodeID.uuidString)
+
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            copyMoveOptions: RestActionOptionsCopyMove(
+                targetIsParent: false,
+                targetPath: targetPath
+            ),
+            nodes: [node],
+        )
+
+        let response = try await NodeServiceAPI.performAction(
+            name: .move,
+            parameters: parameters,
+            apiConfiguration: makeConfiguration()
+        )
+        guard
+            let actions = response.backgroundActions,
+            let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
+            return false
+        }
+        return renameAction.status == .finished
     }
 
     /// Deletes nodes by their `UUID`s.
@@ -119,9 +153,9 @@ final class RestAPI: Sendable {
         )
     }
 
-    func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO {
+    func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {
         let request = RestCreateCheckRequest(
-            findAvailablePath: true,
+            findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
                 type: .leaf
@@ -216,20 +250,6 @@ private extension RestNodeLocator {
 
 }
 
-private extension TreeNodeType {
-
-    init(_ value: WireCellsNodeType) {
-        switch value {
-        case .leaf:
-            self = .leaf
-        case .collection:
-            self = .collection
-        case .any:
-            self = .unknown
-        }
-    }
-}
-
 private struct LoggingIntercepter: OpenAPIInterceptor {
 
     let interceptor = DefaultOpenAPIInterceptor()
@@ -286,21 +306,18 @@ private extension WireCellsGetNodesRequest {
         )
 
         switch configuration {
-        case let .conversationFileView(root):
+        case let .conversationFileView(root, isFoldersEnabled):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
-                type: .leaf
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: true,
+                recursive: isFoldersEnabled ? false : true,
                 root: RestNodeLocator(root)
             )
-            request.sortDirDesc = true
-            request.sortField = "mtime"
         case .filesBrowserView:
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(

@@ -26,7 +26,8 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 /// common reusable views.
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
-    init(viewModel: FilesViewModel)
+    var isBrowsing: Bool { get }
+    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
 }
 
 // MARK: - List
@@ -50,7 +51,7 @@ extension FilesViewProtocol {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.viewAsset(item: item) } }
+                .onTapGesture { Task { await viewModel.openItem(item: item) } }
         }
     }
 }
@@ -61,7 +62,10 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
+        FilesViewItemView(
+            viewModel: viewModel.itemViewModel(index: index),
+            canRenameFile: !isBrowsing // action not allowed when browsing files
+        )
     }
 
     var loadMoreRow: some View {

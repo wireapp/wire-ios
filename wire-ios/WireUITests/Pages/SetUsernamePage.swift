@@ -25,18 +25,28 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .textField)["UsernameField"].firstMatch
     }
 
-    var usernameConfirmButton: XCUIElement {
-        let elementsQuery = usernameField.buttons
-        return elementsQuery.firstMatch
+    var confirmUsernameButton: XCUIElement {
+        app.descendants(matching: .button)["ConfirmButton"].firstMatch
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {
-        try usernameField.tapIfKeyboardNotFocused().typeText(username)
-        usernameConfirmButton.tap()
+        XCTAssertTrue(usernameField.waitForExistence(timeout: 3), "Username field not found")
+
+        let predicate = NSPredicate(format: "exists == true AND hittable == true")
+        let element = XCTNSPredicateExpectation(predicate: predicate, object: usernameField)
+        XCTAssertEqual(
+            XCTWaiter().wait(for: [element], timeout: 3),
+            .completed,
+            "Username field not ready due to animation to type"
+        )
+
+        try usernameField.tapIfKeyboardNotFocused()
+        _ = app.keyboards.firstMatch.waitForExistence(timeout: 2)
+        usernameField.typeText(username)
+        confirmUsernameButton.tap()
         return try ConversationsPage()
     }
 }

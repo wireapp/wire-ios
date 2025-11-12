@@ -41,6 +41,22 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
+    /// Renames a node.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID`s of the node to rename.
+    ///  - targetPath: The new path for the node.
+    /// - Returns: Whether the renaming was successful.
+    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
+
+    /// Apply some pre-validation checks on node name before sending an upload
+    ///
+    /// - Parameters:
+    ///     - nodePath: The node path to pre-check.
+    ///     - findAvailablePath: Finds the next available path if path already exists.
+    /// - Returns: Whether a file already exists at this path and the next available path if any.
+    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
+
 }
 
 package struct WireCellsGetNodesRequest: Equatable, Sendable {
@@ -49,7 +65,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireCellsNodeLocator)
+        case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView
