@@ -173,6 +173,7 @@ extension ZMMessage {
 extension ZMUser {
     func toDomain() -> UserModel {
         UserModel(
+            objectID: objectID,
             remoteIdentifier: remoteIdentifier,
             name: name,
             handle: handle

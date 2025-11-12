@@ -190,6 +190,20 @@ public extension MessageBackupModel.Content {
         )
     }
 
+    var isText: Bool {
+        if case .text = self { return true }
+        return false
+    }
+
+    var isLocation: Bool {
+        if case .location = self { return true }
+        return false
+    }
+
+    var isAsset: Bool {
+        if case .asset = self { return true }
+        return false
+    }
 }
 
 public extension MessageBackupModel.Content.AssetContent.Metadata {

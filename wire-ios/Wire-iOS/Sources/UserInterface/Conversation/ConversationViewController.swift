@@ -133,6 +133,8 @@ final class ConversationViewController: UIViewController {
         return UINavigationController(rootViewController: viewController)
     }
 
+    private let individualChangesFactory: MessagesIndividualUpdatesFactory
+
     required init(
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
@@ -150,13 +152,20 @@ final class ConversationViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+
+        self.individualChangesFactory = MessagesIndividualUpdatesFactory(
+            context: userSession.contextProvider.viewContext
+        )
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
                     conversationObjectID: conversation.objectID,
                     syncContext: userSession.contextProvider.syncContext,
                     backgroundContext: userSession.contextProvider.newBackgroundContext()
-                )
+                ),
+                senderNameObserverProvider: { [individualChangesFactory] model in
+                    individualChangesFactory.makeSenderNameObserver(user: model)
+                }
             )
         } else {
             ConversationContentViewController(
@@ -873,8 +882,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending,
-                nodeIDs: []
+                isCellsStatePending: wireCellsState == .pending
             )
 
         filesView.presentOverAll(animated: true)

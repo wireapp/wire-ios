@@ -128,7 +128,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+                case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                     let domain = if let domain = user.domain, !domain.isEmpty { domain } else { localDomain }
                     if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
@@ -200,7 +200,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     result.1.append(userClientID)
                 }
 
-            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -350,7 +350,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -410,7 +410,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 completionHandler()

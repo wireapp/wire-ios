@@ -1,5 +1,4 @@
 // swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -65,18 +64,10 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
-                "WireCallingDomain",
-                "WireCallingDomainSupport",
-                "WireCallingData",
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
-            ],
-        ),
-        .testTarget(
-            name: "WireCallingUITests",
-            dependencies: [
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
+                "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ],

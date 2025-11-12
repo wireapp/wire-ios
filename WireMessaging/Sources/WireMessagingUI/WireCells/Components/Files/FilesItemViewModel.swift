@@ -32,6 +32,7 @@ final class FilesItemViewModel: ObservableObject {
     private let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem) async -> Void
+    private let onRename: ((FilesViewItem) async -> Void)?
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
@@ -47,6 +48,7 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
         onDelete: @escaping (FilesViewItem) async -> Void,
+        onRename: ((FilesViewItem) async -> Void)? = nil,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
@@ -55,7 +57,8 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onOpen = onOpen
         self.onDelete = onDelete
-        self.fileName = item.filename
+        self.onRename = onRename
+        self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
@@ -66,11 +69,13 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        switch asset?.downloadState {
+        guard item.kind == .file else { return false }
+
+        return switch asset?.downloadState {
         case .downloaded:
-            true
-        default:
             false
+        default:
+            true
         }
     }
 
@@ -107,7 +112,13 @@ final class FilesItemViewModel: ObservableObject {
         await onOpen(item)
     }
 
+    func rename() async {
+        await onRename?(item)
+    }
+
     func download() async {
+        precondition(item.kind == .file)
+
         // Ignore errors as these will be reported via the `asset` publisher.
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }

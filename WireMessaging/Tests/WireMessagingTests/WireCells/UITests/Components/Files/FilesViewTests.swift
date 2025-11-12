@@ -34,6 +34,7 @@ final class FilesViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var renameNodeUseCase: WireCellsRenameNodeUseCase!
 
     @MainActor
     override func setUp() async throws {
@@ -42,13 +43,19 @@ final class FilesViewTests: XCTestCase {
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        renameNodeUseCase = WireCellsRenameNodeUseCase(
+            nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            nodeCache: MockWireCellsNodeCacheProtocol(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
     }
 
@@ -63,7 +70,9 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -85,7 +94,9 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            kind: .file,
+            name: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -107,7 +118,9 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            kind: .file,
+            name: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet
@@ -130,7 +143,9 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -160,7 +175,9 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image
@@ -241,6 +258,7 @@ final class FilesViewTests: XCTestCase {
         let filesViewModel = FilesViewModel(
             fetchNodesUseCase: fetchNodesUseCase,
             deleteNodesUseCase: deleteNodeUseCase,
+            renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache()
@@ -248,9 +266,11 @@ final class FilesViewTests: XCTestCase {
 
         filesViewModel.state = state
 
-        return FilesView(viewModel: filesViewModel)
-            .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        return NavigationStack {
+            FilesView(viewModel: filesViewModel)
+        }
+        .frame(width: 375, height: 667)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }

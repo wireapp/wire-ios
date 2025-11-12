@@ -28,7 +28,7 @@ struct WireCellsFetchNodesUseCaseTests {
 
     init() {
         self.sut = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
             repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
@@ -38,7 +38,7 @@ struct WireCellsFetchNodesUseCaseTests {
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
         let sut = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
             repository: repository
         )
 
@@ -54,10 +54,10 @@ struct WireCellsFetchNodesUseCaseTests {
         #expect(
             repository.getNodes_Invocations == [
                 WireCellsGetNodesRequest(
-                    scope: .init(root: .path("some/path"), isRecursive: true),
-                    filter: .init(deletionStatus: .notDeleted, text: nil, type: .leaf),
+                    searchTerm: nil,
                     limit: 30,
-                    offset: 0
+                    offset: 0,
+                    configuration: .conversationFileView(root: .path("some/path"), isFoldersEnabled: false)
                 )
             ]
         )
@@ -90,8 +90,8 @@ struct WireCellsFetchNodesUseCaseTests {
 
         // Then
         try #require(repository.getNodes_Invocations.count == 2)
-        #expect(repository.getNodes_Invocations[0].filter.text == nil)
-        #expect(repository.getNodes_Invocations[1].filter.text == "foo")
+        #expect(repository.getNodes_Invocations[0].searchTerm == nil)
+        #expect(repository.getNodes_Invocations[1].searchTerm == "foo")
     }
 
 }

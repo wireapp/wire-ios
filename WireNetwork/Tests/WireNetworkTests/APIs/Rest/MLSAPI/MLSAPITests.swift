@@ -181,6 +181,34 @@ final class MLSAPITests: XCTestCase {
         }
     }
 
+    func testPostCommitBundle_givenv13AndErrorResponse() async throws {
+        // Given
+        struct Payload: Encodable {
+            let code = 409
+            let label = "mls-group-out-of-sync"
+            let message = ""
+            let missing_users: Set<QualifiedIDV0>
+        }
+        let missingUsers = Set([
+            QualifiedID(id: UUID(), domain: "example.com"),
+            QualifiedID(id: UUID(), domain: "example.com")
+        ])
+        let payload = Payload(missing_users: Set(missingUsers.map {
+            $0.toNetworkModel()
+        }))
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .conflict,
+            payload: payload
+        )
+        let api = MLSAPIV13(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MLSAPIError.groupOutOfSync(missingUsers: missingUsers)) {
+            // When
+            try await api.postCommitBundle(Scaffolding.commitBundle)
+        }
+    }
+
     // MARK: - Reset MLS conversation
 
     func testResetMLSConversation_SuccessResponse_V9() async throws {
@@ -210,7 +238,7 @@ private extension APIVersion {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1 ... 1000)
+    static let epoch: UInt64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
 
     static let commitBundle = CommitBundle(

@@ -77,8 +77,10 @@ class ConversationsPage: PageModel {
             }
         }
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.descendants(matching: .any).matching(predicate).firstMatch
-        button.tap()
+        let button = app.buttons.containing(predicate).firstMatch
+        if button.waitForExistence(timeout: 2), button.isHittable {
+            button.tap()
+        }
         return try UserAccountPage()
     }
 

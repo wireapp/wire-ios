@@ -180,8 +180,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         self.accountContainer = accountDirectory
 
-        let eventContainer = PersistentContainer(name: "ZMEventModel")
-        let messagesContainer = PersistentContainer(name: "zmessaging")
+        let eventContainer = PersistentContainer(
+            name: "ZMEventModel",
+            managedObjectModel: CoreDataStack.loadEventsModel()
+        )
+        let messagesContainer = PersistentContainer(
+            name: "zmessaging",
+            managedObjectModel: CoreDataStack.loadMessagingModel()
+        )
 
         let description: NSPersistentStoreDescription
         let eventStoreDescription: NSPersistentStoreDescription
@@ -445,7 +451,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadMessagingModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL
@@ -458,7 +464,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadEventsModel() -> NSManagedObjectModel {
-        let modelBundle = WireDataModelBundle.bundle
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL

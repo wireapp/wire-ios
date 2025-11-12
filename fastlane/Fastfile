@@ -288,7 +288,7 @@ platform :ios do
         
         write_tests_info_to_summary("🤖 Testing schemas: #{schemas.join(', ')}")
         
-        testplan = options[:testplan] || "AllTests"
+        testplan = options[:testplan] || "AllTests" # TODO: [WPB-17497] GermanLocaleTests are not run
 
         is_nightly_build = options[:all] == true
         
@@ -477,7 +477,14 @@ platform :ios do
         if build.for_simulator
             Dir.chdir("..") do
                 # Build the app for simulator
-                sh "xcodebuild -workspace 'wire-ios-mono.xcworkspace' -scheme 'Wire-iOS' -configuration 'Debug' -destination \"generic/platform=iOS Simulator\" -derivedDataPath DerivedData -quiet build BUILD_NUMBER=#{build.build_number}"
+                sh "xcodebuild " \
+                   "-workspace 'wire-ios-mono.xcworkspace' " \
+                   "-scheme 'Wire-iOS' " \
+                   "-configuration 'Debug' " \
+                   "-destination \"generic/platform=iOS Simulator\" " \
+                   "-derivedDataPath DerivedData " \
+                   "-quiet build " \
+                   "BUILD_NUMBER=#{build.build_number}"
 
                 # make a "fake" .ipa package that QA will use for installing to simulator
                 sh "mkdir -p debug/Payload"

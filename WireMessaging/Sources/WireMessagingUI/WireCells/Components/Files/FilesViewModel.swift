@@ -17,6 +17,7 @@
 //
 
 import Combine
+package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 import WireFoundation
@@ -25,21 +26,37 @@ package import WireMessagingDomain
 import WireMessagingDomainSupport
 
 /// An item in the `FilesView`.
-struct FilesViewItem: Identifiable, Hashable {
+package struct FilesViewItem: Identifiable, Hashable {
+
+    /// The kind of item
+    enum Kind {
+
+        /// A file.
+        case file
+
+        /// A folder.
+        case folder
+    }
 
     /// Identifier of this item on the wire cells backend.
-    let id: UUID
+    package let id: UUID
 
-    /// The filename of the file including its extension.
-    let filename: String
+    /// The kind of this item - file or folder.
+    let kind: Kind
+
+    /// The name of the user who owns (uploaded or created) this item.
+    let name: String
+
+    /// The filepath of the item.
+    let filePath: String
 
     /// The name of the user who owns (uploaded) this file.
     let ownedBy: String?
 
-    /// The date when the file was last modified.
+    /// The date when the item was last modified.
     let modifiedAt: Date?
 
-    /// The icon representing the file type.
+    /// The icon representing the item's type.
     let icon: FileIcon
 }
 
@@ -55,9 +72,14 @@ package final class FilesViewModel: ObservableObject {
         static let loadMoreThreshold = 5
     }
 
+    /// An navigation option displayed in the navigation folder menu.
+    enum FolderMenuOption: Hashable {
+        case folder(nodeID: UUID, title: String)
+        case root
+    }
+
     enum State: Equatable {
 
-        case initial
         case loading
         case received(items: [FilesViewItem])
         case pending // cells are not ready yet
@@ -74,7 +96,7 @@ package final class FilesViewModel: ObservableObject {
 
         var isLoaded: Bool {
             switch self {
-            case .loading, .pending, .initial, .error:
+            case .loading, .pending, .error:
                 false
             case .received:
                 true
@@ -82,12 +104,15 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    private let setNavigation: ([FilesViewItem]) -> Void
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
+    private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private var subscriptions = Set<AnyCancellable>()
+    private let navigationPath: [FilesViewItem]
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -95,16 +120,28 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var fileRenameView: FileRenameView?
+    var didRenameFile: Bool = false
+
+    let title: String?
 
     package init(
+        title: String? = nil,
+        navigationPath: [FilesViewItem] = [],
+        setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         deleteNodesUseCase: WireCellsDeleteNodesUseCase,
+        renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache
     ) {
+        self.title = title
+        self.navigationPath = navigationPath
+        self.setNavigation = setNavigation
         self.fetchNodesUseCase = fetchNodesUseCase
         self.deleteNodesUseCase = deleteNodesUseCase
+        self.renameNodeUseCase = renameNodeUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.state = isCellsStatePending ? .pending : .loading
@@ -120,27 +157,31 @@ package final class FilesViewModel: ObservableObject {
     private func bindSearch() {
         $searchText
             .removeDuplicates()
+            .dropFirst()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
                 Task { await self?.reload() }
             }
             .store(in: &subscriptions)
-
     }
 
     /// Reloads the items, clearing any previously loaded items.
+    /// - Parameters:
+    ///   - refreshing: Whether the reload was triggered by a pull-to-refresh action.
     ///
-    /// This method cancels any ongoing load operation and starts a new one.
-    func reload() async {
+    /// Cancels any ongoing load operation and starts a new one.
+    /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
+
+    func reload(refreshing: Bool = false) async {
         guard state != .pending else {
             return
         }
 
         cancelLoad()
-        state = .loading
+        state = refreshing ? state : .loading
         hasMore = true
 
-        await loadMore()
+        await loadMore(refreshing: refreshing)
     }
 
     /// Loads more items if available and `index` is towards the end of the list.
@@ -163,16 +204,62 @@ package final class FilesViewModel: ObservableObject {
             item: state.items[index],
             localAssetRepository: localAssetRepository,
             onOpen: { [weak self] item in
-                await self?.viewAsset(item: item)
+                await self?.openItem(item: item)
             },
             onDelete: { [weak self] item in
                 await self?.deleteItem(item)
+            },
+            onRename: { [weak self] item in
+                self?.fileRenameView = self?.makeFileRenameView(item: item)
             }
         )
     }
 
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
+    func openItem(item: FilesViewItem) async {
+        switch item.kind {
+        case .file:
+            await viewAsset(item: item)
+        case .folder:
+            openFolder(item: item)
+        }
+    }
+
+    var folderMenuOptions: [FolderMenuOption] {
+        var options: [FolderMenuOption] = navigationPath.reversed().map { .folder(nodeID: $0.id, title: $0.name) }
+        options.append(.root)
+        options.removeFirst()
+        return options
+    }
+
+    func selectFolderMenuOption(_ option: FolderMenuOption) {
+        let newPath: [FilesViewItem] = switch option {
+        case let .folder(nodeID, _):
+            if let index = navigationPath.firstIndex(where: { $0.id == nodeID }) {
+                Array(navigationPath.prefix(upTo: index + 1))
+            } else {
+                []
+            }
+        case .root:
+            []
+        }
+
+        setNavigation(newPath)
+    }
+
+    // MARK: - Private
+
+    /// Navigates to the folder represented by the given item.
+    private func openFolder(item: FilesViewItem) {
+        precondition(item.kind == .folder)
+
+        setNavigation(navigationPath + [item])
+    }
+
     /// Downloads if necessary and views the asset represented by the given item.
-    func viewAsset(item: FilesViewItem) async {
+    private func viewAsset(item: FilesViewItem) async {
+        precondition(item.kind == .file)
+
         // Bookkeeping ensure we only attempt to display the most recently selected item.
         lastSelectedItem = item
 
@@ -186,8 +273,6 @@ package final class FilesViewModel: ObservableObject {
             alert = .unknownError
         }
     }
-
-    // MARK: - Private
 
     private func localURL(for item: FilesViewItem) async throws -> URL? {
         // If the file is already downloaded, return the local URL.
@@ -213,16 +298,17 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask = nil
     }
 
-    private func loadMore() async {
+    private func loadMore(refreshing: Bool = false) async {
         guard loadMoreTask == nil else { return }
 
-        let offset = state.items.count
+        let offset = refreshing ? 0 : state.items.count
         let task = Task { try await fetchItems(offset: offset) }
 
         loadMoreTask = task
         do {
             let (newItems, isLastPage) = try await task.value
-            state = .received(items: Self.processItems(state.items + newItems))
+            let receivedItems = Self.processItems(refreshing ? newItems : state.items + newItems)
+            state = .received(items: receivedItems)
             hasMore = !isLastPage
         } catch is CancellationError {
             return // developer-driven error, discard
@@ -244,18 +330,21 @@ package final class FilesViewModel: ObservableObject {
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
-            searchTerm: searchText,
+            searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
 
         let items = nodes.map { node in
             let url = URL(string: node.path)
+            let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
-                filename: url?.lastPathComponent ?? node.path,
+                kind: kind,
+                name: url?.lastPathComponent ?? node.path,
+                filePath: node.path,
                 ownedBy: node.ownerUserName,
                 modifiedAt: node.modified,
-                icon: .make(
+                icon: kind == .folder ? .folder : .make(
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 )
@@ -302,34 +391,48 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    /// Sorts items first by modified date descending, then by filename ascending.
-    /// If multiple items have the same `nodeID`, only the first is kept.
+    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
     private static func processItems(_ items: [FilesViewItem]) -> [FilesViewItem] {
-        // sort
-        let sorted = items.sorted { left, right in
-            if let leftModified = left.modifiedAt, let rightModified = right.modifiedAt {
-                if leftModified == rightModified {
-                    left.filename < right.filename
-                } else {
-                    leftModified > rightModified
+        var latestByID: [UUID: FilesViewItem] = [:]
+        for item in items {
+            if let existing = latestByID[item.id] {
+                let existingDate = existing.modifiedAt ?? .distantPast
+                let newDate = item.modifiedAt ?? .distantPast
+                if newDate > existingDate {
+                    latestByID[item.id] = item
                 }
-            } else if left.modifiedAt != nil {
-                true
-            } else if right.modifiedAt != nil {
-                false
             } else {
-                left.filename < right.filename
+                latestByID[item.id] = item
             }
         }
 
-        var nodeIDs = Set<UUID>()
         var results: [FilesViewItem] = []
-        for item in sorted where !nodeIDs.contains(item.id) {
-            nodeIDs.insert(item.id)
+        for item in items where item == latestByID[item.id] {
             results.append(item)
         }
 
         return results
+    }
+
+    private func makeFileRenameView(
+        item: FilesViewItem
+    ) -> FileRenameView {
+        let viewModel = FileRenameViewModel(
+            renameNodeUseCase: renameNodeUseCase,
+            fileRenameModel: .init(
+                nodeID: item.id,
+                filename: item.name,
+                filepath: item.filePath,
+            )
+        )
+
+        // to know whether we need to reload items.
+        viewModel.$didRename
+            .sink { [weak self] didRename in
+                self?.didRenameFile = didRename
+            }.store(in: &subscriptions)
+
+        return FileRenameView(viewModel: viewModel)
     }
 
 }

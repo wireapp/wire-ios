@@ -31,68 +31,72 @@ jobs:
         id: filter
         with:
           filters: |
-            fastlane:
-              - 'fastlane/**'
-            wire-ios:
-              - 'wire-ios/**'
-            WireUI:
-              - 'WireUI/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireUIAll.xcscheme'
-            wire-ios-share-engine:
-              - 'wire-ios-share-engine/**'
-            wire-ios-notification-engine:
-              - 'wire-ios-notification-engine/**'
-            wire-ios-sync-engine:
-              - 'wire-ios-sync-engine/**'
-            wire-ios-request-strategy:
-              - 'wire-ios-request-strategy/**'
-            WireNetwork:
-              - 'WireNetwork/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireNetworkAll.xcscheme'
             WireAnalytics:
               - 'WireAnalytics/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAnalyticsAll.xcscheme'
             WireAuthentication:
               - 'WireAuthentication/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAuthenticationAll.xcscheme'
-            WireData:
-              - 'WireData/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireDataAll.xcscheme'
-            WireMessaging:
-              - 'WireMessaging/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireMessagingAll.xcscheme'
+            WireBackup:
+              - 'WireBackup/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireBackupAll.xcscheme'
             WireCalling:
               - 'WireCalling/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCallingAll.xcscheme'
-            WireLogging:
-              - 'WireLogging/**'
+            WireData:
+              - 'WireData/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireDataAll.xcscheme'
             WireDomain:
               - 'WireDomain/**'
-            wire-ios-data-model:
-              - 'wire-ios-data-model/**'
-            wire-ios-transport:
-              - 'wire-ios-transport/**'
+            WireFoundation:
+              - 'WireFoundation/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireFoundationAll.xcscheme'
+            WireLogging:
+              - 'WireLogging/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireLoggingAll.xcscheme'
+            WireMessaging:
+              - 'WireMessaging/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireMessagingAll.xcscheme'
+            WireNetwork:
+              - 'WireNetwork/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireNetworkAll.xcscheme'
+            WireUI:
+              - 'WireUI/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireUIAll.xcscheme'
+            carthage:
+              - 'Cartfile.resolved'
+            fastlane:
+              - 'fastlane/**'
+            scripts:
+              - 'scripts/**'
+            wire-ios:
+              - 'wire-ios/**'
             wire-ios-cryptobox:
               - 'wire-ios-cryptobox/**'
-            wire-ios-mocktransport:
-              - 'wire-ios-mocktransport/**'
+            wire-ios-data-model:
+              - 'wire-ios-data-model/**'
             wire-ios-images:
               - 'wire-ios-images/**'
             wire-ios-link-preview:
               - 'wire-ios-link-preview/**'
-            wire-ios-utilities:
-              - 'wire-ios-utilities/**'
-            wire-ios-testing:
-              - 'wire-ios-testing/**'
-            WireFoundation:
-              - 'WireFoundation/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireFoundationAll.xcscheme'
+            wire-ios-mocktransport:
+              - 'wire-ios-mocktransport/**'
+            wire-ios-notification-engine:
+              - 'wire-ios-notification-engine/**'
+            wire-ios-request-strategy:
+              - 'wire-ios-request-strategy/**'
+            wire-ios-share-engine:
+              - 'wire-ios-share-engine/**'
+            wire-ios-sync-engine:
+              - 'wire-ios-sync-engine/**'
             wire-ios-system:
               - 'wire-ios-system/**'
-            scripts:
-              - 'scripts/**'
-            carthage:
-              - 'Cartfile.resolved'
+            wire-ios-testing:
+              - 'wire-ios-testing/**'
+            wire-ios-transport:
+              - 'wire-ios-transport/**'
+            wire-ios-utilities:
+              - 'wire-ios-utilities/**'
 
   trigger_tests_pr:
     needs: detect-changes

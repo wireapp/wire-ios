@@ -28,10 +28,11 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 /// Allows browsing files shared across all conversations
 package struct FilesBrowserView: FilesViewProtocol {
-    @ObservedObject package var viewModel: FilesViewModel
+    @StateObject package var viewModel: FilesViewModel
+    package var isBrowsing: Bool { true }
 
-    package init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     package var body: some View {
@@ -40,13 +41,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                 .ignoresSafeArea(.all)
             Group {
                 switch viewModel.state {
-                case .initial:
-                    Button(action: reloadTask) {
-                        Image(systemName: "arrow.trianglehead.clockwise")
-                            .wireTextStyle(.body3)
-                            .foregroundStyle(SemanticColors.Label.textDefault.color)
-
-                    }
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -56,7 +50,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                     } else {
                         filesList
                             .listStyle(.plain)
-                            .refreshable { reloadTask() }
+                            .refreshable { reloadTask(refreshing: true) }
                     }
                 case .pending:
                     FilesInfoView(info: .preparingFiles)
@@ -69,9 +63,9 @@ package struct FilesBrowserView: FilesViewProtocol {
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(!viewModel.state.items.isEmpty || !viewModel.searchText.isEmpty) { view in
+            .if(showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
                     placement: .navigationBarDrawer,
@@ -85,6 +79,17 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+        }
+    }
+
+    private var showSearchBar: Bool {
+        switch viewModel.state {
+        case .loading:
+            true
+        case let .received(items):
+            !items.isEmpty || !viewModel.searchText.isEmpty
+        case .pending, .error:
+            false
         }
     }
 }
