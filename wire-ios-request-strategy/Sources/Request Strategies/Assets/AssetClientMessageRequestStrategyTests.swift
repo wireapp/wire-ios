@@ -19,9 +19,9 @@
 import Foundation
 import GenericMessageProtocol
 import WireDataModel
-import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+@testable import WireRequestStrategy
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -374,6 +374,26 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             XCTAssert(message.delivered)
             XCTAssertEqual(message.deliveryState, .sent)
+        }
+    }
+
+    func testThatItExpiresStaleMessage() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = createMessage(uploaded: false, expired: false)
+            XCTAssertFalse(message.isExpired)
+
+            // WHEN
+            let didComplete = XCTestExpectation(description: "didComplete")
+            self.sut.insert(object: message, isFresh: false, completion: {
+                didComplete.fulfill()
+            })
+
+            wait(for: [didComplete])
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
     }
 }
