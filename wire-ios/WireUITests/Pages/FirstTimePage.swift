@@ -43,12 +43,17 @@ class FirstTimePage: PageModel {
         app.buttons["Not Now"]
     }
 
+    var validationRuleForUsername: XCUIElement {
+        app.descendants(matching: .staticText)["validation-rules"].firstMatch
+    }
+
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
+        okButton.waitToDisappear()
         return self
     }
 

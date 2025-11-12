@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMMessage {
-    @NSManaged var senderID: UUID?
-    @NSManaged var senderDomain: String?
-    @NSManaged var conversationID: UUID?
-    @NSManaged var conversationDomain: String?
-}
+import Foundation
+
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

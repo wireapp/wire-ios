@@ -32,7 +32,7 @@ class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
         pendingInsertions.removeAll()
     }
 
-    func insert(object: MockEntity, completion: @escaping () -> Void) {
+    func insert(object: MockEntity, isFresh: Bool, completion: @escaping () -> Void) {
         objectsAskedToBeInserted.append(object)
         pendingInsertions.append(completion)
     }
