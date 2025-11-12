@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import WireTransport
 
 public struct MultipartAttachment {
 
@@ -85,7 +86,7 @@ extension MultipartAttachment {
     func toProto() -> Attachment {
         Attachment.with { attachment in
             attachment.cellAsset = CellAsset.with { asset in
-                asset.uuid = uuid.uuidString
+                asset.uuid = uuid.transportString()
                 asset.contentType = contentType
 
                 // Only set if values are not nil to avoid protobufs setting nonsense defaults.
