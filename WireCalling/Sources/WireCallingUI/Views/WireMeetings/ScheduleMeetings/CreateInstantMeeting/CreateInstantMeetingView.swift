@@ -45,82 +45,6 @@ struct CreateInstantMeetingView: View {
         }
     }
 
-    private var titleSection: some View {
-        Section(Strings.SetupTitle.header) {
-            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
-        }
-    }
-
-    private var participantsSection: some View {
-        Section(Strings.SetupParticipants.header) {
-            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
-        }
-    }
-
-    private var passwordSection: some View {
-        Section {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    if isPasswordVisible {
-                        TextField(Strings.Password.placeholder, text: $viewModel.password)
-                            .textContentType(.password)
-                            .autocapitalization(.none)
-                    } else {
-                        SecureField(Strings.Password.placeholder, text: $viewModel.password)
-                            .textContentType(.password)
-                            .autocapitalization(.none)
-                    }
-
-                    Button {
-                        isPasswordVisible.toggle()
-                    } label: {
-                        Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
-                            .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-                    }
-                }
-
-                if !viewModel.password.isEmpty, !viewModel.isPasswordValid {
-                    Text(viewModel.localizedPasswordRules)
-                        .font(.caption)
-                        .foregroundColor(ColorTheme.Base.error.color)
-                }
-            }
-        } header: {
-            Text(Strings.SetupPassword.header)
-        }
-    }
-
-    private var confirmedPasswordSection: some View {
-        Section {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    if isConfirmedPasswordVisible {
-                        TextField(Strings.ConfirmedPassword.placeholder, text: $viewModel.confirmedPassword)
-                            .textContentType(.password)
-                            .autocapitalization(.none)
-                    } else {
-                        SecureField(Strings.ConfirmedPassword.placeholder, text: $viewModel.confirmedPassword)
-                            .textContentType(.password)
-                            .autocapitalization(.none)
-                    }
-
-                    Button {
-                        isConfirmedPasswordVisible.toggle()
-                    } label: {
-                        Image(systemName: isConfirmedPasswordVisible ? "eye.slash" : "eye")
-                            .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-                    }
-                }
-
-                if !viewModel.confirmedPassword.isEmpty, !viewModel.isConfirmedPasswordValid {
-                    Text(Strings.ConfirmedPassword.error)
-                        .font(.caption)
-                        .foregroundColor(ColorTheme.Base.error.color)
-                }
-            }
-        }
-    }
-
     @ViewBuilder private var formContent: some View {
         Form {
             titleSection
@@ -137,7 +61,7 @@ struct CreateInstantMeetingView: View {
         .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
     }
 
-    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+    @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button(Strings.Cancel.button) {
                 dismiss()
@@ -151,6 +75,83 @@ struct CreateInstantMeetingView: View {
         }
     }
 
+    private var titleSection: some View {
+        Section(Strings.SetupTitle.header) {
+            TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+        }
+    }
+
+    private var participantsSection: some View {
+        Section(Strings.SetupParticipants.header) {
+            TextField(Strings.SetupParticipants.placeholder, text: $viewModel.participants)
+        }
+    }
+
+    private var passwordSection: some View {
+        Section {
+            PasswordFieldWithToggle(
+                placeholder: Strings.Password.placeholder,
+                text: $viewModel.password,
+                isVisible: $isPasswordVisible,
+                errorMessage: viewModel.localizedPasswordRules,
+                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid
+            )
+        } header: {
+            Text(Strings.SetupPassword.header)
+        }
+    }
+
+    private var confirmedPasswordSection: some View {
+        Section {
+            PasswordFieldWithToggle(
+                placeholder: Strings.ConfirmedPassword.placeholder,
+                text: $viewModel.confirmedPassword,
+                isVisible: $isConfirmedPasswordVisible,
+                errorMessage: Strings.ConfirmedPassword.error,
+                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid
+            )
+        }
+    }
+
+}
+
+// MARK: - Password Field Component
+
+private struct PasswordFieldWithToggle: View {
+    let placeholder: String
+    @Binding var text: String
+    @Binding var isVisible: Bool
+    let errorMessage: String
+    let showError: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                if isVisible {
+                    TextField(placeholder, text: $text)
+                        .textContentType(.password)
+                        .autocapitalization(.none)
+                } else {
+                    SecureField(placeholder, text: $text)
+                        .textContentType(.password)
+                        .autocapitalization(.none)
+                }
+
+                Button {
+                    isVisible.toggle()
+                } label: {
+                    Image(systemName: isVisible ? "eye.slash" : "eye")
+                        .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
+                }
+            }
+
+            if showError {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundColor(ColorTheme.Base.error.color)
+            }
+        }
+    }
 }
 
 // MARK: - Preview
