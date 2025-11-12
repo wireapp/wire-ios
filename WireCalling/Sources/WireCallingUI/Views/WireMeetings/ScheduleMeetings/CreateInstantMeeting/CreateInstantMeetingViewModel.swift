@@ -22,22 +22,19 @@ import WireReusableUIComponents
 
 final class CreateInstantMeetingViewModel: ObservableObject {
 
-    @Published var meetingTitle: String = "" {
-        didSet { updateNextButtonState() }
-    }
+    @Published var meetingTitle: String = ""
 
     // TODO: [WPB-21335] Implement Wire users and emails
     @Published var participants: String = ""
     @Published var allowGuests: Bool = false
-    @Published var password: String = "" {
-        didSet { updateNextButtonState() }
-    }
+    @Published var password: String = ""
+    @Published var confirmedPassword: String = ""
 
-    @Published var confirmedPassword: String = "" {
-        didSet { updateNextButtonState() }
+    var isNextButtonEnabled: Bool {
+        let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let hasValidPassword = password.isEmpty || (isPasswordValid && isConfirmedPasswordValid)
+        return hasValidTitle && hasValidPassword
     }
-
-    @Published private(set) var isNextButtonEnabled: Bool = false
 
     var isPasswordValid: Bool {
         password.isEmpty || passwordValidator.isPasswordValid(password)
@@ -59,15 +56,6 @@ final class CreateInstantMeetingViewModel: ObservableObject {
     init(accentColor: Color, passwordValidator: any PasswordValidator) {
         self.accentColor = accentColor
         self.passwordValidator = passwordValidator
-        updateNextButtonState()
-    }
-
-    // MARK: - Private Methods
-
-    private func updateNextButtonState() {
-        let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        let hasValidPassword = password.isEmpty || (isPasswordValid && isConfirmedPasswordValid)
-        isNextButtonEnabled = hasValidTitle && hasValidPassword
     }
 
     // MARK: - Public Interface

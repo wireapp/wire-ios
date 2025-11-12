@@ -44,20 +44,17 @@ struct ScheduleMeetingView: View {
                     Button(Strings.Cancel.button) {
                         dismiss()
                     }
-                    .foregroundColor(.blue)
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(Strings.Schedule.button) {
                         viewModel.scheduleMeeting()
                     }
-                    .foregroundColor(viewModel.accentColor)
                     .disabled(!viewModel.isNextButtonEnabled)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
         }
-        .background(ColorTheme.Backgrounds.background.color)
     }
 
     var titleSection: some View {

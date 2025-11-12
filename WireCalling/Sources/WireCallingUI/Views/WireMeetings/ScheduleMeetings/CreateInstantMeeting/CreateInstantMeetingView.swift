@@ -34,7 +34,7 @@ struct CreateInstantMeetingView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             if #available(iOS 17, *) {
                 formContent
                     .listSectionSpacing(.compact)
@@ -43,7 +43,6 @@ struct CreateInstantMeetingView: View {
                     .listStyle(.insetGrouped)
             }
         }
-        .background(ColorTheme.Backgrounds.background.color)
     }
 
     private var titleSection: some View {
@@ -134,24 +133,22 @@ struct CreateInstantMeetingView: View {
         .background(ColorTheme.Backgrounds.background.color)
         .navigationTitle(Strings.Now.title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(Strings.Cancel.button) {
-                    dismiss()
-                }
-                .foregroundColor(viewModel.accentColor)
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(Strings.Next.button) {
-                    viewModel.createInstantMeeting()
-                }
-                .disabled(!viewModel.isNextButtonEnabled)
-                .tint(viewModel.accentColor)
-            }
-
-        }
+        .toolbar { toolbarContent }
         .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+    }
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(Strings.Cancel.button) {
+                dismiss()
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(Strings.Next.button) {
+                viewModel.createInstantMeeting()
+            }
+            .disabled(!viewModel.isNextButtonEnabled)
+        }
     }
 
 }
