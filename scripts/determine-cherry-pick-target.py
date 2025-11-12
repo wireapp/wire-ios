@@ -15,6 +15,7 @@ Output:
     Writes the target branch to GITHUB_OUTPUT environment file.
 """
 
+
 import os
 import re
 import subprocess
