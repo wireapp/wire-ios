@@ -106,7 +106,7 @@ extension ZMConversation: ConversationLike {
             .sortedAscendingPrependingNil(by: \.name)
     }
 
-    public var sortedApps: [UserType] { // TODO: rename
+    public var sortedApps: [UserType] {
         localParticipants
             .filter(\.isApp)
             .sortedAscendingPrependingNil(by: \.name)
