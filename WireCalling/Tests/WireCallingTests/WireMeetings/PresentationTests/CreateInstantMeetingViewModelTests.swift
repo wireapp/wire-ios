@@ -31,7 +31,6 @@ struct CreateInstantMeetingViewModelTests {
     init() {
         self.mockPasswordValidator = MockPasswordValidator()
         self.viewModel = CreateInstantMeetingViewModel(
-            accentColor: .blue,
             passwordValidator: mockPasswordValidator
         )
     }

@@ -20,7 +20,7 @@ import Foundation
 import WireCallingDomain
 import WireCallingUI
 public import UIKit
-public import SwiftUI
+import SwiftUI
 import WireCallingData
 public import WireReusableUIComponents
 
@@ -35,7 +35,7 @@ public struct WireMeetingsFactory {
 
 public extension WireMeetingsFactory {
     @MainActor
-    func makeMeetingsView(accentColor: @escaping () -> Color) -> UIViewController {
+    func makeMeetingsView() -> UIViewController {
         let meetingsViewModel = AllMeetingsViewModel(
             repository: MeetingsRepository.demo(),
             currentDateProvider: .system,
@@ -47,7 +47,6 @@ public extension WireMeetingsFactory {
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
             ),
-            accentColor: accentColor,
             passwordValidator: passwordValidator
         )
 

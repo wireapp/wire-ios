@@ -24,7 +24,7 @@ import WireCallingAssembly
 // sourcery: AutoMockable
 protocol WireMeetingsFactoryProtocol {
     @MainActor
-    func makeMeetingsView(accentColor: @escaping () -> Color) -> UIViewController
+    func makeMeetingsView() -> UIViewController
 }
 
 extension WireMeetingsFactory: WireMeetingsFactoryProtocol {}

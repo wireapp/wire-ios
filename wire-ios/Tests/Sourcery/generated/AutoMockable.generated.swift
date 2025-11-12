@@ -1705,20 +1705,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewAccentColor_Invocations: [() -> Color] = []
-    var makeMeetingsViewAccentColor_MockMethod: ((@escaping () -> Color) -> UIViewController)?
-    var makeMeetingsViewAccentColor_MockValue: UIViewController?
+    var makeMeetingsView_Invocations: [Void] = []
+    var makeMeetingsView_MockMethod: (() -> UIViewController)?
+    var makeMeetingsView_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(accentColor: @escaping () -> Color) -> UIViewController {
-        makeMeetingsViewAccentColor_Invocations.append(accentColor)
+    func makeMeetingsView() -> UIViewController {
+        makeMeetingsView_Invocations.append(())
 
-        if let mock = makeMeetingsViewAccentColor_MockMethod {
-            return mock(accentColor)
-        } else if let mock = makeMeetingsViewAccentColor_MockValue {
+        if let mock = makeMeetingsView_MockMethod {
+            return mock()
+        } else if let mock = makeMeetingsView_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewAccentColor`")
+            fatalError("no mock for `makeMeetingsView`")
         }
     }
 

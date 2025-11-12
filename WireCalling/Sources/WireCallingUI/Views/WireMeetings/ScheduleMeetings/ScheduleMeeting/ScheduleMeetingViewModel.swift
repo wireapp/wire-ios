@@ -27,12 +27,6 @@ final class ScheduleMeetingViewModel: ObservableObject {
         true
     }
 
-    let accentColor: Color
-
-    init(accentColor: Color) {
-        self.accentColor = accentColor
-    }
-
     func scheduleMeeting() {}
 
 }

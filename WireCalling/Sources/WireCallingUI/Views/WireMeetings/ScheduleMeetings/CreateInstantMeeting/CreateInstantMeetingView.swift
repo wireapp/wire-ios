@@ -158,7 +158,6 @@ private struct PasswordFieldWithToggle: View {
 
 #Preview {
     CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        accentColor: .blue,
         passwordValidator: MockPasswordValidator()
     ))
 }

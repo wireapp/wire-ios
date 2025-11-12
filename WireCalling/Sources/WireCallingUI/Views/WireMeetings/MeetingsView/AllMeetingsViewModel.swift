@@ -32,7 +32,6 @@ package final class AllMeetingsViewModel: ObservableObject {
     @Published var isCreateInstantMeetingPresented: Bool = false
     @Published var isScheduleMeetingPresented: Bool = false
 
-    public let accentColor: () -> Color
     private let passwordValidator: any PasswordValidator
 
     package init(
@@ -41,7 +40,6 @@ package final class AllMeetingsViewModel: ObservableObject {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        accentColor: @escaping () -> Color,
         passwordValidator: any PasswordValidator
     ) {
         self.meetingsViewModel = MeetingsViewModel(
@@ -51,7 +49,6 @@ package final class AllMeetingsViewModel: ObservableObject {
             pastMeetingsUseCase: pastMeetingsUseCase,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
-        self.accentColor = accentColor
         self.passwordValidator = passwordValidator
     }
 
@@ -67,13 +64,12 @@ package final class AllMeetingsViewModel: ObservableObject {
 
     func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
         CreateInstantMeetingViewModel(
-            accentColor: accentColor(),
             passwordValidator: passwordValidator
         )
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(accentColor: accentColor())
+        ScheduleMeetingViewModel()
     }
 
 }

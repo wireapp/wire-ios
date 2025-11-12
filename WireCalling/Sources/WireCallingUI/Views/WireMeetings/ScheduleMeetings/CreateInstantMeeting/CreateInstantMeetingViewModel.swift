@@ -48,13 +48,11 @@ final class CreateInstantMeetingViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
-    let accentColor: Color
     private let passwordValidator: any PasswordValidator
 
     // MARK: - Initialization
 
-    init(accentColor: Color, passwordValidator: any PasswordValidator) {
-        self.accentColor = accentColor
+    init(passwordValidator: any PasswordValidator) {
         self.passwordValidator = passwordValidator
     }
 
