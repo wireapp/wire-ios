@@ -23,6 +23,8 @@ import WireDesign
 public struct ValidationTextField: View {
     @FocusState private var isFocusedState: Bool
     @ScaledMetric private var fieldHeight: CGFloat = 48
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     @Binding var textInput: String
     @Binding var errorMessage: String?
@@ -110,7 +112,7 @@ public struct ValidationTextField: View {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -118,7 +120,7 @@ public struct ValidationTextField: View {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
         } else {
-            ColorTheme.Base.primary.color
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 

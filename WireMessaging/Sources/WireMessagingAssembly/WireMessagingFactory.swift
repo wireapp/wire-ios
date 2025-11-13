@@ -20,7 +20,7 @@ public import Foundation
 public import UIKit
 public import SwiftUI
 public import WireData
-import WireFoundation
+public import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 public import WireMessagingUI
@@ -135,7 +135,8 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
-        isCellsStatePending: Bool
+        isCellsStatePending: Bool,
+        wireAccentColor: WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
@@ -149,6 +150,8 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled
             )
+            .environment(\.wireAccentColor, wireAccentColor)
+            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
