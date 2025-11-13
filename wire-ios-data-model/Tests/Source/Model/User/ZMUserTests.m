@@ -1925,9 +1925,8 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 {
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"User Name";
-    user.providerIdentifier = [[NSUUID UUID] transportString];
-    user.serviceIdentifier = [[NSUUID UUID] transportString];
-    
+    [user setValue:@(2) forKey:@"typeValue"];
+
     XCTAssertTrue(user.isApp);
     XCTAssertEqualObjects(user.name, @"User Name");
 }
