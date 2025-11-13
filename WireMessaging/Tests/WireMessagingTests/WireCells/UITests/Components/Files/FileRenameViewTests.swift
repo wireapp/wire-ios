@@ -32,7 +32,7 @@ final class FileRenameViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var renameNodeUseCase: MockWireCellsRenameNodeUseCaseProtocol!
     private var viewModel: FileRenameViewModel!
-    private let kinds = [FileRenameViewModel.Kind.file, .folder]
+    private let kinds = [FilesViewItem.Kind.file, .folder]
 
     @MainActor
     override func setUp() async throws {
@@ -145,7 +145,7 @@ final class FileRenameViewTests: XCTestCase {
     }
 
     @MainActor
-    private func makeView(kind: FileRenameViewModel.Kind = .file) -> (FileRenameViewModel, some View) {
+    private func makeView(kind: FilesViewItem.Kind = .file) -> (FileRenameViewModel, some View) {
         let model = FileRenameViewModel.Model(
             nodeID: .mockID1,
             filename: "foo.png",
