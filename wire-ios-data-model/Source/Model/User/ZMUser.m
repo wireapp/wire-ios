@@ -63,6 +63,7 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+static NSString *const TypeKey = @"type";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -157,9 +158,9 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
-    return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
+    return [NSSet setWithObjects:TypeKey, ServiceIdentifierKey, ProviderIdentifierKey, nil];
 }
 
 - (BOOL)isSelfUser
