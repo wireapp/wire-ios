@@ -25,24 +25,23 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .any)["Enter your name"].firstMatch
-    }
-
-    var showPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["eye.slash"].firstMatch
+        app.descendants(matching: .textField)["enterNameField"].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .any)["Enter a password"].firstMatch
+        app.descendants(matching: .textField)["enterPasswordField"].firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .any)["Confirm password"].firstMatch
+        app.descendants(matching: .textField)["enterConfirmPasswordField"].firstMatch
+    }
+
+    var showPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)["Show password"].firstMatch
     }
 
     var continueButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        app.descendants(matching: .button)["Continue"].firstMatch
     }
 
     var acceptButton: XCUIElement {
@@ -56,14 +55,16 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
+        showPasswordIcon.tap()
+        try passwordField.tapIfKeyboardNotFocused()
+        passwordField.typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        try confirmPasswordField.tapIfKeyboardNotFocused().typeText(confirmPassword)
+        showPasswordIcon.tap()
+        try confirmPasswordField.tapIfKeyboardNotFocused()
+        confirmPasswordField.typeText(confirmPassword)
         return self
     }
 
@@ -77,5 +78,4 @@ class CreatePersonalAccountFormPage: PageModel {
         acceptButton.tap()
         return try VerificationCodePage()
     }
-
 }
