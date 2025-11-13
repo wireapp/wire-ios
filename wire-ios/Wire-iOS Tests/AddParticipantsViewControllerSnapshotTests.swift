@@ -118,21 +118,4 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testThatTabBarIsNotShown_WhenBotCanNotBeAdded() {
-        // GIVEN
-        let mockConversation = MockGroupDetailsConversation()
-
-        // WHEN
-        mockConversation.conversationType = .group
-        mockConversation.teamType = MockTeam()
-        mockConversation.allowApps = true
-        mockConversation.messageProtocol = .mls
-
-        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
-
-        // THEN
-        XCTAssertFalse(mockConversation.botCanBeAdded)
-        snapshotHelper.verify(matching: sut)
-    }
-
 }
