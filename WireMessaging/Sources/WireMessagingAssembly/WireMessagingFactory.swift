@@ -136,7 +136,7 @@ public extension WireMessagingFactory {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        wireAccentColor: WireAccentColor
+        accentColor: WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
@@ -150,7 +150,7 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled
             )
-            .environment(\.wireAccentColor, wireAccentColor)
+            .environment(\.wireAccentColor, accentColor)
             .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }

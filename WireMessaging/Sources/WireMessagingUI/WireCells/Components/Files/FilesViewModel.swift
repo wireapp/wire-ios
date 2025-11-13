@@ -288,9 +288,7 @@ package final class FilesViewModel: ObservableObject {
         guard let cellName else { return }
 
         // When navigation path is empty, folder is created at the root path (cell name)
-        let folderPath = navigationPath.isEmpty ? cellName : navigationPath
-            .last!
-            .filePath
+        let folderPath = navigationPath.last?.filePath ?? cellName
 
         let viewModel = CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,

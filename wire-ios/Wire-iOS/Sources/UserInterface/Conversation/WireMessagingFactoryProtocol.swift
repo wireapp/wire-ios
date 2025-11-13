@@ -38,7 +38,7 @@ protocol WireMessagingFactoryProtocol {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        wireAccentColor: WireAccentColor
+        accentColor: WireAccentColor
     ) -> UIViewController
 
     @MainActor

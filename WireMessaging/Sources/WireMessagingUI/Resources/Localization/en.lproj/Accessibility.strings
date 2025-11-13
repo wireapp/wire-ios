@@ -20,7 +20,6 @@
 "general.loading" = "Loading…";
 "general.confirm" = "OK";
 "general.failure" = "Something went wrong";
-"general.create" = "Create";
 "general.save" = "Save";
 "general.cancel" = "Cancel";
 
