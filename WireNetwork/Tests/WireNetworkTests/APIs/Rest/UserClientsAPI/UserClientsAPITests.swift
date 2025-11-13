@@ -163,7 +163,7 @@ final class UserClientsAPITests: XCTestCase {
             model: "string",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: .init(ed25519: "ZXhhbXBsZQo=", ed448: nil, p256: nil, p384: nil, p512: nil),
+            mlsPublicKeys: .init(ed25519: "ZXhhbXBsZQo=", ed448: nil, p256: nil, p384: nil, p521: nil),
             cookie: "string",
             capabilities: [.legalholdConsent]
         )

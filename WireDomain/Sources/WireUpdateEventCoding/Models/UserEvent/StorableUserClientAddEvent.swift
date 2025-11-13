@@ -38,7 +38,7 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
                     ed448: $0.ed448,
                     p256: $0.p256,
                     p384: $0.p384,
-                    p512: $0.p512
+                    p521: $0.p521
                 )
             },
             cookie: value.client.cookie,
@@ -62,7 +62,7 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
                         ed448: $0.ed448,
                         p256: $0.p256,
                         p384: $0.p384,
-                        p512: $0.p512
+                        p521: $0.p521
                     )
                 },
                 cookie: client.cookie,
@@ -131,7 +131,7 @@ private struct StorableMLSPublicKeys: Equatable, Codable, Sendable {
     let ed448: String?
     let p256: String?
     let p384: String?
-    let p512: String?
+    let p521: String?
 
 }
 
