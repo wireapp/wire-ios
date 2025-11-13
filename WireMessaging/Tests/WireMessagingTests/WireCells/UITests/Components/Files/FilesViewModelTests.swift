@@ -57,7 +57,8 @@ final class FilesViewModelTests {
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            isFoldersEnabled: true
         )
 
         sut.$state.dropFirst().sink { [weak self] state in

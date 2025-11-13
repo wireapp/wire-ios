@@ -115,6 +115,7 @@ package final class FilesViewModel: ObservableObject {
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
+    let isFoldersEnabled: Bool
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -140,6 +141,7 @@ package final class FilesViewModel: ObservableObject {
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
+        isFoldersEnabled: Bool
     ) {
         self.title = title
         self.navigationPath = navigationPath
@@ -152,6 +154,7 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
+        self.isFoldersEnabled = isFoldersEnabled
 
         bindSearch()
     }

@@ -144,7 +144,8 @@ final class FilesBrowserViewTests: XCTestCase {
             renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
-            fileCache: MockFileCache()
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true
         )
 
         filesViewModel.state = state

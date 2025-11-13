@@ -98,27 +98,23 @@ private extension CreateFolderView {
                 Text(L10n.Localizable.General.cancel)
             }
         )
-        .accessibilityLabel(L10n.Accessibility.General.cancel)
-        .accessibilityIdentifier("cancel")
+        .accessibilityIdentifier("cancelButton")
     }
 
-    var createButton: some View {
-        Group {
-            if viewModel.isLoading {
-                ProgressView()
-            } else {
-                Button(
-                    action: {
-                        create()
-                    },
-                    label: {
-                        Text(L10n.Localizable.General.create)
-                    }
-                )
-                .disabled(isCreateDisabled())
-                .accessibilityLabel(L10n.Accessibility.General.create)
-                .accessibilityIdentifier("save")
-            }
+    @ViewBuilder var createButton: some View {
+        if viewModel.isLoading {
+            ProgressView()
+        } else {
+            Button(
+                action: {
+                    create()
+                },
+                label: {
+                    Text(L10n.Localizable.General.create)
+                }
+            )
+            .disabled(isCreateDisabled())
+            .accessibilityIdentifier("createButton")
         }
     }
 }

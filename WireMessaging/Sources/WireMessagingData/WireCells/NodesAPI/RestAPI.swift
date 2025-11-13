@@ -166,7 +166,7 @@ final class RestAPI: Sendable {
                 locator: RestNodeLocator(
                     path: path
                 ),
-                resourceUuid: UUID().uuidString,
+                resourceUuid: UUID().transportString(),
                 type: .collection,
             )
         ])

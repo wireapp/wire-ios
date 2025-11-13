@@ -177,7 +177,8 @@ public extension WireMessagingFactory {
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
+                    fileCache: fileCache,
+                    isFoldersEnabled: false
                 )
             )
         )

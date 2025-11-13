@@ -58,6 +58,7 @@ final class CreateFolderViewModel: ObservableObject {
             )
 
             didCreate = true
+            isLoading = false
 
             return true
 

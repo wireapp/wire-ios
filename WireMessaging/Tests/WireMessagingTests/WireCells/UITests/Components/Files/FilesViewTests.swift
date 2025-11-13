@@ -265,7 +265,8 @@ final class FilesViewTests: XCTestCase {
             renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true
         )
 
         filesViewModel.state = state

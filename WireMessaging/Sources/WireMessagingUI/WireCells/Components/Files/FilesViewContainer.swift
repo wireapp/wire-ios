@@ -95,7 +95,8 @@ package struct FilesViewContainer: View {
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache,
-            cellName: cellName
+            cellName: cellName,
+            isFoldersEnabled: isFoldersEnabled
         )
     }
 }

@@ -58,7 +58,11 @@ package struct FilesView: FilesViewProtocol {
                                 .refreshable { reloadTask(refreshing: true) }
                         }
 
-                        createFolderView
+                        if viewModel.isFoldersEnabled {
+                            CreateFolderCTA {
+                                viewModel.onCreateFolder()
+                            }
+                        }
                     }
                 case .pending:
                     FilesInfoView(info: .preparingFiles)
@@ -105,29 +109,6 @@ package struct FilesView: FilesViewProtocol {
         }
     }
 
-    private var createFolderView: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            HStack(alignment: .center, spacing: 20) {
-                Button {
-                    viewModel.onCreateFolder()
-                } label: {
-                    Image(systemName: "plus")
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                }
-
-                Text(Strings.Files.List.newFolder)
-                    .wireTextStyle(.body2)
-                Spacer()
-            }
-            .padding()
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            viewModel.onCreateFolder()
-        }
-    }
 }
 
 // MARK: - Toolbar
@@ -169,6 +150,30 @@ private extension FilesView {
     }
 }
 
+private struct CreateFolderCTA: View {
+
+    let onTap: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            Button(action: onTap) {
+                HStack(alignment: .center, spacing: 20) {
+                    Image(systemName: "plus")
+
+                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
+                        .wireTextStyle(.body2)
+                    Spacer()
+                }
+            }
+            .tint(ColorTheme.Backgrounds.onSurface.color)
+            .padding()
+        }
+        .contentShape(Rectangle())
+    }
+}
+
 private extension FilesViewModel.FolderMenuOption {
 
     var title: String {
@@ -183,6 +188,6 @@ private extension FilesViewModel.FolderMenuOption {
 }
 
 #Preview {
-    FilesView(viewModel: .preview())
+    FilesView(viewModel: .preview(isFoldersEnabled: true))
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
