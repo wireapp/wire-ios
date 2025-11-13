@@ -214,7 +214,7 @@ private extension WireFoundation.QualifiedID {
     }
 
     var transportString: String {
-        "\(id.uuidString.lowercased())@\(domain)"
+        "\(id.transportString())@\(domain)"
     }
 }
 

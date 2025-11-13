@@ -94,11 +94,6 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
-NSString * const ZMMessageSenderIDKey = @"senderID";
-NSString * const ZMMessageSenderDomainKey = @"senderDomain";
-NSString * const ZMMessageConversationIDKey = @"conversationID";
-NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
-
 
 @interface ZMMessage ()
 
@@ -621,11 +616,7 @@ NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
                              ZMMessageButtonStatesKey,
-                             ZMMessageDecryptionErrorCodeKey,
-                             ZMMessageSenderIDKey,
-                             ZMMessageSenderDomainKey,
-                             ZMMessageConversationIDKey,
-                             ZMMessageConversationDomainKey
+                             ZMMessageDecryptionErrorCodeKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
