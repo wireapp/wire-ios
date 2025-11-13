@@ -419,11 +419,12 @@ package final class FilesViewModel: ObservableObject {
     ) -> FileRenameView {
         let viewModel = FileRenameViewModel(
             renameNodeUseCase: renameNodeUseCase,
-            fileRenameModel: .init(
+            model: .init(
                 nodeID: item.id,
                 filename: item.name,
                 filepath: item.filePath,
-            )
+            ),
+            kind: item.kind
         )
 
         // to know whether we need to reload items.
