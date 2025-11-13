@@ -92,7 +92,7 @@ struct AddParticipantsViewModel {
             )
             newItem.tintColor = UIColor.accent()
             newItem.accessibilityIdentifier = values.participants
-                .isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
+                .isEmpty ? Locators.SelectParticipantsPage.skip.rawValue : Locators.SelectParticipantsPage.done.rawValue
             return newItem
         }
     }

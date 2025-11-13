@@ -68,7 +68,6 @@ struct CreatingBackupProgressView: View {
                 backupURL: url,
                 completedAction: completedAction
             )
-            .accessibilityIdentifier(Locators.CreatingBackupPage.backupProgressFinished.rawValue)
         }
     }
 

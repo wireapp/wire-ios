@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct TeamPlanSelectionView: View {
 
@@ -68,6 +69,7 @@ struct TeamPlanSelectionView: View {
                 action: { actionCallback(.continue) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
             .wireButtonStyle(.primary)
         }
     }

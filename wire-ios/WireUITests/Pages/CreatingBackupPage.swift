@@ -30,7 +30,7 @@ class CreatingBackupPage: PageModel {
     }
 
     var backupSuccessfullyCreatedLabel: XCUIElement {
-        app.descendants(matching: .any)[Locators.CreatingBackupPage.backupProgressFinished.rawValue]
+        app.descendants(matching: .any)[Locators.CreatingBackupPage.backupCreatedLabel.rawValue]
     }
 
     var backupProgressLabel: XCUIElement {

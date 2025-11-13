@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -208,6 +209,7 @@ final class AddParticipantsViewController: UIViewController {
         confirmButton.setTitleImageSpacing(16, horizontalMargin: 24)
         confirmButton.layer.cornerRadius = 16
         confirmButton.layer.masksToBounds = true
+        confirmButton.accessibilityIdentifier = Locators.ConversationDetailsPage.addParticipantsButton.rawValue
 
         self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
@@ -288,6 +290,7 @@ final class AddParticipantsViewController: UIViewController {
         searchResultsViewController.didMove(toParent: self)
         searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.backgroundColor = SemanticColors.View.backgroundDefault
+        collectionView.isAccessibilityElement = true
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "add_participants.list"
 
         view.backgroundColor = SemanticColors.View.backgroundDefault

@@ -51,7 +51,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 } message: {
                     Text(Strings.ExportBackup.ErrorAlert.message)
                 }
-                .accessibilityIdentifier(Locators.BackupOrRestorePage.backUpNowButton.rawValue)
+                .accessibilityIdentifier(Locators.BackupOrRestorePage.backUpNow.rawValue)
 
         }
     }

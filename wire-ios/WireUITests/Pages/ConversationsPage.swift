@@ -67,7 +67,7 @@ class ConversationsPage: PageModel {
         if button.waitForExistence(timeout: 2), button.isHittable {
             button.tap()
         }
-        return try UserAccountPage()
+        return try UserProfilePage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

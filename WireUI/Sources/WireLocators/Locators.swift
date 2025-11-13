@@ -57,10 +57,10 @@ public enum Locators {
 
     public enum AccountSettingsPage: String {
 
-        case nameField
-        case usernameField
-        case emailField
-        case domainFieldDisabled
+        case nameField = "NameField"
+        case usernameField = "UsernameField"
+        case emailField = "EmailField"
+        case domainFieldDisabled = "DomainFieldDisabled"
         case backuporRestoreField = "Back up or RestoreField"
         case resetPasswordField = "Reset PasswordField"
         case deleteAccountField = "Delete AccountField"
@@ -81,7 +81,7 @@ public enum Locators {
 
     public enum BackupOrRestorePage: String {
 
-        case backUpNowButton
+        case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
     }
@@ -90,7 +90,7 @@ public enum Locators {
 
         case creatingBackupPageLabel
         case progressView
-        case backupProgressFinished
+        case backupCreatedLabel
         case exportBackupButton
     }
 
@@ -126,27 +126,60 @@ public enum Locators {
         case groupNameField
         case newGroupNextButton
     }
-    
+
     public enum EmailUpdatePage: String {
 
         case emailField
         case newGroupNextButton
         case save
     }
-    
-    public enum LogOutPage: String {
-        
-        case ok
-    }
-    
+
     public enum NewConversationPage: String {
-        
+
         case createNewGroupButton
         case searchByNameOrUsername
     }
-    
-    
+
+    public enum SaveBackupFileBottomSheetPage: String {
+
+        case saveToFiles = "Save to Files"
+    }
+
+    public enum SelectParticipantsPage: String {
+
+        case done
+        case skip
+        case searchByNameOrUsername
+    }
+
+    public enum SetPasscodePage: String {
+
+        case passcodeField
+        case createPasscodeButton
+
+    }
+
+    public enum SetPasswordPage: String {
+
+        case passwordInputField
+        case backUpNowButton
+        case historyRestoredAlert = "Your history is restored."
+
+    }
+
+    public enum SetUsernamePage: String {
+
+        case usernameTextField
+        case confirmUsernameButton
+    }
+
+    public enum TeamSetupStepsPage: String {
+
+        case checkbox
+        case confirmUsernameButton
+        case teamNameTextField
+        case continueButton
+        case backToWireButton
+    }
+
 }
-
-
-

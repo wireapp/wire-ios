@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetPasscodePage: PageModel {
@@ -25,11 +26,11 @@ class SetPasscodePage: PageModel {
     }
 
     var passwordField: XCUIElement {
-        app.secureTextFields["PasscodeField"]
+        app.secureTextFields[Locators.SetPasscodePage.passcodeField.rawValue]
     }
 
     var setPasscodeButton: XCUIElement {
-        app.buttons["createPasscodeButton"]
+        app.buttons[Locators.SetPasscodePage.createPasscodeButton.rawValue]
     }
 
     func SetPasscode(_ pass: String) throws -> OptionsOnSettingsPage {

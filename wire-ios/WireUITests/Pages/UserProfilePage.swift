@@ -50,7 +50,7 @@ class UserProfilePage: PageModel {
         app.descendants(matching: .button)[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
     }
 
-    func tapCreateTeamButtonAndContinue() throws -> TeamSetupStepsPage {
+    func tapCreateTeamButton() throws -> TeamSetupStepsPage {
         createTeamButton.tap()
         return try TeamSetupStepsPage()
     }

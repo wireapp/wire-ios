@@ -16,24 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class OptionsOnSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        optionsLabel
+        lockWithPasscodeSwitch
     }
 
-    var optionsLabel: XCUIElement {
-        app.staticTexts["Options"]
-    }
+//    var optionsMenu: XCUIElement {
+//        app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
+//    }
 
     var lockWithPasscodeSwitch: XCUIElement {
         app.descendants(matching: .any)["Lock With Passcode"].firstMatch
     }
 
-    var conversationsPageLabel: XCUIElement {
-        app.staticTexts["Conversations"]
+    var conversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
     func enableLockWithPasscode() throws -> SetPasscodePage {

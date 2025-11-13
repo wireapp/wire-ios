@@ -66,7 +66,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
-        descriptionLabel.accessibilityIdentifier = "descriptionLabel"
+        descriptionLabel.accessibilityIdentifier = Locators.CreatingBackupPage.backupCreatedLabel.rawValue
         return descriptionLabel
     }()
 

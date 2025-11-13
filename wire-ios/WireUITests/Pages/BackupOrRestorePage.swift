@@ -26,7 +26,7 @@ class BackupOrRestorePage: PageModel {
     }
 
     var backupNowButton: XCUIElement {
-        app.descendants(matching: .button)[Locators.BackupOrRestorePage.backUpNowButton.rawValue]
+        app.descendants(matching: .button)[Locators.BackupOrRestorePage.backUpNow.rawValue]
     }
 
     var restoreFromBackupButton: XCUIElement {

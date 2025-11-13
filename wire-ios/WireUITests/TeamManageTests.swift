@@ -30,7 +30,7 @@ final class TeamManageTests: WireUITestCase {
             .openUserAccountPageForUser(with: user.name)
 
         let conversationPage = try userProfilePage
-            .tapCreateTeamButtonAndContinue()
+            .tapCreateTeamButton()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
