@@ -160,7 +160,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 + (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
-    return [NSSet setWithObjects:TypeKey, ServiceIdentifierKey, ProviderIdentifierKey, nil];
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
 - (BOOL)isSelfUser
