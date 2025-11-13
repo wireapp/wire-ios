@@ -47,7 +47,7 @@ final class FileRenameViewModel: ObservableObject {
     private let model: Model
     private let kind: FilesViewItem.Kind
     private var subscriptions = Set<AnyCancellable>()
-    
+
     var title: String {
         switch kind {
         case .folder:
@@ -56,7 +56,7 @@ final class FileRenameViewModel: ObservableObject {
             Strings.Files.FileName.title
         }
     }
-    
+
     var placeholder: String {
         switch kind {
         case .folder:
@@ -65,7 +65,7 @@ final class FileRenameViewModel: ObservableObject {
             Strings.Files.RenameFile.placeholder
         }
     }
-    
+
     var navigationTitle: String {
         switch kind {
         case .folder:
@@ -74,7 +74,7 @@ final class FileRenameViewModel: ObservableObject {
             Strings.Files.RenameFile.navigationTitle
         }
     }
-    
+
     private var inputTooLongErrorMessage: String {
         switch kind {
         case .folder:
@@ -83,7 +83,7 @@ final class FileRenameViewModel: ObservableObject {
             Strings.Files.RenameFile.filenameTooLongError
         }
     }
-    
+
     private var alreadyExistsErrorMessage: String {
         switch kind {
         case .folder:
