@@ -27,7 +27,7 @@ struct FileRenameView: View, Identifiable {
     @StateObject package var viewModel: FileRenameViewModel
     @Environment(\.dismiss) var dismiss
 
-    var id = UUID()
+    let id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> FileRenameViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())

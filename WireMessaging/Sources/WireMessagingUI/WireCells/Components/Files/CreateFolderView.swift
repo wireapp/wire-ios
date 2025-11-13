@@ -27,7 +27,7 @@ struct CreateFolderView: View, Identifiable {
     @StateObject package var viewModel: CreateFolderViewModel
     @Environment(\.dismiss) var dismiss
 
-    var id = UUID()
+    let id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> CreateFolderViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
