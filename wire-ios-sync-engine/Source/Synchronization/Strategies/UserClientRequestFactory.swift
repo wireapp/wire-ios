@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireDomain
 

@@ -855,13 +855,13 @@ extension UserClientTests {
         client.needsSessionMigration = true
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(
-            userId: userID,
-            clientId: clientID
+        let expectedSessionIdentifier = ProteusSessionID(
+            userID: userID,
+            clientID: clientID
         )
 
         // when
-        let sessionIdentifier = client.sessionIdentifier
+        let sessionIdentifier = client.proteusSessionID
 
         // then
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
@@ -880,14 +880,14 @@ extension UserClientTests {
         client.needsSessionMigration = false
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(
+        let expectedSessionIdentifier = ProteusSessionID(
             domain: domain,
-            userId: userID,
-            clientId: clientID
+            userID: userID,
+            clientID: clientID
         )
 
         // when
-        let sessionIdentifier = client.sessionIdentifier
+        let sessionIdentifier = client.proteusSessionID
 
         // then
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
@@ -927,53 +927,6 @@ extension UserClientTests {
 
         // Then
         XCTAssertNil(client.modifiedKeys)
-    }
-
-}
-
-// MARK: - Proteus
-
-extension UserClientTests {
-
-    func test_GivenDeveloperFlagProteusViaCoreCryptoEnabled_ItUsesCoreKrypto() async {
-        // GIVEN
-        let context = syncMOC
-        var mockMethodCalled = false
-        let prekey = "test".utf8Data!.base64String()
-        var resultOfMethod = false
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
-            mockMethodCalled = true
-        }
-        mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
-            "test"
-        }
-
-        let mock = MockProteusProvider(mockProteusService: mockProteusService)
-        mock.useProteusService = true
-
-        var sut: UserClient!
-        var clientB: UserClient!
-        var sessionId: EncryptionSessionIdentifier!
-
-        await context.performGrouped {
-            sut = self.createSelfClient(onMOC: context)
-            let userB = self.createUser(in: context)
-            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-            sessionId = clientB.sessionIdentifier
-        }
-
-        // WHEN
-        resultOfMethod = await sut.establishSessionWithClient(
-            sessionId: sessionId,
-            usingPreKey: prekey,
-            proteusProviding: mock
-        )
-
-        // THEN
-        XCTAssertTrue(mockMethodCalled)
-        XCTAssertTrue(resultOfMethod)
     }
 
 }
