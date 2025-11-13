@@ -32,7 +32,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var relatedConnectionState: ZMConnectionStatus = .invalid
 
     var sortedOtherParticipants: [UserType] = []
-    var sortedServiceUsers: [UserType] = []
+    var sortedApps: [UserType] = []
 
     func verifyLegalHoldSubjects() {
         // no-op
@@ -61,7 +61,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var allowGuests: Bool = false
 
-    var allowServices: Bool = false
+    var allowApps = false
 
     var teamType: TeamType?
 
@@ -81,7 +81,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var lastMessage: ZMConversationMessage?
     var firstUnreadMessage: ZMConversationMessage?
 
-    var areServicesPresent: Bool = false
+    var areAppsPresent = false
 
     var domain: String?
 

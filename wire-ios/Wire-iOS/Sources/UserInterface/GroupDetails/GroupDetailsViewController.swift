@@ -184,7 +184,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
-        let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        let (participants, apps) = (conversation.sortedOtherParticipants, conversation.sortedApps)
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
                 userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
@@ -313,9 +313,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         // MARK: services sections
 
-        if !serviceUsers.isEmpty {
+        if !apps.isEmpty {
             let servicesSection = ServicesSectionController(
-                serviceUsers: serviceUsers,
+                apps: apps,
                 conversation: conversation,
                 delegate: self
             )
@@ -337,7 +337,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
               changeInfo.participantsChanged ||
               changeInfo.nameChanged ||
               changeInfo.allowGuestsChanged ||
-              changeInfo.allowServicesChanged ||
+              changeInfo.allowAppsChanged ||
               changeInfo.destructionTimeoutChanged ||
               changeInfo.mutedMessageTypesChanged ||
               changeInfo.legalHoldStatusChanged

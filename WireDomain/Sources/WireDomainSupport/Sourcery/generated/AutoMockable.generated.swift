@@ -82,6 +82,30 @@ class MockAppExtensionPushChannelCoordinatorProtocol: AppExtensionPushChannelCoo
 
 }
 
+public class MockAssetTransferStateResolverProtocol: AssetTransferStateResolverProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveTransferState
+
+    public var resolveTransferStateAssetMessageGenericMessageContext_Invocations: [(assetMessage: ZMAssetClientMessage, genericMessage: GenericMessage, context: NSManagedObjectContext)] = []
+    public var resolveTransferStateAssetMessageGenericMessageContext_MockMethod: ((ZMAssetClientMessage, GenericMessage, NSManagedObjectContext) -> Void)?
+
+    public func resolveTransferState(assetMessage: ZMAssetClientMessage, genericMessage: GenericMessage, context: NSManagedObjectContext) {
+        resolveTransferStateAssetMessageGenericMessageContext_Invocations.append((assetMessage: assetMessage, genericMessage: genericMessage, context: context))
+
+        guard let mock = resolveTransferStateAssetMessageGenericMessageContext_MockMethod else {
+            fatalError("no mock for `resolveTransferStateAssetMessageGenericMessageContext`")
+        }
+
+        mock(assetMessage, genericMessage, context)
+    }
+
+}
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle

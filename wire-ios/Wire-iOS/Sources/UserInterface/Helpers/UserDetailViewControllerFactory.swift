@@ -40,7 +40,7 @@ enum UserDetailViewControllerFactory {
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 
-        if user.isServiceUser, let serviceUser = user as? ServiceUser {
+        if user.isApp, let serviceUser = user as? ServiceUser {
             return ServiceDetailViewController(
                 serviceUser: serviceUser,
                 actionType: .removeService(conversation),
