@@ -1122,8 +1122,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             conversation,
             modifier: { _, _ in
-                user.serviceIdentifier = UUID().uuidString
-                user.providerIdentifier = UUID().uuidString
                 user.type = .bot
             },
             expectedChangedFields: ["externalParticipantsStateChanged"],
