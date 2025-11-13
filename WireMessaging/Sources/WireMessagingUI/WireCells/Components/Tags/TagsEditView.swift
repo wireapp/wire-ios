@@ -127,7 +127,7 @@ struct TagsEditView: View {
                 .padding(.horizontal, -horizontalPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                tagNamewValidationError()
+                tagNameValidationError()
 
                 Spacer(minLength: 20)
 
@@ -157,7 +157,7 @@ struct TagsEditView: View {
     }
 
     @ViewBuilder
-    private func tagNamewValidationError() -> some View {
+    private func tagNameValidationError() -> some View {
         if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
             validationText(message)
         }
