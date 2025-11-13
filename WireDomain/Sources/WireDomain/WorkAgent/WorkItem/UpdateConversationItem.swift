@@ -68,7 +68,4 @@ struct UpdateConversationItem: WorkItem {
 
     }
 
-    func cancel() async {
-        // do nothing
-    }
 }
