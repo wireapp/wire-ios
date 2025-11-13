@@ -232,7 +232,7 @@ final class RestAPI: Sendable {
         )
 
         _ = try await NodeServiceAPI.patchNode(
-            uuid: uuid.uuidString,
+            uuid: uuid.uuidString.lowercased(),
             nodeUpdates: .init(metaUpdates: [update]),
             apiConfiguration: makeConfiguration()
         )
