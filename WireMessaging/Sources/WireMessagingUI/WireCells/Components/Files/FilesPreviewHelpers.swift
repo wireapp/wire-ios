@@ -61,7 +61,7 @@ extension FilesViewModel {
 
 extension FileRenameViewModel {
     /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
-    static func preview() -> FileRenameViewModel {
+    static func preview(kind: FilesViewItem.Kind) -> FileRenameViewModel {
         let cache = fileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -74,11 +74,12 @@ extension FileRenameViewModel {
                 nodeCache: MockWireCellsNodeCacheProtocol(),
                 nodeRenameNotifier: WireCellsNodeRenameNotifier()
             ),
-            fileRenameModel: FileRenameModel(
+            model: Model(
                 nodeID: .init(),
                 filename: "foo.jpg",
                 filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
-            )
+            ),
+            kind: kind
         )
     }
 }
