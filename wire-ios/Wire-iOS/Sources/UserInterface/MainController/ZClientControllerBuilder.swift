@@ -66,7 +66,7 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory()
+        WireMeetingsFactory(passwordValidator: AuthenticationPasswordValidator())
     }
 }
 
