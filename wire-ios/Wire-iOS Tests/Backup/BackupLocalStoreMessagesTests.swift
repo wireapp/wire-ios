@@ -348,17 +348,17 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         }
     }
 
-    // MARK: - Formatting assessment 
+    // MARK: - Formatting assessment
 
     func test_FetchAllMessageIDs_ReturnsLowercaseUUIDs() async throws {
         // GIVEN - Insert a message into the database
         let messageNonce = UUID()
-        let context = try XCTUnwrap(self.context)
-        
+        let context = try XCTUnwrap(context)
+
         try await context.perform { [context, conversationID] in
             let message = ZMClientMessage(context: context)
             message.nonce = messageNonce
-            
+
             let id = try XCTUnwrap(conversationID)
             let conversation = try XCTUnwrap(ZMConversation.fetch(
                 with: id.id,
@@ -378,7 +378,6 @@ final class BackupLocalStoreMessagesTests: XCTestCase {
         XCTAssertTrue(fetchedIDs.contains(expectedID), "Should contain lowercase UUID")
         XCTAssertFalse(fetchedIDs.contains(messageNonce.uuidString), "Should not contain uppercase UUID")
     }
-
 
     // MARK: - Performance & Scale
 
