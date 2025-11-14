@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview() -> FilesViewModel {
+    static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
         let cache = fileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -45,6 +45,9 @@ extension FilesViewModel {
                 fileCache: cache,
                 localAssetStore: localAssetStore
             ),
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: previewNodesRepository()
+            ),
             renameNodeUseCase: WireCellsRenameNodeUseCase(
                 nodesRepository: previewNodesRepository(),
                 localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
@@ -53,7 +56,9 @@ extension FilesViewModel {
             ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
-            fileCache: cache
+            fileCache: cache,
+            cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+            isFoldersEnabled: isFoldersEnabled
         )
     }
 
@@ -62,7 +67,6 @@ extension FilesViewModel {
 extension FileRenameViewModel {
     /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
     static func preview(kind: FilesViewItem.Kind) -> FileRenameViewModel {
-        let cache = fileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
@@ -208,4 +212,16 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
     func cancelDownload(nodeID: UUID) {}
 
+}
+
+extension CreateFolderViewModel {
+    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
+    static func preview() -> CreateFolderViewModel {
+        let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+
+        return CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            folderPath: "Test-1/Test-2"
+        )
+    }
 }
