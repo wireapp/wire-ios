@@ -58,7 +58,7 @@ public struct ChannelBannerView: View {
     private var titleView: some View {
         HStack(alignment: .top) {
             Text(configuration.title)
-                .wireTextStyle(.body3)
+                .font(for: .body3)
                 .foregroundStyle(Color.white)
                 .accessibilityLabel(Text(configuration.title))
 
@@ -76,7 +76,7 @@ public struct ChannelBannerView: View {
 
     private var messageView: some View {
         Text(configuration.message)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .foregroundStyle(.white)
             .accessibilityLabel(
                 configuration.message

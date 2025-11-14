@@ -52,12 +52,12 @@ struct FilesViewItemView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
+                        .font(for: .subline1)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
@@ -144,5 +144,4 @@ struct FilesViewItemView: View {
 
 #Preview {
     FilesViewItemView(viewModel: .preview(), canRenameFile: true)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

@@ -55,7 +55,7 @@ struct WireCellsDocumentHeaderView: View {
 
                 Text(headerText)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    .wireTextStyle(.subline1)
+                    .font(for: .subline1)
                     .lineLimit(1)
 
                 Spacer()
@@ -66,7 +66,7 @@ struct WireCellsDocumentHeaderView: View {
 
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                .wireTextStyle(.h5)
+                .font(for: .h5)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.horizontal, .bottom], 8)

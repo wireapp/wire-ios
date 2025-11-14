@@ -120,7 +120,7 @@ package struct ReloginViaEmailView: View {
 
     @ViewBuilder private var expirationMessage: some View {
         Text(Strings.CloudUserLogin.expirationMessage)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .multilineTextAlignment(.center)
             .foregroundStyle(Color.primaryText)
     }
@@ -186,7 +186,7 @@ package struct ReloginViaEmailView: View {
             if let proxyServer = viewModel.proxyServer {
                 Text(Strings.ProxyCredentials.message(proxyServer))
                     .multilineTextAlignment(.center)
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
             }

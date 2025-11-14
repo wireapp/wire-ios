@@ -47,7 +47,7 @@ package struct VerificationCodeView: View {
     package var body: some View {
         VStack(spacing: 20) {
             Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 

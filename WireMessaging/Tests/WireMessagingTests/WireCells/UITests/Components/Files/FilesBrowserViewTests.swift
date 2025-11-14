@@ -156,7 +156,6 @@ final class FilesBrowserViewTests: XCTestCase {
             filesBrowserView
         }
         .frame(width: 375, height: 667)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }

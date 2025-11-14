@@ -42,7 +42,7 @@ package struct NoHistoryView: View {
                 .fixedSize(horizontal: false, vertical: true)
             Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 

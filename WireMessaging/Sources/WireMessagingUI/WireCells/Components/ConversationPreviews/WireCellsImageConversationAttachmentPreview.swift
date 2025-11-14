@@ -77,7 +77,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
     @ViewBuilder private var noPreviewMessageView: some View {
         if canShowNoPreviewMessage {
             Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
-                .wireTextStyle(.subline1)
+                .font(for: .subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
                 .multilineTextAlignment(.center)
                 .padding()

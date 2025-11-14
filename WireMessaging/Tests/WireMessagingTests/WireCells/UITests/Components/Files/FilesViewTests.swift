@@ -275,7 +275,6 @@ final class FilesViewTests: XCTestCase {
             FilesView(viewModel: filesViewModel)
         }
         .frame(width: 375, height: 667)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }
