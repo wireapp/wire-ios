@@ -19,6 +19,7 @@
 public import SwiftUI
 
 /// Used for getting the text style mapping from the environment.
+
 private struct WireTextStyleView<Content: View>: View {
 
     @Environment(\.wireTextStyleMapping) private var wireTextStyleMapping
@@ -39,12 +40,15 @@ private struct WireTextStyleView<Content: View>: View {
             content()
         }
     }
+
 }
 
 public extension View {
+
     func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
         WireTextStyleView(textStyle: textStyle) {
             self
         }
     }
+
 }

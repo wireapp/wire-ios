@@ -48,7 +48,7 @@ let package = Package(
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
 
-        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]),
+        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]), // TODO: try to remove WireFoundation
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents", "WireLocators"]),
