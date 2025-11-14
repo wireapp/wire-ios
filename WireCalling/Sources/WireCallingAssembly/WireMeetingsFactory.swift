@@ -22,10 +22,15 @@ import WireCallingUI
 public import UIKit
 import SwiftUI
 import WireCallingData
+public import WireReusableUIComponents
 
 public struct WireMeetingsFactory {
+    private let passwordValidator: any PasswordValidator
+
     @MainActor
-    public init() {}
+    public init(passwordValidator: any PasswordValidator) {
+        self.passwordValidator = passwordValidator
+    }
 }
 
 public extension WireMeetingsFactory {
@@ -41,7 +46,8 @@ public extension WireMeetingsFactory {
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            )
+            ),
+            passwordValidator: passwordValidator
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
