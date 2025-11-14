@@ -18,17 +18,6 @@
 
 import SwiftUI
 
-public extension WireTextStyleMapping {
-
-    convenience init() {
-        self.init { textStyle in
-            .font(for: textStyle)
-        } fontMapping: { textStyle in
-            .textStyle(textStyle)
-        }
-    }
-}
-
 #Preview("SwiftUI.Font") {
     WireTextStyleFontMappingPreview()
 }
@@ -45,8 +34,7 @@ func WireTextStyleFontMappingPreview() -> some View {
             VStack(spacing: 2) {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
                     Text(textStyle.rawValue)
-                        .wireTextStyle(textStyle)
-                        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                        .font(for: textStyle)
                 }
                 .padding(.top)
             }

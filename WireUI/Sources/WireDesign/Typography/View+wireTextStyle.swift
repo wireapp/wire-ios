@@ -16,16 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 
-public extension Font {
+public extension View {
 
-    /// Creates a font from the given text style.
+    /// Sets a font for the given text style.
     ///
     /// - Parameter textStyle: The text style to use to create the Font.
     /// - Returns: Font that uses the style you specify.
 
-    static func textStyle(_ textStyle: WireTextStyle) -> Font {
+    func font(for textStyle: WireTextStyle) -> some View {
+        self.font(.textStyle(textStyle))
+    }
+
+}
+
+extension Font {
+
+    fileprivate static func textStyle(_ textStyle: WireTextStyle) -> Font {
         switch textStyle {
         case .largeTitle:
             .largeTitle
