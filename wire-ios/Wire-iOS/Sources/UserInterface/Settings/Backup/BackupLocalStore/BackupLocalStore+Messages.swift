@@ -39,7 +39,7 @@ extension BackupLocalStore {
             fetchRequest.propertiesToFetch = ["nonce_data"]
 
             let messages = try backupContext.fetch(fetchRequest) as! [ZMMessage]
-            return Set(messages.compactMap(\.nonce).map(\.uuidString))
+            return Set(messages.compactMap(\.nonce).map { $0.transportString() })
         }
     }
 
