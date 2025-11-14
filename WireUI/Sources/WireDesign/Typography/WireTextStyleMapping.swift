@@ -44,14 +44,9 @@ func WireTextStyleFontMappingPreview() -> some View {
         ScrollView {
             VStack(spacing: 2) {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
-                    if textStyle != .buttonSmall {
-                        Text(textStyle.rawValue)
-                            .wireTextStyle(textStyle)
-                            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-                    } else {
-                        Text(verbatim: "buttonSmall not implemented")
-                            .foregroundStyle(Color.red)
-                    }
+                    Text(textStyle.rawValue)
+                        .wireTextStyle(textStyle)
+                        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
                 }
                 .padding(.top)
             }
