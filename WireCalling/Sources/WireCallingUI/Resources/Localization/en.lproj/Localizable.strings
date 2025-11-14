@@ -32,3 +32,24 @@
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+
+// MARK: - Schedule a meeting
+
+"wireMeetings.schedule.now.title" = "Meet now";
+"wireMeetings.schedule.future.title" = "New meeting";
+"wireMeetings.schedule.cancel.button" = "Cancel";
+"wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.next.button" = "Next";
+"wireMeetings.schedule.setupTitle.header" = "Title";
+"wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
+"wireMeetings.schedule.setupParticipants.header" = "Participants";
+"wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
+"wireMeetings.schedule.allowGuests.title" = "Allow guests";
+"wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
+"wireMeetings.schedule.disableGuestAccess.alert.subtitle" = "Current guests will be removed from the conversation. New guests will not be allowed.";
+"wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
+"wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Cancel";
+"wireMeetings.schedule.setupPassword.header" = "Password (optional)";
+"wireMeetings.schedule.password.placeholder" = "Enter password";
+"wireMeetings.schedule.confirmedPassword.placeholder" = "Confirm password";
+"wireMeetings.schedule.confirmedPassword.error" = "Passwords don't match";
