@@ -107,12 +107,15 @@ package final class FilesViewModel: ObservableObject {
     private let setNavigation: ([FilesViewItem]) -> Void
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
+    private let createFolderUseCase: WireCellsCreateFolderUseCase
     private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
+    private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
+    let isFoldersEnabled: Bool
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -120,9 +123,10 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
+    var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
-
     let title: String?
 
     package init(
@@ -131,20 +135,26 @@ package final class FilesViewModel: ObservableObject {
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         deleteNodesUseCase: WireCellsDeleteNodesUseCase,
+        createFolderUseCase: WireCellsCreateFolderUseCase,
         renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        fileCache: any FileCache
+        fileCache: any FileCache,
+        cellName: String? = nil,
+        isFoldersEnabled: Bool
     ) {
         self.title = title
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
         self.fetchNodesUseCase = fetchNodesUseCase
         self.deleteNodesUseCase = deleteNodesUseCase
+        self.createFolderUseCase = createFolderUseCase
         self.renameNodeUseCase = renameNodeUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
+        self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
+        self.isFoldersEnabled = isFoldersEnabled
 
         bindSearch()
     }
@@ -273,6 +283,30 @@ package final class FilesViewModel: ObservableObject {
             alert = .unknownError
         }
     }
+
+    func onCreateFolder() {
+        guard let cellName else { return }
+
+        // When navigation path is empty, folder is created at the root path (cell name)
+        let folderPath = navigationPath.last?.filePath ?? cellName
+
+        let viewModel = CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            folderPath: folderPath
+        )
+
+        // to know whether we need to reload nodes.
+        viewModel.$didCreate
+            .sink { [weak self] didCreate in
+                self?.didCreateFolder = didCreate
+            }.store(in: &subscriptions)
+
+        createFolderView = CreateFolderView(
+            viewModel: viewModel
+        )
+    }
+
+    // MARK: - Private
 
     private func localURL(for item: FilesViewItem) async throws -> URL? {
         // If the file is already downloaded, return the local URL.

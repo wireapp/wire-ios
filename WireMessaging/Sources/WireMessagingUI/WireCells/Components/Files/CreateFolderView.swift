@@ -23,13 +23,13 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FileRenameView: View, Identifiable {
-    @StateObject package var viewModel: FileRenameViewModel
+struct CreateFolderView: View, Identifiable {
+    @StateObject package var viewModel: CreateFolderViewModel
     @Environment(\.dismiss) var dismiss
 
     let id = UUID()
 
-    init(viewModel: @autoclosure @escaping () -> FileRenameViewModel) {
+    init(viewModel: @autoclosure @escaping () -> CreateFolderViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -41,24 +41,24 @@ struct FileRenameView: View, Identifiable {
 
                 VStack {
                     ValidationTextField(
-                        title: viewModel.title,
-                        placeholder: viewModel.placeholder,
-                        textInput: $viewModel.filenameInput,
+                        title: Strings.Files.NewFolder.title,
+                        placeholder: Strings.Files.NewFolder.placeholder,
+                        textInput: $viewModel.folderNameInput,
                         errorMessage: $viewModel.errorMessage,
                         isFocused: $viewModel.isFocused
                     )
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !isSaveDisabled() {
-                            save()
+                        if !isCreateDisabled() {
+                            create()
                         }
                     }
 
                     Spacer()
                 }
             }
-            .navigationTitle(viewModel.navigationTitle)
+            .navigationTitle(Strings.Files.NewFolder.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
@@ -66,27 +66,27 @@ struct FileRenameView: View, Identifiable {
         }
     }
 
-    private func save() {
+    private func create() {
         Task {
-            if await viewModel.save() {
+            if await viewModel.create() {
                 dismiss()
             }
         }
     }
 
-    private func isSaveDisabled() -> Bool {
-        viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty
+    private func isCreateDisabled() -> Bool {
+        viewModel.errorMessage != nil || viewModel.folderNameInput.isEmpty
     }
 
 }
 
 // MARK: - Toolbar
 
-private extension FileRenameView {
+private extension CreateFolderView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { cancelButton }
-        ToolbarItem(placement: .topBarTrailing) { saveButton }
+        ToolbarItem(placement: .topBarTrailing) { createButton }
     }
 
     var cancelButton: some View {
@@ -98,31 +98,27 @@ private extension FileRenameView {
                 Text(L10n.Localizable.General.cancel)
             }
         )
-        .accessibilityLabel(L10n.Accessibility.General.cancel)
-        .accessibilityIdentifier("cancel")
+        .accessibilityIdentifier("cancelButton")
     }
 
-    var saveButton: some View {
-        Group {
-            if viewModel.isLoading {
-                ProgressView()
-            } else {
-                Button(
-                    action: {
-                        save()
-                    },
-                    label: {
-                        Text(L10n.Localizable.General.save)
-                    }
-                )
-                .disabled(isSaveDisabled())
-                .accessibilityLabel(L10n.Accessibility.General.save)
-                .accessibilityIdentifier("save")
-            }
+    @ViewBuilder var createButton: some View {
+        if viewModel.isLoading {
+            ProgressView()
+        } else {
+            Button(
+                action: {
+                    create()
+                },
+                label: {
+                    Text(L10n.Localizable.General.create)
+                }
+            )
+            .disabled(isCreateDisabled())
+            .accessibilityIdentifier("createButton")
         }
     }
 }
 
 #Preview {
-    FileRenameView(viewModel: .preview(kind: .file))
+    CreateFolderView(viewModel: .preview())
 }
