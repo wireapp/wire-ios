@@ -31,13 +31,16 @@ struct FilesViewItemView: View {
     @ScaledMetric private var imageHeight: CGFloat = 28
 
     private var canRenameFile: Bool
+    private var canEditTags: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        canRenameFile: Bool = false
+        canRenameFile: Bool = false,
+        canEditTags: Bool = false,
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
+        self.canEditTags = canEditTags
     }
 
     var body: some View {
@@ -108,8 +111,10 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    Button(action: editTags) {
-                        Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+                    if canEditTags {
+                        Button(action: editTags) {
+                            Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+                        }
                     }
 
                     Button(role: .destructive, action: delete) {
@@ -180,8 +185,8 @@ struct FilesViewItemView: View {
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(), canRenameFile: true)
-        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true)
+        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
