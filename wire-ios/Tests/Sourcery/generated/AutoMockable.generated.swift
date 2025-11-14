@@ -31,6 +31,7 @@ import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
 import WireMessagingUI
+import WireFoundation
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -1858,20 +1859,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePending_Invocations: [(cellName: String, isCellsStatePending: Bool)] = []
-    var makeFilesViewCellNameIsCellsStatePending_MockMethod: ((String, Bool) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePending_MockValue: UIViewController?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor)] = []
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod: ((String, Bool, WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePending_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending))
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColor: accentColor))
 
-        if let mock = makeFilesViewCellNameIsCellsStatePending_MockMethod {
-            return mock(cellName, isCellsStatePending)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePending_MockValue {
+        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod {
+            return mock(cellName, isCellsStatePending, accentColor)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePending`")
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColor`")
         }
     }
 
