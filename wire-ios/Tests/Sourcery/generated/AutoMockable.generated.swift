@@ -31,6 +31,7 @@ import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
 import WireMessagingUI
+import WireFoundation
 
 @testable import Wire
 @testable import WireCommonComponents
