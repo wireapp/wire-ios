@@ -63,7 +63,7 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
-    public var isApp: Bool {
+    @objc public var isApp: Bool {
         type == .app || type == .bot
     }
 
