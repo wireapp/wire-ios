@@ -151,7 +151,6 @@ public extension WireMessagingFactory {
                 isFoldersEnabled: isFoldersEnabled
             )
             .environment(\.wireAccentColor, accentColor)
-            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 

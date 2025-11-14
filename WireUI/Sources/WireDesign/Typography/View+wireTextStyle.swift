@@ -65,3 +65,26 @@ extension Font {
     }
 
 }
+
+// MARK: - Previews
+
+#Preview("SwiftUI.Font") {
+    WireTextStyleFontMappingPreview()
+}
+
+@ViewBuilder @MainActor
+func WireTextStyleFontMappingPreview() -> some View {
+    NavigationStack {
+        ScrollView {
+            VStack(spacing: 2) {
+                ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
+                    Text(textStyle.rawValue)
+                        .font(for: textStyle)
+                }
+                .padding(.top)
+            }
+        }
+        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}

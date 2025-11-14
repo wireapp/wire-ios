@@ -45,16 +45,6 @@ public final class SidebarViewController: UIViewController {
         set { model.wireAccentColor = newValue }
     }
 
-    public var wireAccentColorMapping: WireAccentColorMapping? {
-        get { model.wireAccentColorMapping }
-        set { model.wireAccentColorMapping = newValue }
-    }
-
-    public var wireTextStyleMapping: WireTextStyleMapping? {
-        get { model.wireTextStyleMapping }
-        set { model.wireTextStyleMapping = newValue }
-    }
-
     public var sidebarBackgroundColor: UIColor {
         get { model.sidebarBackgroundColor }
         set { model.sidebarBackgroundColor = newValue }
@@ -206,8 +196,6 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
                 .sidebarMenuItemIsSelectedTitleForegroundColor
         ))
         .environment(\.wireAccentColor, model.wireAccentColor)
-        .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
-        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
 

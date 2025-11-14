@@ -23,11 +23,10 @@ import WireFoundation
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.
 /// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a
 /// reference.
+
 final class SidebarModel: ObservableObject {
 
     @Published var wireAccentColor: WireAccentColor = .default
-    @Published var wireAccentColorMapping: WireAccentColorMapping?
-    @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = defaultTextColor
     @Published var sidebarAccountInfoViewUsernameColor: UIColor = .gray

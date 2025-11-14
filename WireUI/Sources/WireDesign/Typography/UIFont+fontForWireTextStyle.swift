@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 extension UIFont {
 
@@ -81,4 +81,46 @@ extension UIFont {
         return UIFont(descriptor: descriptor, size: pointSize)
     }
 
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview("UIKit.UIFont") {
+    WireTextStyleUIFontMappingPreview()
+}
+
+@MainActor
+func WireTextStyleUIFontMappingPreview() -> UIViewController {
+    let labels = WireTextStyle.allCases
+        .map { textStyle in
+            let label = UILabel()
+            label.text = textStyle.rawValue
+            label.font = .font(for: textStyle)
+            label.adjustsFontForContentSizeCategory = true
+            label.textAlignment = .center
+            return label
+        }
+
+    let stackView = UIStackView(arrangedSubviews: labels)
+    stackView.axis = .vertical
+    stackView.spacing = 8
+    stackView.distribution = .equalSpacing
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+
+    let viewController = UIViewController()
+    viewController.navigationItem.title = "WireTextStyle -> SwiftUI.Font"
+    viewController.navigationItem.largeTitleDisplayMode = .never
+    viewController.view.backgroundColor = .systemBackground
+    viewController.view.addSubview(stackView)
+    NSLayoutConstraint.activate([
+        stackView.leadingAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.leadingAnchor),
+        stackView.topAnchor.constraint(
+            equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor,
+            multiplier: 2
+        ),
+        viewController.view.trailingAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.trailingAnchor)
+    ])
+
+    return UINavigationController(rootViewController: viewController)
 }
