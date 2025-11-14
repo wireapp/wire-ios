@@ -40,7 +40,7 @@
                                                                                  name:NULL
                                                                                  team:NULL
                                                                           allowGuests:YES
-                                                                        allowServices:YES
+                                                                            allowApps:YES
                                                                          readReceipts:NO
                                                                      participantsRole:nil];
     

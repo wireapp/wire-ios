@@ -70,7 +70,7 @@
 
 "conversation.creationForm.options.footer" = "Alle Team-Mitglieder können öffentlichen Channels beitreten. Aber nur Channel-Admins oder -Mitglieder können Personen zu einem privaten Channel hinzufügen. Ein privater Channel kann nicht in einen öffentlichen umgewandelt werden.";
 
-"conversation.creationForm.services.toggle" = "Dienste zulassen";
+"conversation.creationForm.apps.toggle" = "Dienste zulassen";
 "conversation.creationForm.guests.toggle" = "Gäste zulassen";
 "conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
 
