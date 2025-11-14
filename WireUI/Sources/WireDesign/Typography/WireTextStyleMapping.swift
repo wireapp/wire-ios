@@ -45,7 +45,7 @@ func WireTextStyleFontMappingPreview() -> some View {
             VStack(spacing: 2) {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
                     if textStyle != .buttonSmall {
-                        Text("\(textStyle)")
+                        Text(textStyle.rawValue)
                             .wireTextStyle(textStyle)
                             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
                     } else {
@@ -66,7 +66,7 @@ func WireTextStyleUIFontMappingPreview() -> UIViewController {
     let labels = WireTextStyle.allCases
         .map { textStyle in
             let label = UILabel()
-            label.text = "\(textStyle)"
+            label.text = textStyle.rawValue
             label.font = .font(for: textStyle)
             label.adjustsFontForContentSizeCategory = true
             label.textAlignment = .center

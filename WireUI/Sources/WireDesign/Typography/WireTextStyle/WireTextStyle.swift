@@ -18,7 +18,7 @@
 
 /// Text styles defined in Wire's design system.
 
-public enum WireTextStyle: CaseIterable, Sendable {
+public enum WireTextStyle: String, CaseIterable, Sendable {
 
     case largeTitle
     case h1
