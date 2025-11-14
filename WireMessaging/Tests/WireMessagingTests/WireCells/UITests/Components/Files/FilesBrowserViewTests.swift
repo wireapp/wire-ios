@@ -138,10 +138,14 @@ final class FilesBrowserViewTests: XCTestCase {
         let filesViewModel = FilesViewModel(
             fetchNodesUseCase: fetchNodesUseCase,
             deleteNodesUseCase: deleteNodeUseCase,
+            createFolderUseCase: WireCellsCreateFolderUseCase(
+                nodesRepository: nodesRepository
+            ),
             renameNodeUseCase: renameNodeUseCase,
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
-            fileCache: MockFileCache()
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true
         )
 
         filesViewModel.state = state
