@@ -34,7 +34,7 @@ extension WireNetwork.SelfUserClient {
                 ed448: mlsPublicKeys?.ed448,
                 p256: mlsPublicKeys?.p256,
                 p384: mlsPublicKeys?.p384,
-                p512: mlsPublicKeys?.p512
+                p521: mlsPublicKeys?.p521
             ), capabilities: capabilities
         )
     }

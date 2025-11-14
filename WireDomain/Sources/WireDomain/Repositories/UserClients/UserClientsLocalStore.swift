@@ -149,7 +149,7 @@ public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
                     ed448: userClientInfo.mlsPublicKeys?.ed448,
                     p256: userClientInfo.mlsPublicKeys?.p256,
                     p384: userClientInfo.mlsPublicKeys?.p384,
-                    p521: userClientInfo.mlsPublicKeys?.p512
+                    p521: userClientInfo.mlsPublicKeys?.p521
                 )
             }
 
