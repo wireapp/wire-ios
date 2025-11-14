@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 @MainActor
 func SidebarViewControllerPreview(showMeetings: Bool = false, showFiles: Bool = false) -> UIViewController {

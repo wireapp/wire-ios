@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct SidebarMenuItemView<TitleView: View>: View {
 

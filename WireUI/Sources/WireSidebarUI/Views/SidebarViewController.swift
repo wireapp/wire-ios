@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireFoundation
 
 public final class SidebarViewController: UIViewController {

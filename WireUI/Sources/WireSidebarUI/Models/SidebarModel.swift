@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireFoundation
 
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.

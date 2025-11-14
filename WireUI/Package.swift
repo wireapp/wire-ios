@@ -48,7 +48,7 @@ let package = Package(
         .target(name: "WireConversationListUI"),
         .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
 
-        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]), // TODO: try to remove WireFoundation
+        .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents", "WireLocators"]),
@@ -137,7 +137,7 @@ let package = Package(
 
         .target(
             name: "WireSidebarUI",
-            dependencies: ["WireFoundation", "WireLocators"],
+            dependencies: ["WireDesign", "WireLocators"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])

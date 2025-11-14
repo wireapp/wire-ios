@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+public import WireFoundation
 
 public final class WireAccentColorMapping: ObservableObject, Sendable {
 

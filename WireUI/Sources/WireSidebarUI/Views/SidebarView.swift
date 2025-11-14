@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 

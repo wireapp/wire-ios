@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled

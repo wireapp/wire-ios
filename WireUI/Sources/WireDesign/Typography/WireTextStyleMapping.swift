@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 public extension WireTextStyleMapping {
 
