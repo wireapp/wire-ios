@@ -73,7 +73,6 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
         }
     }
 
-
     /// Create or update conversation related to the connection's sender
     /// - Parameters:
     ///   - connection: connection payload from WireNetwork

@@ -39,7 +39,6 @@ public protocol ConnectionsRepositoryProtocol {
         _ connection: Connection
     ) async throws
 
-
     /// Mark the connection's conversation to be sync with backend
     /// - Parameter connection: the conversation's connection
     func scheduleToSyncConversation(with connection: Connection) async throws

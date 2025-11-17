@@ -145,7 +145,6 @@ final class ConnectionsLocalStoreTests: XCTestCase {
         }
     }
 
-
     func testMarkConversationAsNeedUpdatedFromBackend_It_Successfully_Updates_Conversation_Locally() async throws {
         // Given
 
@@ -154,7 +153,6 @@ final class ConnectionsLocalStoreTests: XCTestCase {
 
         // When
         try await sut.markConversationAsNeedUpdatedFromBackend(connection)
-
 
         // Then
 
