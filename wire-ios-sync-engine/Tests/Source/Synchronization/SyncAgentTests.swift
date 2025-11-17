@@ -39,6 +39,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
     var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
+    var conversationUpdatesGenerator: MockConversationUpdatesGeneratorProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -58,6 +59,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
         mainAppPushChannelCoordinator = MockMainAppPushChannelCoordinatorProtocol()
+        conversationUpdatesGenerator = MockConversationUpdatesGeneratorProtocol()
+        conversationUpdatesGenerator.start_MockMethod = {}
+        conversationUpdatesGenerator.stop_MockMethod = {}
 
         sut = SyncAgent(
             journal: journal,
@@ -68,7 +72,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             legacySyncStatus: legacySyncStatus,
             featureConfigRepository: featureConfigRepository,
             syncStateSubject: syncStateSubject,
-            pushChannelCoordinator: mainAppPushChannelCoordinator
+            pushChannelCoordinator: mainAppPushChannelCoordinator,
+            conversationUpdatesGenerator: conversationUpdatesGenerator
         )
     }
 
@@ -86,6 +91,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity = nil
         featureConfigRepository = nil
         mainAppPushChannelCoordinator = nil
+        conversationUpdatesGenerator = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -272,6 +278,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         } catch {}
 
         await fulfillment(of: [expectation])
+
+        try XCTAssertCount(conversationUpdatesGenerator.start_Invocations, count: 1)
     }
 
     func testSuspend_Sync_State_Update_To_Suspended_And_Background_Task_Is_Active() async throws {
@@ -308,6 +316,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await sut.suspend()
 
         await fulfillment(of: [expectation])
+
+        try XCTAssertCount(conversationUpdatesGenerator.stop_Invocations, count: 1)
     }
 
     func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
