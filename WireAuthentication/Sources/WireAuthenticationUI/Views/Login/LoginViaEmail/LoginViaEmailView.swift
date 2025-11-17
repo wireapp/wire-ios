@@ -180,7 +180,7 @@ package struct LoginViaEmailView: View {
         VStack(spacing: 4) {
             Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
-                .font(for: .body1)
+                .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -216,14 +216,14 @@ package struct LoginViaEmailView: View {
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
-                .font(for: .h2)
+                .font(.textStyle(.h2))
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let proxyServer = viewModel.proxyServer {
                 Text(Strings.ProxyCredentials.message(proxyServer))
                     .multilineTextAlignment(.center)
-                    .font(for: .body1)
+                    .wireTextStyle(.body1)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
             }

@@ -346,6 +346,7 @@ private func hostedView(
             stepCount: stepCount,
             stepTitle: step.title
         )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     )
     vc.title = step.title
     if case .completion = step {

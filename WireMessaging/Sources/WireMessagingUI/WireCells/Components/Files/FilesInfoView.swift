@@ -142,7 +142,7 @@ struct LoadMoreView: View {
                     .accessibilityLabel(Accessibility.Files.LoadMore.title)
                     .accessibilityIdentifier("load-more")
                     .buttonStyle(.borderless)
-                    .font(for: .body3)
+                    .wireTextStyle(.body3)
                     .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
 
             }

@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireDesign
+import WireFoundation
 
 @MainActor
 func SidebarViewControllerPreview(showMeetings: Bool = false, showFiles: Bool = false) -> UIViewController {
@@ -30,6 +30,7 @@ func SidebarViewControllerPreview(showMeetings: Bool = false, showFiles: Bool = 
     sidebarViewController.showMeetings = showMeetings
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
+    sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()
     splitViewController.setViewController(sidebarViewController, for: .primary)
     splitViewController.setViewController(EmptyViewController(), for: .supplementary)
     splitViewController.setViewController(EmptyViewController(), for: .secondary)
@@ -81,5 +82,24 @@ private final class EmptyViewController: UIHostingController<AnyView> {
 final class HintViewController: UIHostingController<Text> {
     convenience init(_ hint: String) {
         self.init(rootView: Text(verbatim: hint).font(.title2))
+    }
+}
+
+private func PreviewTextStyleMapping() -> WireTextStyleMapping {
+    .init { _ in
+        fatalError("not implemented for preview yet")
+    } fontMapping: { textStyle in
+        switch textStyle {
+        case .h2:
+            .title3.bold()
+        case .h3:
+            .headline
+        case .body1:
+            .body
+        case .subline1:
+            .caption
+        default:
+            fatalError("not implemented for preview yet")
+        }
     }
 }

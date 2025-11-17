@@ -88,7 +88,7 @@ struct OtherUserDeviceDetailsView: View {
     private var showDeviceFingerPrintView: some View {
         HStack {
             Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
-                .font(for: .body2)
+                .font(.textStyle(.body2))
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(Color(SemanticColors.Label.textDefault))
             Spacer()
@@ -159,7 +159,7 @@ struct OtherUserDeviceDetailsView: View {
         if let description {
             VStack(alignment: .leading) {
                 Text(description)
-                    .font(for: .h4)
+                    .font(.textStyle(.h4))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(SemanticColors.Label.textCellSubtitle))
@@ -167,7 +167,7 @@ struct OtherUserDeviceDetailsView: View {
                     .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
-                    .font(for: .h4)
+                    .font(.textStyle(.h4))
                     .bold()
                     .foregroundColor(Color(SemanticColors.Label.textDefault))
                     .padding(.leading)

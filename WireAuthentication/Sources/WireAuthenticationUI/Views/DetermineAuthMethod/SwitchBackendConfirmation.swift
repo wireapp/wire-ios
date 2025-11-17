@@ -109,7 +109,7 @@ public struct SwitchBackendConfirmation: View {
 
     private var title: some View {
         Text(Strings.title)
-            .font(for: .h2)
+            .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
             .multilineTextAlignment(.center)
             .lineLimit(nil)
@@ -175,7 +175,7 @@ public struct SwitchBackendConfirmation: View {
                     }
                 } label: {
                     Text(Strings.showDetails)
-                        .font(for: .body1)
+                        .font(.textStyle(.body1))
                 }
                 .wireButtonStyle(.link)
             }
@@ -212,7 +212,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(false)
         } label: {
             Text(Strings.cancel)
-                .font(for: .buttonBig)
+                .font(.textStyle(.buttonBig))
         }
         .wireButtonStyle(.secondary)
     }
@@ -223,7 +223,7 @@ public struct SwitchBackendConfirmation: View {
             onConfirm(true)
         } label: {
             Text(Strings.proceed)
-                .font(for: .buttonBig)
+                .font(.textStyle(.buttonBig))
         }
         .wireButtonStyle(.primary)
     }

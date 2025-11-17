@@ -84,7 +84,7 @@ struct OptionView: View {
                 .padding(.leading, 3)
 
             Text(option.text)
-                .font(for: .body2)
+                .font(Font.textStyle(.body2))
                 .bold()
                 .foregroundStyle(Color(SemanticColors.Label.textDefault))
 

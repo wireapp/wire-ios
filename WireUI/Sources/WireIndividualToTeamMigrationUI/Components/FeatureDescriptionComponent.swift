@@ -28,7 +28,7 @@ struct FeatureDescriptionComponent: View {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundColor(AccentColor.green.color)
             Text(feature.description)
-                .font(for: .body1)
+                .wireTextStyle(.body1)
         }
     }
 }

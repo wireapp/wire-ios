@@ -37,7 +37,7 @@ struct TeamNameView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(String.localized(key: "individualToTeam.teamName.body", bundle: .module))
-                .font(for: .body1)
+                .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
 

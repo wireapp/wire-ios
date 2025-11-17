@@ -50,4 +50,5 @@ package struct WireCellsAttachmentsPreviewView: View {
 
 #Preview {
     WireCellsAttachmentsPreviewView(viewModel: .makePreview())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

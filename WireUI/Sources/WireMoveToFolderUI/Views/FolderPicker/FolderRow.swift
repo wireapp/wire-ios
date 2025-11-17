@@ -28,7 +28,7 @@ struct FolderRow: View {
         Button(action: action) {
             HStack {
                 Text(folder.name)
-                    .font(for: isSelected ? .h3 : .body1)
+                    .font(isSelected ? .textStyle(.h3) : .textStyle(.body1))
                     .foregroundStyle(Color.primaryText)
 
                 Spacer()

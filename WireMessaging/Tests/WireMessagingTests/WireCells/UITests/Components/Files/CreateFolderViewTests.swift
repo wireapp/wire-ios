@@ -125,6 +125,7 @@ final class CreateFolderViewTests: XCTestCase {
 
         return CreateFolderView(viewModel: viewModel)
             .frame(width: 375, height: 667)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }

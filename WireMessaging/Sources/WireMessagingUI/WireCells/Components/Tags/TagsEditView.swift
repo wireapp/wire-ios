@@ -218,7 +218,7 @@ struct TagsEditView: View {
     @ViewBuilder
     private func normalText(_ text: String) -> some View {
         Text(text)
-            .font(for: .body1)
+            .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -226,7 +226,7 @@ struct TagsEditView: View {
     @ViewBuilder
     private func sectionText(_ text: String) -> some View {
         Text(text)
-            .font(for: .h4)
+            .wireTextStyle(.h4)
             .textCase(.uppercase)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -236,7 +236,7 @@ struct TagsEditView: View {
     @ViewBuilder
     private func validationText(_ text: String) -> some View {
         Text(text)
-            .font(for: .body1)
+            .wireTextStyle(.body1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(ColorTheme.Base.error.color)
@@ -326,4 +326,5 @@ struct TagsEditView: View {
     )
 
     TagsEditView(fileItem: item, useCases: useCases, postSaveAction: {})
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

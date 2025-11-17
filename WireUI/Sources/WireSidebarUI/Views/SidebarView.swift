@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireDesign
+import WireFoundation
 
 public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
@@ -163,7 +163,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private func menuItemHeader(_ title: String, addTopPadding: Bool = true) -> some View {
         let text = Text(title)
             .foregroundStyle(menuHeaderForegroundColor)
-            .font(for: .h2)
+            .wireTextStyle(.h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
             .accessibilityAddTraits(.isHeader)
@@ -194,7 +194,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text.font(for: .body1) },
+            title: { text.wireTextStyle(.body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )
@@ -302,7 +302,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
-            title: { text.font(for: .body1) },
+            title: { text.wireTextStyle(.body1) },
             accessibilityLabel: { accessibilityLabel },
             action: action
         )

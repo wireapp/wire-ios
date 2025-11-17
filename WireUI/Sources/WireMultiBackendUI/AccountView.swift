@@ -45,7 +45,7 @@ struct AccountView: View {
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
-                        .font(for: .body2)
+                        .font(Font.textStyle(.body2))
                         .bold()
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
@@ -83,10 +83,9 @@ private struct DotSeparatedTextView: View {
             .lineLimit(nil)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
-            .font(for: .subline1)
+            .font(Font.textStyle(.subline1))
             .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
     }
-
 }
 
 #Preview {
@@ -111,5 +110,6 @@ private struct DotSeparatedTextView: View {
                 action: {}
             )
         )
+
     }
 }

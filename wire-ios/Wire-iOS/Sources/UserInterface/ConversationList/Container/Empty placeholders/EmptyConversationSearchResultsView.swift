@@ -107,7 +107,7 @@ private struct PhoneEmptyView: View {
     var body: some View {
         VStack {
             Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone)
-                .font(for: .body1)
+                .font(.textStyle(.body1))
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
@@ -123,7 +123,7 @@ private struct PhoneEmptyView: View {
                         .background(Circle().fill(Color(ColorTheme.Base.primary)))
 
                     Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone)
-                        .font(for: .body1)
+                        .font(.textStyle(.body1))
                         .foregroundStyle(Color(ColorTheme.Base.primary))
                         .padding(.leading, 4)
                 }
@@ -144,7 +144,7 @@ private struct TabletEmptyView: View {
     var body: some View {
         VStack {
             Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.ipad)
-                .font(for: .body1)
+                .font(.textStyle(.body1))
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
@@ -156,7 +156,7 @@ private struct TabletEmptyView: View {
             )
 
             Text(L10n.Localizable.General.or)
-                .font(for: .body1)
+                .font(.textStyle(.body1))
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
 
@@ -185,7 +185,7 @@ private struct CapsuleButton: View {
                     .background(Circle().fill(Color(ColorTheme.Base.primary)))
 
                 Text(title)
-                    .font(for: .body1)
+                    .font(.textStyle(.body1))
                     .foregroundStyle(Color(ColorTheme.Base.primary))
                     .padding(.leading, 4)
             }

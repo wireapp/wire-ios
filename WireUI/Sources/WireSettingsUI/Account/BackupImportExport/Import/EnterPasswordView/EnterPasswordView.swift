@@ -30,6 +30,7 @@ struct EnterPasswordView: View {
     let isContextMenuAllowed: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable.ImportBackup
     private typealias Labels = L10n.Accessibility.ImportBackup
@@ -112,7 +113,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            Color(wireAccentColor)
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -125,7 +126,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            Color(wireAccentColor)
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -138,7 +139,7 @@ struct EnterPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            Color(wireAccentColor)
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 

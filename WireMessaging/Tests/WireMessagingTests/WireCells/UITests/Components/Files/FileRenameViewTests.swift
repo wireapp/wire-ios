@@ -160,6 +160,7 @@ final class FileRenameViewTests: XCTestCase {
 
         let view = FileRenameView(viewModel: viewModel)
             .frame(width: 375, height: 667)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         return (viewModel, view)
     }

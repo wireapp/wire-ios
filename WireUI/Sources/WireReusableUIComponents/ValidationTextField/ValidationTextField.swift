@@ -24,6 +24,7 @@ public struct ValidationTextField: View {
     @FocusState private var isFocusedState: Bool
     @ScaledMetric private var fieldHeight: CGFloat = 48
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     @Binding var textInput: String
     @Binding var errorMessage: String?
@@ -49,14 +50,14 @@ public struct ValidationTextField: View {
         VStack(alignment: .leading, spacing: 2) {
             if let title {
                 Text(title)
-                    .font(for: .h4)
+                    .wireTextStyle(.h4)
                     .foregroundColor(titleColor)
             }
 
             HStack {
                 TextField(placeholder ?? "", text: $textInput)
                     .autocorrectionDisabled()
-                    .font(for: .body1)
+                    .wireTextStyle(.body1)
                     .frame(height: fieldHeight)
                     .focused($isFocusedState)
                     .onChange(of: $isFocusedState.wrappedValue) { newValue in
@@ -111,7 +112,7 @@ public struct ValidationTextField: View {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
         } else {
-            Color(wireAccentColor)
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 
@@ -119,7 +120,7 @@ public struct ValidationTextField: View {
         if shouldShowErrorMessage {
             ColorTheme.Base.error.color
         } else {
-            Color(wireAccentColor)
+            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
         }
     }
 

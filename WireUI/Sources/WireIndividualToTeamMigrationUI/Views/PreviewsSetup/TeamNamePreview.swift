@@ -31,4 +31,5 @@ func teamNamePreview() -> some View {
         stepCount: 4,
         stepTitle: .localized(key: "individualToTeam.teamName.title", bundle: .module)
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

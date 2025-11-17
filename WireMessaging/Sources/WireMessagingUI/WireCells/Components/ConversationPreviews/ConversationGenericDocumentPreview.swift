@@ -49,6 +49,7 @@ package struct ConversationGenericDocumentPreview_Preview: View {
             headerText: "Document (336 KB)",
             labelText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ipsum purus, scelerisque molestie rutrum vitae, faucibus in velit. Sed eget consectetur elit, in tristique metus."
         )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 

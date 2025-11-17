@@ -77,7 +77,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
     @ViewBuilder private var noPreviewMessageView: some View {
         if canShowNoPreviewMessage {
             Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
-                .font(for: .subline1)
+                .wireTextStyle(.subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -97,4 +97,5 @@ struct WireCellsImageConversationAttachmentPreview: View {
         isAssetDownloadError: false,
         canShowNoPreviewMessage: true
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

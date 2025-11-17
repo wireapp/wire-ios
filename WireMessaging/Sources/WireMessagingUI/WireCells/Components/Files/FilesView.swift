@@ -178,7 +178,7 @@ private struct CreateFolderCTA: View {
                     Image(systemName: "plus")
 
                     Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
+                        .wireTextStyle(.body2)
                     Spacer()
                 }
             }
@@ -204,4 +204,5 @@ private extension FilesViewModel.FolderMenuOption {
 
 #Preview {
     FilesView(viewModel: .preview(isFoldersEnabled: true))
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

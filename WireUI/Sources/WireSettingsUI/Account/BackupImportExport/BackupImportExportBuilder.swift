@@ -31,6 +31,7 @@ public struct BackupImportExportBuilder {
     let exportBackupLogger: any LoggerProtocol
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
+    let wireAccentColorMapping: WireAccentColorMapping
     let isContextMenuAllowed: Bool
 
     public init(
@@ -40,6 +41,7 @@ public struct BackupImportExportBuilder {
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
+        wireAccentColorMapping: WireAccentColorMapping,
         wireAccentColor: WireAccentColor,
         isContextMenuAllowed: Bool
     ) {
@@ -49,6 +51,7 @@ public struct BackupImportExportBuilder {
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
         self.exportBackupLogger = exportBackupLogger
         self.importBackupLogger = importBackupLogger
+        self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
         self.isContextMenuAllowed = isContextMenuAllowed
     }
@@ -64,6 +67,7 @@ public struct BackupImportExportBuilder {
             buildExportBackupView()
             buildImportBackupView()
         }
+        .environment(\.wireAccentColorMapping, wireAccentColorMapping)
         .environment(\.wireAccentColor, wireAccentColor)
     }
 
@@ -134,6 +138,7 @@ extension BackupImportExportBuilder {
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
+            wireAccentColorMapping: WireAccentColorMapping(),
             wireAccentColor: .purple,
             isContextMenuAllowed: true
         )

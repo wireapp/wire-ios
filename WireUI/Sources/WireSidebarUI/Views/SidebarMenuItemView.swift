@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
 
 struct SidebarMenuItemView<TitleView: View>: View {
 
@@ -28,10 +27,15 @@ struct SidebarMenuItemView<TitleView: View>: View {
     // MARK: - Properties
 
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     @Environment(\.sidebarMenuItemTitleForegroundColor) private var titleForegroundColor
     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
     @Environment(\.sidebarMenuItemIsSelectedTitleForegroundColor) private var isSelectedTitleForegroundColor
+
+    private var accentColor: UIColor {
+        wireAccentColorMapping?.uiColor(for: wireAccentColor) ?? .systemGray
+    }
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
@@ -60,7 +64,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
                     let icon = Image(systemName: iconSystemName())
-                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(wireAccentColor))
+                        .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -81,7 +85,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
-            .background(isHighlighted ? Color(wireAccentColor) : .clear)
+            .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
             .accessibilityLabel(accessibilityLabel())
         }

@@ -46,7 +46,7 @@ public struct Checkbox: View {
             .buttonStyle(.plain)
             .foregroundStyle(isChecked ? ColorTheme.Checkbox.selected.color : ColorTheme.Checkbox.enabled.color)
             Text(title)
-                .font(for: .subline1)
+                .wireTextStyle(.subline1)
         }
     }
 

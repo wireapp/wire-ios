@@ -37,7 +37,7 @@ struct AccountSwitcherModalView: View {
         VStack {
             VStack(alignment: .center, spacing: 16) {
                 Text(L10n.Localizable.SwitchingAccounts.title)
-                    .font(for: .h3)
+                    .font(.textStyle(.h3))
                     .bold()
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -45,7 +45,7 @@ struct AccountSwitcherModalView: View {
                     .lineLimit(nil)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                    .font(for: .body1)
+                    .font(Font.textStyle(.body1))
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 AccountSwitcherView(

@@ -44,6 +44,7 @@ final class LinkButtonStyleUITests: XCTestCase {
             label: { Text("Label") }
         )
         .wireButtonStyle(.link)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .frame(width: screenBounds.width, height: screenBounds.height)
     }
 

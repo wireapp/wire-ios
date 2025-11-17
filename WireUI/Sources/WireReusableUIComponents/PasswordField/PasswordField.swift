@@ -53,7 +53,7 @@ public struct PasswordField: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(for: .h4)
+                .wireTextStyle(.h4)
                 .foregroundColor(titleColor)
 
             HStack {
@@ -61,7 +61,7 @@ public struct PasswordField: View {
                     TextField(placeholder, text: $password)
                         .autocorrectionDisabled()
                         .textContentType(.password)
-                        .font(for: .body1)
+                        .wireTextStyle(.body1)
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 } else {

@@ -95,6 +95,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -119,6 +120,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -143,6 +145,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -167,6 +170,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -191,6 +195,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in [DynamicTypeSize.allCases.min()!, DynamicTypeSize.allCases.max()!] {
             snapshotHelper
@@ -225,6 +230,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -257,6 +263,7 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -341,6 +348,7 @@ final class FilesViewTests: XCTestCase {
             FilesView(viewModel: filesViewModel)
         }
         .frame(width: 375, height: 667)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }

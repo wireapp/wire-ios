@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireFoundation
 
 public final class SidebarViewController: UIViewController {
@@ -43,6 +42,16 @@ public final class SidebarViewController: UIViewController {
     public var wireAccentColor: WireAccentColor {
         get { model.wireAccentColor }
         set { model.wireAccentColor = newValue }
+    }
+
+    public var wireAccentColorMapping: WireAccentColorMapping? {
+        get { model.wireAccentColorMapping }
+        set { model.wireAccentColorMapping = newValue }
+    }
+
+    public var wireTextStyleMapping: WireTextStyleMapping? {
+        get { model.wireTextStyleMapping }
+        set { model.wireTextStyleMapping = newValue }
     }
 
     public var sidebarBackgroundColor: UIColor {
@@ -196,6 +205,8 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
                 .sidebarMenuItemIsSelectedTitleForegroundColor
         ))
         .environment(\.wireAccentColor, model.wireAccentColor)
+        .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
+        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
 

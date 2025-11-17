@@ -71,5 +71,6 @@ func teamPlanSelectionPreview() -> some View {
         stepCount: 4,
         stepTitle: String.localized(key: "individualToTeam.planSelection.title", bundle: .module)
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
 }

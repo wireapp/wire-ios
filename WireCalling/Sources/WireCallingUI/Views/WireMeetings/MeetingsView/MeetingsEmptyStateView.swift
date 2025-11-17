@@ -31,12 +31,12 @@ struct MeetingsEmptyStateView: View {
     var body: some View {
         VStack(spacing: 12) {
             Text(title)
-                .font(for: .h2)
+                .font(.textStyle(.h2))
                 .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
                 .multilineTextAlignment(.center)
 
             Text(subtitle)
-                .font(for: .body1)
+                .font(.textStyle(.body1))
                 .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
                 .multilineTextAlignment(.center)
         }

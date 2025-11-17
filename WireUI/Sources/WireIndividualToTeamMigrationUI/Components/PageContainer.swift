@@ -44,12 +44,12 @@ struct PageContainer<Content: View>: View {
             ScrollView {
                 VStack {
                     Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
-                        .font(for: .subline1)
+                        .wireTextStyle(.subline1)
                         .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
                     Spacer()
                         .frame(height: 12)
                     Text(stepTitle)
-                        .font(for: .h2)
+                        .wireTextStyle(.h2)
                     Spacer(minLength: 36)
                     content
                 }

@@ -58,7 +58,7 @@ public struct ChannelBannerView: View {
     private var titleView: some View {
         HStack(alignment: .top) {
             Text(configuration.title)
-                .font(for: .body3)
+                .wireTextStyle(.body3)
                 .foregroundStyle(Color.white)
                 .accessibilityLabel(Text(configuration.title))
 
@@ -76,7 +76,7 @@ public struct ChannelBannerView: View {
 
     private var messageView: some View {
         Text(configuration.message)
-            .font(for: .body1)
+            .wireTextStyle(.body1)
             .foregroundStyle(.white)
             .accessibilityLabel(
                 configuration.message
@@ -112,5 +112,6 @@ public struct ChannelBannerView: View {
             )
         )
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     .preferredColorScheme(.dark)
 }

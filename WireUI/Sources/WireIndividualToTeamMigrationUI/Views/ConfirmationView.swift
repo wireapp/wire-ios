@@ -49,7 +49,7 @@ struct ConfirmationView: View {
                     Text(String.localized(key: "individualToTeam.confirmation.body.permanent", bundle: .module))
                 }
             }
-            .font(for: .body1)
+            .wireTextStyle(.body1)
             VStack(alignment: .leading, spacing: 16) {
                 Checkbox(
                     isChecked: $migrationConfirmed,

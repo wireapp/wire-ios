@@ -39,12 +39,12 @@ struct QRCodeCard: View {
 
             VStack(alignment: .center) {
                 Text(handle)
-                    .font(for: .h2)
+                    .font(.textStyle(.h2))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 Text(profileLink)
-                    .font(for: .subline1)
+                    .font(.textStyle(.subline1))
                     .foregroundColor(.black)
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.center)

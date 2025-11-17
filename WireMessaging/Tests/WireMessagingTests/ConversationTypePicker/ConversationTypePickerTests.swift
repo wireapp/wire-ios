@@ -42,6 +42,7 @@ class ConversationTypePickerTests: XCTestCase {
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: 350, height: 200)
             .padding()
         }
@@ -62,6 +63,7 @@ class ConversationTypePickerTests: XCTestCase {
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: 350, height: 200)
             .padding()
         }

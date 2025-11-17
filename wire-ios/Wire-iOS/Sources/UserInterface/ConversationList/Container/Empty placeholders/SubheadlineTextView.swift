@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireDesign
+import WireFoundation
 
 final class SubheadlineTextView: UITextView {
 

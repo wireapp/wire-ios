@@ -57,7 +57,7 @@ struct AccentColorPicker: View {
                 .frame(width: colorViewSize, height: colorViewSize)
                 .padding(.trailing, 10)
             Text(color.name)
-                .font(for: selectedColor == color ? .h3 : .body1)
+                .font(.textStyle(selectedColor == color ? .h3 : .body1))
 
             Spacer()
 
