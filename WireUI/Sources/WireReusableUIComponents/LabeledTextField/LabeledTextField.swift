@@ -54,11 +54,11 @@ public struct LabeledTextField: View {
                     ) : Text(title)
                 )
                 .foregroundStyle(titleColor)
-                .wireTextStyle(.h4)
+                .font(for: .h4)
             }
             HStack(spacing: 0) {
                 TextField(placeholder ?? "", text: $string)
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .focused($isFocused)
                     .foregroundStyle(labelColor)
                     .frame(height: fieldHeight)

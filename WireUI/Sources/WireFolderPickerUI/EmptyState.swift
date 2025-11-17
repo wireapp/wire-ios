@@ -42,7 +42,7 @@ struct EmptyState: View {
                         .underline()
                 }
             }
-            .font(.textStyle(.body1))
+            .font(for: .body1)
             .foregroundStyle(Color.primaryText)
             .frame(maxWidth: 272)
         }
