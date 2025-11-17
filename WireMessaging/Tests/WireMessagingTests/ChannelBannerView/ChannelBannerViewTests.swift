@@ -78,7 +78,6 @@ final class ChannelBannerTests: XCTestCase {
         )
         .frame(width: 375, height: 667)
         .padding()
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

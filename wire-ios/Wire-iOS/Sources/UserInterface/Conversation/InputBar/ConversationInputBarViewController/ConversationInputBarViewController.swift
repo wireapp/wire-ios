@@ -1145,7 +1145,6 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 }
             )
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
         addChild(carouselViewController)
         carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false
