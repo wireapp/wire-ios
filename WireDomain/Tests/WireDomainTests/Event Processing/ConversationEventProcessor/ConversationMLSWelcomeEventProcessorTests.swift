@@ -80,7 +80,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         // Mock
 
-        let conversation = await context.perform { [self] in
+        let conversation = await context.perform { [modelHelper, context] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
@@ -89,7 +89,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         }
 
         mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
         conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
         mlsService.uploadKeyPackagesIfNeeded_MockMethod = {}
@@ -103,7 +103,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
             conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
             1

@@ -22,7 +22,7 @@ import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
-public protocol ConversationRepositoryProtocol {
+public protocol ConversationRepositoryProtocol: Sendable {
 
     /// Fetches and persists a conversation with a given ID.
     /// - Parameters:
