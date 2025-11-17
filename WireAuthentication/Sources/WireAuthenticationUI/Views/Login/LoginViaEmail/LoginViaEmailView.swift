@@ -216,7 +216,7 @@ package struct LoginViaEmailView: View {
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 

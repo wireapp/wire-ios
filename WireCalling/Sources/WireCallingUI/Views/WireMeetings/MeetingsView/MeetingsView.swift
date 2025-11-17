@@ -103,7 +103,7 @@ struct MeetingsView: View {
                     viewModel.showAll = true
                 } label: {
                     Text(Strings.Actions.showAll)
-                        .font(.textStyle(.buttonBig))
+                        .font(for: .buttonBig)
                 }
                 .wireButtonStyle(.secondary)
                 .listRowBackground(Color.clear)
@@ -137,7 +137,7 @@ struct MeetingsView: View {
 
 private func SectionTitle(_ text: String) -> some View {
     Text(text)
-        .font(.textStyle(.body2))
+        .font(for: .body2)
         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
         .textCase(nil)
 }
@@ -156,7 +156,7 @@ private struct GroupedSections: View {
                         }
                     } header: {
                         Text(formatTime(slot.time))
-                            .font(.textStyle(.subline1))
+                            .font(for: .subline1)
                             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
@@ -187,17 +187,17 @@ private struct MeetingRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(meeting.title)
-                    .font(.textStyle(.body2))
+                    .font(for: .body2)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .lineLimit(2)
 
                 Text("Meeting date")
-                    .font(.textStyle(.subline1))
+                    .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 HStack(spacing: 6) {
                     Label("Design", systemImage: "person.3.fill")
-                        .font(.textStyle(.subline1))
+                        .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
                 .padding(.top, 2)

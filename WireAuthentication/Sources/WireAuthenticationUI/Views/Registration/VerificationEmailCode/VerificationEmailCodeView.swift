@@ -102,7 +102,7 @@ package struct VerificationEmailCodeView: View {
                             )
                     )
                     .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
