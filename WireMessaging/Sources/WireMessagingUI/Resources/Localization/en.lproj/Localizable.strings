@@ -20,6 +20,7 @@
 "general.loading" = "Loading…";
 "general.confirm" = "OK";
 "general.failure" = "Something went wrong";
+"general.close" = "Close";
 "general.save" = "Save";
 "general.cancel" = "Cancel";
 "general.error.unknown.title." = "Something went wrong";
@@ -117,6 +118,7 @@
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.download" = "Download";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
+"conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
 "conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
@@ -153,6 +155,18 @@
 "conversation.wireCells.allFiles.filters.tags.showMore" = "Show less";
 "conversation.wireCells.allFiles.filters.tags.showLess" = "Show less";
 "conversation.wireCells.allFiles.filters.navigationTitle" = "Filters";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Add or remove tags";
+"conversation.wireCells.tags.headline" = "All members of your team can see and use the tags you create.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Suggested tags";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "No tags were created yet.";
+"conversation.wireCells.tags.textFieldPlaceholder" = "Enter tag name";
+"conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
+"conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.retryButton" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

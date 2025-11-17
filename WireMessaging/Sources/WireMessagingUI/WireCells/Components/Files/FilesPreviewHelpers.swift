@@ -35,30 +35,38 @@ extension FilesViewModel {
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FilesViewModel(
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
+                    repository: previewNodesRepository()
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
+                renameNode: WireCellsRenameNodeUseCase(
+                    nodesRepository: previewNodesRepository(),
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol(),
+                    nodeRenameNotifier: WireCellsNodeRenameNotifier()
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(
+                    nodesAPI: previewTagsApi()
+                ),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(
+                    nodesAPI: previewTagsApi()
+                ),
+                createFolder: WireCellsCreateFolderUseCase(
+                    nodesRepository: previewNodesRepository()
+                ),
+            ),
             setNavigation: { _ in },
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
-                repository: previewNodesRepository()
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: previewNodesRepository(),
-                fileCache: cache,
-                localAssetStore: localAssetStore
-            ),
-            createFolderUseCase: WireCellsCreateFolderUseCase(
-                nodesRepository: previewNodesRepository()
-            ),
-            renameNodeUseCase: WireCellsRenameNodeUseCase(
-                nodesRepository: previewNodesRepository(),
-                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-                nodeCache: MockWireCellsNodeCacheProtocol(),
-                nodeRenameNotifier: WireCellsNodeRenameNotifier()
-            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isFoldersEnabled: isFoldersEnabled
+            isFoldersEnabled: isFoldersEnabled,
         )
     }
 
@@ -91,7 +99,7 @@ extension FileRenameViewModel {
 extension FilesItemViewModel {
 
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
-    static func preview() -> FilesItemViewModel {
+    static func preview(tags: [String] = []) -> FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
@@ -100,12 +108,14 @@ extension FilesItemViewModel {
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
-                icon: .image
+                icon: .image,
+                tags: tags
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
             onDelete: { _ in },
-            onRename: { _ in }
+            onRename: { _ in },
+            onEditTagsSelected: { _ in }
         )
     }
 
@@ -142,6 +152,15 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
         return (page, nextOffset)
     }
     return repository
+}
+
+private func previewTagsApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    mock.getAllTags_MockMethod = {
+        ["suggested tag 1", "lorem", "ipsum"]
+    }
+    mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
 }
 
 private func fileCache() -> any FileCache {
