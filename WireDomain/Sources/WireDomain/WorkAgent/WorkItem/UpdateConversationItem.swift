@@ -50,7 +50,7 @@ struct UpdateConversationItem: WorkItem {
 
         } catch ConversationRepositoryError.conversationNotFound {
             WireLogger.conversation.warn(
-                "conversation does not on backend, delete locally",
+                "conversation does not exist on backend",
                 attributes: [.conversationId: conversationID.id.uuidString],
                 .init(self)
             )
