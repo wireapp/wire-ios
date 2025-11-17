@@ -135,6 +135,8 @@ struct MeetingsView: View {
     }
 }
 
+@ViewBuilder
+@MainActor
 private func SectionTitle(_ text: String) -> some View {
     Text(text)
         .font(for: .body2)

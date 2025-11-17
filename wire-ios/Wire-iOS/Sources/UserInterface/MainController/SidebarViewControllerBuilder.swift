@@ -53,8 +53,6 @@ struct SidebarViewControllerBuilder {
                     .legalHoldIndicatorColor(Color(uiColor: legalHoldIndicatorViewDesign.foregroundColor))
             }
         )
-        sidebarViewController.wireTextStyleMapping = .init()
-        sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
 
         let sidebarDesign = SidebarViewDesign()
         sidebarViewController.sidebarBackgroundColor = sidebarDesign.backgroundColor
