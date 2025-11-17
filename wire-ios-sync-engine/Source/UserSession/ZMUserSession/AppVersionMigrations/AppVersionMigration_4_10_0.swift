@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol ConnectionsLocalStoreProtocol {
+import Foundation
+import WireCoreCrypto
+import WireDomain
 
-    /// Save connection and related objects to local storage.
-    /// - Parameter connectionInfo: connection object
+/// **Issue:**: Missing groups are not synced - [WPB-20123]
+struct AppVersionMigration_4_10_0: AppVersionMigration {
 
-    func storeConnection(
-        _ connectionInfo: ConnectionInfo
-    ) async throws
+    let version: SemanticVersion = "4.10.0"
+    let journal: any JournalProtocol
 
-    /// Set to true the needUpdatedFromBackend attribute of the related conversation
-    /// - Parameter connectionInfo: the connectionInfo of the related conversation
-    func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws
+    func perform() async throws {
+        // in order to fix conversations that does not show in the list
+        // we need to force a conversation sync
+        journal[.isConversationSyncRequired] = true
+    }
 
 }
