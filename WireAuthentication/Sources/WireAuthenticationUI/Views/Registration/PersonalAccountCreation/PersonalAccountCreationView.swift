@@ -108,6 +108,7 @@ package struct PersonalAccountCreationView: View {
         .autocapitalization(.words)
         .autocorrectionDisabled()
         .textContentType(.name)
+        .accessibilityIdentifier("enterNameField")
     }
 
     @ViewBuilder private var emailField: some View {
@@ -130,6 +131,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: viewModel.localizedPasswordRules,
             isValidPassword: { _ in viewModel.isPasswordValid }
         )
+        .accessibilityIdentifier("enterPasswordField")
     }
 
     @ViewBuilder private var confirmPasswordField: some View {
@@ -140,6 +142,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: Strings.InputConfirmPassword.error,
             isValidPassword: { _ in viewModel.isPasswordMatchConfirmedPassword }
         )
+        .accessibilityIdentifier("enterConfirmPasswordField")
     }
 
     @ViewBuilder private var dataUsageAgreementView: some View {
