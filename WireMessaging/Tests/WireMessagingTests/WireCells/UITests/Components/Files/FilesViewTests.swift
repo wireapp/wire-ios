@@ -61,7 +61,7 @@ final class FilesViewTests: XCTestCase {
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
-            nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
@@ -75,6 +75,9 @@ final class FilesViewTests: XCTestCase {
         snapshotHelper = nil
         nodesRepository = nil
         fetchNodesUseCase = nil
+        renameNodeUseCase = nil
+        updateTagsUseCase = nil
+        getTagSuggestionsUseCase = nil
     }
 
     @MainActor
@@ -329,10 +332,14 @@ final class FilesViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
+                createFolder: WireCellsCreateFolderUseCase(
+                    nodesRepository: nodesRepository
+                ),
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true,
         )
 
         filesViewModel.state = state

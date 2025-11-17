@@ -90,7 +90,8 @@ package struct FilesViewContainer: View {
                     nodeRenameNotifier: nodeRenameNotifier
                 ),
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -99,7 +100,9 @@ package struct FilesViewContainer: View {
             },
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            cellName: cellName,
+            isFoldersEnabled: isFoldersEnabled
         )
     }
 }

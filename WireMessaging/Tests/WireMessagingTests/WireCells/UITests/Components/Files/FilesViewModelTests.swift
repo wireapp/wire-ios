@@ -59,10 +59,12 @@ final class FilesViewModelTests {
                 ),
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
+                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            isFoldersEnabled: true,
         )
 
         sut.$state.dropFirst().sink { [weak self] state in

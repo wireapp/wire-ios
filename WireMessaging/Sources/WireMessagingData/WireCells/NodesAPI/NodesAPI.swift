@@ -157,6 +157,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func getAllTags() async throws -> [String] {
         try await restAPI.getAllTags()
     }
+
+    package func createFolder(at path: String) async throws {
+        try await restAPI.createFolder(at: path)
+    }
 }
 
 private extension CellsSDK.ErrorResponse {

@@ -20,7 +20,7 @@ public import Foundation
 public import UIKit
 public import SwiftUI
 public import WireData
-import WireFoundation
+public import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 public import WireMessagingUI
@@ -139,7 +139,8 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
-        isCellsStatePending: Bool
+        isCellsStatePending: Bool,
+        accentColor: WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
@@ -154,6 +155,8 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled
             )
+            .environment(\.wireAccentColor, accentColor)
+            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
@@ -179,47 +182,16 @@ public extension WireMessagingFactory {
                             nodeRenameNotifier: nodeRenameNotifier
                         ),
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
-                        getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
+                        getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                        createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
+                    fileCache: fileCache,
+                    isFoldersEnabled: false
                 )
             )
         )
-    }
-
-    @MainActor
-    private func makeFilesHostingController<T: FilesViewProtocol>(
-        configuration: WireCellsGetNodesRequest.Configuration,
-        isCellsStatePending: Bool = false
-    ) -> UIHostingController<T> {
-        let viewModel = FilesViewModel(
-            useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
-                    configuration: configuration,
-                    repository: nodesAPI
-                ),
-                deleteNodes: WireCellsDeleteNodesUseCase(
-                    repository: nodesAPI,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                renameNode: WireCellsRenameNodeUseCase(
-                    nodesRepository: nodesAPI,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache,
-                    nodeRenameNotifier: nodeRenameNotifier
-                ),
-                updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
-            ),
-            isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            fileCache: fileCache
-        )
-
-        return UIHostingController(rootView: T(viewModel: viewModel))
     }
 
     @MainActor
