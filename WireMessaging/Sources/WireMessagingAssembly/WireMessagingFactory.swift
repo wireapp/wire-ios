@@ -20,7 +20,7 @@ public import Foundation
 public import UIKit
 public import SwiftUI
 public import WireData
-import WireFoundation
+public import WireFoundation
 public import WireMessagingDomain
 import WireMessagingData
 public import WireMessagingUI
@@ -128,6 +128,10 @@ public struct WireMessagingFactory {
             localAssetStore: localAssetStore
         )
     }
+
+    public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
+        WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
+    }
 }
 
 public extension WireMessagingFactory {
@@ -135,11 +139,13 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
-        isCellsStatePending: Bool
+        isCellsStatePending: Bool,
+        accentColor: WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
                 cellName: cellName,
+                nodesAPI: nodesAPI,
                 nodesRepository: nodesAPI,
                 isCellsStatePending: isCellsStatePending,
                 localAssetStore: localAssetStore,
@@ -149,6 +155,8 @@ public extension WireMessagingFactory {
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled
             )
+            .environment(\.wireAccentColor, accentColor)
+            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
@@ -157,24 +165,30 @@ public extension WireMessagingFactory {
         UIHostingController(
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
-                    fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                        configuration: .filesBrowserView,
-                        repository: nodesAPI
-                    ),
-                    deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                        repository: nodesAPI,
-                        fileCache: fileCache,
-                        localAssetStore: localAssetStore
-                    ),
-                    renameNodeUseCase: WireCellsRenameNodeUseCase(
-                        nodesRepository: nodesAPI,
-                        localAssetsRepository: localAssetRepository,
-                        nodeCache: nodeCache,
-                        nodeRenameNotifier: nodeRenameNotifier
+                    useCases: .init(
+                        fetchNodes: WireCellsFetchNodesUseCase(
+                            configuration: .filesBrowserView,
+                            repository: nodesAPI
+                        ),
+                        deleteNodes: WireCellsDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        renameNode: WireCellsRenameNodeUseCase(
+                            nodesRepository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache,
+                            nodeRenameNotifier: nodeRenameNotifier
+                        ),
+                        updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
+                        getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                        createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
+                    fileCache: fileCache,
+                    isFoldersEnabled: false
                 )
             )
         )
