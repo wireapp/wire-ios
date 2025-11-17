@@ -73,7 +73,6 @@ final class WireCellsDocumentAttachmentPreviewTests: XCTestCase {
                 isError: testCase.isError
             )
             .frame(width: 222, height: 74)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             snapshotHelper
                 .withUserInterfaceStyle(.light)
                 .verify(matching: view, named: "\(index).light")

@@ -90,7 +90,7 @@ package struct ReloginViaSSOView: View {
 
     @ViewBuilder private var expirationMessage: some View {
         Text(Strings.expirationMessage)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .multilineTextAlignment(.center)
             .foregroundStyle(Color.primaryText)
     }
