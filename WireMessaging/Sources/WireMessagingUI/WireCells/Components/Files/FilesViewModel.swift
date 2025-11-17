@@ -58,6 +58,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The icon representing the item's type.
     let icon: FileIcon
+
+    /// The tags that users have added for that file.
+    let tags: [String]
 }
 
 @MainActor
@@ -70,6 +73,17 @@ package final class FilesViewModel: ObservableObject {
 
         /// How close to the end of the list before loading more items.
         static let loadMoreThreshold = 5
+    }
+
+    enum SheetNavigation: Identifiable {
+        case editTags(fileItem: FilesViewItem)
+
+        var id: String {
+            switch self {
+            case let .editTags(fileItem: item):
+                "editTags(\(item.id))"
+            }
+        }
     }
 
     /// An navigation option displayed in the navigation folder menu.
@@ -104,11 +118,35 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    package struct UseCases {
+        package init(
+            fetchNodes: WireCellsFetchNodesUseCase,
+            deleteNodes: WireCellsDeleteNodesUseCase,
+            renameNode: any WireCellsRenameNodeUseCaseProtocol,
+            updateTags: any WireCellsUpdateTagsUseCaseProtocol,
+            getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
+            createFolder: any WireCellsCreateFolderUseCaseProtocol,
+        ) {
+
+            self.fetchNodes = fetchNodes
+            self.deleteNodes = deleteNodes
+            self.renameNode = renameNode
+            self.updateTags = updateTags
+            self.getTagSuggestions = getTagSuggestions
+            self.createFolder = createFolder
+        }
+
+        let fetchNodes: WireCellsFetchNodesUseCase
+        let deleteNodes: WireCellsDeleteNodesUseCase
+        let renameNode: any WireCellsRenameNodeUseCaseProtocol
+        let updateTags: any WireCellsUpdateTagsUseCaseProtocol
+        let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
+        let createFolder: any WireCellsCreateFolderUseCaseProtocol
+    }
+
+    let useCases: UseCases
+
     private let setNavigation: ([FilesViewItem]) -> Void
-    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
-    private let deleteNodesUseCase: WireCellsDeleteNodesUseCase
-    private let createFolderUseCase: WireCellsCreateFolderUseCase
-    private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
@@ -123,33 +161,29 @@ package final class FilesViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var viewingURL: URL?
     @Published var state: State
+    @Published var sheetNavigation: SheetNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
+
     var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
     let title: String?
 
     package init(
+        useCases: UseCases,
         title: String? = nil,
         navigationPath: [FilesViewItem] = [],
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
-        fetchNodesUseCase: WireCellsFetchNodesUseCase,
-        deleteNodesUseCase: WireCellsDeleteNodesUseCase,
-        createFolderUseCase: WireCellsCreateFolderUseCase,
-        renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool
     ) {
+        self.useCases = useCases
         self.title = title
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
-        self.fetchNodesUseCase = fetchNodesUseCase
-        self.deleteNodesUseCase = deleteNodesUseCase
-        self.createFolderUseCase = createFolderUseCase
-        self.renameNodeUseCase = renameNodeUseCase
         self.localAssetRepository = localAssetRepository
         self.fileCache = fileCache
         self.cellName = cellName
@@ -221,7 +255,10 @@ package final class FilesViewModel: ObservableObject {
             },
             onRename: { [weak self] item in
                 self?.fileRenameView = self?.makeFileRenameView(item: item)
-            }
+            },
+            onEditTagsSelected: { [weak self] item in
+                self?.sheetNavigation = .editTags(fileItem: item)
+            },
         )
     }
 
@@ -291,7 +328,7 @@ package final class FilesViewModel: ObservableObject {
         let folderPath = navigationPath.last?.filePath ?? cellName
 
         let viewModel = CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
+            createFolderUseCase: useCases.createFolder,
             folderPath: folderPath
         )
 
@@ -363,7 +400,7 @@ package final class FilesViewModel: ObservableObject {
     private nonisolated func fetchItems(
         offset: Int
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
-        let (nodes, isLastPage) = try await fetchNodesUseCase.invoke(
+        let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
             offset: offset
         )
@@ -381,7 +418,8 @@ package final class FilesViewModel: ObservableObject {
                 icon: kind == .folder ? .folder : .make(
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
-                )
+                ),
+                tags: node.tags
             )
         }
 
@@ -415,7 +453,7 @@ package final class FilesViewModel: ObservableObject {
         state = .received(items: Self.processItems(currentItems))
 
         do {
-            try await deleteNodesUseCase.invoke(nodeIDs: [asset.id])
+            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id])
         } catch {
             guard state.isLoaded else { return }
 
@@ -452,7 +490,7 @@ package final class FilesViewModel: ObservableObject {
         item: FilesViewItem
     ) -> FileRenameView {
         let viewModel = FileRenameViewModel(
-            renameNodeUseCase: renameNodeUseCase,
+            renameNodeUseCase: useCases.renameNode,
             model: .init(
                 nodeID: item.id,
                 filename: item.name,

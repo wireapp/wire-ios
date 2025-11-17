@@ -36,29 +36,35 @@ final class FilesViewModelTests {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
         self.sut = FilesViewModel(
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
-                repository: nodesRepository
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesRepository,
-                fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            createFolderUseCase: WireCellsCreateFolderUseCase(
-                nodesRepository: nodesRepository
-            ),
-            renameNodeUseCase: WireCellsRenameNodeUseCase(
-                nodesRepository: MockWireCellsNodesRepositoryProtocol(),
-                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-                nodeCache: MockWireCellsNodeCacheProtocol(),
-                nodeRenameNotifier: WireCellsNodeRenameNotifier()
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
+                    repository: nodesRepository
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
+                renameNode: WireCellsRenameNodeUseCase(
+                    nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol(),
+                    nodeRenameNotifier: WireCellsNodeRenameNotifier()
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
+                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache,
-            isFoldersEnabled: true
+            isFoldersEnabled: true,
         )
 
         sut.$state.dropFirst().sink { [weak self] state in
@@ -135,7 +141,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
-                icon: .other
+                icon: .other,
+                tags: []
             )],
             [], // Clears items
             [FilesViewItem(
@@ -145,7 +152,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
-                icon: .other
+                icon: .other,
+                tags: []
             )]
         ])
     }
@@ -192,7 +200,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
-                icon: .image
+                icon: .image,
+                tags: []
             ),
             FilesViewItem(
                 id: node2.id,
@@ -201,7 +210,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
-                icon: .other
+                icon: .other,
+                tags: []
             )
         ])
     }
@@ -238,7 +248,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
-                icon: .other
+                icon: .other,
+                tags: []
             ),
             FilesViewItem(
                 id: node2.id,
@@ -247,7 +258,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: now - 60,
-                icon: .other
+                icon: .other,
+                tags: []
             ),
             FilesViewItem(
                 id: node3.id,
@@ -256,7 +268,8 @@ final class FilesViewModelTests {
                 filePath: "some-cell/c.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
-                icon: .other
+                icon: .other,
+                tags: []
             )
         ])
     }
@@ -377,7 +390,8 @@ final class FilesViewModelTests {
                     filePath: "foo/bb.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
-                    icon: .other
+                    icon: .other,
+                    tags: []
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -386,7 +400,8 @@ final class FilesViewModelTests {
                     filePath: "foo/cc.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
-                    icon: .other
+                    icon: .other,
+                    tags: []
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -395,7 +410,8 @@ final class FilesViewModelTests {
                     filePath: "foo/dd.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
-                    icon: .other
+                    icon: .other,
+                    tags: []
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -404,7 +420,8 @@ final class FilesViewModelTests {
                     filePath: "foo/aaa.xyz",
                     ownedBy: nil,
                     modifiedAt: now,
-                    icon: .other
+                    icon: .other,
+                    tags: []
                 )
             ]
         )

@@ -16,32 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-@testable import WireMessagingUI
+/// Sets a new list of tags for a file or folder, represented by the given node ID.
+package struct WireCellsUpdateTagsUseCase<NodesAPI: NodesAPIProtocol>: WireCellsUpdateTagsUseCaseProtocol {
+    private let nodesAPI: NodesAPI
 
-extension FilesViewItem {
-
-    static func fixture(
-        id: UUID = UUID(),
-        kind: FilesViewItem.Kind = .file,
-        name: String = "filename.png",
-        filePath: String = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image filename.png",
-        ownedBy: String? = nil,
-        modifiedAt: Date? = nil,
-        icon: FileIcon = .image,
-        tags: [String] = []
-    ) -> FilesViewItem {
-        FilesViewItem(
-            id: id,
-            kind: kind,
-            name: name,
-            filePath: filePath,
-            ownedBy: ownedBy,
-            modifiedAt: modifiedAt,
-            icon: icon,
-            tags: tags
-        )
+    package init(nodesAPI: NodesAPI) {
+        self.nodesAPI = nodesAPI
     }
 
+    package func invoke(nodeID: UUID, tags: [String]) async throws {
+        try await nodesAPI.updateTags(nodeID: nodeID, tags: tags)
+    }
 }
