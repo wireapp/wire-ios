@@ -69,7 +69,6 @@ final class AccountSwitcherViewTests: XCTestCase {
             )
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

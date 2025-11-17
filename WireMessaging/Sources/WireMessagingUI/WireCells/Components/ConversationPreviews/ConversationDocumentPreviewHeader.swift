@@ -63,17 +63,17 @@ public struct ConversationDocumentPreviewHeader: View {
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     // If this font is changed
                     // remember to change the reference in the header @ScaledMetric
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .lineLimit(scalingHeaderLineLimit)
                 Spacer()
                 Text(L10n.Localizable.Conversation.File.Preview.open)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .lineLimit(scalingHeaderLineLimit)
             }
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                .wireTextStyle(.h3)
+                .font(for: .h3)
                 // If this font is changed
                 // remember to change the reference in the label @ScaledMetric
                 .lineLimit(max(3, scalingLabelLineLimit))
@@ -89,7 +89,6 @@ package struct ConversationDocumentPreviewHeader_Preview: View {
             headerText: "Document (336 KB)",
             labelText: "Lorem ipsum"
         )
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 

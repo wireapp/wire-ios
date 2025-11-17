@@ -245,7 +245,6 @@ private struct CornerButtonStyle: ButtonStyle {
             )
             .frame(height: 82)
             .background(Color.white)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         }
         Spacer(minLength: 500)
     }
