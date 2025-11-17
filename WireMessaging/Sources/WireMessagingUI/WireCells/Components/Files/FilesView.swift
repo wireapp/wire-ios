@@ -121,6 +121,14 @@ package struct FilesView: FilesViewProtocol {
                 },
                 content: { $0 }
             )
+            .fullScreenCover(item: $viewModel.fullScreenCoverNavigation) { navigationItem in
+                switch navigationItem {
+                case .recycleBin:
+                    NavigationStack {
+                        Text("TODO: Recycle Bin")
+                    }
+                }
+            }
         }
     }
 
@@ -136,8 +144,16 @@ private extension FilesView {
                 toolBarTitleMenuContent()
             }
         }
+        
+        if !viewModel.isRecycleBin {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                moreActionsButton
+            }
+        }
 
-        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            closeButton
+        }
     }
 
     func toolBarTitleMenuContent() -> some View {
@@ -155,13 +171,31 @@ private extension FilesView {
         Button(
             action: { dismiss() },
             label: {
-                Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+                Image(systemName: "xmark")
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
+        .tint(ColorTheme.Base.primary.color)
+    }
+    
+    var moreActionsButton: some View {
+        Menu {
+            Button {
+                viewModel.fullScreenCoverNavigation = .recycleBin
+            } label: {
+                Label {
+                    Text(Strings.Files.openRecycleBin)
+                } icon: {
+                    Image(systemName: "trash")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .tint(ColorTheme.Base.primary.color)
     }
 }
 
@@ -203,6 +237,8 @@ private extension FilesViewModel.FolderMenuOption {
 }
 
 #Preview {
-    FilesView(viewModel: .preview(isFoldersEnabled: true))
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    NavigationStack {
+        FilesView(viewModel: .preview(isFoldersEnabled: true))
+    }
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

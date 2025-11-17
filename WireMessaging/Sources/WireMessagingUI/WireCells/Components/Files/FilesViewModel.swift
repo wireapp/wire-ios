@@ -85,6 +85,14 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
+    
+    enum FullScreenCoverNavigation: String, Identifiable {
+        case recycleBin
+        
+        var id: String {
+            rawValue
+        }
+    }
 
     /// An navigation option displayed in the navigation folder menu.
     enum FolderMenuOption: Hashable {
@@ -154,6 +162,7 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     let isFoldersEnabled: Bool
+    let isRecycleBin: Bool
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -162,6 +171,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
+    @Published var fullScreenCoverNavigation: FullScreenCoverNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
 
@@ -178,7 +188,8 @@ package final class FilesViewModel: ObservableObject {
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isRecycleBin: Bool = false,
     ) {
         self.useCases = useCases
         self.title = title
@@ -189,6 +200,7 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
+        self.isRecycleBin = isRecycleBin
 
         bindSearch()
     }
