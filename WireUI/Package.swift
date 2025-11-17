@@ -137,7 +137,7 @@ let package = Package(
 
         .target(
             name: "WireSidebarUI",
-            dependencies: ["WireFoundation", "WireLocators"],
+            dependencies: ["WireDesign", "WireLocators"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])

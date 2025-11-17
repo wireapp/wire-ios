@@ -30,7 +30,7 @@ struct LinkButtonStyle: SwiftUI.ButtonStyle {
             .underline()
             .padding(8)
             .foregroundStyle(foregroundColor(for: isEnabled, and: isFocused))
-            .wireTextStyle(.body1)
+            .font(for: .body1)
     }
 }
 

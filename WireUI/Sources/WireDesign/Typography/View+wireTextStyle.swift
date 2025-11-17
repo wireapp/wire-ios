@@ -16,15 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireFoundation
+public import SwiftUI
 
-public extension Font {
+public extension View {
 
-    /// Creates a font from the given text style.
+    /// Sets a font for the given text style.
     ///
     /// - Parameter textStyle: The text style to use to create the Font.
     /// - Returns: Font that uses the style you specify.
+
+    func font(for textStyle: WireTextStyle) -> some View {
+        font(.textStyle(textStyle))
+    }
+
+}
+
+private extension Font {
 
     static func textStyle(_ textStyle: WireTextStyle) -> Font {
         switch textStyle {
@@ -57,4 +64,27 @@ public extension Font {
         }
     }
 
+}
+
+// MARK: - Previews
+
+#Preview("SwiftUI.Font") {
+    WireTextStyleFontMappingPreview()
+}
+
+@ViewBuilder @MainActor
+func WireTextStyleFontMappingPreview() -> some View {
+    NavigationStack {
+        ScrollView {
+            VStack(spacing: 2) {
+                ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
+                    Text(textStyle.rawValue)
+                        .font(for: textStyle)
+                }
+                .padding(.top)
+            }
+        }
+        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }

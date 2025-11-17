@@ -135,5 +135,4 @@ struct WireCellsAttachmentsPreviewItemView: View {
     WireCellsAttachmentsPreviewItemView(
         viewModel: WireCellsAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

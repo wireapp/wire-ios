@@ -16,21 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+public import SwiftUI
+public import WireFoundation
 
-public enum WireTextStyle: CaseIterable, Sendable {
+public extension View {
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case subline2
-    case buttonSmall
-    case buttonBig
+    func foregroundStyle(_ accentColor: WireAccentColor) -> some View {
+        foregroundStyle(Color(accentColor))
+    }
+
 }
