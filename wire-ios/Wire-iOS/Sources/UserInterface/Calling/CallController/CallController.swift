@@ -159,6 +159,33 @@ extension CallController: WireCallCenterCallStateObserver {
                 self.updateActiveCallPresentationState()
             }
         }
+        if shouldUpdatePresentationForCallState(callState, previousCallState: previousCallState) {
+            updateActiveCallPresentationState()
+        }
+    }
+
+    private func shouldUpdatePresentationForCallState(
+        _ callState: CallState,
+        previousCallState: CallState?
+    ) -> Bool {
+        switch callState {
+        case .established:
+            // Always update when call becomes established (media flowing)
+            // This handles the case where call was connecting during account switch
+            return true
+        case .incoming, .answered:
+            // Update for incoming/answered calls to show UI
+            return true
+        case .outgoing:
+            // Update for outgoing calls
+            return true
+        case .terminating, .mediaStopped, .none:
+            // These are handled by dismissCall() in updateActiveCallPresentationState
+            return true
+        case .establishedDataChannel, .unknown:
+            // Don't update for these intermediate states
+            return false
+        }
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {

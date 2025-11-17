@@ -431,7 +431,20 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
+//        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
+//        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
+//            // UI is now ready - safe to present modals
+//            self?.authenticatedRouter?.updateActiveCallPresentationState()
+//            completion()
+//        }
+        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
+            // UI is now ready - safe to present modals
+            self?.authenticatedRouter?.updateActiveCallPresentationState()
+
+            // UI is ready now - safe to wire up URL router
+            self?.urlActionRouter.authenticatedRouter = authenticatedRouter
+            completion()
+        }
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
@@ -510,8 +523,11 @@ extension AppRootRouter {
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
             // This is needed to display an ongoing call when coming from the background.
-            authenticatedRouter?.updateActiveCallPresentationState()
-            urlActionRouter.authenticatedRouter = authenticatedRouter
+//            authenticatedRouter?.updateActiveCallPresentationState()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+//                self?.authenticatedRouter?.updateActiveCallPresentationState()
+//            }
+            //urlActionRouter.authenticatedRouter = authenticatedRouter
             ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .appOpen)
             sessionManager.processPendingURLActionRequiresAuthentication()
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
