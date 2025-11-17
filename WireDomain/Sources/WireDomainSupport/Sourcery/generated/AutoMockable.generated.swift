@@ -82,6 +82,30 @@ class MockAppExtensionPushChannelCoordinatorProtocol: AppExtensionPushChannelCoo
 
 }
 
+public class MockAssetTransferStateResolverProtocol: AssetTransferStateResolverProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveTransferState
+
+    public var resolveTransferStateAssetMessageGenericMessageContext_Invocations: [(assetMessage: ZMAssetClientMessage, genericMessage: GenericMessage, context: NSManagedObjectContext)] = []
+    public var resolveTransferStateAssetMessageGenericMessageContext_MockMethod: ((ZMAssetClientMessage, GenericMessage, NSManagedObjectContext) -> Void)?
+
+    public func resolveTransferState(assetMessage: ZMAssetClientMessage, genericMessage: GenericMessage, context: NSManagedObjectContext) {
+        resolveTransferStateAssetMessageGenericMessageContext_Invocations.append((assetMessage: assetMessage, genericMessage: genericMessage, context: context))
+
+        guard let mock = resolveTransferStateAssetMessageGenericMessageContext_MockMethod else {
+            fatalError("no mock for `resolveTransferStateAssetMessageGenericMessageContext`")
+        }
+
+        mock(assetMessage, genericMessage, context)
+    }
+
+}
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -192,6 +216,26 @@ public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
         try await mock(connectionInfo)
     }
 
+    // MARK: - markConversationAsNeedUpdatedFromBackend
+
+    public var markConversationAsNeedUpdatedFromBackend_Invocations: [ConnectionInfo] = []
+    public var markConversationAsNeedUpdatedFromBackend_MockError: Error?
+    public var markConversationAsNeedUpdatedFromBackend_MockMethod: ((ConnectionInfo) async throws -> Void)?
+
+    public func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws {
+        markConversationAsNeedUpdatedFromBackend_Invocations.append(connectionInfo)
+
+        if let error = markConversationAsNeedUpdatedFromBackend_MockError {
+            throw error
+        }
+
+        guard let mock = markConversationAsNeedUpdatedFromBackend_MockMethod else {
+            fatalError("no mock for `markConversationAsNeedUpdatedFromBackend`")
+        }
+
+        try await mock(connectionInfo)
+    }
+
 }
 
 public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
@@ -236,6 +280,26 @@ public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
         guard let mock = updateConnection_MockMethod else {
             fatalError("no mock for `updateConnection`")
+        }
+
+        try await mock(connection)
+    }
+
+    // MARK: - scheduleToSyncConversation
+
+    public var scheduleToSyncConversationWith_Invocations: [Connection] = []
+    public var scheduleToSyncConversationWith_MockError: Error?
+    public var scheduleToSyncConversationWith_MockMethod: ((Connection) async throws -> Void)?
+
+    public func scheduleToSyncConversation(with connection: Connection) async throws {
+        scheduleToSyncConversationWith_Invocations.append(connection)
+
+        if let error = scheduleToSyncConversationWith_MockError {
+            throw error
+        }
+
+        guard let mock = scheduleToSyncConversationWith_MockMethod else {
+            fatalError("no mock for `scheduleToSyncConversationWith`")
         }
 
         try await mock(connection)

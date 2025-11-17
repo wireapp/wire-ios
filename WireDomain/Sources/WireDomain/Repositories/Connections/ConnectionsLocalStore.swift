@@ -44,7 +44,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
             let conversation = try storedConversation(from: connectionInfo, with: connection)
 
-            conversation.needsToBeUpdatedFromBackend = true
+            conversation.needsToBeUpdatedFromBackend = false
             conversation.lastModifiedDate = connectionInfo.lastUpdate
             conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
@@ -55,6 +55,24 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             try context.save()
         }
     }
+
+    public func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws {
+        guard let conversationID = connectionInfo.qualifiedConversationID else {
+            throw ConnectionsRepositoryError.missingConversationId
+        }
+
+        try await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation?.needsToBeUpdatedFromBackend = true
+
+            try context.save()
+        }
+    }
+
 
     /// Create or update conversation related to the connection's sender
     /// - Parameters:

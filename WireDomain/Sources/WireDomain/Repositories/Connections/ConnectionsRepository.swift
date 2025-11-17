@@ -57,4 +57,7 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         try await connectionsLocalStore.storeConnection(connection.toDomainModel())
     }
 
+    public func scheduleToSyncConversation(with connection: Connection) async throws {
+        try await connectionsLocalStore.markConversationAsNeedUpdatedFromBackend(connection.toDomainModel())
+    }
 }

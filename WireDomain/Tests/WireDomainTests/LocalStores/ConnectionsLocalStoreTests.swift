@@ -56,8 +56,8 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     func testPullConnections_GivenConnectionDoesNotExist_FederationEnabled() async throws {
-        await context.perform {
-            self.context.isFederationEnabled = true
+        await context.perform { [context] in
+            context.isFederationEnabled = true
         }
         try await internalTestPullConnections_GivenConnectionDoesNotExist(
             federationEnabled: true
@@ -108,7 +108,7 @@ final class ConnectionsLocalStoreTests: XCTestCase {
                 XCTAssertNil(relatedConversation.domain)
             }
 
-            XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(relatedConversation.needsToBeUpdatedFromBackend)
         }
     }
 
@@ -141,20 +141,46 @@ final class ConnectionsLocalStoreTests: XCTestCase {
 
             XCTAssertNil(relatedConversation.domain)
 
+            XCTAssertFalse(relatedConversation.needsToBeUpdatedFromBackend)
+        }
+    }
+
+
+    func testMarkConversationAsNeedUpdatedFromBackend_It_Successfully_Updates_Conversation_Locally() async throws {
+        // Given
+
+        let connection = Scaffolding.connection
+        try await sut.storeConnection(connection)
+
+        // When
+        try await sut.markConversationAsNeedUpdatedFromBackend(connection)
+
+
+        // Then
+
+        try await context.perform { [context] in
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(
+                userID: Scaffolding.member2ID.uuid,
+                domain: Scaffolding.member2ID.domain,
+                in: context
+            ))
+
+            let relatedConversation = try XCTUnwrap(storedConnection.to.oneOnOneConversation)
+
             XCTAssertTrue(relatedConversation.needsToBeUpdatedFromBackend)
         }
     }
 
     private enum Scaffolding {
-        nonisolated(unsafe) static let member1ID = WireDataModel.QualifiedID(
+        static let member1ID = WireDataModel.QualifiedID(
             uuid: .mockID1,
             domain: String.randomDomain()
         )
-        nonisolated(unsafe) static let conversationID = WireDataModel.QualifiedID(
+        static let conversationID = WireDataModel.QualifiedID(
             uuid: .mockID2,
             domain: String.randomDomain()
         )
-        nonisolated(unsafe) static let member2ID = WireDataModel.QualifiedID(
+        static let member2ID = WireDataModel.QualifiedID(
             uuid: .mockID3,
             domain: String.randomDomain()
         )
