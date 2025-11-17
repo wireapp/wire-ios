@@ -28,4 +28,3 @@ public enum RepeatOption: CaseIterable, Sendable {
     case yearly
 
 }
-

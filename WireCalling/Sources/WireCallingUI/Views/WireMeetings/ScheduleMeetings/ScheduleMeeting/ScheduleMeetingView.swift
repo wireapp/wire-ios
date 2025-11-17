@@ -18,9 +18,9 @@
 
 import Foundation
 import SwiftUI
+import WireCallingDomain
 import WireDesign
 import WireReusableUIComponents
-import WireCallingDomain
 
 struct ScheduleMeetingView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
