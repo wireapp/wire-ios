@@ -26,14 +26,14 @@ public extension View {
     /// - Returns: Font that uses the style you specify.
 
     func font(for textStyle: WireTextStyle) -> some View {
-        self.font(.textStyle(textStyle))
+        font(.textStyle(textStyle))
     }
 
 }
 
-extension Font {
+private extension Font {
 
-    fileprivate static func textStyle(_ textStyle: WireTextStyle) -> Font {
+    static func textStyle(_ textStyle: WireTextStyle) -> Font {
         switch textStyle {
         case .largeTitle:
             .largeTitle

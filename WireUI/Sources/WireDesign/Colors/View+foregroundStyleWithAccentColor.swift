@@ -19,9 +19,9 @@
 public import SwiftUI
 public import WireFoundation
 
-extension View {
+public extension View {
 
-    public func foregroundStyle(_ accentColor: WireAccentColor) -> some View {
+    func foregroundStyle(_ accentColor: WireAccentColor) -> some View {
         foregroundStyle(Color(accentColor))
     }
 

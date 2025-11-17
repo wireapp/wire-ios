@@ -134,5 +134,4 @@ struct WireCellsLargeDocumentPreviewView: View {
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

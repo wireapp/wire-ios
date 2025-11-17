@@ -83,5 +83,4 @@ struct WireCellsDocumentHeaderView: View {
         isError: false
     )
     .frame(width: 222, height: 74)
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

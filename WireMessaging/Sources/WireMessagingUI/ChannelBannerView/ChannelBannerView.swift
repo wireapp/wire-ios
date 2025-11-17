@@ -112,6 +112,5 @@ public struct ChannelBannerView: View {
             )
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     .preferredColorScheme(.dark)
 }

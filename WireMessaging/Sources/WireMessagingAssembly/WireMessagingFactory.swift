@@ -215,8 +215,7 @@ public extension WireMessagingFactory {
                     lastOpenRequest: lastOpenRequest,
                     nodeRenameNotifier: nodeRenameNotifier
                 )
-            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        )
+            ))
         viewController.view.backgroundColor = .clear
         return viewController
     }

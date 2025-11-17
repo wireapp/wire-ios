@@ -50,7 +50,6 @@ final class DetermineAuthMethodViewTests: XCTestCase {
             let view = NavigationStack {
                 DetermineAuthMethodView(factory: factory)
             }
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)

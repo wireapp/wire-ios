@@ -97,5 +97,4 @@ struct WireCellsImageConversationAttachmentPreview: View {
         isAssetDownloadError: false,
         canShowNoPreviewMessage: true
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

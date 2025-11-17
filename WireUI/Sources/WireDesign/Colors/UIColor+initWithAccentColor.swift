@@ -41,7 +41,6 @@ public extension UIColor {
 
         case .purple:
             self.init(light: .purple500Light, dark: .purple500Dark)
-
         }
     }
 

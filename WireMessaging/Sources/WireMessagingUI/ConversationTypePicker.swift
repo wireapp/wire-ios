@@ -151,6 +151,5 @@ package struct ConversationTypePicker: View {
         )
         .padding()
     }
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     .background(.gray)
 }

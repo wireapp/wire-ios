@@ -86,6 +86,7 @@ private struct DotSeparatedTextView: View {
             .font(for: .subline1)
             .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
     }
+
 }
 
 #Preview {
@@ -110,6 +111,5 @@ private struct DotSeparatedTextView: View {
                 action: {}
             )
         )
-
     }
 }
