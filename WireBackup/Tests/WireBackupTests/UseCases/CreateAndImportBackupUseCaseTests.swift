@@ -102,7 +102,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         // import
 
         backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
-        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsSetUUIDReturnValue = []
 
         let importBackupUseCase = importBackupUseCaseFactory(backupURL)
         let importEvents = try await importBackupUseCase.invoke(password: password)
