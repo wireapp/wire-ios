@@ -58,7 +58,7 @@ private extension Font {
         case .subline2:
             .caption.weight(.semibold)
         case .buttonSmall:
-            .system(size: 14, weight: .semibold)
+            .callout.weight(.semibold)
         case .buttonBig:
             .title3.weight(.semibold)
         }
