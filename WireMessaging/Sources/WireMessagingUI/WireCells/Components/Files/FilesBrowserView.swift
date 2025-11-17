@@ -65,6 +65,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+            .toolbar { toolbarContent }
             .if(showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
@@ -92,6 +93,23 @@ package struct FilesBrowserView: FilesViewProtocol {
             false
         }
     }
+}
+
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+    
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
+        }
+    }
+    
 }
 
 // MARK: - Helper

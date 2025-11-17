@@ -111,6 +111,15 @@ extension FilesItemViewModel {
 
 }
 
+extension FilesFiltersViewModel {
+    
+    /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
+    static func preview() -> FilesFiltersViewModel {
+        FilesFiltersViewModel()
+    }
+    
+}
+
 // MARK: - Dependencies
 
 private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {

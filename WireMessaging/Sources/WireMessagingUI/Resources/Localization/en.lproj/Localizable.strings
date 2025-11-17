@@ -147,6 +147,12 @@
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
+"conversation.wireCells.allFiles.filters.clearAll" = "Clear all";
+"conversation.wireCells.allFiles.filters.apply" = "Apply";
+"conversation.wireCells.allFiles.filters.tags.sectionTitle" = "Tags";
+"conversation.wireCells.allFiles.filters.tags.showMore" = "Show less";
+"conversation.wireCells.allFiles.filters.tags.showLess" = "Show less";
+"conversation.wireCells.allFiles.filters.navigationTitle" = "Filters";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
