@@ -33,13 +33,13 @@ extension BackupLocalStore {
         }
     }
 
-    func fetchAllMessageIDs() async throws -> Set<String> {
+    func fetchAllMessageIDs() async throws -> Set<UUID> {
         try await backupContext.perform { [backupContext] in
             let fetchRequest = ZMMessage.fetchRequest()
             fetchRequest.propertiesToFetch = ["nonce_data"]
 
             let messages = try backupContext.fetch(fetchRequest) as! [ZMMessage]
-            return Set(messages.compactMap(\.nonce).map(\.uuidString))
+            return Set(messages.compactMap(\.nonce))
         }
     }
 
