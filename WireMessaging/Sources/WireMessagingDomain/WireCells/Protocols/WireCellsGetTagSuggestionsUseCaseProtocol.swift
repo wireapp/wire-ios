@@ -18,30 +18,6 @@
 
 import Foundation
 
-@testable import WireMessagingUI
-
-extension FilesViewItem {
-
-    static func fixture(
-        id: UUID = UUID(),
-        kind: FilesViewItem.Kind = .file,
-        name: String = "filename.png",
-        filePath: String = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image filename.png",
-        ownedBy: String? = nil,
-        modifiedAt: Date? = nil,
-        icon: FileIcon = .image,
-        tags: [String] = []
-    ) -> FilesViewItem {
-        FilesViewItem(
-            id: id,
-            kind: kind,
-            name: name,
-            filePath: filePath,
-            ownedBy: ownedBy,
-            modifiedAt: modifiedAt,
-            icon: icon,
-            tags: tags
-        )
-    }
-
+public protocol WireCellsGetTagSuggestionsUseCaseProtocol: Sendable {
+    func invoke() async throws -> [String]
 }

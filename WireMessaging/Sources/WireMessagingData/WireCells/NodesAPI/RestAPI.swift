@@ -252,6 +252,27 @@ final class RestAPI: Sendable {
         )
     }
 
+    func updateTags(uuid: UUID, tags: [String]) async throws {
+        let update = RestMetaUpdate(
+            operation: .put,
+            userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
+        )
+
+        _ = try await NodeServiceAPI.patchNode(
+            uuid: uuid.uuidString.lowercased(),
+            nodeUpdates: .init(metaUpdates: [update]),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getAllTags() async throws -> [String] {
+        let response = try await NodeServiceAPI.listNamespaceValues(
+            namespace: "usermeta-tags",
+            apiConfiguration: makeConfiguration()
+        )
+        return response.values ?? []
+    }
+
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()
         config.basePath = serverURL.absoluteString
