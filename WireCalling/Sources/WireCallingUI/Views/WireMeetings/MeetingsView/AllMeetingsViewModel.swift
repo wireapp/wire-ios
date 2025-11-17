@@ -17,7 +17,7 @@
 //
 
 import Foundation
-package import SwiftUI
+import SwiftUI
 package import WireCallingDomain
 import WireCallingDomainSupport
 package import WireFoundation
@@ -69,7 +69,9 @@ package final class AllMeetingsViewModel: ObservableObject {
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel()
+        ScheduleMeetingViewModel(
+            passwordValidator: passwordValidator
+        )
     }
 
 }
