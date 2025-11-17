@@ -86,6 +86,21 @@ package struct FilesView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
+                switch navigationItem {
+                case let .editTags(fileItem: fileItem):
+                    TagsEditView(
+                        fileItem: fileItem,
+                        useCases: .init(
+                            updateTags: viewModel.useCases.updateTags,
+                            getSuggestions: viewModel.useCases.getTagSuggestions
+                        ),
+                        postSaveAction: {
+                            await viewModel.reload()
+                        }
+                    )
+                }
+            }
             .sheet(
                 item: $viewModel.fileRenameView,
                 onDismiss: {
