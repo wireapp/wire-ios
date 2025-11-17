@@ -99,11 +99,11 @@ package struct ConversationTypePicker: View {
                 iconView(for: "wire_conversation_channel_icon")
                 VStack(alignment: .leading) {
                     Text(L10n.Localizable.Conversation.Create.Channel.title)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .multilineTextAlignment(.leading)
                     Text(L10n.Localizable.Conversation.Create.Channel.subtitle)
-                        .wireTextStyle(.h4)
+                        .font(for: .h4)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                         .multilineTextAlignment(.leading)
                 }
@@ -120,7 +120,7 @@ package struct ConversationTypePicker: View {
             HStack(alignment: .center, spacing: Constants.verticalSpacing) {
                 iconView(for: "wire_conversation_group_icon")
                 Text(L10n.Localizable.Conversation.Create.Group.title)
-                    .wireTextStyle(.body2)
+                    .font(for: .body2)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                 Spacer()
                 chevronView()
@@ -151,6 +151,5 @@ package struct ConversationTypePicker: View {
         )
         .padding()
     }
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     .background(.gray)
 }

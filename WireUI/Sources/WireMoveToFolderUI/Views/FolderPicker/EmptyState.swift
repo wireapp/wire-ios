@@ -25,7 +25,7 @@ struct EmptyState: View {
             Spacer()
             Text("folder.picker.empty.hint", tableName: "Localizable", bundle: .module)
                 .foregroundColor(Color.primaryText)
-                .font(.textStyle(.subline1))
+                .font(for: .subline1)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .accessibilityIdentifier("folder.picker.empty")

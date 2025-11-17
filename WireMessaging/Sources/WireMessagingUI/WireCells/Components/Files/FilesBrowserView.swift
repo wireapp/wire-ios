@@ -113,6 +113,5 @@ private extension View {
 #Preview {
     NavigationStack {
         FilesBrowserView(viewModel: .preview())
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
