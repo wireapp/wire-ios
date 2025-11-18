@@ -75,7 +75,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     
     public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
-    ) async throws {
+    ) async throws -> OneOnOneConversationResolution {
+        var action: OneOnOneConversationResolution = .noAction
+        
         let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
         )
@@ -84,9 +86,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
         
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
-            try await resolveMLSConversation(
+            let groupId = try await resolveMLSConversation(
                 for: user
             )
+            action = .migratedToMLSGroup(identifier: groupId)
         }
         
         if mlsProvider.isMLSEnabled, commonProtocol == nil {
@@ -94,6 +97,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 between: selfUser,
                 and: user
             )
+            action = .archivedAsReadOnly
         }
         
         if commonProtocol == .proteus {
@@ -101,12 +105,14 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 for: user
             )
         }
+        return action
     }
     
-    private func resolveMLSConversation(for user: ZMUser) async throws {
+    @discardableResult
+    private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
         
-        let userID = await context.perform {
+        let userID = await context.perform { [user] in
             user.qualifiedID
         }
         
@@ -123,11 +129,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         // Then, fetch the synced MLS conversation.
         let mlsConversation = await conversationLocalStore.fetchMLSConversation(groupID: mlsGroupID)
         
-        let groupID = await context.perform {
-            mlsConversation?.mlsGroupID
-        }
         
-        guard let mlsConversation, let groupID else {
+        guard let mlsConversation else {
             throw Error.failedToFetchConversation
         }
         
@@ -135,19 +138,21 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         
         // If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
-            groupID: groupID
+            groupID: mlsGroupID
         ) == false
         
         if needsMLSMigration {
             await migrateToMLS(
                 mlsConversation: mlsConversation,
-                mlsGroupID: groupID,
+                mlsGroupID: mlsGroupID,
                 mlsPublicKeys: mlsPublicKeys,
                 user: user,
                 userID: userID
                 
             )
         }
+        
+        return mlsGroupID
     }
     
     private func migrateToMLS(
@@ -174,9 +179,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 userOneOnOneConversation?.isForcedReadOnly = true
             }
             
-            return WireLogger.conversation.error(
-                "Failed to setup MLS group with ID: \(mlsGroupID.safeForLoggingDescription)"
+            WireLogger.conversation.error(
+                "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
             )
+            return
         }
         
         await switchLocalConversationToMLS(

@@ -1403,6 +1403,14 @@ extension ZMUserSession: SyncAgentDelegate {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
     }
+    
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> OneOnOneConversationResolution {
+        guard let clientSessionComponent else {
+            return .noAction
+        }
+        
+        return try await clientSessionComponent.oneOnOneResolver.resolveOneOnOneConversation(with: userID)
+    }
 
     private func performPostQuickSyncE2EIActions() {
         guard mlsFeature.isEnabled else { return }
