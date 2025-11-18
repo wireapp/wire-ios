@@ -107,7 +107,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         // WHEN
         mockConversation.conversationType = .group
         mockConversation.teamType = MockTeam()
-        mockConversation.allowServices = true
+        mockConversation.allowApps = true
         mockConversation.messageProtocol = .proteus
 
         sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
@@ -124,7 +124,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         // WHEN
         mockConversation.conversationType = .group
         mockConversation.teamType = MockTeam()
-        mockConversation.allowServices = true
+        mockConversation.allowApps = true
         mockConversation.messageProtocol = .mls
 
         sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)

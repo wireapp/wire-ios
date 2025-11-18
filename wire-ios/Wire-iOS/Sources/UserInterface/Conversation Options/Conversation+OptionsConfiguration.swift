@@ -32,7 +32,7 @@ extension ZMConversation {
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
         var allowGuestsChangedHandler: ((Bool) -> Void)?
-        var allowServicesChangedHandler: ((Bool) -> Void)?
+        var allowAppsChangedHandler: ((Bool) -> Void)?
         var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
 
         init(conversation: ZMConversation, userSession: ZMUserSession) {
@@ -64,8 +64,8 @@ extension ZMConversation {
             conversation.allowGuests
         }
 
-        var allowServices: Bool {
-            conversation.allowServices
+        var allowApps: Bool {
+            conversation.allowApps
         }
 
         var guestLinkFeatureStatus: GuestLinkFeatureStatus = .unknown {
@@ -82,16 +82,16 @@ extension ZMConversation {
             conversation.areGuestsPresent
         }
 
-        var areServicePresent: Bool {
-            conversation.areServicesPresent
+        var areAppsPresent: Bool {
+            conversation.areAppsPresent
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 
-            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
+            userSession.makeSetConversationGuestsAndAppsUseCase().invoke(
                 conversation: conversation,
                 allowGuests: allowGuests,
-                allowServices: conversation.allowServices
+                allowApps: conversation.allowApps
             ) { result in
                 switch result {
                 case .success:
@@ -103,12 +103,12 @@ extension ZMConversation {
 
         }
 
-        func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 
-            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
+            userSession.makeSetConversationGuestsAndAppsUseCase().invoke(
                 conversation: conversation,
                 allowGuests: conversation.allowGuests,
-                allowServices: allowServices
+                allowApps: allowApps
             ) { result in
                 switch result {
                 case .success:
@@ -126,8 +126,8 @@ extension ZMConversation {
                 allowGuestsChangedHandler?(allowGuests)
             }
 
-            if changeInfo.allowServicesChanged {
-                allowServicesChangedHandler?(allowServices)
+            if changeInfo.allowAppsChanged {
+                allowAppsChangedHandler?(allowApps)
             }
         }
 

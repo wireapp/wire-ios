@@ -39,6 +39,6 @@ final class ConversationCreateServicesCell: IconToggleCell {
 
 extension ConversationCreateServicesCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
-        isOn = values.allowServices
+        isOn = values.allowApps
     }
 }

@@ -1928,7 +1928,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     user.providerIdentifier = [[NSUUID UUID] transportString];
     user.serviceIdentifier = [[NSUUID UUID] transportString];
     
-    XCTAssertTrue(user.isServiceUser);
+    XCTAssertTrue(user.isApp);
     XCTAssertEqualObjects(user.name, @"User Name");
 }
 

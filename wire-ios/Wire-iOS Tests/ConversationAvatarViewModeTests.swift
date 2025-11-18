@@ -46,7 +46,7 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
         let mockServiceUser = MockServiceUserType()
         mockServiceUser.serviceIdentifier = "serviceIdentifier"
         mockServiceUser.providerIdentifier = "providerIdentifier"
-        XCTAssert(mockServiceUser.isServiceUser)
+        XCTAssert(mockServiceUser.isApp)
 
         users = [mockServiceUser]
 
