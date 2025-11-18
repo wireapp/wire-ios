@@ -42,7 +42,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-tahoe-xcode:26.1.1
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     timeout-minutes: 90
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
@@ -247,7 +247,7 @@ jobs:
     needs: run-tests
     name: Analyze xcresults
     if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ghcr.io/cirruslabs/macos-tahoe-xcode:26.1.1
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     strategy:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
