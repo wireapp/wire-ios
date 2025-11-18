@@ -16,11 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import WireCoreCrypto
+import WireDomain
 
-@testable import WireConversationListUI
+/// **Issue:**: Missing groups are not synced - [WPB-20123]
+struct AppVersionMigration_4_10_0: AppVersionMigration {
 
-final class PlaceholderTests: XCTestCase {
+    let version: SemanticVersion = "4.10.0"
+    let journal: any JournalProtocol
 
-    func testNothing() {}
+    func perform() async throws {
+        // in order to fix conversations that does not show in the list
+        // we need to force a conversation sync
+        journal[.isConversationSyncRequired] = true
+    }
+
 }
