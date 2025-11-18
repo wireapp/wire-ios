@@ -20,7 +20,7 @@ import UIKit
 
 final class ConversationCreateAppsSectionController: ConversationCreateSectionController {
 
-    typealias Cell = ConversationCreateServicesCell
+    typealias Cell = ConversationCreateAllowAppsCell
 
     var toggleAction: ((Bool) -> Void)?
 
