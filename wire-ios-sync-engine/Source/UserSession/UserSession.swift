@@ -272,7 +272,7 @@ public protocol UserSession: AnyObject {
 
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 

@@ -177,7 +177,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
             CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndServicesActionHandler(
+            SetAllowGuestsAndAppsActionHandler(
                 context: managedObjectContext,
                 localDomain: localDomain,
                 isFederationEnabled: isFederationEnabled

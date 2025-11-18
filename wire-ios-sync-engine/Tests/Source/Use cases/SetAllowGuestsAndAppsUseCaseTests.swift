@@ -21,7 +21,7 @@ import XCTest
 
 @testable import WireSyncEngine
 
-final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
+final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -30,7 +30,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     private let modelHelper = ModelHelper()
     private var mockConversation: ZMConversation!
     private var mockSelfUser: ZMUser!
-    private var sut: SetAllowGuestAndServicesUseCaseProtocol!
+    private var sut: SetAllowGuestAndAppsUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
         stack.syncContext
@@ -42,7 +42,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
-            sut = SetAllowGuestAndServicesUseCase()
+            sut = SetAllowGuestAndAppsUseCase()
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
@@ -79,7 +79,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             // GIVEN
             setUpRoleAndAction()
 
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
                 result: .success(()),
                 context: syncContext.notificationContext
             )
@@ -87,7 +87,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             let expectation = XCTestExpectation(description: "completion should be called")
 
             // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowServices: false) { result in
+            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
                 // THEN
                 switch result {
                 case .success:
@@ -105,7 +105,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     func testGuestEnablementFails_WithInsufficientPermissions() async {
         await syncContext.perform { [self] in
             // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
                 result: .failure(.unknown),
                 context: syncContext.notificationContext
             )
@@ -116,7 +116,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 )
 
             // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowServices: false) { result in
+            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
                 // THEN
                 switch result {
                 case .success:
@@ -131,13 +131,13 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         }
     }
 
-    func testServicesEnablementSucceeds() async {
+    func testAppsEnablementSucceeds() async {
 
         await syncContext.perform { [self] in
             // GIVEN
             setUpRoleAndAction()
 
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
                 result: .success(()),
                 context: syncContext.notificationContext
             )
@@ -145,7 +145,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             let expectation = XCTestExpectation(description: "completion should be called")
 
             // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowServices: true) { result in
+            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
                 // THEN
                 switch result {
                 case .success:
@@ -161,11 +161,11 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         }
     }
 
-    func testServicesEnablementFails_WithInsufficientPermissions() async {
+    func testAppsEnablementFails_WithInsufficientPermissions() async {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
                 result: .failure(.unknown),
                 context: syncContext.notificationContext
             )
@@ -175,7 +175,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 )
 
             // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowServices: true) { result in
+            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
                 // THEN
                 switch result {
                 case .success:

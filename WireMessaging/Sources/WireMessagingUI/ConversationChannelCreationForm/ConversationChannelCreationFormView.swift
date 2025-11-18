@@ -45,7 +45,7 @@ public struct ConversationChannelCreationForm: View {
             if viewModel.isChannelHistoryFeatureEnabled() {
                 channelHistorySection
             }
-            servicesSection
+            appsSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
             //            readReceiptsSection
 
@@ -178,9 +178,9 @@ public struct ConversationChannelCreationForm: View {
         }
     }
 
-    var servicesSection: some View {
+    var appsSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.Services.toggle, isOn: $viewModel.servicesAllowed)
+            Toggle(Strings.CreationForm.Apps.toggle, isOn: $viewModel.appsAllowed)
             Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
             Text(Strings.CreationForm.Guests.description)
